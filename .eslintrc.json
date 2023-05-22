@@ -1,0 +1,68 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "paths": ["pages"],
+        "extensions": [".js", ".ts", ".tsx"]
+      }
+    }
+  },
+  "extends": ["next/core-web-vitals", "airbnb"],
+  "rules": {
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
+    "react/jsx-props-no-spreading": "off",
+    "import/extensions": [
+      "off",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "no-nested-ternary": "off",
+    "import/prefer-default-export": "off",
+    "react/prop-types": 0,
+    "max-len": ["warn", { "code": 140 }],
+    "comma-dangle": ["error", "never"],
+    "object-curly-newline": [0],
+    "arrow-parens": ["error", "as-needed"],
+    "no-console": 0,
+    "import/no-unresolved": 0,
+    "jsx-a11y/no-static-element-interactions": [0],
+    "jsx-a11y/click-events-have-key-events": 0,
+    "jsx-a11y/no-noninteractive-element-interactions": 0,
+    "linebreak-style": 0,
+    "react/function-component-definition": 0,
+    "no-unused-vars": 1,
+    "jsx-a11y/alt-text": 1,
+    "react/no-array-index-key": 1,
+    "react/self-closing-comp": 1,
+    "operator-linebreak": 1,
+    "react/jsx-no-bind": 0,
+    "react/jsx-no-useless-fragment": 1,
+    "react-hooks/rules-of-hooks": 0,
+    "react/jsx-one-expression-per-line": 0,
+    "dot-notation": 0,
+    "indent": 1,
+    "implicit-arrow-linebreak": 1,
+    "jsx-a11y/anchor-is-valid": 1,
+    "prefer-const": 1,
+    "jsx-a11y/label-has-associated-control": 0,
+    "react/button-has-type": 0,
+    "radix": 0
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  }
+}
