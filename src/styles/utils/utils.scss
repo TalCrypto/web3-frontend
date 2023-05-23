@@ -1,0 +1,43 @@
+@mixin font-weight-color($size: 16px, $weight: 400, $color: rgba(255, 255, 255, 0.87)) {
+  font-weight: $weight;
+  font-size: $size;
+  font-family: 'Montserrat';
+  color: $color;
+}
+
+@mixin display-flex($justify: initial, $driection: initial, $align: initial) {
+  display: flex;
+  flex-direction: $driection;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+@mixin absolute-display($top: 0, $right: 0, $bottom: 0, $left: 0) {
+  position: absolute;
+  top: $top;
+  left: $left;
+  right: $right;
+  bottom: $bottom;
+}
+
+@mixin colorful-text($color) {
+  background: $color;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+@mixin colorful-border-color($background, $width: 2px, $radius: 30px) {
+  &:before {
+    @include absolute-display(0, 0, 0, 0);
+    background: $background;
+    content: '';
+    z-index: 1;
+    padding: $width;
+    border-radius: $radius;
+    -webkit-mask: -webkit-linear-gradient(#171833 0 0) content-box, -webkit-linear-gradient(#171833 0 0);
+    -webkit-mask-composite: source-out;
+    mask-composite: exclude;
+  }
+}
