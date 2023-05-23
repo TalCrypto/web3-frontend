@@ -16,7 +16,7 @@
       }
     }
   },
-  "extends": ["next/core-web-vitals", "airbnb"],
+  "extends": ["next/core-web-vitals", "airbnb", "prettier"],
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
     "react/jsx-props-no-spreading": "off",

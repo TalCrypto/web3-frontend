@@ -1,16 +1,12 @@
 {
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "editor.formatOnType": true,
   "editor.detectIndentation": false,
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
-  "prettier.arrowParens": "avoid",
-  "prettier.jsxSingleQuote": false,
-  "prettier.printWidth": 140,
-  "prettier.singleQuote": true,
-  "prettier.bracketSameLine": true,
-  "prettier.trailingComma": "none",
-  "prettier.tabWidth": 2,
-  "prettier.useTabs": false
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
