@@ -90,7 +90,7 @@ const tradeErrorMsgHandling = (error: any, type: any, toastData = { title: '', l
     };
   }
 
-  const errorMsgList: any[] = {
+  const errorMsgList: any = {
     AMM_POFL: 'Please try with smaller notional value.',
     CH_TMRL: 'Your transaction has failed due to high price fluctuation. Please increase your slippage tolerance or try again later.',
     CH_TMRS: 'Your transaction has failed due to high price fluctuation. Please increase your slippage tolerance or try again later.',
@@ -183,7 +183,13 @@ const tradeErrorMsgHandling = (error: any, type: any, toastData = { title: '', l
   };
 };
 
-const successToastHandling = ({ amm, title, linkUrl }) => {
+interface successToastHandlingProps {
+  amm: any;
+  title: string;
+  linkUrl: string;
+}
+
+const successToastHandling = ({ amm, title, linkUrl }: successToastHandlingProps) => {
   setTimeout(async () => {
     // add waiting time for pending transactions for more smooth experience
     await collectionsLoading.setCollectionsLoading(amm, false);
@@ -219,8 +225,60 @@ const waitForTxConfirmation = async (tx: any) =>
       });
   });
 
-export const clearingHouseAddress = process.env.NEXT_PUBLIC_CLEARING_ADDRESS;
-export const walletProvider = {
+export const clearingHouseAddress = process.env.NEXT_PUBLIC_CLEARING_ADDRESS ?? '';
+
+interface WalletProvider {
+  provider: ethers.providers.Web3Provider | null;
+  web3Modal: Web3Modal;
+  holderAddress: string;
+  isWhitelisted: boolean;
+  isTethCollected: boolean;
+  isInputCode: boolean;
+  isNetworkSame: boolean;
+  isDataFetch: boolean;
+  wethBalance: number;
+  allowedValue: number;
+  currentToken: any;
+  currentTokenAmmAddress: any;
+  currentTokenContractAddress: any;
+  firebaseIdToken: string;
+  initWeb3Modal: any;
+  disconnectWallet: any;
+  connectWallet: any;
+  initialConnectWallet: any;
+  isTargetNetwork: any;
+  getHolderAddress: any;
+  setCurrentToken: any;
+  getCurrentToken: any;
+  calculateEstimationValue: any;
+  connectContract: any;
+  createTransaction: any;
+  closePosition: any;
+  adjustPositionMargin: any;
+  getTestToken: any;
+  checkIsGoerliEthCollected: any;
+  checkIsTethCollected: any;
+  checkIsInputCode: any;
+  getWethBalance: any;
+  checkAllowance: any;
+  performApprove: any;
+  getMarginEstimation: any;
+  reduceMargin: any;
+  checkCurrentContractIsOpen: any;
+  fetchDashboardInfomation: any;
+  checkIsWhitelisted: any;
+  fetchMarketOverview: any;
+  checkIsWhitelistedByJson: any;
+  getMaxReduceCollateralValue: any;
+  checkIsTargetNetworkWithChain: any;
+  signAuthMessage: any;
+  addArbitrumGoerli: any;
+  getPendingTransactions: any;
+  getUserCollectionsInfo: any;
+  getLiquidationRatio: any;
+}
+
+export const walletProvider: WalletProvider = {
   provider: null,
   web3Modal: null,
   holderAddress: '',
@@ -258,7 +316,7 @@ export const walletProvider = {
     });
     return Promise.resolve();
   },
-  conectWallet: async function conectWallet() {
+  connectWallet: async function connectWallet() {
     this.initWeb3Modal();
     let instance = null;
     if (!window.ethereum) {
@@ -323,6 +381,7 @@ export const walletProvider = {
     return Promise.resolve();
   },
   isTargetNetwork: async function isTargetNetwork() {
+    if (!this.provider) return false;
     const holderNetwork = await this.provider.getNetwork();
     let result = false;
     if (process.env.NEXT_PUBLIC_SUPPORT_CHAIN === holderNetwork.chainId.toString()) {
@@ -334,6 +393,7 @@ export const walletProvider = {
     return result;
   },
   getHolderAddress: async function getHolderAddress() {
+    if (!this.provider) return null;
     if (this.provider.connection.url === 'metamask') {
       this.holderAddress = await this.provider.provider.selectedAddress;
     } else {
@@ -341,7 +401,7 @@ export const walletProvider = {
     }
     return this.holderAddress;
   },
-  setCurrentToken: function setCurrentToken(tokens) {
+  setCurrentToken: function setCurrentToken(tokens: any) {
     const targetCollection = collectionList.filter(({ collection }) => collection === tokens);
     const { amm, contract } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
     this.currentToken = tokens;
@@ -354,33 +414,40 @@ export const walletProvider = {
     this.currentTokenAmmAddress = amm;
     this.currentTokenContractAddress = contract;
   },
-  calculateEstimationValue: function calculateEstimationValue(isDoBuyAction, enterValue, leverageValue) {
+  calculateEstimationValue: function calculateEstimationValue(isDoBuyAction: boolean, enterValue: any, leverageValue: any) {
     this.getCurrentToken();
     const betEth = utils.parseEther(enterValue.toString());
     const leverageEth = utils.parseEther(leverageValue.toString());
     const longShortValue = isDoBuyAction ? 'short' : 'long';
     return getOpenPositionEstimation(this.currentTokenAmmAddress, this.holderAddress, betEth, leverageEth, longShortValue);
   },
+
   connectContract: async function connectContract() {
     if (!this.isTargetNetwork()) {
       return Promise.reject();
     }
+
+    if (!this.provider) return false;
+
     const providerSigner = this.provider.getSigner(this.holderAddress);
     const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
     const erc20ContractInstance = new ethers.Contract(address, tokenABI, providerSigner);
     return Promise.resolve(erc20ContractInstance);
   },
+
   createTransaction: async function createTransaction(
-    longOrShort,
-    quantity,
-    leverageValue,
-    toleranceRate,
-    exposureValue,
-    transactionType,
-    refreshState
+    longOrShort: number,
+    quantity: number,
+    leverageValue: number,
+    toleranceRate: number,
+    exposureValue: number,
+    transactionType: any,
+    refreshState: any
   ) {
     let tx;
     try {
+      if (!this.provider) return false;
+
       this.getCurrentToken();
       const notionalAmount = quantity;
       const refinedSlippage = toleranceRate / 100;
@@ -429,7 +496,10 @@ export const walletProvider = {
       collectionsLoading.setCollectionsLoading(this.currentTokenAmmAddress, tx.hash);
       await tx.wait();
       const auth = getAuth();
+
       const { currentUser } = auth;
+      if (!currentUser) return Promise.reject();
+
       const tokenId = await currentUser.getIdToken();
       const finishTrade = await apiConnection.finishTrade(tx.hash, tokenId);
       if (!this.isInputCode) {
@@ -453,7 +523,8 @@ export const walletProvider = {
       return Promise.reject(errorObj);
     }
   },
-  closePosition: async function closePosition(refreshState) {
+  closePosition: async function closePosition(refreshState: any) {
+    if (!this.provider) return Promise.reject();
     this.getCurrentToken();
     const providerSigner = this.provider.getSigner(this.holderAddress);
     const clearingHseInstance = new ethers.Contract(clearingHouseAddress, clearingHseABI, providerSigner);
@@ -489,7 +560,10 @@ export const walletProvider = {
       collectionsLoading.setCollectionsLoading(this.currentTokenAmmAddress, tx.hash);
       await tx.wait();
       const auth = getAuth();
+
       const { currentUser } = auth;
+      if (!currentUser) return Promise.reject();
+
       const tokenId = await currentUser.getIdToken();
       await apiConnection.finishTrade(tx.hash, tokenId);
       await this.getWethBalance(this.holderAddress);
@@ -510,8 +584,11 @@ export const walletProvider = {
       return Promise.reject(errorObj);
     }
   },
-  adjustPositionMargin: async function adjustPositionMargin(adjustMarginValue, refreshState) {
+  adjustPositionMargin: async function adjustPositionMargin(adjustMarginValue: any, refreshState: any) {
     this.getCurrentToken();
+
+    if (!this.provider) return Promise.reject();
+
     const providerSigner = this.provider.getSigner(this.holderAddress);
     const clearingHseInstance = new ethers.Contract(clearingHouseAddress, clearingHseABI, providerSigner);
 
@@ -607,9 +684,11 @@ export const walletProvider = {
       return false;
     }
   },
-  getWethBalance: async function getWethBalance(holderAddress) {
+  getWethBalance: async function getWethBalance(holderAddress: any) {
+    if (!this.provider) return 0;
+
     const providerSigner = this.provider.getSigner(holderAddress);
-    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
+    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS ?? '';
     const erc20ContractInstance = new ethers.Contract(address, tokenABI, providerSigner);
     try {
       const balance = await erc20ContractInstance.balanceOf(this.holderAddress);
@@ -622,16 +701,19 @@ export const walletProvider = {
     return this.wethBalance;
   },
   checkAllowance: async function checkAllowance() {
+    if (!this.provider) return 0;
     const providerSigner = this.provider.getSigner(this.holderAddress);
-    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
+    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS ?? '';
     const erc20ContractInstance = new ethers.Contract(address, tokenABI, providerSigner);
     const allowedValue = utils.formatEther(await erc20ContractInstance.allowance(walletProvider.holderAddress, clearingHouseAddress));
     this.allowedValue = Number(allowedValue);
     return this.allowedValue;
   },
   performApprove: async function performApprove() {
+    if (!this.provider) return Promise.reject();
+
     const providerSigner = this.provider.getSigner(this.holderAddress);
-    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
+    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS ?? '';
     const erc20ContractInstance = new ethers.Contract(address, tokenABI, providerSigner);
     try {
       const tx = await erc20ContractInstance.approve(clearingHouseAddress, ethers.constants.MaxUint256);
@@ -641,7 +723,7 @@ export const walletProvider = {
       return Promise.reject(error);
     }
   },
-  getMarginEstimation: async function getMarginEstimation(adjustMarginValue, side) {
+  getMarginEstimation: async function getMarginEstimation(adjustMarginValue: any, side: any) {
     this.getCurrentToken();
     try {
       const formatValue = utils.parseEther(adjustMarginValue);
@@ -650,7 +732,8 @@ export const walletProvider = {
       return null;
     }
   },
-  reduceMargin: async function reduceMargin(adjustMarginValue, refreshState) {
+  reduceMargin: async function reduceMargin(adjustMarginValue: any, refreshState: any) {
+    if (!this.provider) return Promise.reject();
     const providerSigner = this.provider.getSigner(this.holderAddress);
     const clearingHseInstance = new ethers.Contract(clearingHouseAddress, clearingHseABI, providerSigner);
 
@@ -702,7 +785,8 @@ export const walletProvider = {
       return Promise.reject(errorObj);
     }
   },
-  checkCurrentContractIsOpen: async function checkCurrentContractIsOpen(ammAddr) {
+  checkCurrentContractIsOpen: async function checkCurrentContractIsOpen(ammAddr: any) {
+    if (!this.provider) return Promise.reject();
     const providerSigner = this.provider.getSigner(this.holderAddress);
     const contractInstance = new ethers.Contract(ammAddr, ammABI, providerSigner);
     const instanceOpen = await contractInstance.open();
@@ -740,7 +824,7 @@ export const walletProvider = {
     }
     return Promise.resolve();
   },
-  getMaxReduceCollateralValue: async function getMaxReduceCollateralValue(ammAddr, holderAddress) {
+  getMaxReduceCollateralValue: async function getMaxReduceCollateralValue(ammAddr: any, holderAddress: any) {
     const clearingHouseViewerContract = new MulticallContract(clearingHouseViewerAddr, clearingHouseViewerABI);
     try {
       const [result] = await multicallProvider.all([clearingHouseViewerContract.getFreeCollateral(ammAddr, holderAddress)]);
@@ -750,6 +834,7 @@ export const walletProvider = {
     }
   },
   checkIsTargetNetworkWithChain: async function checkIsTargetNetworkWithChain() {
+    if (!this.provider) return Promise.reject();
     const holderNetwork = await this.provider.getNetwork();
     let result = false;
     const holderChain = holderNetwork.chainId;
@@ -761,7 +846,8 @@ export const walletProvider = {
     result = false;
     return { result, holderChain };
   },
-  signAuthMessage: async function signAuthMessage(nonce) {
+  signAuthMessage: async function signAuthMessage(nonce: any) {
+    if (!this.provider) return Promise.reject();
     const providerSigner = this.provider.getSigner(this.holderAddress);
     const messageHex = `\x19Ethereum Signed Message:\nI am signing my one-time nonce: ${nonce}`;
     try {
@@ -795,7 +881,7 @@ export const walletProvider = {
       return Promise.reject(error);
     }
   },
-  getPendingTransactions: async function getPendingTransactions(collectionsLoadingList, selectedCollection) {
+  getPendingTransactions: async function getPendingTransactions(collectionsLoadingList: any, selectedCollection: any) {
     const newCollLoadingList = {
       ...collectionsLoadingList
     };
@@ -824,8 +910,9 @@ export const walletProvider = {
 
     return newCollLoadingList;
   },
-  getUserCollectionsInfo: async function getUserCollectionsInfo(walletAddress) {
-    let userCollectionsInfo = [];
+
+  getUserCollectionsInfo: async function getUserCollectionsInfo(walletAddress: any) {
+    let userCollectionsInfo: any = [];
     try {
       const userCollectionsInfoPromise = await Promise.allSettled([
         ...collectionList.map(collection => getTraderPositionInfo(collection.amm, walletAddress))
@@ -837,8 +924,10 @@ export const walletProvider = {
 
     return userCollectionsInfo;
   },
+
   getLiquidationRatio: async function getLiquidationRatio() {
     try {
+      if (!this.provider) return Promise.reject();
       const providerSigner = this.provider.getSigner(this.holderAddress);
       const clearingHseInstance = new ethers.Contract(clearingHouseAddress, clearingHseABI, providerSigner);
       const rate = await clearingHseInstance.LIQ_SWITCH_RATIO();

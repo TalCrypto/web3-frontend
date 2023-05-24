@@ -6,7 +6,7 @@ interface ConnectWalletModalProps {
   setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
   connectWithWalletConnect: () => void;
   connectWithEthereum: () => void;
-  setIsWalletLoading: () => void;
+  setIsWalletLoading: any;
 }
 
 export default function ConnectWalletModal({

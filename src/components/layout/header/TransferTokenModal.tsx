@@ -5,7 +5,7 @@ interface ButtonContentProps {
   icon: string;
   url: string;
   name: string;
-  setIsShow: () => void;
+  setIsShow: any;
 }
 
 function ButtonContent({ icon, url, name, setIsShow }: ButtonContentProps) {
@@ -28,7 +28,7 @@ function EmptyContent() {
 
 interface TransferTokenModalProps {
   isShow: boolean;
-  setIsShow: () => void;
+  setIsShow: any;
 }
 
 const TransferTokenModal = (props: TransferTokenModalProps) => {

@@ -90,9 +90,9 @@ function Web3Area() {
 
   const { multiplier, total, tradeVol, isBan } = userPointData;
   const tradeVolume = calculateNumber(tradeVol.vol, 4);
-  const eligible = () => tradeVolume >= 5;
+  const eligible = () => tradeVolume >= '5';
 
-  const handleConnectedWalletUpdate = (holderAddress, callback) => {
+  const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
     setWalletAddress(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
     walletProvider.checkIsTargetNetworkWithChain().then(result => {
       setCurrentChain(result.holderChain);
@@ -115,7 +115,7 @@ function Web3Area() {
     userIsLogin.set(true);
   };
 
-  function successfulConnectWalletCallback(callback) {
+  function successfulConnectWalletCallback(callback: any = null) {
     if (localStorage.getItem('isLoggedin') === null || localStorage.getItem('isLoggedin') === 'false') {
       // logEventByName('connectWallet_pressed');
     }
@@ -134,7 +134,7 @@ function Web3Area() {
     localStorage.setItem('isLoggedin', 'false');
   };
 
-  const connectWallet = (callback, initial = false) => {
+  const connectWallet = (callback: any, initial = false) => {
     setIsWalletLoading(true);
     if (initial) {
       setIsConnectWalletModalShow(true);
@@ -148,7 +148,7 @@ function Web3Area() {
     }
   };
 
-  const disconnectWallet = callback => {
+  const disconnectWallet = (callback: any = null) => {
     // logEventByName('wallet_disconnect_pressed');
     walletProvider.disconnectWallet().then(() => {
       resetState();
@@ -167,7 +167,7 @@ function Web3Area() {
   //   // setTokenErrorMsg(error.message);
   // };
 
-  const updateTargetNetwork = callback => {
+  const updateTargetNetwork = (callback: any = null) => {
     // logEventByName('switchGoerli_pressed');
     const networkId = utils.hexValue(Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN || 42161));
     walletProvider.provider.provider
@@ -177,7 +177,7 @@ function Web3Area() {
         handleConnectedWalletUpdate(walletProvider.holderAddress, callback);
         // handleCallback(false);
       })
-      .catch(error => {
+      .catch((error: any) => {
         if (error.code === 4902) {
           walletProvider.addArbitrumGoerli();
         }
@@ -186,7 +186,7 @@ function Web3Area() {
       });
   };
 
-  const getTestToken = async (callback, successHandle) => {
+  const getTestToken = async (callback: any, successHandle: any) => {
     // logEventByName('getTeth_pressed');
     setIsShowTransferTokenModal(true);
     const isGoerliEthCollected = await walletProvider.checkIsGoerliEthCollected();
@@ -287,12 +287,12 @@ function Web3Area() {
         getTestToken={getTestToken}
         isWrongNetwork={isWrongNetwork}
         updateTargetNetwork={updateTargetNetwork}
-        accountInfo={{ address: walletAddress, balance: wethBalance }}
+        // accountInfo={{ address: walletAddress, balance: wethBalance }}
       />
       {/* ) : null} */}
 
       <ConnectWalletButton
-        handleClick={doLoginAction => (doLoginAction ? connectWallet(() => {}, true) : null)}
+        handleClick={(doLoginAction: boolean) => (doLoginAction ? connectWallet(() => {}, true) : null)}
         isLogin={isLogin}
         inWrongNetwork={isWrongNetwork}
         accountInfo={{ address: walletAddress, balance: wethBalance }}

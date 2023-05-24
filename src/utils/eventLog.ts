@@ -1,16 +1,28 @@
 /* eslint-disable import/no-cycle */
 import { logEvent } from 'firebase/analytics';
-import { UAParser } from 'ua-parser-js';
+import { IBrowser, IDevice, IOS, UAParser } from 'ua-parser-js';
 import { apiConnection } from './apiConnection';
 import { firebaseAnalytics } from '../const/firebaseConfig';
 
-export const eventParams = {
+interface EventParams {
+  language: string;
+  time_zone: string;
+  browser: IBrowser | null;
+  device: IDevice | null;
+  os: IOS | null;
+  user_agent: string;
+  set: any;
+  get: any;
+}
+
+export const eventParams: EventParams = {
   language: '',
   time_zone: '',
-  browser: '',
-  device: '',
-  os: '',
+  browser: null,
+  device: null,
+  os: null,
   user_agent: '',
+
   set: async function set(navigator: any) {
     try {
       const parser = new UAParser();

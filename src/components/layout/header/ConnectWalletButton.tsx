@@ -5,22 +5,20 @@ import ProfileContent from '@/components/layout/header/ProfileContent';
 import Image from 'next/image';
 
 interface ConnectWalletButtonProps {
-  handleClick: () => void;
+  handleClick: any;
   isLogin: boolean;
   inWrongNetwork: boolean;
   accountInfo: {
     address: string;
     balance: number;
   };
-  currentChain: string;
+  currentChain: number;
   disconnectWallet: () => void;
-  getTestToken: () => void;
+  getTestToken: any;
   isWrongNetwork: boolean;
   updateTargetNetwork: () => void;
-  callBalance: () => void;
-  userInfo: {
-    username: string;
-  } | null;
+  callBalance: any;
+  userInfo: any;
 }
 
 const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
@@ -111,7 +109,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
         getTestToken={getTestToken}
         isWrongNetwork={isWrongNetwork}
         updateTargetNetwork={updateTargetNetwork}
-        isLogin={isLogin}
+        // isLogin={isLogin}
         callBalance={callBalance}
         userInfo={userInfo}
       />

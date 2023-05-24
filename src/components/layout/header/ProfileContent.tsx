@@ -2,23 +2,23 @@
 /* eslint-disable no-unused-vars */
 import React, { forwardRef } from 'react';
 import Link from 'next/link';
-import { logEvent } from 'firebase/analytics';
+// import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { pageTitleParser } from '@/utils/eventLog';
 import { apiConnection } from '@/utils/apiConnection';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
+// import { firebaseAnalytics } from '@/const/firebaseConfig';
 import NetworkNameDisplay from '@/utils/NetworkNameDisplay';
 import { walletProvider } from '@/utils/walletProvider';
 
 interface PriceContentProps {
   priceValue: string;
-  isLargeText: boolean;
   title: string;
+  isLargeText: boolean;
   notLastRow: boolean;
 }
 
-const PriceContent: React.FC<PriceContentProps> = ({ priceValue, isLargeText = false, title, notLastRow = false }) => {
+const PriceContent: React.FC<PriceContentProps> = ({ priceValue, title, isLargeText = false, notLastRow = false }) => {
   const iconImage = '../images/components/layout/header/eth-tribe3.svg';
   return (
     <div className={`total-value-row ${notLastRow ? 'not-last' : ''}`}>
@@ -50,9 +50,9 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
 
     const fullWalletAddress = walletProvider.holderAddress;
 
-    logEvent(firebaseAnalytics, eventName, {
-      wallet: fullWalletAddress.substring(2)
-    });
+    // logEvent(firebaseAnalytics, eventName, {
+    //   wallet: fullWalletAddress.substring(2)
+    // });
     apiConnection.postUserEvent(eventName, {
       page
     });
@@ -99,8 +99,8 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
 interface BottomContentProps {
   address: string;
   inWrongNetwork: boolean;
-  currentChain: string;
-  balance: string;
+  currentChain: number;
+  balance: number;
   callBalance: { portfolio: string };
 }
 
@@ -143,14 +143,21 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, 
         title="Total Account Value:"
         priceValue={inWrongNetwork ? '0.0000' : (Number(balance) + Number(callBalance.portfolio)).toFixed(4)}
         isLargeText
+        notLastRow={false}
       />
       <div className="dividers" />
       <PriceContent
         title="Portfolio Collateral:"
         priceValue={inWrongNetwork ? '0.0000' : Number(callBalance.portfolio).toFixed(4)}
+        isLargeText={false}
         notLastRow
       />
-      <PriceContent title="Wallet Balance:" priceValue={inWrongNetwork ? '0.0000' : Number(balance).toFixed(4)} />
+      <PriceContent
+        title="Wallet Balance:"
+        priceValue={inWrongNetwork ? '0.0000' : Number(balance).toFixed(4)}
+        isLargeText={false}
+        notLastRow={false}
+      />
     </div>
   );
 };
@@ -177,9 +184,9 @@ const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
 
     const fullWalletAddress = walletProvider.holderAddress;
 
-    logEvent(firebaseAnalytics, eventName, {
-      wallet: fullWalletAddress.substring(2)
-    });
+    // logEvent(firebaseAnalytics, eventName, {
+    //   wallet: fullWalletAddress.substring(2)
+    // });
     apiConnection.postUserEvent(eventName, {
       page
     });
@@ -216,8 +223,8 @@ const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ u
 interface ProfileContentProps {
   address: string;
   inWrongNetwork: boolean;
-  currentChain: string;
-  balance: string;
+  currentChain: number;
+  balance: number;
   showDisconnectTooltip: boolean;
   disconnectWallet: () => void;
   setShowDisconnectTooltip: (value: boolean) => void;

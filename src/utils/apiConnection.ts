@@ -2,8 +2,8 @@
 /* eslint-disable max-len */
 // import React from 'react';
 import { signInWithCustomToken /* , signOut */ } from 'firebase/auth';
+import { firebaseAuth } from '@/const/firebaseConfig';
 import { walletProvider } from './walletProvider';
-import { firebaseAuth } from '../const/firebaseConfig';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
 import { setUserPoint, setLeaderboard, isLeaderboardLoading, isUserPointLoading, defaultUserPoint } from '../stores/airdrop';

@@ -12,8 +12,8 @@ interface Storage {
 export const storage: Storage = {
   eventLogs: [],
   eventLogsLoading: false,
-  async getEventLogs(): Promise<any[]> {
-    const eventLogsLocalForage = (await localForage.getItem('eventLogs')) || [];
+  async getEventLogs(): Promise<any> {
+    const eventLogsLocalForage: any[] = (await localForage.getItem('eventLogs')) || [];
     const eventLogsData = this.eventLogs.length > eventLogsLocalForage.length ? this.eventLogs : eventLogsLocalForage;
     return eventLogsData;
   },

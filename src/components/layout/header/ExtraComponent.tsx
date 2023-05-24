@@ -7,12 +7,12 @@ import { getAuth } from 'firebase/auth';
 import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
-import { tethCollected, inputCode, hasTraded } from '@/stores/userState';
+import { tethCollected, inputCode, hasTraded } from '@/stores/UserState';
 
 interface ExtraComponentProps {
-  getTestToken: () => void;
+  getTestToken: any;
   isWrongNetwork: boolean;
-  updateTargetNetwork: () => void;
+  updateTargetNetwork: any;
 }
 
 const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNetwork, updateTargetNetwork }) => {
@@ -46,7 +46,7 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNe
       <div className="flex items-center space-x-1 px-3">
         {!isLoading ? (
           <>
-            <Image src="/images/components/layout/header/eth-tribe3.svg" width={16} height={16} />
+            <Image src="/images/components/layout/header/eth-tribe3.svg" width={16} height={16} alt="" />
             <span>Get WETH</span>
           </>
         ) : (
@@ -79,6 +79,11 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNe
       currentUser = auth.currentUser;
       await walletProvider.getHolderAddress().then(async () => {
         setInVerify(false);
+
+        if (!currentUser) {
+          return;
+        }
+
         const idToken = await currentUser.getIdToken(true);
         const response = await apiConnection.useReferralCode(code, idToken);
         if (response.code !== 0) {
