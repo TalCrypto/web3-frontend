@@ -1,13 +1,15 @@
 import React from 'react';
-import Layout from '@/components/layout';
+import PageHeader from '@/components/layout/header/PageHeader';
 
-export default function Home() {
+export default function NotFound() {
   return (
-    <Layout
-      title="Trade"
-      ogTitle="Start to trade, hedge, leverage with a real-time charts."
-      ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection.">
+    <>
+      <PageHeader
+        title="Home"
+        ogTitle="Start to trade, hedge, leverage with a real-time charts."
+        ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
+      />
       <main>Page Not Found</main>
-    </Layout>
+    </>
   );
 }
