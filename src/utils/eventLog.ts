@@ -50,8 +50,12 @@ export const eventParams: EventParams = {
   }
 };
 
+interface Routes {
+  [key: string]: string;
+}
+
 export const pageTitleParser = (path: any) => {
-  const routesObj = {
+  const routesObj: Routes = {
     marketoverview: 'Market Overview',
     dashboard: 'Dashboard',
     leaderboard: 'Leaderboard',
@@ -60,11 +64,14 @@ export const pageTitleParser = (path: any) => {
     reward: 'Reward',
     trade: 'Trade'
   };
+
   if (path === '/') {
-    return { parentPath: '', page: 'Trade' };
+    return { parentPath: '', page: routesObj['trade'] };
   }
+
   const parentPath = path.split('/')[1];
-  return { parentPath, page: routesObj[parentPath] };
+  const page = routesObj[parentPath] ?? '';
+  return { parentPath, page };
 };
 
 export const generateBatchName = (logs: any) => {
@@ -76,6 +83,8 @@ export const generateBatchName = (logs: any) => {
 };
 
 export const logHelper = (eventName: any, holderAddress: any, others: any, deviceType: any) => {
+  if (!firebaseAnalytics) return;
+
   logEvent(firebaseAnalytics, eventName, {
     wallet: holderAddress.substring(2),
     ...others

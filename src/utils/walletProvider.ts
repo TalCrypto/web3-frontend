@@ -228,15 +228,15 @@ const waitForTxConfirmation = async (tx: any) =>
 export const clearingHouseAddress = process.env.NEXT_PUBLIC_CLEARING_ADDRESS ?? '';
 
 interface WalletProvider {
-  provider: ethers.providers.Web3Provider | null;
-  web3Modal: Web3Modal;
+  provider: any;
+  web3Modal: Web3Modal | null;
   holderAddress: string;
   isWhitelisted: boolean;
   isTethCollected: boolean;
   isInputCode: boolean;
   isNetworkSame: boolean;
   isDataFetch: boolean;
-  wethBalance: number;
+  wethBalance: any;
   allowedValue: number;
   currentToken: any;
   currentTokenAmmAddress: any;
@@ -304,6 +304,7 @@ export const walletProvider: WalletProvider = {
   },
   disconnectWallet: async function disconnectWallet() {
     this.initWeb3Modal();
+    if (!this.web3Modal) return Promise.reject();
     await this.web3Modal.clearCachedProvider();
     this.provider = null;
     this.isWhitelisted = false;
@@ -311,6 +312,7 @@ export const walletProvider: WalletProvider = {
     this.isInputCode = false;
     this.isNetworkSame = false;
     this.holderAddress = '';
+    if (!firebaseAuth) return Promise.reject();
     signOut(firebaseAuth).then(_ => {
       this.firebaseIdToken = '';
     });
@@ -320,6 +322,7 @@ export const walletProvider: WalletProvider = {
     this.initWeb3Modal();
     let instance = null;
     if (!window.ethereum) {
+      if (!this.web3Modal) return Promise.reject();
       instance = await this.web3Modal.connect();
       this.provider = new ethers.providers.Web3Provider(instance, 'any');
     } else {
@@ -343,6 +346,7 @@ export const walletProvider: WalletProvider = {
     this.initWeb3Modal();
     let instance = null;
     if (isWalletConnect) {
+      if (!this.web3Modal) return Promise.reject();
       instance = await this.web3Modal.connectTo('walletconnect');
       this.provider = new ethers.providers.Web3Provider(instance, 'any');
     } else {
@@ -364,6 +368,7 @@ export const walletProvider: WalletProvider = {
       nonce = postUserContent.data.nonce;
       const postAuthUser = await apiConnection.postAuthUser(nonce);
       firToken = postAuthUser.data.token;
+      if (!firebaseAuth) return Promise.reject();
       signInWithCustomToken(firebaseAuth, firToken)
         .then(userCredential => {
           const { user } = userCredential;
@@ -430,7 +435,7 @@ export const walletProvider: WalletProvider = {
     if (!this.provider) return false;
 
     const providerSigner = this.provider.getSigner(this.holderAddress);
-    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
+    const address = process.env.NEXT_PUBLIC_TOKEN_ADDRESS ?? '';
     const erc20ContractInstance = new ethers.Contract(address, tokenABI, providerSigner);
     return Promise.resolve(erc20ContractInstance);
   },
@@ -440,7 +445,7 @@ export const walletProvider: WalletProvider = {
     quantity: number,
     leverageValue: number,
     toleranceRate: number,
-    exposureValue: number,
+    exposureValue: any,
     transactionType: any,
     refreshState: any
   ) {
@@ -453,8 +458,8 @@ export const walletProvider: WalletProvider = {
       const refinedSlippage = toleranceRate / 100;
       const slippageHandler = longOrShort === 0 ? 1 - refinedSlippage : 1 + refinedSlippage;
 
-      const calcAssetAmountTemp = utils.formatEther(exposureValue.abs()) * utils.parseEther(slippageHandler.toString());
-      const calcAssetAmount = calcAssetAmountTemp / utils.parseEther('1');
+      const calcAssetAmountTemp = Number(utils.formatEther(exposureValue.abs())) * Number(utils.parseEther(slippageHandler.toString()));
+      const calcAssetAmount = calcAssetAmountTemp / Number(utils.parseEther('1'));
       const fixedCalcAssetAmount = calcAssetAmount.toFixed(18);
       const assetAmountLimit = utils.parseEther(fixedCalcAssetAmount.toString());
       const leverageValueBig = utils.parseEther(String(leverageValue));
@@ -512,7 +517,7 @@ export const walletProvider: WalletProvider = {
         linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${tx.hash}`
       });
       return Promise.resolve();
-    } catch (error) {
+    } catch (error: any) {
       collectionsLoading.setCollectionsLoading(this.currentTokenAmmAddress, false);
       const errorObj = tradeErrorMsgHandling(error, 'modal', {
         title: `${targetCollection[0]?.shortName} - ${transactionType}`,
@@ -573,7 +578,7 @@ export const walletProvider: WalletProvider = {
         linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${tx.hash}`
       });
       return Promise.resolve();
-    } catch (error) {
+    } catch (error: any) {
       collectionsLoading.setCollectionsLoading(this.currentTokenAmmAddress, false);
       const errorObj = tradeErrorMsgHandling(error, 'modal', {
         title: `${targetCollection[0]?.title} - Full Close Position`,
@@ -628,7 +633,7 @@ export const walletProvider: WalletProvider = {
         linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${tx.hash}`
       });
       return Promise.resolve();
-    } catch (error) {
+    } catch (error: any) {
       collectionsLoading.setCollectionsLoading(this.currentTokenAmmAddress, false);
       const errorObj = tradeErrorMsgHandling(error, 'modal', {
         title: `${targetCollection[0]?.title} - Add Collateral`,
@@ -692,7 +697,7 @@ export const walletProvider: WalletProvider = {
     const erc20ContractInstance = new ethers.Contract(address, tokenABI, providerSigner);
     try {
       const balance = await erc20ContractInstance.balanceOf(this.holderAddress);
-      const balanceInNum = (Math.floor(Number(utils.formatEther(balance) * 10000)) / 10000).toString();
+      const balanceInNum = (Math.floor(Number(Number(utils.formatEther(balance)) * 10000)) / 10000).toString();
       // const balanceInNum = Number(utils.formatEther(balance)).toFixed(4).toString();
       this.wethBalance = balanceInNum;
     } catch (error) {
@@ -774,7 +779,7 @@ export const walletProvider: WalletProvider = {
         linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${tx.hash}`
       });
       return Promise.resolve();
-    } catch (error) {
+    } catch (error: any) {
       collectionsLoading.setCollectionsLoading(this.currentTokenAmmAddress, false);
       const errorObj = tradeErrorMsgHandling(error, 'modal', {
         title: `${targetCollection[0]?.title} - Reduce Collateral`,
@@ -860,6 +865,7 @@ export const walletProvider: WalletProvider = {
   addArbitrumGoerli: async function addArbitrumGoerli() {
     const networkId = utils.hexValue(Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN || 42161));
     try {
+      if (!walletProvider.provider) return Promise.reject();
       await walletProvider.provider.provider.request({
         method: 'wallet_addEthereumChain',
         params: [
@@ -898,7 +904,7 @@ export const walletProvider: WalletProvider = {
     } else {
       for await (const [key, value] of Object.entries(collectionsLoadingList)) {
         if (value) {
-          const transaction = await provider.getTransaction(value);
+          const transaction = await provider.getTransaction(value.toString());
           if (transaction?.confirmations > 0) {
             newCollLoadingList[key] = false;
             continue;
@@ -917,7 +923,7 @@ export const walletProvider: WalletProvider = {
       const userCollectionsInfoPromise = await Promise.allSettled([
         ...collectionList.map(collection => getTraderPositionInfo(collection.amm, walletAddress))
       ]);
-      userCollectionsInfo = userCollectionsInfoPromise.map(userCollInfo => userCollInfo?.value);
+      userCollectionsInfo = userCollectionsInfoPromise.map((userCollInfo: any) => userCollInfo?.value);
     } catch (error) {
       // console.log('getUserCollectionsInfo => ', error);
     }

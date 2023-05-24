@@ -166,6 +166,9 @@ export const apiConnection = {
     const { nonce } = postUserContent.data;
     const postAuthUser = await this.postAuthUser(nonce);
     const firToken = postAuthUser.data.token;
+
+    if (!firebaseAuth) return Promise.reject();
+
     try {
       const userCredential = await signInWithCustomToken(firebaseAuth, firToken);
       const { user } = userCredential;

@@ -94,7 +94,7 @@ function Web3Area() {
 
   const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
     setWalletAddress(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
-    walletProvider.checkIsTargetNetworkWithChain().then(result => {
+    walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
       setCurrentChain(result.holderChain);
       setIsWrongNetwork(!result.result);
       userIsWrongNetwork.set(!result.result); // userState store
@@ -139,7 +139,7 @@ function Web3Area() {
     if (initial) {
       setIsConnectWalletModalShow(true);
     } else {
-      const callFunction = initial ? walletProvider.initialConnectWallet() : walletProvider.conectWallet();
+      const callFunction = initial ? walletProvider.initialConnectWallet() : walletProvider.connectWallet();
       callFunction
         .then(() => {
           successfulConnectWalletCallback(callback);
@@ -170,6 +170,8 @@ function Web3Area() {
   const updateTargetNetwork = (callback: any = null) => {
     // logEventByName('switchGoerli_pressed');
     const networkId = utils.hexValue(Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN || 42161));
+    if (!walletProvider.provider) return;
+
     walletProvider.provider.provider
       .request({ method: 'wallet_switchEthereumChain', params: [{ chainId: `${networkId}` }] })
       // .request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xA4B1' }] })
@@ -212,7 +214,7 @@ function Web3Area() {
             if (callback && typeof callback === 'function') callback();
           });
       })
-      .catch(error => {
+      .catch((error: any) => {
         // const errorMessage = {};
         // logEventByName('callbacks_gettesttoken_fail', { error_code: error?.error?.code.toString() });
         if (callback && typeof callback === 'function') callback();

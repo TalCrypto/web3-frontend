@@ -155,7 +155,7 @@ export async function getMarginAdjustmentEstimation(ammAddr: string, walletAddr:
 //   TxSummary txSummary;
 // }
 
-export async function getOpenPositionEstimation(ammAddr: string, walletAddr: string, amount: BigNumber, leverage: string, side: string) {
+export async function getOpenPositionEstimation(ammAddr: string, walletAddr: string, amount: BigNumber, leverage: any, side: string) {
   const openNotional = amount.mul(leverage).div(utils.parseEther('1'));
 
   const clearingHouseViewerContract = new MulticallContract(clearingHouseViewerAddr, clearingHouseViewerABI);

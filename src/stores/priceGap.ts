@@ -15,4 +15,4 @@ export const showPopup = map({
 });
 
 // Price gap limit from smartcontract
-export const priceGapLimit = atom(null);
+export const priceGapLimit = atom<any>(null);
