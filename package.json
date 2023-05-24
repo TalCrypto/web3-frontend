@@ -60,5 +60,8 @@
     "**/*.{json,css,scss,md,webmanifest}": [
       "prettier -w"
     ]
+  },
+  "engines": {
+    "yarn": "1.22.5"
   }
 }
