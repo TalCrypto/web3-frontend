@@ -2,17 +2,16 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 
-const CustomToast = ({
-  closeToast,
-  // toastProps,
-  title,
-  message,
-  linkUrl = '',
-  linkLabel = '',
-  warning = false,
-  // success = false,
-  error = false
-}) => (
+interface CustomToastProps {
+  title: string;
+  message: string;
+  linkUrl: string;
+  linkLabel: string;
+  warning: boolean;
+  error: boolean;
+}
+
+const CustomToast: React.FC<CustomToastProps> = ({ title, message, linkUrl = '', linkLabel = '', warning = false, error = false }) => (
   <div className="flex">
     <div className="mr-[6px]">
       <Image
@@ -31,15 +30,20 @@ const CustomToast = ({
             {linkLabel} <Image src="/images/common/out.svg" alt="" width={16} height={16} />
           </a>
         ) : null}
-        {error ? (
-          <div className="closeButton" onClick={() => closeToast()}>
-            Close
-          </div>
-        ) : null}
+        {error ? <div className="closeButton">Close</div> : null}
       </div>
     </div>
   </div>
 );
+
+interface ToastProps {
+  title: string;
+  message: string;
+  linkUrl?: string;
+  linkLabel?: string;
+  warning?: boolean;
+  error?: boolean;
+}
 
 /**
  * Show a custom toast globally.
@@ -47,23 +51,9 @@ const CustomToast = ({
  * @param {*} param0
  * @param {*} options
  */
-export const showToast = (
-  { title, message, linkUrl = '', linkLabel = '', warning = false, success = false, error = false },
-  options = {}
-) => {
-  toast(
-    <CustomToast
-      title={title}
-      message={message}
-      linkUrl={linkUrl}
-      linkLabel={linkLabel}
-      warning={warning}
-      success={success}
-      error={error}
-    />,
-    {
-      containerId: 'GLOBAL',
-      ...options
-    }
-  );
+export const showToast = ({ title, message, linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps, options = {}) => {
+  toast(<CustomToast title={title} message={message} linkUrl={linkUrl} linkLabel={linkLabel} warning={warning} error={error} />, {
+    containerId: 'GLOBAL',
+    ...options
+  });
 };

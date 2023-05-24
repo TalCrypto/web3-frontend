@@ -38,7 +38,7 @@ const clearingHouseViewerABI = require('../abi/clearingHouseViewer.json');
 
 const clearingHouseViewerAddr = process.env.NEXT_PUBLIC_CLEARING_HOUSE_VIEWER_ADDRESS;
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY;
-const suportChainId = process.env.NEXT_PUBLIC_SUPPORT_CHAIN;
+const suportChainId = parseInt(process.env.NEXT_PUBLIC_SUPPORT_CHAIN ?? '');
 const provider = new ethers.providers.AlchemyProvider(process.env.NEXT_PUBLIC_ALCHEMY_PROVIDER, infuraKey);
 const multicallProvider = new MulticallProvider(provider, suportChainId);
 
@@ -60,7 +60,7 @@ const ammAddress = process.env.NEXT_PUBLIC_AMM_ADDRESS;
 const faucetAddress = process.env.NEXT_PUBLIC_FACUET_ADDRESS;
 const tokenAddress = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
 
-const tradeErrorMsgHandling = (error, type, toastData = {}) => {
+const tradeErrorMsgHandling = (error: any, type: any, toastData = { title: '', linkUrl: '' }) => {
   if (error?.message === 'time out') {
     return {
       error: {
@@ -90,7 +90,7 @@ const tradeErrorMsgHandling = (error, type, toastData = {}) => {
     };
   }
 
-  const errorMsgList = {
+  const errorMsgList: any[] = {
     AMM_POFL: 'Please try with smaller notional value.',
     CH_TMRL: 'Your transaction has failed due to high price fluctuation. Please increase your slippage tolerance or try again later.',
     CH_TMRS: 'Your transaction has failed due to high price fluctuation. Please increase your slippage tolerance or try again later.',
@@ -203,17 +203,17 @@ const successToastHandling = ({ amm, title, linkUrl }) => {
   }, 2000);
 };
 
-const waitForTxConfirmation = async tx =>
+const waitForTxConfirmation = async (tx: any) =>
   new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       reject(new Error('time out'));
     }, 30000); // 30 seconds in milliseconds
     tx.wait()
-      .then(receipt => {
+      .then((receipt: any) => {
         clearTimeout(timeout);
         resolve(receipt);
       })
-      .catch(error => {
+      .catch((error: any) => {
         clearTimeout(timeout);
         reject(error);
       });

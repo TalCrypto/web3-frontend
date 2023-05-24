@@ -59,6 +59,8 @@ function Web3Area() {
   const [isShowErrorSwitchNetworkModal, setIsShowErrorSwitchNetworkModal] = useState(false);
   const [showTokenError, setShowTokenError] = useState(false);
   const [isShowGeorliModal, setIsShowGeorliModal] = useState(false);
+  // const isMobile = /(webOS|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini)/i.test(navigator.userAgent) || false;
+  const isMobile = false;
 
   // State from the navigation
   const balanceOriginData = {
@@ -75,6 +77,7 @@ function Web3Area() {
   const [userInfo, setUserInfo] = useState({});
   const [isDataFetched, setIsDataFetched] = useState(false);
   const [isShowTransferTokenModal, setIsShowTransferTokenModal] = useState(false);
+  const [tokenErrorTitle, setTokenErrorTitle] = useState('');
 
   // State from the index
   const [balance, setBalance] = useState(0);
@@ -310,14 +313,16 @@ function Web3Area() {
         setIsWalletLoading={setIsWalletLoading}
       />
 
+      {/* 
       <GeneralModal
         isShow={showTokenError}
         setIsShow={setShowTokenError}
-        // title={tokenErrorTitle}
-        // description={tokenErrorMsg}
+        title={tokenErrorTitle}
+        description={tokenErrorMsg}
         buttonLabel="Close"
-        // onClickSubmit={toggleShowTokenError}
-      />
+        onClickSubmit={toggleShowTokenError}
+        mobile={isMobile}
+      /> */}
 
       <GeneralModal
         isShow={isShowGeorliModal}
@@ -331,6 +336,7 @@ function Web3Area() {
           window.open(url, '_blank');
           setIsShowGeorliModal(false);
         }}
+        mobile={isMobile}
       />
 
       <TransferTokenModal isShow={isShowTransferTokenModal} setIsShow={setIsShowTransferTokenModal} />

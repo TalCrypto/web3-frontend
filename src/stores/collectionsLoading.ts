@@ -1,10 +1,14 @@
 /* eslint-disable import/no-cycle */
 import localforage from 'localforage';
-import { atom } from 'nanostores';
+import { atom, Atom } from 'nanostores';
 import collectionList from '@/const/collectionList';
 import { walletProvider } from '@/utils/walletProvider';
 
-const collectionsLoading = atom({
+interface CollectionsLoadingData {
+  [key: string]: boolean;
+}
+
+const collectionsLoading: Atom<CollectionsLoadingData> = atom<CollectionsLoadingData>({
   [collectionList[0]['amm']]: false,
   [collectionList[1]['amm']]: false,
   [collectionList[2]['amm']]: false,
@@ -14,7 +18,7 @@ const collectionsLoading = atom({
   // [collectionList[6]['amm']]: false
 });
 
-const setCollectionsLoading = async (collectionAdrr, txAdrr) => {
+const setCollectionsLoading = async (collectionAdrr: string, txAdrr: boolean) => {
   const oldData = await collectionsLoading.get();
   const newData = { ...oldData };
   newData[collectionAdrr] = txAdrr;
@@ -22,7 +26,7 @@ const setCollectionsLoading = async (collectionAdrr, txAdrr) => {
   await localforage.setItem('collectionsLoading', newData);
 };
 
-const getCollectionsLoading = async collectionAmm => {
+const getCollectionsLoading = async (collectionAmm?: string) => {
   let collectionsLoadingNew = await collectionsLoading.get();
   const collectionsLoadingOld = (await localforage.getItem('collectionsLoading')) || collectionsLoadingNew;
 

@@ -11,7 +11,7 @@ export const eventParams = {
   device: '',
   os: '',
   user_agent: '',
-  set: async function set(navigator) {
+  set: async function set(navigator: any) {
     try {
       const parser = new UAParser();
       const parserResults = parser.getResult();
@@ -38,7 +38,7 @@ export const eventParams = {
   }
 };
 
-export const pageTitleParser = path => {
+export const pageTitleParser = (path: any) => {
   const routesObj = {
     marketoverview: 'Market Overview',
     dashboard: 'Dashboard',
@@ -55,7 +55,7 @@ export const pageTitleParser = path => {
   return { parentPath, page: routesObj[parentPath] };
 };
 
-export const generateBatchName = logs => {
+export const generateBatchName = (logs: any) => {
   const batchNameList = [];
   for (let i = 0; i < logs.length; i += 1) {
     batchNameList.push(logs[i].name);
@@ -63,7 +63,7 @@ export const generateBatchName = logs => {
   return batchNameList.join('-');
 };
 
-export const logHelper = (eventName, holderAddress, others, deviceType) => {
+export const logHelper = (eventName: any, holderAddress: any, others: any, deviceType: any) => {
   logEvent(firebaseAnalytics, eventName, {
     wallet: holderAddress.substring(2),
     ...others

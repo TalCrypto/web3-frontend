@@ -1,12 +1,26 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function ConnectWalletModal({ isShow, setIsShow, connectWithWalletConnect, connectWithEthereum, setIsWalletLoading }) {
+interface ConnectWalletModalProps {
+  isShow: boolean;
+  setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
+  connectWithWalletConnect: () => void;
+  connectWithEthereum: () => void;
+  setIsWalletLoading: () => void;
+}
+
+export default function ConnectWalletModal({
+  isShow,
+  setIsShow,
+  connectWithWalletConnect,
+  connectWithEthereum,
+  setIsWalletLoading
+}: ConnectWalletModalProps) {
   if (!isShow) {
     return null;
   }
 
-  const connectWallet = isWC => {
+  const connectWallet = (isWC: boolean) => {
     setIsShow(false);
     if (isWC) {
       connectWithWalletConnect();

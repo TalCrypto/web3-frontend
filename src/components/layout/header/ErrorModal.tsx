@@ -1,7 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function ErrorModal(props) {
+interface ErrorModalProps {
+  isShow: boolean;
+  setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
+  image: string;
+}
+
+export default function ErrorModal(props: ErrorModalProps) {
   const { isShow, setIsShow, image } = props;
   if (!isShow) {
     return null;

@@ -7,16 +7,16 @@ const message = atom([]);
 const link = atom('');
 
 // wrapper shortcut for set store
-const setIsShow = value => {
+const setIsShow = (value: boolean) => {
   show.set(value);
   if (!value) link.set('');
 };
 
-const setMessage = value => {
+const setMessage = (value: []) => {
   message.set(value);
 };
 
-const setLink = value => {
+const setLink = (value: string) => {
   link.set(value);
 };
 

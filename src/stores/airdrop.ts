@@ -1,6 +1,35 @@
 import { atom } from 'nanostores';
 
-export const defaultUserPoint = {
+export interface UserPoint {
+  rank: number;
+  multiplier: number;
+  total: number;
+  userAddress: string;
+  username: string;
+  referralUser: Record<string, any>;
+  eligibleCount: number;
+  referralCode: string;
+  isBan: boolean;
+  isInputCode: boolean;
+  tradeVol: {
+    vol: string;
+    points: number;
+    multiplier: string;
+  };
+  referredUserCount: number;
+  referral: {
+    referralSelfRewardPoints: number;
+    referringRewardPoints: number;
+  };
+  og: number;
+  converge: {
+    points: number;
+    val: string;
+  };
+  degenscore: number;
+}
+
+export const defaultUserPoint: UserPoint = {
   rank: 0,
   multiplier: 1,
   total: 0,
@@ -30,18 +59,18 @@ export const defaultUserPoint = {
 };
 
 // user points
-export const userPoint = atom({ ...defaultUserPoint });
+export const userPoint = atom<UserPoint>({ ...defaultUserPoint });
 
 export const isUserPointLoading = atom(false);
 
-export const setUserPoint = data => {
+export const setUserPoint = (data: UserPoint) => {
   userPoint.set(data);
 };
 
 // leaderboard
-export const leaderboard = atom([]);
+export const leaderboard = atom<any[]>([]);
 
-export const setLeaderboard = data => {
+export const setLeaderboard = (data: any[]) => {
   leaderboard.set(data);
 };
 

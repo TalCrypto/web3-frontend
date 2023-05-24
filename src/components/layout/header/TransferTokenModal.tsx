@@ -1,11 +1,19 @@
 import React from 'react';
 import Image from 'next/image';
 
-function ButtonContent({ icon, url, name, setIsShow }) {
+interface ButtonContentProps {
+  icon: string;
+  url: string;
+  name: string;
+  setIsShow: () => void;
+}
+
+function ButtonContent({ icon, url, name, setIsShow }: ButtonContentProps) {
   const openUrl = () => {
     setIsShow(false);
     window.open(url, '_blank');
   };
+
   return (
     <div className="button" onClick={openUrl}>
       <Image src={icon} alt="" className="icon" width={24} height={24} />
@@ -18,8 +26,14 @@ function EmptyContent() {
   return <div className="empty-btn" />;
 }
 
-const TransferTokenModal = props => {
+interface TransferTokenModalProps {
+  isShow: boolean;
+  setIsShow: () => void;
+}
+
+const TransferTokenModal = (props: TransferTokenModalProps) => {
   const { isShow, setIsShow } = props;
+
   if (!isShow) {
     return null;
   }

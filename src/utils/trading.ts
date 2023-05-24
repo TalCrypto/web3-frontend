@@ -35,11 +35,12 @@ const clearingHouseAddr = process.env.NEXT_PUBLIC_CLEARING_ADDRESS;
 const clearingHouseViewerAddr = process.env.NEXT_PUBLIC_CLEARING_HOUSE_VIEWER_ADDRESS;
 
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY;
-const suportChainId = process.env.NEXT_PUBLIC_SUPPORT_CHAIN;
+const suportChainId = process.env.NEXT_PUBLIC_SUPPORT_CHAIN ?? '';
 const provider = new ethers.providers.AlchemyProvider(process.env.NEXT_PUBLIC_ALCHEMY_PROVIDER, infuraKey);
-const multicallProvider = new MulticallProvider(provider, suportChainId);
+const multicallProvider = new MulticallProvider(provider, parseInt(suportChainId));
 const dater = new EthDater(provider);
-const blockNumberMap = new Map();
+// const blockNumberMap:any[] = new Map();
+const blockNumberMap: any[] = [];
 // const TWAP_INTERVAL = 10800;
 
 // struct PositionInfo {
@@ -59,7 +60,7 @@ const blockNumberMap = new Map();
 //     bool isLiquidatable;
 // }
 
-export async function getTraderPositionInfo(ammAddr, walletAddr) {
+export async function getTraderPositionInfo(ammAddr: string, walletAddr: string) {
   try {
     const clearingHouseViewerContract = new MulticallContract(clearingHouseViewerAddr, clearingHouseViewerABI);
     const [positionInfo] = await multicallProvider.all([
@@ -94,11 +95,13 @@ export async function getTraderPositionInfo(ammAddr, walletAddr) {
   }
 }
 
-export async function getTraderPositionInfosByAmmAddressList(ammAddrList, walletAddr) {
-  return (await Promise.all(ammAddrList.map(address => getTraderPositionInfo(address, walletAddr)))).filter(position => position !== null);
+export async function getTraderPositionInfosByAmmAddressList(ammAddrList: any, walletAddr: string) {
+  return (await Promise.all(ammAddrList.map((address: any) => getTraderPositionInfo(address, walletAddr)))).filter(
+    position => position !== null
+  );
 }
 
-export async function getMarginAdjustmentEstimation(ammAddr, walletAddr, adjustment, side) {
+export async function getMarginAdjustmentEstimation(ammAddr: string, walletAddr: string, adjustment: BigNumber, side: number) {
   // side: 0 for increase, 1 for decrease
   try {
     let signedAdjustment = adjustment;
@@ -152,7 +155,7 @@ export async function getMarginAdjustmentEstimation(ammAddr, walletAddr, adjustm
 //   TxSummary txSummary;
 // }
 
-export async function getOpenPositionEstimation(ammAddr, walletAddr, amount, leverage, side) {
+export async function getOpenPositionEstimation(ammAddr: string, walletAddr: string, amount: BigNumber, leverage: string, side: string) {
   const openNotional = amount.mul(leverage).div(utils.parseEther('1'));
 
   const clearingHouseViewerContract = new MulticallContract(clearingHouseViewerAddr, clearingHouseViewerABI);
@@ -189,7 +192,7 @@ export async function getOpenPositionEstimation(ammAddr, walletAddr, amount, lev
   };
 }
 
-export async function getTradingOverview(ammAddr, nftAddr) {
+export async function getTradingOverview(ammAddr: string, nftAddr: string) {
   const [dayTradingDetails, nftTwapPrice] = await Promise.all([getDailySpotPriceGraphData(ammAddr), getLatestTwapPrice(nftAddr)]);
 
   const ammContract = new MulticallContract(ammAddr, ammABI);
@@ -229,23 +232,23 @@ export async function getTradingOverview(ammAddr, nftAddr) {
   };
 }
 
-export async function getTraderPositionHistory(ammAddr, walletAddr) {
+export async function getTraderPositionHistory(ammAddr: string, walletAddr: string) {
   return getPositionHistory(ammAddr, walletAddr);
 }
 
-export async function getAllTraderPositionHistory(walletAddr, limit, offset) {
+export async function getAllTraderPositionHistory(walletAddr: string, limit: number, offset: number) {
   return getAllPositionHistory(walletAddr, limit, offset);
 }
 
-export async function getMarketHistory(ammAddr) {
+export async function getMarketHistory(ammAddr: string) {
   return getMarketHistoryFromSubgraph(ammAddr);
 }
 
-export async function getFundingPaymentHistory(ammAddr) {
+export async function getFundingPaymentHistory(ammAddr: string) {
   return getFundingPaymentHistoryFromSubgraph(ammAddr);
 }
 
-export async function getSpotPriceGraphData(ammAddr, startFrom, interval) {
+export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, interval: number) {
   const now = new Date().getTime();
   const nowTs = Math.round(now / 1000);
   const startRoundTime = startFrom - (startFrom % interval);
@@ -253,7 +256,7 @@ export async function getSpotPriceGraphData(ammAddr, startFrom, interval) {
   const latestPriceBeforeRange = await getLatestSpotPriceBefore(ammAddr, startRoundTime);
 
   const rawGraphDatas = await getGraphDataAfter(ammAddr, startRoundTime - 1, interval);
-  const graphData = [];
+  const graphData: any[] = [];
 
   let rawGraphDataIndex = 0;
 
@@ -336,43 +339,43 @@ export async function getSpotPriceGraphData(ammAddr, startFrom, interval) {
   return { graphData, priceChangeValue, priceChangeRatio, high, low, volume };
 }
 
-export async function getDailySpotPriceGraphData(ammAddr) {
+export async function getDailySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const tsYesterday = nowTs - 1 * 24 * 3600;
   return getSpotPriceGraphData(ammAddr, tsYesterday, 300); // 5mins
 }
 
-export async function getWeeklySpotPriceGraphData(ammAddr) {
+export async function getWeeklySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts7Days = nowTs - 7 * 24 * 3600;
   return getSpotPriceGraphData(ammAddr, ts7Days, 1800); // 30mins
 }
 
-export async function getMonthlySpotPriceGraphData(ammAddr) {
+export async function getMonthlySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts30Days = nowTs - 30 * 24 * 3600;
   return getSpotPriceGraphData(ammAddr, ts30Days, 7200); // 2hr
 }
 
-export async function getThreeMonthlySpotPriceGraphData(ammAddr) {
+export async function getThreeMonthlySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts90Days = nowTs - 90 * 24 * 3600;
   return getSpotPriceGraphData(ammAddr, ts90Days, 7200); // 2hr
 }
 
-export async function getDashboardCardDetails(ammAddrList, walletAddr) {
+export async function getDashboardCardDetails(ammAddrList: any, walletAddr: string) {
   const clearingHouseViewerContract = new MulticallContract(clearingHouseViewerAddr, clearingHouseViewerABI);
 
   const clearingHouseContract = new MulticallContract(clearingHouseAddr, clearingHouseABI);
 
   const tokenContract = new MulticallContract(tokenAddr, tokenABI);
 
-  let balance = BigNumber.from(0);
+  let balance: any = BigNumber.from(0);
   balance = await multicallProvider.all([tokenContract.balanceOf(walletAddr)]);
   const notionalAndPnlList = await multicallProvider.all(
-    ammAddrList.map(address => clearingHouseContract.getPositionNotionalAndUnrealizedPnl(address, walletAddr, 0))
+    ammAddrList.map((address: string) => clearingHouseContract.getPositionNotionalAndUnrealizedPnl(address, walletAddr, 0))
   );
-  const marginRatioList = [];
+  const marginRatioList: any[] = [];
 
   for (let i = 0; i < ammAddrList.length; i += 1) {
     try {
@@ -413,10 +416,10 @@ export async function getDashboardCardDetails(ammAddrList, walletAddr) {
   [ytdBalance] = await multicallProvider.all([tokenContract.balanceOf(walletAddr)], blockNumber);
 
   const ytdNotionalAndPnlList = await multicallProvider.all(
-    ammAddrList.map(address => clearingHouseContract.getPositionNotionalAndUnrealizedPnl(address, walletAddr, 0)),
+    ammAddrList.map((address: string) => clearingHouseContract.getPositionNotionalAndUnrealizedPnl(address, walletAddr, 0)),
     blockNumber
   );
-  const ytdMarginRatioList = [];
+  const ytdMarginRatioList: any[] = [];
 
   for (let i = 0; i < ammAddrList.length; i += 1) {
     try {
@@ -459,40 +462,40 @@ export async function getDashboardCardDetails(ammAddrList, walletAddr) {
   };
 }
 
-export async function getAccountValueGraphData(ammAddrList, walletAddr, startFrom, interval) {
+export async function getAccountValueGraphData(ammAddrList: any, walletAddr: string, startFrom: number, interval: number) {
   const now = new Date().getTime();
   const nowTs = Math.round(now / 1000);
   const startRoundTime = startFrom - (startFrom % interval);
   const totalRound = Math.floor((nowTs - startRoundTime) / interval);
 
   const positionHistoryList = await Promise.all(
-    ammAddrList.map(async ammAddress => getPositionHistoryAfter(ammAddress, walletAddr, startRoundTime - 1))
+    ammAddrList.map(async (ammAddress: string) => getPositionHistoryAfter(ammAddress, walletAddr, startRoundTime - 1))
   );
   const previousPositionList = await Promise.all(
-    ammAddrList.map(async ammAddress => getPositionHistoryBefore(ammAddress, walletAddr, startRoundTime))
+    ammAddrList.map(async (ammAddress: string) => getPositionHistoryBefore(ammAddress, walletAddr, startRoundTime))
   );
   const tokenBalanceHistoryList = await getTokenBalanceAfter(walletAddr, startRoundTime);
   const previousBalanceHistory = await getTokenBalanceBefore(walletAddr, startRoundTime);
   const marginChangedEventHistoryList = await Promise.all(
-    ammAddrList.map(async ammAddress => getMarginChangedEventAfter(ammAddress, walletAddr, startRoundTime - 1))
+    ammAddrList.map(async (ammAddress: string) => getMarginChangedEventAfter(ammAddress, walletAddr, startRoundTime - 1))
   ); // [marginChangedEvent[], ...]
   const previousMarginChangedEvents = await Promise.all(
-    ammAddrList.map(async ammAddress => getMarginChangedEventBefore(ammAddress, walletAddr, startRoundTime))
+    ammAddrList.map(async (ammAddress: string) => getMarginChangedEventBefore(ammAddress, walletAddr, startRoundTime))
   ); // marginChangedEvent[]
 
   const spotPriceGraphDataList = await Promise.all(
-    ammAddrList.map(async ammAddress => getSpotPriceGraphData(ammAddress, startFrom, interval))
+    ammAddrList.map(async (ammAddress: string) => getSpotPriceGraphData(ammAddress, startFrom, interval))
   );
 
-  const currentGraphItems = spotPriceGraphDataList.map(graphDatas => graphDatas.graphData.shift());
+  const currentGraphItems = spotPriceGraphDataList.map((graphDatas: any) => graphDatas.graphData.shift());
   const roundPositionHistories = previousPositionList;
   let currentTokenBalance = previousBalanceHistory == null ? BigNumber.from(0) : previousBalanceHistory.balance;
 
-  const marginsCarryOverToNextRound = previousMarginChangedEvents.map((events, index) =>
+  const marginsCarryOverToNextRound = previousMarginChangedEvents.map((events: any, index: number) =>
     events
-      .filter(event => event.timestamp > roundPositionHistories[index].timestamp)
+      .filter((event: any) => event.timestamp > roundPositionHistories[index].timestamp)
       .reduce(
-        (acc, event) => acc.add(BigNumber.from(event.amount.toString())).sub(BigNumber.from(event.fundingPayment.toString())),
+        (acc: any, event: any) => acc.add(BigNumber.from(event.amount.toString())).sub(BigNumber.from(event.fundingPayment.toString())),
         BigNumber.from(0)
       )
   );
@@ -515,7 +518,7 @@ export async function getAccountValueGraphData(ammAddrList, walletAddr, startFro
           // Handle token balance
           const lastBalanceForThisRoundIndex = findLastIndex(
             tokenBalanceHistoryList,
-            balance => balance.timestamp >= currentRoundStartTime && balance.timestamp < currentRoundEndTime
+            (balance: any) => balance.timestamp >= currentRoundStartTime && balance.timestamp < currentRoundEndTime
           );
           if (lastBalanceForThisRoundIndex > -1) {
             tokenBalanceHistoryList.splice(0, lastBalanceForThisRoundIndex);
@@ -526,7 +529,7 @@ export async function getAccountValueGraphData(ammAddrList, walletAddr, startFro
           if (positionHistoryList[j]) {
             const lastPositionForThisRoundIndex = findLastIndex(
               positionHistoryList[j],
-              history => history.timestamp >= currentRoundStartTime && history.timestamp < currentRoundEndTime
+              (history: any) => history.timestamp >= currentRoundStartTime && history.timestamp < currentRoundEndTime
             );
             if (lastPositionForThisRoundIndex > -1) {
               positionHistoryList[j].splice(0, lastPositionForThisRoundIndex);
@@ -603,25 +606,25 @@ export async function getAccountValueGraphData(ammAddrList, walletAddr, startFro
   };
 }
 
-export async function getDailyAccountValueGraphData(ammAddrList, walletAddr) {
+export async function getDailyAccountValueGraphData(ammAddrList: any, walletAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const tsYesterday = nowTs - 1 * 24 * 3600;
   return getAccountValueGraphData(ammAddrList, walletAddr, tsYesterday, 300); // 5mins
 }
 
-export async function getWeeklyAccountValueGraphData(ammAddrList, walletAddr) {
+export async function getWeeklyAccountValueGraphData(ammAddrList: any, walletAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts7Days = nowTs - 7 * 24 * 3600;
   return getAccountValueGraphData(ammAddrList, walletAddr, ts7Days, 1800); // 30mins
 }
 
-export async function getMonthlyAccountValueGraphData(ammAddrList, walletAddr) {
+export async function getMonthlyAccountValueGraphData(ammAddrList: any, walletAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts30Days = nowTs - 30 * 24 * 3600;
   return getAccountValueGraphData(ammAddrList, walletAddr, ts30Days, 7200); // 2hr
 }
 
-export async function getMarketOverview(ammAddrList, nftAddrList, walletAddr) {
+export async function getMarketOverview(ammAddrList: any, nftAddrList: any, walletAddr: string) {
   const positions = walletAddr ? await getAllAmmPosition(walletAddr) : [];
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts24hr = nowTs - 1 * 24 * 3600;
@@ -629,11 +632,11 @@ export async function getMarketOverview(ammAddrList, nftAddrList, walletAddr) {
   const ts30Days = nowTs - 30 * 24 * 3600;
   const apiResults = await Promise.all(
     ammAddrList
-      .map(ammAddr => getDailySpotPriceGraphData(ammAddr))
-      .concat(nftAddrList.map(nftAddr => getLatestTwapPrice(nftAddr)))
-      .concat(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts24hr)))
-      .concat(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts7Days)))
-      .concat(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts30Days)))
+      .map((ammAddr: string) => getDailySpotPriceGraphData(ammAddr))
+      .concat(nftAddrList.map((nftAddr: string) => getLatestTwapPrice(nftAddr)))
+      .concat(ammAddrList.map((ammAddr: string) => getLatestSpotPriceBefore(ammAddr, ts24hr)))
+      .concat(ammAddrList.map((ammAddr: string) => getLatestSpotPriceBefore(ammAddr, ts7Days)))
+      .concat(ammAddrList.map((ammAddr: string) => getLatestSpotPriceBefore(ammAddr, ts30Days)))
   );
   const graphDataList = apiResults.slice(0, ammAddrList.length);
   const oraclePriceList = apiResults.slice(ammAddrList.length, ammAddrList.length * 2);
@@ -641,14 +644,14 @@ export async function getMarketOverview(ammAddrList, nftAddrList, walletAddr) {
   const priceList7daysAgo = apiResults.slice(ammAddrList.length * 3, ammAddrList.length * 4);
   const priceList30daysAgo = apiResults.slice(ammAddrList.length * 4);
 
-  const ammContractList = ammAddrList.map(ammAddr => new MulticallContract(ammAddr, ammABI));
+  const ammContractList = ammAddrList.map((ammAddr: string) => new MulticallContract(ammAddr, ammABI));
   const clearingHouseViewerContract = new MulticallContract(clearingHouseViewerAddr, clearingHouseViewerABI);
 
   const contractResults = await multicallProvider.all(
     ammContractList
-      .map(ammContract => ammContract.getSpotPrice())
-      .concat(ammContractList.map(ammContract => ammContract.reserveSnapshots(0)))
-      .concat(ammContractList.map(ammContract => clearingHouseViewerContract.getFundingRates(ammContract.address)))
+      .map((ammContract: any) => ammContract.getSpotPrice())
+      .concat(ammContractList.map((ammContract: any) => ammContract.reserveSnapshots(0)))
+      .concat(ammContractList.map((ammContract: any) => clearingHouseViewerContract.getFundingRates(ammContract.address)))
   );
 
   const futureList = contractResults.slice(0, ammContractList.length);

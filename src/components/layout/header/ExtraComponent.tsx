@@ -9,12 +9,14 @@ import { apiConnection } from '@/utils/apiConnection';
 
 import { tethCollected, inputCode, hasTraded } from '@/stores/userState';
 
-const ExtraComponent = ({ /* logEventByName, */ getTestToken, isWrongNetwork, updateTargetNetwork /* , accountInfo */ }) => {
-  // const { address, balance } = accountInfo;
+interface ExtraComponentProps {
+  getTestToken: () => void;
+  isWrongNetwork: boolean;
+  updateTargetNetwork: () => void;
+}
 
-  // states for get teth
+const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNetwork, updateTargetNetwork }) => {
   const [isLoading, setIsLoading] = useState(false);
-  // states for referral code
   const [referralCode, setReferralCode] = useState('');
   const [isError, setIsError] = useState(false);
   const [isShowAlert, setIsShowAlert] = useState(false);
@@ -33,7 +35,6 @@ const ExtraComponent = ({ /* logEventByName, */ getTestToken, isWrongNetwork, up
     );
   }
 
-  // show get weth button. was: if (balance <= 0)
   const getWethButton = (
     <button
       type="button"
@@ -55,8 +56,6 @@ const ExtraComponent = ({ /* logEventByName, */ getTestToken, isWrongNetwork, up
     </button>
   );
 
-  // show input referral code
-
   const verifyCode = async () => {
     const code = referralCode;
     setInVerify(true);
@@ -69,7 +68,6 @@ const ExtraComponent = ({ /* logEventByName, */ getTestToken, isWrongNetwork, up
       }, 1000);
       return;
     }
-    // logEventByName('reward_enter_referral_code_apply_pressed', { code });
     setIsError(false);
     let auth = getAuth();
     let { currentUser } = auth;
@@ -109,7 +107,7 @@ const ExtraComponent = ({ /* logEventByName, */ getTestToken, isWrongNetwork, up
     }
   };
 
-  const submitReferralCode = e => {
+  const submitReferralCode = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     verifyCode();
   };
@@ -119,15 +117,10 @@ const ExtraComponent = ({ /* logEventByName, */ getTestToken, isWrongNetwork, up
     inputRefferalCode = (
       <div>
         {isShowAlert ? (
-          <div
-            className={`referral-code-alert ${isShowAlert ? 'show' : ''}`} /* variant="filled" severity={isError ? 'error' : 'success'} */
-          >
+          <div className={`referral-code-alert ${isShowAlert ? 'show' : ''}`}>
             {isError ? 'Invalid Referral Code' : 'Success Apply Referral Code'}
           </div>
         ) : null}
-        {/* <Alert className={`referral-code-alert ${isShowAlert ? 'show' : ''}`} variant="filled" severity={isError ? 'error' : 'success'}>
-          {isError ? 'Invalid Referral Code' : 'Success Apply Referral Code'}
-        </Alert> */}
         <form className="enter-referral-code" onSubmit={submitReferralCode}>
           <input
             type="text"

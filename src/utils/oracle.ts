@@ -2,10 +2,11 @@
 import { ethers } from 'ethers';
 import collectionList from '../const/collectionList';
 
-const wssProvider = new ethers.providers.WebSocketProvider(process.env.NEXT_PUBLIC_WSS_PROVIDER_URL);
+const url: string = process.env.NEXT_PUBLIC_WSS_PROVIDER_URL ?? '';
+const wssProvider = new ethers.providers.WebSocketProvider(url);
 const ammABI = require('../abi/amm.json');
 
-export const getLatestTwapPrice = async nftAddr => {
+export const getLatestTwapPrice = async (nftAddr: string): Promise<number> => {
   const filterCollection = collectionList.filter(item => item.contract === nftAddr);
   const currentAmm = filterCollection.length > 0 ? filterCollection[0].amm : collectionList[0].amm;
   const ammInstance = new ethers.Contract(currentAmm, ammABI, wssProvider);

@@ -1,4 +1,4 @@
-export function baseFindIndex(array, predicate, fromIndex, fromRight) {
+export function baseFindIndex<T>(array: T[], predicate: any, fromIndex: number, fromRight: boolean): number {
   const { length } = array;
   let index = fromIndex + (fromRight ? 1 : -1);
 
@@ -11,7 +11,7 @@ export function baseFindIndex(array, predicate, fromIndex, fromRight) {
   return -1;
 }
 
-export function findLastIndex(array, predicate, fromIndex) {
+export function findLastIndex<T>(array: T[], predicate: any, fromIndex?: number): number {
   const length = array == null ? 0 : array.length;
   if (!length) {
     return -1;

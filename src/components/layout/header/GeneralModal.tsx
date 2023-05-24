@@ -1,8 +1,17 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function Modal(props) {
-  const { isShow, setIsShow, onClickSubmit, title, description, buttonLabel, mobile } = props;
+interface ModalProps {
+  isShow: boolean;
+  setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
+  onClickSubmit: () => void;
+  title: string;
+  description: string;
+  buttonLabel: string;
+  mobile: boolean;
+}
+
+const Modal: React.FC<ModalProps> = ({ isShow, setIsShow, onClickSubmit, title, description, buttonLabel, mobile = false }) => {
   if (!isShow) {
     return null;
   }
@@ -49,4 +58,6 @@ export default function Modal(props) {
       </div>
     </div>
   );
-}
+};
+
+export default Modal;

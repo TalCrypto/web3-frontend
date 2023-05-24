@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef } from 'react';
 import Link from 'next/link';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
@@ -11,8 +11,14 @@ import { firebaseAnalytics } from '@/const/firebaseConfig';
 import NetworkNameDisplay from '@/utils/NetworkNameDisplay';
 import { walletProvider } from '@/utils/walletProvider';
 
-function PriceContent(props) {
-  const { priceValue, isLargeText = false, title, notLastRow = false } = props;
+interface PriceContentProps {
+  priceValue: string;
+  isLargeText: boolean;
+  title: string;
+  notLastRow: boolean;
+}
+
+const PriceContent: React.FC<PriceContentProps> = ({ priceValue, isLargeText = false, title, notLastRow = false }) => {
   const iconImage = '../images/components/layout/header/eth-tribe3.svg';
   return (
     <div className={`total-value-row ${notLastRow ? 'not-last' : ''}`}>
@@ -27,14 +33,18 @@ function PriceContent(props) {
       </div>
     </div>
   );
+};
+
+interface TopContentProps {
+  username: string;
+  isNotSetUsername: boolean;
 }
 
-function TopContent(props) {
+const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) => {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { username, isNotSetUsername } = props;
 
-  const clickViewProfile = e => {
+  const clickViewProfile = (e: React.MouseEvent) => {
     e.preventDefault();
     const eventName = 'wallet_view_profile_pressed';
 
@@ -84,10 +94,17 @@ function TopContent(props) {
       </div>
     </div>
   );
+};
+
+interface BottomContentProps {
+  address: string;
+  inWrongNetwork: boolean;
+  currentChain: string;
+  balance: string;
+  callBalance: { portfolio: string };
 }
 
-function BottomContent(props) {
-  const { address, inWrongNetwork, currentChain, balance, callBalance } = props;
+const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, currentChain, balance, callBalance }) => {
   const currentNetworkName = NetworkNameDisplay(currentChain);
 
   return (
@@ -136,14 +153,25 @@ function BottomContent(props) {
       <PriceContent title="Wallet Balance:" priceValue={inWrongNetwork ? '0.0000' : Number(balance).toFixed(4)} />
     </div>
   );
+};
+
+interface NormalButtonSetProps {
+  disconnectWallet: () => void;
+  setShowDisconnectTooltip: (value: boolean) => void;
+  getTestToken: () => void;
+  disconnectWalletAction: () => void;
 }
 
-function NormalButtonSet(props) {
+const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
+  disconnectWallet,
+  setShowDisconnectTooltip,
+  getTestToken,
+  disconnectWalletAction
+}) => {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { disconnectWallet, setShowDisconnectTooltip, getTestToken, disconnectWalletAction } = props;
 
-  const clickGetgoerliEth = e => {
+  const clickGetgoerliEth = (e: React.MouseEvent) => {
     // e.preventDefault();
     const eventName = 'wallet_get_goerli_eth_pressed';
 
@@ -167,24 +195,40 @@ function NormalButtonSet(props) {
       </div>
     </div>
   );
+};
+
+interface IncorrectNetworkButtonSetProps {
+  updateTargetNetwork: () => void;
+  disconnectWalletAction: () => void;
 }
 
-function IncorrectNetworkButtonSet(props) {
-  const { updateTargetNetwork, disconnectWalletAction } = props;
-
-  return (
-    <div className="normal-buttons">
-      <div className="btn-switch-goerli" onClick={updateTargetNetwork}>
-        Switch to Arbitrum
-      </div>
-      <div className="function-btn" onClick={disconnectWalletAction}>
-        Disconnect Wallet
-      </div>
+const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ updateTargetNetwork, disconnectWalletAction }) => (
+  <div className="normal-buttons">
+    <div className="btn-switch-goerli" onClick={updateTargetNetwork}>
+      Switch to Arbitrum
     </div>
-  );
+    <div className="function-btn" onClick={disconnectWalletAction}>
+      Disconnect Wallet
+    </div>
+  </div>
+);
+
+interface ProfileContentProps {
+  address: string;
+  inWrongNetwork: boolean;
+  currentChain: string;
+  balance: string;
+  showDisconnectTooltip: boolean;
+  disconnectWallet: () => void;
+  setShowDisconnectTooltip: (value: boolean) => void;
+  getTestToken: () => void;
+  isWrongNetwork: boolean;
+  updateTargetNetwork: () => void;
+  callBalance: { portfolio: string };
+  userInfo: { username: string } | null;
 }
 
-function ProfileContent(props, ref) {
+const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = (props, ref) => {
   const {
     address,
     inWrongNetwork,
@@ -247,6 +291,6 @@ function ProfileContent(props, ref) {
       </div>
     </>
   );
-}
+};
 
-export default forwardRef(ProfileContent);
+export default React.forwardRef(ProfileContent);

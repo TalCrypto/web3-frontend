@@ -1,8 +1,8 @@
 import { BigNumber, utils } from 'ethers';
 
-const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT;
+const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
 
-export const getLatestDayTradingDetails = async ammAddr => {
+export const getLatestDayTradingDetails = async (ammAddr: string) => {
   const dayTradeData = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -43,7 +43,7 @@ export const getLatestDayTradingDetails = async ammAddr => {
   return dayTradeData.length > 0 ? result : null;
 };
 
-export const getOpenInterest = async ammAddr => {
+export const getOpenInterest = async (ammAddr: string) => {
   const openInterest = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -67,7 +67,7 @@ export const getOpenInterest = async ammAddr => {
   return openInterest;
 };
 
-export const getPositionHistory = async (ammAddr, walletArr) => {
+export const getPositionHistory = async (ammAddr: string, walletArr: string) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -95,7 +95,7 @@ export const getPositionHistory = async (ammAddr, walletArr) => {
     .then(res => res.json())
     .then(resJson => resJson.data.positionChangedEvents);
 
-  const result = positions.map(position => {
+  const result = positions.map((position: any) => {
     const exchangedPositionSize = BigNumber.from(position.exchangedPositionSize);
     const positionSizeAfter = BigNumber.from(position.positionSizeAfter);
     let type = 'unknown';
@@ -124,7 +124,7 @@ export const getPositionHistory = async (ammAddr, walletArr) => {
   return positions.length > 0 ? result : null;
 };
 
-export const getAllPositionHistory = async (walletArr, limit, offset) => {
+export const getAllPositionHistory = async (walletArr: string, limit: number, offset: number) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -155,7 +155,7 @@ export const getAllPositionHistory = async (walletArr, limit, offset) => {
     .then(res => res.json())
     .then(resJson => resJson.data.positionChangedEvents);
 
-  const result = positions.map(position => {
+  const result = positions.map((position: any) => {
     const exchangedPositionSize = BigNumber.from(position.exchangedPositionSize);
     const positionSizeAfter = BigNumber.from(position.positionSizeAfter);
     let type = 'unknown';
@@ -180,7 +180,7 @@ export const getAllPositionHistory = async (walletArr, limit, offset) => {
   return positions.length > 0 ? result : null;
 };
 
-export const getMarketHistory = async ammAddr => {
+export const getMarketHistory = async (ammAddr: string) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -205,7 +205,7 @@ export const getMarketHistory = async ammAddr => {
     .then(res => res.json())
     .then(resJson => resJson.data.positionChangedEvents);
 
-  const result = positions.map(position => ({
+  const result = positions.map((position: any) => ({
     amm: position.amm,
     timestamp: Number(position.timestamp),
     exchangedPositionSize: BigNumber.from(position.exchangedPositionSize), // BAYC
@@ -217,7 +217,7 @@ export const getMarketHistory = async ammAddr => {
   return positions.length > 0 ? result : [];
 };
 
-export const getFundingPaymentHistory = async ammAddr => {
+export const getFundingPaymentHistory = async (ammAddr: string) => {
   const fundingPaymentHistory = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -241,7 +241,7 @@ export const getFundingPaymentHistory = async ammAddr => {
     .then(res => res.json())
     .then(resJson => (resJson.data ? resJson.data.fundingRateUpdatedEvents : []));
 
-  const result = fundingPaymentHistory.map(history => {
+  const result = fundingPaymentHistory.map((history: any) => {
     const rateLong = BigNumber.from(history.rateLong);
     const rateShort = BigNumber.from(history.rateShort);
     const underlyingPrice = BigNumber.from(history.underlyingPrice);
@@ -262,7 +262,7 @@ export const getFundingPaymentHistory = async ammAddr => {
   return fundingPaymentHistory.length > 0 ? result : null;
 };
 
-export const getSpotPriceAfter = async (ammAddr, timestamp, limit, offset) => {
+export const getSpotPriceAfter = async (ammAddr: string, timestamp: number, limit: number, offset: number) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -286,7 +286,7 @@ export const getSpotPriceAfter = async (ammAddr, timestamp, limit, offset) => {
     .then(res => res.json())
     .then(resJson => resJson.data.reserveSnapshottedEvents);
 
-  const result = positions.map(position => ({
+  const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
     spotPrice: BigNumber.from(position.spotPrice)
   }));
@@ -294,7 +294,7 @@ export const getSpotPriceAfter = async (ammAddr, timestamp, limit, offset) => {
   return positions.length > 0 ? result : null;
 };
 
-export const getLatestSpotPriceBefore = async (ammAddr, timestamp) => {
+export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: number) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -325,7 +325,7 @@ export const getLatestSpotPriceBefore = async (ammAddr, timestamp) => {
   return positions.length > 0 ? result : null;
 };
 
-export const getGraphDataAfter = async (ammAddr, timestamp, resolution) => {
+export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
   const graphDatas = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -355,7 +355,7 @@ export const getGraphDataAfter = async (ammAddr, timestamp, resolution) => {
     .then(res => res.json())
     .then(resJson => resJson.data.graphDatas);
 
-  const result = graphDatas.map(data => ({
+  const result = graphDatas.map((data: any) => ({
     start: Number(data.startTime),
     end: Number(data.endTime),
     open: BigNumber.from(data.open),
@@ -369,7 +369,7 @@ export const getGraphDataAfter = async (ammAddr, timestamp, resolution) => {
   return graphDatas.length > 0 ? result : [];
 };
 
-export const getPositionHistoryAfter = async (ammAddr, walletAddr, timestamp) => {
+export const getPositionHistoryAfter = async (ammAddr: string, walletAddr: string, timestamp: number) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -395,7 +395,7 @@ export const getPositionHistoryAfter = async (ammAddr, walletAddr, timestamp) =>
     .then(res => res.json())
     .then(resJson => resJson.data.positionChangedEvents);
 
-  const result = positions.map(position => ({
+  const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
     size: BigNumber.from(position.positionSizeAfter),
     notional: BigNumber.from(position.openNotionalAfter),
@@ -405,7 +405,7 @@ export const getPositionHistoryAfter = async (ammAddr, walletAddr, timestamp) =>
   return positions.length > 0 ? result : [];
 };
 
-export const getPositionHistoryBefore = async (ammAddr, walletAddr, timestamp) => {
+export const getPositionHistoryBefore = async (ammAddr: string, walletAddr: string, timestamp: number) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -441,7 +441,7 @@ export const getPositionHistoryBefore = async (ammAddr, walletAddr, timestamp) =
   return positions.length > 0 ? result : null;
 };
 
-export const getTokenBalanceAfter = async (walletAddr, timestamp) => {
+export const getTokenBalanceAfter = async (walletAddr: string, timestamp: number) => {
   const histories = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -464,7 +464,7 @@ export const getTokenBalanceAfter = async (walletAddr, timestamp) => {
     .then(res => res.json())
     .then(resJson => resJson.data.tokenBalanceHistories);
 
-  const result = histories.map(history => ({
+  const result = histories.map((history: any) => ({
     timestamp: Number(history.timestamp),
     balance: BigNumber.from(history.balance)
   }));
@@ -472,7 +472,7 @@ export const getTokenBalanceAfter = async (walletAddr, timestamp) => {
   return histories.length > 0 ? result : [];
 };
 
-export const getTokenBalanceBefore = async (walletAddr, timestamp) => {
+export const getTokenBalanceBefore = async (walletAddr: string, timestamp: number) => {
   const histories = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -503,7 +503,7 @@ export const getTokenBalanceBefore = async (walletAddr, timestamp) => {
   return histories.length > 0 ? result : null;
 };
 
-export const getMarginChangedEventAfter = async (ammAddr, walletAddr, timestamp) => {
+export const getMarginChangedEventAfter = async (ammAddr: string, walletAddr: string, timestamp: number) => {
   const events = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -528,7 +528,7 @@ export const getMarginChangedEventAfter = async (ammAddr, walletAddr, timestamp)
     .then(res => res.json())
     .then(resJson => resJson.data.marginChangedEvents);
 
-  const result = events.map(event => ({
+  const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
     amount: BigNumber.from(event.amount),
     fundingPayment: BigNumber.from(event.fundingPayment)
@@ -537,7 +537,7 @@ export const getMarginChangedEventAfter = async (ammAddr, walletAddr, timestamp)
   return events.length > 0 ? result : [];
 };
 
-export const getMarginChangedEventBefore = async (ammAddr, walletAddr, timestamp) => {
+export const getMarginChangedEventBefore = async (ammAddr: string, walletAddr: string, timestamp: number) => {
   const events = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -562,7 +562,7 @@ export const getMarginChangedEventBefore = async (ammAddr, walletAddr, timestamp
     .then(res => res.json())
     .then(resJson => resJson.data.marginChangedEvents);
 
-  const result = events.map(event => ({
+  const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
     amount: BigNumber.from(event.amount),
     fundingPayment: BigNumber.from(event.fundingPayment)
@@ -571,7 +571,7 @@ export const getMarginChangedEventBefore = async (ammAddr, walletAddr, timestamp
   return events.length > 0 ? result : [];
 };
 
-export const getAllAmmPosition = async walletAddr => {
+export const getAllAmmPosition = async (walletAddr: string) => {
   const positions = await fetch(subgraphUrl, {
     method: 'POST',
     body: JSON.stringify({
@@ -591,7 +591,7 @@ export const getAllAmmPosition = async walletAddr => {
     .then(res => res.json())
     .then(resJson => resJson.data.ammPositions);
 
-  const result = positions.map(event => ({
+  const result = positions.map((event: any) => ({
     amm: event.amm,
     positionSize: BigNumber.from(event.positionSize)
   }));

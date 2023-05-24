@@ -1,4 +1,4 @@
-export default function NetworkNameDisplay(currentChain) {
+export default function NetworkNameDisplay(currentChain: number): string {
   let networkName = '';
   switch (currentChain) {
     case 1:

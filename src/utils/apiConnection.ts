@@ -13,7 +13,7 @@ const authUrl = process.env.NEXT_PUBLIC_AUTHENTICATION_API_URL;
 const leaderboardUrl = process.env.NEXT_PUBLIC_LEADERBOARD_USER_RANKING;
 
 export const apiConnection = {
-  getDashboardContent: async function getDashboardContent(address, timestamp = Math.floor(Date.now() / 1000)) {
+  getDashboardContent: async function getDashboardContent(address: string, timestamp = Math.floor(Date.now() / 1000)) {
     const dashboardApiUrl = `${apiUrl}/allPositions?trader=${address}&timestamp=${timestamp}`;
     let returnData = {};
     try {
@@ -27,7 +27,7 @@ export const apiConnection = {
       return Promise.reject();
     }
   },
-  getWalletChartContent: async function getWalletChartContent(address, timeIndex) {
+  getWalletChartContent: async function getWalletChartContent(address: string, timeIndex: number) {
     let timeRelatedKey = 'dailyAccountValueGraph';
     switch (timeIndex) {
       case 0:
@@ -58,7 +58,7 @@ export const apiConnection = {
       return Promise.reject();
     }
   },
-  postUserContent: async function postUserContent(address) {
+  postUserContent: async function postUserContent(address: string) {
     const postUserUrl = `${authUrl}/users`;
     const postData = { userAddress: address };
     try {
@@ -76,7 +76,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  postAuthUser: async function postAuthUser(nonce) {
+  postAuthUser: async function postAuthUser(nonce: any) {
     const postAuthUserUrl = `${authUrl}/users/auth`;
     if (!walletProvider || !walletProvider.provider) return Promise.reject();
     const providerSigner = walletProvider.provider.getSigner(walletProvider.holderAddress);
@@ -98,7 +98,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  followUser: async function followUser(followerAddress, firebaseToken, userAddress = walletProvider.holderAddress) {
+  followUser: async function followUser(followerAddress: any, firebaseToken: any, userAddress = walletProvider.holderAddress) {
     const url = `${authUrl}/users/follow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };
@@ -114,7 +114,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  unfollowUser: async function unfollowUser(followerAddress, firebaseToken, userAddress = walletProvider.holderAddress) {
+  unfollowUser: async function unfollowUser(followerAddress: string, firebaseToken: string, userAddress = walletProvider.holderAddress) {
     const url = `${authUrl}/users/unfollow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };
@@ -130,7 +130,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  getUserInfo: async function getUserInfo(address) {
+  getUserInfo: async function getUserInfo(address: string) {
     const url = `${authUrl}/users?publicAddress=${address}`;
     try {
       const call = await fetch(url);
@@ -140,7 +140,12 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  updateUserInfo: async function updateUserInfo(username, about, firebaseToken, userAddress = walletProvider.holderAddress) {
+  updateUserInfo: async function updateUserInfo(
+    username: string,
+    about: string,
+    firebaseToken: string,
+    userAddress = walletProvider.holderAddress
+  ) {
     const url = `${authUrl}/users/update`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, username, about };
@@ -169,7 +174,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  getUserFollowers: async function getUserFollowers(targetUser, user) {
+  getUserFollowers: async function getUserFollowers(targetUser: any, user: any) {
     const url = `${authUrl}/followers/list`;
     const body = { user, targetUser, pageNo: 1, pageSize: 30 };
     const headers = { 'Content-Type': 'application/json' };
@@ -185,7 +190,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserFollowings: async function getUserFollowings(targetUser, user) {
+  getUserFollowings: async function getUserFollowings(targetUser: any, user: any) {
     const url = `${authUrl}/following/list`;
     const body = { user, targetUser, pageNo: 1, pageSize: 30 };
     const headers = { 'Content-Type': 'application/json' };
@@ -201,7 +206,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserLeaderboard: async function getUserLeaderboard(address) {
+  getUserLeaderboard: async function getUserLeaderboard(address: string) {
     const url = `${leaderboardUrl}/${address}/3`;
     try {
       const call = await fetch(url);
@@ -211,7 +216,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  searchUser: async function searchUser(query, holderAddress) {
+  searchUser: async function searchUser(query: string, holderAddress: string) {
     const url = `${authUrl}/users/search`;
     const body = { keyword: query, userAddress: holderAddress, pageSize: 30, pageNo: 1 };
     try {
@@ -228,7 +233,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  getTargetUserInfo: async function getTargetUserInfo(targetUser, user) {
+  getTargetUserInfo: async function getTargetUserInfo(targetUser: any, user: any) {
     const url = `${authUrl}/users/info`;
     const body = { targetUser, user };
     try {
@@ -245,7 +250,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  finishTrade: async function finishTrade(txHash, firebaseToken, userAddress = walletProvider.holderAddress) {
+  finishTrade: async function finishTrade(txHash: any, firebaseToken: string, userAddress = walletProvider.holderAddress) {
     const url = `${authUrl}/users/trade/completed`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { txHash, userAddress };
@@ -261,7 +266,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  useReferralCode: async function useReferralCode(code, firebaseToken, userAddress = walletProvider.holderAddress) {
+  useReferralCode: async function useReferralCode(code: any, firebaseToken: any, userAddress = walletProvider.holderAddress) {
     const url = `${authUrl}/users/referral/code`;
     const body = { code, userAddress };
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
@@ -290,7 +295,12 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  postUserEvent: async function postUserEvent(eventName, fields, wallet = walletProvider.holderAddress, deviceType = 'desktop') {
+  postUserEvent: async function postUserEvent(
+    eventName: string,
+    fields: any,
+    wallet = walletProvider.holderAddress,
+    deviceType = 'desktop'
+  ) {
     const url = `${authUrl}/users/event`;
     const defaultParams = await eventParams.get();
     const params = {
@@ -355,7 +365,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  validateUserTradingState: async function validateUserTradingState(firebaseToken, userAddress = walletProvider.holderAddress) {
+  validateUserTradingState: async function validateUserTradingState(firebaseToken: string, userAddress = walletProvider.holderAddress) {
     const url = `${authUrl}/users/trade/validateState`;
     const body = { userAddress };
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
@@ -371,7 +381,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserFundingPaymentHistoryWithAmm: async function getUserFundingPaymentHistoryWithAmm(userAddress, ammAddress) {
+  getUserFundingPaymentHistoryWithAmm: async function getUserFundingPaymentHistoryWithAmm(userAddress: any, ammAddress: any) {
     const url = `${authUrl}/fundingPaymentHistory?trader=${userAddress}&amm=${ammAddress}`;
     try {
       const call = await fetch(url);
