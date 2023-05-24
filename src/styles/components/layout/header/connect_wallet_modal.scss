@@ -1,0 +1,88 @@
+@import '../../../utils/utils.scss';
+
+.connect-modalbg {
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  .connect-modal {
+    background: rgba(23, 24, 51, 1);
+    @include font-weight-color(14px, 400);
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid;
+    border-image-source: linear-gradient(180deg, rgba(113, 170, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
+    padding: 24px 36px;
+    border-radius: 12px;
+
+    .close-row {
+      @include display-flex(flex-end, initial, center);
+
+      .button {
+        cursor: pointer;
+      }
+    }
+
+    .content {
+      position: relative;
+      @include display-flex(flex-start, column, flex-start);
+      cursor: default;
+
+      .title {
+        @include font-weight-color(16px, 600);
+        margin-bottom: 12px;
+      }
+
+      .wallet-rows {
+        width: 100%;
+        .items {
+          &:first-child {
+            margin-top: 24px;
+          }
+
+          &:hover {
+            background-color: #2574fb33;
+          }
+
+          margin-top: 12px;
+          padding: 24px;
+          @include display-flex(center, column, center);
+          border: 1px solid #2574fb;
+          border-radius: 4px;
+          cursor: pointer;
+
+          .name {
+            margin-top: 6px;
+          }
+
+          .name {
+            @include font-weight-color(16px, 600);
+          }
+
+          .desc {
+            @include font-weight-color(12px, 400);
+          }
+        }
+      }
+
+      .tribelogos {
+        position: absolute;
+        display: flex;
+        align-items: flex-end;
+        vertical-align: bottom;
+        margin-right: 12px;
+        right: 0px;
+        bottom: 0px;
+      }
+    }
+  }
+}

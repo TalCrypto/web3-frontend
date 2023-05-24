@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import TopMenu from './TopMenu';
-// import Web3Area from './Web3Area';
+import Web3Area from './Web3Area';
 
 function Header() {
   return (
@@ -21,7 +21,7 @@ function Header() {
           <TopMenu />
           <div className="flex-1" />
 
-          {/* <Web3Area /> */}
+          <Web3Area />
         </div>
       </div>
     </div>
