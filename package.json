@@ -15,9 +15,21 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@nanostores/react": "^0.4.1",
+    "@tribe3/ethers-multicall": "^1.0.1",
+    "@walletconnect/web3-provider": "^1.8.0",
+    "ethereum-block-by-date": "^1.4.7",
+    "ethers": "^5.7.2",
+    "firebase": "^9.22.0",
+    "localforage": "^1.10.0",
+    "nanostores": "^0.8.1",
     "next": "13.4.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-loader-spinner": "^5.3.4",
+    "react-toastify": "^9.1.3",
+    "ua-parser-js": "^1.0.35",
+    "web3modal": "^1.9.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
@@ -25,6 +37,7 @@
     "@types/node": "20.1.7",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
+    "@types/ua-parser-js": "^0.7.36",
     "autoprefixer": "10.4.14",
     "eslint": "8.40.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -47,5 +60,8 @@
     "**/*.{json,css,scss,md,webmanifest}": [
       "prettier -w"
     ]
+  },
+  "engines": {
+    "yarn": "1.22.19"
   }
 }

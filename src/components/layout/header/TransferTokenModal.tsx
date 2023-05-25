@@ -1,142 +1,85 @@
 import React from 'react';
-// import Image from 'next/image';
+import Image from 'next/image';
 
-const ExtraComponent = () => (
-  // const ExtraComponent = ({ logEventByName, getTestToken, isWrongNetwork, updateTargetNetwork, accountInfo }) => {
-  // const { address, balance } = accountInfo;
+interface ButtonContentProps {
+  icon: string;
+  url: string;
+  name: string;
+  setIsShow: any;
+}
 
-  // // states for get teth
-  // const [isLoading, setIsLoading] = useState(false);
-  // // states for referral code
-  // const [referralCode, setReferralCode] = useState('');
-  // const [isError, setIsError] = useState(false);
-  // const [isShowAlert, setIsShowAlert] = useState(false);
-  // const [inVerify, setInVerify] = useState(false);
-  // const [isShowReferral, setIsShowReferral] = useState(true);
-  // const isTethCollected = useNanostore(tethCollected);
-  // const isInputCode = useNanostore(inputCode);
+function ButtonContent({ icon, url, name, setIsShow }: ButtonContentProps) {
+  const openUrl = () => {
+    setIsShow(false);
+    window.open(url, '_blank');
+  };
 
-  // if (isWrongNetwork) {
-  //   return (
-  //     <button type="button" className="navbar-button" onClick={updateTargetNetwork}>
-  //       <div className="container flex-reverse" id="whitelist-register-btn">
-  //         Switch to Arbitrum
-  //       </div>
-  //     </button>
-  //   );
-  // }
+  return (
+    <div className="button" onClick={openUrl}>
+      <Image src={icon} alt="" className="icon" width={24} height={24} />
+      {name}
+    </div>
+  );
+}
 
-  // // show get weth button. was: if (balance <= 0)
-  // const getWethButton = (
-  //   <button
-  //     type="button"
-  //     className="navbar-button"
-  //     onClick={() => {
-  //       setIsLoading(true);
-  //       getTestToken(() => setIsLoading(false));
-  //     }}
-  //   >
-  //     <div className="flex items-center space-x-1 px-3">
-  //       {!isLoading ? (
-  //         <>
-  //           <Image src="/static/eth-tribe3.svg" width={16} height={16} />
-  //           <span>Get WETH</span>
-  //         </>
-  //       ) : (
-  //         <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
-  //       )}
-  //     </div>
-  //   </button>
-  // );
+function EmptyContent() {
+  return <div className="empty-btn" />;
+}
 
-  // // show input referral code
+interface TransferTokenModalProps {
+  isShow: boolean;
+  setIsShow: any;
+}
 
-  // const submitReferralCode = e => {
-  //   e.preventDefault();
-  //   verifyCode();
-  // };
+const TransferTokenModal = (props: TransferTokenModalProps) => {
+  const { isShow, setIsShow } = props;
 
-  // const verifyCode = async () => {
-  //   const code = referralCode;
-  //   setInVerify(true);
-  //   if (code.length !== 7) {
-  //     setIsError(true);
-  //     setInVerify(false);
-  //     setIsShowAlert(true);
-  //     setTimeout(() => {
-  //       setIsShowAlert(false);
-  //     }, 1000);
-  //     return;
-  //   }
-  //   logEventByName('reward_enter_referral_code_apply_pressed', { code });
-  //   setIsError(false);
-  //   let auth = getAuth();
-  //   let { currentUser } = auth;
-  //   try {
-  //     if (!currentUser || currentUser.uid !== walletProvider.holderAddress) {
-  //       await apiConnection.switchAccount();
-  //     }
-  //     auth = getAuth();
-  //     currentUser = auth.currentUser;
-  //     await walletProvider.getHolderAddress().then(async () => {
-  //       setInVerify(false);
-  //       const idToken = await currentUser.getIdToken(true);
-  //       const response = await apiConnection.useReferralCode(code, idToken);
-  //       if (response.code !== 0) {
-  //         setIsError(true);
-  //         setIsShowAlert(true);
-  //         setTimeout(() => {
-  //           setIsShowAlert(false);
-  //         }, 1000);
-  //         return;
-  //       }
-  //       setIsError(false);
-  //       setIsShowAlert(true);
-  //       setTimeout(() => {
-  //         setIsShowAlert(false);
-  //         setIsShowReferral(false);
-  //       }, 1000);
-  //     });
-  //     setInVerify(false);
-  //   } catch (e) {
-  //     setIsError(true);
-  //     setInVerify(false);
-  //     setIsShowAlert(true);
-  //     setTimeout(() => {
-  //       setIsShowAlert(false);
-  //     }, 1000);
-  //   }
-  // };
+  if (!isShow) {
+    return null;
+  }
 
-  // let inputRefferalCode = null;
-  // if (isTethCollected && !isInputCode && !hasTraded && isShowReferral) {
-  //   inputRefferalCode = (
-  //     <div>
-  //       <Alert className={`referral-code-alert ${isShowAlert ? 'show' : ''}`} variant="filled" severity={isError ? 'error' : 'success'}>
-  //         {isError ? 'Invalid Referral Code' : 'Success Apply Referral Code'}
-  //       </Alert>
-  //       <form className="enter-referral-code" onSubmit={submitReferralCode}>
-  //         <input
-  //           type="text"
-  //           className="input"
-  //           placeholder="Enter referral code"
-  //           value={referralCode}
-  //           onChange={e => setReferralCode(e.target.value)}
-  //         />
-  //         <button type="submit" className="submit" disabled={!referralCode && !inVerify}>
-  //           {!inVerify ? 'Apply' : <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />}
-  //         </button>
-  //       </form>
-  //     </div>
-  //   );
-  // }
+  return (
+    <div className="transfertoken-modalbg" onClick={() => setIsShow(false)}>
+      <div className="transfertoken-modal" onClick={e => e.stopPropagation()}>
+        <div className="close-row">
+          <Image
+            src="/images/components/common/modal/close.svg"
+            alt=""
+            width={16}
+            height={16}
+            className="button"
+            onClick={() => setIsShow(false)}
+          />
+        </div>
+        <div className="content">
+          <div className="item">
+            <div className="title">Bridge ETH / WETH to Arbitrum👇</div>
+            <div className="btn-rows">
+              <ButtonContent
+                url="https://bridge.arbitrum.io/"
+                name="Arbitrum"
+                icon="/images/components/layout/header/arbitrum.png"
+                setIsShow={setIsShow}
+              />
+            </div>
+          </div>
+          <div className="item">
+            <div className="title">Wrap ETH on Arbitrum👇</div>
+            <div className="btn-rows">
+              <ButtonContent
+                url="https://app.uniswap.org/#/swap/"
+                name="Uniswap"
+                icon="/images/components/layout/header/uniswap.png"
+                setIsShow={setIsShow}
+              />
+              <EmptyContent />
+            </div>
+          </div>
+          <Image src="/images/components/common/modal/modal-logo.svg" width={170} height={165} alt="" className="tribelogos" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
-  // return (
-  <>
-    {/* {getWethButton} */}
-    {/* {inputRefferalCode} */}
-  </>
-);
-// };
-
-export default ExtraComponent;
+export default TransferTokenModal;

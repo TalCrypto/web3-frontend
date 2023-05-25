@@ -1,0 +1,90 @@
+@import '../../../utils/utils.scss';
+
+.transfertoken-modalbg {
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.transfertoken-modal {
+  background: rgba(23, 24, 51, 1);
+  @include font-weight-color(14px, 400);
+  width: 500px;
+  border: 1px solid;
+  border-image-source: linear-gradient(180deg, rgba(113, 170, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
+  padding: 16px 16px 0px 16px;
+  border-radius: 12px;
+
+  .close-row {
+    @include display-flex(flex-end, initial, center);
+    .button {
+      cursor: pointer;
+    }
+  }
+
+  .content {
+    position: relative;
+    @include display-flex(center, column, center);
+    .item {
+      @include display-flex(flex-start, column, flex-start);
+      &:first-child {
+        margin-bottom: 36px;
+      }
+      &:nth-child(2) {
+        margin-bottom: 60px;
+      }
+      .title {
+        @include font-weight-color(15px, 600);
+      }
+
+      .btn-rows {
+        @include display-flex(flex-start, initial, center);
+        margin-top: 16px;
+        z-index: 2;
+
+        .button {
+          min-width: 120px;
+          height: 40px;
+          border: 1px solid rgba(37, 116, 251, 1);
+          @include font-weight-color(14px, 400);
+          @include display-flex(space-between, initial, center);
+          border-radius: 8px;
+          &:first-child {
+            margin-right: 24px;
+          }
+          padding: 0 12px;
+          cursor: pointer;
+
+          .icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
+          }
+        }
+
+        .empty-btn {
+          width: 120px;
+        }
+      }
+    }
+
+    .tribelogos {
+      position: absolute;
+      display: flex;
+      align-items: flex-end;
+      vertical-align: bottom;
+      margin-right: 12px;
+      right: 0px;
+      bottom: 0px;
+    }
+  }
+}
