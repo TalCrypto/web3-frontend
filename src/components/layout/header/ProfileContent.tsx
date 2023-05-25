@@ -21,14 +21,14 @@ interface PriceContentProps {
 const PriceContent: React.FC<PriceContentProps> = ({ priceValue, title, isLargeText = false, notLastRow = false }) => {
   const iconImage = '../images/components/layout/header/eth-tribe3.svg';
   return (
-    <div className={`total-value-row ${notLastRow ? 'not-last' : ''}`}>
-      <div className="title">{title}</div>
+    <div className={`total-value-row p-6 ${notLastRow ? 'pb-0' : ''}`}>
+      <div className="text-[14px] font-normal text-[#a8cbffbf]">{title}</div>
       <div className="price-content">
-        <div className="">
-          <div className={`icon-row${isLargeText ? ' large-text' : ''}`}>
-            <Image src={iconImage} alt="" className="icon" width="16" height="16" />
-            {priceValue}
-          </div>
+        <div
+          className={`icon-row 
+            ${isLargeText ? 'text-[24px] font-semibold' : 'text-[16px] font-medium'}`}>
+          <Image src={iconImage} alt="" className="mr-2 h-[18px] w-[18px]" width="18" height="18" />
+          {priceValue}
         </div>
       </div>
     </div>
@@ -61,30 +61,34 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
   };
 
   return (
-    <div className="tops">
-      <div className="user-content">
-        <div className="title">
+    <div className="tops gradient-bg-tops rounded-t-[12px]">
+      <div className="user-content p-6 pb-0">
+        <div className="title text-[20px]">
           {username}
           {isNotSetUsername ? (
             <Link href="/userprofile/update">
-              <div className="icon">
+              <div className="ml-[4px] cursor-pointer">
                 <Image src="/images/components/layout/header/update-name.png" width={18} height={18} alt="" />
               </div>
             </Link>
           ) : null}
         </div>
-        <div className="grade">
-          <div className="crown">
+        <div className="flex">
+          <div className="mr-[4px]">
             <Image src="/images/components/layout/header/crown_silver.png" width={17} height={18} alt="" />
           </div>
-          <span className="text no-title">NO TITLE</span>
+          <span
+            className="text gradient-bg-tops-text text-white-87 !bg-clip-text
+            text-[12px] font-semibold">
+            NO TITLE
+          </span>
         </div>
       </div>
-      <div className="desc">User ID</div>
-      <div className="view-page-row">
+      <div className="px-6 pb-0 pt-2 text-[14px] font-medium text-[#a8cbffbf]">User ID</div>
+      <div className="view-page-row px-[24px] py-[14px]">
         <div />
         <Link href={`/userprofile/${walletProvider.holderAddress}`}>
-          <div className="button flex content-center items-center" onClick={clickViewProfile}>
+          <div className="button cursor-pointer text-[16px] font-semibold text-[#2574fb]" onClick={clickViewProfile}>
             <span>View Profile</span>
             <div className="ml-[4px]">
               <Image src="/images/components/layout/header/arrow-right.png" width={10} height={10} alt="" />
@@ -109,33 +113,33 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, 
 
   return (
     <div className="bottoms">
-      <div className="connected-title">Connected Wallet</div>
-      <div className="connected-wallet">
-        <div className="content">
+      <div className="p-6 text-[18px] font-semibold">Connected Wallet</div>
+      <div
+        className="connected-wallet mx-6 my-0
+        h-[64px] rounded-lg border border-solid border-[#2574fb]">
+        <div className="content px-4 py-3">
           <div className="start">
             {walletProvider.provider && walletProvider.provider.connection.url === 'metamask' ? (
-              <div className="icon">
+              <div className="mr-4 h-[34px] w-[34px]">
                 <Image src="/images/components/layout/header/metamask-logo.png" width={34} height={34} alt="" />
               </div>
             ) : (
-              <div className="icon">
+              <div className="mr-4 h-[34px] w-[34px]">
                 <Image src="/images/components/layout/header/walletconnect-logo.png" width={34} height={34} alt="" />
               </div>
             )}
             <div>
-              <div className="wallet">{address}</div>
-              <div className="network">{currentNetworkName}</div>
+              <div className="gradient-bg !bg-clip-text text-transparent">{address}</div>
+              <div className="text-[12px] font-medium text-[#a8cbffbf]">{currentNetworkName}</div>
             </div>
           </div>
-          <div className="end">
+          <div className="flex items-center">
             {inWrongNetwork ? (
-              <div className="wrong-network">
-                Wrong
-                <br />
-                Network
+              <div className="mr-1 text-[12px] font-medium text-[#ff5656]">
+                Wrong <br /> Network
               </div>
             ) : null}
-            <div className={`status ${!inWrongNetwork ? 'correct' : 'wrong'}`} />
+            <div className={`h-2 w-2 rounded-full ${!inWrongNetwork ? 'bg-[#78f363]' : 'bg-[#ff5656]'}`} />
           </div>
         </div>
       </div>
@@ -145,7 +149,7 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, 
         isLargeText
         notLastRow={false}
       />
-      <div className="dividers" />
+      <div className="mx-6 my-0 h-[1px] bg-[#414368]" />
       <PriceContent
         title="Portfolio Collateral:"
         priceValue={inWrongNetwork ? '0.0000' : Number(callBalance.portfolio).toFixed(4)}
@@ -193,11 +197,17 @@ const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
   };
 
   return (
-    <div className="normal-buttons">
-      <div className="btn-switch-goerli" onClick={getTestToken}>
+    <div className="normal-buttons m-6 mt-3">
+      <div
+        className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
+          bg-[#2574fb] text-[14px] font-semibold text-white"
+        onClick={getTestToken}>
         Get WETH
       </div>
-      <div className="function-btn" onClick={disconnectWalletAction}>
+      <div
+        className="function-btn font-semiboldtext-[#2574fb] mt-6
+          cursor-pointer text-[16px]"
+        onClick={disconnectWalletAction}>
         Disconnect Wallet
       </div>
     </div>
@@ -210,11 +220,17 @@ interface IncorrectNetworkButtonSetProps {
 }
 
 const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ updateTargetNetwork, disconnectWalletAction }) => (
-  <div className="normal-buttons">
-    <div className="btn-switch-goerli" onClick={updateTargetNetwork}>
+  <div className="normal-buttons m-6 mt-3">
+    <div
+      className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
+          bg-[#2574fb] text-[14px] font-semibold text-white"
+      onClick={updateTargetNetwork}>
       Switch to Arbitrum
     </div>
-    <div className="function-btn" onClick={disconnectWalletAction}>
+    <div
+      className="function-btn font-semiboldtext-[#2574fb] mt-6
+          cursor-pointer text-[16px]"
+      onClick={disconnectWalletAction}>
       Disconnect Wallet
     </div>
   </div>
@@ -268,35 +284,38 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
   };
 
   return (
-    <>
-      <div className="empty-margin" />
-      <div className="profile-content" id="profile-content">
-        <li>
-          <TopContent username={userName} isNotSetUsername={isNotSetUsername} />
-          <BottomContent
-            address={address}
-            inWrongNetwork={inWrongNetwork}
-            currentChain={currentChain}
-            balance={balance}
-            callBalance={callBalance}
+    <div
+      className="profile-content z-2 transition-visibility invisible
+        absolute right-0 top-[46px] h-0 w-[370px]
+        cursor-default rounded-lg bg-gray-900
+        opacity-0 transition-opacity duration-300 dark:bg-gray-800
+      "
+      id="profile-content">
+      <li className="m-0 list-none p-0">
+        <TopContent username={userName} isNotSetUsername={isNotSetUsername} />
+        <BottomContent
+          address={address}
+          inWrongNetwork={inWrongNetwork}
+          currentChain={currentChain}
+          balance={balance}
+          callBalance={callBalance}
+        />
+      </li>
+      {!isWrongNetwork ? (
+        <li className="m-0 list-none p-0">
+          <NormalButtonSet
+            disconnectWallet={disconnectWallet}
+            setShowDisconnectTooltip={setShowDisconnectTooltip}
+            getTestToken={getTestToken}
+            disconnectWalletAction={disconnectWalletAction}
           />
         </li>
-        {!isWrongNetwork ? (
-          <li>
-            <NormalButtonSet
-              disconnectWallet={disconnectWallet}
-              setShowDisconnectTooltip={setShowDisconnectTooltip}
-              getTestToken={getTestToken}
-              disconnectWalletAction={disconnectWalletAction}
-            />
-          </li>
-        ) : (
-          <li>
-            <IncorrectNetworkButtonSet updateTargetNetwork={updateTargetNetwork} disconnectWalletAction={disconnectWalletAction} />
-          </li>
-        )}
-      </div>
-    </>
+      ) : (
+        <li className="m-0 list-none p-0">
+          <IncorrectNetworkButtonSet updateTargetNetwork={updateTargetNetwork} disconnectWalletAction={disconnectWalletAction} />
+        </li>
+      )}
+    </div>
   );
 };
 

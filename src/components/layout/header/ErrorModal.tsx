@@ -39,7 +39,7 @@ export default function ErrorModal(props: ErrorModalProps) {
               onClick={() => {
                 setIsShow(false);
               }}>
-              <div className="flex-reverse container" id="whitelist-register-btn">
+              <div className="container flex flex-row-reverse" id="whitelist-register-btn">
                 Close
               </div>
             </button>

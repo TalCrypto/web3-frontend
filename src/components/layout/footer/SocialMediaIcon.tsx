@@ -17,7 +17,7 @@ function SocialMediaIcon(props: SocialMediaIconProps) {
     // <OverlayTrigger placement="top" overlay={tips}>
     <div>
       <span style={{ cursor: 'default' }}>
-        <a href={linkUrl} target="_blank" rel="noreferrer" className="icons">
+        <a href={linkUrl} target="_blank" rel="noreferrer" className="cursor-pointer">
           <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="gradient" gradientUnits="userSpaceOnUse" fy="90%">
@@ -33,7 +33,15 @@ function SocialMediaIcon(props: SocialMediaIconProps) {
 
             <g mask={`url(#${idName})`}>
               <rect x="0" y="0" width="24" height="24" fill="white" fillOpacity="0.87" />
-              <rect className="social-icon-transition" x="0" y="0" width="24" height="24" fill="url(#gradient)" />
+              <rect
+                className="duration-400 inline-block opacity-0
+                  transition-opacity ease-in-out hover:opacity-100"
+                x="0"
+                y="0"
+                width="24"
+                height="24"
+                fill="url(#gradient)"
+              />
             </g>
           </svg>
         </a>

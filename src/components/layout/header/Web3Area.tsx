@@ -265,7 +265,9 @@ function Web3Area() {
   // const isLogin = false;
 
   return (
-    <div className="navbar-container py-[14px]">
+    <div
+      className="navbar-container relative mx-auto flex h-[60px] items-start
+        justify-start p-0 py-[14px] text-[16px] font-medium text-white">
       {/* {!userIsLoginStore ? null : ( */}
       <Link href="/airdrop">
         <div

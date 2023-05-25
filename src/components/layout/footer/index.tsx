@@ -3,7 +3,9 @@ import SocialMediaIcon from '@/components/layout/footer/SocialMediaIcon';
 
 function Footer() {
   return (
-    <div className="footers flex">
+    <div
+      className="fixed bottom-0 left-0 right-0 flex bg-black bg-opacity-30
+      shadow-md backdrop-blur-lg">
       <div className="container flex py-[9px]">
         <div className="flex flex-1 space-x-[36px]">
           <SocialMediaIcon

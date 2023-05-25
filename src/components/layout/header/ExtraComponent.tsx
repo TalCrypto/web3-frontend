@@ -28,7 +28,7 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNe
   if (isWrongNetwork) {
     return (
       <button type="button" className="navbar-button" onClick={updateTargetNetwork}>
-        <div className="flex-reverse container" id="whitelist-register-btn">
+        <div className="container flex flex-row-reverse" id="whitelist-register-btn">
           Switch to Arbitrum
         </div>
       </button>

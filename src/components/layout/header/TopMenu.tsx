@@ -51,8 +51,15 @@ function TopMenu() {
           onMouseEnter={() => handleDropdown(name, true)}
           onMouseLeave={() => handleDropdown(name, false)}>
           <div
-            className={`item flex cursor-pointer items-center justify-center space-x-[6px] py-[16px]
-              ${activePageName.toUpperCase() === name.toUpperCase() ? 'active' : ''}`}>
+            className={`py-[16px], space-x-[6px], flex cursor-pointer items-center justify-center
+              ${activePageName.toUpperCase() === name.toUpperCase() ? 'active' : ''}
+              active:hover text-clip bg-gradient-to-r from-pink-500 via-purple-500
+              to-blue-500 bg-clip-text text-transparent`}>
+            <div
+              className="after rounded-3px absolute bottom-0 left-0 right-0 top-0 h-3 w-0
+              translate-y-0 transform bg-gradient-to-r from-pink-500
+              via-purple-500 to-blue-500 transition-all duration-200 "
+            />
             <p>{name}</p>
             <div className="w-[9px]">
               <div className="rotate-180 group-hover:rotate-0">
@@ -60,10 +67,14 @@ function TopMenu() {
               </div>
             </div>
           </div>
-          <div className={`dropdown-${name} absolute -ml-6 hidden rounded-[8px] bg-secondaryBlue shadow`}>
+          <div
+            className={`dropdown-${name} absolute -ml-6 hidden rounded-[8px]
+            bg-secondaryBlue shadow`}>
             {child.map(item => (
               <Link key={item.name} href={item.path}>
-                <div className="flex cursor-pointer items-center space-x-[6px] px-[24px] py-[16px] transition hover:text-highEmphasis">
+                <div
+                  className="flex cursor-pointer items-center space-x-[6px]
+                  px-[24px] py-[16px] transition hover:text-highEmphasis">
                   <p>{item.name}</p>
                   {item.other}
                 </div>
@@ -75,7 +86,9 @@ function TopMenu() {
     }
     return (
       <Link key={name} href={path}>
-        <div className={`item cursor-pointer py-[16px] ${activePageName.toUpperCase() === name.toUpperCase() ? 'active' : ''}`}>
+        <div
+          className={`item cursor-pointer py-[16px]
+          ${activePageName.toUpperCase() === name.toUpperCase() ? 'active' : ''}`}>
           {name}
           {other}
         </div>
@@ -83,7 +96,13 @@ function TopMenu() {
     );
   });
 
-  return <div className="top-menu-navbar flex items-center space-x-[20px] text-mediumEmphasis">{listUI}</div>;
+  return (
+    <div
+      className="font-mont flex items-center space-x-[20px]
+     text-mediumEmphasis">
+      {listUI}
+    </div>
+  );
 }
 
 export default TopMenu;

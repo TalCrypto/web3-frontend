@@ -1,4 +1,5 @@
 /* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import ProfileContent from '@/components/layout/header/ProfileContent';
@@ -71,26 +72,42 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
         type="button"
         className={`navbar-button ${!isLogin ? 'not-connected' : 'connected'}`}
         onClick={() => (isWalletLoading ? null : handleClick(!isLogin))}>
-        <div className={`container ${!isLogin ? 'flex-reverse' : ''}`} id="login-btn">
+        <div className={`container ${!isLogin ? 'flex flex-row-reverse' : ''}`} id="login-btn">
           {isWalletLoading ? (
             <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
           ) : (
             <>
               {isLogin ? (
                 <>
-                  <span className="username">{isNotSetUsername ? address : isLogin ? showUserName : ''}</span>
-                  <Image src="/images/components/layout/header/connect_button.svg" width={24} height={24} alt="" className="image" />
-                  <span className={`balance ${isBalanceLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>
-                    {showWethBalaceLabel}
-                  </span>
+                  <span className="text-transparent">{isNotSetUsername ? address : isLogin ? showUserName : ''}</span>
+                  <Image
+                    src="/images/components/layout/header/connect_button.svg"
+                    width={24}
+                    height={24}
+                    alt=""
+                    className="mx-2 my-0 h-[24px] w-[24px]"
+                  />
+                  <span>{showWethBalaceLabel}</span>
                   {isWrongNetwork ? (
-                    <Image src="/images/components/layout/header/incorrect-network.png" alt="" width={24} height={24} className="image" />
+                    <Image
+                      src="/images/components/layout/header/incorrect-network.png"
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="mx-2 my-0 h-[24px] w-[24px]"
+                    />
                   ) : null}
                 </>
               ) : (
                 <>
                   <span>Connect Wallet</span>
-                  <Image src="/images/components/layout/header/connect_button.svg" width={24} height={24} alt="" className="image" />
+                  <Image
+                    src="/images/components/layout/header/connect_button.svg"
+                    width={24}
+                    height={24}
+                    alt=""
+                    className="mx-2 my-0 h-[24px] w-[24px]"
+                  />
                 </>
               )}
             </>
