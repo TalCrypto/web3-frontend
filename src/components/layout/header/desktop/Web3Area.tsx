@@ -269,7 +269,7 @@ function Web3Area() {
       className="navbar-container relative mx-auto flex h-[60px] items-start
         justify-start p-0 py-[14px] text-[16px] font-medium text-white">
       {/* {!userIsLoginStore ? null : ( */}
-      <Link href="/airdrop">
+      <Link href="/airdrop" className="hidden md:block">
         <div
           className="flex h-[32px] cursor-pointer items-center space-x-[4px] rounded-full
             border-[1px] border-warn px-[16px] py-[6px] text-warn hover:bg-warn/20">
@@ -278,7 +278,7 @@ function Web3Area() {
           ) : (
             <>
               <Image src="/images/components/layout/header/user-point.svg" alt="" width={14} height={14} />
-              <span className="text-[16px] font-[500] leading-[19.5px]">{eligible() && !isBan ? localeConversion(total) : '0.0'}</span>
+              <span className="text-[16px] font-[500] leading-[20px]">{eligible() && !isBan ? localeConversion(total) : '0.0'}</span>
             </>
           )}
         </div>
@@ -286,13 +286,15 @@ function Web3Area() {
       {/* )} */}
 
       {/* {isDataFetched && isLogin ? ( */}
-      <ExtraComponent
-        // logEventByName={logEventByName}
-        getTestToken={getTestToken}
-        isWrongNetwork={isWrongNetwork}
-        updateTargetNetwork={updateTargetNetwork}
-        // accountInfo={{ address: walletAddress, balance: wethBalance }}
-      />
+      <div className="hidden md:block">
+        <ExtraComponent
+          // logEventByName={logEventByName}
+          getTestToken={getTestToken}
+          isWrongNetwork={isWrongNetwork}
+          updateTargetNetwork={updateTargetNetwork}
+          // accountInfo={{ address: walletAddress, balance: wethBalance }}
+        />
+      </div>
       {/* ) : null} */}
 
       <ConnectWalletButton

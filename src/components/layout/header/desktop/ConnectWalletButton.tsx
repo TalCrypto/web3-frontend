@@ -2,8 +2,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
-import ProfileContent from '@/components/layout/header/ProfileContent';
 import Image from 'next/image';
+import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
 
 interface ConnectWalletButtonProps {
   handleClick: any;

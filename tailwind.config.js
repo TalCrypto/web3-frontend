@@ -8,11 +8,12 @@ module.exports = {
       padding: '20px',
       // default breakpoints but with 40px removed
       screens: {
+        xs: '400px',
         sm: '600px',
-        md: '728px',
-        lg: '984px',
-        xl: '1240px',
-        '2xl': '1300px'
+        md: '840px',
+        lg: '968px',
+        xl: '1200px',
+        '2xl': '1400px'
       }
     },
     extend: {

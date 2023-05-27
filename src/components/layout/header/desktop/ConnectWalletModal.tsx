@@ -42,8 +42,8 @@ export default function ConnectWalletModal({
       items-center justify-center overflow-auto bg-black bg-opacity-40"
       onClick={closeModal}>
       <div
-        className="w-full max-w-[500px] rounded-lg bg-[#171833] px-9
-          py-6 text-[14px] font-normal leading-normal"
+        className="mx-4 w-full max-w-[500px] rounded-lg bg-[#171833]
+          px-6 py-6 text-[14px] font-normal leading-normal md:px-9"
         onClick={e => e.stopPropagation()}>
         <div className="flex flex-col items-end justify-end">
           <Image
