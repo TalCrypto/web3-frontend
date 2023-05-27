@@ -14,7 +14,7 @@ function Header() {
         <div className="container px-0">
           <div className="flex">
             <Link href="/">
-              <div className="relative mr-[24px] flex min-w-[93px] cursor-pointer items-center">
+              <div className="relative mr-[24px] flex h-full min-w-[93px] cursor-pointer items-center">
                 <Image src="/images/logos/nav_logo.svg" alt="" width={93} height={46} />
                 <div
                   className="gradient-bg font-mont text-opacity-87
