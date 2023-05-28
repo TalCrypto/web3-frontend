@@ -43,7 +43,13 @@ function MessageBubble(props: any) {
             fwdUserPage();
           }
         }}>
-        <Image src={checkIsSender ? '/static/chat_icon_currentuser.png' : '/static/chat_baycicon.png'} className="image" alt="" />
+        <Image
+          src={checkIsSender ? '/images/common/chat/current_user.png' : '/images/common/chat/baycicon.png'}
+          className="image"
+          alt=""
+          width={32}
+          height={32}
+        />
         <span className="">{checkIsSender ? 'You' : shortenAddress}</span>
       </div>
       <div className={checkIsSender ? 'chatbubble-issender col-auto' : 'chatbubble-notsender col-auto'}>
@@ -149,7 +155,7 @@ function ChatInput(props: any) {
   return (
     <div className="row chatsendercontainer" id="chatdisplays">
       <div className="col-1 iconstate">
-        <Image src="/static/chat_icon_currentuser.png" alt="" height={32} width={32} style={{ borderRadius: '50%' }} />
+        <Image src="/images/common/chat/current_user.png" alt="" height={32} width={32} style={{ borderRadius: '50%' }} />
       </div>
       <div className="col inputrow my-auto">
         <div className="col inputcontainer my-auto">

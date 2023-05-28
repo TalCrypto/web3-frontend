@@ -9,6 +9,7 @@ import { calculateNumber } from '@/utils/calculateNumbers';
 import { setIsTethCollected } from '@/stores/UserState';
 import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
 import SidebarCollection from '@/components/trade/desktop/trading/SidebarCollection';
+import InformationWindow from '@/components/trade/desktop/information/InformationWindow';
 
 interface TradePagePros {
   router: any;
@@ -85,7 +86,7 @@ function TradePage(props: TradePagePros) {
       <main>
         <div className="trading-window">
           <div className="rowcontent container px-0">
-            <div className="row-center">
+            <div className="flex">
               <SidebarCollection
                 currentToken={currentToken}
                 setCurrentToken={setCurrentToken}
@@ -112,7 +113,8 @@ function TradePage(props: TradePagePros) {
                 maxReduceValue={maxReduceValue}
               />
 
-              {/* <div className="ml-[49px] flex-1">
+              <div className="ml-[49px] flex-1">
+                {/* 
                 <ChartWindows
                   ref={graphRef}
                   tradingData={tradingData}
@@ -133,14 +135,15 @@ function TradePage(props: TradePagePros) {
                     fullWalletAddress={fullWalletAddress}
                   />
                 ) : null}
-                <InformationsWindows
-                  ref={informationRef}
+                */}
+                <InformationWindow
+                  // ref={informationRef}
                   tradingData={tradingData}
                   isLoginState={isLoginState}
                   fullWalletAddress={fullWalletAddress}
                   currentToken={currentToken}
                 />
-              </div> */}
+              </div>
             </div>
           </div>
           {/* <FundingPaymentModal

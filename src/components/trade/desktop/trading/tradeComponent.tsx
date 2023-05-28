@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable @next/next/no-img-element */
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable indent */
@@ -643,7 +642,7 @@ function Tips(props: any) {
     <div
       className="mb-[17px] flex h-[16px] items-center text-[16px]
       font-medium leading-[16px] text-[#FFC24B]/[.87]">
-      <img src="/static/info_warning_icon.svg" alt="" className="icon" />
+      <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span className="warning-text">{label}</span>
     </div>
   );
@@ -700,9 +699,9 @@ function ExtendedEstimateComponent(props: any) {
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (
-            <img src="/static/angle_up.svg" style={{ marginRight: '8px' }} alt="" />
+            <Image src="/images/common/angle_up.svg" style={{ marginRight: '8px' }} alt="" width={12} height={12} />
           ) : (
-            <img src="/static/angle_down.svg" style={{ marginRight: '8px' }} alt="" />
+            <Image src="/images/common/angle_down.svg" style={{ marginRight: '8px' }} alt="" width={12} height={12} />
           )}
         </div>
       </div>
@@ -1068,7 +1067,7 @@ export default function TradeComponent(props: any) {
 
   useEffect(() => {
     if (userPosition) {
-      setSaleOrBuyIndex(calculateNumber(userPosition.size, 4) < 0 ? 1 : 0);
+      setSaleOrBuyIndex(Number(calculateNumber(userPosition.size, 4)) < 0 ? 1 : 0);
     }
     if (isPending) {
       handleEnter(quantity);

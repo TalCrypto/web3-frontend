@@ -160,7 +160,14 @@ function QuantityEnter(props: any) {
         <div className="col">
           <div className={`betsizebg-outline ${isFocus ? 'valid' : ''} ${isError ? 'error' : ''} ${disabled ? 'disabled' : ''}`}>
             <div className="betsizebg">
-              <Image src="/static/eth-tribe3.svg" alt="" width="36" height="36" padding-right="12dp" className="betIcon" />
+              <Image
+                src="/images/components/layout/header/eth-tribe3.svg"
+                alt=""
+                width="36"
+                height="36"
+                padding-right="12dp"
+                className="betIcon"
+              />
               <div className="inputweth">
                 <span className="inputwethtext font-12-600">WETH</span>
               </div>
@@ -715,7 +722,7 @@ export default function AdjustCollateral(props: any) {
   let initialCollateral = '0';
   if (userPosition !== null) {
     const collaAmountCalc = Number(calculateNumber(userPosition.realMargin, 4));
-    const marginRatioCalc = Number(calculateNumber(userPosition.marginRatio, 1) / 100).toFixed(2);
+    const marginRatioCalc = Number(Number(calculateNumber(userPosition.marginRatio, 1)) / 100).toFixed(2);
     initialCollateral = Number(collaAmountCalc - (collaAmountCalc / Number(marginRatioCalc)) * 0.2).toFixed(3);
   }
 

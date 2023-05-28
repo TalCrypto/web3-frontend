@@ -146,7 +146,14 @@ function QuantityEnter(props: any) {
         <div className="col">
           <div className={`betsizebg-outline ${isFocus ? 'valid' : ''} ${isError ? 'error' : ''} ${disabled ? 'disabled' : ''}`}>
             <div className="collateralinputbg">
-              <Image src="/static/eth-tribe3.svg" alt="" width="36" height="36" padding-right="12dp" className="betIcon" />
+              <Image
+                src="/images/components/layout/header/eth-tribe3.svg"
+                alt=""
+                width="36"
+                height="36"
+                padding-right="12dp"
+                className="betIcon"
+              />
               <div className="inputweth">
                 <span className="inputwethtext">WETH</span>
               </div>
@@ -406,7 +413,7 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
     }
     setIsClosingPosition(true);
     if (Number(closeValue) !== Number(currentMaxValue)) {
-      const saleOrBuyIndex = calculateNumber(userPosition.size, 4) > 0 ? 1 : 0;
+      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
       const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
       const currentAllowance = await walletProvider.checkAllowance();
       const expectedFee = Number(utils.formatEther(result.fee));
@@ -461,7 +468,7 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
           });
         });
     } else {
-      const saleOrBuyIndex = calculateNumber(userPosition.size, 4) > 0 ? 1 : 0;
+      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
       const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
       const currentAllowance = await walletProvider.checkAllowance();
       const expectedFee = Number(utils.formatEther(result.fee));
@@ -840,8 +847,8 @@ export default function CloseCollateral(props: any) {
   let sizeInEth = '';
   const newValue = 0;
   if (userPosition !== null && tradingData !== null) {
-    size = calculateNumber(userPosition.size, 4);
-    currentPrice = calculateNumber(tradingData.spotPrice, 3);
+    size = Number(calculateNumber(userPosition.size, 4));
+    currentPrice = Number(calculateNumber(tradingData.spotPrice, 3));
     sizeInEth = `${calculateNumber(userPosition.currentNotional, 4)} `;
   }
 
@@ -850,7 +857,7 @@ export default function CloseCollateral(props: any) {
       setTextErrorMessage('');
       setTextErrorMessageShow(false);
       setEstPriceFluctuation(false);
-      const saleOrBuyIndex = calculateNumber(userPosition.size, 4) > 0 ? 1 : 0;
+      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
       setContractSide(saleOrBuyIndex);
       if (walletProvider.provider === null || Number(value) === 0 || !value) {
         setEstimatedValue({});
@@ -916,8 +923,8 @@ export default function CloseCollateral(props: any) {
 
   useEffect(() => {
     if (userPosition !== null && tradingData !== null) {
-      size = calculateNumber(userPosition.size, 4);
-      currentPrice = calculateNumber(tradingData.spotPrice, 3);
+      size = Number(calculateNumber(userPosition.size, 4));
+      currentPrice = Number(calculateNumber(tradingData.spotPrice, 3));
       sizeInEth = `${calculateNumber(userPosition.currentNotional, 4)} `;
       setCurrentMaxValue(Number(sizeInEth));
     }

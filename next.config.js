@@ -5,7 +5,10 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'src/styles')]
   },
-  reactStrictMode: true
+  reactStrictMode: true,
+  images: {
+    domains: ['i.seadn.io']
+  }
 };
 
 module.exports = nextConfig;

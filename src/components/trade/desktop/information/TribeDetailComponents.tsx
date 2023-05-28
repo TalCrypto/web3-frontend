@@ -4,7 +4,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from 'react';
 // import moment from 'moment';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
@@ -18,180 +18,39 @@ import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
 import { getBaycFromMainnet } from '@/utils/opensea';
-import Tab from '@/components/common/Tab';
 import { getTradingActionTypeFromAPI } from '@/components/trade/desktop/information/ActionType';
 import { trimString } from '@/utils/string';
 
-import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
+import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 
-// function OverviewItemCol(props: any) {
-//   const { className, children } = props;
-//   return (
-//     <div className={`col ${className}`}>
-//       <div className="label" />
-//       <div className="content">{children}</div>
-//     </div>
-//   );
-// }
+import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
   return (
     <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
-      <Image src="/static/eth-tribe3.svg" alt="" width={16} height={16} />
+      <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={16} height={16} />
       <span>{priceValue}</span>
     </div>
   );
 }
 
-// function LargePriceWithIcon(props: any) {
-//   const { priceValue = 0, className = '' } = props;
-//   return (
-//     <div className={`large-price-with-icon ${className}`}>
-//       <Image src="/static/eth-tribe3.svg" className="icon" alt="" />
-//       {priceValue}
-//     </div>
-//   );
-// }
-
-// function Overview(props: any) {
-//   const { tradingData, children } = props;
-//   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-//   const [interval, setI] = useState(null);
-//   const [nextFundingTime, setNextFundingTime] = useState(0);
-//   const hadKey = Object.keys(tradingData).length > 0;
-//   let hours = '0';
-//   let minutes = '0';
-//   let seconds = '0';
-
-//   function startCountdown() {
-//     if (!hadKey) {
-//       setTimeLabel('-- : -- : --');
-//       return;
-//     }
-//     let endTime = tradingData.nextFundingTime * 1000;
-//     const { fundingPeriod } = tradingData;
-//     if (interval !== null) {
-//       clearInterval(interval);
-//     }
-//     const intervalTime = setInterval(() => {
-//       let difference = endTime - Date.now();
-//       if (difference < 0) {
-//         endTime = Date.now() + fundingPeriod * 1000;
-//         difference = endTime - Date.now();
-//       }
-//       hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-//         .toString()
-//         .padStart(2, '0');
-//       minutes = Math.floor((difference / 1000 / 60) % 60)
-//         .toString()
-//         .padStart(2, '0');
-//       seconds = Math.floor((difference / 1000) % 60)
-//         .toString()
-//         .padStart(2, '0');
-//       setTimeLabel(`${hours} : ${minutes} : ${seconds}`);
-//     }, 1000);
-//     setI(intervalTime);
-//   }
-
-//   if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-//     setNextFundingTime(tradingData.nextFundingTime);
-//     startCountdown();
-//   }
-
-//   return (
-//     <div className="col-10 col-md-12 mx-auto">
-//       <div className="row contentrow">
-//         <div className="col-6 col-lg-5 col-md-6 col-sm-6 detailscard">
-//           <div className="col title font-14-600 text-color-secondary">Floor Price</div>
-//           <div className="row contentrow">
-//             <div className="col">
-//               <div className="col contenttitle">Futures</div>
-//               <div>
-//                 <LargePriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2)} className="margin-16" />
-//               </div>
-//             </div>
-//             <div className="col">
-//               <div className="col contenttitle">Spot</div>
-//               <div>
-//                 <LargePriceWithIcon priceValue={formatterValue(tradingData.twapPrice, 2)} className="margin-16" />
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="col detailscard">
-//           <div className="col title font-14-600 text-color-secondary">Funding Rate</div>
-//           <div className="col contents-mod funding-payment">
-//             <div className="">
-//               <div className="col">
-//                 Long{' '}
-//                 <span className={Number(formatterValue(tradingData.fundingRateLong * 100, 4)) > 0 ? 'down' : 'up'}>
-//                   {Number(formatterValue(tradingData.fundingRateLong * 100, 4)) > 0 ? 'Pay' : 'Get'}
-//                 </span>{' '}
-//                 <span>{`${Math.abs(Number(formatterValue(tradingData.fundingRateLong * 100, 4)))}%`}</span>
-//               </div>
-//               <div className="col">
-//                 Short{' '}
-//                 <span className={Number(formatterValue(tradingData.fundingRateShort * 100, 4)) > 0 ? 'up' : 'down'}>
-//                   {Number(formatterValue(tradingData.fundingRateShort * 100, 4)) > 0 ? 'Get' : 'Pay'}
-//                 </span>{' '}
-//                 <span>{`${Math.abs(Number(formatterValue(tradingData.fundingRateShort * 100, 4)))}%`}</span>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="col detailscard flex w-[203px] justify-between ">
-//           <div className="col title font-14-600 text-color-secondary">Next Funding Payment</div>
-//           <div className="col contents-mod">{timeLabel}</div>
-//         </div>
-//       </div>
-//       <div className="row contentrow">
-//         <div className="col-3 detailscard">
-//           <div className="col title font-14-600 text-color-secondary">Volume (24hr)</div>
-//           <div className="row normalrow">
-//             <LargePriceWithIcon priceValue={formatterValue(tradingData.dayVolume, 2)} className="margin-16" />
-//           </div>
-//         </div>
-//         <div className="col detailscard">
-//           <div className="col title font-14-600 text-color-secondary">Long Short Ratio</div>
-//           <div className="col">
-//             <OverviewItemCol className="col-12" title="Long Short Ratio">
-//               <div className="ratio-container">
-//                 <div className="market up">Long</div>
-//                 <div
-//                   className="ratio-box long"
-//                   style={{ width: `${calculateNumber(tradingData.longRatio, 0) < 30 ? 30 : calculateNumber(tradingData.longRatio, 0)}%` }}>
-//                   <div className="label">{!hadKey ? '' : formatterValue(tradingData.longRatio, 0, '%')}</div>
-//                   <div className="ratio long-ratio" />
-//                 </div>
-//                 <div
-//                   className="ratio-box short"
-//                   style={{
-//                     width: `${calculateNumber(tradingData.shortRatio, 0) < 30 ? 30 : calculateNumber(tradingData.shortRatio, 0)}%`
-//                   }}>
-//                   <div className="label">{!hadKey ? '' : formatterValue(tradingData.shortRatio, 0, '%')}</div>
-//                   <div className="ratio short-ratio" />
-//                 </div>
-//                 <div className="market down">Short</div>
-//               </div>
-//             </OverviewItemCol>
-//           </div>
-//         </div>
-//       </div>
-//       <div className="row mktrows align-items-center">
-//         <div className="col markettradesdiv start" />
-//         Market Trades
-//         <div className="col markettradesdiv end" />
-//       </div>
-//       {children}
-//     </div>
-//   );
-// }
+function LargePriceWithIcon(props: any) {
+  const { priceValue = 0, className = '' } = props;
+  return (
+    <div className={`large-price-with-icon ${className}`}>
+      <Image src="/images/components/layout/header/eth-tribe3.svg" width={16} height={16} className="icon" alt="" />
+      {priceValue}
+    </div>
+  );
+}
 
 function Cell(props: any) {
   const { items, classNames, rowStyle } = props;
   return (
-    <div className="row cell" style={rowStyle}>
+    <div
+      className="relative mb-6 grid grid-cols-12 items-center
+      text-[14px] text-[#a3c2ff]/[.6]">
       {items.map((item: any, index: any) => (
         // eslint-disable-next-line react/no-array-index-key
         <div className={`${classNames[index]}`} key={index}>
@@ -214,8 +73,9 @@ interface IOpenseaData {
 const SpotTable = forwardRef((props: any, ref: any) => {
   const { fullWalletAddress, /* tokenRef, */ currentToken } = props;
   const [openseaData, setOpenseaData] = useState([]);
+  const firstRender = useRef(true);
 
-  const fetchSpotPriceList = async () => {
+  const fetchSpotPriceList = useCallback(async () => {
     setOpenseaData([]);
     await getBaycFromMainnet(getCollectionInformation(currentToken).contract)
       .then((data: any) => {
@@ -223,12 +83,20 @@ const SpotTable = forwardRef((props: any, ref: any) => {
         setOpenseaData(data);
       })
       .catch(() => setOpenseaData([]));
-  };
-  useImperativeHandle(ref, () => ({ fetchSpotPriceList }));
+  }, [currentToken]);
+
+  // useImperativeHandle(ref, () => ({ fetchSpotPriceList }));
+
+  useEffect(() => {
+    if (firstRender.current) {
+      fetchSpotPriceList();
+      firstRender.current = false;
+    }
+  }, [fetchSpotPriceList]);
 
   return (
-    <div className="list">
-      <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-3 text-12', 'col-3  text-12', 'col-4  text-12', 'col-1  text-12']} />
+    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
+      <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-3', 'col-span-3 px-3 ', 'col-span-4 px-3 ', 'col-span-1 px-3 ']} />
       {openseaData?.map((data: IOpenseaData) => {
         const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
         const src = !asset
@@ -267,15 +135,18 @@ const SpotTable = forwardRef((props: any, ref: any) => {
 
         return (
           <Cell
-            classNames={['col-3', 'col-3', 'col-4', 'col-1']}
+            classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
             key={assetCreationDate + event_timestamp + assetToken}
             items={[
-              <div className="time flex">
-                <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} />
+              <div className="relative">
+                <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+
+                {/* <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} /> */}
+                {formatDateTimeFromString(event_timestamp)}
                 {/* {moment(event_timestamp).format('MM/DD/YYYY HH:mm')} */}
               </div>,
-              <div className="items">
-                <Image src={src} className="user-icon" alt="" />
+              <div className="flex items-center text-[14px] text-[#6286e3]">
+                <Image src={src} className="mr-3 rounded-[5px]" alt="" width={40} height={40} />
                 {`#${assetToken}` || 'No Name'}
               </div>,
               <div className="price">
@@ -287,7 +158,7 @@ const SpotTable = forwardRef((props: any, ref: any) => {
                 )}
               </div>,
               <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
-                <Image src="/static/Out.svg" className="out-link-icon" alt="" />
+                <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
               </a>
             ]}
           />
@@ -318,7 +189,7 @@ function ExplorerButton(props: any) {
 
   return (
     <a href={etherscanUrl} target="_blank" rel="noreferrer">
-      <Image alt="" src="../../../static/Out.svg" onClick={getAnalyticsMktEtherscan} width={20} height={20} />
+      <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={20} height={20} />
     </a>
   );
 }
@@ -327,24 +198,38 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
   const router = useRouter();
   const { fullWalletAddress, currentToken } = props;
   const [marketHistory, setMarketHistory] = useState([]);
-  const fetchMarketHistory = async () => {
+  const firstRender = useRef(true);
+
+  const fetchMarketHistory = useCallback(async () => {
     // console.log('fetchMarketHistory');
     await getMarketHistory(getCollectionInformation(currentToken).amm).then(data => setMarketHistory(data)); // from tokenRef.current
-  };
-  useImperativeHandle(ref, () => ({ fetchMarketHistory }));
-  if (marketHistory.length === 0) {
-    return null;
-  }
+  }, [currentToken]);
+  // useImperativeHandle(ref, () => ({ fetchMarketHistory }));
+  // if (marketHistory.length === 0) {
+  //   return null;
+  // }
 
-  const walletAddressToShow = (addr: any) => `${addr.substring(0, 7)}...${addr.slice(-3)}`;
+  useEffect(() => {
+    if (firstRender.current) {
+      fetchMarketHistory();
+      firstRender.current = false;
+    }
+  }, [fetchMarketHistory]);
+
+  const walletAddressToShow = (addr: any) => {
+    if (!addr) {
+      return '';
+    }
+    return `${addr.substring(0, 7)}...${addr.slice(-3)}`;
+  };
 
   return (
-    <div className="col-12 mktlists">
+    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
       <Cell
-        items={['Time / Type', 'Action', 'Contract Size', 'Resulting Price', 'User ID', '']}
-        classNames={['col-3 text-12', 'col-2 text-12', 'col-2 text-12', 'col-2 text-12', 'col-2 text-12', 'col-1 text-12']}
+        items={['Time / Type', 'Action', 'Notional Size', 'Resulting Price', 'User ID', '']}
+        classNames={['col-span-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-1 px-3']}
       />
-      {marketHistory.map(({ /* timestamp, */ exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
+      {marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
         <Cell
           // key={`${timestamp}_${index}`}
           rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
@@ -353,11 +238,14 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
             //   <div className="col-auto initdivider" />
             //   <div className="col">{moment.unix(timestamp).format('MM/DD/YYYY HH:mm')}</div>
             // </div>,
-            <div className="time">
+            <div className="time relative">
+              <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+
               {/* <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} /> */}
               {/* <span>{moment.unix(timestamp).format('MM/DD/YYYY HH:mm')}</span> */}
+              <span>{formatDateTime(timestamp)}</span>
               <br />
-              <span className={`market ${isPositive(exchangedPositionSize) ? 'up' : 'down'}`}>
+              <span className={`market ${isPositive(exchangedPositionSize) ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
                 {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
               </span>
             </div>,
@@ -379,7 +267,7 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
             </div>,
             <ExplorerButton txHash={txHash} fullWalletAddress={fullWalletAddress} collection={currentToken} />
           ]}
-          classNames={['col-3', 'col-2', 'col-2', 'col-2', 'col-2', 'col-1']}
+          classNames={['col-span-3 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-1 px-3']}
         />
       ))}
     </div>
@@ -389,31 +277,44 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
 const FundingPaymentHistory = forwardRef((props: any, ref) => {
   const { currentToken } = props;
   const [fundingPaymentHistory, setFundingPaymentHistory] = useState([]);
+  const firstRender = useRef(true);
 
-  const fetchFundingPaymentHistory = async () => {
+  const fetchFundingPaymentHistory = useCallback(async () => {
     await getFundingPaymentHistory(getCollectionInformation(currentToken).amm).then(data => setFundingPaymentHistory(data)); // from tokenRef.current
-  };
+  }, [currentToken]);
   useImperativeHandle(ref, () => ({ fetchFundingPaymentHistory }));
 
+  useEffect(() => {
+    if (firstRender.current) {
+      fetchFundingPaymentHistory();
+      firstRender.current = false;
+    }
+  }, [fetchFundingPaymentHistory]);
+
   return fundingPaymentHistory !== null ? (
-    <div className="list">
+    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
       <Cell
         items={['Time', 'Funding Rate (LONG)', 'Funding Rate (SHORT)']}
-        classNames={['col-4 text-12', 'col-3 text-12', 'col-3 text-12']}
+        classNames={['col-span-4', 'col-span-3 px-3', 'col-span-3 px-3']}
       />
       {fundingPaymentHistory.length > 0 ? (
-        fundingPaymentHistory.map(({ /* timestamp, */ rateLong /* , rateShort */ } /* index */) => (
+        fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
           <Cell
             // key={`${timestamp}_${index}`}
             items={[
-              <div className="time flex">
-                <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} />
-                {/* {moment.unix(timestamp).format('MM/DD/YYYY HH:mm')} */}
-              </div>
-              // `${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 4))).toFixed(4)} %`,
-              // `${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 4))).toFixed(4)} %`
+              <div className="time relative">
+                {/* <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} /> */}
+                <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                {formatDateTime(timestamp)}
+              </div>,
+              <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 4))).toFixed(4)} %`}</div>,
+              <div>{`${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 4))).toFixed(4)} %`}</div>
             ]}
-            classNames={['col-4', `col-3 market ${rateLong > 0 ? 'down' : 'up'}`, `col-3 market ${rateLong > 0 ? 'up' : 'down'}`]}
+            classNames={[
+              'col-span-4 px-3',
+              `col-span-3 px-3 market ${rateLong > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}`,
+              `col-span-3 px-3 market ${rateLong > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`
+            ]}
           />
         ))
       ) : (
@@ -431,29 +332,27 @@ function getCollectionInformation(type: any) {
 }
 
 function TribeDetailComponents(props: any, ref: any) {
+  const { tradingData } = props;
   const [tribeDetailIndex, setTribeDetailIndex] = useState(0);
   const { fullWalletAddress, tokenRef, currentToken, activeTab } = props;
   const marketTradeRef = useRef();
   const fundingPaymentRef = useRef();
   const spotRef = useRef();
-  function getAnalyticsDetailTab(index: any) {
-    setTribeDetailIndex(index);
-    const eventName = ['tribedetail_overview_pressed', 'tribedetail_spottransaction_pressed', 'tribedetail_fundingpayment_pressed'][index];
-    if (firebaseAnalytics) {
-      logEvent(
-        firebaseAnalytics,
-        eventName,
-        { wallet: fullWalletAddress.substring(2), collection: currentToken } // from tokenRef.current
-      );
-    }
-    apiConnection.postUserEvent(eventName, {
-      page: 'Trade',
-      collection: currentToken // from tokenRef.current
-    });
-  }
-  const Tabs = ['Market Trades', 'Spot Transactions', 'Funding Payment History'].map((item, index) => (
-    <Tab name={item} key={item} active={tribeDetailIndex === index} onClick={() => getAnalyticsDetailTab(index)} />
-  ));
+  // function getAnalyticsDetailTab(index: any) {
+  //   setTribeDetailIndex(index);
+  //   const eventName = ['tribedetail_overview_pressed', 'tribedetail_spottransaction_pressed', 'tribedetail_fundingpayment_pressed'][index];
+  //   if (firebaseAnalytics) {
+  //     logEvent(
+  //       firebaseAnalytics,
+  //       eventName,
+  //       { wallet: fullWalletAddress.substring(2), collection: currentToken } // from tokenRef.current
+  //     );
+  //   }
+  //   apiConnection.postUserEvent(eventName, {
+  //     page: 'Trade',
+  //     collection: currentToken // from tokenRef.current
+  //   });
+  // }
 
   const updateInfomations = () => {
     // marketTradeRef.current?.fetchMarketHistory();
@@ -469,17 +368,16 @@ function TribeDetailComponents(props: any, ref: any) {
 
   return (
     <>
-      <div className="sub-nav">{Tabs}</div>
-      <div style={{ display: activeTab === 0 ? 'block' : 'none' }}>
+      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[90%]`}>
         {/* <Overview tradingData={tradingData}>
           <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} />
         </Overview> */}
         <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
-      <div style={{ display: activeTab === 1 ? 'block' : 'none' }}>
+      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[90%]`}>
         <SpotTable ref={spotRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
-      <div style={{ display: activeTab === 2 ? 'block' : 'none' }}>
+      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[90%]`}>
         <FundingPaymentHistory ref={fundingPaymentRef} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
     </>

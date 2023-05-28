@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-key */
 import React, { forwardRef, /* useImperativeHandle, */ useRef, useState } from 'react';
@@ -7,6 +6,8 @@ import React, { forwardRef, /* useImperativeHandle, */ useRef, useState } from '
 import ComingSoonWindow from '@/components/trade/desktop/information/CommingSoonWindow';
 import TribeDetailComponents from '@/components/trade/desktop/information/TribeDetailComponents';
 import ChatComponent from '@/components/trade/desktop/information/ChatComponent';
+
+import Image from 'next/image';
 
 // import { firebaseAnalytics } from '@/const/firebaseConfig';
 // import { apiConnection } from '@/utils/apiConnection';
@@ -54,14 +55,16 @@ function InformationsWindows(props: any) {
   // ));
 
   const tabsImages = [
-    <img src="/static/tribe_detail_icon.svg" className="icon" alt="" />,
-    <img src="/static/icon/spot-transaction.svg" className="icon" alt="" />,
-    <img src="/static/icon/dashboard/fundingPayment.svg" className="mr-[6px] h-[16px] w-[16px]" alt="" />
+    <Image src="/images/components/trade/tab_market.svg" className="mr-[6px]" width={20} height={20} alt="" />,
+    <Image src="/images/components/trade/tab_spot.svg" className="mr-[6px]" width={20} height={20} alt="" />,
+    <Image src="/images/components/trade/tab_funding.svg" className="mr-[6px]" width={20} height={20} alt="" />
   ];
 
   const Tabs = ['Market Trades', 'Spot Transactions', 'Funding Payment History'].map((item, index) => (
     <div
-      className={`tab-folder font-16-600 flex items-center justify-center text-highEmphasis ${activeTab === index ? 'selected' : ''}`}
+      className={`tab flex w-[33%] cursor-pointer items-center
+        justify-center text-center text-[16px] font-semibold
+        ${activeTab === index ? 'selected' : ''}`}
       key={item}
       onClick={() => setActiveTab(index)}>
       {tabsImages[index]}
@@ -77,10 +80,17 @@ function InformationsWindows(props: any) {
   // }));
 
   return (
-    <div className="dataWindow information-window mb-[24px]">
-      <div className="information-nav">{Tabs}</div>
-      <div className="display-content">
-        <div style={{ display: detailHeaderIndex === 0 ? 'block' : 'none' }}>
+    <div
+      className="mb-[24px] h-[530px] max-h-[1000px] cursor-default overflow-hidden
+      rounded-[6px] border-[1px] border-[#2e4371] p-0 pb-10">
+      <div
+        className="info-tab mb-6 flex items-center
+        border-b-[2px] border-b-[#2e3064] leading-[50px]
+      ">
+        {Tabs}
+      </div>
+      <div className="display-content h-full">
+        <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
           <TribeDetailComponents
             ref={detailRef}
             tradingData={tradingData}
@@ -90,7 +100,7 @@ function InformationsWindows(props: any) {
             activeTab={activeTab}
           />
         </div>
-        <div style={{ display: detailHeaderIndex === 1 ? 'block' : 'none' }}>
+        <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
           <ChatComponent
             ref={chatRef}
             fullWalletAddress={fullWalletAddress}
@@ -99,7 +109,7 @@ function InformationsWindows(props: any) {
             currentToken={currentToken}
           />
         </div>
-        <div style={{ display: detailHeaderIndex === 2 ? 'block' : 'none' }}>
+        <div className={`${detailHeaderIndex === 2 ? 'block' : 'hidden'} h-full`}>
           <ComingSoonWindow />
         </div>
       </div>

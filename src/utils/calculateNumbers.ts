@@ -1,12 +1,17 @@
 /* eslint-disable implicit-arrow-linebreak */
 import { utils, BigNumber } from 'ethers';
 
-export const calculateNumber = (value: any, toFixedNumber: number): number =>
-  !value ? 0 : Number(Number(utils.formatEther(value.toString())).toFixed(toFixedNumber));
+export const calculateNumber = (value: any, toFixedNumber: number): string => {
+  if (!value) {
+    return Number(utils.formatEther(0)).toFixed(toFixedNumber);
+  }
 
-export const isPositive = (value: BigNumber): boolean => calculateNumber(value, 5) >= 0;
+  return Number(utils.formatEther(value.toString())).toFixed(toFixedNumber);
+};
 
-export const formatterValue = (value: BigNumber, toFixedNumber: number, suffix = '', defaultValue = '0.00'): string => {
+export const isPositive = (value: BigNumber): boolean => Number(calculateNumber(value, 5)) >= 0;
+
+export const formatterValue = (value: number, toFixedNumber: number, suffix = '', defaultValue = '0.00'): string => {
   if (!value) {
     return defaultValue;
   }

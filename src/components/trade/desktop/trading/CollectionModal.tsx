@@ -147,23 +147,26 @@ const CollectionModal = (props: any) => {
       const priceGapPercentage = priceGap * 100;
 
       const changed24h = (
-        <p className={`${calculateNumber(tradingData.priceChangeRatio24h, 2) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
-          {calculateNumber(tradingData.priceChangeRatio24h, 2) > 0 ? '+' : '-'}
-          {Math.abs(calculateNumber(tradingData.priceChange24h, 2))}({Math.abs(calculateNumber(tradingData.priceChangeRatio24h, 2))}%)
+        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio24h, 2)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+          {Number(calculateNumber(tradingData.priceChangeRatio24h, 2)) > 0 ? '+' : '-'}
+          {Math.abs(Number(calculateNumber(tradingData.priceChange24h, 2)))}(
+          {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio24h, 2)))}%)
         </p>
       );
 
       const changed7d = (
-        <p className={`${calculateNumber(tradingData.priceChangeRatio7d, 2) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
-          {calculateNumber(tradingData.priceChangeRatio7d, 2) > 0 ? '+' : '-'}
-          {Math.abs(calculateNumber(tradingData.priceChange7d, 2))}({Math.abs(calculateNumber(tradingData.priceChangeRatio7d, 2))}%)
+        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio7d, 2)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+          {Number(calculateNumber(tradingData.priceChangeRatio7d, 2)) > 0 ? '+' : '-'}
+          {Math.abs(Number(calculateNumber(tradingData.priceChange7d, 2)))}(
+          {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio7d, 2)))}%)
         </p>
       );
 
       const changed30d = (
-        <p className={`${calculateNumber(tradingData.priceChangeRatio30d, 2) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
-          {calculateNumber(tradingData.priceChangeRatio30d, 2) > 0 ? '+' : '-'}
-          {Math.abs(calculateNumber(tradingData.priceChange30d, 2))}({Math.abs(calculateNumber(tradingData.priceChangeRatio30d, 2))}%)
+        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio30d, 2)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+          {Number(calculateNumber(tradingData.priceChangeRatio30d, 2)) > 0 ? '+' : '-'}
+          {Math.abs(Number(calculateNumber(tradingData.priceChange30d, 2)))}(
+          {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio30d, 2)))}%)
         </p>
       );
 
@@ -211,17 +214,17 @@ const CollectionModal = (props: any) => {
           <div className="font-400 basis-1/5 px-[18px] text-right text-[12px] text-highEmphasis">
             <div>
               Long{' '}
-              <span className={calculateNumber(tradingData.fundingRateLong, 5) > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}>
-                {calculateNumber(tradingData.fundingRateLong, 5) > 0 ? 'Pay' : 'Get'}
+              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}>
+                {Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'Pay' : 'Get'}
               </span>{' '}
-              {`${Math.abs(Number(calculateNumber(tradingData.fundingRateLong, 5) * 100)).toFixed(3)}%`}
+              {`${Math.abs(Number(Number(calculateNumber(tradingData.fundingRateLong, 5)) * 100)).toFixed(3)}%`}
             </div>
             <div>
               Short{' '}
-              <span className={calculateNumber(tradingData.fundingRateLong, 5) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}>
-                {calculateNumber(tradingData.fundingRateLong, 5) > 0 ? 'Get' : 'Pay'}
+              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}>
+                {Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'Get' : 'Pay'}
               </span>{' '}
-              {`${Math.abs(Number(calculateNumber(tradingData.fundingRateShort, 5) * 100)).toFixed(3)}%`}
+              {`${Math.abs(Number(Number(calculateNumber(tradingData.fundingRateShort, 5)) * 100)).toFixed(3)}%`}
             </div>
           </div>
         </div>
