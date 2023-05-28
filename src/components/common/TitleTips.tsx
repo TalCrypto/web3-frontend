@@ -1,26 +1,16 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-interface TitleTipsProps {
-  titleText: string;
-  // tipsText: string;
-  // placement?: string;
-}
-
-const TitleTips: React.FC<TitleTipsProps> = ({ titleText }) => (
+function TitleTips(props: any) {
+  const { titleText, tipsText, placement } = props;
   // const TitleTips: React.FC<TitleTipsProps> = ({ titleText, tipsText, placement = 'right' }) => (
   // const tips = <Tooltip>{tipsText}</Tooltip>;
 
   // <OverlayTrigger placement={placement} overlay={tips}>
   //   <span style={{ cursor: 'default' }}>{titleText}</span>
   // </OverlayTrigger>
-  <div>
-    <span style={{ cursor: 'default' }}>{titleText}</span>
-  </div>
-);
-
-// TitleTips.defaultProps = {
-//   placement: 'right'
-// };
+  return <span style={{ cursor: 'default' }}>{titleText}</span>;
+}
 
 export default TitleTips;

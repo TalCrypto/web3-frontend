@@ -90,7 +90,7 @@ function Web3Area() {
 
   const { multiplier, total, tradeVol, isBan } = userPointData;
   const tradeVolume = calculateNumber(tradeVol.vol, 4);
-  const eligible = () => tradeVolume >= '5';
+  const eligible = () => Number(tradeVolume) >= 5;
 
   const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
     setWalletAddress(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
