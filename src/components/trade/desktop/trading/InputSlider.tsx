@@ -1,8 +1,8 @@
 import React from 'react';
 
-const clamp = (val: any, min: any, max: any) => Math.min(Math.max(val, min), max);
+// const clamp = (val: any, min: any, max: any) => Math.min(Math.max(val, min), max);
 
-const lerp = (a: any, b: any, val: any) => a + val * (b - a);
+// const lerp = (a: any, b: any, val: any) => a + val * (b - a);
 
 export default function InputSlider(props: any) {
   const { min, max, step, defautValue, value, onChange, onAfterChange, marks, disabled } = props;
@@ -17,12 +17,14 @@ export default function InputSlider(props: any) {
     if (onAfterChange) onAfterChange(val);
   }
 
-  const alphaFill = clamp((value - min) / (max - min), 0, 1); // clamped 0~1
-  const fill = alphaFill * 100; // 0~100%
+  // const alphaFill = clamp((value - min) / (max - min), 0, 1); // clamped 0~1
+  // const fill = alphaFill * 100; // 0~100%
 
   return (
-    <div className="inputslider">
+    <div className="relative">
       <input
+        className={`h-[4px] w-full rounded-[5px] bg-[#242652]
+          ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         disabled={disabled}
         type="range"
         min={min}
@@ -32,39 +34,32 @@ export default function InputSlider(props: any) {
         value={value > max ? max : value}
         onChange={handleChange}
         onMouseUp={handleAfterChange}
-        style={{
-          cursor: disabled ? 'not-allowed' : 'pointer'
-        }}
       />
       <div
-        className="track"
-        style={{
-          left: '0%',
-          width: `${fill}%`,
-          cursor: disabled ? 'not-allowed' : 'pointer'
-        }}
+        className={`absolute left-0 mt-[-11px] h-[4px] w-full rounded-[5px]
+        ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       />
 
       {marks ? (
         <>
-          <div className="steps">
+          <div className="absolute top-[11px] flex w-full justify-between">
             {Object.keys(marks).map(i => (
               <div
                 key={`dot-${i}`}
-                className="item"
+                className="h-[8px] w-[8px] rounded-[4px] bg-[#a8cbff]/[.75]"
                 onClick={() => {
                   if (!disabled) onChange(i);
                 }}
               />
             ))}
           </div>
-          <div className="marks">
+          <div className="mt-1 flex justify-between">
             {Object.keys(marks).map(i => {
               const mark = marks[i];
               return (
                 <div
                   key={`mark-${i}`}
-                  className="item"
+                  className="h-[8px] w-[8px] cursor-pointer text-[14px] text-[#a3c2ff]/[.6]"
                   onClick={() => {
                     if (!disabled) onChange(i);
                   }}>
@@ -76,12 +71,8 @@ export default function InputSlider(props: any) {
         </>
       ) : null}
       <div
-        className="handle"
-        style={{
-          left: `calc(${fill}% - ${lerp(3, 10, alphaFill)}px)`,
-          // transform: 'translateX(-50%)',
-          opacity: disabled ? '0.6' : '1'
-        }}
+        className="absolute top-2 h-[14px] w-[14px] rounded-full
+        border-[2px] border-[#04aefc] bg-white"
       />
     </div>
   );

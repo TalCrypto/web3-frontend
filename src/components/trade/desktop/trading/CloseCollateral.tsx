@@ -22,8 +22,8 @@ import tradePanel from '@/stores/tradePanel';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
 import { hasPartialClose } from '@/stores/UserState';
-import InputSlider from '@/components/trade/desktop/InputSlider';
-import PartialCloseModal from '@/components/trade/desktop/PartialCloseModal';
+import InputSlider from '@/components/trade/desktop/trading/InputSlider';
+import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
 function SectionDividers() {
   return (

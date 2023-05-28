@@ -21,7 +21,7 @@ import tradePanel from '@/stores/tradePanel';
 // import tradePanelModal from '@/stores/tradePanelModal';
 import collectionsLoading from '@/stores/collectionsLoading';
 
-import InputSlider from '@/components/trade/desktop/InputSlider';
+import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();

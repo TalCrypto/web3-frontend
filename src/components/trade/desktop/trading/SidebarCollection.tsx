@@ -6,7 +6,7 @@ import Image from 'next/image';
 import collectionList from '@/const/collectionList';
 import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
-import CollectionModal from '@/components/trade/desktop/CollectionModal';
+import CollectionModal from '@/components/trade/desktop/trading/CollectionModal';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());

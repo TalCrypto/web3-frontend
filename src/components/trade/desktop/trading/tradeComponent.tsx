@@ -27,8 +27,8 @@ import TitleTips from '@/components/common/TitleTips';
 
 import tradePanel from '@/stores/tradePanel';
 import collectionsLoading from '@/stores/collectionsLoading';
-import InputSlider from '@/components/trade/desktop/InputSlider';
 import { priceGapLimit } from '@/stores/priceGap';
+import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 // const { isWhitelisted } = walletProvider;
 
@@ -37,66 +37,48 @@ function LongShortRatio(props: any) {
   const { page } = pageTitleParser(router.asPath);
   const { userPosition, setSaleOrBuyIndex, saleOrBuyIndex, currentToken } = props;
 
-  // function analyticsLogSide(index: any, currentCollection: any) {
-  //   // logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
-  //   //   wallet: fullWalletAddress.substring(2),
-  //   //   collection: currentCollection
-  //   // });
-  //   const eventName = ['btnLong_pressed', 'btnShort_pressed'][index];
-  //   apiConnection.postUserEvent(eventName, {
-  //     page,
-  //     collection: currentCollection
-  //   });
-  // }
+  function analyticsLogSide(index: any, currentCollection: any) {
+    // logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
+    //   wallet: fullWalletAddress.substring(2),
+    //   collection: currentCollection
+    // });
+    const eventName = ['btnLong_pressed', 'btnShort_pressed'][index];
+    apiConnection.postUserEvent(eventName, {
+      page,
+      collection: currentCollection
+    });
+  }
 
   return (
-    <div className="selectLongShortButtonSet flex">
-      {/* <OverlayTrigger
-        placement="top"
-        overlay={
-          userPosition !== null && userPosition.size < 0 ? (
-            <Tooltip id="button-tooltip-2">To open a long position, please close your short position first</Tooltip>
-          ) : (
-            <div />
-          )
-        }>
-        <div
-          className={`col button font-14-600 selectbehaviour ${saleOrBuyIndex === 0 ? 'longSelected' : ''} ${
-            userPosition !== null ? 'disabled' : ''
-          }`}
-          onClick={() => {
-            if (userPosition === null) {
-              setSaleOrBuyIndex(0);
-              analyticsLogSide(0, currentToken);
-            }
-          }}
-          key="long">
-          <div className="">LONG</div>
-        </div>
-      </OverlayTrigger> */}
-      {/* <OverlayTrigger
-        placement="top"
-        overlay={
-          userPosition !== null && userPosition.size > 0 ? (
-            <Tooltip id="button-tooltip-2">To open a short position, please close your long position first</Tooltip>
-          ) : (
-            <div />
-          )
-        }>
-        <div
-          className={`col button font-14-600 selectbehaviour ${saleOrBuyIndex === 1 ? 'shortSelected' : ''} ${
-            userPosition !== null ? 'disabled' : ''
-          } `}
-          onClick={() => {
-            if (userPosition === null) {
-              setSaleOrBuyIndex(1);
-              analyticsLogSide(1, currentToken);
-            }
-          }}
-          key="short">
-          <div className="">SHORT</div>
-        </div>
-      </OverlayTrigger> */}
+    <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">
+      <div
+        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+          ${saleOrBuyIndex === 0 ? 'long-selected text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
+          ${userPosition !== null ? 'opacity-30' : ''}
+          text-center text-[14px] font-semibold hover:text-white/[.87]`}
+        onClick={() => {
+          if (userPosition === null) {
+            setSaleOrBuyIndex(0);
+            analyticsLogSide(0, currentToken);
+          }
+        }}
+        key="long">
+        <div className="">LONG</div>
+      </div>
+      <div
+        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+          ${saleOrBuyIndex === 1 ? 'short-selected text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
+          ${userPosition !== null ? 'opacity-30' : ''}
+          text-center text-[14px] font-semibold hover:text-white/[.87]`}
+        onClick={() => {
+          if (userPosition === null) {
+            setSaleOrBuyIndex(1);
+            analyticsLogSide(1, currentToken);
+          }
+        }}
+        key="short">
+        <div className="">SHORT</div>
+      </div>
     </div>
   );
 }
@@ -163,46 +145,49 @@ function QuantityEnter(props: any) {
 
   return (
     <>
-      <div className={`betsizetitle align-items-center flex ${disabled ? 'disabled' : ''}`}>
-        <div className="font-14 text-color-secondary flex-1">Collateral</div>
+      <div className={`mb-3 flex items-center ${disabled ? 'opacity-30' : ''}`}>
+        <div className="flex-1 text-[14px] text-[#a3c2ff]/[.68]">Collateral</div>
         {isLoginState && !isWrongNetwork ? (
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-            <div className="flex-1" style={{ display: 'flex', marginRight: '4px' }}>
-              <Image alt="" src="/static/wallet-white.svg" height={16} width={16} />
-            </div>
-            <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
+            <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-b2 text-primaryBlue" onClick={() => getTestToken()}>
+            <button type="button" className="ml-[8px] text-[14px] text-[#2574fb]" onClick={() => getTestToken()}>
               Get WETH
             </button>
           </div>
         ) : null}
       </div>
-      <div className="row">
-        <div className="col">
-          <div className={`betsizebg-outline ${isFocus ? 'valid' : ''} ${isError ? 'error' : ''} ${disabled ? 'disabled' : ''} `}>
-            <div className="betsizebg">
-              <Image src="/static/eth-tribe3.svg" alt="" width="24" height="24" padding-right="12dp" className="betIcon" />
-              <div className="inputweth">
-                <span className="inputwethtext font-12-600">WETH</span>
-              </div>
-              <input
-                type="text"
-                pattern="[0-9]*"
-                className={`inputnum font-15-600 ${isApproveRequired ? ' blockCursor' : ''}`}
-                value={value}
-                placeholder="0.00"
-                onChange={handleEnter}
-                disabled={isApproveRequired || disabled}
-                // onClick={e => {
-                //   e.target.selectionStart = e.target.value.length;
-                //   e.target.selectionEnd = e.target.value.length;
-                // }}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                min={0}
-              />
+      <div className="py-3">
+        <div
+          className={`mb-3 rounded-[4px] bg-none p-[1px]
+            ${isFocus ? 'valid' : ''}
+            ${isError ? 'error' : ''}
+            ${disabled ? 'opacity-30' : ''}
+          `}>
+          <div className="flex h-[48px] rounded-[4px] bg-[#242652] p-3">
+            <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width="24" height="24" padding-right="12dp" className="betIcon" />
+            <div className="ml-[4px] flex items-center justify-center">
+              <span className="input-with-text text-[12px] font-semibold">WETH</span>
             </div>
+            <input
+              type="text"
+              pattern="[0-9]*"
+              className={`${isApproveRequired ? ' blockCursor' : ''}
+                txt-white w-full border-none border-[242652] bg-[#242652]
+                text-right text-[15px] font-semibold outline-none
+              `}
+              value={value}
+              placeholder="0.00"
+              onChange={handleEnter}
+              disabled={isApproveRequired || disabled}
+              // onClick={e => {
+              //   e.target.selectionStart = e.target.value.length;
+              //   e.target.selectionEnd = e.target.value.length;
+              // }}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              min={0}
+            />
           </div>
         </div>
       </div>
@@ -224,24 +209,24 @@ function QuantityEnter(props: any) {
 function LeverageComponent(props: any) {
   const { value, onChange, disabled } = props;
 
-  const leverageMarks = Array(5)
+  const leverageMarks = Array(10)
     .fill(0)
-    .reduce((pre, item, index) => ({ ...pre, [index + 1]: { style: { color: 'rgb(255, 255, 255)' }, label: `${index + 1}x` } }), {});
+    .reduce((pre, item, index) => ({ ...pre, [index + 1]: { style: { color: 'rgb(255, 255, 255)' }, label: `${index + 1}` } }), {});
 
   return (
     <>
-      <div className={`row align-items-center ${disabled ? 'disabled' : ''}`}>
-        <div className="font-14 text-color-secondary col-auto">Leverage</div>
-        <div className="col alignright font-14-600">{`${value}x`}</div>
+      <div className={`flex items-center ${disabled ? 'opacity-30' : ''}`}>
+        <div className="text-[14px] text-[#a3c2ff]">Leverage</div>
+        <div className="flex-1 flex-shrink-0 text-right text-[14px] font-semibold">{`${value}x`}</div>
       </div>
       <div className="row">
-        <div className="col" style={{ marginTop: '12px', marginBottom: '24px' }}>
+        <div className="col mb-6 mt-3">
           <InputSlider
             disabled={disabled}
             defaultValue={1}
             value={value}
             min={1}
-            max={5}
+            max={10}
             step={0.1}
             onChange={onChange}
             marks={leverageMarks}
@@ -256,10 +241,13 @@ function DisplayValues(props: any) {
   const { title, value, unit = '', valueClassName = '', unitClassName = '', className = '' } = props;
 
   return (
-    <div className={`row ${className !== '' ? className : 'sumrow'} align-items-center text-color-secondary font-14`}>
-      <div className="col-auto">{title}</div>
-      <div className={`col contentsmallitem font-14-600 ${valueClassName}`}>
-        <span className="">{value}</span> <span className={`font-14 ${unitClassName}`}>{unit}</span>
+    <div
+      className={`${className !== '' ? className : 'sumrow'}
+      mb-3 flex items-center
+    `}>
+      <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
+      <div className={`flex-1 flex-shrink-0 text-right ${valueClassName}`}>
+        <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
   );
@@ -319,21 +307,23 @@ function EstimatedValueDisplay(props: any) {
 
   return (
     <>
-      <div className="row slipagerow align-items-center">
+      <div className="mb-3 flex items-center">
         <div className="font-14 text-color-secondary col-auto">
-          <TitleTips
-            titleText="Slippage Tolerance"
-            tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM"
-          />
+          <div className="text-[14px] text-[#a3c2ff]/[.48]">Slippage Tolerance</div>
+          {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
         </div>
-        <div className="col" style={{ display: 'flex', justifyContent: 'end' }}>
-          <div className={`slipagebg whitetext ${disabled ? 'disabled' : ''}`}>
+        <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
+          <div
+            className={`flex max-w-[100px] justify-end
+            rounded-[4px] bg-[#242652] px-[10px] py-1
+            ${disabled ? 'opacity-30' : ''}`}>
             <input
               disabled={disabled}
               title=""
               type="text"
               pattern="[0-9]*"
-              className="inputslip"
+              className="w-[90%] border-none border-[#242652] bg-[#242652] text-right
+                text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
               onChange={e => {
@@ -370,16 +360,16 @@ function EstimatedValueDisplay(props: any) {
       {/* <DisplayValuesWithTooltips title="Transaction Fee" value={fee} unit="WETH" tipsText="0.5% of the notional amount of the trade" /> */}
       <div className="row">
         <div className="col">
-          <div className="dividers" />
+          <div className="mb-6 h-[1px] bg-[#2e3064]" />
         </div>
       </div>
-      <div className="row detaillastrow align-items-center">
-        <div className="font-14 text-color-secondary col-auto">Total Balance Required</div>
-        <div className="col totalsizeback">
-          <span className="font-14-600">
+      <div className="mb-3 flex items-center">
+        <div className="text-[14px] text-[#a3c2ff]/[.48]">Total Balance Required</div>
+        <div className="flex-1 flex-shrink-0 text-right">
+          <span className=" text-[14px]">
             {isError || value <= 0 ? '-.--' : estimatedValue.cost ? formatterValue(estimatedValue.cost, 4, '') : '-.--'}
           </span>
-          <span className="font-12" style={{ marginLeft: 4 }}>
+          <span className="text-[12px]" style={{ marginLeft: 4 }}>
             WETH
           </span>
         </div>
@@ -407,7 +397,7 @@ function ConfirmButton(props: any) {
     setEstimatedValue,
     setEstPriceFluctuation,
     isFluctuationLimit,
-    collectWallet,
+    connectWallet,
     leverageValue,
     handleLeverageEnter,
     setToleranceRate,
@@ -579,21 +569,25 @@ function ConfirmButton(props: any) {
   return (
     <div className="flex">
       <div
-        className={`col confirmtradingbtnbgallow selectbehaviour ${disabled || isPending ? 'disabled' : ''}`}
-        onClick={
-          !isLoginState
-            ? collectWallet
-            : isWrongNetwork
-            ? performSwitchGeorli
-            : !isTethCollected
-            ? performGetTeth
-            : isApproveRequired
-            ? performApprove
-            : isNormal && !isProcessingOpenPos && !isPending && !disabled
-            ? connectContract
-            : null
-        }>
-        <div className="col confirmtradingbtntextallow">
+        className={`${disabled || isPending ? 'opacity-30' : ''}
+          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-[#2574fb]
+          px-[10px] py-[14px] text-center
+        `}
+        // onClick={
+        //   !isLoginState
+        //     ? connectWallet
+        //     : isWrongNetwork
+        //     ? performSwitchGeorli
+        //     : !isTethCollected
+        //     ? performGetTeth
+        //     : isApproveRequired
+        //     ? performApprove
+        //     : isNormal && !isProcessingOpenPos && !isPending && !disabled
+        //     ? connectContract
+        //     : null
+        // }
+      >
+        <div className="w-full text-center">
           {isProcessingOpenPos || isDataFetch ? (
             <div className="col loadingindicator mx-auto">
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
@@ -646,7 +640,9 @@ function Tips(props: any) {
   );
 
   return (
-    <div className="tips-container">
+    <div
+      className="mb-[17px] flex h-[16px] items-center text-[16px]
+      font-medium leading-[16px] text-[#FFC24B]/[.87]">
       <img src="/static/info_warning_icon.svg" alt="" className="icon" />
       <span className="warning-text">{label}</span>
     </div>
@@ -797,7 +793,7 @@ export default function TradeComponent(props: any) {
     isLoginState,
     refreshPositions,
     isWrongNetwork,
-    collectWallet,
+    connectWallet,
     getTestToken,
     isApproveRequired,
     setIsApproveRequired,
@@ -1143,7 +1139,7 @@ export default function TradeComponent(props: any) {
       />
       <div className="row">
         <div className="col">
-          <div className="dividers" />
+          <div className="mb-6 h-[1px] bg-[#2e3064]" />
         </div>
       </div>
       <EstimatedValueDisplay
@@ -1179,7 +1175,7 @@ export default function TradeComponent(props: any) {
         setEstimatedValue={setEstimatedValue}
         setEstPriceFluctuation={setEstPriceFluctuation}
         isFluctuationLimit={isFluctuationLimit}
-        collectWallet={collectWallet}
+        connectWallet={connectWallet}
         leverageValue={leverageValue}
         handleLeverageEnter={handleLeverageEnter}
         setToleranceRate={setToleranceRate}
