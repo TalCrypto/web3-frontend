@@ -9,7 +9,7 @@ export const calculateNumber = (value: any, toFixedNumber: number): string => {
   return Number(utils.formatEther(value.toString())).toFixed(toFixedNumber);
 };
 
-export const isPositive = (value: BigNumber): boolean => Number(calculateNumber(value, 5)) >= 0;
+export const isPositive = (value: any): boolean => Number(calculateNumber(value, 5)) >= 0;
 
 export const formatterValue = (value: number, toFixedNumber: number, suffix = '', defaultValue = '0.00'): string => {
   if (!value) {

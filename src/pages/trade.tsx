@@ -10,6 +10,7 @@ import { setIsTethCollected } from '@/stores/UserState';
 import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
 import SidebarCollection from '@/components/trade/desktop/trading/SidebarCollection';
 import InformationWindow from '@/components/trade/desktop/information/InformationWindow';
+import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 
 interface TradePagePros {
   router: any;
@@ -85,8 +86,8 @@ function TradePage(props: TradePagePros) {
       />
       <main>
         <div className="trading-window">
-          <div className="rowcontent container px-0">
-            <div className="hidden md:block lg:flex">
+          <div className="rowcontent px-0">
+            <div className="hidden md:block 2xl:flex">
               <div className="flex">
                 <SidebarCollection
                   currentToken={currentToken}
@@ -115,15 +116,15 @@ function TradePage(props: TradePagePros) {
                 />
               </div>
 
-              <div className="ml-[30px] block lg:flex-1">
-                {/* <ChartWindows
+              <div className="ml-[30px] block 2xl:flex-1">
+                <ChartWindows
                   // ref={graphRef}
                   tradingData={tradingData}
                   fullWalletAddress={fullWalletAddress}
                   currentToken={currentToken}
                   isLoginState={isLoginState}
                   isWrongNetwork={isWrongNetwork}
-                /> */}
+                />
 
                 {/* 
                 isLoginState ? (

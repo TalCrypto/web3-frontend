@@ -2,6 +2,14 @@
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx,mdx}', './src/components/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
+    screens: {
+      xs: '400px',
+      sm: '600px',
+      md: '840px',
+      lg: '968px',
+      xl: '1100px',
+      '2xl': '1300px'
+    },
     container: {
       center: true,
       // have default horizontal padding
@@ -12,8 +20,8 @@ module.exports = {
         sm: '600px',
         md: '840px',
         lg: '968px',
-        xl: '1200px',
-        '2xl': '1400px'
+        xl: '1100px',
+        '2xl': '1300px'
       }
     },
     extend: {

@@ -86,14 +86,14 @@ function SidebarCollection(props: any, ref: any) {
   return (
     <>
       <div
-        className="side-collection absolute mt-[9px] flex w-[44px] flex-col
-        rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-[#202249] px-[6px]
-        py-3
+        className="side-collection absolute  mt-[9px] flex w-[44px]
+        flex-col rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-[#202249]
+        px-[6px] py-3
       ">
         <div
           className={`item ${isLoading ? 'loading' : ''}
             relative flex h-8 w-8 cursor-pointer items-center rounded-full 
-            border-[4px] border-transparent`}
+            border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]`}
           onClick={() => setIsColModalVisible(true)}>
           <Image src="/images/collections/more.svg" width="24" height="24" alt="" />
           {isLoading ? (
@@ -109,12 +109,16 @@ function SidebarCollection(props: any, ref: any) {
             key={`sidecol-${item.collection}`}
             className={`${selectedCollection.collection === item.collection ? 'active' : ''} ${isLoading ? 'loading' : ''}
             relative mt-8 flex h-8 w-8 cursor-pointer items-center rounded-full
-            border-[4px] border-transparent`}
+            border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]`}
             onClick={() => selectCollection(item.collection)}>
+            {selectedCollection.collection === item.collection ? (
+              <div className="absolute right-[-10px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-[#2574fb]" />
+            ) : null}
+
             {/* <OverlayTrigger placement="right" overlay={<Tooltip>{item.displayCollectionPair}</Tooltip>}>
               <Image src={item.sidebarLogo} width="24" height="24" alt="" />
             </OverlayTrigger> */}
-            <Image src={item.sidebarLogo} width="24" height="24" alt="" />
+            <Image src={item.sidebarLogo} width="24" height="24" alt="" className="z-10" />
             {isHasPos(item.amm) ? <Image className="shop-icon" src="/static/shoppingbag-green.svg" width="10" height="10" alt="" /> : null}
             {isLoading ? (
               <div className="loading-indicator">

@@ -139,9 +139,11 @@ function TradingWindow(props: any) {
 
   return (
     <div
-      className="mb-[60px] ml-[44px] mr-[20px] flex w-full rounded-[6px] border-[1px] border-[#71aaff]/[.2]
-      bg-[#171833] p-6 px-[42px] py-[32px] text-white lg:w-[400px]
-    ">
+      className="mb-[60px] ml-[44px] mr-[20px] flex w-full
+        rounded-[6px] border-[1px] border-[#71aaff]/[.2]
+      bg-[#171833] p-6 px-[42px] py-[32px] text-white 2xl:w-[400px]
+    "
+      style={{ height: 'fit-content' }}>
       {/* {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null} */}
       {/* {userPosition !== null ? <div className="col selecttyperow">{tabs}</div> : null} */}
       <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition !== null ? displayComponent : tradeComponent}</div>

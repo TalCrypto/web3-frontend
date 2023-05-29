@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 function base(props: any, image: any) {
-  const { priceValue = 0, className = 'up', children, colorChange } = props;
+  const { priceValue = 0, children, colorChange, large } = props;
   const [localValue, setLocalValue] = useState('--.--');
   const [color, setColor] = useState('');
 
@@ -20,7 +20,10 @@ function base(props: any, image: any) {
   }, [priceValue, colorChange, localValue]);
 
   return (
-    <div className={`text-opacity-87 flex text-white ${className} ${color}`}>
+    <div
+      className={`text-opacity-87 flex text-white ${color}
+      ${large ? `text-[36px] font-semibold` : 'text-[14px]'}
+    `}>
       {image}
       {localValue}
       {children}
@@ -29,9 +32,27 @@ function base(props: any, image: any) {
 }
 
 export function PriceWithIcon(props: any) {
-  return base(props, <Image src="/images/common/symbols/eth-tribe3.svg" className="mr-[6px]" width={16} height={16} alt="" />);
+  return base(
+    props,
+    <Image
+      src="/images/common/symbols/eth-tribe3.svg"
+      className="mr-[6px]"
+      width={props.width ? props.width : 16}
+      height={props.height ? props.height : 16}
+      alt=""
+    />
+  );
 }
 
 export function PriceWithUsdc(props: any) {
-  return base(props, <Image src="/images/common/symbols/usdc.svg" className="mr-[6px]" width={16} height={16} alt="" />);
+  return base(
+    props,
+    <Image
+      src="/images/common/symbols/usdc.svg"
+      className="mr-[6px]"
+      width={props.width ? props.width : 16}
+      height={props.height ? props.height : 16}
+      alt=""
+    />
+  );
 }

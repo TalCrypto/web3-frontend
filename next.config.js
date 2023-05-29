@@ -8,6 +8,14 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     domains: ['i.seadn.io']
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/trade/:collection',
+        destination: '/trade?collection=:collection'
+      }
+    ];
   }
 };
 

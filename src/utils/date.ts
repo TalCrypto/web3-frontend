@@ -1,4 +1,4 @@
-export const formatDateTime = (value: number) => {
+export const formatDateTime = (value: number, format = 'DD/MM/YY HH:mm'): any => {
   const date = new Date(value * 1000);
   const year = date.getFullYear();
   const month = date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
@@ -6,6 +6,12 @@ export const formatDateTime = (value: number) => {
   const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
   const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
 
+  if (format === 'HH:mm') {
+    return `${hours}:${minutes}`;
+  }
+  if (format === 'DD/MM HH:mm') {
+    return `${day}/${month} ${hours}:${minutes}`;
+  }
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
 

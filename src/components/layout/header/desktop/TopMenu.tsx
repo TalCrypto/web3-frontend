@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { withRouter } from 'next/router';
 
 interface NavbarItem {
   name: string;
@@ -9,8 +10,8 @@ interface NavbarItem {
   child: NavbarItem[];
 }
 
-function TopMenu() {
-  const activePageName = 'Trade';
+function TopMenu(props: any) {
+  const { router } = props;
 
   const navbarList: NavbarItem[] = [
     { name: 'Portfolio', path: '/portfolio', other: '', child: [] },
@@ -42,8 +43,6 @@ function TopMenu() {
 
   const listUI = navbarList.map(({ name, path, other, child }) => {
     if (child.length !== 0) {
-      // const isSelected = child.reduce((pre, item) => pre || activePageName.toUpperCase() === item.name.toUpperCase(), false);
-
       return (
         <div
           key={name}
@@ -52,7 +51,7 @@ function TopMenu() {
           onMouseLeave={() => handleDropdown(name, false)}>
           <div
             className={`py-[16px], space-x-[6px], flex cursor-pointer items-center justify-center
-              ${activePageName.toUpperCase() === name.toUpperCase() ? 'active' : ''}
+              ${router.route.toUpperCase() === path.toUpperCase() ? 'active' : ''}
               active:hover text-clip bg-gradient-to-r from-pink-500 via-purple-500
               to-blue-500 bg-clip-text text-transparent`}>
             <div
@@ -88,9 +87,10 @@ function TopMenu() {
       <Link key={name} href={path}>
         <div
           className={`item cursor-pointer py-[16px]
-          ${activePageName.toUpperCase() === name.toUpperCase() ? 'active' : ''}`}>
+          ${router.route.toUpperCase() === path.toUpperCase() ? 'active' : ''}`}>
           {name}
           {other}
+          <div className="after absolute bottom-0 left-0 h-[3px] w-full rounded-[3px]" />
         </div>
       </Link>
     );
@@ -105,4 +105,4 @@ function TopMenu() {
   );
 }
 
-export default TopMenu;
+export default withRouter(TopMenu);

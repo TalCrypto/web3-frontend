@@ -16,7 +16,6 @@ function MobileFooter() {
   useEffect(() => {
     const handleBodyClick = (event: any) => {
       if (!event.target.closest('.footer') && !event.target.closest('.sidebar') && isSidebarShow) {
-        console.log('false');
         setIsSidebarShow(false);
       }
     };

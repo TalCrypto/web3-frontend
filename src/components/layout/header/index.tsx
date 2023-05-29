@@ -9,9 +9,9 @@ function Header() {
   return (
     <>
       <div
-        className="fixed left-0 right-0 top-0 z-10 hidden
+        className="fixed left-0 right-0 top-0 z-20 hidden
         w-full  bg-[#0c0d2099] shadow-md backdrop-blur-3xl md:block">
-        <div className="container px-0">
+        <div className="navbar container px-0">
           <div className="flex">
             <Link href="/">
               <div className="relative mr-[24px] flex h-full min-w-[93px] cursor-pointer items-center">

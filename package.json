@@ -21,6 +21,7 @@
     "ethereum-block-by-date": "^1.4.7",
     "ethers": "^5.7.2",
     "firebase": "^9.22.0",
+    "lightweight-charts": "^4.0.1",
     "localforage": "^1.10.0",
     "nanostores": "^0.8.1",
     "next": "13.4.2",

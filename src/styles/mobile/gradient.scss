@@ -34,3 +34,20 @@
     background: linear-gradient(180deg, #171731, rgba(23, 23, 49, 0) 0.01%, rgba(23, 25, 56, 0.49) 34.9%, #172c76);
   }
 }
+
+.navbar .item {
+  &:hover,
+  &.active {
+    background: linear-gradient(267.54deg, #f703d9 3.52%, #795af4 39.38%, #04aefc 80.93%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+
+    .after {
+      background: linear-gradient(267.54deg, #f703d9 3.52%, #795af4 39.38%, #04aefc 80.93%);
+      transition: all 0.2s;
+      transform: translateY(0px);
+    }
+  }
+}
