@@ -12,6 +12,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/',
+        destination: '/trade/BAYC'
+      },
+      {
         source: '/trade/:collection',
         destination: '/trade?collection=:collection'
       }

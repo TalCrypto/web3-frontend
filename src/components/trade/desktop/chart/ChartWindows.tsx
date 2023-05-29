@@ -74,32 +74,37 @@ function PriceIndicator(props: any) {
     return null;
   }
 
-  const className = `col-auto my-auto ${
-    isPositive(localPriceChangeRatioAndValue.priceChangeRatio) ? 'likeindex' : 'dislikeindex'
-  } indextext`;
+  const isLike = isPositive(localPriceChangeRatioAndValue.priceChangeRatio) ? 1 : 0;
+
   return isPriceChange ? (
-    <div className={className}>
+    <div
+      className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
+        text-center text-[15px] font-semibold leading-[18px]
+        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
       <div className="col my-auto" style={{ marginRight: '16px', alignItems: 'center', display: 'flex' }}>
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
     </div>
   ) : (
-    <div className={className}>
+    <div
+      className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
+        text-center text-[15px] font-semibold leading-[18px]
+        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
       <img
         alt="Polygon_pos"
-        src={isPositive(localPriceChangeRatioAndValue.priceChangeRatio) ? '/static/Polygon_pos.svg' : '/static/Polygon_neg.svg'}
-        style={{ marginRight: '8px', marginLeft: '16px' }}
+        src={
+          isPositive(localPriceChangeRatioAndValue.priceChangeRatio)
+            ? '/images/components/trade/chart/polygon_pos.svg'
+            : '/images/components/trade/chart/polygon_neg.svg'
+        }
+        className="ml-4 mr-2"
         width="16"
         height="16"
-        className="my-auto"
       />
-      <div className="col my-auto" style={{ marginRight: '16px', alignItems: 'center', display: 'flex' }}>
-        <div className="col my-auto">
-          {`${formatterValue(Math.abs(Number(localPriceChangeRatioAndValue.priceChangeValue)), 2, '')} (${formatterValue(
-            Math.abs(Number(localPriceChangeRatioAndValue.priceChangeRatio)),
-            2,
-            '%'
-          )})`}
+      <div>
+        <div className="mr-4">
+          {`${formatterValue(Math.abs(Number(localPriceChangeRatioAndValue.priceChangeValue)), 2, '')}
+          (${formatterValue(Math.abs(Number(localPriceChangeRatioAndValue.priceChangeRatio)), 2, '%')})`}
         </div>
       </div>
     </div>
@@ -334,7 +339,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
               </div>
             </div>
           </div>
-          <div className="col colcontent">
+          <div className="flex">
             <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={32} height={32} large />
             <PriceIndicator priceChangeRatioAndValue={priceChangeRatioAndValue} />
           </div>
