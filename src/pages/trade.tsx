@@ -11,6 +11,7 @@ import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
 import SidebarCollection from '@/components/trade/desktop/trading/SidebarCollection';
 import InformationWindow from '@/components/trade/desktop/information/InformationWindow';
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
+import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
 interface TradePagePros {
   router: any;
@@ -33,6 +34,8 @@ function TradePage(props: TradePagePros) {
   const [maxReduceValue, setMaxReduceValue] = useState('');
   const [historyRecords, setHistoryRecords] = useState([]);
   const [wethBalance, setWethBalance] = useState(0);
+  const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
+  const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
 
   const fetchInformations = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
@@ -126,8 +129,7 @@ function TradePage(props: TradePagePros) {
                   isWrongNetwork={isWrongNetwork}
                 />
 
-                {/* 
-                isLoginState ? (
+                {isLoginState ? (
                   <PositionDetails
                     userPosition={userPosition}
                     tradingData={tradingData}
@@ -139,7 +141,7 @@ function TradePage(props: TradePagePros) {
                     fullWalletAddress={fullWalletAddress}
                   />
                 ) : null}
-                */}
+
                 <InformationWindow
                   // ref={informationRef}
                   tradingData={tradingData}
