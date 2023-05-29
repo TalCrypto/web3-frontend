@@ -19,41 +19,6 @@ function InformationsWindows(props: any) {
   const chatRef = useRef();
   const [activeTab, setActiveTab] = useState(0);
 
-  // function getTabAnalytics(index) {
-  //   setDetailHeaderIndex(index);
-  //   const eventName = ['tribedetail_select_pressed', 'social_select_pressed', 'mytrades_reward_pressed'][index];
-
-  //   if (firebaseAnalytics) {
-  //     logEvent(firebaseAnalytics, eventName, {
-  //       wallet: fullWalletAddress.substring(2),
-  //       collection: currentToken // from tokenRef.current
-  //     });
-  //   }
-
-  //   apiConnection.postUserEvent(eventName, {
-  //     page: 'Trade',
-  //     collection: currentToken // from tokenRef.current
-  //   });
-  // }
-
-  // const tabsImages = [
-  //   <img src="/static/tribe_detail_icon.svg" className="icon" alt="" />,
-  //   <img src="/static/social_icon.svg" className="icon" alt="" />,
-  //   <img src="/static/reward_icon.svg" className="icon" alt="" />,
-  //   <img src="/static/twitter_icon.svg" className="icon" alt="" />
-  // ];
-
-  // const Tabs = ['Tribe Details', 'Social', 'Rewards'].map((item, index) => (
-  //   <div
-  //     className={`tab-folder flex items-center justify-center font-16-600 text-highEmphasis ${detailHeaderIndex === index ? 'selected' : ''}`}
-  //     key={item}
-  //     onClick={() => getTabAnalytics(index)}
-  //   >
-  //     {tabsImages[index]}
-  //     {item}
-  //   </div>
-  // ));
-
   const tabsImages = [
     <Image src="/images/components/trade/tab_market.svg" className="mr-[6px]" width={20} height={20} alt="" />,
     <Image src="/images/components/trade/tab_spot.svg" className="mr-[6px]" width={20} height={20} alt="" />,
@@ -68,7 +33,8 @@ function InformationsWindows(props: any) {
       key={item}
       onClick={() => setActiveTab(index)}>
       {tabsImages[index]}
-      {item}
+      <span className="hidden 2xl:block">{item}</span>
+      <span className="block 2xl:hidden">{item.split(' ')[0]}</span>
     </div>
   ));
 

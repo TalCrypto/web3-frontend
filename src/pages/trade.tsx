@@ -86,44 +86,47 @@ function TradePage(props: TradePagePros) {
       <main>
         <div className="trading-window">
           <div className="rowcontent container px-0">
-            <div className="flex">
-              <SidebarCollection
-                currentToken={currentToken}
-                setCurrentToken={setCurrentToken}
-                fullWalletAddress={fullWalletAddress}
-                isLoginState={isLoginState}
-                isWrongNetwork={isWrongNetwork}
-                isShowPopup={isShowPopup}
-                setIsShowPopup={setIsShowPopup}
-              />
+            <div className="hidden md:block lg:flex">
+              <div className="flex">
+                <SidebarCollection
+                  currentToken={currentToken}
+                  setCurrentToken={setCurrentToken}
+                  fullWalletAddress={fullWalletAddress}
+                  isLoginState={isLoginState}
+                  isWrongNetwork={isWrongNetwork}
+                  isShowPopup={isShowPopup}
+                  setIsShowPopup={setIsShowPopup}
+                />
 
-              <TradingWindow
-                currentToken={currentToken}
-                isLoginState={isLoginState}
-                isWrongNetwork={isWrongNetwork}
-                fullWalletAddress={fullWalletAddress}
-                wethBalance={wethBalance}
-                // collectWallet={() => navbarRef.current?.connectWallet(() => {}, true)}
-                // getTestToken={navbarRef.current?.getTestToken}
-                refreshPositions={fetchPositions}
-                userPosition={userPosition}
-                tradingData={tradingData}
-                // isApproveRequired={isApproveRequired}
-                // setIsApproveRequired={setIsApproveRequired}
-                maxReduceValue={maxReduceValue}
-              />
+                <TradingWindow
+                  currentToken={currentToken}
+                  isLoginState={isLoginState}
+                  isWrongNetwork={isWrongNetwork}
+                  fullWalletAddress={fullWalletAddress}
+                  wethBalance={wethBalance}
+                  // collectWallet={() => navbarRef.current?.connectWallet(() => {}, true)}
+                  // getTestToken={navbarRef.current?.getTestToken}
+                  refreshPositions={fetchPositions}
+                  userPosition={userPosition}
+                  tradingData={tradingData}
+                  // isApproveRequired={isApproveRequired}
+                  // setIsApproveRequired={setIsApproveRequired}
+                  maxReduceValue={maxReduceValue}
+                />
+              </div>
 
-              <div className="ml-[49px] flex-1">
-                {/* 
-                <ChartWindows
-                  ref={graphRef}
+              <div className="ml-[30px] block lg:flex-1">
+                {/* <ChartWindows
+                  // ref={graphRef}
                   tradingData={tradingData}
                   fullWalletAddress={fullWalletAddress}
                   currentToken={currentToken}
                   isLoginState={isLoginState}
                   isWrongNetwork={isWrongNetwork}
-                />
-                {isLoginState ? (
+                /> */}
+
+                {/* 
+                isLoginState ? (
                   <PositionDetails
                     userPosition={userPosition}
                     tradingData={tradingData}

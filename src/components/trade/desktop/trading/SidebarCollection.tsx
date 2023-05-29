@@ -86,7 +86,7 @@ function SidebarCollection(props: any, ref: any) {
   return (
     <>
       <div
-        className="side-collection absolute ml-[-44px] mt-[9px] flex w-[44px] flex-col
+        className="side-collection absolute mt-[9px] flex w-[44px] flex-col
         rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-[#202249] px-[6px]
         py-3
       ">

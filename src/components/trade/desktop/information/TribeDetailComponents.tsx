@@ -368,16 +368,16 @@ function TribeDetailComponents(props: any, ref: any) {
 
   return (
     <>
-      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[90%]`}>
+      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
         {/* <Overview tradingData={tradingData}>
           <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} />
         </Overview> */}
         <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
-      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[90%]`}>
+      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
         <SpotTable ref={spotRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
-      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[90%]`}>
+      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
         <FundingPaymentHistory ref={fundingPaymentRef} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
     </>
