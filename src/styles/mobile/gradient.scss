@@ -1,0 +1,53 @@
+.btn-connect {
+  background: linear-gradient(267.54deg, rgba(247, 3, 217, 0.3) 3.52%, rgba(121, 90, 244, 0.3) 39.38%, rgba(4, 174, 252, 0.3) 80.93%);
+}
+
+.btn-connect-before {
+  background: linear-gradient(180deg, #c187d0 0%, #3576f7 39.06%, #8d05f7 100%);
+  // -webkit-mask: -webkit-linear-gradient(#171833 0 0) content-box, -webkit-linear-gradient(#171833 0 0);
+  // -webkit-mask-composite: source-out;
+}
+
+.sidebar-profile {
+  background: linear-gradient(267.54deg, #611975 3.52%, #38357d 39.38%, #184c7f 80.93%);
+}
+
+.long-selected {
+  background: linear-gradient(267.3deg, #78f363 4.35%, #5dbb4d 50.17%, #4b973e 90.61%);
+}
+
+.short-selected {
+  background: linear-gradient(267.3deg, #ff5656 4.35%, #f24747 50.17%, #e03434 95.35%);
+}
+
+.input-with-text {
+  background-image: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.info-tab {
+  background: linear-gradient(180deg, #171731, #0c0d1f);
+
+  .tab.selected {
+    background: linear-gradient(180deg, #171731, rgba(23, 23, 49, 0) 0.01%, rgba(23, 25, 56, 0.49) 34.9%, #172c76);
+  }
+}
+
+.navbar .item {
+  &:hover,
+  &.active {
+    background: linear-gradient(267.54deg, #f703d9 3.52%, #795af4 39.38%, #04aefc 80.93%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+
+    .after {
+      background: linear-gradient(267.54deg, #f703d9 3.52%, #795af4 39.38%, #04aefc 80.93%);
+      transition: all 0.2s;
+      transform: translateY(0px);
+    }
+  }
+}

@@ -318,8 +318,8 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
     .then(resJson => resJson.data.reserveSnapshottedEvents);
 
   const result = {
-    timestamp: Number(positions[0].timestamp),
-    spotPrice: BigNumber.from(positions[0].spotPrice)
+    timestamp: Number(positions[0] ? positions[0].timestamp : 0),
+    spotPrice: BigNumber.from(positions[0] ? positions[0].spotPrice : 0)
   };
 
   return positions.length > 0 ? result : null;
