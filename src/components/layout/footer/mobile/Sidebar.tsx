@@ -21,7 +21,7 @@ function Sidebar() {
     {
       name: 'Trade',
       handle: () => {
-        window.location.href = '/trade/BAYC';
+        window.location.href = '/trade/bayc';
       }
     },
     {

@@ -78,7 +78,7 @@ function SidebarCollection(props: any, ref: any) {
     // tokenRefCurrent.current = token;
     setCurrentToken(token);
 
-    router.push(`/trade/${token}`, undefined, { shallow: true });
+    router.push(`/trade/${token.toLowerCase()}`, undefined, { shallow: true });
   };
 
   const isHasPos = (amm: any) => overviewData.find((i: any) => i?.amm === amm) || false;

@@ -13,7 +13,7 @@ function Header() {
         w-full  bg-[#0c0d2099] shadow-md backdrop-blur-3xl md:block">
         <div className="navbar container px-0">
           <div className="flex">
-            <Link href="/">
+            <Link href="/trade/bayc">
               <div className="relative mr-[24px] flex h-full min-w-[93px] cursor-pointer items-center">
                 <Image src="/images/logos/nav_logo.svg" alt="" width={93} height={46} />
                 <div
