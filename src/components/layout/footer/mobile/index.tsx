@@ -30,13 +30,13 @@ function MobileFooter() {
       <div
         className="footer backface-visibility-hidden z-600 duration-400 fixed
           bottom-0 left-0 box-border block h-[64px] w-full transform bg-[#202249]
-          px-2 text-white md:hidden">
+          pr-2 text-white md:hidden">
         <div
           className="box-border flex h-full w-full
             content-center items-center justify-normal overflow-hidden">
           <button
-            className="text-opacity-87 relative ml-5 box-border h-9 w-32
-              flex-shrink-0 overflow-ellipsis whitespace-nowrap rounded-md
+            className="text-opacity-87 relative box-border h-full w-[124px]
+              flex-shrink-0 overflow-ellipsis whitespace-nowrap
               bg-[#2574FB] text-xs font-semibold capitalize text-white
               transition duration-100"
             onClick={handleGoToTrade}>
