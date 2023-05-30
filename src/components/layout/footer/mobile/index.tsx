@@ -74,7 +74,7 @@ function MobileFooter() {
       </div>
 
       <div
-        className={`sidebar translate-z-0 absolute right-0 top-0
+        className={`sidebar translate-z-0 fixed right-0 top-0
         ${isSidebarShow ? 'block' : 'hidden'}
         z-10 h-full w-[260px] text-white`}>
         <Sidebar />
