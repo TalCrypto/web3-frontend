@@ -93,9 +93,15 @@ function SidebarCollection(props: any, ref: any) {
         <div
           className={`item ${isLoading ? 'loading' : ''}
             relative flex h-8 w-8 cursor-pointer items-center rounded-full 
-            border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]`}
+             hover:border-[hsla(0,0%,100%,.2)]`}
           onClick={() => setIsColModalVisible(true)}>
-          <Image src="/images/collections/more.svg" width="24" height="24" alt="" />
+          <Image
+            src="/images/collections/more.svg"
+            width="32"
+            height="32"
+            alt=""
+            className="border-[4px] border-transparent hover:border-[4px]"
+          />
           {isLoading ? (
             <div className="loading-indicator">
               <div className="spinner-border spinner-border-sm text-light" role="status">
@@ -108,17 +114,26 @@ function SidebarCollection(props: any, ref: any) {
           <div
             key={`sidecol-${item.collection}`}
             className={`${selectedCollection.collection === item.collection ? 'active' : ''} ${isLoading ? 'loading' : ''}
-            relative mt-8 flex h-8 w-8 cursor-pointer items-center rounded-full
-            border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]`}
+            relative mt-8 flex h-8 w-8 cursor-pointer items-center`}
             onClick={() => selectCollection(item.collection)}>
             {selectedCollection.collection === item.collection ? (
-              <div className="absolute right-[-10px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-[#2574fb]" />
+              <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-[#2574fb]" />
+            ) : null}
+
+            {item.isNew ? (
+              <Image className="absolute right-[-12px] top-[-4px] z-[12]" src="/images/collections/new.svg" alt="" width={26} height={12} />
             ) : null}
 
             {/* <OverlayTrigger placement="right" overlay={<Tooltip>{item.displayCollectionPair}</Tooltip>}>
               <Image src={item.sidebarLogo} width="24" height="24" alt="" />
             </OverlayTrigger> */}
-            <Image src={item.sidebarLogo} width="24" height="24" alt="" className="z-10" />
+            <Image
+              src={item.sidebarLogo}
+              width="32"
+              height="32"
+              alt=""
+              className="z-10 rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
+            />
             {isHasPos(item.amm) ? <Image className="shop-icon" src="/static/shoppingbag-green.svg" width="10" height="10" alt="" /> : null}
             {isLoading ? (
               <div className="loading-indicator">

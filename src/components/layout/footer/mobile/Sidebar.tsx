@@ -21,7 +21,7 @@ function Sidebar() {
     {
       name: 'Trade',
       handle: () => {
-        window.location.href = '/trade/bayc';
+        window.location.href = '/trade/degods';
       }
     },
     {
@@ -52,17 +52,13 @@ function Sidebar() {
       <div className="z-1 relative box-border h-full overflow-auto overscroll-auto">
         <div className="h-[80%] overflow-auto">
           {modules.map(({ name, handle }) => (
-            <div
-              key={name}
-              className="text-opacity-87 ml-8 mt-6 text-base
-                  font-medium text-white"
-              onClick={handle}>
+            <div key={name} className="ml-8 mt-6 text-base font-medium text-white/[.87]" onClick={handle}>
               {name}
             </div>
           ))}
 
           <div className="ml-8 mt-6 h-[1px] bg-[#c3d8ff]/[.48] pr-9" />
-          <div className="text-opacity-87 mobile_no-margin__NrHZj ml-8 mt-6 flex text-base font-medium text-white">
+          <div className="mobile_no-margin__NrHZj ml-8 mt-6 flex text-base font-medium text-white/[.87]">
             Referral <Image src="/images/mobile/common/gift.svg" width={16} height={16} alt="" className="ml-[6px]" />
           </div>
           <div className="relative ml-8 mt-6 flex flex-col bg-transparent">
@@ -84,9 +80,9 @@ function Sidebar() {
             </div>
             {isWalletOpen ? (
               <div className="accordion-item-content">
-                <div className="text-opacity-87 mobile_top__bW5rl mt-6 pl-6 text-[14px] font-medium text-white">Disconnect Wallet</div>
-                <div className="text-opacity-87 mt-6 pl-6 text-[14px] font-medium text-white">Get GoerliETH</div>
-                <div className="text-opacity-87 mt-6 pl-6 text-[14px] font-medium text-white">Get TETH</div>
+                <div className="mobile_top__bW5rl mt-6 pl-6 text-[14px] font-medium text-white/[.87]">Disconnect Wallet</div>
+                <div className="mt-6 pl-6 text-[14px] font-medium text-white/[.87]">Get GoerliETH</div>
+                <div className="mt-6 pl-6 text-[14px] font-medium text-white/[.87]">Get TETH</div>
               </div>
             ) : null}
           </div>
@@ -109,20 +105,20 @@ function Sidebar() {
             </div>
             {isFeedbackOpen ? (
               <div className="accordion-item-content">
-                <div className="text-opacity-87 mobile_top__bW5rl mt-6 pl-6 text-[14px] font-medium text-white">Product Feedback</div>
-                <div className="text-opacity-87 mt-6 pl-6 text-[14px] font-medium text-white">Report Issues</div>
-                <div className="text-opacity-87 mt-6 pl-6 text-[14px] font-medium text-white">Partnership</div>
+                <div className="mobile_top__bW5rl mt-6 pl-6 text-[14px] font-medium text-white/[.87]">Product Feedback</div>
+                <div className="mt-6 pl-6 text-[14px] font-medium text-white/[.87]">Report Issues</div>
+                <div className="mt-6 pl-6 text-[14px] font-medium text-white/[.87]">Partnership</div>
               </div>
             ) : null}
           </div>
-          <div className="text-opacity-87 mobile_no-margin__NrHZj ml-8 mt-6 text-base font-medium text-white">Docs</div>
+          <div className="mobile_no-margin__NrHZj ml-8 mt-6 text-base font-medium text-white/[.87]">Docs</div>
         </div>
         <div
           className="sidebar-profile absolute bottom-0 left-0 right-0 mt-6 h-[110px]
             bg-[#000000] pt-[10px]">
           <div className="px-6 pb-0 pt-2">
             <div className="flex flex-initial items-center justify-between">
-              <div className="text-opacity-87 text-[16px] font-semibold text-white">Unnamed</div>
+              <div className="text-[16px] font-semibold text-white/[.87]">Unnamed</div>
               <div className="text-semibold text-[12px] text-[#2574fb]">View&gt;</div>
             </div>
             <div className="mt-2 flex flex-initial items-center justify-start">

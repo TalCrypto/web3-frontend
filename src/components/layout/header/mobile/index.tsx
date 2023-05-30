@@ -112,9 +112,9 @@ function MobileHeader() {
         </div>
         <div className="ml-[10px] flex items-center justify-start">
           <button
-            className="btn-connect text-opacit-87 relative relative
+            className="btn-connect relative 
             flex h-[25px] flex-initial items-center justify-center rounded-[100px]
-            border-0 px-2 py-1 text-[14px] font-medium text-white"
+            border-0 px-2 py-1 text-[14px] font-medium text-white/[.87]"
             onClick={handleClickConnectButton}>
             <div
               className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full
@@ -129,10 +129,9 @@ function MobileHeader() {
           </button>
 
           {isShowMenu ? (
-            <div className="popover absolute right-[20px] top-[50px] w-[150px] rounded bg-[#202249]">
+            <div className="popover absolute right-[20px] top-[50px] z-[1] w-[150px] rounded bg-[#202249]">
               <div
-                className="text-opacity-87 flex
-                py-3 pl-4 text-[14px] font-medium text-white"
+                className="flex py-3 pl-4 text-[14px] font-medium text-white/[.87]"
                 onClick={() => {
                   // logEventByName('reward_pressed');
                   window.location.href = '/reward';
@@ -141,22 +140,13 @@ function MobileHeader() {
                 <Image src="/images/mobile/common/gift.svg" className="ml-3" alt="" width={20} height={20} />
               </div>
               <div className="mx-[10px] my-5  h-[1px] w-[130px] bg-[#c3d8ff]/[.48]" />
-              <div
-                className="text-opacity-87 py-3
-              pl-4 text-[14px] font-medium text-white"
-                onClick={() => handlePopOverItemClick(1)}>
+              <div className="py-3 pl-4 text-[14px] font-medium text-white/[.87]" onClick={() => handlePopOverItemClick(1)}>
                 Disconnect
               </div>
-              <div
-                className="text-opacity-87 py-3
-              pl-4 text-[14px] font-medium text-white"
-                onClick={() => handlePopOverItemClick(2)}>
+              <div className="py-3 pl-4 text-[14px] font-medium text-white/[.87]" onClick={() => handlePopOverItemClick(2)}>
                 Get GoerliETH
               </div>
-              <div
-                className="text-opacity-87 py-3
-              pl-4 text-[14px] font-medium text-white"
-                onClick={() => handlePopOverItemClick(3)}>
+              <div className="py-3 pl-4 text-[14px] font-medium text-white/[.87]" onClick={() => handlePopOverItemClick(3)}>
                 Get TETH
               </div>
             </div>

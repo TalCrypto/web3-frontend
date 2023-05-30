@@ -35,9 +35,9 @@ function MobileFooter() {
           className="box-border flex h-full w-full
             content-center items-center justify-normal overflow-hidden">
           <button
-            className="text-opacity-87 relative box-border h-full w-[124px]
+            className="relative box-border h-full w-[124px]
               flex-shrink-0 overflow-ellipsis whitespace-nowrap
-              bg-[#2574FB] text-xs font-semibold capitalize text-white
+              bg-[#2574FB] text-xs font-semibold capitalize text-white/[.87]
               transition duration-100"
             onClick={handleGoToTrade}>
             {isLoading ? (
@@ -53,12 +53,12 @@ function MobileFooter() {
             )}
           </button>
           {isLogin ? (
-            <div className="ml-6 flex-1 text-xs font-normal text-[#a8cbff] text-opacity-75">
+            <div className="ml-6 flex-1 text-xs font-normal text-[#a8cbff]/[.75]">
               Wallet Balance
-              <div className="text-opacity-87 text-base font-semibold text-white">{wethBalance} TETH</div>
+              <div className="text-base font-semibold text-white/[.87]">{wethBalance} TETH</div>
             </div>
           ) : (
-            <div className="ml-6 flex-1 text-xs font-normal text-[#a8cbff] text-opacity-75 ">
+            <div className="ml-6 flex-1 text-xs font-normal text-[#a8cbff]/[.75]">
               Please connect
               <br />
               wallet to trade

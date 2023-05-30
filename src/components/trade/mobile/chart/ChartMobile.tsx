@@ -198,7 +198,7 @@ function ChartTimeTabs(props: any) {
             <label
               htmlFor={item.label}
               className={`block p-2 text-[14px] 
-                ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-[#A8CBFF] text-opacity-75'}`}>
+                ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-[#A8CBFF]/[.75]'}`}>
               {item.label}
             </label>
           </div>

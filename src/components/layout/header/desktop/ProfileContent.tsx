@@ -77,11 +77,7 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
           <div className="mr-[4px]">
             <Image src="/images/components/layout/header/crown_silver.png" width={17} height={18} alt="" />
           </div>
-          <span
-            className="text gradient-bg-tops-text text-opacity-87 !bg-clip-text text-[12px]
-            font-semibold text-white">
-            NO TITLE
-          </span>
+          <span className="text gradient-bg-tops-text !bg-clip-text text-[12px] font-semibold text-white/[.87]">NO TITLE</span>
         </div>
       </div>
       <div className="px-6 pb-0 pt-2 text-[14px] font-medium text-[#a8cbffbf]">User ID</div>

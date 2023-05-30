@@ -21,7 +21,7 @@ function base(props: any, image: any) {
 
   return (
     <div
-      className={`text-opacity-87 flex text-white ${color}
+      className={`flex text-white/[.87] ${color}
       ${large ? `text-[36px] font-semibold` : 'text-[14px]'}
       ${medium ? `text-[24px] font-semibold` : 'text-[14px]'}
     `}>

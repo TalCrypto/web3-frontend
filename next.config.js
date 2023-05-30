@@ -13,7 +13,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/trade/bayc'
+        destination: '/trade/degods'
       },
       {
         source: '/trade/:collection',

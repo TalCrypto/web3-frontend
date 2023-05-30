@@ -1,5 +1,45 @@
 export default [
   {
+    name: 'DEGODS/ETH',
+    title: 'DeGods',
+    image: '/images/collections/small/degods.svg',
+    amm: process.env.NEXT_PUBLIC_DEGODS_AMM_ADDRESS || '',
+    collection: 'DEGODS',
+    contract: process.env.NEXT_PUBLIC_DEGODS_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/degods.svg',
+    sidebarLogo: '/images/collections/normal/degods.svg',
+    collectionName: 'DEGODS',
+    collectionType: 'DEGODS',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'https://degods.com//',
+    twitterUrl: 'https://twitter.com/DeGodsNFT',
+    discordUrl: 'https://discord.gg/dedao',
+    etherscanUrl: 'https://etherscan.io/token/0x1821363abc9E33f1bfbE3f96F7C68ECa7f6Af2BD',
+    shortName: 'DEGODS',
+    displayCollectionPair: 'DEGODS/WETH',
+    isNew: true
+  },
+  {
+    name: 'CAPTAINZ/ETH',
+    title: 'Captainz',
+    image: '/images/collections/small/captainz.svg',
+    amm: process.env.NEXT_PUBLIC_CAPTAINZ_AMM_ADDRESS || '',
+    collection: 'CAPTAINZ',
+    contract: process.env.NEXT_PUBLIC_CAPTAINZ_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/captainz.svg',
+    sidebarLogo: '/images/collections/normal/captainz.svg',
+    collectionName: 'CAPTAINZ',
+    collectionType: 'CAPTAINZ',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'http://memeland.com/captainz/',
+    twitterUrl: 'https://www.twitter.com/Memeland',
+    discordUrl: 'https://discord.gg/memeland',
+    etherscanUrl: 'https://etherscan.io/address/0x769272677fab02575e84945f03eca517acc544cc',
+    shortName: 'CAPTAINZ',
+    displayCollectionPair: 'CAPTAINZ/WETH',
+    isNew: true
+  },
+  {
     name: 'BAYC/ETH',
     title: 'Bored Ape Yacht Club',
     image: '/images/collections/small/bayc.svg',
@@ -16,7 +56,8 @@ export default [
     discordUrl: 'https://discord.com/invite/3P5K3dzgdB',
     etherscanUrl: 'https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
     shortName: 'BAYC',
-    displayCollectionPair: 'BAYC/WETH'
+    displayCollectionPair: 'BAYC/WETH',
+    isNew: false
   },
   {
     name: 'MAYC/ETH',
@@ -35,7 +76,8 @@ export default [
     discordUrl: 'https://discord.com/invite/3P5K3dzgdB',
     etherscanUrl: 'https://etherscan.io/token/0x60e4d786628fea6478f785a6d7e704777c86a7c6',
     shortName: 'MAYC',
-    displayCollectionPair: 'MAYC/WETH'
+    displayCollectionPair: 'MAYC/WETH',
+    isNew: false
   },
   {
     name: 'AZUKI/ETH',
@@ -54,7 +96,8 @@ export default [
     discordUrl: 'https://discord.com/invite/azuki',
     etherscanUrl: 'https://etherscan.io/token/0xed5af388653567af2f388e6224dc7c4b3241c544',
     shortName: 'AZUKI',
-    displayCollectionPair: 'AZUKI/WETH'
+    displayCollectionPair: 'AZUKI/WETH',
+    isNew: false
   },
   {
     name: 'PUNKS/ETH',
@@ -73,50 +116,9 @@ export default [
     discordUrl: 'https://discord.com/invite/4JMAauFZBq',
     etherscanUrl: 'https://etherscan.io/token/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb',
     shortName: 'PUNKS',
-    displayCollectionPair: 'PUNKS/WETH'
-  },
-
-  {
-    name: 'DEGODS/ETH',
-    title: 'DeGods',
-    image: '/static/degods.svg',
-    amm: process.env.NEXT_PUBLIC_DEGODS_AMM_ADDRESS || '',
-    collection: 'DEGODS',
-    contract: process.env.NEXT_PUBLIC_DEGODS_CONTRACT_ADDRESS || '',
-    logo: '/static/big_degods.svg',
-    sidebarLogo: '/static/collections/degods.svg',
-    collectionName: 'DEGODS',
-    collectionType: 'DEGODS',
-    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
-    homeUrl: 'https://degods.com//',
-    twitterUrl: 'https://twitter.com/DeGodsNFT',
-    discordUrl: 'https://discord.gg/dedao',
-    etherscanUrl: 'https://etherscan.io/token/0x1821363abc9E33f1bfbE3f96F7C68ECa7f6Af2BD',
-    shortName: 'DEGODS',
-    displayCollectionPair: 'DEGODS/WETH',
-    isNew: true
-  },
-  {
-    name: 'CAPTAINZ/ETH',
-    title: 'Captainz',
-    image: '/static/captainz.svg',
-    amm: process.env.NEXT_PUBLIC_CAPTAINZ_AMM_ADDRESS || '',
-    collection: 'CAPTAINZ',
-    contract: process.env.NEXT_PUBLIC_CAPTAINZ_CONTRACT_ADDRESS || '',
-    logo: '/static/big_captainz.svg',
-    sidebarLogo: '/static/collections/captainz.svg',
-    collectionName: 'CAPTAINZ',
-    collectionType: 'CAPTAINZ',
-    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
-    homeUrl: 'http://memeland.com/captainz/',
-    twitterUrl: 'https://www.twitter.com/Memeland',
-    discordUrl: 'https://discord.gg/memeland',
-    etherscanUrl: 'https://etherscan.io/address/0x769272677fab02575e84945f03eca517acc544cc',
-    shortName: 'CAPTAINZ',
-    displayCollectionPair: 'CAPTAINZ/WETH',
-    isNew: true
+    displayCollectionPair: 'PUNKS/WETH',
+    isNew: false
   }
-
   // {
   //   name: 'DOODLES/ETH',
   //   title: 'Doodles',
