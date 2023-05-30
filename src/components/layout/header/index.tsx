@@ -35,7 +35,7 @@ function Header() {
         </div>
       </div>
 
-      <div className="block md:hidden">
+      <div className="block bg-[#171833] md:hidden">
         <MobileHeader />
       </div>
     </>

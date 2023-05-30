@@ -410,13 +410,13 @@ function TabsInfo(props: any, ref: any) {
 
   return (
     <>
-      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-full`}>
         <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
-      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-full`}>
         <SpotTable ref={spotRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
-      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-full`}>
         <FundingPaymentHistory ref={fundingPaymentRef} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
     </>

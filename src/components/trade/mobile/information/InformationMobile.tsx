@@ -43,7 +43,7 @@ function InformationMobile(props: any) {
 
   return (
     <div
-      className="mb-[24px] mr-auto mt-[20px] max-h-[1000px] cursor-default overflow-hidden
+      className="mb-[24px] mr-auto mt-[20px] cursor-default overflow-hidden
       whitespace-nowrap rounded-[6px] border-0 border-t-[1px] border-t-[#71AAFF]/[.12] p-0 pb-10">
       <div
         className="info-tab no-scrollable mb-6 flex items-center overflow-x-scroll

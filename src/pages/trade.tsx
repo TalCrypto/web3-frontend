@@ -14,6 +14,7 @@ import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
 import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
+import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 
 interface TradePagePros {
   router: any;
@@ -168,7 +169,16 @@ function TradePage(props: TradePagePros) {
           /> */}
         </div>
 
-        <div className="block md:hidden">
+        <div className="block bg-[#171833] md:hidden">
+          <ChartMobile
+            // ref={graphRef}
+            tradingData={tradingData}
+            fullWalletAddress={fullWalletAddress}
+            currentToken={currentToken}
+            isLoginState={isLoginState}
+            isWrongNetwork={isWrongNetwork}
+          />
+
           <InformationMobile
             tradingData={tradingData}
             isLoginState={isLoginState}
