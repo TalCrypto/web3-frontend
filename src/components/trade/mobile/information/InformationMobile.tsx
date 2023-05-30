@@ -30,7 +30,7 @@ function InformationMobile(props: any) {
         ${activeTab === index ? 'selected' : ''}`}
       key={item}
       onClick={(event: any) => onClickTab(event, index)}>
-      <span className="text-[14px] font-medium">{item}</span>
+      <span className="text-[14px] font-medium text-white/[.87]">{item}</span>
     </div>
   ));
 
@@ -43,11 +43,11 @@ function InformationMobile(props: any) {
 
   return (
     <div
-      className="mb-[24px] mr-auto mt-[20px] h-[530px] max-h-[1000px] cursor-default overflow-hidden
-      whitespace-nowrap rounded-[6px] border-[1px] border-[#2e4371] p-0 pb-10">
+      className="mb-[24px] mr-auto mt-[20px] max-h-[1000px] cursor-default overflow-hidden
+      whitespace-nowrap rounded-[6px] border-0 border-t-[1px] border-t-[#71AAFF]/[.12] p-0 pb-10">
       <div
-        className="info-tab no-scrollable mb-6 flex items-center
-          border-b-[2px] border-b-[#2e3064]">
+        className="info-tab no-scrollable mb-6 flex items-center overflow-x-scroll
+          border-b-[2px] border-b-[#71AAFF]/[.12]">
         {Tabs}
       </div>
       <div className="display-content h-full">

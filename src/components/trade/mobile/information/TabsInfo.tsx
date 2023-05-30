@@ -74,6 +74,7 @@ const SpotTable = forwardRef((props: any, ref: any) => {
   const { fullWalletAddress, /* tokenRef, */ currentToken } = props;
   const [openseaData, setOpenseaData] = useState([]);
   const firstRender = useRef(true);
+  const [displayCount, setDisplayCount] = useState(10);
 
   const fetchSpotPriceList = useCallback(async () => {
     setOpenseaData([]);
@@ -95,10 +96,10 @@ const SpotTable = forwardRef((props: any, ref: any) => {
   }, [fetchSpotPriceList]);
 
   return (
-    <div className="scrollable mx-[20px] h-full overflow-y-scroll">
+    <div className="mx-[20px]">
       <Cell items={['Item', 'Price', 'Time', '']} classNames={['col-span-3', 'col-span-3 px-2 ', 'col-span-4 px-1', 'col-span-2']} />
       {openseaData.length > 0 ? (
-        openseaData?.map((data: IOpenseaData) => {
+        openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
           const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
           const src = !asset
             ? asset_bundle.assets[0].image_preview_url
@@ -164,6 +165,19 @@ const SpotTable = forwardRef((props: any, ref: any) => {
           <span className="body1 my-40 text-center text-mediumEmphasis">There is no spot info.</span>
         </div>
       )}
+
+      {openseaData.length > 0 ? (
+        displayCount >= openseaData.length ? null : (
+          <div
+            className="text-center text-[14px] font-semibold text-[#2574FB]"
+            onClick={() => {
+              // logHelper('overview_show_more_pressed', holderAddress, { collection });
+              setDisplayCount(displayCount + 5);
+            }}>
+            Show More
+          </div>
+        )
+      ) : null}
     </div>
   );
 });
@@ -199,6 +213,7 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
   const { fullWalletAddress, currentToken } = props;
   const [marketHistory, setMarketHistory] = useState([]);
   const firstRender = useRef(true);
+  const [displayCount, setDisplayCount] = useState(10);
 
   const fetchMarketHistory = useCallback(async () => {
     await getMarketHistory(getCollectionInformation(currentToken).amm).then(data => setMarketHistory(data)); // from tokenRef.current
@@ -219,40 +234,55 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
   };
 
   return (
-    <div className="scrollable mx-[20px] h-full overflow-y-scroll">
+    <div className="mx-[20px]">
       <Cell
         items={['Time/Type', 'Contract Size', 'Resulting Price', '']}
         classNames={['col-span-4', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
       />
       {marketHistory.length > 0 ? (
-        marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
-          <Cell
-            key={`${timestamp}`}
-            rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
-            items={[
-              <div className="time relative">
-                <div className="absolute left-[-12px] top-0 mt-[3px] h-[30px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+        marketHistory
+          .slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount)
+          .map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
+            <Cell
+              key={`${timestamp}`}
+              rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
+              items={[
+                <div className="time relative">
+                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[30px] w-[3px] rounded-[30px] bg-[#2574fb]" />
 
-                <span>{formatDateTime(timestamp)}</span>
-                <br />
-                <span className={`market ${isPositive(exchangedPositionSize) ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
-                  {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
-                </span>
-              </div>,
+                  <span>{formatDateTime(timestamp)}</span>
+                  <br />
+                  <span className={`market ${isPositive(exchangedPositionSize) ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+                    {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
+                  </span>
+                </div>,
 
-              <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
-              <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
+                <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
+                <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
 
-              <ExplorerButton txHash={txHash} fullWalletAddress={fullWalletAddress} collection={currentToken} />
-            ]}
-            classNames={['col-span-4 px-3', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
-          />
-        ))
+                <ExplorerButton txHash={txHash} fullWalletAddress={fullWalletAddress} collection={currentToken} />
+              ]}
+              classNames={['col-span-4 px-3', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
+            />
+          ))
       ) : (
         <div className="item-center flex justify-center">
           <span className="body1 my-40 text-center text-mediumEmphasis">There is no market history.</span>
         </div>
       )}
+
+      {marketHistory.length > 0 ? (
+        displayCount >= marketHistory.length ? null : (
+          <div
+            className="text-center text-[14px] font-semibold text-[#2574FB]"
+            onClick={() => {
+              // logHelper('overview_show_more_pressed', holderAddress, { collection });
+              setDisplayCount(displayCount + 5);
+            }}>
+            Show More
+          </div>
+        )
+      ) : null}
     </div>
   );
 });
@@ -261,6 +291,7 @@ const FundingPaymentHistory = forwardRef((props: any, ref) => {
   const { currentToken } = props;
   const [fundingPaymentHistory, setFundingPaymentHistory] = useState([]);
   const firstRender = useRef(true);
+  const [displayCount, setDisplayCount] = useState(10);
 
   const fetchFundingPaymentHistory = useCallback(async () => {
     await getFundingPaymentHistory(getCollectionInformation(currentToken).amm).then(data => setFundingPaymentHistory(data)); // from tokenRef.current
@@ -276,29 +307,47 @@ const FundingPaymentHistory = forwardRef((props: any, ref) => {
 
   return fundingPaymentHistory !== null ? (
     <div className="scrollable mx-[20px] h-full overflow-y-scroll">
-      <Cell items={['Time', 'Funding Rate']} classNames={['col-span-6', 'col-span-6 text-right px-3']} />
+      <Cell items={['Time', 'Funding Rate']} classNames={['col-span-4', 'col-span-8 text-right']} />
       {fundingPaymentHistory.length > 0 ? (
-        fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
-          <Cell
-            key={`${timestamp}`}
-            items={[
-              <div className="time relative">
-                <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
-                {formatDateTime(timestamp)}
-              </div>,
-              <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 5))).toFixed(5)} %`}</div>
-            ]}
-            classNames={[
-              'col-span-6 px-3',
-              `col-span-6 text-right text-[14px] px-3 market ${rateLong > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}`
-            ]}
-          />
-        ))
+        fundingPaymentHistory
+          .slice(0, displayCount > fundingPaymentHistory.length ? fundingPaymentHistory.length : displayCount)
+          .map(({ timestamp, rateLong, rateShort } /* index */) => (
+            <Cell
+              key={`${timestamp}`}
+              items={[
+                <div className="time relative">
+                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                  {formatDateTime(timestamp)}
+                </div>,
+                <div>
+                  {`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 5))).toFixed(5)} %`} /&nbsp;
+                  {`${rateShort > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateShort * 100, 5))).toFixed(5)} %`}
+                </div>
+              ]}
+              classNames={[
+                'col-span-4 px-3',
+                `col-span-8 text-right text-[14px] market ${rateLong > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}`
+              ]}
+            />
+          ))
       ) : (
         <div className="item-center flex justify-center">
           <span className="body1 my-40 text-center text-mediumEmphasis">You have no funding payment history.</span>
         </div>
       )}
+
+      {fundingPaymentHistory.length > 0 ? (
+        displayCount >= fundingPaymentHistory.length ? null : (
+          <div
+            className="text-center text-[14px] font-semibold text-[#2574FB]"
+            onClick={() => {
+              // logHelper('overview_show_more_pressed', holderAddress, { collection });
+              setDisplayCount(displayCount + 5);
+            }}>
+            Show More
+          </div>
+        )
+      ) : null}
     </div>
   ) : null;
 });
