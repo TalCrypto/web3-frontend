@@ -49,7 +49,7 @@ function Cell(props: any) {
   const { items, classNames, rowStyle } = props;
   return (
     <div
-      className="relative mb-6 grid grid-cols-12 items-center
+      className="relative mb-6 grid grid-cols-12 items-center whitespace-break-spaces
       text-[12px] text-[#a3c2ff]/[.6]">
       {items.map((item: any, index: any) => (
         // eslint-disable-next-line react/no-array-index-key
@@ -97,7 +97,7 @@ const SpotTable = forwardRef((props: any, ref: any) => {
 
   return (
     <div className="mx-[20px]">
-      <Cell items={['Item', 'Price', 'Time', '']} classNames={['col-span-3', 'col-span-3 px-2 ', 'col-span-4 px-1', 'col-span-2']} />
+      <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-3 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
       {openseaData.length > 0 ? (
         openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
           const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
@@ -137,11 +137,14 @@ const SpotTable = forwardRef((props: any, ref: any) => {
 
           return (
             <Cell
-              classNames={['col-span-3 px-3', 'col-span-3 px-2 text-[14px]', 'col-span-4 px-1', 'col-span-1 px-1']}
+              classNames={['col-span-4 px-3', 'col-span-3 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 px-1']}
               key={assetCreationDate + event_timestamp + assetToken}
               items={[
-                <div className="relative flex items-center text-[14px] text-[#6286e3]">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                <div className="relative">
+                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-[#2574fb]" />
+                  {formatDateTimeFromString(event_timestamp)}
+                </div>,
+                <div className="flex items-center text-[14px] text-[#6286e3]">
                   <Image src={src} className="mr-1 rounded-[5px]" alt="" width={24} height={24} />
                   {`#${assetToken}` || 'No Name'}
                 </div>,
@@ -152,7 +155,6 @@ const SpotTable = forwardRef((props: any, ref: any) => {
                     <SmallPriceIcon priceValue={priceValue} />
                   )}
                 </div>,
-                <div className="">{formatDateTimeFromString(event_timestamp)}</div>,
                 <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
                   <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
                 </a>
@@ -236,8 +238,8 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
   return (
     <div className="mx-[20px]">
       <Cell
-        items={['Time/Type', 'Contract Size', 'Resulting Price', '']}
-        classNames={['col-span-4', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
+        items={['User ID', 'Action / Type', 'Notional Size / Resulting Price', '']}
+        classNames={['col-span-4', 'col-span-3 pl-3', 'col-span-4 px-3', 'col-span-1 px-3']}
       />
       {marketHistory.length > 0 ? (
         marketHistory
@@ -248,21 +250,35 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
               rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
               items={[
                 <div className="time relative">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[30px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-[#2574fb]" />
 
                   <span>{formatDateTime(timestamp)}</span>
-                  <br />
+                  <div className="h-[6px] w-full" />
+                  <span className="colorful-text" onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                    {trimString(userId, 10) || walletAddressToShow(userAddress) || ' '}
+                  </span>
+                  {fullWalletAddress === userAddress ? (
+                    <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
+                      YOU
+                    </span>
+                  ) : null}
+                </div>,
+                <div>
                   <span className={`market ${isPositive(exchangedPositionSize) ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
                     {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
                   </span>
+                  <div className="h-[6px] w-full" />
+                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>,
                 </div>,
-
-                <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
-                <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
+                <div>
+                  <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />
+                  <div className="h-[6px] w-full" />
+                  <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
+                </div>,
 
                 <ExplorerButton txHash={txHash} fullWalletAddress={fullWalletAddress} collection={currentToken} />
               ]}
-              classNames={['col-span-4 px-3', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
+              classNames={['col-span-4 pl-3', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
             />
           ))
       ) : (
@@ -307,7 +323,7 @@ const FundingPaymentHistory = forwardRef((props: any, ref) => {
 
   return fundingPaymentHistory !== null ? (
     <div className="scrollable mx-[20px] h-full overflow-y-scroll">
-      <Cell items={['Time', 'Funding Rate']} classNames={['col-span-4', 'col-span-8 text-right']} />
+      <Cell items={['Time', 'Funding Rate Long / Short']} classNames={['col-span-4 px-3', 'col-span-8 text-right']} />
       {fundingPaymentHistory.length > 0 ? (
         fundingPaymentHistory
           .slice(0, displayCount > fundingPaymentHistory.length ? fundingPaymentHistory.length : displayCount)
@@ -316,7 +332,7 @@ const FundingPaymentHistory = forwardRef((props: any, ref) => {
               key={`${timestamp}`}
               items={[
                 <div className="time relative">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-[#2574fb]" />
                   {formatDateTime(timestamp)}
                 </div>,
                 <div>
