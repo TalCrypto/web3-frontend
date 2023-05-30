@@ -14,12 +14,10 @@ function InformationMobile(props: any) {
     const tabsContainer = event.currentTarget.parentNode;
     const lastTab = event.currentTarget;
 
-    if (index === 0 || index === 2) {
-      tabsContainer.scrollTo({
-        left: lastTab.offsetLeft - tabsContainer.offsetWidth + lastTab.offsetWidth,
-        behavior: 'smooth'
-      });
-    }
+    tabsContainer.scrollTo({
+      left: lastTab.offsetLeft - tabsContainer.offsetWidth + lastTab.offsetWidth,
+      behavior: 'smooth'
+    });
 
     setActiveTab(index);
   };

@@ -29,67 +29,6 @@ import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
 
-// function SectionHeader(props: any) {
-//   const { row1, row2 } = props;
-//   return (
-//     <div className="col secheaderdiv">
-//       <div className="sectiontitledivs col-auto" />
-//       <div className="col sectionheader">
-//         <div className="col">{row1}</div>
-//         <div className="col">{row2}</div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// function SmallPriceIcon(props: any) {
-//   const { priceValue = 0, className = '', type = 'WETH', endsetter = '' } = props;
-//   let pathUrl = '';
-//   switch (type) {
-//     case 'WETH':
-//       pathUrl = '/static/eth-tribe3.svg';
-//       break;
-//     case 'DOODLE':
-//       pathUrl = '/static/doodle-type.svg';
-//       break;
-
-//     case 'BAYC':
-//       pathUrl = '/static/bayc-icon.png';
-//       break;
-
-//     case 'C':
-//       pathUrl = '/static/small_cryptopunks.svg';
-//       break;
-
-//     case 'AZUKI':
-//       pathUrl = '/static/small_azuki.svg';
-//       break;
-
-//     case 'MOONBIRD':
-//       pathUrl = '/static/small_moonbirds.svg';
-//       break;
-
-//     case 'CLONEX':
-//       pathUrl = '/static/small_clonex.svg';
-//       break;
-
-//     case 'MEEBITS':
-//       pathUrl = '/static/small_meebits.svg';
-//       break;
-
-//     default:
-//       pathUrl = '/static/bayc-icon.png';
-//       break;
-//   }
-//   return (
-//     <div className={`smallpriceicon ${className}`}>
-//       <img src={pathUrl} className="icon" alt="" width="18px" height="18px" style={{ marginRight: '4px' }} />
-//       {priceValue}
-//       {endsetter}
-//     </div>
-//   );
-// }
-
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
@@ -99,54 +38,6 @@ function MedPriceIcon(props: any) {
     </div>
   );
 }
-
-// function PriceIcon(props: any) {
-//   const { priceValue = 0, className = '' } = props;
-//   return (
-//     <div className={`priceicon ${className}`}>
-//       <img src="/static/eth-tribe3.svg" className="icon" alt="" width="24px" height="24px" style={{ marginRight: '8px' }} />
-//       {priceValue}
-//     </div>
-//   );
-// }
-
-// function HistoryContents(props: any) {
-//   const { historyRecords = [], tokenRef, currentToken } = props;
-//   const displayTitle = ['Time', 'Action', 'Type', 'Entry Price', 'Contract Size', ''].map((item, index) => (
-//     <div className="title" key={index}>
-//       {item}
-//     </div>
-//   ));
-//   return (
-//     <>
-//       <div className="cell-item title history">{displayTitle}</div>
-//       <div className="scroll-area history">
-//         {historyRecords.map((record: any) => {
-//           const className = { long: 'up', short: 'down', close: '' }[record.type];
-//           const value = [
-//             <div className="content date">{moment.unix(record.timestamp).format('MM/DD/YYYY HH:mm')}</div>,
-//             <div className="content">{getTradingActionType(record)}</div>,
-//             <div className={`content market ${className}`}>{{ long: 'Long', short: 'Short', close: 'Close' }[record.type]}</div>,
-//             <PriceWithIcon className="content" priceValue={Number(record.entryPrice).toFixed(2)} />,
-//             <TypeWithIconByCollection
-//               className="content"
-//               collection={currentToken}
-//               content={Math.abs(Number(formatterValue(record.exchangedPositionSize, 4)))}
-//             />,
-//             <a
-//               className="content"
-//               href={`${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${record.txHash}`}
-//               target="_blank"
-//               rel="noreferrer">
-//               <img src="/static/Out.svg" className="out-link-icon" alt="" />
-//             </a>
-//           ];
-//           return <div className="cell-item">{['Date', 'Action', 'Type', 'Price', 'Size', ' '].map((item, index) => value[index])} </div>;
-//         })}
-//       </div>
-//     </>
-//   );
-// }
 
 export default function PositionDetails(props: any) {
   const router = useRouter();
@@ -255,28 +146,6 @@ export default function PositionDetails(props: any) {
 
   if (userPosition === null) {
     return null;
-    // if (historyRecords.length === 0) {
-    //   return null;
-    // }
-    // return (
-    //   <div className={isTradingHistoryShow ? 'historywins' : ''}>
-    //     <div className="row collapserow align-items-center">
-    //       <div className="dividers start" />
-    //       <div className="col-auto contents-mod pointers" onClick={() => setIsTradingHistoryShow(!isTradingHistoryShow)}>
-    //         <div>{isTradingHistoryShow ? 'Hide' : 'Show'} Trading History</div>
-    //         <div>
-    //           <img
-    //             src={isTradingHistoryShow ? '/static/angle_up.svg' : '/static/angle_down.svg'}
-    //             className="history-content-image"
-    //             alt=""
-    //           />
-    //         </div>
-    //       </div>
-    //       <div className="dividers end" />
-    //     </div>
-    //     {isTradingHistoryShow === false ? null : <HistoryContents historyRecords={historyRecords} tokenRef={tokenRef} currentToken={currentToken} />}
-    //   </div>
-    // );
   }
 
   const clickShowSharePosition = (show: any) => {

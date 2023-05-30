@@ -19,7 +19,7 @@ interface PriceContentProps {
 }
 
 const PriceContent: React.FC<PriceContentProps> = ({ priceValue, title, isLargeText = false, notLastRow = false }) => {
-  const iconImage = '../images/components/layout/header/eth-tribe3.svg';
+  const iconImage = '/images/components/layout/header/eth-tribe3.svg';
   return (
     <div className={`total-value-row p-6 ${notLastRow ? 'pb-0' : ''}`}>
       <div className="text-[14px] font-normal text-[#a8cbffbf]">{title}</div>

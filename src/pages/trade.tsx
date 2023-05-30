@@ -15,6 +15,7 @@ import PositionDetails from '@/components/trade/desktop/position/PositionDetails
 
 import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
 import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
+import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 
 interface TradePagePros {
   router: any;
@@ -178,6 +179,19 @@ function TradePage(props: TradePagePros) {
             isLoginState={isLoginState}
             isWrongNetwork={isWrongNetwork}
           />
+
+          {/* {isLoginState ? ( */}
+          <PositionMobile
+            userPosition={userPosition}
+            tradingData={tradingData}
+            currentToken={currentToken}
+            isLoginState={isLoginState}
+            isWrongNetwork={isWrongNetwork}
+            setHistoryModalIsVisible={setHistoryModalIsVisible}
+            setFundingModalIsShow={setFundingModalIsShow}
+            fullWalletAddress={fullWalletAddress}
+          />
+          {/* ) : null} */}
 
           <InformationMobile
             tradingData={tradingData}
