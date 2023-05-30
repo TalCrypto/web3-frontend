@@ -13,6 +13,8 @@ import InformationWindow from '@/components/trade/desktop/information/Informatio
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
+import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
+
 interface TradePagePros {
   router: any;
 }
@@ -88,8 +90,8 @@ function TradePage(props: TradePagePros) {
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>
-        <div className="trading-window">
-          <div className="rowcontent px-0">
+        <div className="trading-window hidden md:block">
+          <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
                 <SidebarCollection
@@ -164,6 +166,15 @@ function TradePage(props: TradePagePros) {
             historyRecordsByMonth={historyRecordsByMonth}
             fullWalletAddress={fullWalletAddress}
           /> */}
+        </div>
+
+        <div className="block md:hidden">
+          <InformationMobile
+            tradingData={tradingData}
+            isLoginState={isLoginState}
+            fullWalletAddress={fullWalletAddress}
+            currentToken={currentToken}
+          />
         </div>
       </main>
     </>

@@ -61,3 +61,10 @@ body {
     border-radius: 10px;
   }
 }
+
+.no-scrollable {
+  &::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+  }
+}

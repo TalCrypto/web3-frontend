@@ -121,15 +121,17 @@ function ChartDisplay(props: any, ref: any) {
       const fullW = chartProContainerRef.current.clientWidth - 24; // minus padding
       const w = fullW - 261;
       const newChart: any = myChart;
-      newChart.applyOptions({
-        width: isProShow ? w : fullW,
-        rightPriceScale: {
-          scaleMargins: {
-            top: 0.1,
-            bottom: 0.1
+      if (w > 0) {
+        newChart.applyOptions({
+          width: isProShow ? w : fullW,
+          rightPriceScale: {
+            scaleMargins: {
+              top: 0.1,
+              bottom: 0.1
+            }
           }
-        }
-      });
+        });
+      }
       newChart.timeScale().fitContent();
     }
   }, [myChart, isProShow, chartProContainerRef]);
