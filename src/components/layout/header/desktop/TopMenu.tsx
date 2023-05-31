@@ -86,7 +86,7 @@ function TopMenu(props: any) {
     return (
       <Link key={name} href={path}>
         <div
-          className={`item cursor-pointer py-[16px]
+          className={`item relative cursor-pointer py-[16px]
           ${router.route.toUpperCase() === path.toUpperCase() ? 'active' : ''}`}>
           {name}
           {other}
