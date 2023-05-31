@@ -7,8 +7,6 @@
 /* eslint-disable max-len */
 /* eslint-disable implicit-arrow-linebreak */
 import { ethers, utils } from 'ethers';
-import WalletConnectProvider from '@walletconnect/web3-provider';
-import Web3Modal from 'web3modal';
 import { Contract as MulticallContract, Provider as MulticallProvider } from '@tribe3/ethers-multicall';
 import { signInWithCustomToken, signOut, getAuth } from 'firebase/auth';
 
@@ -42,20 +40,6 @@ const suportChainId = parseInt(process.env.NEXT_PUBLIC_SUPPORT_CHAIN ?? '');
 const provider = new ethers.providers.AlchemyProvider(process.env.NEXT_PUBLIC_ALCHEMY_PROVIDER, infuraKey);
 const multicallProvider = new MulticallProvider(provider, suportChainId);
 
-const providerOptions = {
-  walletconnect: {
-    package: WalletConnectProvider, // required
-    options: {
-      infuraId: '1KfTCX6CmgMoQfeJLMAI0TpoLSQSudRJ', // required
-      rpc: {
-        1: 'https://1rpc.io/eth',
-        42161: 'https://arb1.arbitrum.io/rpc',
-        421613: 'https://goerli-rollup.arbitrum.io/rpc'
-      },
-      qrcode: true
-    }
-  }
-};
 const ammAddress = process.env.NEXT_PUBLIC_AMM_ADDRESS;
 const faucetAddress = process.env.NEXT_PUBLIC_FACUET_ADDRESS;
 const tokenAddress = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
@@ -229,7 +213,6 @@ export const clearingHouseAddress = process.env.NEXT_PUBLIC_CLEARING_ADDRESS ?? 
 
 interface WalletProvider {
   provider: any;
-  web3Modal: Web3Modal | null;
   holderAddress: string;
   isWhitelisted: boolean;
   isTethCollected: boolean;
@@ -280,7 +263,6 @@ interface WalletProvider {
 
 export const walletProvider: WalletProvider = {
   provider: null,
-  web3Modal: null,
   holderAddress: '',
   isWhitelisted: false,
   isTethCollected: false,
@@ -294,18 +276,18 @@ export const walletProvider: WalletProvider = {
   currentTokenContractAddress: collectionList[0].contract,
   firebaseIdToken: '',
   initWeb3Modal() {
-    if (!this.web3Modal) {
-      this.web3Modal = new Web3Modal({
-        // network: "mumbai", // optional
-        cacheProvider: true, // optional
-        providerOptions // required
-      });
-    }
+    // if (!this.web3Modal) {
+    //   this.web3Modal = new Web3Modal({
+    //     // network: "mumbai", // optional
+    //     cacheProvider: true, // optional
+    //     providerOptions // required
+    //   });
+    // }
   },
   disconnectWallet: async function disconnectWallet() {
     this.initWeb3Modal();
-    if (!this.web3Modal) return Promise.reject();
-    await this.web3Modal.clearCachedProvider();
+    // if (!this.web3Modal) return Promise.reject();
+    // await this.web3Modal.clearCachedProvider();
     this.provider = null;
     this.isWhitelisted = false;
     this.isTethCollected = false;
@@ -320,15 +302,15 @@ export const walletProvider: WalletProvider = {
   },
   connectWallet: async function connectWallet() {
     this.initWeb3Modal();
-    let instance = null;
-    if (!window.ethereum) {
-      if (!this.web3Modal) return Promise.reject();
-      instance = await this.web3Modal.connect();
-      this.provider = new ethers.providers.Web3Provider(instance, 'any');
-    } else {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-    }
+    const instance = null;
+    // if (!window.ethereum) {
+    //   if (!this.web3Modal) return Promise.reject();
+    //   instance = await this.web3Modal.connect();
+    //   this.provider = new ethers.providers.Web3Provider(instance, 'any');
+    // } else {
+    //   await window.ethereum.request({ method: 'eth_requestAccounts' });
+    //   this.provider = new ethers.providers.Web3Provider(window.ethereum);
+    // }
 
     if (this.provider !== null) {
       const address = await this.getHolderAddress();
@@ -344,15 +326,15 @@ export const walletProvider: WalletProvider = {
   },
   initialConnectWallet: async function initialConnectWallet(isWalletConnect = false) {
     this.initWeb3Modal();
-    let instance = null;
-    if (isWalletConnect) {
-      if (!this.web3Modal) return Promise.reject();
-      instance = await this.web3Modal.connectTo('walletconnect');
-      this.provider = new ethers.providers.Web3Provider(instance, 'any');
-    } else {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-    }
+    // let instance = null;
+    // if (isWalletConnect) {
+    //   if (!this.web3Modal) return Promise.reject();
+    //   instance = await this.web3Modal.connectTo('walletconnect');
+    //   this.provider = new ethers.providers.Web3Provider(instance, 'any');
+    // } else {
+    //   await window.ethereum.request({ method: 'eth_requestAccounts' });
+    //   this.provider = new ethers.providers.Web3Provider(window.ethereum);
+    // }
     let nonce = 0;
     let firToken = '';
     if (this.provider !== null) {
