@@ -1,9 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { wsIsConnectWalletModalShow } from '@/stores/WalletState';
+import { wsIsConnectWalletModalShow, wsIsWalletLoading } from '@/stores/WalletState';
 import { connectWithWalletConnect, connectWithEthereum } from '@/utils/Wallet';
-import { setIsWalletLoading } from '@/stores/UserState';
 
 export default function ConnectWalletModal() {
   const connectWallet = (isWC: boolean) => {
@@ -16,7 +15,7 @@ export default function ConnectWalletModal() {
   };
 
   const closeModal = () => {
-    setIsWalletLoading(false);
+    wsIsWalletLoading.set(false);
     wsIsConnectWalletModalShow.set(false);
   };
 

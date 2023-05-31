@@ -1,13 +1,6 @@
 import { walletProvider } from '@/utils/walletProvider';
 import { utils } from 'ethers';
-import {
-  setIsWhitelisted,
-  setIsTethCollected,
-  setIsWalletLoading,
-  userIsWrongNetwork,
-  userIsLogin,
-  userWalletAddress
-} from '@/stores/UserState';
+import { setIsWhitelisted, setIsTethCollected, userIsWrongNetwork, userIsLogin, userWalletAddress } from '@/stores/UserState';
 import { apiConnection } from '@/utils/apiConnection';
 import {
   wsCurrentChain,
@@ -19,7 +12,8 @@ import {
   wsIsConnectWalletModalShow,
   wsIsShowErrorSwitchNetworkModal,
   wsIsShowTransferTokenModal,
-  wsBalance
+  wsBalance,
+  wsIsWalletLoading
 } from '@/stores/WalletState';
 
 async function fetchUserData() {
@@ -56,7 +50,7 @@ const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
   }
   apiConnection.getUserInfo(walletProvider.holderAddress).then(result => {
     wsUserInfo.set(result.data);
-    setIsWalletLoading(false);
+    wsIsWalletLoading.set(false);
     // handleLoginSuccess(result.data);
   });
   // handleLoginSuccess();
@@ -79,13 +73,13 @@ const resetState = () => {
   userWalletAddress.set('');
   userIsLogin.set(false);
   wsIsLogin.set(false);
-  setIsWalletLoading(false);
+  wsIsWalletLoading.set(false);
   wsWethBalance.set(0);
   localStorage.setItem('isLoggedin', 'false');
 };
 
 export const connectWallet = (callback: any, initial = false) => {
-  setIsWalletLoading(true);
+  wsIsWalletLoading.set(true);
   if (initial) {
     wsIsConnectWalletModalShow.set(true);
   } else {

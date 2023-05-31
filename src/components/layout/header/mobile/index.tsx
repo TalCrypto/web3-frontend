@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
-import { setIsWalletLoading, userIsWrongNetwork, userIsLogin, userWalletAddress } from '@/stores/UserState';
+import { wsIsWalletLoading } from '@/stores/WalletState';
+import { userIsWrongNetwork, userIsLogin, userWalletAddress } from '@/stores/UserState';
 
 function MobileHeader() {
   const [isShowMenu, setIsShowMenu] = useState(false);
@@ -22,7 +23,7 @@ function MobileHeader() {
     setWalletAddress('');
     userWalletAddress.set('');
     userIsLogin.set(false);
-    setIsWalletLoading(false);
+    wsIsWalletLoading.set(false);
     localStorage.setItem('isLoggedin', 'false');
   };
 
@@ -56,7 +57,7 @@ function MobileHeader() {
       callback();
     }
     apiConnection.getUserInfo(walletProvider.holderAddress).then(result => {
-      setIsWalletLoading(false);
+      wsIsWalletLoading.set(false);
       // handleLoginSuccess(result.data);
     });
     // handleLoginSuccess();

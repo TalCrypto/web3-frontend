@@ -268,7 +268,7 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
                     {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
                   </span>
                   <div className="h-[6px] w-full" />
-                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>,
+                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>
                 </div>,
                 <div>
                   <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />

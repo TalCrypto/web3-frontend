@@ -2,9 +2,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
 import React, { useEffect, useState } from 'react';
+import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
+
+import { wsIsWalletLoading } from '@/stores/WalletState';
 
 import { connectWallet } from '@/utils/Wallet';
 
@@ -43,8 +46,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
     showUserName = '';
   }
 
-  const isWalletLoading = false;
-  // const isWalletLoading = useNanostore(walletLoading);
+  const isWalletLoading = useNanostore(wsIsWalletLoading);
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
 
   useEffect(() => {

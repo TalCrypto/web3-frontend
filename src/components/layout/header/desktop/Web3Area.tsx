@@ -1,13 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { utils } from 'ethers';
 import { ThreeDots } from 'react-loader-spinner';
 
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { apiConnection } from '@/utils/apiConnection';
 import { walletProvider } from '@/utils/walletProvider';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { isUserPointLoading, userPoint } from '@/stores/airdrop';
@@ -22,14 +20,7 @@ import {
   wsIsShowErrorSwitchNetworkModal
 } from '@/stores/WalletState';
 
-import {
-  setIsWhitelisted,
-  setIsTethCollected,
-  setIsWalletLoading,
-  userIsWrongNetwork,
-  userIsLogin,
-  userWalletAddress
-} from '@/stores/UserState';
+import { setIsWhitelisted, setIsTethCollected } from '@/stores/UserState';
 
 import { localeConversion } from '@/utils/localeConversion';
 
