@@ -41,6 +41,7 @@ function TradePage(props: TradePagePros) {
   const [wethBalance, setWethBalance] = useState(0);
   const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
   const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
+  const [isApproveRequired, setIsApproveRequired] = useState(false);
 
   const fetchInformations = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
@@ -118,8 +119,8 @@ function TradePage(props: TradePagePros) {
                   refreshPositions={fetchPositions}
                   userPosition={userPosition}
                   tradingData={tradingData}
-                  // isApproveRequired={isApproveRequired}
-                  // setIsApproveRequired={setIsApproveRequired}
+                  isApproveRequired={isApproveRequired}
+                  setIsApproveRequired={setIsApproveRequired}
                   maxReduceValue={maxReduceValue}
                 />
               </div>

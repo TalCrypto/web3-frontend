@@ -1,20 +1,21 @@
 import React from 'react';
 import Image from 'next/image';
 
+import { wsIsShowErrorSwitchNetworkModal } from '@/stores/WalletState';
+
 interface ErrorModalProps {
   isShow: boolean;
-  setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
   image: string;
 }
 
 export default function ErrorModal(props: ErrorModalProps) {
-  const { isShow, setIsShow, image } = props;
+  const { isShow, image } = props;
   if (!isShow) {
     return null;
   }
 
   return (
-    <div className="error-modalbg" onClick={() => setIsShow(false)}>
+    <div className="error-modalbg" onClick={() => wsIsShowErrorSwitchNetworkModal.set(false)}>
       <div className="error-modal" onClick={e => e.stopPropagation()}>
         <div className="close-row">
           <Image
@@ -23,7 +24,7 @@ export default function ErrorModal(props: ErrorModalProps) {
             className="button"
             width={16}
             height={16}
-            onClick={() => setIsShow(false)}
+            onClick={() => wsIsShowErrorSwitchNetworkModal.set(false)}
           />
         </div>
         <div className="content p-[40px]">
@@ -37,7 +38,7 @@ export default function ErrorModal(props: ErrorModalProps) {
             <button
               className="navbar-button"
               onClick={() => {
-                setIsShow(false);
+                wsIsShowErrorSwitchNetworkModal.set(false);
               }}>
               <div className="container flex flex-row-reverse" id="whitelist-register-btn">
                 Close

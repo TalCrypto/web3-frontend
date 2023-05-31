@@ -4,6 +4,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
+/* eslint-disable react/no-array-index-key */
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from 'react';
 // import moment from 'moment';
 import { logEvent } from 'firebase/analytics';
@@ -133,11 +134,12 @@ const SpotTable = forwardRef((props: any, ref: any) => {
           const priceValue = !total_price
             ? '0.00'
             : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
+          const key_value = assetCreationDate + event_timestamp + assetToken;
 
           return (
             <Cell
               classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
-              key={assetCreationDate + event_timestamp + assetToken}
+              key={`Spot_${key_value}`}
               items={[
                 <div className="relative">
                   <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
@@ -238,7 +240,7 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
       {marketHistory.length > 0 ? (
         marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
           <Cell
-            key={`${timestamp}`}
+            key={`market_${timestamp}_${index}`}
             rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
             items={[
               // <div className="col firstcontent">
@@ -312,7 +314,7 @@ const FundingPaymentHistory = forwardRef((props: any, ref) => {
       {fundingPaymentHistory.length > 0 ? (
         fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
           <Cell
-            key={`${timestamp}`}
+            key={`funding_${timestamp}`}
             items={[
               <div className="time relative">
                 {/* <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} /> */}

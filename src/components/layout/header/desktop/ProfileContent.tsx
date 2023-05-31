@@ -11,6 +11,8 @@ import { apiConnection } from '@/utils/apiConnection';
 import NetworkNameDisplay from '@/utils/NetworkNameDisplay';
 import { walletProvider } from '@/utils/walletProvider';
 
+import { disconnectWallet, getTestToken, updateTargetNetwork } from '@/utils/Wallet';
+
 interface PriceContentProps {
   priceValue: string;
   title: string;
@@ -163,18 +165,11 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, 
 };
 
 interface NormalButtonSetProps {
-  disconnectWallet: () => void;
   setShowDisconnectTooltip: (value: boolean) => void;
-  getTestToken: () => void;
   disconnectWalletAction: () => void;
 }
 
-const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
-  disconnectWallet,
-  setShowDisconnectTooltip,
-  getTestToken,
-  disconnectWalletAction
-}) => {
+const NormalButtonSet: React.FC<NormalButtonSetProps> = ({ setShowDisconnectTooltip, disconnectWalletAction }) => {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
@@ -192,12 +187,16 @@ const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
     });
   };
 
+  const onGeWethClick = async () => {
+    await getTestToken(null, null);
+  };
+
   return (
     <div className="normal-buttons m-6 mt-3">
       <div
         className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
           bg-[#2574fb] text-[14px] font-semibold text-white"
-        onClick={getTestToken}>
+        onClick={onGeWethClick}>
         Get WETH
       </div>
       <div
@@ -211,11 +210,10 @@ const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
 };
 
 interface IncorrectNetworkButtonSetProps {
-  updateTargetNetwork: () => void;
   disconnectWalletAction: () => void;
 }
 
-const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ updateTargetNetwork, disconnectWalletAction }) => (
+const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ disconnectWalletAction }) => (
   <div className="normal-buttons m-6 mt-3">
     <div
       className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
@@ -238,11 +236,8 @@ interface ProfileContentProps {
   currentChain: number;
   balance: number;
   showDisconnectTooltip: boolean;
-  disconnectWallet: () => void;
   setShowDisconnectTooltip: (value: boolean) => void;
-  getTestToken: () => void;
   isWrongNetwork: boolean;
-  updateTargetNetwork: () => void;
   callBalance: { portfolio: string };
   userInfo: { username: string } | null;
 }
@@ -254,11 +249,10 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
     currentChain,
     balance,
     showDisconnectTooltip,
-    disconnectWallet,
     setShowDisconnectTooltip,
-    getTestToken,
+    // getTestToken,
     isWrongNetwork,
-    updateTargetNetwork,
+    // updateTargetNetwork,
     callBalance,
     userInfo
   } = props;
@@ -300,15 +294,14 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       {!isWrongNetwork ? (
         <li className="m-0 list-none p-0">
           <NormalButtonSet
-            disconnectWallet={disconnectWallet}
             setShowDisconnectTooltip={setShowDisconnectTooltip}
-            getTestToken={getTestToken}
+            // getTestToken={getTestToken}
             disconnectWalletAction={disconnectWalletAction}
           />
         </li>
       ) : (
         <li className="m-0 list-none p-0">
-          <IncorrectNetworkButtonSet updateTargetNetwork={updateTargetNetwork} disconnectWalletAction={disconnectWalletAction} />
+          <IncorrectNetworkButtonSet disconnectWalletAction={disconnectWalletAction} />
         </li>
       )}
     </div>

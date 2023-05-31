@@ -13,6 +13,16 @@ import { calculateNumber } from '@/utils/calculateNumbers';
 import { isUserPointLoading, userPoint } from '@/stores/airdrop';
 
 import {
+  wsIsConnectWalletModalShow,
+  wsIsLogin,
+  wsWalletAddress,
+  wsCurrentChain,
+  wsIsWrongNetwork,
+  wsWethBalance,
+  wsIsShowErrorSwitchNetworkModal
+} from '@/stores/WalletState';
+
+import {
   setIsWhitelisted,
   setIsTethCollected,
   setIsWalletLoading,
@@ -20,6 +30,7 @@ import {
   userIsLogin,
   userWalletAddress
 } from '@/stores/UserState';
+
 import { localeConversion } from '@/utils/localeConversion';
 
 import ConnectWalletButton from './ConnectWalletButton';
@@ -50,17 +61,22 @@ async function fetchUserData() {
 }
 
 function Web3Area() {
-  const [isLogin, setIsLogin] = useState(false);
-  const [isConnectWalletModalShow, setIsConnectWalletModalShow] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
-  const [currentChain, setCurrentChain] = useState(0);
-  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const [wethBalance, setWethBalance] = useState(0);
-  const [isShowErrorSwitchNetworkModal, setIsShowErrorSwitchNetworkModal] = useState(false);
   const [showTokenError, setShowTokenError] = useState(false);
   const [isShowGeorliModal, setIsShowGeorliModal] = useState(false);
+
+  const isLogin = useNanostore(wsIsLogin);
+  const walletAddress = useNanostore(wsWalletAddress);
+  const currentChain = useNanostore(wsCurrentChain);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const wethBalance = useNanostore(wsWethBalance);
+  const isShowErrorSwitchNetworkModal = useNanostore(wsIsShowErrorSwitchNetworkModal);
+  // const showTokenError = useNanostore();
+  // const isShowGeorliModal = useNanostore();
+
   // const isMobile = /(webOS|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini)/i.test(navigator.userAgent) || false;
   const isMobile = false;
+
+  const isConnectWalletModalShow = useNanostore(wsIsConnectWalletModalShow);
 
   // State from the navigation
   const balanceOriginData = {
@@ -92,178 +108,6 @@ function Web3Area() {
   const tradeVolume = calculateNumber(tradeVol.vol, 4);
   const eligible = () => Number(tradeVolume) >= 5;
 
-  const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
-    setWalletAddress(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
-    walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
-      setCurrentChain(result.holderChain);
-      setIsWrongNetwork(!result.result);
-      userIsWrongNetwork.set(!result.result); // userState store
-    });
-    setWethBalance(Number(walletProvider.wethBalance));
-    setIsLogin(true);
-    if (callback) {
-      callback();
-    }
-    apiConnection.getUserInfo(walletProvider.holderAddress).then(result => {
-      setUserInfo(result.data);
-      setIsWalletLoading(false);
-      // handleLoginSuccess(result.data);
-    });
-    // handleLoginSuccess();
-    // userState store
-    userWalletAddress.set(walletProvider.holderAddress);
-    userIsLogin.set(true);
-  };
-
-  function successfulConnectWalletCallback(callback: any = null) {
-    if (localStorage.getItem('isLoggedin') === null || localStorage.getItem('isLoggedin') === 'false') {
-      // logEventByName('connectWallet_pressed');
-    }
-    localStorage.setItem('isLoggedin', 'true');
-    // logEventByName('wallet_login');
-    handleConnectedWalletUpdate(walletProvider.holderAddress, callback);
-  }
-
-  const resetState = () => {
-    setWalletAddress('');
-    userWalletAddress.set('');
-    userIsLogin.set(false);
-    setIsLogin(false);
-    setIsWalletLoading(false);
-    setWethBalance(0);
-    localStorage.setItem('isLoggedin', 'false');
-  };
-
-  const connectWallet = (callback: any, initial = false) => {
-    setIsWalletLoading(true);
-    if (initial) {
-      setIsConnectWalletModalShow(true);
-    } else {
-      const callFunction = initial ? walletProvider.initialConnectWallet() : walletProvider.connectWallet();
-      callFunction
-        .then(() => {
-          successfulConnectWalletCallback(callback);
-        })
-        .catch(() => resetState());
-    }
-  };
-
-  const disconnectWallet = (callback: any = null) => {
-    // logEventByName('wallet_disconnect_pressed');
-    walletProvider.disconnectWallet().then(() => {
-      resetState();
-      if (callback) {
-        callback();
-      }
-      // handleLogout();
-    });
-  };
-
-  // const handleCallback = (hadError, error) => {
-  //   if (!hadError) {
-  //   }
-  //   // setShowTokenError(true);
-  //   // setTokenErrorTitle(error.title);
-  //   // setTokenErrorMsg(error.message);
-  // };
-
-  const updateTargetNetwork = (callback: any = null) => {
-    // logEventByName('switchGoerli_pressed');
-    const networkId = utils.hexValue(Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN || 42161));
-    if (!walletProvider.provider) return;
-
-    walletProvider.provider.provider
-      .request({ method: 'wallet_switchEthereumChain', params: [{ chainId: `${networkId}` }] })
-      // .request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xA4B1' }] })
-      .then(() => {
-        handleConnectedWalletUpdate(walletProvider.holderAddress, callback);
-        // handleCallback(false);
-      })
-      .catch((error: any) => {
-        if (error.code === 4902) {
-          walletProvider.addArbitrumGoerli();
-        }
-        setIsShowErrorSwitchNetworkModal(true);
-        // handleCallback(false);
-      });
-  };
-
-  const getTestToken = async (callback: any, successHandle: any) => {
-    // logEventByName('getTeth_pressed');
-    setIsShowTransferTokenModal(true);
-    const isGoerliEthCollected = await walletProvider.checkIsGoerliEthCollected();
-    if (!isGoerliEthCollected) {
-      // setIsShowGeorliModal(true);
-      if (callback && typeof callback === 'function') callback();
-      return;
-    }
-
-    walletProvider
-      .getTestToken()
-      .then(() => {
-        // logEventByName('callbacks_gettesttoken_success');
-        fetchUserData()
-          .then(() => {
-            if (setBalance && typeof setBalance === 'function') setBalance(walletProvider.wethBalance);
-            if (successHandle && typeof successHandle === 'function') successHandle();
-            setWethBalance(walletProvider.wethBalance);
-            // handleCallback(false);
-            if (callback && typeof callback === 'function') callback();
-          })
-          .catch(() => {
-            if (callback && typeof callback === 'function') callback();
-          });
-      })
-      .catch((error: any) => {
-        // const errorMessage = {};
-        // logEventByName('callbacks_gettesttoken_fail', { error_code: error?.error?.code.toString() });
-        if (callback && typeof callback === 'function') callback();
-
-        if (!error.error) {
-          // errorMessage = { title: 'Error when getting test tokens', message: error.message };
-          return;
-        }
-        if (error.error.message === 'execution reverted: You have already claimed') {
-          // errorMessage = {
-          //   title: 'Failed to claim test TETH!',
-          //   message: <div>Failed to claim test TETH! Each user will only be entitled to receive a maximum of 20 TETH.</div>
-          // };
-        } else {
-          const errmsg = error.error.message;
-          const spiltErrorMsg = errmsg.split('reverted: ');
-          const targetMsg = spiltErrorMsg[1];
-          // errorMessage = {
-          //   title: 'Error when getting test tokens',
-          //   message: targetMsg
-          // };
-        }
-        // handleCallback(true, errorMessage);
-      });
-  };
-
-  async function connectWithWalletConnect() {
-    await walletProvider
-      .initialConnectWallet(true)
-      .then(() => {
-        successfulConnectWalletCallback();
-      })
-      .catch(() => resetState());
-  }
-
-  async function connectWithEthereum() {
-    await walletProvider
-      .initialConnectWallet(false)
-      .then(() => {
-        successfulConnectWalletCallback();
-      })
-      .catch(() => resetState());
-  }
-
-  // const userIsLoginStore = false;
-  // const userPointIsLoading = false;
-  // const isDataFetched = false;
-  // const isLogin = false;
-
   return (
     <div
       className="navbar-container relative mx-auto flex h-[60px] items-start
@@ -284,41 +128,21 @@ function Web3Area() {
         </div>
       </Link>
       {/* )} */}
-
       {/* {isDataFetched && isLogin ? ( */}
       <div className="hidden md:block">
-        <ExtraComponent
-          // logEventByName={logEventByName}
-          getTestToken={getTestToken}
-          isWrongNetwork={isWrongNetwork}
-          updateTargetNetwork={updateTargetNetwork}
-          // accountInfo={{ address: walletAddress, balance: wethBalance }}
-        />
+        <ExtraComponent isWrongNetwork={isWrongNetwork} />
       </div>
       {/* ) : null} */}
-
       <ConnectWalletButton
-        handleClick={(doLoginAction: boolean) => (doLoginAction ? connectWallet(() => {}, true) : null)}
         isLogin={isLogin}
         inWrongNetwork={isWrongNetwork}
         accountInfo={{ address: walletAddress, balance: wethBalance }}
         currentChain={currentChain}
-        disconnectWallet={() => disconnectWallet()}
-        getTestToken={getTestToken}
         isWrongNetwork={isWrongNetwork}
-        updateTargetNetwork={() => updateTargetNetwork()}
         callBalance={callBalance}
         userInfo={userInfo}
       />
-
-      <ConnectWalletModal
-        isShow={isConnectWalletModalShow}
-        setIsShow={setIsConnectWalletModalShow}
-        connectWithWalletConnect={connectWithWalletConnect}
-        connectWithEthereum={connectWithEthereum}
-        setIsWalletLoading={setIsWalletLoading}
-      />
-
+      {isConnectWalletModalShow ? <ConnectWalletModal /> : null}
       {/* 
       <GeneralModal
         isShow={showTokenError}
@@ -329,7 +153,6 @@ function Web3Area() {
         onClickSubmit={toggleShowTokenError}
         mobile={isMobile}
       /> */}
-
       <GeneralModal
         isShow={isShowGeorliModal}
         setIsShow={setIsShowGeorliModal}
@@ -344,14 +167,8 @@ function Web3Area() {
         }}
         mobile={isMobile}
       />
-
       <TransferTokenModal isShow={isShowTransferTokenModal} setIsShow={setIsShowTransferTokenModal} />
-
-      <ErrorModal
-        isShow={isShowErrorSwitchNetworkModal}
-        setIsShow={setIsShowErrorSwitchNetworkModal}
-        image="/images/components/layout/header/cloudError.svg"
-      />
+      <ErrorModal isShow={isShowErrorSwitchNetworkModal} image="/images/components/layout/header/cloudError.svg" />
     </div>
   );
 }

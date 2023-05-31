@@ -10,12 +10,12 @@ import { apiConnection } from '@/utils/apiConnection';
 import { tethCollected, inputCode, hasTraded } from '@/stores/UserState';
 
 interface ExtraComponentProps {
-  getTestToken: any;
+  // getTestToken: any;
   isWrongNetwork: boolean;
-  updateTargetNetwork: any;
+  // updateTargetNetwork: any;
 }
 
-const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNetwork, updateTargetNetwork }) => {
+const ExtraComponent: React.FC<ExtraComponentProps> = ({ /* getTestToken, */ isWrongNetwork /* updateTargetNetwork */ }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [referralCode, setReferralCode] = useState('');
   const [isError, setIsError] = useState(false);
@@ -25,9 +25,13 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNe
   const isTethCollected = useNanostore(tethCollected);
   const isInputCode = useNanostore(inputCode);
 
+  const onSwitchClick = () => {
+    // updateTargetNetwork();
+  };
+
   if (isWrongNetwork) {
     return (
-      <button type="button" className="navbar-button" onClick={updateTargetNetwork}>
+      <button type="button" className="navbar-button" onClick={onSwitchClick}>
         <div className="container flex flex-row-reverse" id="whitelist-register-btn">
           Switch to Arbitrum
         </div>
@@ -41,7 +45,7 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ getTestToken, isWrongNe
       className="navbar-button"
       onClick={() => {
         setIsLoading(true);
-        getTestToken(() => setIsLoading(false));
+        // getTestToken(() => setIsLoading(false));
       }}>
       <div className="flex items-center space-x-1 px-3">
         {!isLoading ? (

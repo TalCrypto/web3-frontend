@@ -8,6 +8,8 @@ import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollatera
 import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
 import TradePanelModal from '@/components/trade/desktop/trading/TradePanelModal';
 
+import { connectWallet } from '@/utils/Wallet';
+
 // function Tab(props: any) {
 //   const { name, active, onClick: click } = props;
 //   return (
@@ -40,7 +42,6 @@ import TradePanelModal from '@/components/trade/desktop/trading/TradePanelModal'
 
 function TradingWindow(props: any) {
   const {
-    connectWallet,
     getTestToken,
     userPosition,
     isLoginState,
@@ -84,7 +85,7 @@ function TradingWindow(props: any) {
 
   const traderConnectWallet = () => {
     // logEventByName('connectWallet_pressed_tradings');
-    connectWallet();
+    connectWallet(() => {}, true);
   };
   useEffect(() => setTradeWindowIndex(0), [currentToken]);
 
