@@ -16,6 +16,7 @@ import PositionDetails from '@/components/trade/desktop/position/PositionDetails
 import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
 import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
+import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 interface TradePagePros {
   router: any;
@@ -171,6 +172,8 @@ function TradePage(props: TradePagePros) {
         </div>
 
         <div className="block bg-[#171833] md:hidden">
+          <Switcher currentToken={currentToken} setCurrentToken={setCurrentToken} />
+
           <ChartMobile
             // ref={graphRef}
             tradingData={tradingData}
