@@ -14,7 +14,7 @@ export default function Switcher(props: any) {
   const currentCollectionLogo = currentCollection.logo;
 
   const [popupOpened, setPopupOpened] = useState(false);
-  const [marketData, setMarketData] = useState();
+  const [marketData, setMarketData] = useState([]);
 
   const fetchMarketOverview = async () => {
     const ammList = collectionList.map(({ amm }) => amm).filter(item => item !== '');
@@ -24,8 +24,8 @@ export default function Switcher(props: any) {
   };
 
   const onSwitcherClick = async () => {
-    await fetchMarketOverview();
     setPopupOpened(true);
+    await fetchMarketOverview();
   };
 
   return (
