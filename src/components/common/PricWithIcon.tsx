@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 function base(props: any, image: any) {
-  const { priceValue = 0, children, colorChange, large } = props;
+  const { priceValue = 0, children, colorChange, large, medium, className } = props;
   const [localValue, setLocalValue] = useState('--.--');
   const [color, setColor] = useState('');
 
@@ -21,8 +21,9 @@ function base(props: any, image: any) {
 
   return (
     <div
-      className={`text-opacity-87 flex text-white ${color}
+      className={`flex text-white/[.87] ${color} ${className}
       ${large ? `text-[36px] font-semibold` : 'text-[14px]'}
+      ${medium ? `text-[24px] font-semibold` : 'text-[14px]'}
     `}>
       {image}
       {localValue}

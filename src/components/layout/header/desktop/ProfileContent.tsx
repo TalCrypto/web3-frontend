@@ -11,6 +11,8 @@ import { apiConnection } from '@/utils/apiConnection';
 import NetworkNameDisplay from '@/utils/NetworkNameDisplay';
 import { walletProvider } from '@/utils/walletProvider';
 
+import { disconnectWallet, getTestToken, updateTargetNetwork } from '@/utils/Wallet';
+
 interface PriceContentProps {
   priceValue: string;
   title: string;
@@ -19,7 +21,7 @@ interface PriceContentProps {
 }
 
 const PriceContent: React.FC<PriceContentProps> = ({ priceValue, title, isLargeText = false, notLastRow = false }) => {
-  const iconImage = '../images/components/layout/header/eth-tribe3.svg';
+  const iconImage = '/images/components/layout/header/eth-tribe3.svg';
   return (
     <div className={`total-value-row p-6 ${notLastRow ? 'pb-0' : ''}`}>
       <div className="text-[14px] font-normal text-[#a8cbffbf]">{title}</div>
@@ -77,11 +79,7 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
           <div className="mr-[4px]">
             <Image src="/images/components/layout/header/crown_silver.png" width={17} height={18} alt="" />
           </div>
-          <span
-            className="text gradient-bg-tops-text text-opacity-87 !bg-clip-text text-[12px]
-            font-semibold text-white">
-            NO TITLE
-          </span>
+          <span className="text gradient-bg-tops-text !bg-clip-text text-[12px] font-semibold text-white/[.87]">NO TITLE</span>
         </div>
       </div>
       <div className="px-6 pb-0 pt-2 text-[14px] font-medium text-[#a8cbffbf]">User ID</div>
@@ -167,18 +165,11 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, 
 };
 
 interface NormalButtonSetProps {
-  disconnectWallet: () => void;
   setShowDisconnectTooltip: (value: boolean) => void;
-  getTestToken: () => void;
   disconnectWalletAction: () => void;
 }
 
-const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
-  disconnectWallet,
-  setShowDisconnectTooltip,
-  getTestToken,
-  disconnectWalletAction
-}) => {
+const NormalButtonSet: React.FC<NormalButtonSetProps> = ({ setShowDisconnectTooltip, disconnectWalletAction }) => {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
@@ -196,12 +187,16 @@ const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
     });
   };
 
+  const onGeWethClick = async () => {
+    await getTestToken(null, null);
+  };
+
   return (
     <div className="normal-buttons m-6 mt-3">
       <div
         className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
           bg-[#2574fb] text-[14px] font-semibold text-white"
-        onClick={getTestToken}>
+        onClick={onGeWethClick}>
         Get WETH
       </div>
       <div
@@ -215,11 +210,10 @@ const NormalButtonSet: React.FC<NormalButtonSetProps> = ({
 };
 
 interface IncorrectNetworkButtonSetProps {
-  updateTargetNetwork: () => void;
   disconnectWalletAction: () => void;
 }
 
-const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ updateTargetNetwork, disconnectWalletAction }) => (
+const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ disconnectWalletAction }) => (
   <div className="normal-buttons m-6 mt-3">
     <div
       className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
@@ -242,11 +236,8 @@ interface ProfileContentProps {
   currentChain: number;
   balance: number;
   showDisconnectTooltip: boolean;
-  disconnectWallet: () => void;
   setShowDisconnectTooltip: (value: boolean) => void;
-  getTestToken: () => void;
   isWrongNetwork: boolean;
-  updateTargetNetwork: () => void;
   callBalance: { portfolio: string };
   userInfo: { username: string } | null;
 }
@@ -258,11 +249,10 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
     currentChain,
     balance,
     showDisconnectTooltip,
-    disconnectWallet,
     setShowDisconnectTooltip,
-    getTestToken,
+    // getTestToken,
     isWrongNetwork,
-    updateTargetNetwork,
+    // updateTargetNetwork,
     callBalance,
     userInfo
   } = props;
@@ -304,15 +294,14 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       {!isWrongNetwork ? (
         <li className="m-0 list-none p-0">
           <NormalButtonSet
-            disconnectWallet={disconnectWallet}
             setShowDisconnectTooltip={setShowDisconnectTooltip}
-            getTestToken={getTestToken}
+            // getTestToken={getTestToken}
             disconnectWalletAction={disconnectWalletAction}
           />
         </li>
       ) : (
         <li className="m-0 list-none p-0">
-          <IncorrectNetworkButtonSet updateTargetNetwork={updateTargetNetwork} disconnectWalletAction={disconnectWalletAction} />
+          <IncorrectNetworkButtonSet disconnectWalletAction={disconnectWalletAction} />
         </li>
       )}
     </div>

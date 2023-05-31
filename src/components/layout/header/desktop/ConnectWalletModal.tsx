@@ -1,27 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 
-interface ConnectWalletModalProps {
-  isShow: boolean;
-  setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
-  connectWithWalletConnect: () => void;
-  connectWithEthereum: () => void;
-  setIsWalletLoading: any;
-}
+import { wsIsConnectWalletModalShow } from '@/stores/WalletState';
+import { connectWithWalletConnect, connectWithEthereum } from '@/utils/Wallet';
+import { setIsWalletLoading } from '@/stores/UserState';
 
-export default function ConnectWalletModal({
-  isShow,
-  setIsShow,
-  connectWithWalletConnect,
-  connectWithEthereum,
-  setIsWalletLoading
-}: ConnectWalletModalProps) {
-  if (!isShow) {
-    return null;
-  }
-
+export default function ConnectWalletModal() {
   const connectWallet = (isWC: boolean) => {
-    setIsShow(false);
+    wsIsConnectWalletModalShow.set(false);
     if (isWC) {
       connectWithWalletConnect();
     } else {
@@ -31,7 +17,7 @@ export default function ConnectWalletModal({
 
   const closeModal = () => {
     setIsWalletLoading(false);
-    setIsShow(false);
+    wsIsConnectWalletModalShow.set(false);
   };
 
   const imageSize = 24;
@@ -57,6 +43,7 @@ export default function ConnectWalletModal({
         </div>
         <div className="relative flex cursor-default flex-col items-start justify-start">
           <div className="mb-3 text-[16px] font-semibold">Connect Your Wallet👇</div>
+
           <div className="w-full">
             <div
               className="mt-3 flex cursor-pointer flex-col items-center

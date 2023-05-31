@@ -1,12 +1,14 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-unused-vars */
+/* eslint-disable operator-linebreak */
 import React, { useEffect, useState } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
 
+import { connectWallet } from '@/utils/Wallet';
+
 interface ConnectWalletButtonProps {
-  handleClick: any;
   isLogin: boolean;
   inWrongNetwork: boolean;
   accountInfo: {
@@ -14,28 +16,15 @@ interface ConnectWalletButtonProps {
     balance: number;
   };
   currentChain: number;
-  disconnectWallet: () => void;
-  getTestToken: any;
+  // getTestToken: any;
   isWrongNetwork: boolean;
-  updateTargetNetwork: () => void;
+  // updateTargetNetwork: () => void;
   callBalance: any;
   userInfo: any;
 }
 
 const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
-  const {
-    handleClick,
-    isLogin,
-    inWrongNetwork,
-    accountInfo,
-    currentChain,
-    disconnectWallet,
-    getTestToken,
-    isWrongNetwork,
-    updateTargetNetwork,
-    callBalance,
-    userInfo
-  } = props;
+  const { isLogin, inWrongNetwork, accountInfo, currentChain, isWrongNetwork, callBalance, userInfo } = props;
 
   const { address, balance } = accountInfo;
   const showWethBalaceLabel = !isLogin ? '' : inWrongNetwork ? '-.-- WETH' : `${Number(balance).toFixed(2)} WETH`;
@@ -66,12 +55,14 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
     };
   }, [balance]);
 
+  const handleClick = () => {
+    if (isWalletLoading) return;
+    connectWallet(() => {}, true);
+  };
+
   return (
     <div className={`navbar-outer${isLogin ? ' connected' : ''}`}>
-      <button
-        type="button"
-        className={`navbar-button ${!isLogin ? 'not-connected' : 'connected'}`}
-        onClick={() => (isWalletLoading ? null : handleClick(!isLogin))}>
+      <button type="button" className={`navbar-button ${!isLogin ? 'not-connected' : 'connected'}`} onClick={handleClick}>
         <div className={`container ${!isLogin ? 'flex flex-row-reverse' : ''}`} id="login-btn">
           {isWalletLoading ? (
             <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
@@ -121,11 +112,10 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
         currentChain={currentChain}
         balance={balance}
         showDisconnectTooltip={showDisconnectTooltip}
-        disconnectWallet={disconnectWallet}
         setShowDisconnectTooltip={setShowDisconnectTooltip}
-        getTestToken={getTestToken}
+        // getTestToken={getTestToken}
         isWrongNetwork={isWrongNetwork}
-        updateTargetNetwork={updateTargetNetwork}
+        // updateTargetNetwork={updateTargetNetwork}
         // isLogin={isLogin}
         callBalance={callBalance}
         userInfo={userInfo}

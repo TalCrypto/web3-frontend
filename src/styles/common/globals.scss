@@ -29,7 +29,7 @@ body {
 @media (max-width: 600px) {
   html,
   body {
-    overflow: hidden;
+    // overflow: hidden;
   }
 }
 
@@ -59,5 +59,12 @@ body {
   &::-webkit-scrollbar-thumb {
     background: rgba(196, 196, 196, 0.2);
     border-radius: 10px;
+  }
+}
+
+.no-scrollable {
+  &::-webkit-scrollbar {
+    height: 0;
+    width: 0;
   }
 }

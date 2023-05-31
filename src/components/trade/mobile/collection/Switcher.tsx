@@ -1,0 +1,62 @@
+import React, { useState } from 'react';
+import Image from 'next/image';
+// import moment from 'moment';
+import collectionList from '@/const/collectionList';
+import { getMarketOverview } from '@/utils/trading';
+
+import CollectionListModal from '@/components/trade/mobile/collection/CollectionListModal';
+
+export default function Switcher(props: any) {
+  const { currentToken, setCurrentToken } = props;
+
+  const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
+  const currentCollectionName = currentCollection.displayCollectionPair || 'BAYC';
+  const currentCollectionLogo = currentCollection.logo;
+
+  const [popupOpened, setPopupOpened] = useState(false);
+  const [marketData, setMarketData] = useState([]);
+
+  const fetchMarketOverview = async () => {
+    const ammList = collectionList.map(({ amm }) => amm).filter(item => item !== '');
+    const contractList = collectionList.map(({ contract }) => contract).filter(item => item !== '');
+    const data: any = await getMarketOverview(ammList, contractList, '');
+    setMarketData(data);
+  };
+
+  const onSwitcherClick = async () => {
+    setPopupOpened(true);
+    await fetchMarketOverview();
+  };
+
+  return (
+    <>
+      {/* <div className="fixed top-0 z-10 h-[48px] w-full bg-[#202249]"> */}
+      <div className="h-[48px] w-full bg-[#202249]">
+        <div className="flex h-full px-5">
+          <div className="flex items-center">
+            <Image className="" src={currentCollectionLogo} width="24" height="24" alt="" />
+            <div className="ml-[6px] text-[15px] text-white/[.87]">{currentCollectionName}</div>
+          </div>
+          <div className="flex flex-1 justify-end text-right">
+            <Image
+              className="cursor-pointer"
+              src="/images/mobile/common/switcher.svg"
+              onClick={onSwitcherClick}
+              width="24"
+              height="24"
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
+      {popupOpened ? (
+        <CollectionListModal
+          marketData={marketData}
+          setPopupOpened={setPopupOpened}
+          setCurrentToken={setCurrentToken}
+          currentToken={currentToken}
+        />
+      ) : null}
+    </>
+  );
+}

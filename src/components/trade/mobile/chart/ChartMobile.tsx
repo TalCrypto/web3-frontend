@@ -78,18 +78,19 @@ function PriceIndicator(props: any) {
 
   return isPriceChange ? (
     <div
-      className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
+      className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
-      <div className="col my-auto" style={{ marginRight: '16px', alignItems: 'center', display: 'flex' }}>
+        ${isLike ? 'text-[#78f363]' : 'text-[#ff5656]'}
+        `}>
+      <div className="">
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
     </div>
   ) : (
     <div
-      className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
+      className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
+        ${isLike ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
       <img
         alt="Polygon_pos"
         src={
@@ -97,7 +98,6 @@ function PriceIndicator(props: any) {
             ? '/images/components/trade/chart/polygon_pos.svg'
             : '/images/components/trade/chart/polygon_neg.svg'
         }
-        className="ml-4 mr-2"
         width="16"
         height="16"
       />
@@ -185,7 +185,9 @@ function ChartTimeTabs(props: any) {
             className={`segment ${i === selectedTimeIndex ? 'active' : ''} ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
             z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
             ref={item.ref}>
-            {i === selectedTimeIndex ? <div className="absolute bottom-0 right-0 z-0 h-[3px] w-[25px] rounded-[2px] bg-[#5465ff]" /> : null}
+            {i === selectedTimeIndex ? (
+              <div className="absolute bottom-0 left-[6px] right-[6px] z-0 h-[3px] rounded-[2px] bg-[#5465ff]" />
+            ) : null}
             <input
               type="radio"
               value={item.label}
@@ -195,8 +197,8 @@ function ChartTimeTabs(props: any) {
             />
             <label
               htmlFor={item.label}
-              className={`block p-2 text-[16px] font-semibold
-                ${i === selectedTimeIndex ? 'text-white' : 'text-[#A8CBFF]/[.75]'}`}>
+              className={`block p-2 text-[14px] 
+                ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-[#A8CBFF]/[.75]'}`}>
               {item.label}
             </label>
           </div>
@@ -216,17 +218,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
   } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
-  // const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  // const [interval, setI] = useState(null);
-  // const [nextFundingTime, setNextFundingTime] = useState(0);
-  // const hadKey = Object.keys(tradingData).length > 0;
-  // const hours = 0;
-  // const minutes = 0;
-  // const seconds = 0;
-  // const rateLong = '-.--';
-  // const rateShort = '-.--';
-  // const longSide = '';
-  // const shortSide = '';
 
   useImperativeHandle(ref, () => ({
     reset() {
@@ -239,213 +230,25 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
     }
   }));
-
-  // if (tradingData && tradingData.fundingRateLong) {
-  //   const rawdata = utils.formatEther(tradingData.fundingRateLong);
-  //   const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-  //   const absoluteNumber = Math.abs(Number(numberRawdata));
-  //   rateLong = (
-  //     <span>
-  //       &nbsp;
-  //       {`${absoluteNumber}%`}
-  //     </span>
-  //   );
-  //   if (numberRawdata > 0) {
-  //     longSide = 'Pay';
-  //   } else {
-  //     longSide = 'Get';
-  //   }
-  // }
-  // if (tradingData && tradingData.fundingRateShort) {
-  //   const rawdata = utils.formatEther(tradingData.fundingRateShort);
-  //   const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-  //   const absoluteNumber = Math.abs(Number(numberRawdata));
-  //   rateShort = (
-  //     <span>
-  //       &nbsp;
-  //       {`${absoluteNumber}%`}
-  //     </span>
-  //   );
-  //   if (numberRawdata > 0) {
-  //     shortSide = 'Get';
-  //   } else {
-  //     shortSide = 'Pay';
-  //   }
-  // }
-
-  // function startCountdown() {
-  //   if (!hadKey) {
-  //     setTimeLabel('-- : -- : --');
-  //     return;
-  //   }
-  //   let endTime = tradingData.nextFundingTime * 1000;
-  //   const { fundingPeriod } = tradingData;
-  //   if (interval !== null) {
-  //     clearInterval(interval);
-  //   }
-  //   const intervalTime = setInterval(() => {
-  //     let difference = endTime - Date.now();
-  //     if (difference < 0) {
-  //       endTime = Date.now() + fundingPeriod * 1000;
-  //       difference = endTime - Date.now();
-  //     }
-  //     hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     minutes = Math.floor((difference / 1000 / 60) % 60)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     seconds = Math.floor((difference / 1000) % 60)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     setTimeLabel(`${hours}:${minutes}:${seconds}`);
-  //   }, 1000);
-  //   setI(intervalTime);
-  // }
-
-  // if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-  //   setNextFundingTime(tradingData.nextFundingTime);
-  //   startCountdown();
-  // }
-
-  const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
-
-  return (
-    <div className="flex w-full flex-row items-center justify-start text-[16px]">
-      <div className="left">
-        <div className="col my-auto">
-          {/* <div className="col pricetitletext my-auto">
-            <TitleTips
-              titleText="Futures (vAMM Price)"
-              tipsText="Resulting price of users' trades in the VAMM system based on the constant product formula"
-            />
-          </div> */}
-          <div className="col newcontenttext mb-[16px]">
-            <div className="text-14 font-400 flex space-x-[12px] text-highEmphasis">
-              <div className="flex items-center space-x-[6px]">
-                {/* <img className="" src={selectedCollection.logo} width="16" height="16" alt="" /> */}
-                <span>{selectedCollection.displayCollectionPair}</span>
-              </div>
-              <div className="text-14 font-400 flex text-highEmphasis">
-                <SmallPriceIcon priceValue={`${formatterValue(tradingData.twapPrice, 2, '', '-.--')} (Oracle)`} />
-                {/* <LabelDisplayWithTips
-                  title="Spot (Oracle Price): "
-                  value={`${formatterValue(tradingData.twapPrice, 2)} (Spot)`}
-                  className="pricetextcontent"
-                  placement="right"
-                  tips="The price of the lowest-priced listed NFT within a collection across open market places. Tribe3 is using simple time weighted average floor price on a rolling 6-hour basis in 10 seconds increments"
-                  size="16px"
-                /> */}
-              </div>
-            </div>
-          </div>
-          <div className="flex">
-            <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={32} height={32} large />
-            <PriceIndicator priceChangeRatioAndValue={priceChangeRatioAndValue} />
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-1 items-end justify-end">
-        {/* <div className="info-set">
-          <div className="fp">
-            <TitleTips
-              titleText={`Funding Rate (${timeLabel})`}
-              tipsText="The rate of the funding payment. Funding payment is paid to/by either short or long positions based on the difference between spot and vAMM price. Funding payment happens once every 3 hours, which is calculated on a 3-hour simple weighted rolling average basis."
-              placement="top"
-            />
-            <div className="col">
-              Long <span className={longSide === 'Pay' ? 'pay' : 'receive'}>{longSide}</span>{rateLong}
-              &nbsp;
-              Short <span className={shortSide === 'Pay' ? 'pay' : 'receive'}>{shortSide}</span>{rateShort}
-            </div>
-          </div>
-          <div className="high-low">
-            <div>High: <span className="pricetextcontent">{currentTagMaxAndMinValue.max}</span></div>
-            &nbsp;
-            Low: <span className="pricetextcontent">{currentTagMaxAndMinValue.min}</span>
-          </div>
-        </div> */}
-        <ChartTimeTabs
-          name="group-1"
-          callback={(val: any) => setSelectedTimeIndex(val)}
-          controlRef={useRef()}
-          contentArray={[
-            { label: '1D', ref: useRef() },
-            { label: '1W', ref: useRef() },
-            { label: '1M', ref: useRef() },
-            { label: '3M', ref: useRef() }
-          ]}
-          setSelectedTimeIndex={setSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
-          isStartLoadingChart={isStartLoadingChart}
-        />
-        {/* <div className="pro-btn-container">
-          <div
-            className={`pro-btn cursor-pointer ${isProShow ? 'active' : ''}`}
-            onClick={() => {
-              const value = !isProShow;
-              setIsProShow(value);
-              localStorage.setItem('isProShow', value ? 'true' : false);
-            }}
-          >
-            <img className="" src="/static/pro_text.svg" width="18" height="18" alt="" />
-          </div>
-        </div> */}
-      </div>
-    </div>
-  );
-});
-
-const ChartFooter = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, tokenRef, currentToken } = props;
   const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
-
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
+
   const priceGapLmt = useStore(priceGapLimit);
-
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
-  const popup: any = showPopup.get();
-  const isAlertTooltipHasShown = selectedCollection ? popup[selectedCollection.collection] : false;
 
-  const [showAlertOverlay, setShowAlertOverlay] = useState(false);
-
-  const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
-  const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  const [interval, setI] = useState(null);
-  const [nextFundingTime, setNextFundingTime] = useState(0);
-  const hadKey = Object.keys(tradingData).length > 0;
-  let hours = '';
-  let minutes = '';
-  let seconds = '';
+
+  const hours = '';
+  const minutes = '';
+  const seconds = '';
   const rateLong = '-.--';
   const rateShort = '-.--';
   let longSide = '';
   let shortSide = '';
-
-  // react to pricegap store, so tooltip can show on first load
-  useEffect(() => {
-    if (!isAlertTooltipHasShown) {
-      setShowAlertOverlay(isGapAboveLimit);
-    } else {
-      setShowAlertOverlay(false);
-    }
-  }, [isGapAboveLimit, isAlertTooltipHasShown]);
-
-  // useImperativeHandle(ref, () => ({
-  //   reset() {
-  //     setCurrentTagMaxAndMinValue({ max: '-.--', min: '-.--' });
-  //     setPriceChangeRatioAndValue({ priceChangeRatio: '', priceChangeValue: '' });
-  //   },
-  //   setGraphOtherValue({ high, low, priceChangeRatio, priceChangeValue }) {
-  //     setCurrentTagMaxAndMinValue({ max: formatterValue(high, 2), min: formatterValue(low, 2) });
-  //     setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
-  //   }
-  // }));
 
   if (tradingData && tradingData.fundingRateLong) {
     const rawdata = utils.formatEther(tradingData.fundingRateLong);
@@ -463,6 +266,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
       longSide = 'Get';
     }
   }
+
   if (tradingData && tradingData.fundingRateShort) {
     const rawdata = utils.formatEther(tradingData.fundingRateShort);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
@@ -480,128 +284,67 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
     }
   }
 
-  function startCountdown() {
-    if (!hadKey) {
-      setTimeLabel('-- : -- : --');
-      return;
-    }
-    let endTime = tradingData.nextFundingTime * 1000;
-    const { fundingPeriod } = tradingData;
-    if (interval !== null) {
-      clearInterval(interval);
-    }
-    const intervalTime: any = setInterval(() => {
-      let difference = endTime - Date.now();
-      if (difference < 0) {
-        endTime = Date.now() + fundingPeriod * 1000;
-        difference = endTime - Date.now();
-      }
-      hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-        .toString()
-        .padStart(2, '0');
-      minutes = Math.floor((difference / 1000 / 60) % 60)
-        .toString()
-        .padStart(2, '0');
-      seconds = Math.floor((difference / 1000) % 60)
-        .toString()
-        .padStart(2, '0');
-      setTimeLabel(`${hours}:${minutes}:${seconds}`);
-    }, 1000);
-    setI(intervalTime);
-  }
-
-  if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-    setNextFundingTime(tradingData.nextFundingTime);
-    startCountdown();
-  }
-
-  const handleToggleAlertOverlay = (show: any) => {
-    if (show) {
-      setShowAlertOverlay(true);
-    } else if (isAlertTooltipHasShown) {
-      // hide on mouse exit, only if has shown
-      setShowAlertOverlay(false);
-    }
-  };
-
   return (
-    <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
-      <div className="flex items-center space-x-[12px]">
-        {/* <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip>
-              <p className="text-b3">Price difference between the vAMM and the oracle prices</p>
-            </Tooltip>
-          }>
-          <p className="cursor-default">VAMM - Oracle Price Gap:</p>
-        </OverlayTrigger> */}
-
-        <div>
-          <p className="cursor-default">VAMM - Oracle Price Gap:</p>
+    <div className="w-full">
+      <div className="grid grid-cols-2 px-[20px] pt-[27px]">
+        <div className="col-span-1">
+          <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={22} height={22} medium />
+          <PriceIndicator priceChangeRatioAndValue={priceChangeRatioAndValue} />
         </div>
 
-        <div className="flex items-center space-x-[4px]">
-          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-          <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice - oraclePrice).toFixed(2)} (${Math.abs(
-            priceGapPercentage
-          ).toFixed(2)}%)`}</p>
+        <div className="col-span-1 text-right">
+          <div className="font-400 mb-[8px] mt-[6px] text-[14px]">
+            <span className="mr-[6px] text-[12px] text-[#a8cbff]/[.75]">Oracle:</span>
+            <span className="text-[12px] text-white/[.87]">{formatterValue(tradingData.twapPrice, 2, '', '-.--')}</span>
+          </div>
 
-          {isGapAboveLimit ? (
-            // <OverlayTrigger
-            //   placement="top"
-            //   onToggle={handleToggleAlertOverlay}
-            //   show={showAlertOverlay}
-            //   overlay={
-            //     <Tooltip>
-            //       <div className="">
-            //         <p className="mb-[10px] text-left text-b3">
-            //           vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at Oracle Price (note that P&L is still calculated based on
-            //           vAMM price)
-            //         </p>
-            //         {!isAlertTooltipHasShown ? (
-            //           <div className="flex justify-end">
-            //             <button
-            //               className="rounded border border-highEmphasis px-[14px] py-[7px] text-b3"
-            //               onClick={() => {
-            //                 setShowAlertOverlay(false);
-            //                 showPopup.setKey(selectedCollection.collection, true);
-            //               }}>
-            //               Got it !
-            //             </button>
-            //           </div>
-            //         ) : null}
-            //       </div>
-            //     </Tooltip>
-            //   }>
-            //   <div className="flex items-center">
-            //     <Image src="/static/alert_red.svg" width={20} height={20} />
-            //   </div>
-            // </OverlayTrigger>
-            <div>
-              <div className="flex items-center">
-                <Image src="/static/alert_red.svg" width={20} height={20} alt="" />
-              </div>
+          <div>
+            <div className="text-[12px] text-[#a8cbff]/[.75]">VAMM - Oracle Price Gap:</div>
+
+            <div className="mt-1 flex w-full items-center justify-end text-[12px] text-white/[.87]">
+              <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice - oraclePrice).toFixed(2)} (${Math.abs(
+                priceGapPercentage
+              ).toFixed(2)}%)`}</p>
+
+              {isGapAboveLimit ? (
+                <div>
+                  <div className="flex items-center">
+                    <Image src="/static/alert_red.svg" width={20} height={20} alt="" />
+                  </div>
+                </div>
+              ) : null}
             </div>
-          ) : null}
+          </div>
         </div>
       </div>
-      <div className="flex space-x-[12px]">
-        <TitleTips
-          titleText={
-            <span className="flex w-[209px] justify-between">
-              <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
-            </span>
-          }
-          tipsText="The rate of the funding payment. Funding payment is paid to/by either short or long positions based on the difference between spot and vAMM price. Funding payment happens once every 3 hours, which is calculated on a 3-hour simple weighted rolling average basis."
-          placement="top"
-        />
+
+      <div className="px-[20px] text-[12px]">
+        <div className="text-[#a8cbff]/[.75]">
+          <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
+        </div>
         <div className="col text-highEmphasis">
           Long <span className={longSide === 'Pay' ? 'pay' : 'receive'}>{longSide}</span>
           {rateLong}
           &nbsp; Short <span className={shortSide === 'Pay' ? 'pay' : 'receive'}>{shortSide}</span>
           {rateShort}
         </div>
+      </div>
+
+      <div className="flex flex-1 items-end justify-end px-[20px]">
+        <ChartTimeTabs
+          name="group-1"
+          callback={(val: any) => setSelectedTimeIndex(val)}
+          controlRef={useRef()}
+          contentArray={[
+            { label: '1D', ref: useRef() },
+            { label: '1W', ref: useRef() },
+            { label: '1M', ref: useRef() },
+            { label: '3M', ref: useRef() }
+          ]}
+          setSelectedTimeIndex={setSelectedTimeIndex}
+          selectedTimeIndex={selectedTimeIndex}
+          isStartLoadingChart={isStartLoadingChart}
+        />
       </div>
     </div>
   );
@@ -683,21 +426,25 @@ const ProComponent = forwardRef((props: any, ref: any) => {
   }, [visible, onVisibleChanged]);
 
   return (
-    <div className={`w-[261px] whitespace-nowrap rounded-none bg-black px-[34px] py-[26px] ${visible ? 'visible' : ''}`}>
-      <div className="content ml-[12px] flex flex-col space-y-[24px]">
+    <div
+      className={`w-full whitespace-nowrap rounded-none bg-[#0C0D20]
+        px-[21px] py-[24px] ${visible ? 'visible' : ''}`}>
+      <div className="content flex flex-col space-y-[24px]">
         <div className="flex text-[14px] text-mediumEmphasis">
           <div className="flex-1">
-            <p className="mb-[6px]">{displayTimeKey} High</p>
+            <p className="text-normal mb-[6px] text-[12px]">{displayTimeKey} High</p>
             <SmallPriceIcon
               priceValue={!currentTagMaxAndMinValue.max ? '-.--' : currentTagMaxAndMinValue.max}
               isLoading={currentTagMaxAndMinValue.max === '-.--'}
+              className="text-normal text-[15px]"
             />
           </div>
-          <div className="flex flex-1 flex-col items-end">
-            <p className="mb-[6px]">{displayTimeKey} Low</p>
+          <div className="flex flex-1 flex-col">
+            <p className="text-normal mb-[6px] text-[12px]">{displayTimeKey} Low</p>
             <SmallPriceIcon
               priceValue={!currentTagMaxAndMinValue.min ? '-.--' : currentTagMaxAndMinValue.min}
               isLoading={currentTagMaxAndMinValue.min === '-.--'}
+              className="text-normal text-[15px]"
             />
           </div>
         </div>
@@ -709,7 +456,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
                 {!tradingData.longRatio ? '-.--' : formatterValue(tradingData.longRatio, 0, '%')}
               </span>
             </div>
-            <div className="flex flex-1 flex-col items-end">
+            <div className="flex flex-1 flex-col">
               <span className="text-marketRed">Short</span>
               <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
                 {!tradingData.shortRatio ? '-.--' : formatterValue(tradingData.shortRatio, 0, '%')}
@@ -738,7 +485,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
   );
 });
 
-function ChartWindows(props: any, ref: any) {
+function ChartMobile(props: any, ref: any) {
   const { tradingData, fullWalletAddress, tokenRef, currentToken, isLoginState, isWrongNetwork } = props;
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
@@ -833,37 +580,25 @@ function ChartWindows(props: any, ref: any) {
           isProShow={isProShow}
           setIsProShow={setIsProShow}
         />
-        <div className="dividerslim" />
-        <div ref={chartProContainerRef} className="chart-pro-container mb-[16px] flex">
-          <div className="chartcontainer flex-1">
-            <ChartDisplay
-              lineChartData={lineChartData}
-              isStartLoadingChart={isStartLoadingChart}
-              selectedTimeIndex={selectedTimeIndex}
-              isProShow={isProShow}
-              chartProContainerRef={chartProContainerRef}
-            />
-          </div>
-          <ProComponent
-            ref={proRef}
-            visible={isProShow}
-            tradingData={tradingData}
-            currentToken={currentToken}
+        <div ref={chartProContainerRef}>
+          <ChartDisplay
+            lineChartData={lineChartData}
+            isStartLoadingChart={isStartLoadingChart}
             selectedTimeIndex={selectedTimeIndex}
+            isProShow={isProShow}
+            chartProContainerRef={chartProContainerRef}
           />
         </div>
-        <ChartFooter
-          // ref={graphHeaderRef}
+        <ProComponent
+          ref={proRef}
+          visible={isProShow}
           tradingData={tradingData}
-          setSelectedTimeIndex={handleSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
-          isStartLoadingChart={isStartLoadingChart}
-          // tokenRef={tokenRef}
           currentToken={currentToken}
+          selectedTimeIndex={selectedTimeIndex}
         />
       </div>
     </div>
   );
 }
 
-export default forwardRef(ChartWindows);
+export default forwardRef(ChartMobile);

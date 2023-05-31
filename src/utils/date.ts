@@ -12,6 +12,9 @@ export const formatDateTime = (value: number, format = 'DD/MM/YY HH:mm'): any =>
   if (format === 'DD/MM HH:mm') {
     return `${day}/${month} ${hours}:${minutes}`;
   }
+  if (format === 'YYYY. DD. MMM HH:mm UTCZ') {
+    return `${year}. ${day}. ${month}.  ${hours}:${minutes} UTCZ`;
+  }
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
 

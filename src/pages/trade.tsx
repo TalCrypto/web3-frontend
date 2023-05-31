@@ -11,6 +11,12 @@ import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
 import SidebarCollection from '@/components/trade/desktop/trading/SidebarCollection';
 import InformationWindow from '@/components/trade/desktop/information/InformationWindow';
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
+import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
+
+import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
+import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
+import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
+import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 interface TradePagePros {
   router: any;
@@ -33,6 +39,9 @@ function TradePage(props: TradePagePros) {
   const [maxReduceValue, setMaxReduceValue] = useState('');
   const [historyRecords, setHistoryRecords] = useState([]);
   const [wethBalance, setWethBalance] = useState(0);
+  const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
+  const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
+  const [isApproveRequired, setIsApproveRequired] = useState(false);
 
   const fetchInformations = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
@@ -85,8 +94,8 @@ function TradePage(props: TradePagePros) {
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>
-        <div className="trading-window">
-          <div className="rowcontent px-0">
+        <div className="trading-window hidden md:block">
+          <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
                 <SidebarCollection
@@ -110,8 +119,8 @@ function TradePage(props: TradePagePros) {
                   refreshPositions={fetchPositions}
                   userPosition={userPosition}
                   tradingData={tradingData}
-                  // isApproveRequired={isApproveRequired}
-                  // setIsApproveRequired={setIsApproveRequired}
+                  isApproveRequired={isApproveRequired}
+                  setIsApproveRequired={setIsApproveRequired}
                   maxReduceValue={maxReduceValue}
                 />
               </div>
@@ -126,8 +135,7 @@ function TradePage(props: TradePagePros) {
                   isWrongNetwork={isWrongNetwork}
                 />
 
-                {/* 
-                isLoginState ? (
+                {isLoginState ? (
                   <PositionDetails
                     userPosition={userPosition}
                     tradingData={tradingData}
@@ -139,7 +147,7 @@ function TradePage(props: TradePagePros) {
                     fullWalletAddress={fullWalletAddress}
                   />
                 ) : null}
-                */}
+
                 <InformationWindow
                   // ref={informationRef}
                   tradingData={tradingData}
@@ -162,6 +170,39 @@ function TradePage(props: TradePagePros) {
             historyRecordsByMonth={historyRecordsByMonth}
             fullWalletAddress={fullWalletAddress}
           /> */}
+        </div>
+
+        <div className="block bg-[#171833] md:hidden">
+          <Switcher currentToken={currentToken} setCurrentToken={setCurrentToken} />
+
+          <ChartMobile
+            // ref={graphRef}
+            tradingData={tradingData}
+            fullWalletAddress={fullWalletAddress}
+            currentToken={currentToken}
+            isLoginState={isLoginState}
+            isWrongNetwork={isWrongNetwork}
+          />
+
+          {/* {isLoginState ? ( */}
+          <PositionMobile
+            userPosition={userPosition}
+            tradingData={tradingData}
+            currentToken={currentToken}
+            isLoginState={isLoginState}
+            isWrongNetwork={isWrongNetwork}
+            setHistoryModalIsVisible={setHistoryModalIsVisible}
+            setFundingModalIsShow={setFundingModalIsShow}
+            fullWalletAddress={fullWalletAddress}
+          />
+          {/* ) : null} */}
+
+          <InformationMobile
+            tradingData={tradingData}
+            isLoginState={isLoginState}
+            fullWalletAddress={fullWalletAddress}
+            currentToken={currentToken}
+          />
         </div>
       </main>
     </>

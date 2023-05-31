@@ -119,7 +119,7 @@ function ChartDisplay(props: any, ref: any) {
   useEffect(() => {
     if (myChart) {
       const fullW = chartProContainerRef.current.clientWidth - 24; // minus padding
-      const w = fullW - 261;
+      const w = fullW;
       const newChart: any = myChart;
       if (w > 0) {
         newChart.applyOptions({
@@ -137,7 +137,7 @@ function ChartDisplay(props: any, ref: any) {
   }, [myChart, isProShow, chartProContainerRef]);
 
   return (
-    <div>
+    <div className="flex justify-center bg-[#0C0D20] py-6">
       <div ref={chartContainerRef} />
     </div>
   );

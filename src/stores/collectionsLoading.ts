@@ -12,9 +12,9 @@ const collectionsLoading: any = atom<CollectionsLoadingData>({
   [collectionList[0]['amm']]: false,
   [collectionList[1]['amm']]: false,
   [collectionList[2]['amm']]: false,
-  [collectionList[3]['amm']]: false
-  // [collectionList[4]['amm']]: false,
-  // [collectionList[5]['amm']]: false,
+  [collectionList[3]['amm']]: false,
+  [collectionList[4]['amm']]: false,
+  [collectionList[5]['amm']]: false
   // [collectionList[6]['amm']]: false
 });
 

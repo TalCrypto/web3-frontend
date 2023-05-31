@@ -193,7 +193,7 @@ const CollectionModal = (props: any) => {
                 <Image src={logo} width="24" height="24" alt="" />
               </div>
               <div className="ml-[6px]">
-                <p className="text-opacity-87 mb-1 text-[14px] text-white">{collectionName}</p>
+                <p className="mb-1 text-[14px] text-white/[.87]">{collectionName}</p>
                 <p className="text-[12px]">{displayCollectionPair}</p>
               </div>
             </div>
@@ -241,15 +241,15 @@ const CollectionModal = (props: any) => {
       <div
         className="relative mx-auto mt-[80px] h-[600px] max-w-[940px]
           rounded-[12px] border-[1px] border-[#a8cbff]/[.22] bg-[#0c0d20] text-[14px]
-          font-normal leading-[17px] text-[#A8CBFF] text-opacity-75"
+          font-normal leading-[17px] text-[#A8CBFF]/[.75]"
         onClick={e => {
           e.stopPropagation();
         }}>
         <div className="p-6">
           <div className="flex flex-1 space-x-[9px]">
             <p
-              className="text-opacity-87 text-[20px] font-semibold
-                leading-[24px] text-white">
+              className="text-[20px] font-semibold
+                leading-[24px] text-white/[.87]">
               Collections
             </p>
             <Image
@@ -299,7 +299,7 @@ const CollectionModal = (props: any) => {
                         setPeriodIndex(0);
                       }}
                       className={`font-medium
-                        ${periodIndex === 0 ? 'text-opacity-87 text-white underline' : 'text-[#2574fb]'}`}>
+                        ${periodIndex === 0 ? 'text-white/[.87] underline' : 'text-[#2574fb]'}`}>
                       24hr
                     </span>
                     <span
@@ -308,7 +308,7 @@ const CollectionModal = (props: any) => {
                         setPeriodIndex(1);
                       }}
                       className={`ml-1 font-medium
-                        ${periodIndex === 1 ? 'text-opacity-87 text-white underline' : 'text-[#2574fb]'}`}>
+                        ${periodIndex === 1 ? 'text-white/[.87] underline' : 'text-[#2574fb]'}`}>
                       7D
                     </span>
                     <span
@@ -317,7 +317,7 @@ const CollectionModal = (props: any) => {
                         setPeriodIndex(2);
                       }}
                       className={`ml-1 font-medium
-                        ${periodIndex === 2 ? 'text-opacity-87 text-white underline' : 'text-[#2574fb]'}`}>
+                        ${periodIndex === 2 ? 'text-white/[.87] underline' : 'text-[#2574fb]'}`}>
                       30D
                     </span>
                   </div>

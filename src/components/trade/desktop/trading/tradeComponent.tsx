@@ -565,6 +565,20 @@ function ConfirmButton(props: any) {
     disabled = true;
   }
 
+  const onClickButton = () => {
+    if (!isLoginState) {
+      connectWallet();
+    } else if (isWrongNetwork) {
+      performSwitchGeorli();
+    } else if (!isTethCollected) {
+      performGetTeth();
+    } else if (isApproveRequired) {
+      performApprove();
+    } else if (isNormal && !isProcessingOpenPos && !isPending && !disabled) {
+      connectContract();
+    }
+  };
+
   return (
     <div className="flex">
       <div
@@ -572,20 +586,7 @@ function ConfirmButton(props: any) {
           mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-[#2574fb]
           px-[10px] py-[14px] text-center
         `}
-        // onClick={
-        //   !isLoginState
-        //     ? connectWallet
-        //     : isWrongNetwork
-        //     ? performSwitchGeorli
-        //     : !isTethCollected
-        //     ? performGetTeth
-        //     : isApproveRequired
-        //     ? performApprove
-        //     : isNormal && !isProcessingOpenPos && !isPending && !disabled
-        //     ? connectContract
-        //     : null
-        // }
-      >
+        onClick={onClickButton}>
         <div className="w-full text-center">
           {isProcessingOpenPos || isDataFetch ? (
             <div className="col loadingindicator mx-auto">
