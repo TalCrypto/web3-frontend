@@ -27,7 +27,7 @@ export default function CollectionListModal(props: any) {
         }}>
         <Image src={item.logo} className="" alt="" width={32} height={32} />
         <div className="ml-[6px] flex-1">
-          <div className="text-[14px] text-white/[.87]">{item.title}</div>
+          <div className="text-[14px] font-semibold text-white/[.87]">{item.title}</div>
           <div className="text-[12px] text-[#a8cbff]/[.75]">{item.name}</div>
         </div>
         <div className="flex w-[140px] items-center justify-between">
