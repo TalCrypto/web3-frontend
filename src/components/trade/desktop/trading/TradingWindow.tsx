@@ -41,17 +41,7 @@ import { connectWallet } from '@/utils/Wallet';
 // }
 
 function TradingWindow(props: any) {
-  const {
-    userPosition,
-    refreshPositions,
-    tradingData,
-    isApproveRequired,
-    setIsApproveRequired,
-    wethBalance,
-    fullWalletAddress,
-    currentToken,
-    maxReduceValue
-  } = props;
+  const { userPosition, refreshPositions, tradingData, wethBalance, fullWalletAddress, currentToken, maxReduceValue } = props;
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
   const isTradePanelModalShow = useStore(tradePanelModal.show);
   const tradePanelModalMsg = useStore(tradePanelModal.message);
@@ -66,8 +56,6 @@ function TradingWindow(props: any) {
     <TradeComponent
       refreshPositions={refreshPositions}
       connectWallet={traderConnectWallet}
-      isApproveRequired={isApproveRequired}
-      setIsApproveRequired={setIsApproveRequired}
       wethBalance={wethBalance}
       fullWalletAddress={fullWalletAddress}
       currentToken={currentToken}

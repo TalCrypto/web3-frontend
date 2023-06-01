@@ -23,7 +23,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsIsApproveRequired } from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
 
 function SaleOrBuyRadio(props: any) {
@@ -84,7 +84,6 @@ function QuantityEnter(props: any) {
     setValue,
     userPosition,
     onChange,
-    isApproveRequired,
     isInsuffBalance,
     wethBalance,
     maxReduceValue,
@@ -100,6 +99,7 @@ function QuantityEnter(props: any) {
   const [isFocus, setIsFocus] = useState(false);
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;

@@ -29,7 +29,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired } from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
 import { getTestToken } from '@/utils/Wallet';
 
@@ -107,7 +107,6 @@ function QuantityEnter(props: any) {
   const {
     value,
     onChange,
-    isApproveRequired,
     isInsuffBalance,
     wethBalance,
     isAmountTooSmall,
@@ -120,6 +119,7 @@ function QuantityEnter(props: any) {
 
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   const [isFocus, setIsFocus] = useState(false);
 
@@ -172,9 +172,9 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               pattern="[0-9]*"
-              className={`${isApproveRequired ? ' blockCursor' : ''}
-                txt-white w-full border-none border-[242652] bg-[#242652]
-                text-right text-[15px] font-semibold outline-none
+              className={`${isApproveRequired ? 'cursor-not-allowed' : ''}
+                w-full border-none border-[242652] bg-[#242652] text-right
+                text-[15px] font-semibold text-white outline-none
               `}
               value={value}
               placeholder="0.00"
@@ -381,8 +381,6 @@ function ConfirmButton(props: any) {
   const {
     quantity,
     createTransaction,
-    isApproveRequired,
-    setIsApproveRequired,
     isInsuffBalance,
     isAmountTooSmall,
     currentToken,
@@ -400,6 +398,7 @@ function ConfirmButton(props: any) {
 
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   // const { isTethCollected, isWhitelisted, isDataFetch } = walletProvider;
   const isDataFetch = useNanostore(dataFetch);
@@ -483,7 +482,7 @@ function ConfirmButton(props: any) {
     walletProvider
       .performApprove()
       .then(() => {
-        setIsApproveRequired(false);
+        wsIsApproveRequired.set(false);
         setIsProcessingOpenPos(false);
         // logEvent(firebaseAnalytics, 'callbacks_performapprove_success', {
         //   wallet: fullWalletAddress.substring(2),
@@ -585,7 +584,7 @@ function ConfirmButton(props: any) {
         onClick={onClickButton}>
         <div className="w-full text-center">
           {isProcessingOpenPos || isDataFetch ? (
-            <div className="col loadingindicator mx-auto">
+            <div className="flex justify-center">
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
             </div>
           ) : !isLoginState ? (
@@ -609,9 +608,9 @@ function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
   const isWhitelisted = useNanostore(whitelisted);
   const isTethCollected = Number(walletProvider.wethBalance) !== 0;
-  const { isApproveRequired } = props;
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   if ((isLoginState && !isWrongNetwork && !isApproveRequired) || isDataFetch) {
     return <div className="row tbloverviewcontent" />;
@@ -790,8 +789,6 @@ export default function TradeComponent(props: any) {
   const {
     refreshPositions,
     connectWallet,
-    isApproveRequired,
-    setIsApproveRequired,
     fullWalletAddress,
     // tokenRef,
     currentToken,
@@ -824,6 +821,7 @@ export default function TradeComponent(props: any) {
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const wethBalance = useNanostore(wsWethBalance);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1110,7 +1108,6 @@ export default function TradeComponent(props: any) {
       <QuantityEnter
         disabled={isProcessing || isWrongNetwork}
         value={quantity}
-        // isApproveRequired={isApproveRequired}
         onChange={(value: any) => {
           handleEnter(value);
         }}
@@ -1155,8 +1152,6 @@ export default function TradeComponent(props: any) {
       <ConfirmButton
         quantity={quantity}
         createTransaction={createTransaction}
-        isApproveRequired={isApproveRequired}
-        setIsApproveRequired={setIsApproveRequired}
         isInsuffBalance={isInsuffBalance}
         isAmountTooSmall={isAmountTooSmall}
         fullWalletAddress={fullWalletAddress}
@@ -1176,7 +1171,7 @@ export default function TradeComponent(props: any) {
       {textErrorMessageShow && isLoginState && !isWrongNetwork && !isApproveRequired && !isInsuffBalance ? (
         <p className="font-12 text-color-warning">{textErrorMessage}</p>
       ) : null}
-      <Tips isApproveRequired={isApproveRequired} isInsuffBalance={isInsuffBalance} />
+      <Tips isInsuffBalance={isInsuffBalance} />
       <ExtendedEstimateComponent
         estimatedValue={estimatedValue}
         fullWalletAddress={fullWalletAddress}

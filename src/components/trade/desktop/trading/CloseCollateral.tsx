@@ -25,7 +25,7 @@ import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
-import { wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsIsWrongNetwork, wsIsApproveRequired } from '@/stores/WalletState';
 
 function SectionDividers() {
   return (
@@ -64,7 +64,6 @@ function QuantityEnter(props: any) {
   const { page } = pageTitleParser(router.asPath);
   const {
     onChange,
-    isApproveRequired,
     isAmountTooSmall,
     isAmountTooLarge,
     userPosition,
@@ -79,6 +78,7 @@ function QuantityEnter(props: any) {
   } = props;
 
   const [isFocus, setIsFocus] = useState(false);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;

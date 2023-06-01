@@ -43,7 +43,6 @@ function TradePage(props: TradePagePros) {
   const [wethBalance, setWethBalance] = useState(0);
   const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
   const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
-  const [isApproveRequired, setIsApproveRequired] = useState(false);
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
@@ -129,24 +128,15 @@ function TradePage(props: TradePagePros) {
                   currentToken={currentToken}
                   fullWalletAddress={fullWalletAddress}
                   wethBalance={wethBalance}
-                  // collectWallet={() => navbarRef.current?.connectWallet(() => {}, true)}
-                  // getTestToken={navbarRef.current?.getTestToken}
                   refreshPositions={fetchPositions}
                   userPosition={userPosition}
                   tradingData={tradingData}
-                  isApproveRequired={isApproveRequired}
-                  setIsApproveRequired={setIsApproveRequired}
                   maxReduceValue={maxReduceValue}
                 />
               </div>
 
               <div className="ml-[30px] block 2xl:flex-1">
-                <ChartWindows
-                  // ref={graphRef}
-                  tradingData={tradingData}
-                  fullWalletAddress={fullWalletAddress}
-                  currentToken={currentToken}
-                />
+                <ChartWindows tradingData={tradingData} fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
 
                 {isLoginState ? (
                   <PositionDetails
@@ -159,12 +149,7 @@ function TradePage(props: TradePagePros) {
                   />
                 ) : null}
 
-                <InformationWindow
-                  // ref={informationRef}
-                  tradingData={tradingData}
-                  fullWalletAddress={fullWalletAddress}
-                  currentToken={currentToken}
-                />
+                <InformationWindow tradingData={tradingData} fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
               </div>
             </div>
           </div>
