@@ -52,6 +52,7 @@ function SidebarCollection(props: any, ref: any) {
   useEffect(() => {
     const targetIndex = collectionList.findIndex(i => i.collection === currentToken);
     setActiveIndex(targetIndex);
+    console.log(currentToken);
   }, [currentToken]);
 
   const selectedCollection = getCollectionInformation(currentToken);

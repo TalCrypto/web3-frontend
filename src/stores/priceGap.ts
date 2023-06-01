@@ -8,6 +8,8 @@ import { atom, map } from 'nanostores';
 
 // Indicate that alert tooltip has shown for the first time load page
 export const showPopup = map({
+  DEGODS: false,
+  CAPTAINZ: false,
   BAYC: false,
   MAYC: false,
   AZUKI: false,

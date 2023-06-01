@@ -74,7 +74,7 @@ export default function PositionMobile(props: any) {
   const [showSharePosition, setShowSharePosition] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  const currentCollectionName = currentCollection.shortName || 'BAYC';
+  const currentCollectionName = currentCollection.shortName || 'DEGODS';
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
 
   // liquidation warning

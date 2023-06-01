@@ -21,8 +21,8 @@ export default function CollectionListModal(props: any) {
           //   current_collection: collectionInfo.collection,
           //   new_collection: collections[0].collection
           // });
-          // store.dispatch('setCurrentToken', collections[0].collection || 'BAYC');
-          setCurrentToken(collections[0].collection || 'BAYC');
+          // store.dispatch('setCurrentToken', collections[0].collection || 'DEGODS');
+          setCurrentToken(collections[0].collection || 'DEGODS');
           setPopupOpened(false);
         }}>
         <Image src={item.logo} className="" alt="" width={32} height={32} />

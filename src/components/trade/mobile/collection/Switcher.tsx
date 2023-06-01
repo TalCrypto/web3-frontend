@@ -10,7 +10,7 @@ export default function Switcher(props: any) {
   const { currentToken, setCurrentToken } = props;
 
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  const currentCollectionName = currentCollection.displayCollectionPair || 'BAYC';
+  const currentCollectionName = currentCollection.displayCollectionPair || 'DEGODS';
   const currentCollectionLogo = currentCollection.logo;
 
   const [popupOpened, setPopupOpened] = useState(false);

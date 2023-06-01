@@ -30,7 +30,7 @@ const getCollectionInformation = (collectionName: any) => {
 
 function TradePage(props: TradePagePros) {
   const { router } = props;
-  const [currentToken, setCurrentToken] = useState(router.query?.collection || 'BAYC');
+  const [currentToken, setCurrentToken] = useState(router.query?.collection || 'DEGODS');
   const [fullWalletAddress, setFullWalletAddress] = useState('');
   const [isLoginState, setIsLoginState] = useState(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(true);
