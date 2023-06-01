@@ -19,6 +19,9 @@ import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
+import { useStore as useNanostore } from '@nanostores/react';
+import { wsIsLogin } from '@/stores/WalletState';
+
 interface TradePagePros {
   router: any;
 }
@@ -32,7 +35,6 @@ function TradePage(props: TradePagePros) {
   const { router } = props;
   const [currentToken, setCurrentToken] = useState(router.query?.collection ?? 'DEGODS');
   const [fullWalletAddress, setFullWalletAddress] = useState('');
-  const [isLoginState, setIsLoginState] = useState(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(true);
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
@@ -43,6 +45,7 @@ function TradePage(props: TradePagePros) {
   const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
   const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
   const [isApproveRequired, setIsApproveRequired] = useState(false);
+  const isLoginState = useNanostore(wsIsLogin);
 
   const fetchInformations = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
@@ -118,7 +121,6 @@ function TradePage(props: TradePagePros) {
                   currentToken={currentToken}
                   setCurrentToken={setCurrentToken}
                   fullWalletAddress={fullWalletAddress}
-                  isLoginState={isLoginState}
                   isWrongNetwork={isWrongNetwork}
                   isShowPopup={isShowPopup}
                   setIsShowPopup={setIsShowPopup}
@@ -126,7 +128,6 @@ function TradePage(props: TradePagePros) {
 
                 <TradingWindow
                   currentToken={currentToken}
-                  isLoginState={isLoginState}
                   isWrongNetwork={isWrongNetwork}
                   fullWalletAddress={fullWalletAddress}
                   wethBalance={wethBalance}
@@ -147,7 +148,6 @@ function TradePage(props: TradePagePros) {
                   tradingData={tradingData}
                   fullWalletAddress={fullWalletAddress}
                   currentToken={currentToken}
-                  isLoginState={isLoginState}
                   isWrongNetwork={isWrongNetwork}
                 />
 
@@ -156,7 +156,6 @@ function TradePage(props: TradePagePros) {
                     userPosition={userPosition}
                     tradingData={tradingData}
                     currentToken={currentToken}
-                    isLoginState={isLoginState}
                     isWrongNetwork={isWrongNetwork}
                     setHistoryModalIsVisible={setHistoryModalIsVisible}
                     setFundingModalIsShow={setFundingModalIsShow}
@@ -167,7 +166,6 @@ function TradePage(props: TradePagePros) {
                 <InformationWindow
                   // ref={informationRef}
                   tradingData={tradingData}
-                  isLoginState={isLoginState}
                   fullWalletAddress={fullWalletAddress}
                   currentToken={currentToken}
                 />
@@ -196,7 +194,6 @@ function TradePage(props: TradePagePros) {
             tradingData={tradingData}
             fullWalletAddress={fullWalletAddress}
             currentToken={currentToken}
-            isLoginState={isLoginState}
             isWrongNetwork={isWrongNetwork}
           />
 
@@ -205,7 +202,6 @@ function TradePage(props: TradePagePros) {
             userPosition={userPosition}
             tradingData={tradingData}
             currentToken={currentToken}
-            isLoginState={isLoginState}
             isWrongNetwork={isWrongNetwork}
             setHistoryModalIsVisible={setHistoryModalIsVisible}
             setFundingModalIsShow={setFundingModalIsShow}
@@ -213,12 +209,7 @@ function TradePage(props: TradePagePros) {
           />
           {/* ) : null} */}
 
-          <InformationMobile
-            tradingData={tradingData}
-            isLoginState={isLoginState}
-            fullWalletAddress={fullWalletAddress}
-            currentToken={currentToken}
-          />
+          <InformationMobile tradingData={tradingData} fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
         </div>
       </main>
     </>

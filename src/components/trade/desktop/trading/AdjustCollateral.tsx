@@ -23,6 +23,8 @@ import collectionsLoading from '@/stores/collectionsLoading';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
+import { wsIsLogin } from '@/stores/WalletState';
+
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
@@ -85,7 +87,6 @@ function QuantityEnter(props: any) {
     isInsuffBalance,
     wethBalance,
     maxReduceValue,
-    isLoginState,
     isWrongNetwork,
     marginIndex,
     balanceChecking,
@@ -98,6 +99,7 @@ function QuantityEnter(props: any) {
   } = props;
 
   const [isFocus, setIsFocus] = useState(false);
+  const isLoginState = useNanostore(wsIsLogin);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -664,7 +666,6 @@ export default function AdjustCollateral(props: any) {
     fullWalletAddress,
     tokenRef,
     currentToken,
-    isLoginState,
     maxReduceValue,
     getTestToken
   } = props;
@@ -785,7 +786,6 @@ export default function AdjustCollateral(props: any) {
         }}
         marginIndex={marginIndex}
         wethBalance={wethBalance}
-        isLoginState={isLoginState}
         isWrongNetwork={isWrongNetwork}
         value={adjustMarginValue}
         setValue={setAdjustMarginValue}

@@ -13,7 +13,7 @@ import Image from 'next/image';
 // import { apiConnection } from '@/utils/apiConnection';
 
 function InformationWindow(props: any) {
-  const { tradingData, isLoginState, fullWalletAddress, tokenRef, currentToken } = props;
+  const { tradingData, fullWalletAddress, tokenRef, currentToken } = props;
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -57,12 +57,7 @@ function InformationWindow(props: any) {
           />
         </div>
         <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
-          <ChatComponent
-            fullWalletAddress={fullWalletAddress}
-            isLoginState={isLoginState}
-            tokenRef={tokenRef}
-            currentToken={currentToken}
-          />
+          <ChatComponent fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
         </div>
         <div className={`${detailHeaderIndex === 2 ? 'block' : 'hidden'} h-full`}>
           <ComingSoonWindow />

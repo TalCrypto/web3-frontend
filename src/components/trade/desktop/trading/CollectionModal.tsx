@@ -9,6 +9,8 @@ import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { walletProvider } from '@/utils/walletProvider';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
+import { useStore as useNanostore } from '@nanostores/react';
+import { wsIsLogin } from '@/stores/WalletState';
 
 const SortingIndicator = (props: any) => {
   const { value } = props;
@@ -25,13 +27,14 @@ const SortingIndicator = (props: any) => {
 };
 
 const CollectionModal = (props: any) => {
-  const { isLoginState, isWrongNetwork, visible, setVisible, selectCollection } = props;
+  const { isWrongNetwork, visible, setVisible, selectCollection } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [overviewData, setOverviewData] = useState([]);
   const [periodIndex, setPeriodIndex] = useState(0);
   const initSorting = { collection: 0, futurePrice: 0, priceGap: 0, timeChange: 0, dayVolume: 1, fundingRate: 0, timeValue: 0 };
   const [positionSorting, setPositionSorting] = useState(initSorting);
   const [sortedData, setSortedData] = useState(overviewData);
+  const isLoginState = useNanostore(wsIsLogin);
 
   function fetchOverview() {
     setIsLoading(true);

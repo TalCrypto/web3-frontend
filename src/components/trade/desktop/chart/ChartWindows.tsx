@@ -4,12 +4,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { useStore } from '@nanostores/react';
+import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
@@ -28,6 +29,8 @@ import {
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
+
+import { wsIsLogin } from '@/stores/WalletState';
 
 const flashAnim = 'animate__animated animate__flash animate__infinite';
 
@@ -405,7 +408,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
 
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
-  const priceGapLmt = useStore(priceGapLimit);
+  const priceGapLmt = useNanostore(priceGapLimit);
 
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
   const popup: any = showPopup.get();
@@ -739,7 +742,9 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartWindows(props: any, ref: any) {
-  const { tradingData, fullWalletAddress, tokenRef, currentToken, isLoginState, isWrongNetwork } = props;
+  const { tradingData, fullWalletAddress, tokenRef, currentToken, isWrongNetwork } = props;
+  const isLoginState = useNanostore(wsIsLogin);
+
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);

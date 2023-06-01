@@ -9,7 +9,7 @@ import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { useStore } from '@nanostores/react';
+import { useStore, useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
@@ -28,6 +28,8 @@ import {
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
+
+import { wsIsLogin } from '@/stores/WalletState';
 
 const flashAnim = 'animate__animated animate__flash animate__infinite';
 
@@ -486,7 +488,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartMobile(props: any, ref: any) {
-  const { tradingData, fullWalletAddress, tokenRef, currentToken, isLoginState, isWrongNetwork } = props;
+  const { tradingData, fullWalletAddress, tokenRef, currentToken, isWrongNetwork } = props;
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
@@ -497,6 +499,7 @@ function ChartMobile(props: any, ref: any) {
   const graphHeaderRef = useRef();
   const graphDataRef = useRef({});
   const proRef = useRef();
+  const isLoginState = useNanostore(wsIsLogin);
 
   // const handleIsProShow = async () => {
   //   const storageIsProShow = await localStorage.getItem('isProShow');

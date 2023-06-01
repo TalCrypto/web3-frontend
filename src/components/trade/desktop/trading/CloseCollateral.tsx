@@ -814,7 +814,6 @@ export default function CloseCollateral(props: any) {
     tradingData,
     // tokenRef,
     currentToken,
-    isLoginState,
     setShowOverFluctuationContent,
     setTradeWindowIndex
   } = props;
@@ -972,7 +971,6 @@ export default function CloseCollateral(props: any) {
           handleEnter(e);
         }}
         wethBalance={wethBalance}
-        isLoginState={isLoginState}
         isWrongNetwork={isWrongNetwork}
         userPosition={userPosition}
         closeValue={closeValue}

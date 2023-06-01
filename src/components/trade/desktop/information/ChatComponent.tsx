@@ -15,6 +15,8 @@ import Image from 'next/image';
 import { db, firebaseAnalytics } from '@/const/firebaseConfig';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
+import { useStore as useNanostore } from '@nanostores/react';
+import { wsIsLogin } from '@/stores/WalletState';
 
 const getCollectionInformation = (curentCollection: any) => {
   const targetCollection = collectionList.filter(coll => coll.collection?.toUpperCase() === curentCollection.toUpperCase());
@@ -112,7 +114,8 @@ function ChatDisplays(props: any) {
 }
 
 function ChatInput(props: any) {
-  const { fullWalletAddress, isLoginState, setChatScrollKey, tokenRef, currentToken } = props;
+  const isLoginState = useNanostore(wsIsLogin);
+  const { fullWalletAddress, setChatScrollKey, tokenRef, currentToken } = props;
   const [messageInfo, setMessageInfo] = useState('');
   const allowSendMessage = isLoginState && messageInfo.trim().length > 0;
   const [pressTime, setPressTime] = useState(0);
@@ -205,7 +208,6 @@ function ChatComponent(props: any, ref: any) {
       <ChatDisplays chatData={chatData} fullWalletAddress={fullWalletAddress} chatScrollKey={chatScrollKey} />
       <ChatInput
         fullWalletAddress={fullWalletAddress}
-        isLoginState={isLoginState}
         setChatScrollKey={setChatScrollKey}
         currentToken={currentToken}
         tokenRef={tokenRef}

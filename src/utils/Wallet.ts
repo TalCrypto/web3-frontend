@@ -13,7 +13,8 @@ import {
   wsIsShowErrorSwitchNetworkModal,
   wsIsShowTransferTokenModal,
   wsBalance,
-  wsIsWalletLoading
+  wsIsWalletLoading,
+  wsIsApproveRequired
 } from '@/stores/WalletState';
 
 async function fetchUserData() {
@@ -36,6 +37,42 @@ async function fetchUserData() {
   }
 }
 
+const handleLoginSuccess = async () => {
+  const localStorageShowModal = localStorage.getItem('isModalShown');
+  if (localStorageShowModal === undefined || localStorageShowModal === null) {
+    localStorage.setItem('isModalShown', 'false');
+  }
+
+  walletProvider.checkIsWhitelisted();
+
+  const currentNetwork = await walletProvider.provider?.getNetwork();
+  const isTargetNetwork = process.env.NEXT_PUBLIC_SUPPORT_CHAIN === Number(currentNetwork.chainId).toString();
+
+  wsIsWrongNetwork.set(!isTargetNetwork);
+  wsWethBalance.set(Number(walletProvider.wethBalance));
+  const localShowModal = localStorageShowModal === 'false' || localStorageShowModal === undefined || localStorageShowModal === null;
+  if ((Number(walletProvider.wethBalance) === 0 || !isTargetNetwork) && localShowModal) {
+    localStorage.setItem('isModalShown', 'true');
+  }
+
+  wsIsLogin.set(true);
+  if (isTargetNetwork) {
+    walletProvider.checkAllowance().then((value: any) => {
+      wsIsApproveRequired.set(value === 0);
+    });
+    // .catch((e: any) => {
+    // console.log(e);
+    // });
+  }
+};
+
+// const logout = () => {
+//   setFullWalletAddress('');
+//   setIsLoginState(false);
+//   setIsApproveRequired(false);
+//   resetOtherState();
+// };
+
 const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
   wsWalletAddress.set(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
   walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
@@ -53,7 +90,7 @@ const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
     wsIsWalletLoading.set(false);
     // handleLoginSuccess(result.data);
   });
-  // handleLoginSuccess();
+  handleLoginSuccess();
   // userState store
   userWalletAddress.set(walletProvider.holderAddress);
   userIsLogin.set(true);

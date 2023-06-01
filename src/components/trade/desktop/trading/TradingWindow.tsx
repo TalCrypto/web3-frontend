@@ -44,7 +44,6 @@ function TradingWindow(props: any) {
   const {
     getTestToken,
     userPosition,
-    isLoginState,
     refreshPositions,
     tradingData,
     isWrongNetwork,
@@ -91,7 +90,6 @@ function TradingWindow(props: any) {
 
   const tradeComponent = (
     <TradeComponent
-      isLoginState={isLoginState}
       refreshPositions={refreshPositions}
       connectWallet={traderConnectWallet}
       getTestToken={getTestToken}
@@ -118,7 +116,6 @@ function TradingWindow(props: any) {
       tradingData={tradingData}
       // tokenRef={tokenRef}
       currentToken={currentToken}
-      isLoginState={isLoginState}
       // setShowOverFluctuationContent={setShowOverFluctuationContent}
       setTradeWindowIndex={setTradeWindowIndex}
       getTestToken={getTestToken}
@@ -132,7 +129,6 @@ function TradingWindow(props: any) {
       tradingData={tradingData}
       // tokenRef={tokenRef}
       currentToken={currentToken}
-      isLoginState={isLoginState}
       maxReduceValue={maxReduceValue}
       getTestToken={getTestToken}
     />

@@ -18,3 +18,5 @@ export const wsUserInfo = atom(null);
 
 export const wsIsWrongNetwork = atom(false);
 export const wsIsWalletLoading = atom(false);
+
+export const wsIsApproveRequired = atom(false);

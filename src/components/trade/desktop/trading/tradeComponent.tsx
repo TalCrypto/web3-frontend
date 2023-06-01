@@ -29,6 +29,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
+import { wsIsLogin } from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
 
 function LongShortRatio(props: any) {
@@ -109,7 +110,6 @@ function QuantityEnter(props: any) {
     isApproveRequired,
     isInsuffBalance,
     wethBalance,
-    isLoginState,
     isWrongNetwork,
     isAmountTooSmall,
     estPriceFluctuation,
@@ -120,6 +120,7 @@ function QuantityEnter(props: any) {
     getTestToken
   } = props;
 
+  const isLoginState = useNanostore(wsIsLogin);
   const [isFocus, setIsFocus] = useState(false);
 
   const handleEnter = (target: any) => {
@@ -276,7 +277,6 @@ function EstimatedValueDisplay(props: any) {
     setToleranceRate,
     // setIsInsuffBalance,
     // wethBalance,
-    // isLoginState,
     // fullWalletAddress,
     // tokenRef,
     currentToken,
@@ -381,7 +381,6 @@ function ConfirmButton(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const {
-    isLoginState,
     quantity,
     createTransaction,
     isWrongNetwork,
@@ -404,6 +403,8 @@ function ConfirmButton(props: any) {
     isPending,
     isWaiting
   } = props;
+
+  const isLoginState = useNanostore(wsIsLogin);
 
   // const { isTethCollected, isWhitelisted, isDataFetch } = walletProvider;
   const isDataFetch = useNanostore(dataFetch);
@@ -614,7 +615,9 @@ function Tips(props: any) {
   const isWhitelisted = useNanostore(whitelisted);
   // const isTethCollected = useNanostore(tethCollected);
   const isTethCollected = Number(walletProvider.wethBalance) !== 0;
-  const { isLoginState, isWrongNetwork, isApproveRequired } = props;
+  const { isWrongNetwork, isApproveRequired } = props;
+  const isLoginState = useNanostore(wsIsLogin);
+
   if ((isLoginState && !isWrongNetwork && !isApproveRequired) || isDataFetch) {
     return <div className="row tbloverviewcontent" />;
   }
@@ -790,7 +793,6 @@ export default function TradeComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const {
-    isLoginState,
     refreshPositions,
     isWrongNetwork,
     connectWallet,
@@ -827,6 +829,7 @@ export default function TradeComponent(props: any) {
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapLmt = useNanostore(priceGapLimit);
+  const isLoginState = useNanostore(wsIsLogin);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1119,7 +1122,6 @@ export default function TradeComponent(props: any) {
         }}
         isInsuffBalance={isInsuffBalance}
         wethBalance={wethBalance}
-        isLoginState={isLoginState}
         isWrongNetwork={isWrongNetwork}
         isAmountTooSmall={isAmountTooSmall}
         estPriceFluctuation={estPriceFluctuation}
@@ -1149,7 +1151,6 @@ export default function TradeComponent(props: any) {
         setToleranceRate={setToleranceRate}
         setIsInsuffBalance={setIsInsuffBalance}
         wethBalance={wethBalance}
-        isLoginState={isLoginState}
         fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
@@ -1160,7 +1161,6 @@ export default function TradeComponent(props: any) {
         estPriceFluctuation={estPriceFluctuation}
       />
       <ConfirmButton
-        isLoginState={isLoginState}
         quantity={quantity}
         createTransaction={createTransaction}
         isWrongNetwork={isWrongNetwork}
@@ -1186,12 +1186,7 @@ export default function TradeComponent(props: any) {
       {textErrorMessageShow && isLoginState && !isWrongNetwork && !isApproveRequired && !isInsuffBalance ? (
         <p className="font-12 text-color-warning">{textErrorMessage}</p>
       ) : null}
-      <Tips
-        isLoginState={isLoginState}
-        isWrongNetwork={isWrongNetwork}
-        isApproveRequired={isApproveRequired}
-        isInsuffBalance={isInsuffBalance}
-      />
+      <Tips isWrongNetwork={isWrongNetwork} isApproveRequired={isApproveRequired} isInsuffBalance={isInsuffBalance} />
       <ExtendedEstimateComponent
         estimatedValue={estimatedValue}
         fullWalletAddress={fullWalletAddress}
