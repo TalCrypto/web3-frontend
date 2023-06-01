@@ -31,7 +31,7 @@ import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
 import { wsIsLogin } from '@/stores/WalletState';
 
-const flashAnim = 'animate__animated animate__flash animate__infinite';
+const flashAnim = 'flash';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -43,7 +43,7 @@ function SmallPriceIcon(props: any) {
   return (
     <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>{priceValue}</span>
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
   );
 }

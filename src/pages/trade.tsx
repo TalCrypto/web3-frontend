@@ -59,15 +59,7 @@ function TradePage(props: TradePagePros) {
     if (!isLoginState || isWrongNetwork) {
       return;
     }
-    // console.log('refresh fetchPositions');
     try {
-      // refresh Tribe Detail Market Trades
-      setTimeout(() => {
-        // informationRef.current?.fetchInformations();
-      }, 10000);
-      // refresh sidebar position
-      // sidebarCollectionRef.current?.fetchOverview();
-
       const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
       const traderPositionInfo: any = await getTraderPositionInfo(currentAmm, walletProvider.holderAddress);
       setUserPosition(traderPositionInfo);
@@ -80,7 +72,6 @@ function TradePage(props: TradePagePros) {
       setIsTethCollected(isCollected);
       const newBalance = await walletProvider.getWethBalance(walletProvider.holderAddress);
       setWethBalance(Number(newBalance));
-      // navbarRef.current?.updateBalance();
 
       // get price gap from smartcontract
       await walletProvider.getLiquidationRatio();

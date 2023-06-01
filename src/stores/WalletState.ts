@@ -20,3 +20,5 @@ export const wsIsWrongNetwork = atom(false);
 export const wsIsWalletLoading = atom(false);
 
 export const wsIsApproveRequired = atom(false);
+
+export const wsChatInterval = atom(0);

@@ -41,7 +41,7 @@ function MedPriceIcon(props: any) {
         height={20}
         style={{ marginRight: '4px' }}
       />
-      <span className={`${isLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>{priceValue}</span>
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
   );
 }
@@ -256,10 +256,7 @@ export default function PositionDetails(props: any) {
             />
           </div>
           <div className="flex w-[20%] pl-12">
-            <span
-              className={`normalprice mr-1 ${
-                isLoading || collectionIsPending[currentCollection.amm] ? 'animate__animated animate__flash animate__infinite' : ''
-              }`}>
+            <span className={`normalprice mr-1 ${isLoading || collectionIsPending[currentCollection.amm] ? 'flash' : ''}`}>
               {userPosition === null
                 ? '---'
                 : isLeverageNegative

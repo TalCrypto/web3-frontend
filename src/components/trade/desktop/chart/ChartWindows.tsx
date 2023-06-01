@@ -30,9 +30,9 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsIsLogin } from '@/stores/WalletState';
+import { wsIsLogin, wsChatInterval } from '@/stores/WalletState';
 
-const flashAnim = 'animate__animated animate__flash animate__infinite';
+const flashAnim = 'flash';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -44,7 +44,7 @@ function SmallPriceIcon(props: any) {
   return (
     <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>{priceValue}</span>
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
   );
 }
@@ -212,26 +212,9 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const {
-    tradingData,
-    setSelectedTimeIndex,
-    selectedTimeIndex,
-    isStartLoadingChart,
-    /* tokenRef, */ currentToken /* isProShow, setIsProShow */
-  } = props;
+  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, currentToken } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
-  // const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  // const [interval, setI] = useState(null);
-  // const [nextFundingTime, setNextFundingTime] = useState(0);
-  // const hadKey = Object.keys(tradingData).length > 0;
-  // const hours = 0;
-  // const minutes = 0;
-  // const seconds = 0;
-  // const rateLong = '-.--';
-  // const rateShort = '-.--';
-  // const longSide = '';
-  // const shortSide = '';
 
   useImperativeHandle(ref, () => ({
     reset() {
@@ -244,74 +227,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
     }
   }));
-
-  // if (tradingData && tradingData.fundingRateLong) {
-  //   const rawdata = utils.formatEther(tradingData.fundingRateLong);
-  //   const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-  //   const absoluteNumber = Math.abs(Number(numberRawdata));
-  //   rateLong = (
-  //     <span>
-  //       &nbsp;
-  //       {`${absoluteNumber}%`}
-  //     </span>
-  //   );
-  //   if (numberRawdata > 0) {
-  //     longSide = 'Pay';
-  //   } else {
-  //     longSide = 'Get';
-  //   }
-  // }
-  // if (tradingData && tradingData.fundingRateShort) {
-  //   const rawdata = utils.formatEther(tradingData.fundingRateShort);
-  //   const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-  //   const absoluteNumber = Math.abs(Number(numberRawdata));
-  //   rateShort = (
-  //     <span>
-  //       &nbsp;
-  //       {`${absoluteNumber}%`}
-  //     </span>
-  //   );
-  //   if (numberRawdata > 0) {
-  //     shortSide = 'Get';
-  //   } else {
-  //     shortSide = 'Pay';
-  //   }
-  // }
-
-  // function startCountdown() {
-  //   if (!hadKey) {
-  //     setTimeLabel('-- : -- : --');
-  //     return;
-  //   }
-  //   let endTime = tradingData.nextFundingTime * 1000;
-  //   const { fundingPeriod } = tradingData;
-  //   if (interval !== null) {
-  //     clearInterval(interval);
-  //   }
-  //   const intervalTime = setInterval(() => {
-  //     let difference = endTime - Date.now();
-  //     if (difference < 0) {
-  //       endTime = Date.now() + fundingPeriod * 1000;
-  //       difference = endTime - Date.now();
-  //     }
-  //     hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     minutes = Math.floor((difference / 1000 / 60) % 60)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     seconds = Math.floor((difference / 1000) % 60)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     setTimeLabel(`${hours}:${minutes}:${seconds}`);
-  //   }, 1000);
-  //   setI(intervalTime);
-  // }
-
-  // if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-  //   setNextFundingTime(tradingData.nextFundingTime);
-  //   startCountdown();
-  // }
 
   const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
@@ -421,9 +336,11 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  const [interval, setI] = useState(null);
   const [nextFundingTime, setNextFundingTime] = useState(0);
   const hadKey = Object.keys(tradingData).length > 0;
+
+  const interval = useNanostore(wsChatInterval);
+
   let hours = '';
   let minutes = '';
   let seconds = '';
@@ -502,7 +419,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
         .padStart(2, '0');
       setTimeLabel(`${hours}:${minutes}:${seconds}`);
     }, 1000);
-    setI(intervalTime);
+    wsChatInterval.set(intervalTime);
   }
 
   if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
