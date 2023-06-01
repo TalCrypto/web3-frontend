@@ -611,7 +611,6 @@ function ConfirmButton(props: any) {
 function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
   const isWhitelisted = useNanostore(whitelisted);
-  // const isTethCollected = useNanostore(tethCollected);
   const isTethCollected = Number(walletProvider.wethBalance) !== 0;
   const { isApproveRequired } = props;
   const isLoginState = useNanostore(wsIsLogin);

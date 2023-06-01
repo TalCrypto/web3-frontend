@@ -11,14 +11,12 @@ import { calculateNumber } from '@/utils/calculateNumbers';
 import { isUserPointLoading, userPoint } from '@/stores/airdrop';
 
 import { firebaseAuth } from '@/const/firebaseConfig';
-import { connectWallet } from '@/utils/Wallet';
+import { connectWallet, addEventListener } from '@/utils/Wallet';
 
 import {
   wsIsConnectWalletModalShow,
   wsIsLogin,
   wsWalletAddress,
-  wsCurrentChain,
-  wsIsWrongNetwork,
   wsWethBalance,
   wsIsShowErrorSwitchNetworkModal,
   wsIsWalletLoading
@@ -61,7 +59,6 @@ function Web3Area() {
 
   const isLogin = useNanostore(wsIsLogin);
   const walletAddress = useNanostore(wsWalletAddress);
-  const currentChain = useNanostore(wsCurrentChain);
   const wethBalance = useNanostore(wsWethBalance);
   const isShowErrorSwitchNetworkModal = useNanostore(wsIsShowErrorSwitchNetworkModal);
   // const showTokenError = useNanostore();
@@ -93,13 +90,14 @@ function Web3Area() {
 
   // normal
   // const userWalletAddressStore = useNanostore(userWalletAddress);
-  // const userIsWrongNetworkStore = useNanostore(userIsWrongNetwork);
   const userPointIsLoading = useNanostore(isUserPointLoading);
   const userPointData = useNanostore(userPoint);
 
   const { multiplier, total, tradeVol, isBan } = userPointData;
   const tradeVolume = calculateNumber(tradeVol.vol, 4);
   const eligible = () => Number(tradeVolume) >= 5;
+
+  addEventListener();
 
   useEffect(() => {
     const auth = firebaseAuth;
@@ -149,7 +147,6 @@ function Web3Area() {
       <ConnectWalletButton
         isLogin={isLogin}
         accountInfo={{ address: walletAddress, balance: wethBalance }}
-        currentChain={currentChain}
         callBalance={callBalance}
         userInfo={userInfo}
       />

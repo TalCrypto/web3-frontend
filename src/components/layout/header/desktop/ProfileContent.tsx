@@ -13,7 +13,7 @@ import { walletProvider } from '@/utils/walletProvider';
 
 import { disconnectWallet, getTestToken, updateTargetNetwork } from '@/utils/Wallet';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsCurrentChain, wsIsWrongNetwork } from '@/stores/WalletState';
 
 interface PriceContentProps {
   priceValue: string;
@@ -102,12 +102,12 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
 
 interface BottomContentProps {
   address: string;
-  currentChain: number;
   balance: number;
   callBalance: { portfolio: string };
 }
 
-const BottomContent: React.FC<BottomContentProps> = ({ address, currentChain, balance, callBalance }) => {
+const BottomContent: React.FC<BottomContentProps> = ({ address, balance, callBalance }) => {
+  const currentChain = useNanostore(wsCurrentChain);
   const currentNetworkName = NetworkNameDisplay(currentChain);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
@@ -168,7 +168,6 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, currentChain, ba
 
 interface ProfileContentProps {
   address: string;
-  currentChain: number;
   balance: number;
   showDisconnectTooltip: boolean;
   setShowDisconnectTooltip: (value: boolean) => void;
@@ -177,7 +176,7 @@ interface ProfileContentProps {
 }
 
 const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = (props, ref) => {
-  const { address, currentChain, balance, showDisconnectTooltip, setShowDisconnectTooltip, callBalance, userInfo } = props;
+  const { address, balance, showDisconnectTooltip, setShowDisconnectTooltip, callBalance, userInfo } = props;
   const isNotSetUsername = !userInfo || !userInfo.username;
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
@@ -210,7 +209,7 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       id="profile-content">
       <li className="m-0 list-none p-0">
         <TopContent username={userName} isNotSetUsername={isNotSetUsername} />
-        <BottomContent address={address} currentChain={currentChain} balance={balance} callBalance={callBalance} />
+        <BottomContent address={address} balance={balance} callBalance={callBalance} />
       </li>
 
       <li className="m-0 list-none p-0">

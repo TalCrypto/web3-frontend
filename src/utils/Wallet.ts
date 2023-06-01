@@ -1,6 +1,7 @@
+/* eslint-disable prefer-destructuring */
 import { walletProvider } from '@/utils/walletProvider';
 import { utils } from 'ethers';
-import { setIsWhitelisted, setIsTethCollected, userIsWrongNetwork, userIsLogin, userWalletAddress } from '@/stores/UserState';
+import { setIsWhitelisted, setIsTethCollected, userIsLogin, userWalletAddress } from '@/stores/UserState';
 import { apiConnection } from '@/utils/apiConnection';
 import {
   wsCurrentChain,
@@ -78,7 +79,6 @@ const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
   walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
     wsCurrentChain.set(result.holderChain);
     wsIsWrongNetwork.set(!result.result);
-    userIsWrongNetwork.set(!result.result); // userState store
   });
   wsWethBalance.set(Number(walletProvider.wethBalance));
   wsIsLogin.set(true);
@@ -113,6 +113,19 @@ const resetState = () => {
   wsIsWalletLoading.set(false);
   wsWethBalance.set(0);
   localStorage.setItem('isLoggedin', 'false');
+};
+
+export const addEventListener = () => {
+  if (!walletProvider.provider) return;
+
+  walletProvider.provider.provider.on('chainChanged', (chainId: any) => {
+    wsCurrentChain.set(Number(chainId));
+    wsIsWrongNetwork.set(process.env.NEXT_PUBLIC_SUPPORT_CHAIN !== Number(chainId).toString());
+  });
+  walletProvider.provider.provider.on('accountsChanged', (addresses: any) => {
+    walletProvider.holderAddress = addresses[0];
+    // debounceCheck();
+  });
 };
 
 export const connectWallet = (callback: any, initial = false) => {

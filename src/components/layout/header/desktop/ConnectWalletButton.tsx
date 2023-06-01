@@ -17,13 +17,12 @@ interface ConnectWalletButtonProps {
     address: string;
     balance: number;
   };
-  currentChain: number;
   callBalance: any;
   userInfo: any;
 }
 
 const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
-  const { isLogin, accountInfo, currentChain, callBalance, userInfo } = props;
+  const { isLogin, accountInfo, callBalance, userInfo } = props;
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const { address, balance } = accountInfo;
@@ -108,7 +107,6 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
 
       <ProfileContent
         address={address}
-        currentChain={currentChain}
         balance={balance}
         showDisconnectTooltip={showDisconnectTooltip}
         setShowDisconnectTooltip={setShowDisconnectTooltip}

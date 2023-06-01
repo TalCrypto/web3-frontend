@@ -5,13 +5,12 @@ import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
 import { wsIsWalletLoading, wsIsWrongNetwork } from '@/stores/WalletState';
-import { userIsWrongNetwork, userIsLogin, userWalletAddress } from '@/stores/UserState';
+import { userIsLogin, userWalletAddress } from '@/stores/UserState';
 
 function MobileHeader() {
   const [isShowMenu, setIsShowMenu] = useState(false);
 
   const [walletAddress, setWalletAddress] = useState('');
-  const [currentChain, setCurrentChain] = useState(0);
 
   const [address, setAddress] = useState('');
 
@@ -48,9 +47,8 @@ function MobileHeader() {
     setAddress(holderAddress);
     setWalletAddress(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
     walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
-      setCurrentChain(result.holderChain);
+      // setCurrentChain(result.holderChain);
       wsIsWrongNetwork.set(!result.result);
-      userIsWrongNetwork.set(!result.result); // userState store
     });
     if (callback) {
       callback();
