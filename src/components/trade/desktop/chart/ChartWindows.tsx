@@ -742,7 +742,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartWindows(props: any, ref: any) {
-  const { tradingData, fullWalletAddress, tokenRef, currentToken, isWrongNetwork } = props;
+  const { tradingData, fullWalletAddress, currentToken } = props;
   const isLoginState = useNanostore(wsIsLogin);
 
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);

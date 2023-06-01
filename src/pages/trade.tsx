@@ -20,7 +20,7 @@ import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 
 interface TradePagePros {
   router: any;
@@ -35,7 +35,6 @@ function TradePage(props: TradePagePros) {
   const { router } = props;
   const [currentToken, setCurrentToken] = useState(router.query?.collection ?? 'DEGODS');
   const [fullWalletAddress, setFullWalletAddress] = useState('');
-  const [isWrongNetwork, setIsWrongNetwork] = useState(true);
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
   const [userPosition, setUserPosition] = useState(null);
@@ -46,6 +45,7 @@ function TradePage(props: TradePagePros) {
   const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
   const [isApproveRequired, setIsApproveRequired] = useState(false);
   const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const fetchInformations = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
@@ -121,14 +121,12 @@ function TradePage(props: TradePagePros) {
                   currentToken={currentToken}
                   setCurrentToken={setCurrentToken}
                   fullWalletAddress={fullWalletAddress}
-                  isWrongNetwork={isWrongNetwork}
                   isShowPopup={isShowPopup}
                   setIsShowPopup={setIsShowPopup}
                 />
 
                 <TradingWindow
                   currentToken={currentToken}
-                  isWrongNetwork={isWrongNetwork}
                   fullWalletAddress={fullWalletAddress}
                   wethBalance={wethBalance}
                   // collectWallet={() => navbarRef.current?.connectWallet(() => {}, true)}
@@ -148,7 +146,6 @@ function TradePage(props: TradePagePros) {
                   tradingData={tradingData}
                   fullWalletAddress={fullWalletAddress}
                   currentToken={currentToken}
-                  isWrongNetwork={isWrongNetwork}
                 />
 
                 {isLoginState ? (
@@ -156,7 +153,6 @@ function TradePage(props: TradePagePros) {
                     userPosition={userPosition}
                     tradingData={tradingData}
                     currentToken={currentToken}
-                    isWrongNetwork={isWrongNetwork}
                     setHistoryModalIsVisible={setHistoryModalIsVisible}
                     setFundingModalIsShow={setFundingModalIsShow}
                     fullWalletAddress={fullWalletAddress}
@@ -194,7 +190,6 @@ function TradePage(props: TradePagePros) {
             tradingData={tradingData}
             fullWalletAddress={fullWalletAddress}
             currentToken={currentToken}
-            isWrongNetwork={isWrongNetwork}
           />
 
           {/* {isLoginState ? ( */}
@@ -202,7 +197,6 @@ function TradePage(props: TradePagePros) {
             userPosition={userPosition}
             tradingData={tradingData}
             currentToken={currentToken}
-            isWrongNetwork={isWrongNetwork}
             setHistoryModalIsVisible={setHistoryModalIsVisible}
             setFundingModalIsShow={setFundingModalIsShow}
             fullWalletAddress={fullWalletAddress}

@@ -25,6 +25,8 @@ import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
+import { wsIsWrongNetwork } from '@/stores/WalletState';
+
 function SectionDividers() {
   return (
     <div className="row">
@@ -251,7 +253,6 @@ function AdjustMarginButton(props: any) {
     closeValue,
     isClosingPosition,
     closePosition,
-    isWrongNetwork,
     maxValueComparison,
     minValueComparison,
     isPending,
@@ -259,6 +260,7 @@ function AdjustMarginButton(props: any) {
     isFluctuationLimit,
     isBadDebt
   } = props;
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const isChecked1 = closeValue <= 0 || closeValue === '' || isWrongNetwork || closeValue === 0;
   const isChecked2 = maxValueComparison || minValueComparison || isPending || isWaiting || isFluctuationLimit || isBadDebt;
@@ -293,7 +295,6 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   const [isProcessingClosePos, setIsProcessingClosePos] = useState(false);
   const {
     refreshPositions,
-    isWrongNetwork,
     fullWalletAddress,
     // tokenRef,
     currentToken,
@@ -537,7 +538,6 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
         closeValue={closeValue}
         isClosingPosition={isClosingPosition}
         closePosition={showModalOrClose}
-        isWrongNetwork={isWrongNetwork}
         maxValueComparison={maxValueComparison}
         minValueComparison={minValueComparison}
         isPending={isPending}
@@ -806,7 +806,6 @@ export default function CloseCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const {
-    isWrongNetwork,
     refreshPositions,
     userPosition,
     wethBalance,
@@ -971,7 +970,6 @@ export default function CloseCollateral(props: any) {
           handleEnter(e);
         }}
         wethBalance={wethBalance}
-        isWrongNetwork={isWrongNetwork}
         userPosition={userPosition}
         closeValue={closeValue}
         tradingData={tradingData}
@@ -1052,7 +1050,6 @@ export default function CloseCollateral(props: any) {
       <ActionButtons
         ref={actionButtonRef}
         refreshPositions={refreshPositions}
-        isWrongNetwork={isWrongNetwork}
         fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}

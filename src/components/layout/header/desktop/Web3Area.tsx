@@ -62,7 +62,6 @@ function Web3Area() {
   const isLogin = useNanostore(wsIsLogin);
   const walletAddress = useNanostore(wsWalletAddress);
   const currentChain = useNanostore(wsCurrentChain);
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const wethBalance = useNanostore(wsWethBalance);
   const isShowErrorSwitchNetworkModal = useNanostore(wsIsShowErrorSwitchNetworkModal);
   // const showTokenError = useNanostore();
@@ -143,16 +142,14 @@ function Web3Area() {
 
       {/* {isDataFetched && isLogin ? ( */}
       <div className="hidden md:block">
-        <ExtraComponent isWrongNetwork={isWrongNetwork} />
+        <ExtraComponent />
       </div>
       {/* ) : null} */}
 
       <ConnectWalletButton
         isLogin={isLogin}
-        inWrongNetwork={isWrongNetwork}
         accountInfo={{ address: walletAddress, balance: wethBalance }}
         currentChain={currentChain}
-        isWrongNetwork={isWrongNetwork}
         callBalance={callBalance}
         userInfo={userInfo}
       />

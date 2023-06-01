@@ -23,7 +23,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
@@ -87,7 +87,6 @@ function QuantityEnter(props: any) {
     isInsuffBalance,
     wethBalance,
     maxReduceValue,
-    isWrongNetwork,
     marginIndex,
     balanceChecking,
     marginRatioChecker,
@@ -100,6 +99,7 @@ function QuantityEnter(props: any) {
 
   const [isFocus, setIsFocus] = useState(false);
   const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -279,9 +279,6 @@ function AdjustMarginButton(props: any) {
     adjustMarginValue,
     isAdjustingMargin,
     adjustPositionMargin,
-    isWrongNetwork,
-    marginEstimation,
-    exceedBalance,
     balanceChecking,
     marginRatioChecker,
     minimalMarginChecking,
@@ -290,6 +287,7 @@ function AdjustMarginButton(props: any) {
     isPending,
     isWaiting
   } = props;
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const isChecked1 = adjustMarginValue === '' || isWrongNetwork || adjustMarginValue === 0 || balanceChecking;
   const isChecked2 = marginRatioChecker || minimalMarginChecking || initialMarginChecker || isPending || isWaiting;
@@ -323,7 +321,6 @@ function ActionButtons(props: any) {
   const {
     adjustMarginValue,
     refreshPositions,
-    isWrongNetwork,
     marginIndex,
     marginEstimation,
     exceedBalance,
@@ -468,7 +465,6 @@ function ActionButtons(props: any) {
         adjustMarginValue={adjustMarginValue}
         isAdjustingMargin={isAdjustingMargin}
         adjustPositionMargin={adjustPositionMargin}
-        isWrongNetwork={isWrongNetwork}
         marginEstimation={marginEstimation}
         exceedBalance={exceedBalance}
         balanceChecking={balanceChecking}
@@ -658,17 +654,7 @@ function AdjustCollateralSlidingBars(props: any) {
 export default function AdjustCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    isWrongNetwork,
-    refreshPositions,
-    userPosition,
-    wethBalance,
-    fullWalletAddress,
-    tokenRef,
-    currentToken,
-    maxReduceValue,
-    getTestToken
-  } = props;
+  const { refreshPositions, userPosition, wethBalance, fullWalletAddress, tokenRef, currentToken, maxReduceValue, getTestToken } = props;
   const [adjustMarginValue, setAdjustMarginValue] = useState('');
   const [marginIndex, setMarginIndex] = useState(0);
   const [marginEstimation, setMarginEstimation] = useState(null);
@@ -786,7 +772,6 @@ export default function AdjustCollateral(props: any) {
         }}
         marginIndex={marginIndex}
         wethBalance={wethBalance}
-        isWrongNetwork={isWrongNetwork}
         value={adjustMarginValue}
         setValue={setAdjustMarginValue}
         maxReduceValue={maxReduceValue}
@@ -851,7 +836,6 @@ export default function AdjustCollateral(props: any) {
       <ActionButtons
         adjustMarginValue={adjustMarginValue}
         refreshPositions={handleSuccess}
-        isWrongNetwork={isWrongNetwork}
         marginIndex={marginIndex}
         marginEstimation={marginEstimation}
         exceedBalance={exceedBalance}

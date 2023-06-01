@@ -29,7 +29,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
 
 function LongShortRatio(props: any) {
@@ -87,7 +87,6 @@ function QuantityTips(props: any) {
   const {
     isInsuffBalance,
     isAmountTooSmall,
-    isWrongNetwork,
     isAmountNegative,
     estPriceFluctuation,
     // isFluctuationLimit,
@@ -97,6 +96,7 @@ function QuantityTips(props: any) {
     // getTestToken
   } = props;
   // price gap
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const isChecking = !isInsuffBalance && !isAmountTooSmall && !isPending && !estPriceFluctuation && !isLiquidatable;
   const isShow = value <= 0 || isChecking || isWrongNetwork || isAmountNegative;
@@ -110,7 +110,6 @@ function QuantityEnter(props: any) {
     isApproveRequired,
     isInsuffBalance,
     wethBalance,
-    isWrongNetwork,
     isAmountTooSmall,
     estPriceFluctuation,
     isFluctuationLimit,
@@ -121,6 +120,8 @@ function QuantityEnter(props: any) {
   } = props;
 
   const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+
   const [isFocus, setIsFocus] = useState(false);
 
   const handleEnter = (target: any) => {
@@ -194,7 +195,6 @@ function QuantityEnter(props: any) {
       <QuantityTips
         isInsuffBalance={isInsuffBalance}
         isAmountTooSmall={isAmountTooSmall}
-        isWrongNetwork={isWrongNetwork}
         estPriceFluctuation={estPriceFluctuation}
         isFluctuationLimit={isFluctuationLimit}
         isLiquidatable={isLiquidatable}
@@ -383,13 +383,10 @@ function ConfirmButton(props: any) {
   const {
     quantity,
     createTransaction,
-    isWrongNetwork,
     isApproveRequired,
     setIsApproveRequired,
     isInsuffBalance,
     isAmountTooSmall,
-    // fullWalletAddress,
-    // tokenRef,
     currentToken,
     setQuantity,
     setEstimatedValue,
@@ -405,6 +402,7 @@ function ConfirmButton(props: any) {
   } = props;
 
   const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   // const { isTethCollected, isWhitelisted, isDataFetch } = walletProvider;
   const isDataFetch = useNanostore(dataFetch);
@@ -615,8 +613,9 @@ function Tips(props: any) {
   const isWhitelisted = useNanostore(whitelisted);
   // const isTethCollected = useNanostore(tethCollected);
   const isTethCollected = Number(walletProvider.wethBalance) !== 0;
-  const { isWrongNetwork, isApproveRequired } = props;
+  const { isApproveRequired } = props;
   const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   if ((isLoginState && !isWrongNetwork && !isApproveRequired) || isDataFetch) {
     return <div className="row tbloverviewcontent" />;
@@ -794,7 +793,6 @@ export default function TradeComponent(props: any) {
   const { page } = pageTitleParser(router.asPath);
   const {
     refreshPositions,
-    isWrongNetwork,
     connectWallet,
     getTestToken,
     isApproveRequired,
@@ -830,6 +828,7 @@ export default function TradeComponent(props: any) {
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapLmt = useNanostore(priceGapLimit);
   const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1122,7 +1121,6 @@ export default function TradeComponent(props: any) {
         }}
         isInsuffBalance={isInsuffBalance}
         wethBalance={wethBalance}
-        isWrongNetwork={isWrongNetwork}
         isAmountTooSmall={isAmountTooSmall}
         estPriceFluctuation={estPriceFluctuation}
         isFluctuationLimit={isFluctuationLimit}
@@ -1163,7 +1161,6 @@ export default function TradeComponent(props: any) {
       <ConfirmButton
         quantity={quantity}
         createTransaction={createTransaction}
-        isWrongNetwork={isWrongNetwork}
         isApproveRequired={isApproveRequired}
         setIsApproveRequired={setIsApproveRequired}
         isInsuffBalance={isInsuffBalance}
@@ -1186,7 +1183,7 @@ export default function TradeComponent(props: any) {
       {textErrorMessageShow && isLoginState && !isWrongNetwork && !isApproveRequired && !isInsuffBalance ? (
         <p className="font-12 text-color-warning">{textErrorMessage}</p>
       ) : null}
-      <Tips isWrongNetwork={isWrongNetwork} isApproveRequired={isApproveRequired} isInsuffBalance={isInsuffBalance} />
+      <Tips isApproveRequired={isApproveRequired} isInsuffBalance={isInsuffBalance} />
       <ExtendedEstimateComponent
         estimatedValue={estimatedValue}
         fullWalletAddress={fullWalletAddress}

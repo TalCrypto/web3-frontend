@@ -8,7 +8,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 import CollectionModal from '@/components/trade/desktop/trading/CollectionModal';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -16,13 +16,14 @@ const getCollectionInformation = (collectionName: any) => {
 };
 
 function SidebarCollection(props: any, ref: any) {
-  const { currentToken, setCurrentToken, isWrongNetwork, fullWalletAddress, setIsShowPopup } = props;
+  const { currentToken, setCurrentToken, fullWalletAddress, setIsShowPopup } = props;
   const [isColModalVisible, setIsColModalVisible] = useState(false);
   const [userPositions, setUserPositions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [overviewData, setOverviewData] = useState([]);
   const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const router = useRouter();
 
@@ -148,12 +149,7 @@ function SidebarCollection(props: any, ref: any) {
           </div>
         ))}
       </div>
-      <CollectionModal
-        visible={isColModalVisible}
-        setVisible={setIsColModalVisible}
-        isWrongNetwork={isWrongNetwork}
-        selectCollection={selectCollection}
-      />
+      <CollectionModal visible={isColModalVisible} setVisible={setIsColModalVisible} selectCollection={selectCollection} />
     </>
   );
 }

@@ -10,13 +10,9 @@ import { apiConnection } from '@/utils/apiConnection';
 import { tethCollected, inputCode, hasTraded } from '@/stores/UserState';
 import { getTestToken } from '@/utils/Wallet';
 
-interface ExtraComponentProps {
-  // getTestToken: any;
-  isWrongNetwork: boolean;
-  // updateTargetNetwork: any;
-}
+import { wsIsWrongNetwork } from '@/stores/WalletState';
 
-const ExtraComponent: React.FC<ExtraComponentProps> = ({ /* getTestToken, */ isWrongNetwork /* updateTargetNetwork */ }) => {
+const ExtraComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [referralCode, setReferralCode] = useState('');
   const [isError, setIsError] = useState(false);
@@ -25,6 +21,7 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ /* getTestToken, */ isW
   const [isShowReferral, setIsShowReferral] = useState(true);
   const isTethCollected = useNanostore(tethCollected);
   const isInputCode = useNanostore(inputCode);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const onSwitchClick = () => {
     // updateTargetNetwork();

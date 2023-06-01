@@ -7,30 +7,27 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
 
-import { wsIsWalletLoading } from '@/stores/WalletState';
+import { wsIsWalletLoading, wsIsWrongNetwork } from '@/stores/WalletState';
 
 import { connectWallet } from '@/utils/Wallet';
 
 interface ConnectWalletButtonProps {
   isLogin: boolean;
-  inWrongNetwork: boolean;
   accountInfo: {
     address: string;
     balance: number;
   };
   currentChain: number;
-  // getTestToken: any;
-  isWrongNetwork: boolean;
-  // updateTargetNetwork: () => void;
   callBalance: any;
   userInfo: any;
 }
 
 const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
-  const { isLogin, inWrongNetwork, accountInfo, currentChain, isWrongNetwork, callBalance, userInfo } = props;
+  const { isLogin, accountInfo, currentChain, callBalance, userInfo } = props;
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const { address, balance } = accountInfo;
-  const showWethBalaceLabel = !isLogin ? '' : inWrongNetwork ? '-.-- WETH' : `${Number(balance).toFixed(2)} WETH`;
+  const showWethBalaceLabel = !isLogin ? '' : isWrongNetwork ? '-.-- WETH' : `${Number(balance).toFixed(2)} WETH`;
   const [showDisconnectTooltip, setShowDisconnectTooltip] = useState(false);
   const isNotSetUsername = !userInfo || !userInfo.username;
 
@@ -111,15 +108,10 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
 
       <ProfileContent
         address={address}
-        inWrongNetwork={inWrongNetwork}
         currentChain={currentChain}
         balance={balance}
         showDisconnectTooltip={showDisconnectTooltip}
         setShowDisconnectTooltip={setShowDisconnectTooltip}
-        // getTestToken={getTestToken}
-        isWrongNetwork={isWrongNetwork}
-        // updateTargetNetwork={updateTargetNetwork}
-        // isLogin={isLogin}
         callBalance={callBalance}
         userInfo={userInfo}
       />

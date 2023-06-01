@@ -46,7 +46,6 @@ function TradingWindow(props: any) {
     userPosition,
     refreshPositions,
     tradingData,
-    isWrongNetwork,
     isApproveRequired,
     setIsApproveRequired,
     wethBalance,
@@ -59,31 +58,7 @@ function TradingWindow(props: any) {
   const tradePanelModalMsg = useStore(tradePanelModal.message);
   const tradePanelModalLink = useStore(tradePanelModal.link);
 
-  // const logEventByName = name => {
-  //   logEvent(firebaseAnalytics, name, {
-  //     wallet: fullWalletAddress.substring(2),
-  //     collection: currentToken
-  //   });
-  //   apiConnection.postUserEvent(name, {
-  //     page,
-  //     collection: currentToken
-  //   });
-  // };
-  // const tabs = ['Add', 'Close', 'Adjust Collateral'].map((item, index) => (
-  //   <Tab
-  //     name={item}
-  //     key={item}
-  //     active={tradeWindowIndex === index}
-  //     onClick={() => {
-  //       setTradeWindowIndex(index);
-  //       // logEventByName(analyticsKeys[index]);
-  //     }}
-  //   />
-  // ));
-  // const [showOverFluctuationContent, setShowOverFluctuationContent] = useState(false);
-
   const traderConnectWallet = () => {
-    // logEventByName('connectWallet_pressed_tradings');
     connectWallet(() => {}, true);
   };
   useEffect(() => setTradeWindowIndex(0), [currentToken]);
@@ -93,12 +68,10 @@ function TradingWindow(props: any) {
       refreshPositions={refreshPositions}
       connectWallet={traderConnectWallet}
       getTestToken={getTestToken}
-      isWrongNetwork={isWrongNetwork}
       isApproveRequired={isApproveRequired}
       setIsApproveRequired={setIsApproveRequired}
       wethBalance={wethBalance}
       fullWalletAddress={fullWalletAddress}
-      // tokenRef={tokenRef}
       currentToken={currentToken}
       userPosition={userPosition}
       tradingData={tradingData}
@@ -108,26 +81,21 @@ function TradingWindow(props: any) {
   const displayComponent = [
     tradeComponent,
     <CloseCollateral
-      isWrongNetwork={isWrongNetwork}
       refreshPositions={refreshPositions}
       userPosition={userPosition}
       wethBalance={wethBalance}
       fullWalletAddress={fullWalletAddress}
       tradingData={tradingData}
-      // tokenRef={tokenRef}
       currentToken={currentToken}
-      // setShowOverFluctuationContent={setShowOverFluctuationContent}
       setTradeWindowIndex={setTradeWindowIndex}
       getTestToken={getTestToken}
     />,
     <AdjustCollateral
-      isWrongNetwork={isWrongNetwork}
       refreshPositions={refreshPositions}
       userPosition={userPosition}
       wethBalance={wethBalance}
       fullWalletAddress={fullWalletAddress}
       tradingData={tradingData}
-      // tokenRef={tokenRef}
       currentToken={currentToken}
       maxReduceValue={maxReduceValue}
       getTestToken={getTestToken}

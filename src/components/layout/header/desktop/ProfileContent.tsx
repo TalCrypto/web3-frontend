@@ -12,6 +12,8 @@ import NetworkNameDisplay from '@/utils/NetworkNameDisplay';
 import { walletProvider } from '@/utils/walletProvider';
 
 import { disconnectWallet, getTestToken, updateTargetNetwork } from '@/utils/Wallet';
+import { useStore as useNanostore } from '@nanostores/react';
+import { wsIsWrongNetwork } from '@/stores/WalletState';
 
 interface PriceContentProps {
   priceValue: string;
@@ -100,14 +102,14 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
 
 interface BottomContentProps {
   address: string;
-  inWrongNetwork: boolean;
   currentChain: number;
   balance: number;
   callBalance: { portfolio: string };
 }
 
-const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, currentChain, balance, callBalance }) => {
+const BottomContent: React.FC<BottomContentProps> = ({ address, currentChain, balance, callBalance }) => {
   const currentNetworkName = NetworkNameDisplay(currentChain);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   return (
     <div className="bottoms">
@@ -132,31 +134,31 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, 
             </div>
           </div>
           <div className="flex items-center">
-            {inWrongNetwork ? (
+            {isWrongNetwork ? (
               <div className="mr-1 text-[12px] font-medium text-[#ff5656]">
                 Wrong <br /> Network
               </div>
             ) : null}
-            <div className={`h-2 w-2 rounded-full ${!inWrongNetwork ? 'bg-[#78f363]' : 'bg-[#ff5656]'}`} />
+            <div className={`h-2 w-2 rounded-full ${!isWrongNetwork ? 'bg-[#78f363]' : 'bg-[#ff5656]'}`} />
           </div>
         </div>
       </div>
       <PriceContent
         title="Total Account Value:"
-        priceValue={inWrongNetwork ? '0.0000' : (Number(balance) + Number(callBalance.portfolio)).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : (Number(balance) + Number(callBalance.portfolio)).toFixed(4)}
         isLargeText
         notLastRow={false}
       />
       <div className="mx-6 my-0 h-[1px] bg-[#414368]" />
       <PriceContent
         title="Portfolio Collateral:"
-        priceValue={inWrongNetwork ? '0.0000' : Number(callBalance.portfolio).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : Number(callBalance.portfolio).toFixed(4)}
         isLargeText={false}
         notLastRow
       />
       <PriceContent
         title="Wallet Balance:"
-        priceValue={inWrongNetwork ? '0.0000' : Number(balance).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : Number(balance).toFixed(4)}
         isLargeText={false}
         notLastRow={false}
       />
@@ -164,99 +166,20 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, inWrongNetwork, 
   );
 };
 
-interface NormalButtonSetProps {
-  setShowDisconnectTooltip: (value: boolean) => void;
-  disconnectWalletAction: () => void;
-}
-
-const NormalButtonSet: React.FC<NormalButtonSetProps> = ({ setShowDisconnectTooltip, disconnectWalletAction }) => {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-
-  const clickGetgoerliEth = (e: React.MouseEvent) => {
-    // e.preventDefault();
-    const eventName = 'wallet_get_goerli_eth_pressed';
-
-    const fullWalletAddress = walletProvider.holderAddress;
-
-    // logEvent(firebaseAnalytics, eventName, {
-    //   wallet: fullWalletAddress.substring(2)
-    // });
-    apiConnection.postUserEvent(eventName, {
-      page
-    });
-  };
-
-  const onGeWethClick = async () => {
-    await getTestToken(null, null);
-  };
-
-  return (
-    <div className="normal-buttons m-6 mt-3">
-      <div
-        className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
-          bg-[#2574fb] text-[14px] font-semibold text-white"
-        onClick={onGeWethClick}>
-        Get WETH
-      </div>
-      <div
-        className="function-btn mt-6 cursor-pointer text-[16px]
-          font-semibold text-[#2574fb]"
-        onClick={disconnectWalletAction}>
-        Disconnect Wallet
-      </div>
-    </div>
-  );
-};
-
-interface IncorrectNetworkButtonSetProps {
-  disconnectWalletAction: () => void;
-}
-
-const IncorrectNetworkButtonSet: React.FC<IncorrectNetworkButtonSetProps> = ({ disconnectWalletAction }) => (
-  <div className="normal-buttons m-6 mt-3">
-    <div
-      className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
-          bg-[#2574fb] text-[14px] font-semibold text-white"
-      onClick={updateTargetNetwork}>
-      Switch to Arbitrum
-    </div>
-    <div
-      className="function-btn font-semiboldtext-[#2574fb] mt-6
-          cursor-pointer text-[16px]"
-      onClick={disconnectWalletAction}>
-      Disconnect Wallet
-    </div>
-  </div>
-);
-
 interface ProfileContentProps {
   address: string;
-  inWrongNetwork: boolean;
   currentChain: number;
   balance: number;
   showDisconnectTooltip: boolean;
   setShowDisconnectTooltip: (value: boolean) => void;
-  isWrongNetwork: boolean;
   callBalance: { portfolio: string };
   userInfo: { username: string } | null;
 }
 
 const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = (props, ref) => {
-  const {
-    address,
-    inWrongNetwork,
-    currentChain,
-    balance,
-    showDisconnectTooltip,
-    setShowDisconnectTooltip,
-    // getTestToken,
-    isWrongNetwork,
-    // updateTargetNetwork,
-    callBalance,
-    userInfo
-  } = props;
+  const { address, currentChain, balance, showDisconnectTooltip, setShowDisconnectTooltip, callBalance, userInfo } = props;
   const isNotSetUsername = !userInfo || !userInfo.username;
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   let userName = '';
 
@@ -273,6 +196,10 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
     setShowDisconnectTooltip(false);
   };
 
+  const onGeWethClick = async () => {
+    await getTestToken(null, null);
+  };
+
   return (
     <div
       className="profile-content z-2 transition-visibility invisible
@@ -283,27 +210,34 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       id="profile-content">
       <li className="m-0 list-none p-0">
         <TopContent username={userName} isNotSetUsername={isNotSetUsername} />
-        <BottomContent
-          address={address}
-          inWrongNetwork={inWrongNetwork}
-          currentChain={currentChain}
-          balance={balance}
-          callBalance={callBalance}
-        />
+        <BottomContent address={address} currentChain={currentChain} balance={balance} callBalance={callBalance} />
       </li>
-      {!isWrongNetwork ? (
-        <li className="m-0 list-none p-0">
-          <NormalButtonSet
-            setShowDisconnectTooltip={setShowDisconnectTooltip}
-            // getTestToken={getTestToken}
-            disconnectWalletAction={disconnectWalletAction}
-          />
-        </li>
-      ) : (
-        <li className="m-0 list-none p-0">
-          <IncorrectNetworkButtonSet disconnectWalletAction={disconnectWalletAction} />
-        </li>
-      )}
+
+      <li className="m-0 list-none p-0">
+        <div className="normal-buttons m-6 mt-3">
+          {!isWrongNetwork ? (
+            <div
+              className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
+                bg-[#2574fb] text-[14px] font-semibold text-white"
+              onClick={onGeWethClick}>
+              Get WETH
+            </div>
+          ) : (
+            <div
+              className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
+            bg-[#2574fb] text-[14px] font-semibold text-white"
+              onClick={updateTargetNetwork}>
+              Switch to Arbitrum
+            </div>
+          )}
+          <div
+            className="function-btn mt-6 cursor-pointer text-[16px]
+              font-semibold text-[#2574fb]"
+            onClick={disconnectWalletAction}>
+            Disconnect Wallet
+          </div>
+        </div>
+      </li>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
-import { wsIsWalletLoading } from '@/stores/WalletState';
+import { wsIsWalletLoading, wsIsWrongNetwork } from '@/stores/WalletState';
 import { userIsWrongNetwork, userIsLogin, userWalletAddress } from '@/stores/UserState';
 
 function MobileHeader() {
@@ -12,7 +12,6 @@ function MobileHeader() {
 
   const [walletAddress, setWalletAddress] = useState('');
   const [currentChain, setCurrentChain] = useState(0);
-  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
 
   const [address, setAddress] = useState('');
 
@@ -50,7 +49,7 @@ function MobileHeader() {
     setWalletAddress(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
     walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
       setCurrentChain(result.holderChain);
-      setIsWrongNetwork(!result.result);
+      wsIsWrongNetwork.set(!result.result);
       userIsWrongNetwork.set(!result.result); // userState store
     });
     if (callback) {
