@@ -174,7 +174,7 @@ export const updateTargetNetwork = (callback: any = null) => {
     });
 };
 
-export const getTestToken = async (callback: any, successHandle: any) => {
+export const getTestToken = async (callback: any = null, successHandle: any = null) => {
   // logEventByName('getTeth_pressed');
   wsIsShowTransferTokenModal.set(true);
   const isGoerliEthCollected = await walletProvider.checkIsGoerliEthCollected();

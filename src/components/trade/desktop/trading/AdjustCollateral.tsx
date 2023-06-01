@@ -24,6 +24,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { getTestToken } from '@/utils/Wallet';
 
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
@@ -93,8 +94,7 @@ function QuantityEnter(props: any) {
     minimalMarginChecking,
     initialMarginChecker,
     reduceMarginChecking,
-    isProcessing,
-    getTestToken
+    isProcessing
   } = props;
 
   const [isFocus, setIsFocus] = useState(false);
@@ -489,8 +489,7 @@ function QuantityTips(props: any) {
     value,
     maxReduceValue,
     isPending,
-    marginIndex,
-    getTestToken
+    marginIndex
   } = props;
   const decreaseMax = Number(maxReduceValue) - 0.0001;
 
@@ -654,7 +653,7 @@ function AdjustCollateralSlidingBars(props: any) {
 export default function AdjustCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, userPosition, wethBalance, fullWalletAddress, tokenRef, currentToken, maxReduceValue, getTestToken } = props;
+  const { refreshPositions, userPosition, wethBalance, fullWalletAddress, tokenRef, currentToken, maxReduceValue } = props;
   const [adjustMarginValue, setAdjustMarginValue] = useState('');
   const [marginIndex, setMarginIndex] = useState(0);
   const [marginEstimation, setMarginEstimation] = useState(null);
@@ -782,7 +781,6 @@ export default function AdjustCollateral(props: any) {
         initialMarginChecker={initialMarginChecker}
         reduceMarginChecking={reduceMarginChecking}
         isProcessing={isProcessing}
-        getTestToken={getTestToken}
       />
       <QuantityTips
         balanceChecking={balanceChecking}
@@ -794,7 +792,6 @@ export default function AdjustCollateral(props: any) {
         maxReduceValue={maxReduceValue}
         marginIndex={marginIndex}
         isPending={isPending}
-        getTestToken={getTestToken}
       />
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}

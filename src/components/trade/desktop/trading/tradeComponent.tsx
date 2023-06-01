@@ -29,8 +29,9 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
+import { getTestToken } from '@/utils/Wallet';
 
 function LongShortRatio(props: any) {
   const router = useRouter();
@@ -93,7 +94,6 @@ function QuantityTips(props: any) {
     isPending,
     isLiquidatable,
     value
-    // getTestToken
   } = props;
   // price gap
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
@@ -115,8 +115,7 @@ function QuantityEnter(props: any) {
     isFluctuationLimit,
     isLiquidatable,
     isPending,
-    disabled,
-    getTestToken
+    disabled
   } = props;
 
   const isLoginState = useNanostore(wsIsLogin);
@@ -200,7 +199,6 @@ function QuantityEnter(props: any) {
         isLiquidatable={isLiquidatable}
         value={value}
         isPending={isPending}
-        getTestToken={getTestToken}
       />
     </>
   );
@@ -396,7 +394,6 @@ function ConfirmButton(props: any) {
     leverageValue,
     handleLeverageEnter,
     setToleranceRate,
-    getTestToken,
     isPending,
     isWaiting
   } = props;
@@ -793,10 +790,8 @@ export default function TradeComponent(props: any) {
   const {
     refreshPositions,
     connectWallet,
-    getTestToken,
     isApproveRequired,
     setIsApproveRequired,
-    wethBalance,
     fullWalletAddress,
     // tokenRef,
     currentToken,
@@ -828,6 +823,7 @@ export default function TradeComponent(props: any) {
   const priceGapLmt = useNanostore(priceGapLimit);
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const wethBalance = useNanostore(wsWethBalance);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1124,7 +1120,6 @@ export default function TradeComponent(props: any) {
         estPriceFluctuation={estPriceFluctuation}
         isFluctuationLimit={isFluctuationLimit}
         isPending={isPending}
-        getTestToken={getTestToken}
         isLiquidatable={isLiquidatable}
       />
       <LeverageComponent
@@ -1175,7 +1170,6 @@ export default function TradeComponent(props: any) {
         leverageValue={leverageValue}
         handleLeverageEnter={handleLeverageEnter}
         setToleranceRate={setToleranceRate}
-        getTestToken={getTestToken}
         isPending={isPending}
         isWaiting={isWaiting}
       />

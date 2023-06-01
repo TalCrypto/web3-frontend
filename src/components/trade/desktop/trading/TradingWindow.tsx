@@ -42,7 +42,6 @@ import { connectWallet } from '@/utils/Wallet';
 
 function TradingWindow(props: any) {
   const {
-    getTestToken,
     userPosition,
     refreshPositions,
     tradingData,
@@ -67,7 +66,6 @@ function TradingWindow(props: any) {
     <TradeComponent
       refreshPositions={refreshPositions}
       connectWallet={traderConnectWallet}
-      getTestToken={getTestToken}
       isApproveRequired={isApproveRequired}
       setIsApproveRequired={setIsApproveRequired}
       wethBalance={wethBalance}
@@ -88,7 +86,6 @@ function TradingWindow(props: any) {
       tradingData={tradingData}
       currentToken={currentToken}
       setTradeWindowIndex={setTradeWindowIndex}
-      getTestToken={getTestToken}
     />,
     <AdjustCollateral
       refreshPositions={refreshPositions}
@@ -98,7 +95,6 @@ function TradingWindow(props: any) {
       tradingData={tradingData}
       currentToken={currentToken}
       maxReduceValue={maxReduceValue}
-      getTestToken={getTestToken}
     />
   ][tradeWindowIndex];
 
