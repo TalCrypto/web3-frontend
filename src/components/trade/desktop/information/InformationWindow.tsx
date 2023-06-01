@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-key */
-import React, { forwardRef, /* useImperativeHandle, */ useRef, useState } from 'react';
+import React, { useState } from 'react';
 // import { logEvent } from 'firebase/analytics';
 
 import ComingSoonWindow from '@/components/trade/desktop/information/CommingSoonWindow';
@@ -12,11 +12,9 @@ import Image from 'next/image';
 // import { firebaseAnalytics } from '@/const/firebaseConfig';
 // import { apiConnection } from '@/utils/apiConnection';
 
-function InformationsWindows(props: any) {
+function InformationWindow(props: any) {
   const { tradingData, isLoginState, fullWalletAddress, tokenRef, currentToken } = props;
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
-  const detailRef = useRef();
-  const chatRef = useRef();
   const [activeTab, setActiveTab] = useState(0);
 
   const tabsImages = [
@@ -38,13 +36,6 @@ function InformationsWindows(props: any) {
     </div>
   ));
 
-  // useImperativeHandle(ref, () => ({
-  //   fetchInformations: () => {
-  //     detailRef.current?.updateInfomations();
-  //     chatRef.current?.getFirebaseChat();
-  //   }
-  // }));
-
   return (
     <div
       className="mb-[24px] h-[530px] max-h-[1000px] cursor-default overflow-hidden
@@ -58,7 +49,6 @@ function InformationsWindows(props: any) {
       <div className="display-content h-full">
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
           <TribeDetailComponents
-            ref={detailRef}
             tradingData={tradingData}
             fullWalletAddress={fullWalletAddress}
             tokenRef={tokenRef}
@@ -68,7 +58,6 @@ function InformationsWindows(props: any) {
         </div>
         <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
           <ChatComponent
-            ref={chatRef}
             fullWalletAddress={fullWalletAddress}
             isLoginState={isLoginState}
             tokenRef={tokenRef}
@@ -82,4 +71,5 @@ function InformationsWindows(props: any) {
     </div>
   );
 }
-export default forwardRef(InformationsWindows);
+
+export default InformationWindow;

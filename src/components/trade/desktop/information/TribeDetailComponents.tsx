@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable react/no-array-index-key */
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from 'react';
+import React, { useEffect } from 'react';
 // import moment from 'moment';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
@@ -14,7 +14,6 @@ import Image from 'next/image';
 import { /* calculateNumber, */ formatterValue, isPositive, formatterUSDC } from '@/utils/calculateNumbers';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 
-import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
 import { getTradingActionTypeFromAPI } from '@/components/trade/desktop/information/ActionType';
@@ -88,7 +87,7 @@ function ExplorerButton(props: any) {
   );
 }
 
-const MarketTrade = forwardRef((props: any) => {
+const MarketTrade = (props: any) => {
   const router = useRouter();
   const { fullWalletAddress, currentToken } = props;
   const marketHistory = useNanostore(tsMarketHistory);
@@ -145,9 +144,9 @@ const MarketTrade = forwardRef((props: any) => {
       )}
     </div>
   );
-});
+};
 
-const SpotTable = forwardRef((props: any, ref: any) => {
+const SpotTable = (props: any) => {
   const { fullWalletAddress, currentToken } = props;
   const openseaData = useNanostore(tsSportPriceList);
 
@@ -227,9 +226,9 @@ const SpotTable = forwardRef((props: any, ref: any) => {
       )}
     </div>
   );
-});
+};
 
-const FundingPaymentHistory = forwardRef(() => {
+const FundingPaymentHistory = () => {
   const fundingPaymentHistory = useNanostore(tsFundingPaymentHistory);
 
   return fundingPaymentHistory !== null ? (
@@ -264,9 +263,9 @@ const FundingPaymentHistory = forwardRef(() => {
       )}
     </div>
   ) : null;
-});
+};
 
-function TribeDetailComponents(props: any, ref: any) {
+function TribeDetailComponents(props: any) {
   const { fullWalletAddress, currentToken, activeTab } = props;
 
   useEffect(() => {
@@ -287,4 +286,4 @@ function TribeDetailComponents(props: any, ref: any) {
     </>
   );
 }
-export default forwardRef(TribeDetailComponents);
+export default TribeDetailComponents;

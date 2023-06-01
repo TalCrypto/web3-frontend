@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable react/no-array-index-key */
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 // import moment from 'moment';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
@@ -14,7 +14,6 @@ import Image from 'next/image';
 import { /* calculateNumber, */ formatterValue, isPositive, formatterUSDC } from '@/utils/calculateNumbers';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 
-import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
 import { getTradingActionTypeFromAPI } from '@/components/trade/desktop/information/ActionType';
@@ -171,7 +170,7 @@ interface IOpenseaData {
 }
 
 const SpotTable = (props: any) => {
-  const { fullWalletAddress, /* tokenRef, */ currentToken } = props;
+  const { fullWalletAddress, currentToken } = props;
   const [displayCount, setDisplayCount] = useState(10);
   const openseaData = useNanostore(tsSportPriceList);
 
@@ -200,14 +199,14 @@ const SpotTable = (props: any) => {
                 wallet: fullWalletAddress.substring(2),
                 transaction: transactionHash.substring(2),
                 token: assetToken,
-                collection: currentToken // from tokenRef.current
+                collection: currentToken
               });
             }
             apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
               page: 'Trade',
               transaction: transactionHash.substring(2),
               token: assetToken,
-              collection: currentToken // from tokenRef.current
+              collection: currentToken
             });
           };
           const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
@@ -316,18 +315,8 @@ const FundingPaymentHistory = () => {
   ) : null;
 };
 
-function getCollectionInformation(type: any) {
-  const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === type.toUpperCase());
-  return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-}
-
-function TabsInfo(props: any, ref: any) {
-  const { tradingData } = props;
-  const [tribeDetailIndex, setTribeDetailIndex] = useState(0);
-  const { fullWalletAddress, tokenRef, currentToken, activeTab } = props;
-  const marketTradeRef = useRef();
-  const fundingPaymentRef = useRef();
-  const spotRef = useRef();
+function TabsInfo(props: any) {
+  const { fullWalletAddress, currentToken, activeTab } = props;
 
   useEffect(() => {
     updateTradeInformation(currentToken);
@@ -336,10 +325,10 @@ function TabsInfo(props: any, ref: any) {
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-full`}>
-        <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
+        <MarketTrade fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-full`}>
-        <SpotTable ref={spotRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
+        <SpotTable fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-full`}>
         <FundingPaymentHistory />
@@ -348,4 +337,4 @@ function TabsInfo(props: any, ref: any) {
   );
 }
 
-export default forwardRef(TabsInfo);
+export default TabsInfo;

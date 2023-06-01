@@ -1,13 +1,12 @@
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-key */
-import React, { forwardRef, /* useImperativeHandle, */ useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import TabsInfo from '@/components/trade/mobile/information/TabsInfo';
 
 function InformationMobile(props: any) {
   const { tradingData, fullWalletAddress, tokenRef, currentToken } = props;
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
-  const detailRef = useRef();
   const [activeTab, setActiveTab] = useState(0);
 
   const onClickTab = (event: any, index: number) => {
@@ -32,13 +31,6 @@ function InformationMobile(props: any) {
     </div>
   ));
 
-  // useImperativeHandle(ref, () => ({
-  //   fetchInformations: () => {
-  //     detailRef.current?.updateInfomations();
-  //     chatRef.current?.getFirebaseChat();
-  //   }
-  // }));
-
   return (
     <div
       className="mb-[24px] mr-auto mt-[20px] cursor-default overflow-hidden
@@ -51,7 +43,6 @@ function InformationMobile(props: any) {
       <div className="display-content h-full">
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
           <TabsInfo
-            ref={detailRef}
             tradingData={tradingData}
             fullWalletAddress={fullWalletAddress}
             tokenRef={tokenRef}
@@ -63,4 +54,5 @@ function InformationMobile(props: any) {
     </div>
   );
 }
-export default forwardRef(InformationMobile);
+
+export default InformationMobile;
