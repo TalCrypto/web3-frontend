@@ -1,5 +1,6 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -8,7 +9,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 import CollectionModal from '@/components/trade/desktop/trading/CollectionModal';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsWalletAddress } from '@/stores/WalletState';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -16,7 +17,7 @@ const getCollectionInformation = (collectionName: any) => {
 };
 
 function SidebarCollection(props: any, ref: any) {
-  const { currentToken, setCurrentToken, fullWalletAddress, setIsShowPopup } = props;
+  const { currentToken, setCurrentToken, setIsShowPopup } = props;
   const [isColModalVisible, setIsColModalVisible] = useState(false);
   const [userPositions, setUserPositions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -24,6 +25,7 @@ function SidebarCollection(props: any, ref: any) {
   const [overviewData, setOverviewData] = useState([]);
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const fullWalletAddress = useNanostore(wsWalletAddress);
 
   const router = useRouter();
 
@@ -48,9 +50,9 @@ function SidebarCollection(props: any, ref: any) {
 
   useImperativeHandle(ref, () => ({ fetchOverview }));
 
-  // useEffect(() => {
-  //   fetchOverview(true);
-  // }, [isLoginState, isWrongNetwork, fullWalletAddress]);
+  useEffect(() => {
+    fetchOverview(true);
+  }, [isLoginState, isWrongNetwork, fullWalletAddress]);
 
   // sync active item index in div
   useEffect(() => {
@@ -106,13 +108,13 @@ function SidebarCollection(props: any, ref: any) {
             alt=""
             className="border-[4px] border-transparent hover:border-[4px]"
           />
-          {isLoading ? (
+          {/* {isLoading ? (
             <div className="loading-indicator">
               <div className="spinner-border spinner-border-sm text-light" role="status">
                 <span className="visually-hidden">Loading...</span>
               </div>
             </div>
-          ) : null}
+          ) : null} */}
         </div>
         {collectionList.map(item => (
           <div
@@ -139,15 +141,21 @@ function SidebarCollection(props: any, ref: any) {
               className="z-10 rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
             />
             {isHasPos(item.amm) ? (
-              <Image className="shop-icon" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="10" height="10" alt="" />
+              <Image
+                className="absolute bottom-[3px] right-[-2px] z-10"
+                src="/images/mobile/pages/trade/shopping-bag-green.svg"
+                width="14"
+                height="14"
+                alt=""
+              />
             ) : null}
-            {isLoading ? (
+            {/* {isLoading ? (
               <div className="loading-indicator">
                 <div className="spinner-border spinner-border-sm text-light" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         ))}
       </div>
