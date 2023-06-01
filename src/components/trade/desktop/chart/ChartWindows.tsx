@@ -188,7 +188,9 @@ function ChartTimeTabs(props: any) {
             className={`segment ${i === selectedTimeIndex ? 'active' : ''} ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
             z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
             ref={item.ref}>
-            {i === selectedTimeIndex ? <div className="absolute bottom-0 right-0 z-0 h-[3px] w-[25px] rounded-[2px] bg-[#5465ff]" /> : null}
+            {i === selectedTimeIndex ? (
+              <div className="absolute bottom-0 left-[5px] right-[5px] z-0 h-[3px] rounded-[2px] bg-[#5465ff]" />
+            ) : null}
             <input
               type="radio"
               value={item.label}
@@ -425,8 +427,8 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
   let hours = '';
   let minutes = '';
   let seconds = '';
-  const rateLong = '-.--';
-  const rateShort = '-.--';
+  let rateLong = '-.--';
+  let rateShort = '-.--';
   let longSide = '';
   let shortSide = '';
 
@@ -454,12 +456,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
     const rawdata = utils.formatEther(tradingData.fundingRateLong);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateLong = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
+    rateLong = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
       longSide = 'Pay';
     } else {
@@ -470,12 +467,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
     const rawdata = utils.formatEther(tradingData.fundingRateShort);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateShort = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
+    rateShort = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
       shortSide = 'Get';
     } else {
@@ -600,9 +592,9 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
           placement="top"
         />
         <div className="col text-highEmphasis">
-          Long <span className={longSide === 'Pay' ? 'pay' : 'receive'}>{longSide}</span>
+          Long <span className={longSide === 'Pay' ? 'text-[#ff5656]' : 'text-[#78f363]'}>{longSide}</span>
           {rateLong}
-          &nbsp; Short <span className={shortSide === 'Pay' ? 'pay' : 'receive'}>{shortSide}</span>
+          &nbsp; Short <span className={shortSide === 'Pay' ? 'text-[#ff5656]' : 'text-[#78f363]'}>{shortSide}</span>
           {rateShort}
         </div>
       </div>
