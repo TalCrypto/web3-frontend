@@ -200,8 +200,8 @@ const NormalButtonSet: React.FC<NormalButtonSetProps> = ({ setShowDisconnectTool
         Get WETH
       </div>
       <div
-        className="function-btn font-semiboldtext-[#2574fb] mt-6
-          cursor-pointer text-[16px]"
+        className="function-btn mt-6 cursor-pointer text-[16px]
+          font-semibold text-[#2574fb]"
         onClick={disconnectWalletAction}>
         Disconnect Wallet
       </div>
@@ -277,8 +277,8 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
     <div
       className="profile-content z-2 transition-visibility invisible
         absolute right-0 top-[46px] h-0 w-[370px]
-        cursor-default rounded-lg bg-gray-900
-        opacity-0 transition-opacity duration-300 dark:bg-gray-800
+        cursor-default rounded-lg bg-[#202249]
+        opacity-0 transition-opacity duration-300 
       "
       id="profile-content">
       <li className="m-0 list-none p-0">
