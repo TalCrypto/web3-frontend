@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
 
@@ -10,6 +10,9 @@ import { walletProvider } from '@/utils/walletProvider';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { isUserPointLoading, userPoint } from '@/stores/airdrop';
 
+import { firebaseAuth } from '@/const/firebaseConfig';
+import { connectWallet } from '@/utils/Wallet';
+
 import {
   wsIsConnectWalletModalShow,
   wsIsLogin,
@@ -17,7 +20,8 @@ import {
   wsCurrentChain,
   wsIsWrongNetwork,
   wsWethBalance,
-  wsIsShowErrorSwitchNetworkModal
+  wsIsShowErrorSwitchNetworkModal,
+  wsIsWalletLoading
 } from '@/stores/WalletState';
 
 import { setIsWhitelisted, setIsTethCollected } from '@/stores/UserState';
@@ -83,7 +87,6 @@ function Web3Area() {
   const [callBalance, setCallBalance] = useState(balanceOriginData);
   const [userInfo, setUserInfo] = useState({});
   const [isDataFetched, setIsDataFetched] = useState(false);
-  const [isShowTransferTokenModal, setIsShowTransferTokenModal] = useState(false);
   const [tokenErrorTitle, setTokenErrorTitle] = useState('');
 
   // State from the index
@@ -99,10 +102,30 @@ function Web3Area() {
   const tradeVolume = calculateNumber(tradeVol.vol, 4);
   const eligible = () => Number(tradeVolume) >= 5;
 
+  useEffect(() => {
+    const auth = firebaseAuth;
+    const localStorageLogin = localStorage.getItem('isLoggedin');
+    if (!auth) return;
+
+    auth.onAuthStateChanged(user => {
+      if (user && localStorageLogin === 'true') {
+        connectWallet(null, false);
+
+        user.getIdToken(true).then(tokenId => {
+          walletProvider.firebaseIdToken = tokenId;
+        });
+      } else {
+        wsIsWalletLoading.set(false);
+      }
+    });
+  }, []);
+
   return (
     <div
       className="navbar-container relative mx-auto flex h-[60px] items-start
         justify-start p-0 py-[14px] text-[16px] font-medium text-white">
+      {isLogin ? 'true' : 'false'}
+
       {/* {!userIsLoginStore ? null : ( */}
       <Link href="/airdrop" className="hidden md:block">
         <div
@@ -119,11 +142,13 @@ function Web3Area() {
         </div>
       </Link>
       {/* )} */}
+
       {/* {isDataFetched && isLogin ? ( */}
       <div className="hidden md:block">
         <ExtraComponent isWrongNetwork={isWrongNetwork} />
       </div>
       {/* ) : null} */}
+
       <ConnectWalletButton
         isLogin={isLogin}
         inWrongNetwork={isWrongNetwork}
@@ -158,7 +183,7 @@ function Web3Area() {
         }}
         mobile={isMobile}
       />
-      <TransferTokenModal isShow={isShowTransferTokenModal} setIsShow={setIsShowTransferTokenModal} />
+      <TransferTokenModal />
       <ErrorModal isShow={isShowErrorSwitchNetworkModal} image="/images/components/layout/header/cloudError.svg" />
     </div>
   );
