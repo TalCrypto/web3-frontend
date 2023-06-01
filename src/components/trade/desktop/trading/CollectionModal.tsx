@@ -141,7 +141,7 @@ const CollectionModal = (props: any) => {
   if (!visible) return null;
 
   const renderData = () =>
-    sortedData.map((tradingData: any) => {
+    sortedData.map((tradingData: any, index: any) => {
       const targetCollection = collectionList.filter(collectionItem => collectionItem.amm === tradingData.amm);
       const targetItem = targetCollection[0];
       const { logo, collection, collectionName, displayCollectionPair } = targetItem;
@@ -186,7 +186,9 @@ const CollectionModal = (props: any) => {
 
       return (
         <div
-          className="flex flex-row bg-[#1c1d3f] p-3"
+          className={`flex flex-row p-3
+            ${index % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-[#171833]'}
+          `}
           key={collection}
           onClick={() => {
             selectCollection(collection);

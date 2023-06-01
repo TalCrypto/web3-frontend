@@ -45,7 +45,6 @@ function Cell(props: any) {
       className="relative mb-6 grid grid-cols-12 items-center
       text-[14px] text-[#a3c2ff]/[.6]">
       {items.map((item: any, index: any) => (
-        // eslint-disable-next-line react/no-array-index-key
         <div className={`${classNames[index]}`} key={index}>
           {item}
         </div>
@@ -62,91 +61,6 @@ interface IOpenseaData {
   event_timestamp: any;
   transaction: any;
 }
-
-const SpotTable = forwardRef((props: any, ref: any) => {
-  const { fullWalletAddress, currentToken } = props;
-  const openseaData = useNanostore(tsSportPriceList);
-
-  return (
-    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
-      <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-3', 'col-span-3 px-3 ', 'col-span-4 px-3 ', 'col-span-1 px-3 ']} />
-      {openseaData.length > 0 ? (
-        openseaData?.map((data: IOpenseaData) => {
-          const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
-          const src = !asset
-            ? asset_bundle.assets[0].image_preview_url
-            : !asset.image_preview_url
-            ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
-            : asset.image_preview_url;
-          let isEth = false;
-          let isUSDC = false;
-          if (payment_token !== null) {
-            isEth = payment_token.symbol === 'ETH' || payment_token.symbol === 'WETH';
-            isUSDC = payment_token.symbol === 'USDC';
-          }
-          const transactionHash = transaction.transaction_hash;
-          const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
-          const getAnalyticsSpotEthers = () => {
-            if (firebaseAnalytics) {
-              logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
-                wallet: fullWalletAddress.substring(2),
-                transaction: transactionHash.substring(2),
-                token: assetToken,
-                collection: currentToken // from tokenRef.current
-              });
-            }
-            apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
-              page: 'Trade',
-              transaction: transactionHash.substring(2),
-              token: assetToken,
-              collection: currentToken // from tokenRef.current
-            });
-          };
-          const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
-          const priceValue = !total_price
-            ? '0.00'
-            : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
-          const key_value = assetCreationDate + event_timestamp + assetToken;
-
-          return (
-            <Cell
-              classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
-              key={`Spot_${key_value}`}
-              items={[
-                <div className="relative">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
-
-                  {/* <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} /> */}
-                  {formatDateTimeFromString(event_timestamp)}
-                  {/* {moment(event_timestamp).format('MM/DD/YYYY HH:mm')} */}
-                </div>,
-                <div className="flex items-center text-[14px] text-[#6286e3]">
-                  <Image src={src} className="mr-3 rounded-[5px]" alt="" width={40} height={40} />
-                  {`#${assetToken}` || 'No Name'}
-                </div>,
-                <div className="price">
-                  {isUSDC ? (
-                    <PriceWithUsdc priceValue={priceValue} className="margin-16 text-14 font-400" />
-                  ) : (
-                    // <PriceWithIcon priceValue={priceValue} className="margin-16  text-14 font-400" />
-                    <SmallPriceIcon priceValue={priceValue} />
-                  )}
-                </div>,
-                <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
-                  <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
-                </a>
-              ]}
-            />
-          );
-        })
-      ) : (
-        <div className="item-center flex justify-center">
-          <span className="body1 my-40 text-center text-mediumEmphasis">There is no spot info.</span>
-        </div>
-      )}
-    </div>
-  );
-});
 
 function ExplorerButton(props: any) {
   const { txHash, fullWalletAddress, collection } = props;
@@ -198,15 +112,9 @@ const MarketTrade = forwardRef((props: any) => {
             key={`market_${timestamp}_${index}`}
             rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
             items={[
-              // <div className="col firstcontent">
-              //   <div className="col-auto initdivider" />
-              //   <div className="col">{moment.unix(timestamp).format('MM/DD/YYYY HH:mm')}</div>
-              // </div>,
               <div className="time relative">
                 <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-[#2574fb]" />
 
-                {/* <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} /> */}
-                {/* <span>{moment.unix(timestamp).format('MM/DD/YYYY HH:mm')}</span> */}
                 <span>{formatDateTime(timestamp)}</span>
                 <br />
                 <span className={`market ${isPositive(exchangedPositionSize) ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
@@ -214,15 +122,11 @@ const MarketTrade = forwardRef((props: any) => {
                 </span>
               </div>,
               <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>,
-              // <TypeWithIconByCollection
-              //   content={Math.abs(Number(formatterValue(exchangedPositionSize, 4))).toFixed(4)}
-              //   collection={currentToken} // from tokenRef.current
-              //   className="image"
-              // />,
+
               <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
               <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
               <div>
-                <span className="colorful-text" onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
                   {trimString(userId, 10) || walletAddressToShow(userAddress)}
                 </span>
                 {fullWalletAddress === userAddress ? (
@@ -237,6 +141,88 @@ const MarketTrade = forwardRef((props: any) => {
       ) : (
         <div className="item-center flex justify-center">
           <span className="body1 my-40 text-center text-mediumEmphasis">There is no market history.</span>
+        </div>
+      )}
+    </div>
+  );
+});
+
+const SpotTable = forwardRef((props: any, ref: any) => {
+  const { fullWalletAddress, currentToken } = props;
+  const openseaData = useNanostore(tsSportPriceList);
+
+  return (
+    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
+      <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-3', 'col-span-3 px-3 ', 'col-span-4 px-3 ', 'col-span-1 px-3 ']} />
+      {openseaData.length > 0 ? (
+        openseaData?.map((data: IOpenseaData) => {
+          const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
+          const src = !asset
+            ? asset_bundle.assets[0].image_preview_url
+            : !asset.image_preview_url
+            ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
+            : asset.image_preview_url;
+          let isEth = false;
+          let isUSDC = false;
+          if (payment_token !== null) {
+            isEth = payment_token.symbol === 'ETH' || payment_token.symbol === 'WETH';
+            isUSDC = payment_token.symbol === 'USDC';
+          }
+          const transactionHash = transaction.transaction_hash;
+          const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
+          const getAnalyticsSpotEthers = () => {
+            if (firebaseAnalytics) {
+              logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
+                wallet: fullWalletAddress.substring(2),
+                transaction: transactionHash.substring(2),
+                token: assetToken,
+                collection: currentToken // from tokenRef.current
+              });
+            }
+            apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
+              page: 'Trade',
+              transaction: transactionHash.substring(2),
+              token: assetToken,
+              collection: currentToken // from tokenRef.current
+            });
+          };
+          const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
+          const priceValue = !total_price
+            ? '0.00'
+            : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
+          const key_value = assetCreationDate + event_timestamp + assetToken;
+
+          return (
+            <Cell
+              classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
+              key={`spot_${key_value}`}
+              items={[
+                <div className="relative">
+                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+
+                  {formatDateTimeFromString(event_timestamp)}
+                </div>,
+                <div className="flex items-center text-[14px] text-[#6286e3]">
+                  <Image src={src} className="mr-3 rounded-[5px]" alt="" width={40} height={40} />
+                  {`#${assetToken}` || 'No Name'}
+                </div>,
+                <div className="price">
+                  {isUSDC ? (
+                    <PriceWithUsdc priceValue={priceValue} className="margin-16 text-14 font-400" />
+                  ) : (
+                    <SmallPriceIcon priceValue={priceValue} />
+                  )}
+                </div>,
+                <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
+                  <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
+                </a>
+              ]}
+            />
+          );
+        })
+      ) : (
+        <div className="item-center flex justify-center">
+          <span className="body1 my-40 text-center text-mediumEmphasis">There is no spot info.</span>
         </div>
       )}
     </div>
@@ -258,7 +244,6 @@ const FundingPaymentHistory = forwardRef(() => {
             key={`funding_${timestamp}`}
             items={[
               <div className="time relative">
-                {/* <div className="bg-primary" style={{ width: 3, height: 20, marginRight: 8, borderRadius: 2 }} /> */}
                 <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
                 {formatDateTime(timestamp)}
               </div>,
@@ -280,11 +265,6 @@ const FundingPaymentHistory = forwardRef(() => {
     </div>
   ) : null;
 });
-
-function getCollectionInformation(type: any) {
-  const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === type.toUpperCase());
-  return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-}
 
 function TribeDetailComponents(props: any, ref: any) {
   const { fullWalletAddress, currentToken, activeTab } = props;
