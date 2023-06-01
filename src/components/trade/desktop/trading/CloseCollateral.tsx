@@ -1083,7 +1083,9 @@ export default function CloseCollateral(props: any) {
       </div> */}
       {estimatedValue /* && estimatedValue.newPosition */ && !minValueComparison && !maxValueComparison && closeValue > 0 ? (
         <div className="row">
-          <div className="advancebtn selectbehaviour col-auto" onClick={() => setDisplayAdvanceDetail(displayAdvanceDetail ? 0 : 1)}>
+          <div
+            className="flex cursor-pointer text-[14px] font-semibold text-[#2574fb] hover:text-[#6286e3]"
+            onClick={() => setDisplayAdvanceDetail(displayAdvanceDetail ? 0 : 1)}>
             {displayAdvanceDetail === 0 ? 'Show' : 'Hide'} Advanced Details
             {displayAdvanceDetail === 0 ? (
               <Image src="/static/angle_down.svg" style={{ marginRight: '8px' }} alt="" />

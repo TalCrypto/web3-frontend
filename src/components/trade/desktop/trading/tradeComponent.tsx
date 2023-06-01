@@ -90,17 +90,57 @@ function QuantityTips(props: any) {
     isAmountTooSmall,
     isAmountNegative,
     estPriceFluctuation,
-    // isFluctuationLimit,
+    isFluctuationLimit,
     isPending,
     isLiquidatable,
     value
+    //
   } = props;
   // price gap
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const isChecking = !isInsuffBalance && !isAmountTooSmall && !isPending && !estPriceFluctuation && !isLiquidatable;
   const isShow = value <= 0 || isChecking || isWrongNetwork || isAmountNegative;
-  return <div>{isShow ? <div className="row tbloverviewcontent" /> : null}</div>;
+
+  if (isShow) {
+    return <div className="row tbloverviewcontent" />;
+  }
+
+  const label = isPending ? (
+    'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
+  ) : isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isInsuffBalance ? (
+    <>
+      Not enough WETH (including transaction fee).
+      <a href="#" onClick={() => getTestToken()} className="ml-1 text-white underline">
+        Get WETH
+      </a>{' '}
+      first
+    </>
+  ) : isFluctuationLimit ? (
+    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : isLiquidatable ? (
+    'Resulting position DOES NOT meet the maintenance leverage requirement of 10x calculated based on Oracle Price.'
+  ) : estPriceFluctuation ? (
+    'Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : (
+    ''
+  );
+
+  const isRedText = isInsuffBalance || isAmountTooSmall || isFluctuationLimit || isLiquidatable;
+  return (
+    <div className={`quantity-tips-container ${(!isInsuffBalance && estPriceFluctuation) || isPending ? 'price-fluc' : ''}`}>
+      {/* {!isInsuffBalance && estPriceFluctuation ? null : (
+        <Image
+          src={isInsuffBalance || isAmountTooSmall ? '/static/infocircle.svg' : '/static/info_warning_icon.svg'}
+          alt=""
+          className="icon"
+        />
+      )} */}
+      <div className={`${isRedText ? 'text-[#ff5656]' : 'text-[#ffc24b]/[.87]'} mb-2 text-[12px] leading-[20px]`}>{label}</div>
+    </div>
+  );
 }
 
 function QuantityEnter(props: any) {
@@ -123,7 +163,8 @@ function QuantityEnter(props: any) {
 
   const [isFocus, setIsFocus] = useState(false);
 
-  const handleEnter = (target: any) => {
+  const handleEnter = (event: any) => {
+    const { target } = event;
     const { value: inputValue } = target;
 
     const reg = /^\d*(\.\d*)?$/;
@@ -157,11 +198,11 @@ function QuantityEnter(props: any) {
           </div>
         ) : null}
       </div>
+      {/* ${isError ? 'bg-[#ff5656]' : ''} */}
       <div className="py-3">
         <div
-          className={`mb-3 rounded-[4px] bg-none p-[1px]
+          className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
             ${isFocus ? 'valid' : ''}
-            ${isError ? 'error' : ''}
             ${disabled ? 'opacity-30' : ''}
           `}>
           <div className="flex h-[48px] rounded-[4px] bg-[#242652] p-3">
@@ -173,20 +214,21 @@ function QuantityEnter(props: any) {
               type="text"
               pattern="[0-9]*"
               className={`${isApproveRequired ? 'cursor-not-allowed' : ''}
-                w-full border-none border-[242652] bg-[#242652] text-right
+                w-full border-none border-[#242652] bg-[#242652] text-right
                 text-[15px] font-semibold text-white outline-none
               `}
               value={value}
               placeholder="0.00"
               onChange={handleEnter}
               disabled={isApproveRequired || disabled}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              min={0}
+
               // onClick={e => {
               //   e.target.selectionStart = e.target.value.length;
               //   e.target.selectionEnd = e.target.value.length;
               // }}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              min={0}
             />
           </div>
         </div>
@@ -241,10 +283,10 @@ function DisplayValues(props: any) {
   return (
     <div
       className={`${className !== '' ? className : 'sumrow'}
-      mb-3 flex items-center
+      mb-[2px] flex items-center
     `}>
       <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
-      <div className={`flex-1 flex-shrink-0 text-right ${valueClassName}`}>
+      <div className={`flex-1 flex-shrink-0 text-right text-[#a3c2ff]/[.68] ${valueClassName}`}>
         <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
@@ -582,7 +624,7 @@ function ConfirmButton(props: any) {
           px-[10px] py-[14px] text-center
         `}
         onClick={onClickButton}>
-        <div className="w-full text-center">
+        <div className="w-full text-center text-[15px] font-semibold">
           {isProcessingOpenPos || isDataFetch ? (
             <div className="flex justify-center">
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
@@ -681,7 +723,7 @@ function ExtendedEstimateComponent(props: any) {
     <div>
       <div className="row">
         <div
-          className="advancebtn selectbehaviour col-auto"
+          className="flex cursor-pointer text-[14px] font-semibold text-[#2574fb] hover:text-[#6286e3]"
           onClick={() => {
             isShowDetail(!showDetail);
             // logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
@@ -709,7 +751,7 @@ function ExtendedEstimateComponent(props: any) {
           {userPosition != null ? (
             <>
               <div className="row">
-                <div className="transactiondetail font-14-600">Estimated Blended Position</div>
+                <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               </div>
               {/* <DisplayValues
                 title="Position Type"
@@ -755,7 +797,7 @@ function ExtendedEstimateComponent(props: any) {
           ) : null}
 
           <div className="row">
-            <div className="transactiondetail font-14-600">
+            <div className="mb-2 mt-4 text-[14px] font-semibold text-white underline">
               Transaction Details
               {/* {userPosition != null ? '(Standalone Basis)' : null} */}
             </div>
@@ -796,7 +838,7 @@ export default function TradeComponent(props: any) {
     tradingData
   } = props;
   const [saleOrBuyIndex, setSaleOrBuyIndex] = useState(0);
-  const [quantity, setQuantity] = useState('');
+  const [quantity, setQuantity] = useState('0');
   const [estimatedValue, setEstimatedValue] = useState({});
   const [exposureValue, setExposureValue] = useState(0);
   const [toleranceRate, setToleranceRate] = useState(0.5);

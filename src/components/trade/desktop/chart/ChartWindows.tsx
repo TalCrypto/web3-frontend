@@ -93,7 +93,7 @@ function PriceIndicator(props: any) {
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
         ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
-      <img
+      <Image
         alt="Polygon_pos"
         src={
           isPositive(localPriceChangeRatioAndValue.priceChangeRatio)
@@ -326,7 +326,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
           <div className="col newcontenttext mb-[16px]">
             <div className="text-14 font-400 flex space-x-[12px] text-highEmphasis">
               <div className="flex items-center space-x-[6px]">
-                {/* <img className="" src={selectedCollection.logo} width="16" height="16" alt="" /> */}
+                {/* <Image className="" src={selectedCollection.logo} width="16" height="16" alt="" /> */}
                 <span>{selectedCollection.displayCollectionPair}</span>
               </div>
               <div className="text-14 font-400 flex text-highEmphasis">
@@ -391,7 +391,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
               localStorage.setItem('isProShow', value ? 'true' : false);
             }}
           >
-            <img className="" src="/static/pro_text.svg" width="18" height="18" alt="" />
+            <Image className="" src="/static/pro_text.svg" width="18" height="18" alt="" />
           </div>
         </div> */}
       </div>

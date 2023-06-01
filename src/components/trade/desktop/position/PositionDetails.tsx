@@ -33,7 +33,14 @@ function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
     <div className={`text-15 font-400 flex text-highEmphasis ${className}`}>
-      <img src={image || '/static/eth-tribe3.svg'} className="icon" alt="" width="20px" height="20px" style={{ marginRight: '4px' }} />
+      <Image
+        src={image || '/images/common/symbols/eth-tribe3.svg'}
+        className="icon"
+        alt=""
+        width={20}
+        height={20}
+        style={{ marginRight: '4px' }}
+      />
       <span className={`${isLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>{priceValue}</span>
     </div>
   );
@@ -167,27 +174,27 @@ export default function PositionDetails(props: any) {
   // const marginRatio = Number(calculateNumber(userPosition.marginRatio, 2)) * 100;
 
   return (
-    <div className="positionpanel mb-[24px]">
+    <div className="mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
       {showSharePosition ? (
         <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
       ) : null}
       <div className="mb-[36px] flex justify-between">
         <div className="flex space-x-[6px]">
-          <img className="" src="/static/shoppingbag-green.svg" width="20" height="20" alt="" />
+          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
           {collectionIsPending[currentCollection.amm] ? <div className="pending-reminder">Transaction Pending...</div> : null}
         </div>
         <div className="flex space-x-[24px]">
           <div className="nav-icon-btn" onClick={() => clickShowSharePosition(true)}>
-            <img alt="" src="/static/share_icon.svg" width="16" height="16" />
+            <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width="16" height="16" />
           </div>
           {/* <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>
-            <img alt="" src="/static/threedots_icon.svg" width="16" height="16" />
+            <Image alt="" src="/static/threedots_icon.svg" width="16" height="16" />
           </div> */}
           {/* <CustomDropdown.Dropdown>
             <CustomDropdown.Toggle id="dropdown-custom-components">
               <div className="nav-icon-btn">
-                <img alt="" src="/static/threedots_icon.svg" width="16" height="16" />
+                <Image alt="" src="/static/threedots_icon.svg" width="16" height="16" />
               </div>
             </CustomDropdown.Toggle>
 
@@ -197,7 +204,7 @@ export default function PositionDetails(props: any) {
                 onClick={() => {
                   setHistoryModalIsVisible(true);
                 }}>
-                <img alt="" src="/static/icon/dashboard/tradeHistory.svg" width="16" height="16" style={{ marginRight: 6 }} />
+                <Image alt="" src="/static/icon/dashboard/tradeHistory.svg" width="16" height="16" style={{ marginRight: 6 }} />
                 <span>View History</span>
               </CustomDropdown.Item>
               <CustomDropdown.Item
@@ -205,7 +212,7 @@ export default function PositionDetails(props: any) {
                 onClick={() => {
                   router.push('/dashboard');
                 }}>
-                <img alt="" src="/static/icon/dashboard/position.svg" width="16" height="16" style={{ marginRight: 6 }} />
+                <Image alt="" src="/static/icon/dashboard/position.svg" width="16" height="16" style={{ marginRight: 6 }} />
                 <span>View Portfolio</span>
               </CustomDropdown.Item>
               <CustomDropdown.Item
@@ -213,7 +220,7 @@ export default function PositionDetails(props: any) {
                 onClick={() => {
                   setFundingModalIsShow(true);
                 }}>
-                <img alt="" src="/static/icon/dashboard/fundingPayment.svg" width="16" height="16" style={{ marginRight: 6 }} />
+                <Image alt="" src="/static/icon/dashboard/fundingPayment.svg" width="16" height="16" style={{ marginRight: 6 }} />
                 <span>View Funding Payment</span>
               </CustomDropdown.Item>
             </CustomDropdown.Menu>
@@ -221,14 +228,14 @@ export default function PositionDetails(props: any) {
         </div>
       </div>
       <div>
-        <div className="text-14 font-500 mb-[12px] flex text-mediumEmphasis">
+        <div className="mb-[12px] flex text-[14px] font-medium text-mediumEmphasis">
           <div className="w-[15%]">Type</div>
           <div className="w-[25%]">Contract Size / Notional</div>
           <div className="w-[20%] pl-12">Leverage</div>
           <div className="w-[20%] pl-4">Liqui. Price</div>
           <div className="w-[20%]">Unrealized P/L</div>
         </div>
-        <div className="text-15 font-400 flex text-highEmphasis">
+        <div className="flex text-[15px] font-normal text-highEmphasis">
           <div className="w-[15%]">
             <span className={userPosition === null ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
               {userPosition === null ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
@@ -264,7 +271,7 @@ export default function PositionDetails(props: any) {
             {isLeverageNegative ? (
               <TitleTips
                 placement="top"
-                titleText={<img className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
                 tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
               />
             ) : null}
@@ -284,14 +291,14 @@ export default function PositionDetails(props: any) {
             {liquidationChanceWarning() && !liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<img className="" src="/static/alert_yellow.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/static/alert_yellow.svg" width="20" height="20" alt="" />}
                 tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
               />
             ) : null}
             {liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<img className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
                 tipsText="Your position is at risk of being liquidated. Please manage your risk."
               />
             ) : null}
@@ -335,12 +342,12 @@ export default function PositionDetails(props: any) {
   //     {showSharePosition ? <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} /> : null}
   //     <div className="row titlerow">
   //       <div className="col-auto my-auto sectiontitle">
-  //         <img alt="" src="../../static/positionicon.svg" width="20px" height="20px" className="iconposition" />
+  //         <Image alt="" src="../../static/positionicon.svg" width="20px" height="20px" className="iconposition" />
   //         My Position
   //       </div>
   //       <div className="col shareposition" onClick={() => clickShowSharePosition(true)}>
   //         Share Position Performance
-  //         <img alt="" src="../../static/share-position.png" className="share-icon" />
+  //         <Image alt="" src="../../static/share-position.png" className="share-icon" />
   //       </div>
   //     </div>
   //     <div className="row contentrow">
@@ -519,15 +526,15 @@ export default function PositionDetails(props: any) {
   //       >
   //         {isTradingHistoryShow ? 'Hide' : 'Show'} Trading History
   //         {isTradingHistoryShow ? (
-  //           <img src="/static/angle_up.svg" style={{ marginRight: '8px' }} alt="" />
+  //           <Image src="/static/angle_up.svg" style={{ marginRight: '8px' }} alt="" />
   //         ) : (
-  //           <img src="/static/angle_down.svg" style={{ marginRight: '8px' }} alt="" />
+  //           <Image src="/static/angle_down.svg" style={{ marginRight: '8px' }} alt="" />
   //         )}
   //       </div>
   //       <div className="col-8">
   //         {calculateNumber(userPosition.marginRatio, 1) < 20 ? (
   //           <div className="col tipsrow">
-  //             <img alt="" src="../../static/tips_exclude.svg" width="11px" height="11px" className="iconposition" />
+  //             <Image alt="" src="../../static/tips_exclude.svg" width="11px" height="11px" className="iconposition" />
   //             Your position is in high chance to be liquidated, please adjust your collateral to secure your trade.
   //           </div>
   //         ) : null}

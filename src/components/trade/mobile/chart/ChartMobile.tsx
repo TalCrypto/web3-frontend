@@ -93,7 +93,7 @@ function PriceIndicator(props: any) {
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
         ${isLike ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
-      <img
+      <Image
         alt="Polygon_pos"
         src={
           isPositive(localPriceChangeRatioAndValue.priceChangeRatio)

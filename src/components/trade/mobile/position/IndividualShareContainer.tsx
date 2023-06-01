@@ -21,7 +21,7 @@ function LargeEthPrice(props: any) {
   return (
     <div className="row eths">
       <div className="large-eth col-auto">
-        <Image src="../../static/eth-tribe3.svg" alt="" className="eth-icon" />
+        <Image src="/images/common/symbols/eth-tribe3.svg" alt="" className="eth-icon" />
         <span className={`price ${Number(pnlValue) > 0 ? 'raise' : Number(pnlValue) < 0 ? 'drop' : ''}`}>
           {(Number(pnlValue) > 0 ? '+' : '') + (Number(pnlValue) === 0 ? '0.00' : pnlValue)}
         </span>
@@ -36,7 +36,7 @@ function NormalEthPrice(props: any) {
   return (
     <div className="row">
       <div className="normal-eth col-auto">
-        <Image src="../../static/eth-tribe3.svg" alt="" className="eth-icon" />
+        <Image src="/images/common/symbols/eth-tribe3.svg" alt="" className="eth-icon" />
         <span className="price">{price}</span>
       </div>
     </div>

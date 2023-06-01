@@ -138,7 +138,9 @@ function SidebarCollection(props: any, ref: any) {
               alt=""
               className="z-10 rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
             />
-            {isHasPos(item.amm) ? <Image className="shop-icon" src="/static/shoppingbag-green.svg" width="10" height="10" alt="" /> : null}
+            {isHasPos(item.amm) ? (
+              <Image className="shop-icon" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="10" height="10" alt="" />
+            ) : null}
             {isLoading ? (
               <div className="loading-indicator">
                 <div className="spinner-border spinner-border-sm text-light" role="status">

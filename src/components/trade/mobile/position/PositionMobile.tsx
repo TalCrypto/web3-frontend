@@ -174,7 +174,7 @@ export default function PositionMobile(props: any) {
   };
 
   return (
-    <div className="positionpanel mb-[24px]">
+    <div className="mb-[24px]">
       {showSharePosition ? (
         <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
       ) : null}

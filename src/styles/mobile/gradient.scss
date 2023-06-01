@@ -61,3 +61,11 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.trade-input-outline.valid {
+  background: linear-gradient(to right, rgba(4, 174, 252, 1), rgba(121, 90, 244, 1), rgba(247, 3, 217, 1));
+}
+
+.input-track {
+  background: linear-gradient(260.78deg, #f703d9 0.16%, #795af4 49.47%, #04aefc 106.6%);
+}
