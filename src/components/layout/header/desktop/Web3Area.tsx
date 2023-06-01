@@ -124,8 +124,6 @@ function Web3Area() {
     <div
       className="navbar-container relative mx-auto flex h-[60px] items-start
         justify-start p-0 py-[14px] text-[16px] font-medium text-white">
-      {isLogin ? 'true' : 'false'}
-
       {/* {!userIsLoginStore ? null : ( */}
       <Link href="/airdrop" className="hidden md:block">
         <div
