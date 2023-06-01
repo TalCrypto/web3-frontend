@@ -75,3 +75,11 @@ export const setLeaderboard = (data: any[]) => {
 };
 
 export const isLeaderboardLoading = atom(false);
+
+// referral
+export const referralList = atom([]);
+
+export const setReferralList = (data: any) => {
+  referralList.set(data);
+};
+export const isReferralListLoading = atom(false);

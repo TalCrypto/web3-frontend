@@ -25,6 +25,9 @@ import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 
 import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
 
+import { useStore as useNanostore } from '@nanostores/react';
+import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
+
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
   return (
@@ -70,30 +73,10 @@ interface IOpenseaData {
   transaction: any;
 }
 
-const SpotTable = forwardRef((props: any, ref: any) => {
+const SpotTable = forwardRef((props: any) => {
   const { fullWalletAddress, /* tokenRef, */ currentToken } = props;
-  const [openseaData, setOpenseaData] = useState([]);
-  const firstRender = useRef(true);
   const [displayCount, setDisplayCount] = useState(10);
-
-  const fetchSpotPriceList = useCallback(async () => {
-    setOpenseaData([]);
-    await getBaycFromMainnet(getCollectionInformation(currentToken).contract)
-      .then((data: any) => {
-        // from tokenRef.current
-        setOpenseaData(data);
-      })
-      .catch(() => setOpenseaData([]));
-  }, [currentToken]);
-
-  // useImperativeHandle(ref, () => ({ fetchSpotPriceList }));
-
-  useEffect(() => {
-    if (firstRender.current) {
-      fetchSpotPriceList();
-      firstRender.current = false;
-    }
-  }, [fetchSpotPriceList]);
+  const openseaData = useNanostore(tsSportPriceList);
 
   return (
     <div className="mx-[20px]">
@@ -210,23 +193,11 @@ function ExplorerButton(props: any) {
   );
 }
 
-const MarketTrade = forwardRef((props: any, ref: any) => {
+const MarketTrade = forwardRef((props: any) => {
   const router = useRouter();
   const { fullWalletAddress, currentToken } = props;
-  const [marketHistory, setMarketHistory] = useState([]);
-  const firstRender = useRef(true);
+  const marketHistory = useNanostore(tsMarketHistory);
   const [displayCount, setDisplayCount] = useState(10);
-
-  const fetchMarketHistory = useCallback(async () => {
-    await getMarketHistory(getCollectionInformation(currentToken).amm).then(data => setMarketHistory(data)); // from tokenRef.current
-  }, [currentToken]);
-
-  useEffect(() => {
-    if (firstRender.current) {
-      fetchMarketHistory();
-      firstRender.current = false;
-    }
-  }, [fetchMarketHistory]);
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -303,23 +274,9 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
   );
 });
 
-const FundingPaymentHistory = forwardRef((props: any, ref) => {
-  const { currentToken } = props;
-  const [fundingPaymentHistory, setFundingPaymentHistory] = useState([]);
-  const firstRender = useRef(true);
+const FundingPaymentHistory = forwardRef(() => {
+  const fundingPaymentHistory = useNanostore(tsFundingPaymentHistory);
   const [displayCount, setDisplayCount] = useState(10);
-
-  const fetchFundingPaymentHistory = useCallback(async () => {
-    await getFundingPaymentHistory(getCollectionInformation(currentToken).amm).then(data => setFundingPaymentHistory(data)); // from tokenRef.current
-  }, [currentToken]);
-  useImperativeHandle(ref, () => ({ fetchFundingPaymentHistory }));
-
-  useEffect(() => {
-    if (firstRender.current) {
-      fetchFundingPaymentHistory();
-      firstRender.current = false;
-    }
-  }, [fetchFundingPaymentHistory]);
 
   return fundingPaymentHistory !== null ? (
     <div className="scrollable mx-[20px] h-full overflow-y-scroll">
@@ -417,7 +374,7 @@ function TabsInfo(props: any, ref: any) {
         <SpotTable ref={spotRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-full`}>
-        <FundingPaymentHistory ref={fundingPaymentRef} tokenRef={tokenRef} currentToken={currentToken} />
+        <FundingPaymentHistory />
       </div>
     </>
   );

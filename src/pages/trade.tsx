@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { withRouter } from 'next/router';
 import collectionList from '@/const/collectionList';
@@ -85,6 +86,36 @@ function TradePage(props: TradePagePros) {
       // console.log('error from fetchPositions => ', error);
     }
   };
+
+  let timeoutPositionChangeId: any; // Declare the timeout ID variable in a scope accessible to both functions
+
+  // function stopTimeout() {
+  //   clearTimeout(timeoutPositionChangeId);
+  // }
+
+  // function startTimeout() {
+  //   const snapToken = currentToken;
+  //   timeoutPositionChangeId = setTimeout(() => {
+  //     // if (snapToken === currentTokenRef.current) {
+  //       // fetchInformations();
+  //       // graphRef.current?.fetchChartData();
+  //     // }
+  //   }, 10000);
+  // }
+
+  useEffect(() => {
+    // currentTokenRef.current = currentToken;
+
+    // const coll = getCollectionInformation(currentToken);
+    // setCurrentCollection(coll);
+
+    fetchPositions();
+    fetchInformations();
+
+    // return () => {
+    //   stopTimeout(); // Stop the timeout
+    // };
+  }, [currentToken]); // from tokenRef.current
 
   return (
     <>

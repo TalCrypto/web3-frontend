@@ -117,10 +117,7 @@ function MobileHeader() {
             flex h-[25px] flex-initial items-center justify-center rounded-[100px]
             border-0 px-2 py-1 text-[14px] font-medium text-white/[.87]"
             onClick={handleClickConnectButton}>
-            <div
-              className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full
-                p-[2px]"
-            />
+            <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[2px]" />
 
             {address === '' ? (
               <Image src="/images/components/layout/header/connect_button.svg" alt="" className="mr-2" width={20} height={20} />

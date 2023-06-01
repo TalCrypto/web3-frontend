@@ -13,18 +13,20 @@ import Image from 'next/image';
 
 import { /* calculateNumber, */ formatterValue, isPositive, formatterUSDC } from '@/utils/calculateNumbers';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { getFundingPaymentHistory, getMarketHistory } from '@/utils/trading';
 
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
-import { getBaycFromMainnet } from '@/utils/opensea';
 import { getTradingActionTypeFromAPI } from '@/components/trade/desktop/information/ActionType';
 import { trimString } from '@/utils/string';
 
 import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 
 import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
+
+import { useStore as useNanostore } from '@nanostores/react';
+import { updateTradeInformation } from '@/utils/TradeInformation';
+import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -35,16 +37,6 @@ function SmallPriceIcon(props: any) {
     </div>
   );
 }
-
-// function LargePriceWithIcon(props: any) {
-//   const { priceValue = 0, className = '' } = props;
-//   return (
-//     <div className={`large-price-with-icon ${className}`}>
-//       <Image src="/images/components/layout/header/eth-tribe3.svg" width={16} height={16} className="icon" alt="" />
-//       {priceValue}
-//     </div>
-//   );
-// }
 
 function Cell(props: any) {
   const { items, classNames, rowStyle } = props;
@@ -72,28 +64,8 @@ interface IOpenseaData {
 }
 
 const SpotTable = forwardRef((props: any, ref: any) => {
-  const { fullWalletAddress, /* tokenRef, */ currentToken } = props;
-  const [openseaData, setOpenseaData] = useState([]);
-  const firstRender = useRef(true);
-
-  const fetchSpotPriceList = useCallback(async () => {
-    setOpenseaData([]);
-    await getBaycFromMainnet(getCollectionInformation(currentToken).contract)
-      .then((data: any) => {
-        // from tokenRef.current
-        setOpenseaData(data);
-      })
-      .catch(() => setOpenseaData([]));
-  }, [currentToken]);
-
-  // useImperativeHandle(ref, () => ({ fetchSpotPriceList }));
-
-  useEffect(() => {
-    if (firstRender.current) {
-      fetchSpotPriceList();
-      firstRender.current = false;
-    }
-  }, [fetchSpotPriceList]);
+  const { fullWalletAddress, currentToken } = props;
+  const openseaData = useNanostore(tsSportPriceList);
 
   return (
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
@@ -202,27 +174,10 @@ function ExplorerButton(props: any) {
   );
 }
 
-const MarketTrade = forwardRef((props: any, ref: any) => {
+const MarketTrade = forwardRef((props: any) => {
   const router = useRouter();
   const { fullWalletAddress, currentToken } = props;
-  const [marketHistory, setMarketHistory] = useState([]);
-  const firstRender = useRef(true);
-
-  const fetchMarketHistory = useCallback(async () => {
-    // console.log('fetchMarketHistory');
-    await getMarketHistory(getCollectionInformation(currentToken).amm).then(data => setMarketHistory(data)); // from tokenRef.current
-  }, [currentToken]);
-  // useImperativeHandle(ref, () => ({ fetchMarketHistory }));
-  // if (marketHistory.length === 0) {
-  //   return null;
-  // }
-
-  useEffect(() => {
-    if (firstRender.current) {
-      fetchMarketHistory();
-      firstRender.current = false;
-    }
-  }, [fetchMarketHistory]);
+  const marketHistory = useNanostore(tsMarketHistory);
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -288,22 +243,8 @@ const MarketTrade = forwardRef((props: any, ref: any) => {
   );
 });
 
-const FundingPaymentHistory = forwardRef((props: any, ref) => {
-  const { currentToken } = props;
-  const [fundingPaymentHistory, setFundingPaymentHistory] = useState([]);
-  const firstRender = useRef(true);
-
-  const fetchFundingPaymentHistory = useCallback(async () => {
-    await getFundingPaymentHistory(getCollectionInformation(currentToken).amm).then(data => setFundingPaymentHistory(data)); // from tokenRef.current
-  }, [currentToken]);
-  useImperativeHandle(ref, () => ({ fetchFundingPaymentHistory }));
-
-  useEffect(() => {
-    if (firstRender.current) {
-      fetchFundingPaymentHistory();
-      firstRender.current = false;
-    }
-  }, [fetchFundingPaymentHistory]);
+const FundingPaymentHistory = forwardRef(() => {
+  const fundingPaymentHistory = useNanostore(tsFundingPaymentHistory);
 
   return fundingPaymentHistory !== null ? (
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
@@ -346,53 +287,22 @@ function getCollectionInformation(type: any) {
 }
 
 function TribeDetailComponents(props: any, ref: any) {
-  const { tradingData } = props;
-  const [tribeDetailIndex, setTribeDetailIndex] = useState(0);
-  const { fullWalletAddress, tokenRef, currentToken, activeTab } = props;
-  const marketTradeRef = useRef();
-  const fundingPaymentRef = useRef();
-  const spotRef = useRef();
-  // function getAnalyticsDetailTab(index: any) {
-  //   setTribeDetailIndex(index);
-  //   const eventName = ['tribedetail_overview_pressed', 'tribedetail_spottransaction_pressed', 'tribedetail_fundingpayment_pressed'][index];
-  //   if (firebaseAnalytics) {
-  //     logEvent(
-  //       firebaseAnalytics,
-  //       eventName,
-  //       { wallet: fullWalletAddress.substring(2), collection: currentToken } // from tokenRef.current
-  //     );
-  //   }
-  //   apiConnection.postUserEvent(eventName, {
-  //     page: 'Trade',
-  //     collection: currentToken // from tokenRef.current
-  //   });
-  // }
-
-  const updateInfomations = () => {
-    // marketTradeRef.current?.fetchMarketHistory();
-    // fundingPaymentRef.current?.fetchFundingPaymentHistory();
-    // spotRef.current?.fetchSpotPriceList();
-  };
+  const { fullWalletAddress, currentToken, activeTab } = props;
 
   useEffect(() => {
-    updateInfomations();
-  }, [currentToken]); // from tokenRef.current
-
-  useImperativeHandle(ref, () => ({ updateInfomations }));
+    updateTradeInformation(currentToken);
+  }, [currentToken]);
 
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
-        {/* <Overview tradingData={tradingData}>
-          <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} />
-        </Overview> */}
-        <MarketTrade ref={marketTradeRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
+        <MarketTrade fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
-        <SpotTable ref={spotRef} fullWalletAddress={fullWalletAddress} tokenRef={tokenRef} currentToken={currentToken} />
+        <SpotTable fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
-        <FundingPaymentHistory ref={fundingPaymentRef} tokenRef={tokenRef} currentToken={currentToken} />
+        <FundingPaymentHistory />
       </div>
     </>
   );

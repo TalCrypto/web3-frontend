@@ -1,4 +1,5 @@
 import { BigNumber, utils } from 'ethers';
+import { binarySearch } from '@/utils/arrayHelper';
 
 const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
 
@@ -198,6 +199,9 @@ export const getMarketHistory = async (ammAddr: string) => {
                     exchangedPositionSize
                     positionNotional
                     spotPrice
+                    positionSizeAfter
+                    liquidationPenalty
+                    trader
                   }
               }`
     })
@@ -205,16 +209,31 @@ export const getMarketHistory = async (ammAddr: string) => {
     .then(res => res.json())
     .then(resJson => resJson.data.positionChangedEvents);
 
-  const result = positions.map((position: any) => ({
-    amm: position.amm,
-    timestamp: Number(position.timestamp),
-    exchangedPositionSize: BigNumber.from(position.exchangedPositionSize), // BAYC
-    positionNotional: BigNumber.from(position.positionNotional), // ETH paid
-    spotPrice: BigNumber.from(position.spotPrice),
-    txHash: position.id.split('-')[0]
-  }));
+  const userAddresses: any[] = [];
+  const finalPositions: any[] = [];
 
-  return positions.length > 0 ? result : [];
+  if (positions.length > 0) {
+    positions.map((position: any) => {
+      if (binarySearch(userAddresses, position.trader) < 0) {
+        userAddresses.push(position.trader);
+      }
+      finalPositions.push({
+        amm: position.amm,
+        timestamp: Number(position.timestamp),
+        exchangedPositionSize: BigNumber.from(position.exchangedPositionSize), // BAYC
+        positionNotional: BigNumber.from(position.positionNotional), // ETH paid
+        positionSizeAfter: BigNumber.from(position.positionSizeAfter), // ETH size after
+        liquidationPenalty: BigNumber.from(position.liquidationPenalty),
+        spotPrice: BigNumber.from(position.spotPrice),
+        userAddress: position.trader,
+        txHash: position.id.split('-')[0]
+      });
+
+      return position;
+    });
+  }
+
+  return { userAddresses, finalPositions };
 };
 
 export const getFundingPaymentHistory = async (ammAddr: string) => {

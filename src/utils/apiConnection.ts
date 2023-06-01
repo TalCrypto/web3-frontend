@@ -6,7 +6,15 @@ import { firebaseAuth } from '@/const/firebaseConfig';
 import { walletProvider } from './walletProvider';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
-import { setUserPoint, setLeaderboard, isLeaderboardLoading, isUserPointLoading, defaultUserPoint } from '../stores/airdrop';
+import {
+  setUserPoint,
+  setLeaderboard,
+  isLeaderboardLoading,
+  isUserPointLoading,
+  defaultUserPoint,
+  isReferralListLoading,
+  setReferralList
+} from '../stores/airdrop';
 
 const apiUrl = process.env.NEXT_PUBLIC_DASHBOARD_API_URL;
 const authUrl = process.env.NEXT_PUBLIC_AUTHENTICATION_API_URL;
@@ -429,6 +437,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
+
   getUserPointLite: async function getUserPointLite(userAddress = walletProvider.holderAddress) {
     const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge`;
     let defaultData = { total: 0, rank: 0 };
@@ -459,6 +468,49 @@ export const apiConnection = {
       return Promise.resolve(data);
     } catch (err) {
       isLeaderboardLoading.set(false);
+      return Promise.reject(err);
+    }
+  },
+  getUsernameFromAddress: async function getUsernameFromAddress(userAddressList: any) {
+    const url = `${authUrl}/users/username`;
+    const body = { userAddressList };
+    const headers = { 'Content-Type': 'application/json' };
+    try {
+      const call = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers
+      });
+      const result = await call.json();
+      return Promise.resolve(result.data);
+    } catch (err) {
+      console.log({ err });
+      return Promise.reject(err);
+    }
+  },
+  getReferralList: async function getReferralList(userAddress = walletProvider.holderAddress) {
+    const url = `${authUrl}/points/referral/reward/detail/${userAddress}`;
+    try {
+      isReferralListLoading.set(true);
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      setReferralList(data);
+      isReferralListLoading.set(false);
+      return Promise.resolve(data);
+    } catch (err) {
+      isReferralListLoading.set(false);
+      return Promise.reject(err);
+    }
+  },
+  getUsernameFromReferral: async function getUsernameFromReferral(referralCode: any) {
+    const url = `${authUrl}/users/referral/code/userinfo?code=${referralCode}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      return Promise.resolve(data);
+    } catch (err) {
       return Promise.reject(err);
     }
   }
