@@ -1,4 +1,5 @@
 /* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import { utils } from 'ethers';
@@ -24,7 +25,7 @@ const SortingIndicator = (props: any) => {
 };
 
 const CollectionModal = (props: any) => {
-  const { visible, setVisible, selectCollection } = props;
+  const { isLoginState, isWrongNetwork, visible, setVisible, selectCollection } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [overviewData, setOverviewData] = useState([]);
   const [periodIndex, setPeriodIndex] = useState(0);
@@ -132,6 +133,10 @@ const CollectionModal = (props: any) => {
       setSortedData(tempSort);
     }
   }, [positionSorting, periodIndex, overviewData]);
+
+  useEffect(() => {
+    fetchOverview();
+  }, [isLoginState, isWrongNetwork]);
 
   if (!visible) return null;
 

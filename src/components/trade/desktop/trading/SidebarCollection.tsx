@@ -52,7 +52,6 @@ function SidebarCollection(props: any, ref: any) {
   useEffect(() => {
     const targetIndex = collectionList.findIndex(i => i.collection === currentToken);
     setActiveIndex(targetIndex);
-    console.log(currentToken);
   }, [currentToken]);
 
   const selectedCollection = getCollectionInformation(currentToken);
@@ -114,17 +113,17 @@ function SidebarCollection(props: any, ref: any) {
         {collectionList.map(item => (
           <div
             key={`sidecol-${item.collection}`}
-            className={`${selectedCollection.collection === item.collection ? 'active' : ''} ${isLoading ? 'loading' : ''}
+            className={`${selectedCollection.collection.toLocaleLowerCase() === item.collection.toLocaleLowerCase() ? 'active' : ''} ${
+              isLoading ? 'loading' : ''
+            }
             relative mt-8 flex h-8 w-8 cursor-pointer items-center`}
             onClick={() => selectCollection(item.collection)}>
-            {selectedCollection.collection === item.collection ? (
+            {selectedCollection.collection.toUpperCase() === item.collection.toUpperCase() ? (
               <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-[#2574fb]" />
             ) : null}
-
             {item.isNew ? (
               <Image className="absolute right-[-12px] top-[-4px] z-[12]" src="/images/collections/new.svg" alt="" width={26} height={12} />
             ) : null}
-
             {/* <OverlayTrigger placement="right" overlay={<Tooltip>{item.displayCollectionPair}</Tooltip>}>
               <Image src={item.sidebarLogo} width="24" height="24" alt="" />
             </OverlayTrigger> */}

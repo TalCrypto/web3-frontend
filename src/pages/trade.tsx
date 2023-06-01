@@ -30,7 +30,7 @@ const getCollectionInformation = (collectionName: any) => {
 
 function TradePage(props: TradePagePros) {
   const { router } = props;
-  const [currentToken, setCurrentToken] = useState(router.query?.collection || 'DEGODS');
+  const [currentToken, setCurrentToken] = useState(router.query?.collection ?? 'DEGODS');
   const [fullWalletAddress, setFullWalletAddress] = useState('');
   const [isLoginState, setIsLoginState] = useState(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(true);
@@ -87,35 +87,20 @@ function TradePage(props: TradePagePros) {
     }
   };
 
-  let timeoutPositionChangeId: any; // Declare the timeout ID variable in a scope accessible to both functions
-
-  // function stopTimeout() {
-  //   clearTimeout(timeoutPositionChangeId);
-  // }
-
-  // function startTimeout() {
-  //   const snapToken = currentToken;
-  //   timeoutPositionChangeId = setTimeout(() => {
-  //     // if (snapToken === currentTokenRef.current) {
-  //       // fetchInformations();
-  //       // graphRef.current?.fetchChartData();
-  //     // }
-  //   }, 10000);
-  // }
-
   useEffect(() => {
-    // currentTokenRef.current = currentToken;
-
-    // const coll = getCollectionInformation(currentToken);
-    // setCurrentCollection(coll);
-
     fetchPositions();
     fetchInformations();
-
-    // return () => {
-    //   stopTimeout(); // Stop the timeout
-    // };
   }, [currentToken]); // from tokenRef.current
+
+  useEffect(() => {
+    if (Object.keys(router.query).length === 0) {
+      return;
+    }
+
+    const passCollection = decodeURIComponent(router.query.collection)?.toUpperCase();
+    setCurrentToken(passCollection); // from tokenRef.current
+    walletProvider.setCurrentToken(passCollection);
+  }, [router.query]);
 
   return (
     <>
