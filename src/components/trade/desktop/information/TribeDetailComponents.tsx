@@ -26,6 +26,7 @@ import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWith
 import { useStore as useNanostore } from '@nanostores/react';
 import { updateTradeInformation } from '@/utils/TradeInformation';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
+import { walletProvider } from '@/utils/walletProvider';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -62,8 +63,10 @@ interface IOpenseaData {
 }
 
 function ExplorerButton(props: any) {
-  const { txHash, fullWalletAddress, collection } = props;
+  const { txHash, collection } = props;
   const etherscanUrl = `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`;
+  const fullWalletAddress = walletProvider.holderAddress;
+
   const getAnalyticsMktEtherscan = () => {
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, 'tribedetail_markettrades_etherscan_pressed', {
@@ -89,8 +92,9 @@ function ExplorerButton(props: any) {
 
 const MarketTrade = (props: any) => {
   const router = useRouter();
-  const { fullWalletAddress, currentToken } = props;
+  const { currentToken } = props;
   const marketHistory = useNanostore(tsMarketHistory);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -132,7 +136,7 @@ const MarketTrade = (props: any) => {
                   <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">YOU</span>
                 ) : null}
               </div>,
-              <ExplorerButton txHash={txHash} fullWalletAddress={fullWalletAddress} collection={currentToken} />
+              <ExplorerButton txHash={txHash} collection={currentToken} />
             ]}
             classNames={['col-span-3 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-1 px-3']}
           />
@@ -275,10 +279,10 @@ function TribeDetailComponents(props: any) {
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
-        <MarketTrade fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
+        <MarketTrade currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
-        <SpotTable fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
+        <SpotTable currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
         <FundingPaymentHistory />

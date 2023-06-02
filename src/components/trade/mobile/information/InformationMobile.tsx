@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import TabsInfo from '@/components/trade/mobile/information/TabsInfo';
 
 function InformationMobile(props: any) {
-  const { tradingData, fullWalletAddress, tokenRef, currentToken } = props;
+  const { tradingData, tokenRef, currentToken } = props;
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -42,13 +42,7 @@ function InformationMobile(props: any) {
       </div>
       <div className="display-content h-full">
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
-          <TabsInfo
-            tradingData={tradingData}
-            fullWalletAddress={fullWalletAddress}
-            tokenRef={tokenRef}
-            currentToken={currentToken}
-            activeTab={activeTab}
-          />
+          <TabsInfo tradingData={tradingData} tokenRef={tokenRef} currentToken={currentToken} activeTab={activeTab} />
         </div>
       </div>
     </div>

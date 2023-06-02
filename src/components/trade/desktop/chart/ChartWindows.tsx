@@ -31,6 +31,7 @@ import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
 import { wsIsLogin, wsChatInterval } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
 
 const flashAnim = 'flash';
 
@@ -114,40 +115,10 @@ function PriceIndicator(props: any) {
   );
 }
 
-// function LabelDisplay(props: any) {
-//   const { title = '', value = '', className = '', children } = props;
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         {title}
-//         <span className={className}>{value}</span>
-//       </div>
-//     </div>
-//   );
-// }
-
-// function LabelDisplayWithTips(props: any) {
-//   const { title = '', value = '', className = '', children, placement = 'left', size = '20px', tips = '' } = props;
-
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         <TitleTips titleText={title} tipsText={tips} placement="top" />
-//         <span className={className}>{value}</span>
-//         {/* <TextTips
-//           tipsText="Resulting price of users' trades in the VAMM system based on the constant product formula"
-//           placement={placement}
-//           size={size}
-//         /> */}
-//       </div>
-//     </div>
-//   );
-// }
-
-function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
+function chartButtonLogged(index: any, currentCollection: any) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
+  const fullWalletAddress = walletProvider.holderAddress;
+
   if (firebaseAnalytics) {
     logEvent(firebaseAnalytics, eventName, {
       wallet: fullWalletAddress.substring(2),
@@ -164,12 +135,6 @@ function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection
 function ChartTimeTabs(props: any) {
   const { selectedTimeIndex, setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
 
-  const componentReady = useRef();
-
-  // useEffect(() => {
-  //   componentReady.current = true;
-  // }, []);
-
   useEffect(() => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
     const { offsetWidth, offsetLeft } = activeSegmentRef.current;
@@ -180,8 +145,7 @@ function ChartTimeTabs(props: any) {
 
   return (
     <div className="flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-      <div
-        className={`relative inline-flex w-full justify-between overflow-hidden text-center ${componentReady.current ? 'ready' : 'idle'}`}>
+      <div className="relative inline-flex w-full justify-between overflow-hidden text-center">
         {contentArray.map((item: any, i: any) => (
           <div
             key={item.label}
@@ -248,14 +212,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
               </div>
               <div className="text-14 font-400 flex text-highEmphasis">
                 <SmallPriceIcon priceValue={`${formatterValue(tradingData.twapPrice, 2, '', '-.--')} (Oracle)`} />
-                {/* <LabelDisplayWithTips
-                  title="Spot (Oracle Price): "
-                  value={`${formatterValue(tradingData.twapPrice, 2)} (Spot)`}
-                  className="pricetextcontent"
-                  placement="right"
-                  tips="The price of the lowest-priced listed NFT within a collection across open market places. Tribe3 is using simple time weighted average floor price on a rolling 6-hour basis in 10 seconds increments"
-                  size="16px"
-                /> */}
               </div>
             </div>
           </div>
@@ -266,25 +222,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
         </div>
       </div>
       <div className="flex flex-1 items-end justify-end">
-        {/* <div className="info-set">
-          <div className="fp">
-            <TitleTips
-              titleText={`Funding Rate (${timeLabel})`}
-              tipsText="The rate of the funding payment. Funding payment is paid to/by either short or long positions based on the difference between spot and vAMM price. Funding payment happens once every 3 hours, which is calculated on a 3-hour simple weighted rolling average basis."
-              placement="top"
-            />
-            <div className="col">
-              Long <span className={longSide === 'Pay' ? 'pay' : 'receive'}>{longSide}</span>{rateLong}
-              &nbsp;
-              Short <span className={shortSide === 'Pay' ? 'pay' : 'receive'}>{shortSide}</span>{rateShort}
-            </div>
-          </div>
-          <div className="high-low">
-            <div>High: <span className="pricetextcontent">{currentTagMaxAndMinValue.max}</span></div>
-            &nbsp;
-            Low: <span className="pricetextcontent">{currentTagMaxAndMinValue.min}</span>
-          </div>
-        </div> */}
         <ChartTimeTabs
           name="group-1"
           callback={(val: any) => setSelectedTimeIndex(val)}
@@ -299,18 +236,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
         />
-        {/* <div className="pro-btn-container">
-          <div
-            className={`pro-btn cursor-pointer ${isProShow ? 'active' : ''}`}
-            onClick={() => {
-              const value = !isProShow;
-              setIsProShow(value);
-              localStorage.setItem('isProShow', value ? 'true' : false);
-            }}
-          >
-            <Image className="" src="/static/pro_text.svg" width="18" height="18" alt="" />
-          </div>
-        </div> */}
       </div>
     </div>
   );
@@ -651,43 +576,16 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartWindows(props: any, ref: any) {
-  const { tradingData, fullWalletAddress, currentToken } = props;
-  const isLoginState = useNanostore(wsIsLogin);
+  const { tradingData, currentToken } = props;
 
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
   const [isProShow, setIsProShow] = useState(true);
-  const [isProVisible, setIsProVisible] = useState(false); // indicate pro component state after animation complete
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
-  const graphDataRef = useRef({});
   const proRef = useRef();
-
-  // const handleIsProShow = async () => {
-  //   const storageIsProShow = await localStorage.getItem('isProShow');
-  //   if (storageIsProShow === 'false') return setIsProShow(false);
-  //   return setIsProShow(true);
-
-  //   // if (isLoginState && fullWalletAddress) {
-  //   //   const storagefullWalletAddress = localStorage.getItem('fullWalletAddress');
-  //   //   if (storagefullWalletAddress !== fullWalletAddress) {
-  //   //     setIsProShow(true);
-  //   //     // save to local
-  //   //     localStorage.setItem('isProShow', 'true');
-  //   //     localStorage.setItem('fullWalletAddress', fullWalletAddress);
-  //   //   }
-  //   // }
-  // };
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, [fullWalletAddress, isLoginState]);
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, []);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
@@ -706,14 +604,12 @@ function ChartWindows(props: any, ref: any) {
     graphRef?.setGraphOtherValue(chartData);
     const pRef: any = proRef.current;
     pRef?.setGraphOtherValue(chartData);
-    // console.log('fetchChartData, set chart data and pro component', chartData);
 
     const dynamicDataSet = chartData.graphData.map((params: any) => {
       const { end, avgPrice } = params;
       return { time: end, value: utils.formatEther(avgPrice) };
     });
     setLineChartData(dynamicDataSet);
-    // graphDataRef.current.setGb raphValue(dynamicDataSet);
     setIsStartLoadingChart(false);
   };
 
@@ -722,14 +618,13 @@ function ChartWindows(props: any, ref: any) {
   useEffect(() => {
     const gRef: any = graphHeaderRef.current;
     gRef.reset();
-    // graphDataRef.current.reset();
     const pRef: any = proRef.current;
     pRef.reset();
     fetchChartData();
   }, [currentToken, selectedTimeIndex]); // from tokenRef.current
 
   const handleSelectedTimeIndex = (index: any) => {
-    chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
+    chartButtonLogged(index, currentToken); // from tokenRef.current
     setSelectedTimeIndex(index);
   };
 
@@ -742,8 +637,6 @@ function ChartWindows(props: any, ref: any) {
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          // tokenRef={tokenRef}
-          currentToken={currentToken}
           isProShow={isProShow}
           setIsProShow={setIsProShow}
         />
@@ -758,22 +651,13 @@ function ChartWindows(props: any, ref: any) {
               chartProContainerRef={chartProContainerRef}
             />
           </div>
-          <ProComponent
-            ref={proRef}
-            visible={isProShow}
-            tradingData={tradingData}
-            currentToken={currentToken}
-            selectedTimeIndex={selectedTimeIndex}
-          />
+          <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
         </div>
         <ChartFooter
-          // ref={graphHeaderRef}
           tradingData={tradingData}
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          // tokenRef={tokenRef}
-          currentToken={currentToken}
         />
       </div>
     </div>

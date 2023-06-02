@@ -50,16 +50,7 @@ export default function PositionMobile(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
-  const {
-    userPosition,
-    tradingData,
-    // tokenRef,
-    currentToken,
-    fullWalletAddress
-    // historyRecords,
-    // setFundingModalIsShow,
-    // setHistoryModalIsVisible
-  } = props;
+  const { userPosition, tradingData, currentToken } = props;
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
@@ -117,6 +108,7 @@ export default function PositionMobile(props: any) {
   // leverage handling
   const isLeverageNegative = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) <= 0 : false;
   const isLeverageOver = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) > 100 : false;
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // const size = '';
   // const currentPrice = '';

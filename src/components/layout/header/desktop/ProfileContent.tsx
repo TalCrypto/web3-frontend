@@ -14,6 +14,8 @@ import { walletProvider } from '@/utils/walletProvider';
 import { disconnectWallet, getTestToken, updateTargetNetwork } from '@/utils/Wallet';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentChain, wsIsWrongNetwork } from '@/stores/WalletState';
+import { firebaseAnalytics } from '@/const/firebaseConfig';
+import { logEvent } from 'firebase/analytics';
 
 interface PriceContentProps {
   priceValue: string;
@@ -54,9 +56,11 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
 
     const fullWalletAddress = walletProvider.holderAddress;
 
-    // logEvent(firebaseAnalytics, eventName, {
-    //   wallet: fullWalletAddress.substring(2)
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, eventName, {
+        wallet: fullWalletAddress.substring(2)
+      });
+    }
     apiConnection.postUserEvent(eventName, {
       page
     });

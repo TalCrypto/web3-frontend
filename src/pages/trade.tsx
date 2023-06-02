@@ -20,7 +20,7 @@ import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsFullWalletAddress, wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 
 interface TradePagePros {
   router: any;
@@ -34,7 +34,6 @@ const getCollectionInformation = (collectionName: any) => {
 function TradePage(props: TradePagePros) {
   const { router } = props;
   const [currentToken, setCurrentToken] = useState(router.query?.collection ?? 'DEGODS');
-  const [fullWalletAddress, setFullWalletAddress] = useState('');
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
   const [userPosition, setUserPosition] = useState(null);
@@ -43,8 +42,10 @@ function TradePage(props: TradePagePros) {
   const [wethBalance, setWethBalance] = useState(0);
   const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
   const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
+
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const fetchInformations = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
@@ -112,14 +113,12 @@ function TradePage(props: TradePagePros) {
                 <SidebarCollection
                   currentToken={currentToken}
                   setCurrentToken={setCurrentToken}
-                  fullWalletAddress={fullWalletAddress}
                   isShowPopup={isShowPopup}
                   setIsShowPopup={setIsShowPopup}
                 />
 
                 <TradingWindow
                   currentToken={currentToken}
-                  fullWalletAddress={fullWalletAddress}
                   wethBalance={wethBalance}
                   refreshPositions={fetchPositions}
                   userPosition={userPosition}
@@ -129,7 +128,7 @@ function TradePage(props: TradePagePros) {
               </div>
 
               <div className="ml-[30px] block 2xl:flex-1">
-                <ChartWindows tradingData={tradingData} fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
+                <ChartWindows tradingData={tradingData} currentToken={currentToken} />
 
                 {isLoginState ? (
                   <PositionDetails
@@ -138,11 +137,10 @@ function TradePage(props: TradePagePros) {
                     currentToken={currentToken}
                     setHistoryModalIsVisible={setHistoryModalIsVisible}
                     setFundingModalIsShow={setFundingModalIsShow}
-                    fullWalletAddress={fullWalletAddress}
                   />
                 ) : null}
 
-                <InformationWindow tradingData={tradingData} fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
+                <InformationWindow tradingData={tradingData} currentToken={currentToken} />
               </div>
             </div>
           </div>
@@ -156,7 +154,6 @@ function TradePage(props: TradePagePros) {
             visible={historyModalIsVisible}
             onChange={visible => setHistoryModalIsVisible(visible)}
             historyRecordsByMonth={historyRecordsByMonth}
-            fullWalletAddress={fullWalletAddress}
           /> */}
         </div>
 
@@ -166,7 +163,6 @@ function TradePage(props: TradePagePros) {
           <ChartMobile
             // ref={graphRef}
             tradingData={tradingData}
-            fullWalletAddress={fullWalletAddress}
             currentToken={currentToken}
           />
 
@@ -177,11 +173,10 @@ function TradePage(props: TradePagePros) {
             currentToken={currentToken}
             setHistoryModalIsVisible={setHistoryModalIsVisible}
             setFundingModalIsShow={setFundingModalIsShow}
-            fullWalletAddress={fullWalletAddress}
           />
           {/* ) : null} */}
 
-          <InformationMobile tradingData={tradingData} fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
+          <InformationMobile tradingData={tradingData} currentToken={currentToken} />
         </div>
       </main>
     </>

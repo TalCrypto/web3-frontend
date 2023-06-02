@@ -26,6 +26,7 @@ import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWith
 import { useStore as useNanostore } from '@nanostores/react';
 import { updateTradeInformation } from '@/utils/TradeInformation';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
+import { walletProvider } from '@/utils/walletProvider';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -54,8 +55,10 @@ function Cell(props: any) {
 }
 
 function ExplorerButton(props: any) {
-  const { txHash, fullWalletAddress, collection } = props;
+  const { txHash, collection } = props;
   const etherscanUrl = `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`;
+  const fullWalletAddress = walletProvider.holderAddress;
+
   const getAnalyticsMktEtherscan = () => {
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, 'tribedetail_markettrades_etherscan_pressed', {
@@ -81,9 +84,10 @@ function ExplorerButton(props: any) {
 
 const MarketTrade = (props: any) => {
   const router = useRouter();
-  const { fullWalletAddress, currentToken } = props;
+  const { currentToken } = props;
   const marketHistory = useNanostore(tsMarketHistory);
   const [displayCount, setDisplayCount] = useState(10);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -133,7 +137,7 @@ const MarketTrade = (props: any) => {
                   <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
                 </div>,
 
-                <ExplorerButton txHash={txHash} fullWalletAddress={fullWalletAddress} collection={currentToken} />
+                <ExplorerButton txHash={txHash} collection={currentToken} />
               ]}
               classNames={['col-span-4 pl-3', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
             />
@@ -170,9 +174,10 @@ interface IOpenseaData {
 }
 
 const SpotTable = (props: any) => {
-  const { fullWalletAddress, currentToken } = props;
+  const { currentToken } = props;
   const [displayCount, setDisplayCount] = useState(10);
   const openseaData = useNanostore(tsSportPriceList);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   return (
     <div className="mx-[20px]">
@@ -316,7 +321,7 @@ const FundingPaymentHistory = () => {
 };
 
 function TabsInfo(props: any) {
-  const { fullWalletAddress, currentToken, activeTab } = props;
+  const { currentToken, activeTab } = props;
 
   useEffect(() => {
     updateTradeInformation(currentToken);
@@ -325,10 +330,10 @@ function TabsInfo(props: any) {
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-full`}>
-        <MarketTrade fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
+        <MarketTrade currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-full`}>
-        <SpotTable fullWalletAddress={fullWalletAddress} currentToken={currentToken} />
+        <SpotTable currentToken={currentToken} />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-full`}>
         <FundingPaymentHistory />

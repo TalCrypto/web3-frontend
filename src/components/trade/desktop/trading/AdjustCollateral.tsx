@@ -29,20 +29,9 @@ import { getTestToken } from '@/utils/Wallet';
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    marginIndex,
-    setMarginIndex,
-    // adjustMarginValue,
-    setMarginEstimation,
-    fullWalletAddress,
-    // tokenRef,
-    currentToken,
-    // setEstMargin,
-    // userPosition,
-    // estMargin,
-    setAdjustMarginValue
-  } = props;
+  const { marginIndex, setMarginIndex, setMarginEstimation, currentToken, setAdjustMarginValue } = props;
   // const radioButtonIndex = marginIndex ? 0 : 1;
+  const fullWalletAddress = walletProvider.holderAddress;
 
   function getAnalyticsLongShort(index: any) {
     if (firebaseAnalytics) {
@@ -332,8 +321,6 @@ function ActionButtons(props: any) {
     balanceChecking,
     marginRatioChecker,
     minimalMarginChecking,
-    fullWalletAddress,
-    // tokenRef,
     currentToken,
     initialMarginChecker,
     setAdjustMarginValue,
@@ -343,6 +330,7 @@ function ActionButtons(props: any) {
     isWaiting
   } = props;
   const [isAdjustingMargin, setIsAdjustingMargin] = useState(false);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const [processToken, setProcessToken] = useState(null); // save current token while process tx
 
@@ -752,7 +740,6 @@ export default function AdjustCollateral(props: any) {
         setMarginIndex={setMarginIndex}
         adjustMarginValue={adjustMarginValue}
         setMarginEstimation={setMarginEstimation}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         setEstMargin={setEstMargin}
@@ -761,7 +748,6 @@ export default function AdjustCollateral(props: any) {
       />
       <QuantityEnter
         adjustMarginValue={adjustMarginValue}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         onChange={(e: any) => {
@@ -849,7 +835,6 @@ export default function AdjustCollateral(props: any) {
         balanceChecking={balanceChecking}
         marginRatioChecker={marginRatioChecker}
         minimalMarginChecking={minimalMarginChecking}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         initialMarginChecker={initialMarginChecker}

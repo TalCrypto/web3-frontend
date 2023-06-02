@@ -30,6 +30,7 @@ import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
 import { wsIsLogin } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
 
 const flashAnim = 'flash';
 
@@ -61,6 +62,7 @@ function PriceIndicator(props: any) {
   });
 
   const [isPriceChange, setIsPriceChange] = useState(false);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   useEffect(() => {
     setIsPriceChange(true);
@@ -488,7 +490,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartMobile(props: any, ref: any) {
-  const { tradingData, fullWalletAddress, tokenRef, currentToken, isWrongNetwork } = props;
+  const { tradingData, tokenRef, currentToken, isWrongNetwork } = props;
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
@@ -497,33 +499,8 @@ function ChartMobile(props: any, ref: any) {
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
-  const graphDataRef = useRef({});
   const proRef = useRef();
-  const isLoginState = useNanostore(wsIsLogin);
-
-  // const handleIsProShow = async () => {
-  //   const storageIsProShow = await localStorage.getItem('isProShow');
-  //   if (storageIsProShow === 'false') return setIsProShow(false);
-  //   return setIsProShow(true);
-
-  //   // if (isLoginState && fullWalletAddress) {
-  //   //   const storagefullWalletAddress = localStorage.getItem('fullWalletAddress');
-  //   //   if (storagefullWalletAddress !== fullWalletAddress) {
-  //   //     setIsProShow(true);
-  //   //     // save to local
-  //   //     localStorage.setItem('isProShow', 'true');
-  //   //     localStorage.setItem('fullWalletAddress', fullWalletAddress);
-  //   //   }
-  //   // }
-  // };
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, [fullWalletAddress, isLoginState]);
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, []);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);

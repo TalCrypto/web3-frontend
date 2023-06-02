@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable operator-linebreak */
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback } from 'react';
 import Image from 'next/image';
 import { logEvent } from 'firebase/analytics';
@@ -71,14 +72,13 @@ function QuantityEnter(props: any) {
     tradingData,
     setCloseValue,
     setCurrentMaxValue,
-    fullWalletAddress,
-    // tokenRef,
     currentToken,
     disabled
   } = props;
 
   const [isFocus, setIsFocus] = useState(false);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -301,8 +301,6 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   const [isProcessingClosePos, setIsProcessingClosePos] = useState(false);
   const {
     refreshPositions,
-    fullWalletAddress,
-    // tokenRef,
     currentToken,
     exposureValue,
     closeValue,
@@ -330,6 +328,7 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   const [processToken, setProcessToken] = useState(null); // save current token while process tx
 
   const isHasPartialClose = useNanostore(hasPartialClose);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // sync isProcessing to store/tradePanel
   useEffect(() => {
@@ -813,17 +812,8 @@ function CloseSlider(props: any) {
 export default function CloseCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    refreshPositions,
-    userPosition,
-    wethBalance,
-    fullWalletAddress,
-    tradingData,
-    // tokenRef,
-    currentToken,
-    setShowOverFluctuationContent,
-    setTradeWindowIndex
-  } = props;
+  const { refreshPositions, userPosition, wethBalance, tradingData, currentToken, setShowOverFluctuationContent, setTradeWindowIndex } =
+    props;
 
   const [closeValue, setCloseValue] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -845,6 +835,7 @@ export default function CloseCollateral(props: any) {
   const [isPending, setIsPending] = useState(false);
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const actionButtonRef = useRef();
 
@@ -959,7 +950,6 @@ export default function CloseCollateral(props: any) {
   return (
     <div>
       <QuantityEnter
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         onChange={(e: any) => {
@@ -1063,7 +1053,6 @@ export default function CloseCollateral(props: any) {
       <ActionButtons
         ref={actionButtonRef}
         refreshPositions={refreshPositions}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         exposureValue={exposureValue}

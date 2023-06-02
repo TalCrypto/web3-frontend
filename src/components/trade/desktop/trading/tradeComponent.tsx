@@ -32,17 +32,22 @@ import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired } from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
 import { getTestToken } from '@/utils/Wallet';
+import { firebaseAnalytics } from '@/const/firebaseConfig';
+import { logEvent } from 'firebase/analytics';
 
 function LongShortRatio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const { userPosition, setSaleOrBuyIndex, saleOrBuyIndex, currentToken } = props;
+  const fullWalletAddress = walletProvider.holderAddress;
 
   function analyticsLogSide(index: any, currentCollection: any) {
-    // logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentCollection
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentCollection
+      });
+    }
     const eventName = ['btnLong_pressed', 'btnShort_pressed'][index];
     apiConnection.postUserEvent(eventName, {
       page,
@@ -315,16 +320,11 @@ function EstimatedValueDisplay(props: any) {
     estimatedValue,
     toleranceRate,
     setToleranceRate,
-    // setIsInsuffBalance,
-    // wethBalance,
-    // fullWalletAddress,
-    // tokenRef,
     currentToken,
     leverageValue,
     value,
     isInsuffBalance,
     isAmountTooSmall,
-    // estPriceFluctuation,
     disabled
   } = props;
 
@@ -336,6 +336,7 @@ function EstimatedValueDisplay(props: any) {
   // const collateralCalc = isEstimatedValueEmpty ? 0 : cost.sub(feeInNumber);
   // const newCollateral = isEstimatedValueEmpty ? '-.--' : formatterValue(collateralCalc, 4);
   const sizeNotional = fee && cost && leverageValue ? ((costInNumber - feeInNumber) * Number(leverageValue))?.toFixed(4) : '-.--';
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // determine if input is valid or error state
   // const isValid = value > 0 && !isInsuffBalance && !isAmountTooSmall && !estPriceFluctuation;
@@ -374,10 +375,13 @@ function EstimatedValueDisplay(props: any) {
               }}
               onClick={e => {
                 // e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-                // logEvent(firebaseAnalytics, 'trade_open_add_slippageTolerance_pressed', {
-                //   wallet: fullWalletAddress.substring(2),
-                //   collection: currentToken
-                // });
+                if (firebaseAnalytics) {
+                  logEvent(firebaseAnalytics, 'trade_open_add_slippageTolerance_pressed', {
+                    wallet: fullWalletAddress.substring(2),
+                    collection: currentToken
+                  });
+                }
+
                 apiConnection.postUserEvent('trade_open_add_slippageTolerance_pressed', {
                   page,
                   collection: currentToken
@@ -450,6 +454,7 @@ function ConfirmButton(props: any) {
 
   const [isProcessingOpenPos, setIsProcessingOpenPos] = useState(false);
   const isNormal = isLoginState && !isWrongNetwork && quantity > 0 && !isInsuffBalance && !isAmountTooSmall;
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // sync isProcessing to store/tradePanel
   useEffect(() => {
@@ -494,10 +499,13 @@ function ConfirmButton(props: any) {
     if (!isLoginState || isWrongNetwork || !quantity) {
       return;
     }
-    // logEvent(firebaseAnalytics, 'confirm_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'confirm_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('confirm_pressed', {
       page,
       collection: currentToken
@@ -512,10 +520,12 @@ function ConfirmButton(props: any) {
   };
 
   const performApprove = async () => {
-    // logEvent(firebaseAnalytics, 'approve_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'approve_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('approve_pressed', {
       page,
       collection: currentToken
@@ -526,10 +536,12 @@ function ConfirmButton(props: any) {
       .then(() => {
         wsIsApproveRequired.set(false);
         setIsProcessingOpenPos(false);
-        // logEvent(firebaseAnalytics, 'callbacks_performapprove_success', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   collection: currentToken
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performapprove_success', {
+            wallet: fullWalletAddress.substring(2),
+            collection: currentToken
+          });
+        }
         apiConnection.postUserEvent('callbacks_performapprove_success', {
           page,
           collection: currentToken
@@ -537,11 +549,13 @@ function ConfirmButton(props: any) {
       })
       .catch((error: any) => {
         setIsProcessingOpenPos(false);
-        // logEvent(firebaseAnalytics, 'callbacks_performapprove_fail', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   error_code: error?.code.toString(),
-        //   collection: currentToken
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performapprove_fail', {
+            wallet: fullWalletAddress.substring(2),
+            error_code: error?.code.toString(),
+            collection: currentToken
+          });
+        }
         apiConnection.postUserEvent('callbacks_performapprove_fail', {
           page,
           error_code: error?.code.toString(),
@@ -550,34 +564,17 @@ function ConfirmButton(props: any) {
       });
   };
 
-  // const performWhitelistRegister = () => {
-  //   logEvent(firebaseAnalytics, 'whitelist_register_pressed', {
-  //     wallet: fullWalletAddress.substring(2),
-  //     collection: currentToken
-  //   });
-  //   apiConnection.postUserEvent('whitelist_register_pressed', {
-  //     page,
-  //     collection: currentToken
-  //   });
-  //   window.open('https://gleam.io/kfydk/testnet-access-request', '_blank', 'noreferrer');
-  //   logEvent(firebaseAnalytics, 'whitelist_register_pressed', {
-  //     wallet: fullWalletAddress.substring(2)
-  //   });
-  //   apiConnection.postUserEvent('whitelist_register_pressed', {
-  //     page
-  //   });
-  // };
-
   const performGetTeth = () => {
-    // setIsProcessingOpenPos(true);
     getTestToken(() => setIsProcessingOpenPos(false));
   };
 
   const performSwitchGeorli = () => {
-    // logEvent(firebaseAnalytics, 'switchGoerli_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'switchGoerli_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('switchGoerli_pressed', {
       page,
       collection: currentToken
@@ -691,23 +688,14 @@ function Tips(props: any) {
 function ExtendedEstimateComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    fullWalletAddress,
-    tokenRef,
-    currentToken,
-    estimatedValue,
-    leverageValue,
-    userPosition,
-    value,
-    isAmountTooSmall,
-    isInsuffBalance
-  } = props;
+  const { currentToken, estimatedValue, userPosition, value, isAmountTooSmall, isInsuffBalance } = props;
   const [showDetail, isShowDetail] = useState(false);
   const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
   const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
   const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
   const fee = formatterValue(estimatedValue.fee, 4);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // hide component when there is no estimatedValue
   if (!estimatedValue || !estimatedValue.cost) return null;
@@ -726,11 +714,13 @@ function ExtendedEstimateComponent(props: any) {
           className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
             isShowDetail(!showDetail);
-            // logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
-            //   wallet: fullWalletAddress.substring(2),
-            //   is_advanced_data_shown: !showDetail,
-            //   collection: currentToken
-            // });
+            if (firebaseAnalytics) {
+              logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
+                wallet: fullWalletAddress.substring(2),
+                is_advanced_data_shown: !showDetail,
+                collection: currentToken
+              });
+            }
             apiConnection.postUserEvent('showAdvancedDetails_pressed', {
               page,
               is_advanced_data_shown: !showDetail,
@@ -828,15 +818,7 @@ function ExtendedEstimateComponent(props: any) {
 export default function TradeComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    refreshPositions,
-    connectWallet,
-    fullWalletAddress,
-    // tokenRef,
-    currentToken,
-    userPosition,
-    tradingData
-  } = props;
+  const { refreshPositions, connectWallet, currentToken, userPosition, tradingData } = props;
   const [saleOrBuyIndex, setSaleOrBuyIndex] = useState(0);
   const [quantity, setQuantity] = useState('0');
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -864,6 +846,7 @@ export default function TradeComponent(props: any) {
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const wethBalance = useNanostore(wsWethBalance);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -901,10 +884,12 @@ export default function TradeComponent(props: any) {
     }
 
     // logging
-    // logEvent(firebaseAnalytics, 'trade_add_input_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'trade_add_input_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('trade_add_input_pressed', {
       page,
       collection: currentToken
@@ -1055,10 +1040,12 @@ export default function TradeComponent(props: any) {
         // if (currentToken === processToken) {
         refreshPositions();
         // }
-        // logEvent(firebaseAnalytics, 'callbacks_performtrades_success', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   collection: currentToken
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performtrades_success', {
+            wallet: fullWalletAddress.substring(2),
+            collection: currentToken
+          });
+        }
         apiConnection.postUserEvent('callbacks_performtrades_success', {
           page,
           collection: currentToken
@@ -1077,11 +1064,14 @@ export default function TradeComponent(props: any) {
           setTextErrorMessageShow(true);
         }
 
-        // logEvent(firebaseAnalytics, 'callbacks_performtrades_fail', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   collection: currentToken,
-        //   error_code: error?.code?.toString()
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performtrades_fail', {
+            wallet: fullWalletAddress.substring(2),
+            collection: currentToken,
+            error_code: error?.code?.toString()
+          });
+        }
+
         apiConnection.postUserEvent('callbacks_performtrades_fail', {
           page,
           collection: currentToken,
@@ -1091,11 +1081,13 @@ export default function TradeComponent(props: any) {
   };
 
   function analyticsLogLeverageValue(index: any, currentCollection: any) {
-    // logEvent(firebaseAnalytics, 'leverage_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   leverage_value: index,
-    //   collection: currentCollection
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'leverage_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        leverage_value: index,
+        collection: currentCollection
+      });
+    }
     apiConnection.postUserEvent('leverage_pressed', {
       page,
       leverage_value: index,
@@ -1145,7 +1137,6 @@ export default function TradeComponent(props: any) {
         userPosition={userPosition}
         // tokenRef={tokenRef}
         currentToken={currentToken}
-        fullWalletAddress={fullWalletAddress}
       />
       <QuantityEnter
         disabled={isProcessing || isWrongNetwork}
@@ -1182,7 +1173,6 @@ export default function TradeComponent(props: any) {
         setToleranceRate={setToleranceRate}
         setIsInsuffBalance={setIsInsuffBalance}
         wethBalance={wethBalance}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         leverageValue={leverageValue}
@@ -1196,7 +1186,6 @@ export default function TradeComponent(props: any) {
         createTransaction={createTransaction}
         isInsuffBalance={isInsuffBalance}
         isAmountTooSmall={isAmountTooSmall}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         setQuantity={setQuantity}
@@ -1216,7 +1205,6 @@ export default function TradeComponent(props: any) {
       <Tips isInsuffBalance={isInsuffBalance} />
       <ExtendedEstimateComponent
         estimatedValue={estimatedValue}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
         currentToken={currentToken}
         leverageValue={leverageValue}

@@ -31,7 +31,7 @@ function OverFluctuationError(props: any) {
 }
 
 function TradingWindow(props: any) {
-  const { userPosition, refreshPositions, tradingData, wethBalance, fullWalletAddress, currentToken, maxReduceValue } = props;
+  const { userPosition, refreshPositions, tradingData, wethBalance, currentToken, maxReduceValue } = props;
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
   const isTradePanelModalShow = useStore(tradePanelModal.show);
   const tradePanelModalMsg = useStore(tradePanelModal.message);
@@ -47,7 +47,6 @@ function TradingWindow(props: any) {
       refreshPositions={refreshPositions}
       connectWallet={traderConnectWallet}
       wethBalance={wethBalance}
-      fullWalletAddress={fullWalletAddress}
       currentToken={currentToken}
       userPosition={userPosition}
       tradingData={tradingData}
@@ -60,7 +59,6 @@ function TradingWindow(props: any) {
       refreshPositions={refreshPositions}
       userPosition={userPosition}
       wethBalance={wethBalance}
-      fullWalletAddress={fullWalletAddress}
       tradingData={tradingData}
       currentToken={currentToken}
       setTradeWindowIndex={setTradeWindowIndex}
@@ -69,7 +67,6 @@ function TradingWindow(props: any) {
       refreshPositions={refreshPositions}
       userPosition={userPosition}
       wethBalance={wethBalance}
-      fullWalletAddress={fullWalletAddress}
       tradingData={tradingData}
       currentToken={currentToken}
       maxReduceValue={maxReduceValue}

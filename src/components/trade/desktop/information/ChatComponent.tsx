@@ -17,6 +17,7 @@ import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsIsLogin } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
 
 const getCollectionInformation = (curentCollection: any) => {
   const targetCollection = collectionList.filter(coll => coll.collection?.toUpperCase() === curentCollection.toUpperCase());
@@ -65,10 +66,11 @@ function MessageBubble(props: any) {
 }
 
 function ChatDisplays(props: any) {
-  const { chatData, fullWalletAddress, chatScrollKey } = props;
+  const { chatData, chatScrollKey } = props;
   const [isScrollButtonShow, setIsScrollButtonShow] = useState(true);
   const messagesEndRef = useRef(null);
   const messageRef = useRef(null);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 
@@ -115,10 +117,11 @@ function ChatDisplays(props: any) {
 
 function ChatInput(props: any) {
   const isLoginState = useNanostore(wsIsLogin);
-  const { fullWalletAddress, setChatScrollKey, tokenRef, currentToken } = props;
+  const { setChatScrollKey, tokenRef, currentToken } = props;
   const [messageInfo, setMessageInfo] = useState('');
   const allowSendMessage = isLoginState && messageInfo.trim().length > 0;
   const [pressTime, setPressTime] = useState(0);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const logUserEvent = (eventName: any) => {
     if (firebaseAnalytics) {
@@ -184,7 +187,7 @@ function ChatInput(props: any) {
 }
 
 function ChatComponent(props: any, ref: any) {
-  const { fullWalletAddress, isLoginState, currentToken, tokenRef } = props;
+  const { currentToken, tokenRef } = props;
   const [chatData, setChatData] = useState([]);
   const [chatScrollKey, setChatScrollKey] = useState('');
 
@@ -205,13 +208,8 @@ function ChatComponent(props: any, ref: any) {
 
   return (
     <div className="chatcontainer">
-      <ChatDisplays chatData={chatData} fullWalletAddress={fullWalletAddress} chatScrollKey={chatScrollKey} />
-      <ChatInput
-        fullWalletAddress={fullWalletAddress}
-        setChatScrollKey={setChatScrollKey}
-        currentToken={currentToken}
-        tokenRef={tokenRef}
-      />
+      <ChatDisplays chatData={chatData} chatScrollKey={chatScrollKey} />
+      <ChatInput setChatScrollKey={setChatScrollKey} currentToken={currentToken} tokenRef={tokenRef} />
     </div>
   );
 }

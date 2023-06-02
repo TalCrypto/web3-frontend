@@ -51,16 +51,7 @@ export default function PositionDetails(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
-  const {
-    userPosition,
-    tradingData,
-    // tokenRef,
-    currentToken,
-    fullWalletAddress
-    // historyRecords,
-    // setFundingModalIsShow,
-    // setHistoryModalIsVisible
-  } = props;
+  const { userPosition, tradingData, currentToken } = props;
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
@@ -82,6 +73,7 @@ export default function PositionDetails(props: any) {
   const positionType = userPosition ? (userPosition.size > 0 ? 'LONG' : 'SHORT') : null;
   const liquidationPrice = userPosition ? Number(utils.formatEther(userPosition.liquidationPrice)) : null;
   const liquidationChanceLimit = 0.05;
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const [userInfo, setUserInfo] = useState({});
 
