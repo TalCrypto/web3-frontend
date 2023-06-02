@@ -80,7 +80,7 @@ function TradePage(props: TradePagePros) {
     }
   };
 
-  fetchPositions();
+  // fetchPositions();
 
   useEffect(() => {
     fetchPositions();
