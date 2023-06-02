@@ -47,8 +47,7 @@ function Sidebar() {
   return (
     <div
       className="absolute left-0 top-0 box-border h-full w-full
-          transform-none rounded-tl-[4px] bg-[#202249] shadow-md
-       ">
+        transform-none rounded-tl-[4px] bg-[#202249] shadow-md">
       <div className="z-1 relative box-border h-full overflow-auto overscroll-auto">
         <div className="h-[80%] overflow-auto">
           {modules.map(({ name, handle }) => (

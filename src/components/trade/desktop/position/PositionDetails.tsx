@@ -189,7 +189,7 @@ export default function PositionDetails(props: any) {
           {collectionIsPending[currentCollection.amm] ? <div className="pending-reminder">Transaction Pending...</div> : null}
         </div>
         <div className="flex space-x-[24px]">
-          <div className="nav-icon-btn" onClick={() => clickShowSharePosition(true)}>
+          <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>
             <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width="16" height="16" />
           </div>
           {/* <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>

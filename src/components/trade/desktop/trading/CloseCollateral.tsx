@@ -1021,8 +1021,8 @@ export default function CloseCollateral(props: any) {
               type="text"
               pattern="[0-9]*"
               className="w-[90%] max-w-[100px]  border-[1px]
-                border-[#242652] bg-[#242652] text-[15px] font-semibold outline-none
-              "
+                border-[#242652] bg-[#242652] text-[15px]
+                font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
               onChange={e => {

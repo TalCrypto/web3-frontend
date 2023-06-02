@@ -95,3 +95,12 @@
     background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
   }
 }
+
+.share-container {
+  background: linear-gradient(180deg, #171731, #0c0d1f);
+
+  .image-bg {
+    background: url('/images/components/trade/bg_sharing_rise.png');
+    background-size: 100% 100%;
+  }
+}

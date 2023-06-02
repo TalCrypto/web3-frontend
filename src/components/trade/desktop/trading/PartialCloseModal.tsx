@@ -18,11 +18,11 @@ export default function PartialCloseModal(props: any) {
         <div className="col">
           <div className="col closebuttonrow">
             <Image
+              src="/images/components/common/modal/close.svg"
               alt=""
-              src="../../static/close-modal.svg"
+              className="cursor-pointer"
               width={16}
               height={16}
-              className="closebtn"
               onClick={e => {
                 e.stopPropagation();
                 dismissModal();
@@ -58,7 +58,7 @@ export default function PartialCloseModal(props: any) {
               Cancel
             </button>
           </div>
-          <Image src="../../static/modal-logo.svg" alt="" className="tribelogos" />
+          <Image src="/images/components/common/modal/modal-logo.svg" width={170} height={165} alt="" className="tribelogos" />
         </div>
       </div>
     </div>

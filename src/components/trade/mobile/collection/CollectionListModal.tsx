@@ -59,7 +59,7 @@ export default function CollectionListModal(props: any) {
   return (
     <div
       className="t-0 fixed bottom-0 left-0 right-0 z-10 h-full w-full
-       bg-[#000]/[.3] backdrop-blur-[4px] "
+       bg-[#000]/[.3] backdrop-blur-[4px]"
       onClick={() => {
         setPopupOpened(false);
       }}>

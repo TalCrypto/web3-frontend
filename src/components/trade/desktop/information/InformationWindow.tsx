@@ -42,8 +42,7 @@ function InformationWindow(props: any) {
       rounded-[6px] border-[1px] border-[#2e4371] p-0 pb-10">
       <div
         className="info-tab mb-6 flex items-center
-        border-b-[2px] border-b-[#2e3064] leading-[50px]
-      ">
+        border-b-[2px] border-b-[#2e3064] leading-[50px]">
         {Tabs}
       </div>
       <div className="display-content h-full">

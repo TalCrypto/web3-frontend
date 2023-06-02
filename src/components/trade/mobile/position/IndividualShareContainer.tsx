@@ -64,8 +64,9 @@ export default function IndividualShareContainer(props: any) {
   const currentPositionName = filteredCollection.collectionName;
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;
-  const showUserId = userInfo?.username === '' ? userAddress : userInfo?.username;
+  console.log(userInfo);
+  // const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;
+  // const showUserId = userInfo?.username === '' ? userAddress : userInfo?.username;
 
   const closeShareWindow = () => {
     setShowShareComponent(false);
@@ -156,7 +157,7 @@ export default function IndividualShareContainer(props: any) {
                   <NormalEthPrice price={futurePrice} />
                 </div>
                 <div className="time">
-                  <div>ID: {showUserId}</div>
+                  {/* <div>ID: {showUserId}</div> */}
                   <div>{formatDateTime(Date.now(), 'YYYY. DD. MMM HH:mm UTCZ').toUpperCase()}</div>
                   {/* <div>{moment().format('YYYY. DD. MMM HH:mm UTCZ').toUpperCase()}</div> */}
                 </div>
@@ -166,7 +167,14 @@ export default function IndividualShareContainer(props: any) {
           <div className="col function-col">
             <div className="row contents-row-empty">
               <div className="col closebtn">
-                <Image alt="" src="../../static/close-modal.svg" width={16} height={16} className="closebtn" onClick={closeShareWindow} />
+                <Image
+                  src="/images/components/common/modal/close.svg"
+                  alt=""
+                  className="cursor-pointer"
+                  width={16}
+                  height={16}
+                  onClick={closeShareWindow}
+                />
               </div>
             </div>
             <div className="row contents-row">

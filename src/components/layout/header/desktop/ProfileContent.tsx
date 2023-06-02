@@ -204,8 +204,7 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       className="profile-content z-2 transition-visibility invisible
         absolute right-0 top-[46px] h-0 w-[370px]
         cursor-default rounded-lg bg-[#202249]
-        opacity-0 transition-opacity duration-300 
-      "
+        opacity-0 transition-opacity duration-300"
       id="profile-content">
       <li className="m-0 list-none p-0">
         <TopContent username={userName} isNotSetUsername={isNotSetUsername} />

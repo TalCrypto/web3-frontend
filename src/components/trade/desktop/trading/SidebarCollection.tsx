@@ -94,8 +94,7 @@ function SidebarCollection(props: any, ref: any) {
       <div
         className="side-collection absolute  mt-[9px] flex w-[44px]
         flex-col rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-[#202249]
-        px-[6px] py-3
-      ">
+        px-[6px] py-3">
         <div
           className={`item ${isLoading ? 'loading' : ''}
             relative flex h-8 w-8 cursor-pointer items-center rounded-full 
