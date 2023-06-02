@@ -98,7 +98,7 @@ const MarketTrade = (props: any) => {
         items={['User ID', 'Action / Type', 'Notional Size / Resulting Price', '']}
         classNames={['col-span-4', 'col-span-3 pl-3', 'col-span-4 px-3', 'col-span-1 px-3']}
       />
-      {marketHistory.length > 0 ? (
+      {marketHistory && marketHistory.length > 0 ? (
         marketHistory
           .slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount)
           .map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
@@ -144,7 +144,7 @@ const MarketTrade = (props: any) => {
         </div>
       )}
 
-      {marketHistory.length > 0 ? (
+      {marketHistory && marketHistory.length > 0 ? (
         displayCount >= marketHistory.length ? null : (
           <div
             className="text-center text-[14px] font-semibold text-[#2574FB]"
@@ -177,7 +177,7 @@ const SpotTable = (props: any) => {
   return (
     <div className="mx-[20px]">
       <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-3 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
-      {openseaData.length > 0 ? (
+      {openseaData && openseaData.length > 0 ? (
         openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
           const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
           const src = !asset
@@ -248,7 +248,7 @@ const SpotTable = (props: any) => {
         </div>
       )}
 
-      {openseaData.length > 0 ? (
+      {openseaData && openseaData.length > 0 ? (
         displayCount >= openseaData.length ? null : (
           <div
             className="text-center text-[14px] font-semibold text-[#2574FB]"
@@ -271,7 +271,7 @@ const FundingPaymentHistory = () => {
   return fundingPaymentHistory !== null ? (
     <div className="scrollable mx-[20px] h-full overflow-y-scroll">
       <Cell items={['Time', 'Funding Rate Long / Short']} classNames={['col-span-4 px-3', 'col-span-8 text-right']} />
-      {fundingPaymentHistory.length > 0 ? (
+      {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
         fundingPaymentHistory
           .slice(0, displayCount > fundingPaymentHistory.length ? fundingPaymentHistory.length : displayCount)
           .map(({ timestamp, rateLong, rateShort } /* index */) => (
@@ -299,7 +299,7 @@ const FundingPaymentHistory = () => {
         </div>
       )}
 
-      {fundingPaymentHistory.length > 0 ? (
+      {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
         displayCount >= fundingPaymentHistory.length ? null : (
           <div
             className="text-center text-[14px] font-semibold text-[#2574FB]"

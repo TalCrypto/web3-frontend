@@ -105,7 +105,7 @@ const MarketTrade = (props: any) => {
         items={['Time / Type', 'Action', 'Notional Size', 'Resulting Price', 'User ID', '']}
         classNames={['col-span-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-1 px-3']}
       />
-      {marketHistory.length > 0 ? (
+      {marketHistory && marketHistory.length > 0 ? (
         marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
           <Cell
             key={`market_${timestamp}_${index}`}
@@ -153,7 +153,7 @@ const SpotTable = (props: any) => {
   return (
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
       <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-3', 'col-span-3 px-3 ', 'col-span-4 px-3 ', 'col-span-1 px-3 ']} />
-      {openseaData.length > 0 ? (
+      {openseaData && openseaData && openseaData.length > 0 ? (
         openseaData?.map((data: IOpenseaData) => {
           const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
           const src = !asset
@@ -237,7 +237,7 @@ const FundingPaymentHistory = () => {
         items={['Time', 'Funding Rate (LONG)', 'Funding Rate (SHORT)']}
         classNames={['col-span-4', 'col-span-4 px-3', 'col-span-4 px-3']}
       />
-      {fundingPaymentHistory.length > 0 ? (
+      {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
         fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
           <Cell
             key={`funding_${timestamp}`}
