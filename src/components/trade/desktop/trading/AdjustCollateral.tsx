@@ -68,7 +68,7 @@ function SaleOrBuyRadio(props: any) {
           ${className} ${marginIndex === index ? 'text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
         `}
         onClick={() => {
-          setAdjustMarginValue('');
+          setAdjustMarginValue(0);
           setMarginEstimation(null);
           getAnalyticsLongShort(index);
           setMarginIndex(index);
