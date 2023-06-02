@@ -225,7 +225,7 @@ function UpdateValueNoDataDisplay(props: any) {
   const { title, unit } = props;
 
   return (
-    <div className="align-items-center flex">
+    <div className="flex items-center">
       <div className="text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
       <div className="text-[14px] font-semibold text-white/[.87]">
         <span>-.--</span>
@@ -287,13 +287,9 @@ function AdjustMarginButton(props: any) {
   return (
     <div
       className="mb-6 flex h-[46px] w-full cursor-pointer
-        items-center justify-center rounded-[6px] bg-[#2574fb] hover:bg-[#5190fc] "
+        items-center justify-center rounded-[6px] bg-[#2574fb] hover:bg-[#5190fc]"
       onClick={closePosition}>
-      <div
-        className="text-center font-semibold text-white
-      ">
-        Close Position
-      </div>
+      <div className="text-center font-semibold text-white">Close Position</div>
     </div>
   );
 }
@@ -1012,7 +1008,7 @@ export default function CloseCollateral(props: any) {
         disabled={isProcessing || isBadDebt}
       />
       <SectionDividers />
-      <div className={`align-items-center mb-4 flex ${isProcessing ? 'disabled' : ''}`}>
+      <div className={`mb-4 flex items-center ${isProcessing ? 'disabled' : ''}`}>
         <div className="text-[14px] text-[#a3c2ff]/[.68]">Slippage Tolerance</div>
         <div className="flex flex-1 justify-end">
           <div

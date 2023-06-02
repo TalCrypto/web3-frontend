@@ -60,10 +60,13 @@ function SaleOrBuyRadio(props: any) {
   }
 
   const radioGroup = ['Add', 'Reduce'].map((item, index) => {
-    const className = marginIndex === index ? ['longSelected', 'shortSelected'][marginIndex] : 'selectbehaviour';
+    const className = marginIndex === index ? ['long-selected', 'short-selected'][marginIndex] : 'selectbehaviour';
     return (
       <div
-        className={`col button text-[14px] font-semibold ${className}`}
+        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center 
+          rounded-full text-center text-[14px] font-semibold hover:text-white/[.87]
+          ${className} ${marginIndex === index ? 'text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
+        `}
         onClick={() => {
           setAdjustMarginValue('');
           setMarginEstimation(null);
@@ -75,7 +78,7 @@ function SaleOrBuyRadio(props: any) {
       </div>
     );
   });
-  return <div className="selectLongShortButtonSet flex">{radioGroup}</div>;
+  return <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">{radioGroup}</div>;
 }
 
 function QuantityEnter(props: any) {
@@ -142,12 +145,12 @@ function QuantityEnter(props: any) {
 
   return (
     <>
-      <div className={`betsizetitle flex ${disabled ? 'disabled' : ''}`}>
-        <div className="text-color-secondary flex-1 text-[14px]">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
+      <div className={`mb-4 flex ${disabled ? 'disabled' : ''}`}>
+        <div className="flex-1 text-[14px] text-[#a3c2ff]/[.68]">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
         {isLoginState && !isWrongNetwork && marginIndex === 0 ? (
-          <div className="text-color-secondary flex text-[14px]" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+          <div className="flex text-[14px] text-[#a3c2ff]/[.68]" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <div className="flex-1" style={{ display: 'flex', marginRight: '4px' }}>
-              <Image alt="" src="/static/wallet-white.svg" height={16} width={16} />
+              <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
             </div>
             {/* {marginIndex === 0 ? 'Balance' : 'Free Collateral'} */}
             <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
@@ -158,58 +161,57 @@ function QuantityEnter(props: any) {
           </div>
         ) : null}
       </div>
-      <div className="row">
-        <div className="col">
-          <div className={`betsizebg-outline ${isFocus ? 'valid' : ''} ${isError ? 'error' : ''} ${disabled ? 'disabled' : ''}`}>
-            <div className="betsizebg">
-              <Image
-                src="/images/components/layout/header/eth-tribe3.svg"
-                alt=""
-                width="36"
-                height="36"
-                padding-right="12dp"
-                className="betIcon"
-              />
-              <div className="inputweth">
-                <span className="inputwethtext font-12-600">WETH</span>
-              </div>
-              <div className="col straightdiv">
-                <div className="straightdivider" />
-              </div>
-              <div className="col sizebtncontent">
-                <div
-                  className={`sizebutton lefting ${disabled ? 'disabled' : ''}`}
-                  onClick={() => {
-                    if (!disabled) {
-                      showMaxValue();
-                    }
-                  }}>
-                  <span className="btntext">MAX</span>
-                </div>
-                <div
-                  className={`sizebutton ${disabled ? 'disabled' : ''}`}
-                  onClick={() => {
-                    if (!disabled) {
-                      showHalfValue();
-                    }
-                  }}>
-                  <span className="btntext">HALF</span>
-                </div>
-              </div>
-              <input
-                type="text"
-                pattern="[0-9]*"
-                className={`inputnum font-15-600 ${isApproveRequired ? ' blockCursor' : ''}`}
-                value={value}
-                placeholder="0.00"
-                onChange={handleEnter}
-                disabled={isApproveRequired || disabled}
-                min={0}
-                // onClick={e => e.target.setSelectionRange(e.target.value.length, e.target.value.length)}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-              />
+      <div className="mb-3">
+        <div
+          className={`trade-input-outline rounded-[4px] bg-none p-[1px]
+              ${isFocus ? 'valid' : ''}
+              ${isError ? 'error' : ''}
+              ${disabled ? 'disabled' : ''}`}>
+          <div className="flex h-12 items-center rounded-[4px] bg-[#242652] p-3">
+            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width="18" height="24" className="" />
+            <div className="inputweth">
+              <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
+            <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
+            <div className="flex">
+              <div
+                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                    items-center justify-center rounded-[6px] text-[12px] font-bold
+                    ${disabled ? 'disabled' : ''}`}
+                onClick={() => {
+                  if (!disabled) {
+                    showMaxValue();
+                  }
+                }}>
+                <span className="text-center text-[#a3c2ff]/[.6]">MAX</span>
+              </div>
+              <div
+                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                    items-center justify-center rounded-[6px] text-[12px] font-bold
+                    ${disabled ? 'disabled' : ''}`}
+                onClick={() => {
+                  if (!disabled) {
+                    showHalfValue();
+                  }
+                }}>
+                <span className="text-center text-[#a3c2ff]/[.6]">HALF</span>
+              </div>
+            </div>
+            <input
+              type="text"
+              pattern="[0-9]*"
+              className={`w-full border-none border-[#242652] bg-[#242652]
+                  text-right text-[15px] font-bold text-white outline-none
+                  ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
+              value={value}
+              placeholder="0.00"
+              onChange={handleEnter}
+              disabled={isApproveRequired || disabled}
+              min={0}
+              // onClick={e => e.target.setSelectionRange(e.target.value.length, e.target.value.length)}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+            />
           </div>
         </div>
       </div>
@@ -221,12 +223,12 @@ function UpdateValueDisplay(props: any) {
   const { title, currentValue, newValue, unit, unitSizing = 'normal' } = props;
 
   return (
-    <div className="adjustcollateralrow">
-      <div className="text-color-secondary left text-[14px]">{title}</div>
+    <div className="mb-4 flex">
+      <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
       <div className="right">
-        <span className="text-color-secondary text-[14px] font-semibold">{currentValue}</span>
+        <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue}</span>
         <span className="text-[14px] font-semibold text-white/[.87]">{' → '}</span>
-        <span className={unitSizing === 'normal' ? 'font-12' : ''}>
+        <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
           <span className="text-[14px] font-semibold">{newValue}</span>
           {unit}
         </span>
@@ -239,9 +241,9 @@ function UpdateValueNoDataDisplay(props: any) {
   const { title, unit } = props;
 
   return (
-    <div className="row adjustcollateralrow align-items-center">
-      <div className="col text-color-secondary text-[14px]">{title}</div>
-      <div className="text-color-secondary col-auto text-[14px] font-semibold">
+    <div className="row adjustcollateralrow items-center">
+      <div className="col text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="col-auto text-[14px] font-semibold text-[#a3c2ff]/[.68]">
         <span>{`-.--${unit}`}</span>
       </div>
     </div>
@@ -252,7 +254,7 @@ function SectionDividers() {
   return (
     <div className="row">
       <div className="col">
-        <div className="dividers" />
+        <div className="mb-6 h-[1px] bg-[#2e3064]" />
       </div>
     </div>
   );
@@ -262,13 +264,11 @@ function UpdatedCollateralValue(props: any) {
   const { value, marginIndex } = props;
 
   return (
-    <div className="row detaillastrow align-items-center">
-      <div className="text-color-secondary col-auto text-[14px]">
-        {marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}
-      </div>
-      <div className="col totalsizeback">
+    <div className="mb-4 flex items-center">
+      <div className="text-[14px] text-[#a3c2ff]/[.68]">{marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}</div>
+      <div className="flex-1 text-right">
         <span className="text-[14px] font-semibold">{value}</span>
-        <span className="font-12" style={{ marginLeft: '4px' }}>
+        <span className="text-[12px]" style={{ marginLeft: '4px' }}>
           WETH
         </span>
       </div>
@@ -296,23 +296,26 @@ function AdjustMarginButton(props: any) {
 
   if (isChecked1 || isChecked2) {
     return (
-      <div className="col confirmtradingbtnbgallow disabled">
-        <div className="col confirmtradingbtntextallow">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
+      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#272955]">
+        <div className="text-center font-semibold text-[#373961]">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
       </div>
     );
   }
   if (isAdjustingMargin) {
     return (
-      <div className="col confirmtradingbtnbgallow">
-        <div className="col loadingindicator confirmtradingbtntextallow mx-auto">
+      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#2574fb]">
+        <div className="col loadingindicator confirmtradingbtntextallow mx-auto text-center">
           <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
         </div>
       </div>
     );
   }
   return (
-    <div className="col button confirmtradingbtnbgallow selectbehaviour" onClick={adjustPositionMargin}>
-      <div className="col confirmtradingbtntextallow">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
+    <div
+      className="mb-6 flex h-[46px] w-full cursor-pointer
+        items-center justify-center rounded-[6px] bg-[#2574fb] hover:bg-[#5190fc]"
+      onClick={adjustPositionMargin}>
+      <div className="center font-semibold text-white">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
     </div>
   );
 }
@@ -427,18 +430,18 @@ function ActionButtons(props: any) {
           setIsAdjustingMargin(false);
 
           if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'callbacks_adjustmargin_fail', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken, // from tokenRef.current
-              error_code: error.error.code.toString()
-            });
+            // logEvent(firebaseAnalytics, 'callbacks_adjustmargin_fail', {
+            //   wallet: fullWalletAddress.substring(2),
+            //   collection: currentToken, // from tokenRef.current
+            //   error_code: error.error.code.toString()
+            // });
           }
 
-          apiConnection.postUserEvent('callbacks_adjustmargin_fail', {
-            page,
-            collection: currentToken, // from tokenRef.current
-            error_code: error.error.code.toString()
-          });
+          // apiConnection.postUserEvent('callbacks_adjustmargin_fail', {
+          //   page,
+          //   collection: currentToken, // from tokenRef.current
+          //   error_code: error.error.code.toString()
+          // });
         });
     } else {
       walletProvider
@@ -526,7 +529,11 @@ function QuantityTips(props: any) {
 
   return (
     <div className={`quantity-tips-container ${isPending ? 'price-fluc' : ''}`}>
-      <span className={`${!isPending ? 'errortext' : ''}`}>{label}</span>
+      <span
+        className={`${isPending ? 'text-[#ffc24b]/[.87]' : 'text-[#ff5656]}'}
+          mb-2 text-[12px] leading-[20px]`}>
+        {label}
+      </span>
     </div>
   );
 }
@@ -629,6 +636,7 @@ function AdjustCollateralSlidingBars(props: any) {
   const increaseMax = Number(wethBalance) - 0.0001;
   const decreaseMax = Number(maxReduceValue) - 0.0001;
   const maxValue = marginIndex === 0 ? increaseMax : decreaseMax;
+
   return (
     <div className={`${disabled ? 'disabled' : ''}`}>
       <InputSlider
@@ -640,13 +648,13 @@ function AdjustCollateralSlidingBars(props: any) {
         onChange={(value: any) => setAdjustMarginValue(value)}
         onAfterChange={onChange}
       />
-      <div className="row adjust-slide-row font-12 text-white/[.87]">
-        <div className="col left">
+      <div className="mb-6 flex justify-between text-[12px] text-white/[.87]">
+        <div className="">
           Current
           <br />
           Collateral
         </div>
-        <div className="col right">{rightText}</div>
+        <div className="">{rightText}</div>
       </div>
     </div>
   );
@@ -656,7 +664,7 @@ export default function AdjustCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const { refreshPositions, userPosition, wethBalance, fullWalletAddress, tokenRef, currentToken, maxReduceValue } = props;
-  const [adjustMarginValue, setAdjustMarginValue] = useState('');
+  const [adjustMarginValue, setAdjustMarginValue] = useState(0);
   const [marginIndex, setMarginIndex] = useState(0);
   const [marginEstimation, setMarginEstimation] = useState(null);
   const [exceedBalance, setExceedBalance] = useState(false);
@@ -672,7 +680,7 @@ export default function AdjustCollateral(props: any) {
   const newMarginEstimation: any = marginEstimation;
   const marginRatioChecker =
     marginEstimation !== null && marginIndex === 1 && Number(utils.formatEther(newMarginEstimation.marginRatio)) < 20;
-  const minimalMarginChecking = Number(adjustMarginValue) !== 0 && Number(adjustMarginValue) < 0.01 && adjustMarginValue !== '';
+  const minimalMarginChecking = Number(adjustMarginValue) !== 0 && Number(adjustMarginValue) < 0.01 && adjustMarginValue !== 0;
   const initialMarginChecker = marginEstimation !== null && marginIndex === 1 && Number(utils.formatEther(userPosition.marginRatio)) < 20;
   const reduceMarginChecking = Number(maxReduceValue) - 0.0001 < 0 && marginIndex === 1;
 
@@ -733,7 +741,7 @@ export default function AdjustCollateral(props: any) {
   }, [collectionIsPending[walletProvider?.currentTokenAmmAddress]]);
 
   useEffect(() => {
-    setAdjustMarginValue('');
+    setAdjustMarginValue(0);
     handleMarginEnter('');
   }, [walletProvider.holderAddress]);
 
@@ -806,7 +814,7 @@ export default function AdjustCollateral(props: any) {
         onChange={(e: any) => {
           const number = Math.round(e * 10000) / 10000;
           const stringValue = number.toString();
-          setAdjustMarginValue(stringValue);
+          setAdjustMarginValue(number);
           handleMarginEnter(stringValue);
         }}
         disabled={isProcessing}
@@ -851,7 +859,7 @@ export default function AdjustCollateral(props: any) {
         isPending={isPending}
         isWaiting={isWaiting}
       />
-      {textErrorMessageShow ? <p className="font-12 text-color-warning">{textErrorMessage}</p> : null}
+      {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
     </div>
   );
 }
