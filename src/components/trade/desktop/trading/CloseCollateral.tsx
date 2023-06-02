@@ -26,7 +26,7 @@ import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
-import { wsIsWrongNetwork, wsIsApproveRequired } from '@/stores/WalletState';
+import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken } from '@/stores/WalletState';
 
 function SectionDividers() {
   return (
@@ -72,13 +72,13 @@ function QuantityEnter(props: any) {
     tradingData,
     setCloseValue,
     setCurrentMaxValue,
-    currentToken,
     disabled
   } = props;
 
   const [isFocus, setIsFocus] = useState(false);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -301,7 +301,6 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   const [isProcessingClosePos, setIsProcessingClosePos] = useState(false);
   const {
     refreshPositions,
-    currentToken,
     exposureValue,
     closeValue,
     closeLeverage,
@@ -325,10 +324,9 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
     isBadDebt
   } = props;
 
-  const [processToken, setProcessToken] = useState(null); // save current token while process tx
-
   const isHasPartialClose = useNanostore(hasPartialClose);
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   // sync isProcessing to store/tradePanel
   useEffect(() => {
@@ -401,8 +399,6 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   };
 
   const closePosition = async () => {
-    setProcessToken(currentToken);
-
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, 'trade_close_button_pressed', {
         wallet: fullWalletAddress.substring(2),
@@ -691,16 +687,7 @@ function EstimationComponent(props: any) {
 }
 
 function ExtendedEstimateComponent(props: any) {
-  const {
-    displayAdvanceDetail,
-    // tokenRef,
-    // currentToken,
-    estimatedValue = {},
-    closeValue,
-    currentMaxValue,
-    isAmountTooSmall,
-    isAmountTooLarge
-  } = props;
+  const { displayAdvanceDetail, estimatedValue = {}, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
   // const targetCollection = collectionList.filter(({ collection }) => collection === currentToken); // from tokenRef.current
   // const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
   // const exposure = formatterValue(estimatedValue.exposure, 4);
@@ -951,7 +938,6 @@ export default function CloseCollateral(props: any) {
     <div>
       <QuantityEnter
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         onChange={(e: any) => {
           if (firebaseAnalytics) {
             logEvent(firebaseAnalytics, 'trade_close_input_pressed', {
@@ -1054,7 +1040,6 @@ export default function CloseCollateral(props: any) {
         ref={actionButtonRef}
         refreshPositions={refreshPositions}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         exposureValue={exposureValue}
         closeValue={closeValue}
         closeLeverage={closeLeverage}
@@ -1100,7 +1085,6 @@ export default function CloseCollateral(props: any) {
       <ExtendedEstimateComponent
         displayAdvanceDetail={displayAdvanceDetail}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         estimatedValue={estimatedValue}
         closeValue={closeValue}
         currentMaxValue={currentMaxValue}

@@ -28,6 +28,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
+import { wsCurrentToken } from '@/stores/WalletState';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -50,12 +51,13 @@ export default function PositionMobile(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
-  const { userPosition, tradingData, currentToken } = props;
+  const { userPosition, tradingData } = props;
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapLmt = useNanostore(priceGapLimit);
+  const currentToken = useNanostore(wsCurrentToken);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;

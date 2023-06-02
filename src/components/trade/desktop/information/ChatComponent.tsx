@@ -16,7 +16,7 @@ import { db, firebaseAnalytics } from '@/const/firebaseConfig';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin } from '@/stores/WalletState';
+import { wsCurrentToken, wsIsLogin } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 
 const getCollectionInformation = (curentCollection: any) => {
@@ -117,11 +117,12 @@ function ChatDisplays(props: any) {
 
 function ChatInput(props: any) {
   const isLoginState = useNanostore(wsIsLogin);
-  const { setChatScrollKey, tokenRef, currentToken } = props;
+  const { setChatScrollKey } = props;
   const [messageInfo, setMessageInfo] = useState('');
   const allowSendMessage = isLoginState && messageInfo.trim().length > 0;
   const [pressTime, setPressTime] = useState(0);
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   const logUserEvent = (eventName: any) => {
     if (firebaseAnalytics) {
@@ -187,9 +188,10 @@ function ChatInput(props: any) {
 }
 
 function ChatComponent(props: any, ref: any) {
-  const { currentToken, tokenRef } = props;
+  const { tokenRef } = props;
   const [chatData, setChatData] = useState([]);
   const [chatScrollKey, setChatScrollKey] = useState('');
+  const currentToken = useNanostore(wsCurrentToken);
 
   const getFirebaseChat = function getFirebaseChat() {
     const q = query(setCollectionChat(currentToken), orderBy('createTime', 'asc')); // from tokenRef.current
@@ -209,7 +211,7 @@ function ChatComponent(props: any, ref: any) {
   return (
     <div className="chatcontainer">
       <ChatDisplays chatData={chatData} chatScrollKey={chatScrollKey} />
-      <ChatInput setChatScrollKey={setChatScrollKey} currentToken={currentToken} tokenRef={tokenRef} />
+      <ChatInput setChatScrollKey={setChatScrollKey} tokenRef={tokenRef} />
     </div>
   );
 }

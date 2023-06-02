@@ -20,7 +20,7 @@ import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsFullWalletAddress, wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress, wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 
 interface TradePagePros {
   router: any;
@@ -33,7 +33,6 @@ const getCollectionInformation = (collectionName: any) => {
 
 function TradePage(props: TradePagePros) {
   const { router } = props;
-  const [currentToken, setCurrentToken] = useState(router.query?.collection ?? 'DEGODS');
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
   const [userPosition, setUserPosition] = useState(null);
@@ -46,6 +45,8 @@ function TradePage(props: TradePagePros) {
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
+
+  const currentToken = useNanostore(wsCurrentToken);
 
   const fetchInformations = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
@@ -94,7 +95,7 @@ function TradePage(props: TradePagePros) {
     }
 
     const passCollection = decodeURIComponent(router.query.collection)?.toUpperCase();
-    setCurrentToken(passCollection); // from tokenRef.current
+    wsCurrentToken.set(passCollection); // from tokenRef.current
     walletProvider.setCurrentToken(passCollection);
   }, [router.query]);
 
@@ -110,15 +111,9 @@ function TradePage(props: TradePagePros) {
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
-                <SidebarCollection
-                  currentToken={currentToken}
-                  setCurrentToken={setCurrentToken}
-                  isShowPopup={isShowPopup}
-                  setIsShowPopup={setIsShowPopup}
-                />
+                <SidebarCollection isShowPopup={isShowPopup} setIsShowPopup={setIsShowPopup} />
 
                 <TradingWindow
-                  currentToken={currentToken}
                   wethBalance={wethBalance}
                   refreshPositions={fetchPositions}
                   userPosition={userPosition}
@@ -128,19 +123,18 @@ function TradePage(props: TradePagePros) {
               </div>
 
               <div className="ml-[30px] block 2xl:flex-1">
-                <ChartWindows tradingData={tradingData} currentToken={currentToken} />
+                <ChartWindows tradingData={tradingData} />
 
                 {isLoginState ? (
                   <PositionDetails
                     userPosition={userPosition}
                     tradingData={tradingData}
-                    currentToken={currentToken}
                     setHistoryModalIsVisible={setHistoryModalIsVisible}
                     setFundingModalIsShow={setFundingModalIsShow}
                   />
                 ) : null}
 
-                <InformationWindow tradingData={tradingData} currentToken={currentToken} />
+                <InformationWindow tradingData={tradingData} />
               </div>
             </div>
           </div>
@@ -158,25 +152,23 @@ function TradePage(props: TradePagePros) {
         </div>
 
         <div className="block bg-lightBlue md:hidden">
-          <Switcher currentToken={currentToken} setCurrentToken={setCurrentToken} />
+          <Switcher />
 
           <ChartMobile
             // ref={graphRef}
             tradingData={tradingData}
-            currentToken={currentToken}
           />
 
           {/* {isLoginState ? ( */}
           <PositionMobile
             userPosition={userPosition}
             tradingData={tradingData}
-            currentToken={currentToken}
             setHistoryModalIsVisible={setHistoryModalIsVisible}
             setFundingModalIsShow={setFundingModalIsShow}
           />
           {/* ) : null} */}
 
-          <InformationMobile tradingData={tradingData} currentToken={currentToken} />
+          <InformationMobile tradingData={tradingData} />
         </div>
       </main>
     </>

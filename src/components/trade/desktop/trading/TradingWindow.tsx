@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from '@nanostores/react';
+import { useStore as useNanostore } from '@nanostores/react';
 
 import tradePanelModal from '@/stores/tradePanelModal';
 
@@ -9,6 +9,7 @@ import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral'
 import TradePanelModal from '@/components/trade/desktop/trading/TradePanelModal';
 
 import { connectWallet } from '@/utils/Wallet';
+import { wsCurrentToken } from '@/stores/WalletState';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -31,11 +32,12 @@ function OverFluctuationError(props: any) {
 }
 
 function TradingWindow(props: any) {
-  const { userPosition, refreshPositions, tradingData, wethBalance, currentToken, maxReduceValue } = props;
+  const { userPosition, refreshPositions, tradingData, wethBalance, maxReduceValue } = props;
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
-  const isTradePanelModalShow = useStore(tradePanelModal.show);
-  const tradePanelModalMsg = useStore(tradePanelModal.message);
-  const tradePanelModalLink = useStore(tradePanelModal.link);
+  const isTradePanelModalShow = useNanostore(tradePanelModal.show);
+  const tradePanelModalMsg = useNanostore(tradePanelModal.message);
+  const tradePanelModalLink = useNanostore(tradePanelModal.link);
+  const currentToken = useNanostore(wsCurrentToken);
 
   const traderConnectWallet = () => {
     connectWallet(() => {}, true);
@@ -47,7 +49,6 @@ function TradingWindow(props: any) {
       refreshPositions={refreshPositions}
       connectWallet={traderConnectWallet}
       wethBalance={wethBalance}
-      currentToken={currentToken}
       userPosition={userPosition}
       tradingData={tradingData}
     />
@@ -60,7 +61,6 @@ function TradingWindow(props: any) {
       userPosition={userPosition}
       wethBalance={wethBalance}
       tradingData={tradingData}
-      currentToken={currentToken}
       setTradeWindowIndex={setTradeWindowIndex}
     />,
     <AdjustCollateral
@@ -68,7 +68,6 @@ function TradingWindow(props: any) {
       userPosition={userPosition}
       wethBalance={wethBalance}
       tradingData={tradingData}
-      currentToken={currentToken}
       maxReduceValue={maxReduceValue}
     />
   ][tradeWindowIndex];

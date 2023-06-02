@@ -9,7 +9,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 import CollectionModal from '@/components/trade/desktop/trading/CollectionModal';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin, wsIsWrongNetwork, wsWalletAddress } from '@/stores/WalletState';
+import { wsCurrentToken, wsIsLogin, wsIsWrongNetwork, wsWalletAddress } from '@/stores/WalletState';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -17,7 +17,7 @@ const getCollectionInformation = (collectionName: any) => {
 };
 
 function SidebarCollection(props: any, ref: any) {
-  const { currentToken, setCurrentToken, setIsShowPopup } = props;
+  const { setIsShowPopup } = props;
   const [isColModalVisible, setIsColModalVisible] = useState(false);
   const [userPositions, setUserPositions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -26,6 +26,7 @@ function SidebarCollection(props: any, ref: any) {
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const fullWalletAddress = useNanostore(wsWalletAddress);
+  const currentToken = useNanostore(wsCurrentToken);
 
   const router = useRouter();
 
@@ -82,7 +83,7 @@ function SidebarCollection(props: any, ref: any) {
     // console.log('selectCollection', token);
     walletProvider.setCurrentToken(token);
     // tokenRefCurrent.current = token;
-    setCurrentToken(token);
+    wsCurrentToken.set(token);
 
     router.push(`/trade/${token.toLowerCase()}`, undefined, { shallow: true });
   };

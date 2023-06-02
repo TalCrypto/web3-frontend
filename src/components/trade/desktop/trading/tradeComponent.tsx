@@ -29,7 +29,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken } from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
 import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
@@ -38,8 +38,9 @@ import { logEvent } from 'firebase/analytics';
 function LongShortRatio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { userPosition, setSaleOrBuyIndex, saleOrBuyIndex, currentToken } = props;
+  const { userPosition, setSaleOrBuyIndex, saleOrBuyIndex } = props;
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   function analyticsLogSide(index: any, currentCollection: any) {
     if (firebaseAnalytics) {
@@ -316,17 +317,7 @@ function DisplayValues(props: any) {
 function EstimatedValueDisplay(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    estimatedValue,
-    toleranceRate,
-    setToleranceRate,
-    currentToken,
-    leverageValue,
-    value,
-    isInsuffBalance,
-    isAmountTooSmall,
-    disabled
-  } = props;
+  const { estimatedValue, toleranceRate, setToleranceRate, leverageValue, value, isInsuffBalance, isAmountTooSmall, disabled } = props;
 
   // const isEstimatedValueEmpty = Object.keys(estimatedValue).length === 0;
   const { fee } = estimatedValue;
@@ -337,6 +328,7 @@ function EstimatedValueDisplay(props: any) {
   // const newCollateral = isEstimatedValueEmpty ? '-.--' : formatterValue(collateralCalc, 4);
   const sizeNotional = fee && cost && leverageValue ? ((costInNumber - feeInNumber) * Number(leverageValue))?.toFixed(4) : '-.--';
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   // determine if input is valid or error state
   // const isValid = value > 0 && !isInsuffBalance && !isAmountTooSmall && !estPriceFluctuation;
@@ -429,7 +421,6 @@ function ConfirmButton(props: any) {
     createTransaction,
     isInsuffBalance,
     isAmountTooSmall,
-    currentToken,
     setQuantity,
     setEstimatedValue,
     setEstPriceFluctuation,
@@ -455,6 +446,7 @@ function ConfirmButton(props: any) {
   const [isProcessingOpenPos, setIsProcessingOpenPos] = useState(false);
   const isNormal = isLoginState && !isWrongNetwork && quantity > 0 && !isInsuffBalance && !isAmountTooSmall;
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   // sync isProcessing to store/tradePanel
   useEffect(() => {
@@ -687,8 +679,9 @@ function Tips(props: any) {
 
 function ExtendedEstimateComponent(props: any) {
   const router = useRouter();
+  const currentToken = useNanostore(wsCurrentToken);
   const { page } = pageTitleParser(router.asPath);
-  const { currentToken, estimatedValue, userPosition, value, isAmountTooSmall, isInsuffBalance } = props;
+  const { estimatedValue, userPosition, value, isAmountTooSmall, isInsuffBalance } = props;
   const [showDetail, isShowDetail] = useState(false);
   const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
   const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
@@ -818,7 +811,7 @@ function ExtendedEstimateComponent(props: any) {
 export default function TradeComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, connectWallet, currentToken, userPosition, tradingData } = props;
+  const { refreshPositions, connectWallet, userPosition, tradingData } = props;
   const [saleOrBuyIndex, setSaleOrBuyIndex] = useState(0);
   const [quantity, setQuantity] = useState('0');
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -835,7 +828,6 @@ export default function TradeComponent(props: any) {
   const isProcessing = useNanostore(tradePanel.processing);
   const [isPending, setIsPending] = useState(false);
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
-  const [processToken, setProcessToken] = useState(null); // save current token while process tx
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
@@ -847,6 +839,7 @@ export default function TradeComponent(props: any) {
   const wethBalance = useNanostore(wsWethBalance);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1023,7 +1016,6 @@ export default function TradeComponent(props: any) {
   };
 
   const createTransaction = async function createTransaction(startTransaction = () => {}) {
-    setProcessToken(currentToken);
     walletProvider
       .createTransaction(
         saleOrBuyIndex,
@@ -1136,7 +1128,6 @@ export default function TradeComponent(props: any) {
         setSaleOrBuyIndex={setSaleOrBuyIndex}
         userPosition={userPosition}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
       />
       <QuantityEnter
         disabled={isProcessing || isWrongNetwork}
@@ -1174,7 +1165,6 @@ export default function TradeComponent(props: any) {
         setIsInsuffBalance={setIsInsuffBalance}
         wethBalance={wethBalance}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         leverageValue={leverageValue}
         value={quantity}
         isInsuffBalance={isInsuffBalance}
@@ -1187,7 +1177,6 @@ export default function TradeComponent(props: any) {
         isInsuffBalance={isInsuffBalance}
         isAmountTooSmall={isAmountTooSmall}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         setQuantity={setQuantity}
         setEstimatedValue={setEstimatedValue}
         setEstPriceFluctuation={setEstPriceFluctuation}
@@ -1206,7 +1195,6 @@ export default function TradeComponent(props: any) {
       <ExtendedEstimateComponent
         estimatedValue={estimatedValue}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         leverageValue={leverageValue}
         userPosition={userPosition}
         value={quantity}

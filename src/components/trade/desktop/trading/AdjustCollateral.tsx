@@ -23,15 +23,16 @@ import collectionsLoading from '@/stores/collectionsLoading';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsIsApproveRequired } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken } from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
 
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { marginIndex, setMarginIndex, setMarginEstimation, currentToken, setAdjustMarginValue } = props;
+  const { marginIndex, setMarginIndex, setMarginEstimation, setAdjustMarginValue } = props;
   // const radioButtonIndex = marginIndex ? 0 : 1;
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   function getAnalyticsLongShort(index: any) {
     if (firebaseAnalytics) {
@@ -321,7 +322,6 @@ function ActionButtons(props: any) {
     balanceChecking,
     marginRatioChecker,
     minimalMarginChecking,
-    currentToken,
     initialMarginChecker,
     setAdjustMarginValue,
     setTextErrorMessage,
@@ -332,7 +332,7 @@ function ActionButtons(props: any) {
   const [isAdjustingMargin, setIsAdjustingMargin] = useState(false);
   const fullWalletAddress = walletProvider.holderAddress;
 
-  const [processToken, setProcessToken] = useState(null); // save current token while process tx
+  const currentToken = useNanostore(wsCurrentToken);
 
   // sync isProcessing to store/tradePanel
   useEffect(() => {
@@ -378,8 +378,6 @@ function ActionButtons(props: any) {
   }
 
   const adjustPositionMargin = async () => {
-    setProcessToken(currentToken);
-
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, 'trade_adjust_collateral_button_pressed', {
         wallet: fullWalletAddress.substring(2),
@@ -418,18 +416,18 @@ function ActionButtons(props: any) {
           setIsAdjustingMargin(false);
 
           if (firebaseAnalytics) {
-            // logEvent(firebaseAnalytics, 'callbacks_adjustmargin_fail', {
-            //   wallet: fullWalletAddress.substring(2),
-            //   collection: currentToken, // from tokenRef.current
-            //   error_code: error.error.code.toString()
-            // });
+            logEvent(firebaseAnalytics, 'callbacks_adjustmargin_fail', {
+              wallet: fullWalletAddress.substring(2),
+              collection: currentToken, // from tokenRef.current
+              error_code: error.error.code.toString()
+            });
           }
 
-          // apiConnection.postUserEvent('callbacks_adjustmargin_fail', {
-          //   page,
-          //   collection: currentToken, // from tokenRef.current
-          //   error_code: error.error.code.toString()
-          // });
+          apiConnection.postUserEvent('callbacks_adjustmargin_fail', {
+            page,
+            collection: currentToken, // from tokenRef.current
+            error_code: error.error.code.toString()
+          });
         });
     } else {
       walletProvider
@@ -741,7 +739,6 @@ export default function AdjustCollateral(props: any) {
         adjustMarginValue={adjustMarginValue}
         setMarginEstimation={setMarginEstimation}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         setEstMargin={setEstMargin}
         userPosition={userPosition}
         setAdjustMarginValue={setAdjustMarginValue}
@@ -749,7 +746,6 @@ export default function AdjustCollateral(props: any) {
       <QuantityEnter
         adjustMarginValue={adjustMarginValue}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         onChange={(e: any) => {
           if (firebaseAnalytics) {
             logEvent(firebaseAnalytics, 'trade_adjust_collateral_input_pressed', {
@@ -836,7 +832,6 @@ export default function AdjustCollateral(props: any) {
         marginRatioChecker={marginRatioChecker}
         minimalMarginChecking={minimalMarginChecking}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         initialMarginChecker={initialMarginChecker}
         setAdjustMarginValue={setAdjustMarginValue}
         setTextErrorMessage={setTextErrorMessage}

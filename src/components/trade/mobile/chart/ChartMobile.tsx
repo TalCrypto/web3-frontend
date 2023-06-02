@@ -29,7 +29,7 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsIsLogin } from '@/stores/WalletState';
+import { wsCurrentChain, wsCurrentToken, wsIsLogin } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 
 const flashAnim = 'flash';
@@ -234,7 +234,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
     }
   }));
-  const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
@@ -382,6 +381,10 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
   // handle interval each 10s fetch volume
   useEffect(() => {
+    if (!currentToken) {
+      return;
+    }
+
     const interval = setInterval(() => {
       const { amm: currentAmm } = getCollectionInformation(currentToken);
       getDailySpotPriceGraphData(currentAmm).then(dayTradingDetails => {
@@ -490,7 +493,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartMobile(props: any, ref: any) {
-  const { tradingData, tokenRef, currentToken, isWrongNetwork } = props;
+  const { tradingData } = props;
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
@@ -501,6 +504,7 @@ function ChartMobile(props: any, ref: any) {
   const graphHeaderRef = useRef();
   const proRef = useRef();
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
@@ -555,8 +559,6 @@ function ChartMobile(props: any, ref: any) {
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          // tokenRef={tokenRef}
-          currentToken={currentToken}
           isProShow={isProShow}
           setIsProShow={setIsProShow}
         />
@@ -569,13 +571,7 @@ function ChartMobile(props: any, ref: any) {
             chartProContainerRef={chartProContainerRef}
           />
         </div>
-        <ProComponent
-          ref={proRef}
-          visible={isProShow}
-          tradingData={tradingData}
-          currentToken={currentToken}
-          selectedTimeIndex={selectedTimeIndex}
-        />
+        <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
       </div>
     </div>
   );

@@ -29,6 +29,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
+import { wsCurrentToken } from '@/stores/WalletState';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -51,7 +52,7 @@ export default function PositionDetails(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
-  const { userPosition, tradingData, currentToken } = props;
+  const { userPosition, tradingData } = props;
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
@@ -63,6 +64,7 @@ export default function PositionDetails(props: any) {
   const isBadDebt = userPosition ? Number(utils.formatEther(userPosition.remainMarginLeverage)) === 0 : false;
 
   // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
+  const currentToken = useNanostore(wsCurrentToken);
   const [showSharePosition, setShowSharePosition] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];

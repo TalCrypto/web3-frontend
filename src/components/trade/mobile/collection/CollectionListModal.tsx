@@ -1,11 +1,15 @@
 import React from 'react';
+import { useStore as useNanostore } from '@nanostores/react';
 import collectionList from '@/const/collectionList';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { calculateNumber, formatterValue, isPositive } from '@/utils/calculateNumbers';
+import { wsCurrentToken } from '@/stores/WalletState';
 
 export default function CollectionListModal(props: any) {
-  const { marketData, setPopupOpened, setCurrentToken, currentToken } = props;
+  const { marketData, setPopupOpened } = props;
+  const currentToken = useNanostore(wsCurrentToken);
+
   const handleMap = (item: any, index: any) => {
     const targetCollection = marketData.filter((param: any) => param.amm === item.amm);
     const collections = collectionList.filter((param: any) => item.amm === param.amm);
@@ -21,8 +25,7 @@ export default function CollectionListModal(props: any) {
           //   current_collection: collectionInfo.collection,
           //   new_collection: collections[0].collection
           // });
-          // store.dispatch('setCurrentToken', collections[0].collection || 'DEGODS');
-          setCurrentToken(collections[0].collection || 'DEGODS');
+          wsCurrentToken.set(collections[0].collection || 'DEGODS');
           setPopupOpened(false);
         }}>
         <Image src={item.logo} className="" alt="" width={32} height={32} />

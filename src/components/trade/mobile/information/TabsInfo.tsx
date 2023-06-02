@@ -27,6 +27,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { updateTradeInformation } from '@/utils/TradeInformation';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
 import { walletProvider } from '@/utils/walletProvider';
+import { wsCurrentToken } from '@/stores/WalletState';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -84,7 +85,6 @@ function ExplorerButton(props: any) {
 
 const MarketTrade = (props: any) => {
   const router = useRouter();
-  const { currentToken } = props;
   const marketHistory = useNanostore(tsMarketHistory);
   const [displayCount, setDisplayCount] = useState(10);
   const fullWalletAddress = walletProvider.holderAddress;
@@ -137,7 +137,7 @@ const MarketTrade = (props: any) => {
                   <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
                 </div>,
 
-                <ExplorerButton txHash={txHash} collection={currentToken} />
+                <ExplorerButton txHash={txHash} />
               ]}
               classNames={['col-span-4 pl-3', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
             />
@@ -174,10 +174,10 @@ interface IOpenseaData {
 }
 
 const SpotTable = (props: any) => {
-  const { currentToken } = props;
   const [displayCount, setDisplayCount] = useState(10);
   const openseaData = useNanostore(tsSportPriceList);
   const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   return (
     <div className="mx-[20px]">
@@ -321,7 +321,8 @@ const FundingPaymentHistory = () => {
 };
 
 function TabsInfo(props: any) {
-  const { currentToken, activeTab } = props;
+  const { activeTab } = props;
+  const currentToken = useNanostore(wsCurrentToken);
 
   useEffect(() => {
     updateTradeInformation(currentToken);
@@ -330,10 +331,10 @@ function TabsInfo(props: any) {
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-full`}>
-        <MarketTrade currentToken={currentToken} />
+        <MarketTrade />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-full`}>
-        <SpotTable currentToken={currentToken} />
+        <SpotTable />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-full`}>
         <FundingPaymentHistory />

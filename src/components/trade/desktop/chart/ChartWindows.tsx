@@ -30,7 +30,7 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsIsLogin, wsChatInterval } from '@/stores/WalletState';
+import { wsIsLogin, wsChatInterval, wsCurrentToken } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 
 const flashAnim = 'flash';
@@ -176,9 +176,10 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, currentToken } = props;
+  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
+  const currentToken = useNanostore(wsCurrentToken);
 
   useImperativeHandle(ref, () => ({
     reset() {
@@ -242,7 +243,8 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
 });
 
 const ChartFooter = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, tokenRef, currentToken } = props;
+  const { tradingData } = props;
+  const currentToken = useNanostore(wsCurrentToken);
   const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
@@ -258,8 +260,6 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
 
   const [showAlertOverlay, setShowAlertOverlay] = useState(false);
 
-  const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
-  const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
   const [nextFundingTime, setNextFundingTime] = useState(0);
   const hadKey = Object.keys(tradingData).length > 0;
@@ -282,17 +282,6 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
       setShowAlertOverlay(false);
     }
   }, [isGapAboveLimit, isAlertTooltipHasShown]);
-
-  // useImperativeHandle(ref, () => ({
-  //   reset() {
-  //     setCurrentTagMaxAndMinValue({ max: '-.--', min: '-.--' });
-  //     setPriceChangeRatioAndValue({ priceChangeRatio: '', priceChangeValue: '' });
-  //   },
-  //   setGraphOtherValue({ high, low, priceChangeRatio, priceChangeValue }) {
-  //     setCurrentTagMaxAndMinValue({ max: formatterValue(high, 2), min: formatterValue(low, 2) });
-  //     setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
-  //   }
-  // }));
 
   if (tradingData && tradingData.fundingRateLong) {
     const rawdata = utils.formatEther(tradingData.fundingRateLong);
@@ -472,6 +461,10 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
   // handle interval each 10s fetch volume
   useEffect(() => {
+    if (!currentToken) {
+      return;
+    }
+
     const interval = setInterval(() => {
       const { amm: currentAmm } = getCollectionInformation(currentToken);
       getDailySpotPriceGraphData(currentAmm).then(dayTradingDetails => {
@@ -576,7 +569,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartWindows(props: any, ref: any) {
-  const { tradingData, currentToken } = props;
+  const { tradingData } = props;
 
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
@@ -586,6 +579,7 @@ function ChartWindows(props: any, ref: any) {
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
   const proRef = useRef();
+  const currentToken = useNanostore(wsCurrentToken);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);

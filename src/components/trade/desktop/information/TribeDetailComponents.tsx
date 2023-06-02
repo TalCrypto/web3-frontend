@@ -27,6 +27,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { updateTradeInformation } from '@/utils/TradeInformation';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
 import { walletProvider } from '@/utils/walletProvider';
+import { wsCurrentToken } from '@/stores/WalletState';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -90,9 +91,8 @@ function ExplorerButton(props: any) {
   );
 }
 
-const MarketTrade = (props: any) => {
+const MarketTrade = () => {
   const router = useRouter();
-  const { currentToken } = props;
   const marketHistory = useNanostore(tsMarketHistory);
   const fullWalletAddress = walletProvider.holderAddress;
 
@@ -136,7 +136,7 @@ const MarketTrade = (props: any) => {
                   <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">YOU</span>
                 ) : null}
               </div>,
-              <ExplorerButton txHash={txHash} collection={currentToken} />
+              <ExplorerButton txHash={txHash} />
             ]}
             classNames={['col-span-3 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-1 px-3']}
           />
@@ -150,9 +150,10 @@ const MarketTrade = (props: any) => {
   );
 };
 
-const SpotTable = (props: any) => {
-  const { fullWalletAddress, currentToken } = props;
+const SpotTable = () => {
   const openseaData = useNanostore(tsSportPriceList);
+  const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   return (
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
@@ -270,7 +271,8 @@ const FundingPaymentHistory = () => {
 };
 
 function TribeDetailComponents(props: any) {
-  const { fullWalletAddress, currentToken, activeTab } = props;
+  const { activeTab } = props;
+  const currentToken = useNanostore(wsCurrentToken);
 
   useEffect(() => {
     updateTradeInformation(currentToken);
@@ -279,10 +281,10 @@ function TribeDetailComponents(props: any) {
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
-        <MarketTrade currentToken={currentToken} />
+        <MarketTrade />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
-        <SpotTable currentToken={currentToken} />
+        <SpotTable />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
         <FundingPaymentHistory />
