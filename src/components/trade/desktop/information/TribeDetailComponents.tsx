@@ -112,11 +112,11 @@ const MarketTrade = (props: any) => {
             rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
             items={[
               <div className="time relative">
-                <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
                 <span>{formatDateTime(timestamp)}</span>
                 <br />
-                <span className={`market ${isPositive(exchangedPositionSize) ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+                <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
                   {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
                 </span>
               </div>,
@@ -197,7 +197,7 @@ const SpotTable = (props: any) => {
               key={`spot_${key_value}`}
               items={[
                 <div className="relative">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
                   {formatDateTimeFromString(event_timestamp)}
                 </div>,
@@ -243,7 +243,7 @@ const FundingPaymentHistory = () => {
             key={`funding_${timestamp}`}
             items={[
               <div className="time relative">
-                <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-[#2574fb]" />
+                <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-primaryBlue" />
                 {formatDateTime(timestamp)}
               </div>,
               <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 4))).toFixed(4)} %`}</div>,
@@ -251,8 +251,8 @@ const FundingPaymentHistory = () => {
             ]}
             classNames={[
               'col-span-4 px-3',
-              `col-span-4 px-3 market ${rateLong > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}`,
-              `col-span-4 px-3 market ${rateLong > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`
+              `col-span-4 px-3 market ${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`,
+              `col-span-4 px-3 market ${rateLong > 0 ? 'text-marketGreen' : 'text-marketRed'}`
             ]}
           />
         ))

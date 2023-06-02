@@ -107,7 +107,7 @@ const MarketTrade = (props: any) => {
               rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
               items={[
                 <div className="time relative">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-[#2574fb]" />
+                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
 
                   <span>{formatDateTime(timestamp)}</span>
                   <div className="h-[6px] w-full" />
@@ -121,7 +121,7 @@ const MarketTrade = (props: any) => {
                   ) : null}
                 </div>,
                 <div>
-                  <span className={`market ${isPositive(exchangedPositionSize) ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+                  <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
                     {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
                   </span>
                   <div className="h-[6px] w-full" />
@@ -147,7 +147,7 @@ const MarketTrade = (props: any) => {
       {marketHistory && marketHistory.length > 0 ? (
         displayCount >= marketHistory.length ? null : (
           <div
-            className="text-center text-[14px] font-semibold text-[#2574FB]"
+            className="text-center text-[14px] font-semibold text-primaryBlue"
             onClick={() => {
               // logHelper('overview_show_more_pressed', holderAddress, { collection });
               setDisplayCount(displayCount + 5);
@@ -221,7 +221,7 @@ const SpotTable = (props: any) => {
               key={`spot_${key_value}`}
               items={[
                 <div className="relative">
-                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-[#2574fb]" />
+                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
                   {formatDateTimeFromString(event_timestamp)}
                 </div>,
                 <div className="flex items-center text-[14px] text-[#6286e3]">
@@ -251,7 +251,7 @@ const SpotTable = (props: any) => {
       {openseaData && openseaData.length > 0 ? (
         displayCount >= openseaData.length ? null : (
           <div
-            className="text-center text-[14px] font-semibold text-[#2574FB]"
+            className="text-center text-[14px] font-semibold text-primaryBlue"
             onClick={() => {
               // logHelper('overview_show_more_pressed', holderAddress, { collection });
               setDisplayCount(displayCount + 5);
@@ -279,7 +279,7 @@ const FundingPaymentHistory = () => {
               key={`funding_${timestamp}`}
               items={[
                 <div className="time relative">
-                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-[#2574fb]" />
+                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
                   {formatDateTime(timestamp)}
                 </div>,
                 <div>
@@ -289,7 +289,7 @@ const FundingPaymentHistory = () => {
               ]}
               classNames={[
                 'col-span-4 px-3',
-                `col-span-8 text-right text-[14px] market ${rateLong > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}`
+                `col-span-8 text-right text-[14px] market ${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`
               ]}
             />
           ))
@@ -302,7 +302,7 @@ const FundingPaymentHistory = () => {
       {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
         displayCount >= fundingPaymentHistory.length ? null : (
           <div
-            className="text-center text-[14px] font-semibold text-[#2574FB]"
+            className="text-center text-[14px] font-semibold text-primaryBlue"
             onClick={() => {
               // logHelper('overview_show_more_pressed', holderAddress, { collection });
               setDisplayCount(displayCount + 5);

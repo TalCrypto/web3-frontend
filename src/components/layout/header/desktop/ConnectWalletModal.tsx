@@ -27,7 +27,7 @@ export default function ConnectWalletModal() {
       items-center justify-center overflow-auto bg-black bg-opacity-40"
       onClick={closeModal}>
       <div
-        className="mx-4 w-full max-w-[500px] rounded-lg bg-[#171833]
+        className="mx-4 w-full max-w-[500px] rounded-lg bg-lightBlue
           px-6 py-6 text-[14px] font-normal leading-normal md:px-9"
         onClick={e => e.stopPropagation()}>
         <div className="flex flex-col items-end justify-end">
@@ -47,7 +47,7 @@ export default function ConnectWalletModal() {
             <div
               className="mt-3 flex cursor-pointer flex-col items-center
                 justify-center rounded-md border border-solid
-                border-[#2574fb] py-6 hover:bg-[#2574fb33]"
+                border-primaryBlue py-6 hover:bg-[#2574fb33]"
               onClick={() => connectWallet(false)}>
               <Image src="/images/components/layout/header/okx-logo.svg" alt="" className="logo" width={imageSize} height={imageSize} />
               <div className="mt-[6px] text-[16px] font-semibold">OKX Wallet</div>
@@ -56,7 +56,7 @@ export default function ConnectWalletModal() {
             <div
               className="mt-3 flex cursor-pointer flex-col items-center
                 justify-center rounded-md border border-solid
-                border-[#2574fb] py-6 hover:bg-[#2574fb33]"
+                border-primaryBlue py-6 hover:bg-[#2574fb33]"
               onClick={() => connectWallet(false)}>
               <Image
                 src="/images/components/layout/header/metamask-logo.png"
@@ -71,7 +71,7 @@ export default function ConnectWalletModal() {
             <div
               className="mt-3 flex cursor-pointer flex-col items-center
                 justify-center rounded-md border border-solid
-                border-[#2574fb] py-6 hover:bg-[#2574fb33]"
+                border-primaryBlue py-6 hover:bg-[#2574fb33]"
               onClick={() => connectWallet(true)}>
               <Image
                 src="/images/components/layout/header/walletconnect-logo.png"

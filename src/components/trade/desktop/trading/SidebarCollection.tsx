@@ -93,7 +93,7 @@ function SidebarCollection(props: any, ref: any) {
     <>
       <div
         className="side-collection absolute  mt-[9px] flex w-[44px]
-        flex-col rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-[#202249]
+        flex-col rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-secondaryBlue
         px-[6px] py-3">
         <div
           className={`item ${isLoading ? 'loading' : ''}
@@ -124,7 +124,7 @@ function SidebarCollection(props: any, ref: any) {
             relative mt-8 flex h-8 w-8 cursor-pointer items-center`}
             onClick={() => selectCollection(item.collection)}>
             {selectedCollection.collection.toUpperCase() === item.collection.toUpperCase() ? (
-              <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-[#2574fb]" />
+              <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-primaryBlue" />
             ) : null}
             {item.isNew ? (
               <Image className="absolute right-[-12px] top-[-4px] z-[12]" src="/images/collections/new.svg" alt="" width={26} height={12} />

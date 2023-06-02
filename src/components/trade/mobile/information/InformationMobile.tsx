@@ -27,7 +27,7 @@ function InformationMobile(props: any) {
         ${activeTab === index ? 'selected' : ''}`}
       key={item}
       onClick={(event: any) => onClickTab(event, index)}>
-      <span className="text-[14px] font-medium text-white/[.87]">{item}</span>
+      <span className="text-[14px] font-medium text-highEmphasis">{item}</span>
     </div>
   ));
 

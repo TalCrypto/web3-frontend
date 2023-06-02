@@ -156,7 +156,7 @@ const CollectionModal = (props: any) => {
       const priceGapPercentage = priceGap * 100;
 
       const changed24h = (
-        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio24h, 2)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio24h, 2)) > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
           {Number(calculateNumber(tradingData.priceChangeRatio24h, 2)) > 0 ? '+' : '-'}
           {Math.abs(Number(calculateNumber(tradingData.priceChange24h, 2)))}(
           {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio24h, 2)))}%)
@@ -164,7 +164,7 @@ const CollectionModal = (props: any) => {
       );
 
       const changed7d = (
-        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio7d, 2)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio7d, 2)) > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
           {Number(calculateNumber(tradingData.priceChangeRatio7d, 2)) > 0 ? '+' : '-'}
           {Math.abs(Number(calculateNumber(tradingData.priceChange7d, 2)))}(
           {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio7d, 2)))}%)
@@ -172,7 +172,7 @@ const CollectionModal = (props: any) => {
       );
 
       const changed30d = (
-        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio30d, 2)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio30d, 2)) > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
           {Number(calculateNumber(tradingData.priceChangeRatio30d, 2)) > 0 ? '+' : '-'}
           {Math.abs(Number(calculateNumber(tradingData.priceChange30d, 2)))}(
           {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio30d, 2)))}%)
@@ -191,7 +191,7 @@ const CollectionModal = (props: any) => {
       return (
         <div
           className={`flex flex-row p-3
-            ${index % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-[#171833]'}
+            ${index % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}
           `}
           key={collection}
           onClick={() => {
@@ -204,7 +204,7 @@ const CollectionModal = (props: any) => {
                 <Image src={logo} width="24" height="24" alt="" />
               </div>
               <div className="ml-[6px]">
-                <p className="mb-1 text-[14px] text-white/[.87]">{collectionName}</p>
+                <p className="mb-1 text-[14px] text-highEmphasis">{collectionName}</p>
                 <p className="text-[12px]">{displayCollectionPair}</p>
               </div>
             </div>
@@ -225,14 +225,14 @@ const CollectionModal = (props: any) => {
           <div className="font-400 basis-1/5 px-[18px] text-right text-[12px] text-highEmphasis">
             <div>
               Long{' '}
-              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-[#ff5656]' : 'text-[#78f363]'}>
+              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-marketRed' : 'text-marketGreen'}>
                 {Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'Pay' : 'Get'}
               </span>{' '}
               {`${Math.abs(Number(Number(calculateNumber(tradingData.fundingRateLong, 5)) * 100)).toFixed(3)}%`}
             </div>
             <div>
               Short{' '}
-              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-[#78f363]' : 'text-[#ff5656]'}>
+              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-marketGreen' : 'text-marketRed'}>
                 {Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'Get' : 'Pay'}
               </span>{' '}
               {`${Math.abs(Number(Number(calculateNumber(tradingData.fundingRateShort, 5)) * 100)).toFixed(3)}%`}
@@ -245,14 +245,14 @@ const CollectionModal = (props: any) => {
   return (
     <div
       className="t-0 fixed bottom-0 left-0 right-0 z-10 h-full w-full
-       bg-[#000]/[.2] backdrop-blur-[4px]"
+       bg-black/[.2] backdrop-blur-[4px]"
       onClick={() => {
         setVisible(false);
       }}>
       <div
         className="relative mx-auto mt-[80px] h-[600px] max-w-[940px]
           rounded-[12px] border-[1px] border-[#a8cbff]/[.22] bg-[#0c0d20] text-[14px]
-          font-normal leading-[17px] text-[#A8CBFF]/[.75]"
+          font-normal leading-[17px] text-mediumEmphasis"
         onClick={e => {
           e.stopPropagation();
         }}>
@@ -260,7 +260,7 @@ const CollectionModal = (props: any) => {
           <div className="flex flex-1 space-x-[9px]">
             <p
               className="text-[20px] font-semibold
-                leading-[24px] text-white/[.87]">
+                leading-[24px] text-highEmphasis">
               Collections
             </p>
             <Image
@@ -310,7 +310,7 @@ const CollectionModal = (props: any) => {
                         setPeriodIndex(0);
                       }}
                       className={`font-medium
-                        ${periodIndex === 0 ? 'text-white/[.87] underline' : 'text-[#2574fb]'}`}>
+                        ${periodIndex === 0 ? 'text-highEmphasis underline' : 'text-primaryBlue'}`}>
                       24hr
                     </span>
                     <span
@@ -319,7 +319,7 @@ const CollectionModal = (props: any) => {
                         setPeriodIndex(1);
                       }}
                       className={`ml-1 font-medium
-                        ${periodIndex === 1 ? 'text-white/[.87] underline' : 'text-[#2574fb]'}`}>
+                        ${periodIndex === 1 ? 'text-highEmphasis underline' : 'text-primaryBlue'}`}>
                       7D
                     </span>
                     <span
@@ -328,7 +328,7 @@ const CollectionModal = (props: any) => {
                         setPeriodIndex(2);
                       }}
                       className={`ml-1 font-medium
-                        ${periodIndex === 2 ? 'text-white/[.87] underline' : 'text-[#2574fb]'}`}>
+                        ${periodIndex === 2 ? 'text-highEmphasis underline' : 'text-primaryBlue'}`}>
                       30D
                     </span>
                   </div>

@@ -211,7 +211,7 @@ function UpdateValueDisplay(props: any) {
       <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
       <div className="flex-1">
         <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue + currentUnit}</span>
-        <span className="text-[14px] font-semibold text-white/[.87]">{' → '}</span>
+        <span className="text-[14px] font-semibold text-highEmphasis">{' → '}</span>
         <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
           <span className="text-[14px] font-semibold">{newValue}</span>
           {unit}
@@ -227,7 +227,7 @@ function UpdateValueNoDataDisplay(props: any) {
   return (
     <div className="flex items-center">
       <div className="text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
-      <div className="text-[14px] font-semibold text-white/[.87]">
+      <div className="text-[14px] font-semibold text-highEmphasis">
         <span>-.--</span>
         <span className="text-[14px]">{unit}</span>
       </div>
@@ -277,7 +277,7 @@ function AdjustMarginButton(props: any) {
   }
   if (isClosingPosition) {
     return (
-      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#2574fb]">
+      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-primaryBlue">
         <div className="col loadingindicator confirmtradingbtntextallow mx-auto text-center">
           <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
         </div>
@@ -287,7 +287,7 @@ function AdjustMarginButton(props: any) {
   return (
     <div
       className="mb-6 flex h-[46px] w-full cursor-pointer
-        items-center justify-center rounded-[6px] bg-[#2574fb] hover:bg-[#5190fc]"
+        items-center justify-center rounded-[6px] bg-primaryBlue hover:bg-[#5190fc]"
       onClick={closePosition}>
       <div className="text-center font-semibold text-white">Close Position</div>
     </div>
@@ -581,7 +581,7 @@ function QuantityTips(props: any) {
   return (
     <div className={`quantity-tips-container ${estPriceFluctuation || isPending ? 'price-fluc' : ''}`}>
       <span
-        className={`${isError ? 'text-[#ffc24b]/[.87]' : 'text-[#ff5656]}'}
+        className={`${isError ? 'text-warn' : 'text-marketRed}'}
           mb-2 text-[12px] leading-[20px]
         `}>
         {label}
@@ -802,7 +802,7 @@ function CloseSlider(props: any) {
         onAfterChange={onChange}
         step={0.0001}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-white/[.87]">
+      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
         <div className="">0</div>
         <div className="">Total Notional Value</div>
       </div>
@@ -1097,7 +1097,7 @@ export default function CloseCollateral(props: any) {
       {estimatedValue /* && estimatedValue.newPosition */ && !minValueComparison && !maxValueComparison && closeValue > 0 ? (
         <div className="row">
           <div
-            className="flex cursor-pointer text-[14px] font-semibold text-[#2574fb] hover:text-[#6286e3]"
+            className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
             onClick={() => setDisplayAdvanceDetail(displayAdvanceDetail ? 0 : 1)}>
             {displayAdvanceDetail === 0 ? 'Show' : 'Hide'} Advanced Details
             {displayAdvanceDetail === 0 ? (

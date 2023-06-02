@@ -83,7 +83,7 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
+        ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
       <div className="col my-auto" style={{ marginRight: '16px', alignItems: 'center', display: 'flex' }}>
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
@@ -92,7 +92,7 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
+        ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
       <Image
         alt="Polygon_pos"
         src={
@@ -201,7 +201,7 @@ function ChartTimeTabs(props: any) {
             <label
               htmlFor={item.label}
               className={`block p-2 text-[16px] font-semibold
-                ${i === selectedTimeIndex ? 'text-white' : 'text-[#A8CBFF]/[.75]'}`}>
+                ${i === selectedTimeIndex ? 'text-white' : 'text-mediumEmphasis'}`}>
               {item.label}
             </label>
           </div>
@@ -509,9 +509,9 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
           placement="top"
         />
         <div className="col text-highEmphasis">
-          Long <span className={longSide === 'Pay' ? 'text-[#ff5656]' : 'text-[#78f363]'}>{longSide}</span>
+          Long <span className={longSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{longSide}</span>
           {rateLong}
-          &nbsp; Short <span className={shortSide === 'Pay' ? 'text-[#ff5656]' : 'text-[#78f363]'}>{shortSide}</span>
+          &nbsp; Short <span className={shortSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{shortSide}</span>
           {rateShort}
         </div>
       </div>

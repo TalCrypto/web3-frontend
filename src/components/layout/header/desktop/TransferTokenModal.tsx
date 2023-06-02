@@ -41,7 +41,7 @@ const TransferTokenModal = () => {
         justify-center overflow-auto bg-black bg-opacity-40"
       onClick={() => wsIsShowTransferTokenModal.set(false)}>
       <div
-        className="w-[500px] rounded-xl bg-[#171833] p-[16px] pb-0 text-[14px]
+        className="w-[500px] rounded-xl bg-lightBlue p-[16px] pb-0 text-[14px]
           font-normal leading-normal"
         onClick={e => e.stopPropagation()}>
         <div className="items-initial flex content-center justify-end">

@@ -24,7 +24,7 @@ function LargeEthPrice(props: any) {
         <Image src="/images/common/symbols/eth-tribe3.svg" alt="" className="eth-icon" width={36} height={36} />
         <span
           className={`ml-1 text-[36px] font-semibold
-            ${Number(pnlValue) > 0 ? 'text-[#78f363]' : Number(pnlValue) < 0 ? 'text-[#ff5656]' : ''}`}>
+            ${Number(pnlValue) > 0 ? 'text-marketGreen' : Number(pnlValue) < 0 ? 'text-marketRed' : ''}`}>
           {(Number(pnlValue) > 0 ? '+' : '') + (Number(pnlValue) === 0 ? '0.00' : pnlValue)}
         </span>
       </div>
@@ -152,9 +152,9 @@ export default function IndividualShareContainer(props: any) {
               <div className="mt-5">
                 <div className="ml-8 flex">
                   <div
-                    className={`mx-2 my-0 rounded-[2px] bg-[#78f363]/[.2] px-1 py-0
+                    className={`mx-2 my-0 rounded-[2px] bg-marketGreen/[.2] px-1 py-0
                       text-[16px] font-semibold
-                    ${side ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+                    ${side ? 'text-marketGreen' : 'text-marketRed'}`}>
                     {side ? 'LONG' : 'SHORT'}
                   </div>
 

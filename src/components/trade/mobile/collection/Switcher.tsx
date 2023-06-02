@@ -30,12 +30,12 @@ export default function Switcher(props: any) {
 
   return (
     <>
-      {/* <div className="fixed top-0 z-10 h-[48px] w-full bg-[#202249]"> */}
-      <div className="h-[48px] w-full bg-[#202249]">
+      {/* <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue"> */}
+      <div className="h-[48px] w-full bg-secondaryBlue">
         <div className="flex h-full px-5">
           <div className="flex items-center">
             <Image className="" src={currentCollectionLogo} width="24" height="24" alt="" />
-            <div className="ml-[6px] text-[15px] text-white/[.87]">{currentCollectionName}</div>
+            <div className="ml-[6px] text-[15px] text-highEmphasis">{currentCollectionName}</div>
           </div>
           <div className="flex flex-1 justify-end text-right">
             <Image

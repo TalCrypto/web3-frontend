@@ -82,7 +82,7 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'text-[#78f363]' : 'text-[#ff5656]'}
+        ${isLike ? 'text-marketGreen' : 'text-marketRed'}
         `}>
       <div className="">
         <div className="col my-auto">-.-- (-.-- %)</div>
@@ -92,7 +92,7 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
+        ${isLike ? 'text-marketGreen' : 'text-marketRed'}`}>
       <Image
         alt="Polygon_pos"
         src={
@@ -200,7 +200,7 @@ function ChartTimeTabs(props: any) {
             <label
               htmlFor={item.label}
               className={`block p-2 text-[14px] 
-                ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-[#A8CBFF]/[.75]'}`}>
+                ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-mediumEmphasis'}`}>
               {item.label}
             </label>
           </div>
@@ -296,14 +296,14 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
 
         <div className="col-span-1 text-right">
           <div className="font-400 mb-[8px] mt-[6px] text-[14px]">
-            <span className="mr-[6px] text-[12px] text-[#a8cbff]/[.75]">Oracle:</span>
-            <span className="text-[12px] text-white/[.87]">{formatterValue(tradingData.twapPrice, 2, '', '-.--')}</span>
+            <span className="mr-[6px] text-[12px] text-mediumEmphasis">Oracle:</span>
+            <span className="text-[12px] text-highEmphasis">{formatterValue(tradingData.twapPrice, 2, '', '-.--')}</span>
           </div>
 
           <div>
-            <div className="text-[12px] text-[#a8cbff]/[.75]">VAMM - Oracle Price Gap:</div>
+            <div className="text-[12px] text-mediumEmphasis">VAMM - Oracle Price Gap:</div>
 
-            <div className="mt-1 flex w-full items-center justify-end text-[12px] text-white/[.87]">
+            <div className="mt-1 flex w-full items-center justify-end text-[12px] text-highEmphasis">
               <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice - oraclePrice).toFixed(2)} (${Math.abs(
                 priceGapPercentage
               ).toFixed(2)}%)`}</p>
@@ -321,7 +321,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       </div>
 
       <div className="px-[20px] text-[12px]">
-        <div className="text-[#a8cbff]/[.75]">
+        <div className="text-mediumEmphasis">
           <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
         </div>
         <div className="col text-highEmphasis">

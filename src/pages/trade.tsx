@@ -160,7 +160,7 @@ function TradePage(props: TradePagePros) {
           /> */}
         </div>
 
-        <div className="block bg-[#171833] md:hidden">
+        <div className="block bg-lightBlue md:hidden">
           <Switcher currentToken={currentToken} setCurrentToken={setCurrentToken} />
 
           <ChartMobile

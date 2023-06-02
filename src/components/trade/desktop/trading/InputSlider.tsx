@@ -48,8 +48,8 @@ export default function InputSlider(props: any) {
             {Object.keys(marks).map(i => (
               <div
                 key={`dot-${i}`}
-                className="pointer-events-auto h-[8px] w-[8px] cursor-pointer rounded-[4px] bg-[#a8cbff]/[.75]
-                  hover:bg-white/[.87] hover:outline-[3px] hover:outline-white/[.20]"
+                className="pointer-events-auto h-[8px] w-[8px] cursor-pointer rounded-[4px] bg-mediumEmphasis
+                  hover:bg-highEmphasis hover:outline-[3px] hover:outline-white/[.20]"
                 onClick={() => {
                   if (!disabled) onChange(i);
                 }}

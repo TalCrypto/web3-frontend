@@ -64,8 +64,8 @@ function SaleOrBuyRadio(props: any) {
     return (
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center 
-          rounded-full text-center text-[14px] font-semibold hover:text-white/[.87]
-          ${className} ${marginIndex === index ? 'text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
+          rounded-full text-center text-[14px] font-semibold hover:text-highEmphasis
+          ${className} ${marginIndex === index ? 'text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
         `}
         onClick={() => {
           setAdjustMarginValue(0);
@@ -227,7 +227,7 @@ function UpdateValueDisplay(props: any) {
       <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
       <div className="right">
         <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue}</span>
-        <span className="text-[14px] font-semibold text-white/[.87]">{' → '}</span>
+        <span className="text-[14px] font-semibold text-highEmphasis">{' → '}</span>
         <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
           <span className="text-[14px] font-semibold">{newValue}</span>
           {unit}
@@ -303,7 +303,7 @@ function AdjustMarginButton(props: any) {
   }
   if (isAdjustingMargin) {
     return (
-      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#2574fb]">
+      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-primaryBlue">
         <div className="col loadingindicator confirmtradingbtntextallow mx-auto text-center">
           <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
         </div>
@@ -313,7 +313,7 @@ function AdjustMarginButton(props: any) {
   return (
     <div
       className="mb-6 flex h-[46px] w-full cursor-pointer
-        items-center justify-center rounded-[6px] bg-[#2574fb] hover:bg-[#5190fc]"
+        items-center justify-center rounded-[6px] bg-primaryBlue hover:bg-[#5190fc]"
       onClick={adjustPositionMargin}>
       <div className="center font-semibold text-white">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
     </div>
@@ -530,7 +530,7 @@ function QuantityTips(props: any) {
   return (
     <div className={`quantity-tips-container ${isPending ? 'price-fluc' : ''}`}>
       <span
-        className={`${isPending ? 'text-[#ffc24b]/[.87]' : 'text-[#ff5656]}'}
+        className={`${isPending ? 'text-warn' : 'text-marketRed}'}
           mb-2 text-[12px] leading-[20px]`}>
         {label}
       </span>
@@ -648,7 +648,7 @@ function AdjustCollateralSlidingBars(props: any) {
         onChange={(value: any) => setAdjustMarginValue(value)}
         onAfterChange={onChange}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-white/[.87]">
+      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
         <div className="">
           Current
           <br />

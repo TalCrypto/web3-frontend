@@ -195,7 +195,7 @@ export default function PositionMobile(props: any) {
       <div>
         <div className="px-5 pb-2 pt-6">
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Unrealized P/L</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
             <div className="text-15 font-400">
               <div>
                 <MedPriceIcon
@@ -210,7 +210,7 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Type</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
             <div>
               <span className={userPosition === null ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
                 {userPosition === null ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
@@ -219,7 +219,7 @@ export default function PositionMobile(props: any) {
           </div>
 
           {/* <div className="flex mb-1">
-            <div className="text-[14px] text-[#a8cbff]/[.75] w-[120px]">Contract Size</div>
+            <div className="text-[14px] text-mediumEmphasis w-[120px]">Contract Size</div>
             <div className="flex w-[25%] space-x-[12px]">
               <MedPriceIcon
                 priceValue={absoluteSize}
@@ -231,7 +231,7 @@ export default function PositionMobile(props: any) {
           </div> */}
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Entry Price</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Entry Price</div>
             <div className="">
               <MedPriceIcon
                 priceValue={entryPrice}
@@ -242,7 +242,7 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Notional</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Notional</div>
             <div className="">
               <MedPriceIcon
                 priceValue={sizeInEth}
@@ -253,7 +253,7 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Leverage</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
 
             <div className="">
               <span className={`normalprice mr-1 ${isLoading || collectionIsPending[currentCollection.amm] ? 'flash' : ''}`}>
@@ -276,7 +276,7 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Liqui. Price</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
             <div className="">
               <MedPriceIcon
                 priceValue={

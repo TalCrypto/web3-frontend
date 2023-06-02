@@ -54,9 +54,9 @@ function LongShortRatio(props: any) {
     <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
           ${userPosition !== null ? 'opacity-30' : ''}
-          text-center text-[14px] font-semibold hover:text-white/[.87]`}
+          text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
           if (userPosition === null) {
             setSaleOrBuyIndex(0);
@@ -68,9 +68,9 @@ function LongShortRatio(props: any) {
       </div>
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 1 ? 'short-selected text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
+          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
           ${userPosition !== null ? 'opacity-30' : ''}
-          text-center text-[14px] font-semibold hover:text-white/[.87]`}
+          text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
           if (userPosition === null) {
             setSaleOrBuyIndex(1);
@@ -138,7 +138,7 @@ function QuantityTips(props: any) {
           className="icon"
         />
       )} */}
-      <div className={`${isRedText ? 'text-[#ff5656]' : 'text-[#ffc24b]/[.87]'} mb-2 text-[12px] leading-[20px]`}>{label}</div>
+      <div className={`${isRedText ? 'text-marketRed' : 'text-warn'} mb-2 text-[12px] leading-[20px]`}>{label}</div>
     </div>
   );
 }
@@ -192,13 +192,13 @@ function QuantityEnter(props: any) {
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-[#2574fb]" onClick={() => getTestToken()}>
+            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => getTestToken()}>
               Get WETH
             </button>
           </div>
         ) : null}
       </div>
-      {/* ${isError ? 'bg-[#ff5656]' : ''} */}
+      {/* ${isError ? 'bg-marketRed' : ''} */}
       <div className="py-3">
         <div
           className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
@@ -620,7 +620,7 @@ function ConfirmButton(props: any) {
     <div className="flex">
       <div
         className={`${disabled || isPending ? 'opacity-30' : ''}
-          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-[#2574fb]
+          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
           px-[10px] py-[14px] text-center
         `}
         onClick={onClickButton}>
@@ -681,7 +681,7 @@ function Tips(props: any) {
   return (
     <div
       className="mb-[17px] flex h-[16px] items-center text-[16px]
-      font-medium leading-[16px] text-[#FFC24B]/[.87]">
+      font-medium leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span className="warning-text">{label}</span>
     </div>
@@ -723,7 +723,7 @@ function ExtendedEstimateComponent(props: any) {
     <div>
       <div className="row">
         <div
-          className="flex cursor-pointer text-[14px] font-semibold text-[#2574fb] hover:text-[#6286e3]"
+          className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
             isShowDetail(!showDetail);
             // logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
