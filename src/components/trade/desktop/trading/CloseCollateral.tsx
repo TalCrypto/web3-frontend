@@ -29,9 +29,9 @@ import { wsIsWrongNetwork, wsIsApproveRequired } from '@/stores/WalletState';
 
 function SectionDividers() {
   return (
-    <div className="row">
-      <div className="col">
-        <div className="dividers" />
+    <div className="">
+      <div className="">
+        <div className="mb-6 h-[1px] bg-[#2e3064]" />
       </div>
     </div>
   );
@@ -141,61 +141,61 @@ function QuantityEnter(props: any) {
 
   return (
     <>
-      <div className={`row betsizetitle ${disabled ? 'disabled' : ''}`}>
-        <div className="font-14 text-color-secondary">Amount to Close (Notional)</div>
+      <div className={`${disabled ? 'disabled' : ''}`}>
+        <div className="mb-3 text-[14px] text-[#a3c2ff]/[.68]">Amount to Close (Notional)</div>
       </div>
-      <div className="row">
-        <div className="col">
-          <div className={`betsizebg-outline ${isFocus ? 'valid' : ''} ${isError ? 'error' : ''} ${disabled ? 'disabled' : ''}`}>
-            <div className="collateralinputbg">
-              <Image
-                src="/images/components/layout/header/eth-tribe3.svg"
-                alt=""
-                width="36"
-                height="36"
-                padding-right="12dp"
-                className="betIcon"
-              />
-              <div className="inputweth">
-                <span className="inputwethtext">WETH</span>
-              </div>
-              <div className="col straightdiv">
-                <div className="straightdivider" />
-              </div>
-              <div className="col sizebtncontent">
-                <div
-                  className={`sizebutton lefting ${disabled ? 'disabled' : ''}`}
-                  onClick={() => {
-                    if (!disabled) {
-                      showMaxValue();
-                    }
-                  }}>
-                  <span className="btntext">MAX</span>
-                </div>
-                <div
-                  className={`sizebutton ${disabled ? 'disabled' : ''}`}
-                  onClick={() => {
-                    if (!disabled) {
-                      showHalfValue();
-                    }
-                  }}>
-                  <span className="btntext">HALF</span>
-                </div>
-              </div>
-              <input
-                type="text"
-                pattern="[0-9]*"
-                className={`inputnum font-15-600 ${isApproveRequired ? ' blockCursor' : ''}`}
-                value={closeValue === 0 ? '' : closeValue}
-                placeholder="0.00"
-                onChange={handleEnter}
-                disabled={isApproveRequired || disabled}
-                min={0}
-                // onClick={e => e.target.setSelectionRange(e.target.value.length, e.target.value.length)}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-              />
+      <div className="mb-3">
+        <div
+          className={`trade-input-outline rounded-[4px] bg-none p-[1px]
+              ${isFocus ? 'valid' : ''}
+              ${isError ? 'error' : ''}
+              ${disabled ? 'disabled' : ''}`}>
+          <div className="flex h-12 items-center rounded-[4px] bg-[#242652] p-3">
+            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width="18" height="24" className="" />
+            <div className="inputweth">
+              <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
+            <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
+
+            <div className="flex">
+              <div
+                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                    items-center justify-center rounded-[6px] text-[12px] font-bold
+                    ${disabled ? 'disabled' : ''}`}
+                onClick={() => {
+                  if (!disabled) {
+                    showMaxValue();
+                  }
+                }}>
+                <span className="text-center text-[#a3c2ff]/[.6]">MAX</span>
+              </div>
+              <div
+                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                    items-center justify-center rounded-[6px] text-[12px] font-bold
+                    ${disabled ? 'disabled' : ''}`}
+                onClick={() => {
+                  if (!disabled) {
+                    showHalfValue();
+                  }
+                }}>
+                <span className="text-center text-[#a3c2ff]/[.6]">HALF</span>
+              </div>
+            </div>
+            <input
+              type="text"
+              pattern="[0-9]*"
+              className={`w-full border-none border-[#242652] bg-[#242652]
+                  text-right text-[15px] font-bold text-white outline-none
+                  ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
+              value={closeValue === 0 ? '' : closeValue}
+              placeholder="0.00"
+              onChange={handleEnter}
+              disabled={isApproveRequired || disabled}
+              min={0}
+              // onClick={e => e.target.setSelectionRange(e.target.value.length, e.target.value.length)}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+            />
           </div>
         </div>
       </div>
@@ -207,13 +207,13 @@ function UpdateValueDisplay(props: any) {
   const { title, currentValue, newValue, unit, unitSizing = 'normal', currentUnit = '' } = props;
 
   return (
-    <div className="adjustcollateralrow">
-      <div className="font-14 text-color-secondary left">{title}</div>
-      <div className="right">
-        <span className="text-color-secondary font-14-600">{currentValue + currentUnit}</span>
-        <span className="text-color-primary font-14-600">{' → '}</span>
-        <span className={unitSizing === 'normal' ? 'font-12' : ''}>
-          <span className="font-14-600">{newValue}</span>
+    <div className="mb-4 flex">
+      <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="flex-1">
+        <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue + currentUnit}</span>
+        <span className="text-[14px] font-semibold text-white/[.87]">{' → '}</span>
+        <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
+          <span className="text-[14px] font-semibold">{newValue}</span>
           {unit}
         </span>
       </div>
@@ -225,11 +225,11 @@ function UpdateValueNoDataDisplay(props: any) {
   const { title, unit } = props;
 
   return (
-    <div className="row adjustcollateralrow align-items-center">
-      <div className="col font-14 text-color-secondary">{title}</div>
-      <div className="font-14-600 text-color-primary col-auto">
+    <div className="align-items-center flex">
+      <div className="text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="text-[14px] font-semibold text-white/[.87]">
         <span>-.--</span>
-        <span className="font-14">{unit}</span>
+        <span className="text-[14px]">{unit}</span>
       </div>
     </div>
   );
@@ -239,10 +239,13 @@ function DisplayValues(props: any) {
   const { title, value, unit = '', valueClassName = '', unitClassName = '', className = '' } = props;
 
   return (
-    <div className={`row ${className !== '' ? className : 'sumrow'} align-items-center text-color-secondary font-14`}>
-      <div className="col-auto">{title}</div>
-      <div className={`col contentsmallitem font-14-600 ${valueClassName}`}>
-        <span className="">{value}</span> <span className={`font-14 ${unitClassName}`}>{unit}</span>
+    <div
+      className={`${className !== '' ? className : 'sumrow'}
+      mb-[2px] flex items-center
+    `}>
+      <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
+      <div className={`flex-1 flex-shrink-0 text-right text-[#a3c2ff]/[.68] ${valueClassName}`}>
+        <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
   );
@@ -267,23 +270,30 @@ function AdjustMarginButton(props: any) {
 
   if (isChecked1 || isChecked2) {
     return (
-      <div className="col confirmtradingbtnbgallow disabled">
-        <div className="col confirmtradingbtntextallow">Close Position</div>
+      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#272955]">
+        <div className="text-center font-semibold text-[#373961]">Close Position</div>
       </div>
     );
   }
   if (isClosingPosition) {
     return (
-      <div className="col confirmtradingbtnbgallow">
-        <div className="col loadingindicator confirmtradingbtntextallow mx-auto">
+      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#2574fb]">
+        <div className="col loadingindicator confirmtradingbtntextallow mx-auto text-center">
           <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
         </div>
       </div>
     );
   }
   return (
-    <div className="col confirmtradingbtnbgallow selectbehaviour" onClick={closePosition}>
-      <div className="col confirmtradingbtntextallow">Close Position</div>
+    <div
+      className="mb-6 flex h-[46px] w-full cursor-pointer
+        items-center justify-center rounded-[6px] bg-[#2574fb] hover:bg-[#5190fc] "
+      onClick={closePosition}>
+      <div
+        className="text-center font-semibold text-white
+      ">
+        Close Position
+      </div>
     </div>
   );
 }
@@ -570,12 +580,14 @@ function QuantityTips(props: any) {
     ? 'Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
     : '';
 
+  const isError = (estPriceFluctuation || isPending || isFluctuationLimit) && !(maxValueComparison || minValueComparison);
+
   return (
     <div className={`quantity-tips-container ${estPriceFluctuation || isPending ? 'price-fluc' : ''}`}>
       <span
-        className={
-          (estPriceFluctuation || isPending || isFluctuationLimit) && !(maxValueComparison || minValueComparison) ? '' : 'errortext'
-        }>
+        className={`${isError ? 'text-[#ffc24b]/[.87]' : 'text-[#ff5656]}'}
+          mb-2 text-[12px] leading-[20px]
+        `}>
         {label}
       </span>
     </div>
@@ -616,11 +628,11 @@ function EstimationComponent(props: any) {
       ) : (
         <UpdateValueDisplay
           title={
-            <span>
-              Collateral{' '}
+            <span className="flex">
+              Collateral&nbsp;
               {Number(closeValue) > 0 && Number(closeValue) < Number(currentMaxValue) ? (
                 <TitleTips
-                  titleText={<Image src="/static/alert.svg" width={16} height={16} alt="" />}
+                  titleText={<Image src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
                   tipsText="Collateral will not change."
                   placement="top"
                 />
@@ -713,10 +725,10 @@ function ExtendedEstimateComponent(props: any) {
           {Number(closeValue) < Number(currentMaxValue) ? (
             <>
               <div className="row">
-                <div className="transactiondetail font-14-600">Estimated Blended Position</div>
+                <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               </div>
               {/* <div className="row detailrow">
-                <div className="col-auto font-14 text-color-secondary">Position Type</div>
+                <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">Position Type</div>
                 <div className="col contentls">{isNewPosition ? (estimatedValue.newPosition.type === 'long' ? 'Long' : 'Short') : '---'}</div>
               </div> */}
               {/* <DisplayValues
@@ -749,14 +761,14 @@ function ExtendedEstimateComponent(props: any) {
           ) : null}
 
           <div className="row">
-            <div className="transactiondetail font-14-600">Transaction Details</div>
+            <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
           </div>
           <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.--' : formatterValue(estimatedValue.fee, 5)} />
           {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
           <div className="row detaillastrow">
-            <div className="font-14 text-color-secondary col-auto">Price Impact</div>
-            <div className="col contentsmallitem font-14 text-color-secondary">
+            <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">Price Impact</div>
+            <div className="col contentsmallitem text-[14px] text-[#a3c2ff]/[.68]">
               <span className="value">{formatterValue(estimatedValue.priceImpact, 2)}</span> %
             </div>
           </div>
@@ -794,9 +806,9 @@ function CloseSlider(props: any) {
         onAfterChange={onChange}
         step={0.0001}
       />
-      <div className="row close-slide-row">
-        <div className="col left digit">0</div>
-        <div className="col right font-12">Total Notional Value</div>
+      <div className="mb-6 flex justify-between text-[12px] text-white/[.87]">
+        <div className="">0</div>
+        <div className="">Total Notional Value</div>
       </div>
     </div>
   );
@@ -1000,16 +1012,21 @@ export default function CloseCollateral(props: any) {
         disabled={isProcessing || isBadDebt}
       />
       <SectionDividers />
-      <div className={`row slipagerow align-items-center ${isProcessing ? 'disabled' : ''}`}>
-        <div className="font-14 text-color-secondary col-auto">Slippage Tolerance</div>
-        <div className="col" style={{ display: 'flex', justifyContent: 'end' }}>
-          <div className={`slipagebg whitetext ${isProcessing ? 'disabled' : ''}`}>
+      <div className={`align-items-center mb-4 flex ${isProcessing ? 'disabled' : ''}`}>
+        <div className="text-[14px] text-[#a3c2ff]/[.68]">Slippage Tolerance</div>
+        <div className="flex flex-1 justify-end">
+          <div
+            className={`rounded-[4px] border-[#242652] bg-[#242652]
+              px-[10px] py-[4px] text-white
+              ${isProcessing ? 'disabled' : ''}`}>
             <input
               disabled={isProcessing}
               title=""
               type="text"
               pattern="[0-9]*"
-              className="inputslip"
+              className="w-[90%] max-w-[100px]  border-[1px]
+                border-[#242652] bg-[#242652] text-[15px] font-semibold outline-none
+              "
               placeholder="0.0 "
               value={toleranceRate}
               onChange={e => {
@@ -1075,9 +1092,9 @@ export default function CloseCollateral(props: any) {
         userPosition={userPosition}
         isBadDebt={isBadDebt}
       />
-      {textErrorMessageShow ? <p className="font-12 text-color-warning">{textErrorMessage}</p> : null}
+      {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
       {/* <div className="row">
-        <div className="col-auto font-14 text-color-secondary">
+        <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">
           * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released
         </div>
       </div> */}
@@ -1088,9 +1105,9 @@ export default function CloseCollateral(props: any) {
             onClick={() => setDisplayAdvanceDetail(displayAdvanceDetail ? 0 : 1)}>
             {displayAdvanceDetail === 0 ? 'Show' : 'Hide'} Advanced Details
             {displayAdvanceDetail === 0 ? (
-              <Image src="/static/angle_down.svg" style={{ marginRight: '8px' }} alt="" />
+              <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
             ) : (
-              <Image src="/static/angle_up.svg" style={{ marginRight: '8px' }} alt="" />
+              <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
             )}
           </div>
         </div>

@@ -739,9 +739,9 @@ function ExtendedEstimateComponent(props: any) {
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (
-            <Image src="/images/common/angle_up.svg" style={{ marginRight: '8px' }} alt="" width={12} height={12} />
+            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
           ) : (
-            <Image src="/images/common/angle_down.svg" style={{ marginRight: '8px' }} alt="" width={12} height={12} />
+            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
           )}
         </div>
       </div>

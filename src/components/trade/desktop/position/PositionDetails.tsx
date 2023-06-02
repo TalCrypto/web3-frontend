@@ -2,6 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
+/* eslint-disable no-unused-vars */
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -136,11 +137,14 @@ export default function PositionDetails(props: any) {
   }
 
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => {
-      clearTimeout(timer);
-    };
+    // alert(1);
+    // setIsLoading(true);
+    // const timer = setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 1000);
+    // return () => {
+    //   clearTimeout(timer);
+    // };
   }, [currentToken, userPosition]);
 
   useEffect(() => {
@@ -332,214 +336,4 @@ export default function PositionDetails(props: any) {
       ) : null}
     </div>
   );
-
-  // old backup
-  // return (
-  //   <div className="col positionpanel">
-  //     {showSharePosition ? <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} /> : null}
-  //     <div className="row titlerow">
-  //       <div className="col-auto my-auto sectiontitle">
-  //         <Image alt="" src="../../static/positionicon.svg" width="20px" height="20px" className="iconposition" />
-  //         My Position
-  //       </div>
-  //       <div className="col shareposition" onClick={() => clickShowSharePosition(true)}>
-  //         Share Position Performance
-  //         <Image alt="" src="../../static/share-position.png" className="share-icon" />
-  //       </div>
-  //     </div>
-  //     <div className="row contentrow">
-  //       <div className="col-7 longside">
-  //         <div className="col contentpanel headerside">
-  //           <div className="row">
-  //             <SectionHeader row1="Position" row2="Details" />
-  //             <div className="col">
-  //               <div className="col contenttitle">
-  //                 <TitleTips
-  //                   titleText="Unrealized P/L"
-  //                   tipsText="Current profit or loss on this open position due to price change on the vAMM price (this takes into account the price impact of exiting the position)"
-  //                 />
-  //                 {/* <TextTips
-  //                   tipsText="Current profit or loss on this open position due to price change on the vAMM price (this takes into account the price impact of exiting the position)"
-  //                   size="16px"
-  //                 /> */}
-  //               </div>
-  //               <div className="col">
-  //                 <PriceIcon
-  //                   priceValue={userPosition === null ? '---' : totalPnlValue}
-  //                   className={userPosition === null ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : 'dropvalue'}
-  //                 />
-  //               </div>
-  //             </div>
-  //             <div className="col" />
-  //           </div>
-  //         </div>
-  //         <div className="col contentpanel">
-  //           <div className="row detailrows">
-  //             <div className="col">
-  //               <div className="col contenttitle">Entry Price</div>
-  //               <div className="col">
-  //                 <SmallPriceIcon
-  //                   priceValue={userPosition === null ? '---' : calculateNumber(userPosition.entryPrice, 2)}
-  //                   className="normalprice"
-  //                 />
-  //               </div>
-  //             </div>
-  //             <div className="col">
-  //               <div className="col contenttitle">Current Price</div>
-  //               <div className="col">
-  //                 <SmallPriceIcon priceValue={currentPrice} className="normalprice" />
-  //               </div>
-  //             </div>
-  //             <div className="col">
-  //               <div className="col contenttitle">Contract Size</div>
-  //               <div className="col">
-  //                 <SmallPriceIcon
-  //                   priceValue={absoluteSize}
-  //                   className="normalprice"
-  //                   type={currentToken === '' ? '' : currentToken}
-  //                   endsetter={currentToken === '' ? '' : ` ${currentToken}`}
-  //                 />
-  //               </div>
-  //             </div>
-  //           </div>
-  //           <div className="row detailrows">
-  //             <div className="col-4">
-  //               <div className="col contenttitle">Type</div>
-  //               <div className="col">
-  //                 <span className={userPosition === null ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
-  //                   {userPosition === null ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
-  //                 </span>
-  //               </div>
-  //             </div>
-  //             <div className="col-4">
-  //               <div className="col contenttitle">Funding Payment</div>
-  //               <div className="col">
-  //                 <SmallPriceIcon
-  //                   priceValue={userPosition === null ? '---' : calculateNumber(userPosition.fundingPayment, 3)}
-  //                   className={`market
-  //                     ${calculateNumber(userPosition.fundingPayment, 3) > 0
-  //                     ? 'up'
-  //                     : calculateNumber(userPosition.fundingPayment, 3) < 0
-  //                       ? 'down'
-  //                       : 'normaltext'
-  //                     }`}
-  //                 />
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //       <div className="col">
-  //         <div className="col contentpanel headerside">
-  //           <div className="row">
-  //             <SectionHeader row1="Leverage" row2="Details" />
-  //             <div className="col">
-  //               <div className="col contenttitle">
-  //                 <TitleTips
-  //                   titleText="Collateral Value"
-  //                   tipsText="Current collateral after taking into account of unrealized P&L, accumulated funding payment, and manual collateral adjustments"
-  //                 />
-  //               </div>
-  //               <div className="col">
-  //                 <PriceIcon
-  //                   priceValue={userPosition === null ? '---' : calculateNumber(userPosition.realMargin, 4)}
-  //                   className="normalprice"
-  //                 />
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </div>
-  //         <div className="col contentpanel">
-  //           <div className="row detailrows">
-  //             <div className="col">
-  //               <div className="col contenttitle">
-  //                 <TitleTips
-  //                   titleText="Liquidation Price"
-  //                   tipsText="The price where the platform forcefully closes a position due to its margin ratio going below the maintenance collateral ratio requirement"
-  //                 />
-  //               </div>
-  //               <div className="col">
-  //                 <SmallPriceIcon
-  //                   priceValue={userPosition === null ? '---' : calculateNumber(userPosition.liquidationPrice, 2)}
-  //                   className="normalprice"
-  //                 />
-  //               </div>
-  //             </div>
-  //             <div className="col">
-  //               <div className="col contenttitle">
-  //                 <TitleTips
-  //                   titleText="Notional Value"
-  //                   tipsText="The total value or exposure of this position"
-  //                 />
-  //               </div>
-  //               <div className="col">
-  //                 <SmallPriceIcon priceValue={sizeInEth} className="normalprice" />
-  //               </div>
-  //             </div>
-  //           </div>
-  //           <div className="row detailrows">
-  //             <div className="col">
-  //               <div className="col contenttitle">
-  //                 <TitleTips
-  //                   titleText="Leverage"
-  //                   tipsText="Currnet Notional Amount / Current Collateral"
-  //                 />
-  //               </div>
-  //               <div className="col">
-  //                 <span className="normalprice">
-  //                   {userPosition === null ? '---' : formatterValue(userPosition.remainMarginLeverage, 2, 'x')}
-  //                 </span>
-  //               </div>
-  //             </div>
-  //             <div className="col normalprice">
-  //               <div className="col contenttitle">
-  //                 <TitleTips
-  //                   titleText="Collateral Ratio"
-  //                   tipsText="Current Collateral / Currnet Notional Amount"
-  //                 />
-  //               </div>
-  //               <div className="col">{userPosition === null ? '---' : `${calculateNumber(userPosition.marginRatio, 2)}%`}</div>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     <div className="row showhistoryrow">
-  //       <div
-  //         className="col advancebtn selectbehaviour"
-  //         onClick={() => {
-  //           setIsTradingHistoryShow(!isTradingHistoryShow);
-  //           logEvent(firebaseAnalytics, 'showTradingHistory_pressed', {
-  //             wallet: fullWalletAddress.substring(2),
-  //             is_shown: !isTradingHistoryShow,
-  //             collection: currentToken
-  //           });
-  //           apiConnection.postUserEvent('showTradingHistory_pressed', {
-  //             page,
-  //             is_shown: !isTradingHistoryShow,
-  //             collection: currentToken
-  //           });
-  //         }}
-  //       >
-  //         {isTradingHistoryShow ? 'Hide' : 'Show'} Trading History
-  //         {isTradingHistoryShow ? (
-  //           <Image src="/static/angle_up.svg" style={{ marginRight: '8px' }} alt="" />
-  //         ) : (
-  //           <Image src="/static/angle_down.svg" style={{ marginRight: '8px' }} alt="" />
-  //         )}
-  //       </div>
-  //       <div className="col-8">
-  //         {calculateNumber(userPosition.marginRatio, 1) < 20 ? (
-  //           <div className="col tipsrow">
-  //             <Image alt="" src="../../static/tips_exclude.svg" width="11px" height="11px" className="iconposition" />
-  //             Your position is in high chance to be liquidated, please adjust your collateral to secure your trade.
-  //           </div>
-  //         ) : null}
-  //       </div>
-  //     </div>
-  //     {isTradingHistoryShow === false ? null : historyRecords === null ? null : (
-  //       <HistoryContents historyRecords={historyRecords} tokenRef={tokenRef} />
-  //     )}
-  //   </div>
-  // );
 }

@@ -63,7 +63,7 @@ function SaleOrBuyRadio(props: any) {
     const className = marginIndex === index ? ['longSelected', 'shortSelected'][marginIndex] : 'selectbehaviour';
     return (
       <div
-        className={`col button font-14-600 ${className}`}
+        className={`col button text-[14px] font-semibold ${className}`}
         onClick={() => {
           setAdjustMarginValue('');
           setMarginEstimation(null);
@@ -143,9 +143,9 @@ function QuantityEnter(props: any) {
   return (
     <>
       <div className={`betsizetitle flex ${disabled ? 'disabled' : ''}`}>
-        <div className="font-14 text-color-secondary flex-1">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
+        <div className="text-color-secondary flex-1 text-[14px]">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
         {isLoginState && !isWrongNetwork && marginIndex === 0 ? (
-          <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+          <div className="text-color-secondary flex text-[14px]" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <div className="flex-1" style={{ display: 'flex', marginRight: '4px' }}>
               <Image alt="" src="/static/wallet-white.svg" height={16} width={16} />
             </div>
@@ -222,12 +222,12 @@ function UpdateValueDisplay(props: any) {
 
   return (
     <div className="adjustcollateralrow">
-      <div className="font-14 text-color-secondary left">{title}</div>
+      <div className="text-color-secondary left text-[14px]">{title}</div>
       <div className="right">
-        <span className="text-color-secondary font-14-600">{currentValue}</span>
-        <span className="text-color-primary font-14-600">{' → '}</span>
+        <span className="text-color-secondary text-[14px] font-semibold">{currentValue}</span>
+        <span className="text-[14px] font-semibold text-white/[.87]">{' → '}</span>
         <span className={unitSizing === 'normal' ? 'font-12' : ''}>
-          <span className="font-14-600">{newValue}</span>
+          <span className="text-[14px] font-semibold">{newValue}</span>
           {unit}
         </span>
       </div>
@@ -240,8 +240,8 @@ function UpdateValueNoDataDisplay(props: any) {
 
   return (
     <div className="row adjustcollateralrow align-items-center">
-      <div className="col font-14 text-color-secondary">{title}</div>
-      <div className="font-14-600 text-color-secondary col-auto">
+      <div className="col text-color-secondary text-[14px]">{title}</div>
+      <div className="text-color-secondary col-auto text-[14px] font-semibold">
         <span>{`-.--${unit}`}</span>
       </div>
     </div>
@@ -263,9 +263,11 @@ function UpdatedCollateralValue(props: any) {
 
   return (
     <div className="row detaillastrow align-items-center">
-      <div className="font-14 text-color-secondary col-auto">{marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}</div>
+      <div className="text-color-secondary col-auto text-[14px]">
+        {marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}
+      </div>
       <div className="col totalsizeback">
-        <span className="font-14-600">{value}</span>
+        <span className="text-[14px] font-semibold">{value}</span>
         <span className="font-12" style={{ marginLeft: '4px' }}>
           WETH
         </span>
@@ -638,7 +640,7 @@ function AdjustCollateralSlidingBars(props: any) {
         onChange={(value: any) => setAdjustMarginValue(value)}
         onAfterChange={onChange}
       />
-      <div className="row adjust-slide-row font-12 text-color-primary">
+      <div className="row adjust-slide-row font-12 text-white/[.87]">
         <div className="col left">
           Current
           <br />
