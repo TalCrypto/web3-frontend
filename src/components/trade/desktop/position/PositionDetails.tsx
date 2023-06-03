@@ -7,7 +7,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-// import moment from 'moment';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -15,15 +14,9 @@ import { utils } from 'ethers';
 
 import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
-// import { TypeWithIconByCollection } from '@/components/trade/desktop/information/TypeWithIcon';
-// import { getTradingActionType } from '@/components/trade/desktop/information/ActionType';
-
-// import IndividualShareContainer from '../dashboard/individualShareContainer';
-// import { PriceWithIcon } from '../../components/priceWithIcon';
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
-// import CustomDropdown from '../../components/CustomDropdown';
 import collectionList from '@/const/collectionList';
 import collectionsLoading from '@/stores/collectionsLoading';
 import { walletProvider } from '@/utils/walletProvider';
@@ -213,7 +206,9 @@ export default function PositionDetails(props: any) {
           ) : null}
 
           {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-          {showFundingPaymentModal ? <FundingPaymentModal setShowFundingPaymentModal={setShowFundingPaymentModal} /> : null}
+          {showFundingPaymentModal ? (
+            <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
+          ) : null}
         </div>
       </div>
       <div>

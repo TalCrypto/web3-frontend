@@ -128,7 +128,7 @@ function SidebarCollection(props: any, ref: any) {
               <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-primaryBlue" />
             ) : null}
             {item.isNew ? (
-              <Image className="absolute right-[-12px] top-[-4px] z-[12]" src="/images/collections/new.svg" alt="" width={26} height={12} />
+              <Image className="absolute right-[-12px] top-[-4px] z-[2]" src="/images/collections/new.svg" alt="" width={26} height={12} />
             ) : null}
             {/* <OverlayTrigger placement="right" overlay={<Tooltip>{item.displayCollectionPair}</Tooltip>}>
               <Image src={item.sidebarLogo} width="24" height="24" alt="" />
@@ -138,7 +138,7 @@ function SidebarCollection(props: any, ref: any) {
               width="32"
               height="32"
               alt=""
-              className="z-10 rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
+              className="z-[1] rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
             />
             {isHasPos(item.amm) ? (
               <Image

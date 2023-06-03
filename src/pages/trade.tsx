@@ -20,7 +20,7 @@ import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsFullWalletAddress, wsHistoryGroupByMonth, wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsCurrentToken, wsHistoryGroupByMonth, wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 import { formatDateTime } from '@/utils/date';
 import { apiConnection } from '@/utils/apiConnection';
 
@@ -87,7 +87,7 @@ function TradePage(props: TradePagePros) {
   useEffect(() => {
     fetchPositions();
     fetchInformation();
-  }, [currentToken]); // from tokenRef.current
+  }, [currentToken, isLoginState]); // from tokenRef.current
 
   useEffect(() => {
     if (Object.keys(router.query).length === 0) {
@@ -123,7 +123,6 @@ function TradePage(props: TradePagePros) {
       walletProvider.getFluctuationLimitRatio(currentCollection.amm);
       walletProvider.getInitialMarginRatio(currentCollection.amm);
     }
-    console.log('here');
   }, [walletProvider.holderAddress, isLoginState, currentCollection, fetchUserTradingHistory]);
 
   return (
@@ -151,14 +150,14 @@ function TradePage(props: TradePagePros) {
 
               <div className="ml-[30px] block 2xl:flex-1">
                 <ChartWindows tradingData={tradingData} />
-                {/* {isLoginState ? ( */}
-                <PositionDetails
-                  userPosition={userPosition}
-                  tradingData={tradingData}
-                  setHistoryModalIsVisible={setHistoryModalIsVisible}
-                  setFundingModalIsShow={setFundingModalIsShow}
-                />
-                {/* ) : null} */}
+                {isLoginState ? (
+                  <PositionDetails
+                    userPosition={userPosition}
+                    tradingData={tradingData}
+                    setHistoryModalIsVisible={setHistoryModalIsVisible}
+                    setFundingModalIsShow={setFundingModalIsShow}
+                  />
+                ) : null}
 
                 <InformationWindow tradingData={tradingData} />
               </div>

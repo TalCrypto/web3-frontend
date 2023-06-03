@@ -244,7 +244,7 @@ const CollectionModal = (props: any) => {
 
   return (
     <div
-      className="t-0 fixed bottom-0 left-0 right-0 z-10 h-full w-full
+      className="fixed bottom-0 left-0 right-0 top-0 z-10 h-full w-full
        bg-black/[.2] backdrop-blur-[4px]"
       onClick={() => {
         setVisible(false);
