@@ -179,7 +179,7 @@ export default function IndividualShareContainer(props: any) {
             </div>
             <div className="row contents-row">
               <div className="col-12 function-icon">
-                <Image src="../../static/share_twitter.png" alt="" width={44} height={44} onClick={shareToTwitter} />
+                <Image src="/images/components/trade/share_twitter.png" alt="" width={44} height={44} onClick={shareToTwitter} />
               </div>
               <div className="col function-title">Share to Twitter</div>
             </div>

@@ -26,3 +26,5 @@ export const wsChatInterval = atom(0);
 export const wsFullWalletAddress = atom('');
 
 export const wsCurrentToken = atom('DEGODS');
+
+export const wsHistoryGroupByMonth = atom([]);

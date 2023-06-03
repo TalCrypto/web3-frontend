@@ -196,7 +196,7 @@ export default function IndividualShareContainer(props: any) {
             </div>
             <div className="mb-8 cursor-pointer" onClick={shareToTwitter}>
               <div className="mb-1 flex justify-center">
-                <Image src="/images/components/trade/share_twitter.png" alt="" width={44} height={44} />
+                <Image src="/images/components/trade/share_twitter.png" alt="" width={44} height={44} onClick={shareToTwitter} />
               </div>
               <div className="text-center text-[12px]">Share to Twitter</div>
             </div>

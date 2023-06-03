@@ -137,13 +137,6 @@ function QuantityTips(props: any) {
   const isRedText = isInsuffBalance || isAmountTooSmall || isFluctuationLimit || isLiquidatable;
   return (
     <div className={`quantity-tips-container ${(!isInsuffBalance && estPriceFluctuation) || isPending ? 'price-fluc' : ''}`}>
-      {/* {!isInsuffBalance && estPriceFluctuation ? null : (
-        <Image
-          src={isInsuffBalance || isAmountTooSmall ? '/static/infocircle.svg' : '/static/info_warning_icon.svg'}
-          alt=""
-          className="icon"
-        />
-      )} */}
       <div className={`${isRedText ? 'text-marketRed' : 'text-warn'} mb-2 text-[12px] leading-[20px]`}>{label}</div>
     </div>
   );

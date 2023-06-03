@@ -27,7 +27,7 @@ import { firebaseAuth } from '../const/firebaseConfig';
 import tradePanelModal from '../stores/tradePanelModal';
 import collectionsLoading from '../stores/collectionsLoading';
 import { showToast } from '../components/common/Toast';
-import { priceGapLimit } from '../stores/priceGap';
+import { fluctuationLimit, initialMarginRatio, priceGapLimit } from '../stores/priceGap';
 import { setPositionChanged } from '../stores/transaction';
 
 const tokenABI = require('../abi/token.json');
@@ -276,6 +276,8 @@ interface WalletProvider {
   getPendingTransactions: any;
   getUserCollectionsInfo: any;
   getLiquidationRatio: any;
+  getFluctuationLimitRatio: any;
+  getInitialMarginRatio: any;
 }
 
 export const walletProvider: WalletProvider = {
@@ -938,6 +940,28 @@ export const walletProvider: WalletProvider = {
       const clearingHseInstance = new ethers.Contract(clearingHouseAddress, clearingHseABI, providerSigner);
       const rate = await clearingHseInstance.LIQ_SWITCH_RATIO();
       priceGapLimit.set(utils.formatEther(rate));
+      return Promise.resolve(utils.formatEther(rate));
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+  getFluctuationLimitRatio: async function getFluctuationLimitRatio(params: any, ammAddr: any = process.env.NEXT_PUBLIC_AMM_ADDRESS) {
+    try {
+      const providerSigner = this.provider.getSigner(this.holderAddress);
+      const contractInstance = new ethers.Contract(ammAddr, ammABI, providerSigner);
+      const rate: any = await contractInstance.fluctuationLimitRatio();
+      fluctuationLimit.set(Number(Number(utils.formatEther(rate)) * 100));
+      return Promise.resolve(utils.formatEther(rate));
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+  getInitialMarginRatio: async function getInitialMarginRatio(params: any, ammAddr: any = process.env.NEXT_PUBLIC_AMM_ADDRESS) {
+    try {
+      const providerSigner = this.provider.getSigner(this.holderAddress);
+      const contractInstance = new ethers.Contract(ammAddr, ammABI, providerSigner);
+      const rate: any = await contractInstance.initMarginRatio();
+      initialMarginRatio.set(Number(Number(utils.formatEther(rate)) * 100));
       return Promise.resolve(utils.formatEther(rate));
     } catch (error) {
       return Promise.reject(error);

@@ -3,7 +3,8 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
-
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 // import moment from 'moment';
@@ -29,7 +30,11 @@ import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsIsLogin } from '@/stores/WalletState';
+
+import Dropdown from '@/components/trade/desktop/position/Dropdown';
+import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
+import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaymentModal';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -66,6 +71,7 @@ export default function PositionDetails(props: any) {
   // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
   const currentToken = useNanostore(wsCurrentToken);
   const [showSharePosition, setShowSharePosition] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
   const currentCollectionName = currentCollection.shortName || 'DEGODS';
@@ -77,7 +83,11 @@ export default function PositionDetails(props: any) {
   const liquidationChanceLimit = 0.05;
   const fullWalletAddress = walletProvider.holderAddress;
 
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
+
   const [userInfo, setUserInfo] = useState({});
+  const isLoginState = useNanostore(wsIsLogin);
 
   const liquidationChanceWarning = () => {
     if (!userPosition || !tradingData.spotPrice || !tradingData.twapPrice || !priceGapLmt) return false;
@@ -131,14 +141,13 @@ export default function PositionDetails(props: any) {
   }
 
   useEffect(() => {
-    // alert(1);
-    // setIsLoading(true);
-    // const timer = setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 1000);
-    // return () => {
-    //   clearTimeout(timer);
-    // };
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [currentToken, userPosition]);
 
   useEffect(() => {
@@ -172,11 +181,11 @@ export default function PositionDetails(props: any) {
   // const marginRatio = Number(calculateNumber(userPosition.marginRatio, 2)) * 100;
 
   return (
-    <div className="mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
+    <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
       {showSharePosition ? (
-        <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
+        <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowDropdown} userInfo={userInfo} />
       ) : null}
-      <div className="mb-[36px] flex justify-between">
+      <div className=" mb-[36px] flex justify-between">
         <div className="flex space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
@@ -186,43 +195,25 @@ export default function PositionDetails(props: any) {
           <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>
             <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width="16" height="16" />
           </div>
-          {/* <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>
-            <Image alt="" src="/static/threedots_icon.svg" width="16" height="16" />
-          </div> */}
-          {/* <CustomDropdown.Dropdown>
-            <CustomDropdown.Toggle id="dropdown-custom-components">
-              <div className="nav-icon-btn">
-                <Image alt="" src="/static/threedots_icon.svg" width="16" height="16" />
-              </div>
-            </CustomDropdown.Toggle>
 
-            <CustomDropdown.Menu>
-              <CustomDropdown.Item
-                eventKey="1"
-                onClick={() => {
-                  setHistoryModalIsVisible(true);
-                }}>
-                <Image alt="" src="/static/icon/dashboard/tradeHistory.svg" width="16" height="16" style={{ marginRight: 6 }} />
-                <span>View History</span>
-              </CustomDropdown.Item>
-              <CustomDropdown.Item
-                eventKey="2"
-                onClick={() => {
-                  router.push('/dashboard');
-                }}>
-                <Image alt="" src="/static/icon/dashboard/position.svg" width="16" height="16" style={{ marginRight: 6 }} />
-                <span>View Portfolio</span>
-              </CustomDropdown.Item>
-              <CustomDropdown.Item
-                eventKey="3"
-                onClick={() => {
-                  setFundingModalIsShow(true);
-                }}>
-                <Image alt="" src="/static/icon/dashboard/fundingPayment.svg" width="16" height="16" style={{ marginRight: 6 }} />
-                <span>View Funding Payment</span>
-              </CustomDropdown.Item>
-            </CustomDropdown.Menu>
-          </CustomDropdown.Dropdown> */}
+          <div
+            className="open-dropdown flex h-[20px] w-[20px] cursor-pointer
+            justify-center hover:rounded-full hover:bg-white/[.2]"
+            onClick={() => setShowDropdown(!showDropdown)}>
+            <Image alt="" src="/images/components/trade/position/menu.svg" width="16" height="16" />
+          </div>
+
+          {showDropdown ? (
+            <Dropdown
+              showDropdown={showDropdown}
+              setShowDropdown={setShowDropdown}
+              setShowHistoryModal={setShowHistoryModal}
+              setShowFundingPaymentModal={setShowFundingPaymentModal}
+            />
+          ) : null}
+
+          {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
+          {showFundingPaymentModal ? <FundingPaymentModal setShowFundingPaymentModal={setShowFundingPaymentModal} /> : null}
         </div>
       </div>
       <div>

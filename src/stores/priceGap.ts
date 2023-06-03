@@ -18,3 +18,9 @@ export const showPopup = map({
 
 // Price gap limit from smartcontract
 export const priceGapLimit = atom<any>(null);
+
+// Price fluctuation limit from smartcontract
+export const fluctuationLimit = atom(0);
+
+// Initial margin ratio from smartcontract
+export const initialMarginRatio = atom(0);
