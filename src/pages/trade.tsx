@@ -44,11 +44,9 @@ function TradePage(props: TradePagePros) {
 
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-
   const currentToken = useNanostore(wsCurrentToken);
 
-  const fetchInformations = async () => {
+  const fetchInformation = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
     setTradingData({});
     // set tradingData
@@ -82,11 +80,9 @@ function TradePage(props: TradePagePros) {
     }
   };
 
-  // fetchPositions();
-
   useEffect(() => {
     fetchPositions();
-    fetchInformations();
+    fetchInformation();
   }, [currentToken]); // from tokenRef.current
 
   useEffect(() => {
@@ -154,10 +150,7 @@ function TradePage(props: TradePagePros) {
         <div className="block bg-lightBlue md:hidden">
           <Switcher />
 
-          <ChartMobile
-            // ref={graphRef}
-            tradingData={tradingData}
-          />
+          <ChartMobile tradingData={tradingData} />
 
           {/* {isLoginState ? ( */}
           <PositionMobile

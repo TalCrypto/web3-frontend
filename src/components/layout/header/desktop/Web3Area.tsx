@@ -63,15 +63,12 @@ async function fetchUserData() {
 }
 
 function Web3Area() {
-  const [showTokenError, setShowTokenError] = useState(false);
   const [isShowGeorliModal, setIsShowGeorliModal] = useState(false);
 
   const isLogin = useNanostore(wsIsLogin);
   const walletAddress = useNanostore(wsWalletAddress);
   const wethBalance = useNanostore(wsWethBalance);
   const isShowErrorSwitchNetworkModal = useNanostore(wsIsShowErrorSwitchNetworkModal);
-  // const showTokenError = useNanostore();
-  // const isShowGeorliModal = useNanostore();
 
   // const isMobile = /(webOS|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini)/i.test(navigator.userAgent) || false;
   const isMobile = false;

@@ -228,7 +228,7 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
             <div
               className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
             bg-primaryBlue text-[14px] font-semibold text-white"
-              onClick={updateTargetNetwork}>
+              onClick={() => updateTargetNetwork()}>
               Switch to Arbitrum
             </div>
           )}

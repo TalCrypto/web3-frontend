@@ -185,7 +185,7 @@ export default function IndividualShareContainer(props: any) {
             </div>
             <div className="row contents-row">
               <div className="col-12 function-icon">
-                <Image src="../../static/download_img.png" alt="" width={44} height={44} onClick={downloadRank} />
+                <Image src="/images/components/trade/download_img.png" alt="" width={44} height={44} onClick={downloadRank} />
               </div>
               <div className="col function-title">Download Image</div>
             </div>

@@ -46,7 +46,7 @@ const ExtraComponent = () => {
         getTestToken(() => setIsLoading(false), null);
       }}>
       <div className="flex items-center space-x-1 px-3">
-        <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[2px]" />
+        <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
         {!isLoading ? (
           <>
             <Image src="/images/components/layout/header/eth-tribe3.svg" width={16} height={16} alt="" />
