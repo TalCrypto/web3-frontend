@@ -20,9 +20,19 @@ import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsHistoryGroupByMonth, wsIsLogin, wsIsWrongNetwork, wsUserPosition, wsWethBalance } from '@/stores/WalletState';
+import {
+  wsCurrentToken,
+  wsHistoryGroupByMonth,
+  wsIsLogin,
+  wsIsShowTradingMobile,
+  wsIsWrongNetwork,
+  wsMaxReduceValue,
+  wsUserPosition,
+  wsWethBalance
+} from '@/stores/WalletState';
 import { formatDateTime } from '@/utils/date';
 import { apiConnection } from '@/utils/apiConnection';
+import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 
 interface TradePagePros {
   router: any;
@@ -37,10 +47,11 @@ function TradePage(props: TradePagePros) {
   const { router } = props;
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
-  const [maxReduceValue, setMaxReduceValue] = useState('');
-  const [historyRecords, setHistoryRecords] = useState([]);
-  const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
-  const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
+  const maxReduceValue = useNanostore(wsMaxReduceValue);
+  // const [maxReduceValue, setMaxReduceValue] = useState('');
+  // const [historyRecords, setHistoryRecords] = useState([]);
+
+  const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
 
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
@@ -66,10 +77,9 @@ function TradePage(props: TradePagePros) {
       const traderPositionInfo: any = await getTraderPositionInfo(currentAmm, walletProvider.holderAddress);
       wsUserPosition.set(traderPositionInfo);
       const maxReduce = await walletProvider.getMaxReduceCollateralValue(currentAmm, walletProvider.holderAddress);
-      const maxReduceValueTemp: any = calculateNumber(maxReduce, 4);
-      setMaxReduceValue(maxReduceValueTemp);
-      const latestHistoryRecords = await getTraderPositionHistory(currentAmm, walletProvider.holderAddress);
-      setHistoryRecords(latestHistoryRecords === null ? [] : latestHistoryRecords);
+      wsMaxReduceValue.set(Number(calculateNumber(maxReduce, 4)));
+      // const latestHistoryRecords = await getTraderPositionHistory(currentAmm, walletProvider.holderAddress);
+      // setHistoryRecords(latestHistoryRecords === null ? [] : latestHistoryRecords);
       const isCollected = await walletProvider.checkIsTethCollected();
       setIsTethCollected(isCollected);
       const newBalance = await walletProvider.getWethBalance(walletProvider.holderAddress);
@@ -137,18 +147,12 @@ function TradePage(props: TradePagePros) {
               <div className="flex">
                 <SidebarCollection isShowPopup={isShowPopup} setIsShowPopup={setIsShowPopup} />
 
-                <TradingWindow refreshPositions={fetchPositions} tradingData={tradingData} maxReduceValue={maxReduceValue} />
+                <TradingWindow refreshPositions={fetchPositions} tradingData={tradingData} />
               </div>
 
               <div className="ml-[30px] block 2xl:flex-1">
                 <ChartWindows tradingData={tradingData} />
-                {isLoginState ? (
-                  <PositionDetails
-                    tradingData={tradingData}
-                    setHistoryModalIsVisible={setHistoryModalIsVisible}
-                    setFundingModalIsShow={setFundingModalIsShow}
-                  />
-                ) : null}
+                {isLoginState ? <PositionDetails tradingData={tradingData} /> : null}
 
                 <InformationWindow tradingData={tradingData} />
               </div>
@@ -162,15 +166,11 @@ function TradePage(props: TradePagePros) {
           <div className="mt-10">
             <ChartMobile tradingData={tradingData} />
 
-            {isLoginState ? (
-              <PositionMobile
-                tradingData={tradingData}
-                setHistoryModalIsVisible={setHistoryModalIsVisible}
-                setFundingModalIsShow={setFundingModalIsShow}
-              />
-            ) : null}
+            {isLoginState ? <PositionMobile tradingData={tradingData} /> : null}
 
             <InformationMobile tradingData={tradingData} />
+
+            {isShowTradingMobile ? <TradingMobile refreshPositions={fetchPositions} tradingData={tradingData} /> : null}
           </div>
         </div>
       </main>

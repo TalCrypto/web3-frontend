@@ -41,7 +41,6 @@ export default function InputSlider(props: any) {
         ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         style={{ width: `${fill}%` }}
       />
-
       {marks ? (
         <>
           <div className="pointer-events-none absolute top-[11px] flex w-full justify-between">

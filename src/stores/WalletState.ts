@@ -30,3 +30,7 @@ export const wsCurrentToken = atom('DEGODS');
 export const wsHistoryGroupByMonth = atom([]);
 
 export const wsUserPosition = atom();
+
+export const wsIsShowTradingMobile = atom(false);
+
+export const wsMaxReduceValue = atom(0);

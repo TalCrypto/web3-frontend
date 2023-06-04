@@ -3,13 +3,14 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import tradePanelModal from '@/stores/tradePanelModal';
 
-import TradeComponent from '@/components/trade/desktop/trading/tradeComponent';
-import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
-import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
-import TradePanelModal from '@/components/trade/desktop/trading/TradePanelModal';
+import TradeComponent from '@/components/trade/mobile/trading/tradeComponent';
+import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
+import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
+import TradePanelModal from '@/components/trade/mobile/trading/TradePanelModal';
 
 import { connectWallet } from '@/utils/Wallet';
-import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { wsCurrentToken, wsIsShowTradingMobile, wsUserPosition } from '@/stores/WalletState';
+import Image from 'next/image';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -31,7 +32,7 @@ function OverFluctuationError(props: any) {
   );
 }
 
-function TradingWindow(props: any) {
+function TradingMobile(props: any) {
   const { refreshPositions, tradingData } = props;
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
   const isTradePanelModalShow = useNanostore(tradePanelModal.show);
@@ -63,8 +64,12 @@ function TradingWindow(props: any) {
     setTradeWindowIndex(index);
   };
 
+  const handleBackClick = () => {
+    wsIsShowTradingMobile.set(false);
+  };
+
   return (
-    <div className="ml-[44px] mr-[20px] w-full 2xl:w-[400px]" style={{ height: 'fit-content' }}>
+    <div className="fixed left-0 top-0 z-[12] h-full w-full bg-lightBlue 2xl:w-[400px]">
       {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null}
       {userPosition ? (
         <div
@@ -87,9 +92,9 @@ function TradingWindow(props: any) {
         </div>
       ) : null}
       <div
-        className="mb-[60px]  flex 
-        rounded-[6px] border-[1px] border-[#71aaff]/[.2]
-      bg-lightBlue p-6 px-[36px] py-[32px] text-white">
+        className={`mb-[60px] flex ${userPosition ? 'h-[calc(100%-130px)]' : 'h-[calc(100%-60px)]'}
+          overflow-y-scroll rounded-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
+          bg-lightBlue p-6 px-[22px] py-[22px] text-white`}>
         <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
         <TradePanelModal
           isShow={isTradePanelModalShow}
@@ -98,8 +103,23 @@ function TradingWindow(props: any) {
           link={tradePanelModalLink}
         />
       </div>
+
+      <div
+        className="fixed bottom-0 flex h-[50px] w-full items-center justify-center
+        bg-secondaryBlue px-[22px] py-4 text-[15px] text-white
+      ">
+        <Image
+          src="/images/mobile/common/angle-right.svg"
+          className="fixed left-[22px] cursor-pointer"
+          width={8}
+          height={12}
+          alt=""
+          onClick={handleBackClick}
+        />
+        <div className="flex">Trade BYC</div>
+      </div>
     </div>
   );
 }
 
-export default TradingWindow;
+export default TradingMobile;

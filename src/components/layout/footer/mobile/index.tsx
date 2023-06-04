@@ -3,7 +3,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 // import Sidebar from '@/components/layout/footer/mobile/Sidebar';
 import { connectWallet, updateTargetNetwork } from '@/utils/Wallet';
-import { wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
+import { wsIsLogin, wsIsShowTradingMobile, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
 import { walletProvider } from '@/utils/walletProvider';
 
@@ -30,17 +30,25 @@ function MobileFooter() {
   const onClickBottomButton = async () => {
     if (!isLogin) {
       connectWallet(null, false);
+      return;
     }
 
     if (isWrongNetwork) {
       updateTargetNetwork(null);
+      return;
     }
+
+    if (!isTethCollected) {
+      return;
+    }
+
+    wsIsShowTradingMobile.set(true);
   };
 
   return (
     <>
       <div
-        className="footer backface-visibility-hidden z-600 duration-400 fixed
+        className="backface-visibility-hidden z-600 duration-400 fixed
           bottom-0 left-0 box-border block h-[64px] w-full transform bg-secondaryBlue
           pr-2 text-white md:hidden">
         <div
