@@ -27,6 +27,9 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
+import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
+import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
+
 // import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
 import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 
@@ -64,7 +67,6 @@ export default function PositionMobile(props: any) {
   // const isBadDebt = userPosition ? Number(utils.formatEther(userPosition.remainMarginLeverage)) === 0 : false;
 
   // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
-  const [showSharePosition, setShowSharePosition] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
   const currentCollectionName = currentCollection.shortName || 'DEGODS';
@@ -77,6 +79,8 @@ export default function PositionMobile(props: any) {
   const liquidationChanceLimit = 0.05;
 
   const [userInfo, setUserInfo] = useState({});
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
 
   const liquidationChanceWarning = () => {
     if (!userPosition || !tradingData.spotPrice || !tradingData.twapPrice || !priceGapLmt) return false;
@@ -152,28 +156,8 @@ export default function PositionMobile(props: any) {
     return null;
   }
 
-  const clickShowSharePosition = (show: any) => {
-    setShowSharePosition(show);
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'share_position_performance_pressed', {
-        wallet: walletProvider?.holderAddress?.substring(2),
-        collection: currentToken
-      });
-    }
-
-    apiConnection.postUserEvent('share_position_performance_pressed', {
-      page,
-      collection: currentToken
-    });
-  };
-
   return (
     <div className="mb-[24px]">
-      {/* {showSharePosition ? (
-        <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
-      ) : null} */}
-
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
@@ -181,8 +165,11 @@ export default function PositionMobile(props: any) {
           {collectionIsPending[currentCollection.amm] ? <div className="pending-reminder">Transaction Pending...</div> : null}
         </div>
         <div className="flex space-x-[24px]">
-          <div className="nav-icon-btn" onClick={() => clickShowSharePosition(true)}>
-            <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width="16" height="16" />
+          <div onClick={() => setShowFundingPaymentModal(true)}>
+            <Image alt="" src="/images/components/trade/position/trade_history.svg" width="16" height="16" />
+          </div>
+          <div onClick={() => setShowHistoryModal(true)}>
+            <Image alt="" src="/images/components/trade/position/funding_payment.svg" width="16" height="16" />
           </div>
         </div>
       </div>
@@ -305,6 +292,11 @@ export default function PositionMobile(props: any) {
           </div>
         </div>
       </div>
+
+      {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
+      {showFundingPaymentModal ? (
+        <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
+      ) : null}
 
       {/* {isGapAboveLimit ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
