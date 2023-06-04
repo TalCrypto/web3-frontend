@@ -68,8 +68,8 @@ export default function IndividualShareContainer(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   console.log(userInfo);
-  // const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;
-  // const showUserId = userInfo?.username === '' ? userAddress : userInfo?.username;
+  const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;
+  const showUserId = userInfo?.username === '' ? userAddress : userInfo?.username;
 
   const closeShareWindow = () => {
     setShowShareComponent(false);
@@ -175,7 +175,7 @@ export default function IndividualShareContainer(props: any) {
                 <div
                   className="mx-4 mb-3 mt-[172px] flex items-center
                   justify-between text-[12px] font-medium">
-                  <div>ID: {/* showUserId */}</div>
+                  <div>ID: {showUserId}</div>
                   <div>{formatDateTime(Date.now() / 1000, 'YYYY. DD. MMM HH:mm UTCZ').toUpperCase()}</div>
                   {/* <div>{moment().format('YYYY. DD. MMM HH:mm UTCZ').toUpperCase()}</div> */}
                 </div>
