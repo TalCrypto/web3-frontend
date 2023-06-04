@@ -20,7 +20,7 @@ import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsHistoryGroupByMonth, wsIsLogin, wsIsWrongNetwork, wsUserPosition } from '@/stores/WalletState';
+import { wsCurrentToken, wsHistoryGroupByMonth, wsIsLogin, wsIsWrongNetwork, wsUserPosition, wsWethBalance } from '@/stores/WalletState';
 import { formatDateTime } from '@/utils/date';
 import { apiConnection } from '@/utils/apiConnection';
 
@@ -39,7 +39,6 @@ function TradePage(props: TradePagePros) {
   const [tradingData, setTradingData] = useState({});
   const [maxReduceValue, setMaxReduceValue] = useState('');
   const [historyRecords, setHistoryRecords] = useState([]);
-  const [wethBalance, setWethBalance] = useState(0);
   const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
   const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
 
@@ -74,7 +73,7 @@ function TradePage(props: TradePagePros) {
       const isCollected = await walletProvider.checkIsTethCollected();
       setIsTethCollected(isCollected);
       const newBalance = await walletProvider.getWethBalance(walletProvider.holderAddress);
-      setWethBalance(Number(newBalance));
+      wsWethBalance.set(Number(newBalance));
 
       // get price gap from smartcontract
       await walletProvider.getLiquidationRatio();
@@ -119,8 +118,8 @@ function TradePage(props: TradePagePros) {
   useEffect(() => {
     if (isLoginState && walletProvider.holderAddress && currentCollection) {
       fetchUserTradingHistory();
-      walletProvider.getFluctuationLimitRatio(currentCollection.amm);
-      walletProvider.getInitialMarginRatio(currentCollection.amm);
+      // walletProvider.getFluctuationLimitRatio(currentCollection.amm);
+      // walletProvider.getInitialMarginRatio(currentCollection.amm);
     }
   }, [walletProvider.holderAddress, isLoginState, currentCollection, fetchUserTradingHistory]);
 
@@ -138,12 +137,7 @@ function TradePage(props: TradePagePros) {
               <div className="flex">
                 <SidebarCollection isShowPopup={isShowPopup} setIsShowPopup={setIsShowPopup} />
 
-                <TradingWindow
-                  wethBalance={wethBalance}
-                  refreshPositions={fetchPositions}
-                  tradingData={tradingData}
-                  maxReduceValue={maxReduceValue}
-                />
+                <TradingWindow refreshPositions={fetchPositions} tradingData={tradingData} maxReduceValue={maxReduceValue} />
               </div>
 
               <div className="ml-[30px] block 2xl:flex-1">

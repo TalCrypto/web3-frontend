@@ -2,6 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
+/* eslint-disable no-unused-vars */
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -16,7 +17,6 @@ import { firebaseAnalytics } from '@/const/firebaseConfig';
 // import { TypeWithIconByCollection } from '@/components/trade/desktop/information/TypeWithIcon';
 // import { getTradingActionType } from '@/components/trade/desktop/information/ActionType';
 
-// import IndividualShareContainer from '../dashboard/individualShareContainer';
 // import { PriceWithIcon } from '../../components/priceWithIcon';
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
@@ -27,7 +27,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
-import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
+// import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
 import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 
 function MedPriceIcon(props: any) {
@@ -170,9 +170,9 @@ export default function PositionMobile(props: any) {
 
   return (
     <div className="mb-[24px]">
-      {showSharePosition ? (
+      {/* {showSharePosition ? (
         <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
-      ) : null}
+      ) : null} */}
 
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">

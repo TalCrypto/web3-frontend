@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
-import Sidebar from '@/components/layout/footer/mobile/Sidebar';
+// import Sidebar from '@/components/layout/footer/mobile/Sidebar';
+import { connectWallet, updateTargetNetwork } from '@/utils/Wallet';
+import { wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
+import { useStore as useNanostore } from '@nanostores/react';
+import { walletProvider } from '@/utils/walletProvider';
 
 function MobileFooter() {
-  const isLogin = false;
-  const isLoading = false;
-  const wethBalance = 0;
-  const isTethCollected = false;
-  const isNetworkSame = true;
+  const isLogin = useNanostore(wsIsLogin);
+  const isWalletLoading = useNanostore(wsIsWalletLoading);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
+  const wethBalance = useNanostore(wsWethBalance);
   const [isSidebarShow, setIsSidebarShow] = useState(false);
-
-  function handleGoToTrade() {}
 
   useEffect(() => {
     const handleBodyClick = (event: any) => {
@@ -25,6 +27,16 @@ function MobileFooter() {
     };
   }, [isSidebarShow]);
 
+  const onClickBottomButton = async () => {
+    if (!isLogin) {
+      connectWallet(null, false);
+    }
+
+    if (isWrongNetwork) {
+      updateTargetNetwork(null);
+    }
+  };
+
   return (
     <>
       <div
@@ -35,17 +47,19 @@ function MobileFooter() {
           className="box-border flex h-full w-full
             content-center items-center justify-normal overflow-hidden">
           <button
-            className="relative box-border h-full w-[124px]
-              flex-shrink-0 overflow-ellipsis whitespace-nowrap
+            className="relative box-border flex h-full w-[124px] flex-shrink-0
+              items-center justify-center overflow-ellipsis whitespace-nowrap
               bg-primaryBlue text-xs font-semibold capitalize text-highEmphasis
               transition duration-100"
-            onClick={handleGoToTrade}>
-            {isLoading ? (
+            onClick={onClickBottomButton}>
+            {isWalletLoading ? (
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
             ) : !isLogin ? (
               'Connect Wallet'
-            ) : !isNetworkSame ? (
-              'Switch to Goerli'
+            ) : isWrongNetwork ? (
+              <>
+                Switch to <br /> Arbitrum
+              </>
             ) : !isTethCollected ? (
               'Get TETH'
             ) : (
@@ -73,12 +87,12 @@ function MobileFooter() {
         </div>
       </div>
 
-      <div
+      {/* <div
         className={`sidebar translate-z-0 fixed right-0 top-0
         ${isSidebarShow ? 'block' : 'hidden'}
         z-10 h-full w-[260px] text-white`}>
         <Sidebar />
-      </div>
+      </div> */}
     </>
   );
 }

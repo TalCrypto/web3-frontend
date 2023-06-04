@@ -32,7 +32,7 @@ function OverFluctuationError(props: any) {
 }
 
 function TradingWindow(props: any) {
-  const { refreshPositions, tradingData, wethBalance, maxReduceValue } = props;
+  const { refreshPositions, tradingData, maxReduceValue } = props;
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
   const isTradePanelModalShow = useNanostore(tradePanelModal.show);
   const tradePanelModalMsg = useNanostore(tradePanelModal.message);
@@ -46,28 +46,13 @@ function TradingWindow(props: any) {
   useEffect(() => setTradeWindowIndex(0), [currentToken]);
 
   const tradeComponent = (
-    <TradeComponent
-      refreshPositions={refreshPositions}
-      connectWallet={traderConnectWallet}
-      wethBalance={wethBalance}
-      tradingData={tradingData}
-    />
+    <TradeComponent refreshPositions={refreshPositions} connectWallet={traderConnectWallet} tradingData={tradingData} />
   );
 
   const displayComponent = [
     tradeComponent,
-    <CloseCollateral
-      refreshPositions={refreshPositions}
-      wethBalance={wethBalance}
-      tradingData={tradingData}
-      setTradeWindowIndex={setTradeWindowIndex}
-    />,
-    <AdjustCollateral
-      refreshPositions={refreshPositions}
-      wethBalance={wethBalance}
-      tradingData={tradingData}
-      maxReduceValue={maxReduceValue}
-    />
+    <CloseCollateral refreshPositions={refreshPositions} tradingData={tradingData} setTradeWindowIndex={setTradeWindowIndex} />,
+    <AdjustCollateral refreshPositions={refreshPositions} tradingData={tradingData} maxReduceValue={maxReduceValue} />
   ][tradeWindowIndex];
 
   const tabs = ['Add', 'Close', 'Adjust Collateral'];

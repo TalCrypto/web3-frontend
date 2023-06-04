@@ -23,7 +23,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition, wsWethBalance } from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
 
 function SaleOrBuyRadio(props: any) {
@@ -76,8 +76,6 @@ function QuantityEnter(props: any) {
     value,
     setValue,
     onChange,
-    isInsuffBalance,
-    wethBalance,
     maxReduceValue,
     marginIndex,
     balanceChecking,
@@ -92,6 +90,7 @@ function QuantityEnter(props: any) {
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
+  const wethBalance = useNanostore(wsWethBalance);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -758,7 +757,6 @@ export default function AdjustCollateral(props: any) {
           handleMarginEnter(e);
         }}
         marginIndex={marginIndex}
-        wethBalance={wethBalance}
         value={adjustMarginValue}
         setValue={setAdjustMarginValue}
         maxReduceValue={maxReduceValue}
@@ -783,7 +781,6 @@ export default function AdjustCollateral(props: any) {
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
         adjustMarginValue={adjustMarginValue}
-        wethBalance={wethBalance}
         initialCollateral={initialCollateral}
         maxReduceValue={maxReduceValue}
         setAdjustMarginValue={setAdjustMarginValue}

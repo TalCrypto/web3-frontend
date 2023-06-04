@@ -148,7 +148,6 @@ function QuantityEnter(props: any) {
     value,
     onChange,
     isInsuffBalance,
-    wethBalance,
     isAmountTooSmall,
     estPriceFluctuation,
     isFluctuationLimit,
@@ -160,6 +159,7 @@ function QuantityEnter(props: any) {
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
+  const wethBalance = useNanostore(wsWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
 
@@ -1130,7 +1130,6 @@ export default function TradeComponent(props: any) {
           handleEnter(value);
         }}
         isInsuffBalance={isInsuffBalance}
-        wethBalance={wethBalance}
         isAmountTooSmall={isAmountTooSmall}
         estPriceFluctuation={estPriceFluctuation}
         isFluctuationLimit={isFluctuationLimit}
@@ -1157,7 +1156,6 @@ export default function TradeComponent(props: any) {
         toleranceRate={toleranceRate}
         setToleranceRate={setToleranceRate}
         setIsInsuffBalance={setIsInsuffBalance}
-        wethBalance={wethBalance}
         // tokenRef={tokenRef}
         leverageValue={leverageValue}
         value={quantity}

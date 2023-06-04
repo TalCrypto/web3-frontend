@@ -788,7 +788,7 @@ function CloseSlider(props: any) {
 export default function CloseCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, wethBalance, tradingData, currentToken, setShowOverFluctuationContent, setTradeWindowIndex } = props;
+  const { refreshPositions, tradingData, currentToken, setShowOverFluctuationContent, setTradeWindowIndex } = props;
 
   const [closeValue, setCloseValue] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -942,7 +942,6 @@ export default function CloseCollateral(props: any) {
           setCloseValue(e);
           handleEnter(e);
         }}
-        wethBalance={wethBalance}
         closeValue={closeValue}
         tradingData={tradingData}
         setCloseValue={setCloseValue}
