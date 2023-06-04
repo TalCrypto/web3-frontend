@@ -165,17 +165,19 @@ function TradePage(props: TradePagePros) {
         <div className="block bg-lightBlue md:hidden">
           <Switcher />
 
-          <ChartMobile tradingData={tradingData} />
+          <div className="mt-10">
+            <ChartMobile tradingData={tradingData} />
 
-          {/* {isLoginState ? ( */}
-          <PositionMobile
-            tradingData={tradingData}
-            setHistoryModalIsVisible={setHistoryModalIsVisible}
-            setFundingModalIsShow={setFundingModalIsShow}
-          />
-          {/* ) : null} */}
+            {isLoginState ? (
+              <PositionMobile
+                tradingData={tradingData}
+                setHistoryModalIsVisible={setHistoryModalIsVisible}
+                setFundingModalIsShow={setFundingModalIsShow}
+              />
+            ) : null}
 
-          <InformationMobile tradingData={tradingData} />
+            <InformationMobile tradingData={tradingData} />
+          </div>
         </div>
       </main>
     </>

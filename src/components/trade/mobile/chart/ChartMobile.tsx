@@ -463,7 +463,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
                 {!tradingData.longRatio ? '-.--' : formatterValue(tradingData.longRatio, 0, '%')}
               </span>
             </div>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col text-right">
               <span className="text-marketRed">Short</span>
               <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
                 {!tradingData.shortRatio ? '-.--' : formatterValue(tradingData.shortRatio, 0, '%')}

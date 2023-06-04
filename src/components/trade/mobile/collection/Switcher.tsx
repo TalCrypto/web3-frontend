@@ -32,7 +32,7 @@ export default function Switcher() {
   return (
     <>
       {/* <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue"> */}
-      <div className="h-[48px] w-full bg-secondaryBlue">
+      <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue">
         <div className="flex h-full px-5">
           <div className="flex items-center">
             <Image className="" src={currentCollectionLogo} width="24" height="24" alt="" />

@@ -148,9 +148,9 @@ export default function PositionMobile(props: any) {
     }
   }, [fullWalletAddress]);
 
-  // if (!userPosition) {
-  //   return null;
-  // }
+  if (!userPosition) {
+    return null;
+  }
 
   const clickShowSharePosition = (show: any) => {
     setShowSharePosition(show);

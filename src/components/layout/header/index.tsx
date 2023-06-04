@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import TopMenu from '@/components/layout/header/desktop/TopMenu';
 import Web3Area from '@/components/layout/header/desktop/Web3Area';
-import MobileHeader from '@/components/layout/header/mobile';
+// import MobileHeader from '@/components/layout/header/mobile';
 
 function Header() {
   return (
@@ -34,9 +34,9 @@ function Header() {
         </div>
       </div>
 
-      <div className="block bg-lightBlue md:hidden">
+      {/* <div className="block bg-lightBlue md:hidden">
         <MobileHeader />
-      </div>
+      </div> */}
     </>
   );
 }
