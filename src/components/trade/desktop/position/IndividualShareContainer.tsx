@@ -48,25 +48,22 @@ function NormalEthPrice(props: any) {
 }
 
 export default function IndividualShareContainer(props: any) {
-  const { index = 0, setShowShareComponent, userInfo } = props;
+  const { setShowShareComponent, userInfo } = props;
   const userPosition: any = useNanostore(wsUserPosition);
 
-  const filteredPosition = userPosition[index];
-  const ammTitle = filteredPosition.pair;
+  const ammTitle = userPosition.pair;
   const filteringCollection = collectionList.filter((item: any) => item.name === ammTitle);
   const filteredCollection = filteringCollection[0];
-  const pnlStatus = filteredPosition.unrealizedPnl
-    ? Number(calculateNumber(filteredPosition.unrealizedPnl, 4)) >= 0
-    : Number(calculateNumber(filteredPosition.unrealizedPnl, 4)) >= 0;
-  const side = Number(calculateNumber(filteredPosition.size, 4)) > 0;
-  const leverage = Number(calculateNumber(filteredPosition.remainMarginLeverage, 2)).toFixed(2);
-  const pnlValue = filteredPosition.unrealizedPnl
-    ? calculateNumber(filteredPosition.unrealizedPnl, 4)
-    : calculateNumber(filteredPosition.unrealizedPnl, 4);
-  const entryPrice = calculateNumber(filteredPosition.entryPrice, 2);
-  const futurePrice = filteredPosition.spotPrice
-    ? calculateNumber(filteredPosition.spotPrice, 2)
-    : calculateNumber(filteredPosition.currentPrice, 2);
+  const pnlStatus = userPosition.unrealizedPnl
+    ? Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0
+    : Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0;
+  const side = Number(calculateNumber(userPosition.size, 4)) > 0;
+  const leverage = Number(calculateNumber(userPosition.remainMarginLeverage, 2)).toFixed(2);
+  const pnlValue = userPosition.unrealizedPnl
+    ? calculateNumber(userPosition.unrealizedPnl, 4)
+    : calculateNumber(userPosition.unrealizedPnl, 4);
+  const entryPrice = calculateNumber(userPosition.entryPrice, 2);
+  const futurePrice = userPosition.spotPrice ? calculateNumber(userPosition.spotPrice, 2) : calculateNumber(userPosition.currentPrice, 2);
   const currentPositionName = filteredCollection.collectionName;
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);

@@ -176,9 +176,7 @@ export default function PositionDetails(props: any) {
 
   return (
     <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
-      {showSharePosition ? (
-        <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
-      ) : null}
+      {showSharePosition ? <IndividualShareContainer setShowShareComponent={setShowSharePosition} userInfo={userInfo} /> : null}
       <div className=" mb-[36px] flex justify-between">
         <div className="flex space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
