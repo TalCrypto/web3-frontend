@@ -15,7 +15,9 @@ import {
   wsIsShowTransferTokenModal,
   wsBalance,
   wsIsWalletLoading,
-  wsIsApproveRequired
+  wsIsApproveRequired,
+  wsFullWalletAddress,
+  wsUserPosition
 } from '@/stores/WalletState';
 
 async function fetchUserData() {
@@ -67,12 +69,15 @@ const handleLoginSuccess = async () => {
   }
 };
 
-// const logout = () => {
-//   setFullWalletAddress('');
-//   setIsLoginState(false);
-//   setIsApproveRequired(false);
-//   resetOtherState();
-// };
+const logout = () => {
+  wsFullWalletAddress.set('');
+  wsIsLogin.set(false);
+  wsIsApproveRequired.set(false);
+
+  wsUserPosition.set(null);
+  // setHistoryRecords([]);
+  wsWethBalance.set(0);
+};
 
 const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
   wsWalletAddress.set(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
@@ -149,7 +154,7 @@ export const disconnectWallet = (callback: any = null) => {
     if (callback) {
       callback();
     }
-    // handleLogout();
+    logout();
   });
 };
 

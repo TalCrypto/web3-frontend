@@ -26,7 +26,7 @@ import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
-import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken } from '@/stores/WalletState';
+import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 
 function SectionDividers() {
   return (
@@ -63,22 +63,13 @@ const fullCloseEstimation = {
 function QuantityEnter(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    onChange,
-    isAmountTooSmall,
-    isAmountTooLarge,
-    userPosition,
-    closeValue,
-    tradingData,
-    setCloseValue,
-    setCurrentMaxValue,
-    disabled
-  } = props;
+  const { onChange, isAmountTooSmall, isAmountTooLarge, closeValue, tradingData, setCloseValue, setCurrentMaxValue, disabled } = props;
 
   const [isFocus, setIsFocus] = useState(false);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
   const fullWalletAddress = walletProvider.holderAddress;
   const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -320,13 +311,13 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
     isPending,
     setToleranceRate,
     isWaiting,
-    userPosition,
     isBadDebt
   } = props;
 
   const isHasPartialClose = useNanostore(hasPartialClose);
   const fullWalletAddress = walletProvider.holderAddress;
   const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // sync isProcessing to store/tradePanel
   useEffect(() => {
@@ -586,8 +577,9 @@ function QuantityTips(props: any) {
 }
 
 function EstimationComponent(props: any) {
-  const { userPosition, estimatedValue = {}, sizeInEth, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
+  const { estimatedValue = {}, sizeInEth, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
   const isNewPosition = 'newPosition' in estimatedValue;
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // determine if input is valid or error state
   let isError = isAmountTooSmall || isAmountTooLarge;
@@ -597,12 +589,11 @@ function EstimationComponent(props: any) {
 
   return (
     <div>
-      {userPosition === null || estimatedValue === null ? (
+      {!userPosition || estimatedValue === null ? (
         <UpdateValueNoDataDisplay title="Notional Value" unit=" WETH" />
       ) : (
         <UpdateValueDisplay
           title="Notional Value"
-          userPosition={userPosition}
           currentValue={!userPosition ? '-.--' : sizeInEth}
           newValue={
             !isNewPosition || isError || closeValue <= 0
@@ -614,7 +605,7 @@ function EstimationComponent(props: any) {
           unit=" WETH"
         />
       )}
-      {userPosition === null || estimatedValue === null ? (
+      {!userPosition || estimatedValue === null ? (
         <UpdateValueNoDataDisplay title="Collateral" unit="%" />
       ) : (
         <UpdateValueDisplay
@@ -630,8 +621,7 @@ function EstimationComponent(props: any) {
               ) : null}
             </span>
           }
-          userPosition={userPosition}
-          currentValue={userPosition === null ? '-.--' : calculateNumber(userPosition.realMargin, 4)}
+          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMargin, 4)}
           currentUnit=""
           newValue={
             !isNewPosition || isError || closeValue <= 0
@@ -643,13 +633,12 @@ function EstimationComponent(props: any) {
           unit=" WETH"
         />
       )}
-      {userPosition === null && estimatedValue === null ? (
+      {!userPosition && estimatedValue === null ? (
         <UpdateValueNoDataDisplay title="Leverage" unit="x" />
       ) : (
         <UpdateValueDisplay
           title="Leverage"
-          userPosition={userPosition}
-          currentValue={userPosition === null ? '-.--' : calculateNumber(userPosition.remainMarginLeverage, 2)}
+          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.remainMarginLeverage, 2)}
           currentUnit="x"
           newValue={
             !isNewPosition || isError || closeValue <= 0
@@ -661,13 +650,13 @@ function EstimationComponent(props: any) {
           unit="x"
         />
       )}
-      {/* {userPosition === null || estimatedValue === null ? (
+      {/* {!userPosition || estimatedValue === null ? (
         <UpdateValueNoDataDisplay title="Collateral Ratio" unit="%" />
       ) : (
         <UpdateValueDisplay
           title="Collateral Ratio"
-          userPosition={userPosition}
-          currentValue={userPosition === null ? '-.--' : calculateNumber(userPosition.realMarginRatio, 2)}
+          
+          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMarginRatio, 2)}
           currentUnit="%"
           newValue={
             !isNewPosition
@@ -799,8 +788,7 @@ function CloseSlider(props: any) {
 export default function CloseCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, userPosition, wethBalance, tradingData, currentToken, setShowOverFluctuationContent, setTradeWindowIndex } =
-    props;
+  const { refreshPositions, wethBalance, tradingData, currentToken, setShowOverFluctuationContent, setTradeWindowIndex } = props;
 
   const [closeValue, setCloseValue] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -823,6 +811,7 @@ export default function CloseCollateral(props: any) {
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
   const fullWalletAddress = walletProvider.holderAddress;
+  const userPosition: any = useNanostore(wsUserPosition);
 
   const actionButtonRef = useRef();
 
@@ -954,7 +943,6 @@ export default function CloseCollateral(props: any) {
           handleEnter(e);
         }}
         wethBalance={wethBalance}
-        userPosition={userPosition}
         closeValue={closeValue}
         tradingData={tradingData}
         setCloseValue={setCloseValue}
@@ -1028,7 +1016,6 @@ export default function CloseCollateral(props: any) {
         </div>
       </div>
       <EstimationComponent
-        userPosition={userPosition}
         estimatedValue={estimatedValue}
         sizeInEth={sizeInEth}
         closeValue={closeValue}
@@ -1059,7 +1046,6 @@ export default function CloseCollateral(props: any) {
         isPending={isPending}
         setToleranceRate={setToleranceRate}
         isWaiting={isWaiting}
-        userPosition={userPosition}
         isBadDebt={isBadDebt}
       />
       {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}

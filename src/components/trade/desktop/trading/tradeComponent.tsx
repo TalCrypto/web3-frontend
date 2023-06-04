@@ -29,7 +29,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
 import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
@@ -38,9 +38,10 @@ import { logEvent } from 'firebase/analytics';
 function LongShortRatio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { userPosition, setSaleOrBuyIndex, saleOrBuyIndex } = props;
+  const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
   const fullWalletAddress = walletProvider.holderAddress;
   const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   function analyticsLogSide(index: any, currentCollection: any) {
     if (firebaseAnalytics) {
@@ -61,10 +62,10 @@ function LongShortRatio(props: any) {
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
-          ${userPosition !== null ? 'opacity-30' : ''}
+          ${!userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
-          if (userPosition === null) {
+          if (!userPosition) {
             setSaleOrBuyIndex(0);
             analyticsLogSide(0, currentToken);
           }
@@ -75,10 +76,10 @@ function LongShortRatio(props: any) {
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
-          ${userPosition !== null ? 'opacity-30' : ''}
+          ${userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
-          if (userPosition === null) {
+          if (!userPosition) {
             setSaleOrBuyIndex(1);
             analyticsLogSide(1, currentToken);
           }
@@ -1119,7 +1120,7 @@ export default function TradeComponent(props: any) {
       <LongShortRatio
         saleOrBuyIndex={saleOrBuyIndex}
         setSaleOrBuyIndex={setSaleOrBuyIndex}
-        userPosition={userPosition}
+
         // tokenRef={tokenRef}
       />
       <QuantityEnter
@@ -1189,7 +1190,6 @@ export default function TradeComponent(props: any) {
         estimatedValue={estimatedValue}
         // tokenRef={tokenRef}
         leverageValue={leverageValue}
-        userPosition={userPosition}
         value={quantity}
         isAmountTooSmall={isAmountTooSmall}
         isInsuffBalance={isInsuffBalance}

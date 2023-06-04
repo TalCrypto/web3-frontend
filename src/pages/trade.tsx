@@ -20,7 +20,7 @@ import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsHistoryGroupByMonth, wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsCurrentToken, wsHistoryGroupByMonth, wsIsLogin, wsIsWrongNetwork, wsUserPosition } from '@/stores/WalletState';
 import { formatDateTime } from '@/utils/date';
 import { apiConnection } from '@/utils/apiConnection';
 
@@ -37,7 +37,6 @@ function TradePage(props: TradePagePros) {
   const { router } = props;
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
-  const [userPosition, setUserPosition] = useState(null);
   const [maxReduceValue, setMaxReduceValue] = useState('');
   const [historyRecords, setHistoryRecords] = useState([]);
   const [wethBalance, setWethBalance] = useState(0);
@@ -66,7 +65,7 @@ function TradePage(props: TradePagePros) {
     try {
       const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
       const traderPositionInfo: any = await getTraderPositionInfo(currentAmm, walletProvider.holderAddress);
-      setUserPosition(traderPositionInfo);
+      wsUserPosition.set(traderPositionInfo);
       const maxReduce = await walletProvider.getMaxReduceCollateralValue(currentAmm, walletProvider.holderAddress);
       const maxReduceValueTemp: any = calculateNumber(maxReduce, 4);
       setMaxReduceValue(maxReduceValueTemp);
@@ -142,7 +141,6 @@ function TradePage(props: TradePagePros) {
                 <TradingWindow
                   wethBalance={wethBalance}
                   refreshPositions={fetchPositions}
-                  userPosition={userPosition}
                   tradingData={tradingData}
                   maxReduceValue={maxReduceValue}
                 />
@@ -152,7 +150,6 @@ function TradePage(props: TradePagePros) {
                 <ChartWindows tradingData={tradingData} />
                 {isLoginState ? (
                   <PositionDetails
-                    userPosition={userPosition}
                     tradingData={tradingData}
                     setHistoryModalIsVisible={setHistoryModalIsVisible}
                     setFundingModalIsShow={setFundingModalIsShow}
@@ -172,7 +169,6 @@ function TradePage(props: TradePagePros) {
 
           {/* {isLoginState ? ( */}
           <PositionMobile
-            userPosition={userPosition}
             tradingData={tradingData}
             setHistoryModalIsVisible={setHistoryModalIsVisible}
             setFundingModalIsShow={setFundingModalIsShow}

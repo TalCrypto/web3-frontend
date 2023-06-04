@@ -23,7 +23,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
-import { wsCurrentToken, wsIsLogin } from '@/stores/WalletState';
+import { wsCurrentToken, wsIsLogin, wsUserPosition } from '@/stores/WalletState';
 
 import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
@@ -50,12 +50,13 @@ export default function PositionDetails(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
-  const { userPosition, tradingData } = props;
+  const { tradingData } = props;
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapLmt = useNanostore(priceGapLimit);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -123,7 +124,7 @@ export default function PositionDetails(props: any) {
   let totalPnlValue = '';
   let numberTotalPnl = 0;
 
-  if (userPosition !== null && tradingData !== null) {
+  if (userPosition && tradingData) {
     // size = calculateNumber(userPosition.size, 4);
     // currentPrice = calculateNumber(tradingData.spotPrice, 2);
     absoluteSize = Math.abs(Number(calculateNumber(userPosition.size, 4)));
@@ -151,7 +152,7 @@ export default function PositionDetails(props: any) {
     }
   }, [fullWalletAddress]);
 
-  if (userPosition === null) {
+  if (!userPosition) {
     return null;
   }
 
@@ -176,7 +177,7 @@ export default function PositionDetails(props: any) {
   return (
     <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
       {showSharePosition ? (
-        <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowDropdown} userInfo={userInfo} />
+        <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
       ) : null}
       <div className=" mb-[36px] flex justify-between">
         <div className="flex space-x-[6px]">
@@ -221,8 +222,8 @@ export default function PositionDetails(props: any) {
         </div>
         <div className="flex text-[15px] font-normal text-highEmphasis">
           <div className="w-[15%]">
-            <span className={userPosition === null ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
-              {userPosition === null ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
+            <span className={!userPosition ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
+              {!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
             </span>
           </div>
           <div className="flex w-[25%] space-x-[12px]">
@@ -241,7 +242,7 @@ export default function PositionDetails(props: any) {
           </div>
           <div className="flex w-[20%] pl-12">
             <span className={`normalprice mr-1 ${isLoading || collectionIsPending[currentCollection.amm] ? 'flash' : ''}`}>
-              {userPosition === null
+              {!userPosition
                 ? '---'
                 : isLeverageNegative
                 ? 'N/A'
@@ -260,7 +261,7 @@ export default function PositionDetails(props: any) {
           <div className="relative flex w-[20%] space-x-[3px] pl-4">
             <MedPriceIcon
               priceValue={
-                userPosition === null
+                !userPosition
                   ? '---'
                   : Number(calculateNumber(userPosition.liquidationPrice, 2)) < 0
                   ? '0.00'
@@ -289,10 +290,8 @@ export default function PositionDetails(props: any) {
           </div>
           <div className="w-[20%]">
             <MedPriceIcon
-              priceValue={userPosition === null ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
-              className={
-                userPosition === null ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'
-              }
+              priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
+              className={!userPosition ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'}
               isLoading={isLoading || collectionIsPending[currentCollection.amm]}
             />
           </div>

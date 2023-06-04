@@ -23,7 +23,7 @@ import collectionsLoading from '@/stores/collectionsLoading';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken } from '@/stores/WalletState';
+import { wsIsLogin, wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
 
 function SaleOrBuyRadio(props: any) {
@@ -75,7 +75,6 @@ function QuantityEnter(props: any) {
   const {
     value,
     setValue,
-    userPosition,
     onChange,
     isInsuffBalance,
     wethBalance,
@@ -526,7 +525,6 @@ function QuantityTips(props: any) {
 
 function EstimationValueDisplay(props: any) {
   const {
-    userPosition,
     marginEstimation = {},
     marginRatioChecker,
     estMargin,
@@ -537,6 +535,7 @@ function EstimationValueDisplay(props: any) {
     initialMarginChecker,
     reduceMarginChecking
   } = props;
+  const userPosition: any = useNanostore(wsUserPosition);
 
   let isError = balanceChecking || marginRatioChecker || minimalMarginChecking || initialMarginChecker || reduceMarginChecking;
   if (value <= 0) {
@@ -550,7 +549,6 @@ function EstimationValueDisplay(props: any) {
       ) : (
         <UpdateValueDisplay
           title="Collateral Amount"
-          userPosition={userPosition}
           currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMargin, 4)}
           newValue={!marginEstimation || marginRatioChecker || isError || adjustMarginValue <= 0 ? '-.--' : estMargin}
           unit=" WETH"
@@ -561,7 +559,6 @@ function EstimationValueDisplay(props: any) {
       ) : (
         <UpdateValueDisplay
           title="Collateral Ratio"
-          userPosition={userPosition}
           currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.marginRatio, 1)}
           newValue={!marginEstimation || marginRatioChecker ? '-.--' : calculateNumber(marginEstimation.marginRatio, 1)}
           unit="%"
@@ -573,7 +570,6 @@ function EstimationValueDisplay(props: any) {
       ) : (
         <UpdateValueDisplay
           title="Leverage"
-          userPosition={userPosition}
           currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.remainMarginLeverage, 2)}
           newValue={
             !marginEstimation || marginRatioChecker || isError
@@ -590,7 +586,6 @@ function EstimationValueDisplay(props: any) {
       ) : (
         <UpdateValueDisplay
           title="Liquidation Price"
-          userPosition={userPosition}
           currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.liquidationPrice, 4)}
           newValue={
             !marginEstimation || marginRatioChecker || isError
@@ -649,7 +644,7 @@ function AdjustCollateralSlidingBars(props: any) {
 export default function AdjustCollateral(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, userPosition, wethBalance, fullWalletAddress, tokenRef, currentToken, maxReduceValue } = props;
+  const { refreshPositions, wethBalance, tokenRef, currentToken, maxReduceValue } = props;
   const [adjustMarginValue, setAdjustMarginValue] = useState(0);
   const [marginIndex, setMarginIndex] = useState(0);
   const [marginEstimation, setMarginEstimation] = useState(null);
@@ -661,6 +656,7 @@ export default function AdjustCollateral(props: any) {
   const [isPending, setIsPending] = useState(false);
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
+  const userPosition: any = useNanostore(wsUserPosition);
 
   const balanceChecking = Number(adjustMarginValue) > Number(wethBalance) && marginIndex === 0;
   const newMarginEstimation: any = marginEstimation;
@@ -669,6 +665,7 @@ export default function AdjustCollateral(props: any) {
   const minimalMarginChecking = Number(adjustMarginValue) !== 0 && Number(adjustMarginValue) < 0.01 && adjustMarginValue !== 0;
   const initialMarginChecker = marginEstimation !== null && marginIndex === 1 && Number(utils.formatEther(userPosition.marginRatio)) < 20;
   const reduceMarginChecking = Number(maxReduceValue) - 0.0001 < 0 && marginIndex === 1;
+  const fullWalletAddress = walletProvider.holderAddress;
 
   const handleMarginEnter = async function handleMarginEnter(marginValue: any) {
     setTextErrorMessage('');
@@ -702,7 +699,7 @@ export default function AdjustCollateral(props: any) {
   };
 
   let initialCollateral = '0';
-  if (userPosition !== null) {
+  if (userPosition) {
     const collaAmountCalc = Number(calculateNumber(userPosition.realMargin, 4));
     const marginRatioCalc = Number(Number(calculateNumber(userPosition.marginRatio, 1)) / 100).toFixed(2);
     initialCollateral = Number(collaAmountCalc - (collaAmountCalc / Number(marginRatioCalc)) * 0.2).toFixed(3);
@@ -740,7 +737,6 @@ export default function AdjustCollateral(props: any) {
         setMarginEstimation={setMarginEstimation}
         // tokenRef={tokenRef}
         setEstMargin={setEstMargin}
-        userPosition={userPosition}
         setAdjustMarginValue={setAdjustMarginValue}
       />
       <QuantityEnter
@@ -766,7 +762,6 @@ export default function AdjustCollateral(props: any) {
         value={adjustMarginValue}
         setValue={setAdjustMarginValue}
         maxReduceValue={maxReduceValue}
-        userPosition={userPosition}
         balanceChecking={balanceChecking}
         marginRatioChecker={marginRatioChecker}
         minimalMarginChecking={minimalMarginChecking}
@@ -803,7 +798,6 @@ export default function AdjustCollateral(props: any) {
       />
       <SectionDividers />
       <EstimationValueDisplay
-        userPosition={userPosition}
         marginEstimation={marginEstimation}
         marginRatioChecker={marginRatioChecker}
         estMargin={estMargin}
@@ -817,7 +811,7 @@ export default function AdjustCollateral(props: any) {
       <UpdatedCollateralValue
         marginIndex={marginIndex}
         value={
-          userPosition === null || marginEstimation === null || marginRatioChecker || isInputError || Number(adjustMarginValue) <= 0
+          !userPosition || marginEstimation === null || marginRatioChecker || isInputError || Number(adjustMarginValue) <= 0
             ? '-.-'
             : Number(adjustMarginValue).toFixed(4)
         }

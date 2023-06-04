@@ -14,6 +14,8 @@ import { walletProvider } from '@/utils/walletProvider';
 import { pageTitleParser } from '@/utils/eventLog';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
+import { wsUserPosition } from '@/stores/WalletState';
+import { useStore as useNanostore } from '@nanostores/react';
 
 function LargeEthPrice(props: any) {
   const { pnlValue } = props;
@@ -44,7 +46,8 @@ function NormalEthPrice(props: any) {
 }
 
 export default function IndividualShareContainer(props: any) {
-  const { userPosition, index = 0, setShowShareComponent, userInfo } = props;
+  const { index = 0, setShowShareComponent, userInfo } = props;
+  const userPosition: any = useNanostore(wsUserPosition);
   const filteredPosition = userPosition[index];
   const ammTitle = filteredPosition.pair;
   const filteringCollection = collectionList.filter((item: any) => item.name === ammTitle);

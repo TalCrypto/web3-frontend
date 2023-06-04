@@ -28,7 +28,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -51,7 +51,7 @@ export default function PositionMobile(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
-  const { userPosition, tradingData } = props;
+  const { tradingData } = props;
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
@@ -69,6 +69,7 @@ export default function PositionMobile(props: any) {
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
   const currentCollectionName = currentCollection.shortName || 'DEGODS';
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // liquidation warning
   const positionType = userPosition ? (userPosition.size > 0 ? 'LONG' : 'SHORT') : null;
@@ -120,7 +121,7 @@ export default function PositionMobile(props: any) {
   let totalPnlValue = '';
   let numberTotalPnl = 0;
 
-  if (userPosition !== null && tradingData !== null) {
+  if (userPosition && tradingData) {
     // size = calculateNumber(userPosition.size, 4);
     // currentPrice = calculateNumber(tradingData.spotPrice, 2);
     // absoluteSize = Math.abs(Number(calculateNumber(userPosition.size, 4)));
@@ -147,7 +148,7 @@ export default function PositionMobile(props: any) {
     }
   }, [fullWalletAddress]);
 
-  // if (userPosition === null) {
+  // if (!userPosition) {
   //   return null;
   // }
 
@@ -193,9 +194,9 @@ export default function PositionMobile(props: any) {
             <div className="text-15 font-400">
               <div>
                 <MedPriceIcon
-                  priceValue={userPosition === null ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
+                  priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
                   className={
-                    userPosition === null ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'
+                    !userPosition ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'
                   }
                   isLoading={isLoading || collectionIsPending[currentCollection.amm]}
                 />
@@ -206,8 +207,8 @@ export default function PositionMobile(props: any) {
           <div className="mb-1 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
             <div>
-              <span className={userPosition === null ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
-                {userPosition === null ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
+              <span className={!userPosition ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
+                {!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
               </span>
             </div>
           </div>
@@ -251,7 +252,7 @@ export default function PositionMobile(props: any) {
 
             <div className="">
               <span className={`normalprice mr-1 ${isLoading || collectionIsPending[currentCollection.amm] ? 'flash' : ''}`}>
-                {userPosition === null
+                {!userPosition
                   ? '---'
                   : isLeverageNegative
                   ? 'N/A'
@@ -274,7 +275,7 @@ export default function PositionMobile(props: any) {
             <div className="">
               <MedPriceIcon
                 priceValue={
-                  userPosition === null
+                  !userPosition
                     ? '---'
                     : Number(calculateNumber(userPosition.liquidationPrice, 2)) < 0
                     ? '0.00'

@@ -9,7 +9,7 @@ import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral'
 import TradePanelModal from '@/components/trade/desktop/trading/TradePanelModal';
 
 import { connectWallet } from '@/utils/Wallet';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -32,12 +32,13 @@ function OverFluctuationError(props: any) {
 }
 
 function TradingWindow(props: any) {
-  const { userPosition, refreshPositions, tradingData, wethBalance, maxReduceValue } = props;
+  const { refreshPositions, tradingData, wethBalance, maxReduceValue } = props;
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
   const isTradePanelModalShow = useNanostore(tradePanelModal.show);
   const tradePanelModalMsg = useNanostore(tradePanelModal.message);
   const tradePanelModalLink = useNanostore(tradePanelModal.link);
   const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   const traderConnectWallet = () => {
     connectWallet(() => {}, true);
@@ -49,7 +50,6 @@ function TradingWindow(props: any) {
       refreshPositions={refreshPositions}
       connectWallet={traderConnectWallet}
       wethBalance={wethBalance}
-      userPosition={userPosition}
       tradingData={tradingData}
     />
   );
@@ -58,14 +58,12 @@ function TradingWindow(props: any) {
     tradeComponent,
     <CloseCollateral
       refreshPositions={refreshPositions}
-      userPosition={userPosition}
       wethBalance={wethBalance}
       tradingData={tradingData}
       setTradeWindowIndex={setTradeWindowIndex}
     />,
     <AdjustCollateral
       refreshPositions={refreshPositions}
-      userPosition={userPosition}
       wethBalance={wethBalance}
       tradingData={tradingData}
       maxReduceValue={maxReduceValue}
@@ -83,7 +81,7 @@ function TradingWindow(props: any) {
   return (
     <div className="ml-[44px] mr-[20px] w-full 2xl:w-[400px]" style={{ height: 'fit-content' }}>
       {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null}
-      {userPosition !== null ? (
+      {userPosition ? (
         <div
           className="border-b-none flex h-[50px] justify-between
             rounded-t-[12px] border-[1px] border-[#71aaff]/[.2]
@@ -107,9 +105,7 @@ function TradingWindow(props: any) {
         className="mb-[60px]  flex 
         rounded-[6px] border-[1px] border-[#71aaff]/[.2]
       bg-lightBlue p-6 px-[36px] py-[32px] text-white">
-        <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>
-          {userPosition !== null ? displayComponent : tradeComponent}
-        </div>
+        <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
         <TradePanelModal
           isShow={isTradePanelModalShow}
           setIsShow={tradePanelModal.setIsShow}
