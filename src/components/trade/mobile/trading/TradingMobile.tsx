@@ -11,6 +11,7 @@ import TradePanelModal from '@/components/trade/mobile/trading/TradePanelModal';
 import { connectWallet } from '@/utils/Wallet';
 import { wsCurrentToken, wsIsShowTradingMobile, wsUserPosition } from '@/stores/WalletState';
 import Image from 'next/image';
+import collectionList from '@/const/collectionList';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -40,6 +41,8 @@ function TradingMobile(props: any) {
   const tradePanelModalLink = useNanostore(tradePanelModal.link);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
+  const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
+  const currentCollectionName = currentCollection.collectionName || 'DEGODS';
 
   const traderConnectWallet = () => {
     connectWallet(() => {}, true);
@@ -116,7 +119,7 @@ function TradingMobile(props: any) {
           alt=""
           onClick={handleBackClick}
         />
-        <div className="flex">Trade BYC</div>
+        <div className="flex">Trade {currentCollectionName}</div>
       </div>
     </div>
   );

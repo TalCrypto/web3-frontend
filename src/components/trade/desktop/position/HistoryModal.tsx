@@ -275,9 +275,9 @@ const HistoryModal = (props: any) => {
                             <div
                               key={`item-${idx}-${record.timestamp}`}
                               className={`flex cursor-pointer justify-between
-                                border-b-[1px] border-b-secondaryBlue bg-secondaryBlue
+                                border-b-[1px] border-b-secondaryBlue 
                                 px-6 py-[10px] text-highEmphasis
-                                ${record.timestamp === selectedRecord.timestamp ? 'active' : ''}`}
+                                ${record.timestamp === selectedRecord.timestamp ? 'bg-secondaryBlue' : ''}`}
                               onClick={() => {
                                 setSelectedRecord(defaultSelectedRecord);
                                 setSelectedRecord(record);
