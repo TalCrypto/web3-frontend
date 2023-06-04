@@ -54,6 +54,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
   }, [balance]);
 
   const handleClick = () => {
+    if (isLogin) return;
     if (isWalletLoading) return;
     connectWallet(() => {}, true);
   };
