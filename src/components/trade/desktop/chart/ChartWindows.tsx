@@ -5,7 +5,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
 import dynamic from 'next/dynamic';
@@ -145,11 +144,13 @@ function ChartTimeTabs(props: any) {
 
   return (
     <div className="flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-      <div className="relative inline-flex w-full justify-between overflow-hidden text-center">
+      <div className="relative inline-flex w-full justify-between overflow-hidden text-center ">
         {contentArray.map((item: any, i: any) => (
           <div
             key={item.label}
-            className={`segment ${i === selectedTimeIndex ? 'active' : ''} ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
+            className={`segment text-mediumEmphasis hover:text-highEmphasis ${i === selectedTimeIndex ? 'active' : ''} ${
+              isStartLoadingChart ? 'waitCursor' : 'presscursor'
+            }
             z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
             ref={item.ref}>
             {i === selectedTimeIndex ? (
@@ -164,8 +165,8 @@ function ChartTimeTabs(props: any) {
             />
             <label
               htmlFor={item.label}
-              className={`block p-2 text-[16px] font-semibold
-                ${i === selectedTimeIndex ? 'text-white' : 'text-mediumEmphasis'}`}>
+              className={`block p-2 text-[16px] 
+                ${i === selectedTimeIndex ? 'font-semibold text-white' : ''}`}>
               {item.label}
             </label>
           </div>

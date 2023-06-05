@@ -8,16 +8,11 @@ import { utils } from 'ethers';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
-// import { logEvent } from 'firebase/analytics';
-// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-// import { Tooltip } from 'react-bootstrap';
 import { useRouter } from 'next/router';
-// import { debounce } from 'lodash';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
 import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
-// import { firebaseAnalytics } from '@/const/firebaseConfig';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
@@ -30,7 +25,6 @@ import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
-// const { isWhitelisted } = walletProvider;
 import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';

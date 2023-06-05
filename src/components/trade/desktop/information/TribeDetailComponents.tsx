@@ -128,7 +128,7 @@ const MarketTrade = () => {
 
               <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
               <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
-              <div>
+              <div className="overflow-hidden text-ellipsis">
                 <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
                   {trimString(userId, 10) || walletAddressToShow(userAddress)}
                 </span>

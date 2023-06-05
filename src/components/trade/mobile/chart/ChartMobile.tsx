@@ -55,14 +55,13 @@ const ChartDisplay = dynamic(() => import('./chartDisplay'), {
 
 function PriceIndicator(props: any) {
   const { priceChangeRatioAndValue } = props;
-  const { priceChangeRatio, priceChangeValue } = priceChangeRatioAndValue;
+  const { priceChangeRatio } = priceChangeRatioAndValue;
   const [localPriceChangeRatioAndValue, setLocalPriceChangeRatioAndValue] = useState({
     priceChangeRatio: '',
     priceChangeValue: ''
   });
 
   const [isPriceChange, setIsPriceChange] = useState(false);
-  const fullWalletAddress = walletProvider.holderAddress;
 
   useEffect(() => {
     setIsPriceChange(true);
@@ -115,38 +114,6 @@ function PriceIndicator(props: any) {
   );
 }
 
-// function LabelDisplay(props: any) {
-//   const { title = '', value = '', className = '', children } = props;
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         {title}
-//         <span className={className}>{value}</span>
-//       </div>
-//     </div>
-//   );
-// }
-
-// function LabelDisplayWithTips(props: any) {
-//   const { title = '', value = '', className = '', children, placement = 'left', size = '20px', tips = '' } = props;
-
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         <TitleTips titleText={title} tipsText={tips} placement="top" />
-//         <span className={className}>{value}</span>
-//         {/* <TextTips
-//           tipsText="Resulting price of users' trades in the VAMM system based on the constant product formula"
-//           placement={placement}
-//           size={size}
-//         /> */}
-//       </div>
-//     </div>
-//   );
-// }
-
 function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
   if (firebaseAnalytics) {
@@ -167,13 +134,9 @@ function ChartTimeTabs(props: any) {
 
   const componentReady = useRef();
 
-  // useEffect(() => {
-  //   componentReady.current = true;
-  // }, []);
-
   useEffect(() => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
-    const { offsetWidth, offsetLeft } = activeSegmentRef.current;
+    const { offsetLeft } = activeSegmentRef.current;
     const { style } = controlRef.current;
     style.setProperty('--highlight-width', '25px');
     style.setProperty('--highlight-x-pos', `${offsetLeft + 8}px`);
