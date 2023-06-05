@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 import { ThreeDots } from 'react-loader-spinner';
@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { connectWallet, disconnectWallet, updateTargetNetwork } from '@/utils/Wallet';
 import { walletProvider } from '@/utils/walletProvider';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
+import Link from 'next/link';
+import { withRouter } from 'next/router';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -15,6 +17,10 @@ const MobileMenu = (props: any) => {
 
   const fullWalletAddress = walletProvider.holderAddress;
   const wethBalance = useNanostore(wsWethBalance);
+
+  const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
+  const [isOthersOpen, setIsOthersOpen] = useState(false);
+  const { router } = props;
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -43,10 +49,145 @@ const MobileMenu = (props: any) => {
     // getTestToken();
   };
 
+  const onBtnClickSocial = () => {
+    setIsShowSocialFooter(!isShowSocialFooter);
+  };
+
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 top-0 z-10 flex h-screen w-full
-        items-center justify-center overflow-auto bg-lightBlue">
+      className="fixed bottom-0 left-0 right-0 top-0 z-10  h-screen w-full
+        overflow-auto bg-lightBlue">
+      <div className="mt-[18px] flex">
+        <div className="w-full pl-[20px] text-[14px] text-highEmphasis">
+          <div className="flex w-full items-center">
+            <div className="mr-3 w-[60px]">
+              <Image className="mr-[6px]" src="/images/mobile/common/avatar.svg" alt="" width={60} height={60} />
+            </div>
+            <div className="max-w-[calc(100%-50px)] ">
+              <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">EMMMMMMMMMMMA</div>
+              <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
+                Points: <span className="font-semibold">12</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="my-[18px]">
+            <Link
+              href="/portfolio"
+              className={`
+                ${router.route.toLowerCase() === '/portfolio' ? 'mobile-menu-active font-semibold' : ''}
+              `}>
+              Portfolio
+            </Link>
+          </div>
+          <div className="my-[18px]">
+            <Link
+              href="/trade"
+              className={`
+                ${router.route.toLowerCase() === '/trade' ? 'mobile-menu-active font-semibold' : ''}
+              `}>
+              Trade
+            </Link>
+          </div>
+          {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
+          <div className="my-[18px] flex items-center" onClick={() => setIsOthersOpen(!isOthersOpen)}>
+            {/* <Link href="/others">Others</Link> */}
+            Others
+            <Image
+              className={`ml-2 ${isOthersOpen ? 'rotate-90' : ''}`}
+              src="/images/mobile/common/angle-right.png"
+              alt=""
+              width={6}
+              height={10}
+            />
+          </div>
+          {isOthersOpen ? (
+            <>
+              <div className="my-[18px] ml-5">
+                <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                  Avatar
+                  <span
+                    className="ml-[6px] rounded-[2px] border-[1px] border-[#ffc34b]/[.87] px-[3px]
+                    py-[1px] text-[8px] text-[#ffc34b]/[.87]">
+                    SOON
+                  </span>
+                </Link>
+              </div>
+              <div className="my-[18px] ml-5">
+                <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                  Battle
+                  <span
+                    className="ml-[6px] rounded-[2px] border-[1px] border-[#ffc34b]/[.87] px-[3px]
+                    py-[1px] text-[8px] text-[#ffc34b]/[.87]">
+                    SOON
+                  </span>
+                </Link>
+              </div>
+            </>
+          ) : null}
+
+          <div className="my-[18px]">
+            <Link
+              href="/airdrop"
+              className={`
+            ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
+            `}>
+              Airdrop
+            </Link>
+          </div>
+        </div>
+        {isShowSocialFooter ? (
+          <div
+            className="fixed left-0 top-0 z-10 h-full w-full"
+            onClick={() => {
+              setIsShowSocialFooter(false);
+            }}>
+            <div
+              className="fixed right-[20px] top-[75px] rounded-[4px]
+                bg-secondaryBlue text-[14px] text-highEmphasis">
+              <div className="flex h-[52px] w-[160px] items-center pl-5">
+                <Link href="https://discord.com/invite/v9xrD3rK9j" className="flex" target="_blank">
+                  <Image className="mr-[6px]" src="/images/components/layout/footer/discord.svg" alt="" width={18} height={18} />
+                  Discord
+                </Link>
+              </div>
+              <div className="flex h-[52px] w-[160px] items-center pl-5">
+                <Link href="https://twitter.com/Tribe3Official" className="flex" target="_blank">
+                  <Image className="mr-[6px]" src="/images/components/layout/footer/twitter.svg" alt="" width={18} height={18} />
+                  Twitter
+                </Link>
+              </div>
+              <div className="flex h-[52px] w-[160px] items-center pl-5">
+                <Link href="https://t.me/OfficialTribe3" className="flex" target="_blank">
+                  <Image className="mr-[6px]" src="/images/components/layout/footer/telegram.svg" alt="" width={18} height={18} />
+                  Telegram
+                </Link>
+              </div>
+              <div className="flex h-[52px] w-[160px] items-center pl-5">
+                <Link href="https://mirror.xyz/tribe3.eth" className="flex" target="_blank">
+                  <Image className="mr-[6px]" src="/images/components/layout/footer/mirror.svg" alt="" width={18} height={18} />
+                  Mirror
+                </Link>
+              </div>
+              <div className="flex h-[52px] w-[160px] items-center pl-5">
+                <Link href="https://tribe3.gitbook.io/tribe3/" className="flex" target="_blank">
+                  <Image className="mr-[6px]" src="/images/components/layout/footer/docs.svg" alt="" width={18} height={18} />
+                  Docs
+                </Link>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        <Image
+          src="/images/mobile/menu/social.svg"
+          alt=""
+          className="fixed right-[20px] top-[340px]"
+          width={40}
+          height={40}
+          onClick={onBtnClickSocial}
+        />
+      </div>
+
       <div className="fixed bottom-0 h-[250px] w-full bg-secondaryBlue">
         <div className="fixed bottom-[50px] h-[200px] w-full text-center">
           {!isLogin ? (
@@ -161,4 +302,4 @@ const MobileMenu = (props: any) => {
   );
 };
 
-export default MobileMenu;
+export default withRouter(MobileMenu);
