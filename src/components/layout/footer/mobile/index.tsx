@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 // import Sidebar from '@/components/layout/footer/mobile/Sidebar';
@@ -6,6 +6,7 @@ import { connectWallet, updateTargetNetwork } from '@/utils/Wallet';
 import { wsIsLogin, wsIsShowTradingMobile, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
 import { walletProvider } from '@/utils/walletProvider';
+import MobileMenu from '@/components/trade/mobile/menu';
 
 function MobileFooter() {
   const isLogin = useNanostore(wsIsLogin);
@@ -13,19 +14,7 @@ function MobileFooter() {
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isTethCollected = Number(walletProvider.wethBalance) !== 0;
   const wethBalance = useNanostore(wsWethBalance);
-  const [isSidebarShow, setIsSidebarShow] = useState(false);
-
-  useEffect(() => {
-    const handleBodyClick = (event: any) => {
-      if (!event.target.closest('.footer') && !event.target.closest('.sidebar') && isSidebarShow) {
-        setIsSidebarShow(false);
-      }
-    };
-    document.body.addEventListener('click', handleBodyClick);
-    return () => {
-      document.body.removeEventListener('click', handleBodyClick);
-    };
-  }, [isSidebarShow]);
+  const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
 
   const onClickBottomButton = async () => {
     if (!isLogin) {
@@ -88,19 +77,14 @@ function MobileFooter() {
           )}
           <button
             onClick={() => {
-              setIsSidebarShow(true);
+              setIsShowMobileMenu(true);
             }}>
             <Image src="/images/mobile/common/menu_icon.svg" alt="" width={40} height={40} />
           </button>
         </div>
       </div>
 
-      {/* <div
-        className={`sidebar translate-z-0 fixed right-0 top-0
-        ${isSidebarShow ? 'block' : 'hidden'}
-        z-10 h-full w-[260px] text-white`}>
-        <Sidebar />
-      </div> */}
+      {isShowMobileMenu ? <MobileMenu setIsShowMobileMenu={setIsShowMobileMenu} /> : null}
     </>
   );
 }
