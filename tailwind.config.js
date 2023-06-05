@@ -37,7 +37,7 @@ module.exports = {
         mediumEmphasis: '#a8cbffbf',
         marketRed: '#ff5656',
         marketGreen: '#78f363',
-        warn: '#FFC24BDE'
+        warn: '#ffc24bde'
       },
       fontSize: {
         h1: [

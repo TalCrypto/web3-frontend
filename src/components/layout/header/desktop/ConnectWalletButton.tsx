@@ -2,32 +2,31 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
 import React, { useEffect, useState } from 'react';
+import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
+
+import { wsIsWalletLoading, wsIsWrongNetwork } from '@/stores/WalletState';
 
 import { connectWallet } from '@/utils/Wallet';
 
 interface ConnectWalletButtonProps {
   isLogin: boolean;
-  inWrongNetwork: boolean;
   accountInfo: {
     address: string;
     balance: number;
   };
-  currentChain: number;
-  // getTestToken: any;
-  isWrongNetwork: boolean;
-  // updateTargetNetwork: () => void;
   callBalance: any;
   userInfo: any;
 }
 
 const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
-  const { isLogin, inWrongNetwork, accountInfo, currentChain, isWrongNetwork, callBalance, userInfo } = props;
+  const { isLogin, accountInfo, callBalance, userInfo } = props;
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const { address, balance } = accountInfo;
-  const showWethBalaceLabel = !isLogin ? '' : inWrongNetwork ? '-.-- WETH' : `${Number(balance).toFixed(2)} WETH`;
+  const showWethBalaceLabel = !isLogin ? '' : isWrongNetwork ? '-.-- WETH' : `${Number(balance).toFixed(2)} WETH`;
   const [showDisconnectTooltip, setShowDisconnectTooltip] = useState(false);
   const isNotSetUsername = !userInfo || !userInfo.username;
 
@@ -43,8 +42,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
     showUserName = '';
   }
 
-  const isWalletLoading = false;
-  // const isWalletLoading = useNanostore(walletLoading);
+  const isWalletLoading = useNanostore(wsIsWalletLoading);
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
 
   useEffect(() => {
@@ -56,6 +54,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
   }, [balance]);
 
   const handleClick = () => {
+    if (isLogin) return;
     if (isWalletLoading) return;
     connectWallet(() => {}, true);
   };
@@ -63,6 +62,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
   return (
     <div className={`navbar-outer${isLogin ? ' connected' : ''}`}>
       <button type="button" className={`navbar-button ${!isLogin ? 'not-connected' : 'connected'}`} onClick={handleClick}>
+        <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
         <div className={`container ${!isLogin ? 'flex flex-row-reverse' : ''}`} id="login-btn">
           {isWalletLoading ? (
             <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
@@ -108,15 +108,9 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
 
       <ProfileContent
         address={address}
-        inWrongNetwork={inWrongNetwork}
-        currentChain={currentChain}
         balance={balance}
         showDisconnectTooltip={showDisconnectTooltip}
         setShowDisconnectTooltip={setShowDisconnectTooltip}
-        // getTestToken={getTestToken}
-        isWrongNetwork={isWrongNetwork}
-        // updateTargetNetwork={updateTargetNetwork}
-        // isLogin={isLogin}
         callBalance={callBalance}
         userInfo={userInfo}
       />

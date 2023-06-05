@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-key */
-import React, { forwardRef, /* useImperativeHandle, */ useRef, useState } from 'react';
+import React, { useState } from 'react';
 // import { logEvent } from 'firebase/analytics';
 
 import ComingSoonWindow from '@/components/trade/desktop/information/CommingSoonWindow';
@@ -12,11 +12,9 @@ import Image from 'next/image';
 // import { firebaseAnalytics } from '@/const/firebaseConfig';
 // import { apiConnection } from '@/utils/apiConnection';
 
-function InformationsWindows(props: any) {
-  const { tradingData, isLoginState, fullWalletAddress, tokenRef, currentToken } = props;
+function InformationWindow(props: any) {
+  const { tradingData, tokenRef } = props;
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
-  const detailRef = useRef();
-  const chatRef = useRef();
   const [activeTab, setActiveTab] = useState(0);
 
   const tabsImages = [
@@ -38,42 +36,21 @@ function InformationsWindows(props: any) {
     </div>
   ));
 
-  // useImperativeHandle(ref, () => ({
-  //   fetchInformations: () => {
-  //     detailRef.current?.updateInfomations();
-  //     chatRef.current?.getFirebaseChat();
-  //   }
-  // }));
-
   return (
     <div
       className="mb-[24px] h-[530px] max-h-[1000px] cursor-default overflow-hidden
       rounded-[6px] border-[1px] border-[#2e4371] p-0 pb-10">
       <div
         className="info-tab mb-6 flex items-center
-        border-b-[2px] border-b-[#2e3064] leading-[50px]
-      ">
+        border-b-[2px] border-b-[#2e3064] leading-[50px]">
         {Tabs}
       </div>
       <div className="display-content h-full">
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
-          <TribeDetailComponents
-            ref={detailRef}
-            tradingData={tradingData}
-            fullWalletAddress={fullWalletAddress}
-            tokenRef={tokenRef}
-            currentToken={currentToken}
-            activeTab={activeTab}
-          />
+          <TribeDetailComponents tradingData={tradingData} tokenRef={tokenRef} activeTab={activeTab} />
         </div>
         <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
-          <ChatComponent
-            ref={chatRef}
-            fullWalletAddress={fullWalletAddress}
-            isLoginState={isLoginState}
-            tokenRef={tokenRef}
-            currentToken={currentToken}
-          />
+          <ChatComponent tokenRef={tokenRef} />
         </div>
         <div className={`${detailHeaderIndex === 2 ? 'block' : 'hidden'} h-full`}>
           <ComingSoonWindow />
@@ -82,4 +59,5 @@ function InformationsWindows(props: any) {
     </div>
   );
 }
-export default forwardRef(InformationsWindows);
+
+export default InformationWindow;

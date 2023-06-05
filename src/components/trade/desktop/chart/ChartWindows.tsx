@@ -4,12 +4,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { useStore } from '@nanostores/react';
+import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
@@ -29,7 +29,10 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-const flashAnim = 'animate__animated animate__flash animate__infinite';
+import { wsIsLogin, wsChatInterval, wsCurrentToken } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
+
+const flashAnim = 'flash';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -41,7 +44,7 @@ function SmallPriceIcon(props: any) {
   return (
     <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>{priceValue}</span>
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
   );
 }
@@ -80,7 +83,7 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
+        ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
       <div className="col my-auto" style={{ marginRight: '16px', alignItems: 'center', display: 'flex' }}>
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
@@ -89,8 +92,8 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-[#78f363] text-[#78f363]' : 'border-[#ff5656] text-[#ff5656]'}`}>
-      <img
+        ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
+      <Image
         alt="Polygon_pos"
         src={
           isPositive(localPriceChangeRatioAndValue.priceChangeRatio)
@@ -111,40 +114,10 @@ function PriceIndicator(props: any) {
   );
 }
 
-// function LabelDisplay(props: any) {
-//   const { title = '', value = '', className = '', children } = props;
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         {title}
-//         <span className={className}>{value}</span>
-//       </div>
-//     </div>
-//   );
-// }
-
-// function LabelDisplayWithTips(props: any) {
-//   const { title = '', value = '', className = '', children, placement = 'left', size = '20px', tips = '' } = props;
-
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         <TitleTips titleText={title} tipsText={tips} placement="top" />
-//         <span className={className}>{value}</span>
-//         {/* <TextTips
-//           tipsText="Resulting price of users' trades in the VAMM system based on the constant product formula"
-//           placement={placement}
-//           size={size}
-//         /> */}
-//       </div>
-//     </div>
-//   );
-// }
-
-function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
+function chartButtonLogged(index: any, currentCollection: any) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
+  const fullWalletAddress = walletProvider.holderAddress;
+
   if (firebaseAnalytics) {
     logEvent(firebaseAnalytics, eventName, {
       wallet: fullWalletAddress.substring(2),
@@ -161,12 +134,6 @@ function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection
 function ChartTimeTabs(props: any) {
   const { selectedTimeIndex, setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
 
-  const componentReady = useRef();
-
-  // useEffect(() => {
-  //   componentReady.current = true;
-  // }, []);
-
   useEffect(() => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
     const { offsetWidth, offsetLeft } = activeSegmentRef.current;
@@ -177,15 +144,18 @@ function ChartTimeTabs(props: any) {
 
   return (
     <div className="flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-      <div
-        className={`relative inline-flex w-full justify-between overflow-hidden text-center ${componentReady.current ? 'ready' : 'idle'}`}>
+      <div className="relative inline-flex w-full justify-between overflow-hidden text-center ">
         {contentArray.map((item: any, i: any) => (
           <div
             key={item.label}
-            className={`segment ${i === selectedTimeIndex ? 'active' : ''} ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
+            className={`segment text-mediumEmphasis hover:text-highEmphasis ${i === selectedTimeIndex ? 'active' : ''} ${
+              isStartLoadingChart ? 'waitCursor' : 'presscursor'
+            }
             z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
             ref={item.ref}>
-            {i === selectedTimeIndex ? <div className="absolute bottom-0 right-0 z-0 h-[3px] w-[25px] rounded-[2px] bg-[#5465ff]" /> : null}
+            {i === selectedTimeIndex ? (
+              <div className="absolute bottom-0 left-[5px] right-[5px] z-0 h-[3px] rounded-[2px] bg-[#5465ff]" />
+            ) : null}
             <input
               type="radio"
               value={item.label}
@@ -195,8 +165,8 @@ function ChartTimeTabs(props: any) {
             />
             <label
               htmlFor={item.label}
-              className={`block p-2 text-[16px] font-semibold
-                ${i === selectedTimeIndex ? 'text-white' : 'text-[#A8CBFF]/[.75]'}`}>
+              className={`block p-2 text-[16px] 
+                ${i === selectedTimeIndex ? 'font-semibold text-white' : ''}`}>
               {item.label}
             </label>
           </div>
@@ -207,26 +177,10 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const {
-    tradingData,
-    setSelectedTimeIndex,
-    selectedTimeIndex,
-    isStartLoadingChart,
-    /* tokenRef, */ currentToken /* isProShow, setIsProShow */
-  } = props;
+  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
-  // const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  // const [interval, setI] = useState(null);
-  // const [nextFundingTime, setNextFundingTime] = useState(0);
-  // const hadKey = Object.keys(tradingData).length > 0;
-  // const hours = 0;
-  // const minutes = 0;
-  // const seconds = 0;
-  // const rateLong = '-.--';
-  // const rateShort = '-.--';
-  // const longSide = '';
-  // const shortSide = '';
+  const currentToken = useNanostore(wsCurrentToken);
 
   useImperativeHandle(ref, () => ({
     reset() {
@@ -239,74 +193,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
     }
   }));
-
-  // if (tradingData && tradingData.fundingRateLong) {
-  //   const rawdata = utils.formatEther(tradingData.fundingRateLong);
-  //   const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-  //   const absoluteNumber = Math.abs(Number(numberRawdata));
-  //   rateLong = (
-  //     <span>
-  //       &nbsp;
-  //       {`${absoluteNumber}%`}
-  //     </span>
-  //   );
-  //   if (numberRawdata > 0) {
-  //     longSide = 'Pay';
-  //   } else {
-  //     longSide = 'Get';
-  //   }
-  // }
-  // if (tradingData && tradingData.fundingRateShort) {
-  //   const rawdata = utils.formatEther(tradingData.fundingRateShort);
-  //   const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-  //   const absoluteNumber = Math.abs(Number(numberRawdata));
-  //   rateShort = (
-  //     <span>
-  //       &nbsp;
-  //       {`${absoluteNumber}%`}
-  //     </span>
-  //   );
-  //   if (numberRawdata > 0) {
-  //     shortSide = 'Get';
-  //   } else {
-  //     shortSide = 'Pay';
-  //   }
-  // }
-
-  // function startCountdown() {
-  //   if (!hadKey) {
-  //     setTimeLabel('-- : -- : --');
-  //     return;
-  //   }
-  //   let endTime = tradingData.nextFundingTime * 1000;
-  //   const { fundingPeriod } = tradingData;
-  //   if (interval !== null) {
-  //     clearInterval(interval);
-  //   }
-  //   const intervalTime = setInterval(() => {
-  //     let difference = endTime - Date.now();
-  //     if (difference < 0) {
-  //       endTime = Date.now() + fundingPeriod * 1000;
-  //       difference = endTime - Date.now();
-  //     }
-  //     hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     minutes = Math.floor((difference / 1000 / 60) % 60)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     seconds = Math.floor((difference / 1000) % 60)
-  //       .toString()
-  //       .padStart(2, '0');
-  //     setTimeLabel(`${hours}:${minutes}:${seconds}`);
-  //   }, 1000);
-  //   setI(intervalTime);
-  // }
-
-  // if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-  //   setNextFundingTime(tradingData.nextFundingTime);
-  //   startCountdown();
-  // }
 
   const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
@@ -323,19 +209,11 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
           <div className="col newcontenttext mb-[16px]">
             <div className="text-14 font-400 flex space-x-[12px] text-highEmphasis">
               <div className="flex items-center space-x-[6px]">
-                {/* <img className="" src={selectedCollection.logo} width="16" height="16" alt="" /> */}
+                {/* <Image className="" src={selectedCollection.logo} width="16" height="16" alt="" /> */}
                 <span>{selectedCollection.displayCollectionPair}</span>
               </div>
               <div className="text-14 font-400 flex text-highEmphasis">
                 <SmallPriceIcon priceValue={`${formatterValue(tradingData.twapPrice, 2, '', '-.--')} (Oracle)`} />
-                {/* <LabelDisplayWithTips
-                  title="Spot (Oracle Price): "
-                  value={`${formatterValue(tradingData.twapPrice, 2)} (Spot)`}
-                  className="pricetextcontent"
-                  placement="right"
-                  tips="The price of the lowest-priced listed NFT within a collection across open market places. Tribe3 is using simple time weighted average floor price on a rolling 6-hour basis in 10 seconds increments"
-                  size="16px"
-                /> */}
               </div>
             </div>
           </div>
@@ -346,25 +224,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
         </div>
       </div>
       <div className="flex flex-1 items-end justify-end">
-        {/* <div className="info-set">
-          <div className="fp">
-            <TitleTips
-              titleText={`Funding Rate (${timeLabel})`}
-              tipsText="The rate of the funding payment. Funding payment is paid to/by either short or long positions based on the difference between spot and vAMM price. Funding payment happens once every 3 hours, which is calculated on a 3-hour simple weighted rolling average basis."
-              placement="top"
-            />
-            <div className="col">
-              Long <span className={longSide === 'Pay' ? 'pay' : 'receive'}>{longSide}</span>{rateLong}
-              &nbsp;
-              Short <span className={shortSide === 'Pay' ? 'pay' : 'receive'}>{shortSide}</span>{rateShort}
-            </div>
-          </div>
-          <div className="high-low">
-            <div>High: <span className="pricetextcontent">{currentTagMaxAndMinValue.max}</span></div>
-            &nbsp;
-            Low: <span className="pricetextcontent">{currentTagMaxAndMinValue.min}</span>
-          </div>
-        </div> */}
         <ChartTimeTabs
           name="group-1"
           callback={(val: any) => setSelectedTimeIndex(val)}
@@ -379,25 +238,14 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
         />
-        {/* <div className="pro-btn-container">
-          <div
-            className={`pro-btn cursor-pointer ${isProShow ? 'active' : ''}`}
-            onClick={() => {
-              const value = !isProShow;
-              setIsProShow(value);
-              localStorage.setItem('isProShow', value ? 'true' : false);
-            }}
-          >
-            <img className="" src="/static/pro_text.svg" width="18" height="18" alt="" />
-          </div>
-        </div> */}
       </div>
     </div>
   );
 });
 
 const ChartFooter = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, tokenRef, currentToken } = props;
+  const { tradingData } = props;
+  const currentToken = useNanostore(wsCurrentToken);
   const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
@@ -405,7 +253,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
 
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
-  const priceGapLmt = useStore(priceGapLimit);
+  const priceGapLmt = useNanostore(priceGapLimit);
 
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
   const popup: any = showPopup.get();
@@ -413,17 +261,17 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
 
   const [showAlertOverlay, setShowAlertOverlay] = useState(false);
 
-  const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
-  const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  const [interval, setI] = useState(null);
   const [nextFundingTime, setNextFundingTime] = useState(0);
   const hadKey = Object.keys(tradingData).length > 0;
+
+  const interval = useNanostore(wsChatInterval);
+
   let hours = '';
   let minutes = '';
   let seconds = '';
-  const rateLong = '-.--';
-  const rateShort = '-.--';
+  let rateLong = '-.--';
+  let rateShort = '-.--';
   let longSide = '';
   let shortSide = '';
 
@@ -436,27 +284,11 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
     }
   }, [isGapAboveLimit, isAlertTooltipHasShown]);
 
-  // useImperativeHandle(ref, () => ({
-  //   reset() {
-  //     setCurrentTagMaxAndMinValue({ max: '-.--', min: '-.--' });
-  //     setPriceChangeRatioAndValue({ priceChangeRatio: '', priceChangeValue: '' });
-  //   },
-  //   setGraphOtherValue({ high, low, priceChangeRatio, priceChangeValue }) {
-  //     setCurrentTagMaxAndMinValue({ max: formatterValue(high, 2), min: formatterValue(low, 2) });
-  //     setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
-  //   }
-  // }));
-
   if (tradingData && tradingData.fundingRateLong) {
     const rawdata = utils.formatEther(tradingData.fundingRateLong);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateLong = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
+    rateLong = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
       longSide = 'Pay';
     } else {
@@ -467,12 +299,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
     const rawdata = utils.formatEther(tradingData.fundingRateShort);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateShort = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
+    rateShort = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
       shortSide = 'Get';
     } else {
@@ -507,7 +334,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
         .padStart(2, '0');
       setTimeLabel(`${hours}:${minutes}:${seconds}`);
     }, 1000);
-    setI(intervalTime);
+    wsChatInterval.set(intervalTime);
   }
 
   if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
@@ -597,9 +424,9 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
           placement="top"
         />
         <div className="col text-highEmphasis">
-          Long <span className={longSide === 'Pay' ? 'pay' : 'receive'}>{longSide}</span>
+          Long <span className={longSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{longSide}</span>
           {rateLong}
-          &nbsp; Short <span className={shortSide === 'Pay' ? 'pay' : 'receive'}>{shortSide}</span>
+          &nbsp; Short <span className={shortSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{shortSide}</span>
           {rateShort}
         </div>
       </div>
@@ -635,6 +462,10 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
   // handle interval each 10s fetch volume
   useEffect(() => {
+    if (!currentToken) {
+      return;
+    }
+
     const interval = setInterval(() => {
       const { amm: currentAmm } = getCollectionInformation(currentToken);
       getDailySpotPriceGraphData(currentAmm).then(dayTradingDetails => {
@@ -739,41 +570,17 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartWindows(props: any, ref: any) {
-  const { tradingData, fullWalletAddress, tokenRef, currentToken, isLoginState, isWrongNetwork } = props;
+  const { tradingData } = props;
+
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
   const [isProShow, setIsProShow] = useState(true);
-  const [isProVisible, setIsProVisible] = useState(false); // indicate pro component state after animation complete
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
-  const graphDataRef = useRef({});
   const proRef = useRef();
-
-  // const handleIsProShow = async () => {
-  //   const storageIsProShow = await localStorage.getItem('isProShow');
-  //   if (storageIsProShow === 'false') return setIsProShow(false);
-  //   return setIsProShow(true);
-
-  //   // if (isLoginState && fullWalletAddress) {
-  //   //   const storagefullWalletAddress = localStorage.getItem('fullWalletAddress');
-  //   //   if (storagefullWalletAddress !== fullWalletAddress) {
-  //   //     setIsProShow(true);
-  //   //     // save to local
-  //   //     localStorage.setItem('isProShow', 'true');
-  //   //     localStorage.setItem('fullWalletAddress', fullWalletAddress);
-  //   //   }
-  //   // }
-  // };
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, [fullWalletAddress, isLoginState]);
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, []);
+  const currentToken = useNanostore(wsCurrentToken);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
@@ -792,14 +599,12 @@ function ChartWindows(props: any, ref: any) {
     graphRef?.setGraphOtherValue(chartData);
     const pRef: any = proRef.current;
     pRef?.setGraphOtherValue(chartData);
-    // console.log('fetchChartData, set chart data and pro component', chartData);
 
     const dynamicDataSet = chartData.graphData.map((params: any) => {
       const { end, avgPrice } = params;
       return { time: end, value: utils.formatEther(avgPrice) };
     });
     setLineChartData(dynamicDataSet);
-    // graphDataRef.current.setGb raphValue(dynamicDataSet);
     setIsStartLoadingChart(false);
   };
 
@@ -808,14 +613,13 @@ function ChartWindows(props: any, ref: any) {
   useEffect(() => {
     const gRef: any = graphHeaderRef.current;
     gRef.reset();
-    // graphDataRef.current.reset();
     const pRef: any = proRef.current;
     pRef.reset();
     fetchChartData();
   }, [currentToken, selectedTimeIndex]); // from tokenRef.current
 
   const handleSelectedTimeIndex = (index: any) => {
-    chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
+    chartButtonLogged(index, currentToken); // from tokenRef.current
     setSelectedTimeIndex(index);
   };
 
@@ -828,8 +632,6 @@ function ChartWindows(props: any, ref: any) {
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          // tokenRef={tokenRef}
-          currentToken={currentToken}
           isProShow={isProShow}
           setIsProShow={setIsProShow}
         />
@@ -844,22 +646,13 @@ function ChartWindows(props: any, ref: any) {
               chartProContainerRef={chartProContainerRef}
             />
           </div>
-          <ProComponent
-            ref={proRef}
-            visible={isProShow}
-            tradingData={tradingData}
-            currentToken={currentToken}
-            selectedTimeIndex={selectedTimeIndex}
-          />
+          <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
         </div>
         <ChartFooter
-          // ref={graphHeaderRef}
           tradingData={tradingData}
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          // tokenRef={tokenRef}
-          currentToken={currentToken}
         />
       </div>
     </div>

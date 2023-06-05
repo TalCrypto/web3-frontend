@@ -1,13 +1,7 @@
+/* eslint-disable prefer-destructuring */
 import { walletProvider } from '@/utils/walletProvider';
 import { utils } from 'ethers';
-import {
-  setIsWhitelisted,
-  setIsTethCollected,
-  setIsWalletLoading,
-  userIsWrongNetwork,
-  userIsLogin,
-  userWalletAddress
-} from '@/stores/UserState';
+import { setIsWhitelisted, setIsTethCollected, userIsLogin, userWalletAddress } from '@/stores/UserState';
 import { apiConnection } from '@/utils/apiConnection';
 import {
   wsCurrentChain,
@@ -19,7 +13,11 @@ import {
   wsIsConnectWalletModalShow,
   wsIsShowErrorSwitchNetworkModal,
   wsIsShowTransferTokenModal,
-  wsBalance
+  wsBalance,
+  wsIsWalletLoading,
+  wsIsApproveRequired,
+  wsFullWalletAddress,
+  wsUserPosition
 } from '@/stores/WalletState';
 
 async function fetchUserData() {
@@ -42,12 +40,50 @@ async function fetchUserData() {
   }
 }
 
+const handleLoginSuccess = async () => {
+  const localStorageShowModal = localStorage.getItem('isModalShown');
+  if (localStorageShowModal === undefined || localStorageShowModal === null) {
+    localStorage.setItem('isModalShown', 'false');
+  }
+
+  walletProvider.checkIsWhitelisted();
+
+  const currentNetwork = await walletProvider.provider?.getNetwork();
+  const isTargetNetwork = process.env.NEXT_PUBLIC_SUPPORT_CHAIN === Number(currentNetwork.chainId).toString();
+
+  wsIsWrongNetwork.set(!isTargetNetwork);
+  wsWethBalance.set(Number(walletProvider.wethBalance));
+  const localShowModal = localStorageShowModal === 'false' || localStorageShowModal === undefined || localStorageShowModal === null;
+  if ((Number(walletProvider.wethBalance) === 0 || !isTargetNetwork) && localShowModal) {
+    localStorage.setItem('isModalShown', 'true');
+  }
+
+  wsIsLogin.set(true);
+  if (isTargetNetwork) {
+    walletProvider.checkAllowance().then((value: any) => {
+      wsIsApproveRequired.set(value === 0);
+    });
+    // .catch((e: any) => {
+    // console.log(e);
+    // });
+  }
+};
+
+const logout = () => {
+  wsFullWalletAddress.set('');
+  wsIsLogin.set(false);
+  wsIsApproveRequired.set(false);
+
+  wsUserPosition.set(null);
+  // setHistoryRecords([]);
+  wsWethBalance.set(0);
+};
+
 const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
   wsWalletAddress.set(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
   walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
     wsCurrentChain.set(result.holderChain);
     wsIsWrongNetwork.set(!result.result);
-    userIsWrongNetwork.set(!result.result); // userState store
   });
   wsWethBalance.set(Number(walletProvider.wethBalance));
   wsIsLogin.set(true);
@@ -56,10 +92,10 @@ const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
   }
   apiConnection.getUserInfo(walletProvider.holderAddress).then(result => {
     wsUserInfo.set(result.data);
-    setIsWalletLoading(false);
+    wsIsWalletLoading.set(false);
     // handleLoginSuccess(result.data);
   });
-  // handleLoginSuccess();
+  handleLoginSuccess();
   // userState store
   userWalletAddress.set(walletProvider.holderAddress);
   userIsLogin.set(true);
@@ -79,13 +115,26 @@ const resetState = () => {
   userWalletAddress.set('');
   userIsLogin.set(false);
   wsIsLogin.set(false);
-  setIsWalletLoading(false);
+  wsIsWalletLoading.set(false);
   wsWethBalance.set(0);
   localStorage.setItem('isLoggedin', 'false');
 };
 
+export const addEventListener = () => {
+  if (!walletProvider.provider) return;
+
+  walletProvider.provider.provider.on('chainChanged', (chainId: any) => {
+    wsCurrentChain.set(Number(chainId));
+    wsIsWrongNetwork.set(process.env.NEXT_PUBLIC_SUPPORT_CHAIN !== Number(chainId).toString());
+  });
+  walletProvider.provider.provider.on('accountsChanged', (addresses: any) => {
+    walletProvider.holderAddress = addresses[0];
+    // debounceCheck();
+  });
+};
+
 export const connectWallet = (callback: any, initial = false) => {
-  setIsWalletLoading(true);
+  wsIsWalletLoading.set(true);
   if (initial) {
     wsIsConnectWalletModalShow.set(true);
   } else {
@@ -105,7 +154,7 @@ export const disconnectWallet = (callback: any = null) => {
     if (callback) {
       callback();
     }
-    // handleLogout();
+    logout();
   });
 };
 
@@ -130,7 +179,7 @@ export const updateTargetNetwork = (callback: any = null) => {
     });
 };
 
-export const getTestToken = async (callback: any, successHandle: any) => {
+export const getTestToken = async (callback: any = null, successHandle: any = null) => {
   // logEventByName('getTeth_pressed');
   wsIsShowTransferTokenModal.set(true);
   const isGoerliEthCollected = await walletProvider.checkIsGoerliEthCollected();

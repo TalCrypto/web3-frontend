@@ -1,8 +1,12 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-use-before-define */
 /* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable import/no-cycle */
+/* eslint-disable indent */
+
 import { Contract as MulticallContract, Provider as MulticallProvider } from '@tribe3/ethers-multicall';
 import { ethers, utils, BigNumber } from 'ethers';
+import { apiConnection } from '@/utils/apiConnection';
 import {
   // getOpenInterest,
   getPositionHistory,
@@ -241,7 +245,23 @@ export async function getAllTraderPositionHistory(walletAddr: string, limit: num
 }
 
 export async function getMarketHistory(ammAddr: string) {
-  return getMarketHistoryFromSubgraph(ammAddr);
+  let usernameList: any[] = [];
+  const { userAddresses, finalPositions } = await getMarketHistoryFromSubgraph(ammAddr);
+  try {
+    usernameList = finalPositions.length > 0 ? await apiConnection.getUsernameFromAddress(userAddresses) : [];
+  } catch (error) {
+    usernameList = [];
+  }
+
+  return finalPositions.length > 0
+    ? finalPositions.map(position => ({
+        ...position,
+        userId:
+          !usernameList?.[position.userAddress] || usernameList?.[position.userAddress] === position.userAddress
+            ? ''
+            : usernameList?.[position.userAddress]
+      }))
+    : [];
 }
 
 export async function getFundingPaymentHistory(ammAddr: string) {

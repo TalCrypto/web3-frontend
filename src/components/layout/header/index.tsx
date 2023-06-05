@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import TopMenu from '@/components/layout/header/desktop/TopMenu';
 import Web3Area from '@/components/layout/header/desktop/Web3Area';
-import MobileHeader from '@/components/layout/header/mobile';
+// import MobileHeader from '@/components/layout/header/mobile';
 
 function Header() {
   return (
@@ -20,7 +20,7 @@ function Header() {
                   className="gradient-bg font-mont absolute bottom-[10px] right-0 flex h-[13px] w-[34px]
                     items-center justify-center rounded-bl-[1px] rounded-br-[12px]
                     rounded-tl-[12px] rounded-tr-[1px] text-center text-[7px]
-                    font-semibold leading-[9px] text-white/[.87]">
+                    font-semibold leading-[9px] text-highEmphasis">
                   <div>BETA</div>
                 </div>
               </div>
@@ -34,9 +34,9 @@ function Header() {
         </div>
       </div>
 
-      <div className="block bg-[#171833] md:hidden">
+      {/* <div className="block bg-lightBlue md:hidden">
         <MobileHeader />
-      </div>
+      </div> */}
     </>
   );
 }

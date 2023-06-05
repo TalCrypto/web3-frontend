@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { withRouter } from 'next/router';
 import collectionList from '@/const/collectionList';
@@ -18,6 +19,21 @@ import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
+import { useStore as useNanostore } from '@nanostores/react';
+import {
+  wsCurrentToken,
+  wsHistoryGroupByMonth,
+  wsIsLogin,
+  wsIsShowTradingMobile,
+  wsIsWrongNetwork,
+  wsMaxReduceValue,
+  wsUserPosition,
+  wsWethBalance
+} from '@/stores/WalletState';
+import { formatDateTime } from '@/utils/date';
+import { apiConnection } from '@/utils/apiConnection';
+import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
+
 interface TradePagePros {
   router: any;
 }
@@ -29,21 +45,21 @@ const getCollectionInformation = (collectionName: any) => {
 
 function TradePage(props: TradePagePros) {
   const { router } = props;
-  const [currentToken, setCurrentToken] = useState(router.query?.collection || 'BAYC');
-  const [fullWalletAddress, setFullWalletAddress] = useState('');
-  const [isLoginState, setIsLoginState] = useState(false);
-  const [isWrongNetwork, setIsWrongNetwork] = useState(true);
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
-  const [userPosition, setUserPosition] = useState(null);
-  const [maxReduceValue, setMaxReduceValue] = useState('');
-  const [historyRecords, setHistoryRecords] = useState([]);
-  const [wethBalance, setWethBalance] = useState(0);
-  const [historyModalIsVisible, setHistoryModalIsVisible] = useState(false);
-  const [fundingModalIsShow, setFundingModalIsShow] = useState(false);
-  const [isApproveRequired, setIsApproveRequired] = useState(false);
+  const maxReduceValue = useNanostore(wsMaxReduceValue);
+  // const [maxReduceValue, setMaxReduceValue] = useState('');
+  // const [historyRecords, setHistoryRecords] = useState([]);
 
-  const fetchInformations = async () => {
+  const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
+
+  const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const currentToken = useNanostore(wsCurrentToken);
+
+  const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
+
+  const fetchInformation = async () => {
     const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
     setTradingData({});
     // set tradingData
@@ -56,28 +72,18 @@ function TradePage(props: TradePagePros) {
     if (!isLoginState || isWrongNetwork) {
       return;
     }
-    // console.log('refresh fetchPositions');
     try {
-      // refresh Tribe Detail Market Trades
-      setTimeout(() => {
-        // informationRef.current?.fetchInformations();
-      }, 10000);
-      // refresh sidebar position
-      // sidebarCollectionRef.current?.fetchOverview();
-
       const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
       const traderPositionInfo: any = await getTraderPositionInfo(currentAmm, walletProvider.holderAddress);
-      setUserPosition(traderPositionInfo);
+      wsUserPosition.set(traderPositionInfo);
       const maxReduce = await walletProvider.getMaxReduceCollateralValue(currentAmm, walletProvider.holderAddress);
-      const maxReduceValueTemp: any = calculateNumber(maxReduce, 4);
-      setMaxReduceValue(maxReduceValueTemp);
-      const latestHistoryRecords = await getTraderPositionHistory(currentAmm, walletProvider.holderAddress);
-      setHistoryRecords(latestHistoryRecords === null ? [] : latestHistoryRecords);
+      wsMaxReduceValue.set(Number(calculateNumber(maxReduce, 4)));
+      // const latestHistoryRecords = await getTraderPositionHistory(currentAmm, walletProvider.holderAddress);
+      // setHistoryRecords(latestHistoryRecords === null ? [] : latestHistoryRecords);
       const isCollected = await walletProvider.checkIsTethCollected();
       setIsTethCollected(isCollected);
       const newBalance = await walletProvider.getWethBalance(walletProvider.holderAddress);
-      setWethBalance(Number(newBalance));
-      // navbarRef.current?.updateBalance();
+      wsWethBalance.set(Number(newBalance));
 
       // get price gap from smartcontract
       await walletProvider.getLiquidationRatio();
@@ -85,6 +91,47 @@ function TradePage(props: TradePagePros) {
       // console.log('error from fetchPositions => ', error);
     }
   };
+
+  useEffect(() => {
+    fetchPositions();
+    fetchInformation();
+  }, [currentToken, isLoginState]); // from tokenRef.current
+
+  useEffect(() => {
+    if (Object.keys(router.query).length === 0) {
+      return;
+    }
+
+    const passCollection = decodeURIComponent(router.query.collection)?.toUpperCase();
+    wsCurrentToken.set(passCollection); // from tokenRef.current
+    walletProvider.setCurrentToken(passCollection);
+  }, [router.query]);
+
+  const fetchUserTradingHistory = async () => {
+    const latestHistoryRecords = await apiConnection.getUserTradingHistory();
+    const { tradeHistory } = latestHistoryRecords.data;
+
+    const historyGroupByMonth = tradeHistory
+      .filter((i: any) => i.ammAddress.toLowerCase() === currentCollection.amm.toLowerCase())
+      .sort((a: any, b: any) => b.timestamp - a.timestamp)
+      .reduce((group: any, record: any) => {
+        const month = formatDateTime(record.timestamp, 'MM/YYYY');
+        const result = [];
+        result[month] = group[month] ?? [];
+        result[month].push(record);
+        return result;
+      }, {});
+
+    wsHistoryGroupByMonth.set(historyGroupByMonth || []);
+  };
+
+  useEffect(() => {
+    if (isLoginState && walletProvider.holderAddress && currentCollection) {
+      fetchUserTradingHistory();
+      // walletProvider.getFluctuationLimitRatio(currentCollection.amm);
+      // walletProvider.getInitialMarginRatio(currentCollection.amm);
+    }
+  }, [walletProvider.holderAddress, isLoginState, currentCollection, fetchUserTradingHistory]);
 
   return (
     <>
@@ -98,111 +145,33 @@ function TradePage(props: TradePagePros) {
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
-                <SidebarCollection
-                  currentToken={currentToken}
-                  setCurrentToken={setCurrentToken}
-                  fullWalletAddress={fullWalletAddress}
-                  isLoginState={isLoginState}
-                  isWrongNetwork={isWrongNetwork}
-                  isShowPopup={isShowPopup}
-                  setIsShowPopup={setIsShowPopup}
-                />
+                <SidebarCollection isShowPopup={isShowPopup} setIsShowPopup={setIsShowPopup} />
 
-                <TradingWindow
-                  currentToken={currentToken}
-                  isLoginState={isLoginState}
-                  isWrongNetwork={isWrongNetwork}
-                  fullWalletAddress={fullWalletAddress}
-                  wethBalance={wethBalance}
-                  // collectWallet={() => navbarRef.current?.connectWallet(() => {}, true)}
-                  // getTestToken={navbarRef.current?.getTestToken}
-                  refreshPositions={fetchPositions}
-                  userPosition={userPosition}
-                  tradingData={tradingData}
-                  isApproveRequired={isApproveRequired}
-                  setIsApproveRequired={setIsApproveRequired}
-                  maxReduceValue={maxReduceValue}
-                />
+                <TradingWindow refreshPositions={fetchPositions} tradingData={tradingData} />
               </div>
 
               <div className="ml-[30px] block 2xl:flex-1">
-                <ChartWindows
-                  // ref={graphRef}
-                  tradingData={tradingData}
-                  fullWalletAddress={fullWalletAddress}
-                  currentToken={currentToken}
-                  isLoginState={isLoginState}
-                  isWrongNetwork={isWrongNetwork}
-                />
+                <ChartWindows tradingData={tradingData} />
+                {isLoginState ? <PositionDetails tradingData={tradingData} /> : null}
 
-                {isLoginState ? (
-                  <PositionDetails
-                    userPosition={userPosition}
-                    tradingData={tradingData}
-                    currentToken={currentToken}
-                    isLoginState={isLoginState}
-                    isWrongNetwork={isWrongNetwork}
-                    setHistoryModalIsVisible={setHistoryModalIsVisible}
-                    setFundingModalIsShow={setFundingModalIsShow}
-                    fullWalletAddress={fullWalletAddress}
-                  />
-                ) : null}
-
-                <InformationWindow
-                  // ref={informationRef}
-                  tradingData={tradingData}
-                  isLoginState={isLoginState}
-                  fullWalletAddress={fullWalletAddress}
-                  currentToken={currentToken}
-                />
+                <InformationWindow tradingData={tradingData} />
               </div>
             </div>
           </div>
-          {/* <FundingPaymentModal
-            visible={fundingModalIsShow}
-            setVisible={setFundingModalIsShow}
-            tradingData={tradingData}
-            currentCollection={currentCollection}
-          />
-          <HistoryModal
-            visible={historyModalIsVisible}
-            onChange={visible => setHistoryModalIsVisible(visible)}
-            historyRecordsByMonth={historyRecordsByMonth}
-            fullWalletAddress={fullWalletAddress}
-          /> */}
         </div>
 
-        <div className="block bg-[#171833] md:hidden">
-          <Switcher currentToken={currentToken} setCurrentToken={setCurrentToken} />
+        <div className="block bg-lightBlue md:hidden">
+          <Switcher />
 
-          <ChartMobile
-            // ref={graphRef}
-            tradingData={tradingData}
-            fullWalletAddress={fullWalletAddress}
-            currentToken={currentToken}
-            isLoginState={isLoginState}
-            isWrongNetwork={isWrongNetwork}
-          />
+          <div className="mt-10">
+            <ChartMobile tradingData={tradingData} />
 
-          {/* {isLoginState ? ( */}
-          <PositionMobile
-            userPosition={userPosition}
-            tradingData={tradingData}
-            currentToken={currentToken}
-            isLoginState={isLoginState}
-            isWrongNetwork={isWrongNetwork}
-            setHistoryModalIsVisible={setHistoryModalIsVisible}
-            setFundingModalIsShow={setFundingModalIsShow}
-            fullWalletAddress={fullWalletAddress}
-          />
-          {/* ) : null} */}
+            {isLoginState ? <PositionMobile tradingData={tradingData} /> : null}
 
-          <InformationMobile
-            tradingData={tradingData}
-            isLoginState={isLoginState}
-            fullWalletAddress={fullWalletAddress}
-            currentToken={currentToken}
-          />
+            <InformationMobile tradingData={tradingData} />
+
+            {isShowTradingMobile ? <TradingMobile refreshPositions={fetchPositions} tradingData={tradingData} /> : null}
+          </div>
         </div>
       </main>
     </>

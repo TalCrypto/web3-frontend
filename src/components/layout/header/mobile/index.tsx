@@ -4,14 +4,13 @@ import Image from 'next/image';
 import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
-import { setIsWalletLoading, userIsWrongNetwork, userIsLogin, userWalletAddress } from '@/stores/UserState';
+import { wsIsWalletLoading, wsIsWrongNetwork } from '@/stores/WalletState';
+import { userIsLogin, userWalletAddress } from '@/stores/UserState';
 
 function MobileHeader() {
   const [isShowMenu, setIsShowMenu] = useState(false);
 
   const [walletAddress, setWalletAddress] = useState('');
-  const [currentChain, setCurrentChain] = useState(0);
-  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
 
   const [address, setAddress] = useState('');
 
@@ -22,7 +21,7 @@ function MobileHeader() {
     setWalletAddress('');
     userWalletAddress.set('');
     userIsLogin.set(false);
-    setIsWalletLoading(false);
+    wsIsWalletLoading.set(false);
     localStorage.setItem('isLoggedin', 'false');
   };
 
@@ -48,15 +47,14 @@ function MobileHeader() {
     setAddress(holderAddress);
     setWalletAddress(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
     walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
-      setCurrentChain(result.holderChain);
-      setIsWrongNetwork(!result.result);
-      userIsWrongNetwork.set(!result.result); // userState store
+      // setCurrentChain(result.holderChain);
+      wsIsWrongNetwork.set(!result.result);
     });
     if (callback) {
       callback();
     }
     apiConnection.getUserInfo(walletProvider.holderAddress).then(result => {
-      setIsWalletLoading(false);
+      wsIsWalletLoading.set(false);
       // handleLoginSuccess(result.data);
     });
     // handleLoginSuccess();
@@ -114,12 +112,9 @@ function MobileHeader() {
           <button
             className="btn-connect relative 
             flex h-[25px] flex-initial items-center justify-center rounded-[100px]
-            border-0 px-2 py-1 text-[14px] font-medium text-white/[.87]"
+            border-0 px-2 py-1 text-[14px] font-medium text-highEmphasis"
             onClick={handleClickConnectButton}>
-            <div
-              className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full
-                p-[2px]"
-            />
+            <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
 
             {address === '' ? (
               <Image src="/images/components/layout/header/connect_button.svg" alt="" className="mr-2" width={20} height={20} />
@@ -129,9 +124,9 @@ function MobileHeader() {
           </button>
 
           {isShowMenu ? (
-            <div className="popover absolute right-[20px] top-[50px] z-[1] w-[150px] rounded bg-[#202249]">
+            <div className="popover absolute right-[20px] top-[50px] z-[1] w-[150px] rounded bg-secondaryBlue">
               <div
-                className="flex py-3 pl-4 text-[14px] font-medium text-white/[.87]"
+                className="flex py-3 pl-4 text-[14px] font-medium text-highEmphasis"
                 onClick={() => {
                   // logEventByName('reward_pressed');
                   window.location.href = '/reward';
@@ -140,13 +135,13 @@ function MobileHeader() {
                 <Image src="/images/mobile/common/gift.svg" className="ml-3" alt="" width={20} height={20} />
               </div>
               <div className="mx-[10px] my-5  h-[1px] w-[130px] bg-[#c3d8ff]/[.48]" />
-              <div className="py-3 pl-4 text-[14px] font-medium text-white/[.87]" onClick={() => handlePopOverItemClick(1)}>
+              <div className="py-3 pl-4 text-[14px] font-medium text-highEmphasis" onClick={() => handlePopOverItemClick(1)}>
                 Disconnect
               </div>
-              <div className="py-3 pl-4 text-[14px] font-medium text-white/[.87]" onClick={() => handlePopOverItemClick(2)}>
+              <div className="py-3 pl-4 text-[14px] font-medium text-highEmphasis" onClick={() => handlePopOverItemClick(2)}>
                 Get GoerliETH
               </div>
-              <div className="py-3 pl-4 text-[14px] font-medium text-white/[.87]" onClick={() => handlePopOverItemClick(3)}>
+              <div className="py-3 pl-4 text-[14px] font-medium text-highEmphasis" onClick={() => handlePopOverItemClick(3)}>
                 Get TETH
               </div>
             </div>

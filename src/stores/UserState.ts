@@ -6,7 +6,6 @@ export const dataFetch = atom(false);
 export const whitelisted = atom(false);
 export const tethCollected = atom(false);
 export const inputCode = atom(false);
-export const walletLoading = atom(true); // set default state to true
 export const hasPartialClose = atom(false);
 export const hasTraded = atom(false);
 export const userWalletAddress = atom('');
@@ -28,10 +27,6 @@ export const setIsTethCollected = (value: boolean) => {
 
 export const setIsInputCode = (value: boolean) => {
   inputCode.set(value);
-};
-
-export const setIsWalletLoading = (value: boolean) => {
-  walletLoading.set(value);
 };
 
 export const setIsHasPartialClose = (value: boolean) => {

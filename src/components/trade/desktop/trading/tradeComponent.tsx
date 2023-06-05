@@ -8,16 +8,11 @@ import { utils } from 'ethers';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
-// import { logEvent } from 'firebase/analytics';
-// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-// import { Tooltip } from 'react-bootstrap';
 import { useRouter } from 'next/router';
-// import { debounce } from 'lodash';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
 import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
-// import { firebaseAnalytics } from '@/const/firebaseConfig';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
@@ -29,18 +24,26 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-// const { isWhitelisted } = walletProvider;
+import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { getTestToken } from '@/utils/Wallet';
+import { firebaseAnalytics } from '@/const/firebaseConfig';
+import { logEvent } from 'firebase/analytics';
 
 function LongShortRatio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { userPosition, setSaleOrBuyIndex, saleOrBuyIndex, currentToken } = props;
+  const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
+  const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   function analyticsLogSide(index: any, currentCollection: any) {
-    // logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentCollection
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentCollection
+      });
+    }
     const eventName = ['btnLong_pressed', 'btnShort_pressed'][index];
     apiConnection.postUserEvent(eventName, {
       page,
@@ -52,11 +55,11 @@ function LongShortRatio(props: any) {
     <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
-          ${userPosition !== null ? 'opacity-30' : ''}
-          text-center text-[14px] font-semibold hover:text-white/[.87]`}
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+          ${!userPosition ? 'opacity-30' : ''}
+          text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
-          if (userPosition === null) {
+          if (!userPosition) {
             setSaleOrBuyIndex(0);
             analyticsLogSide(0, currentToken);
           }
@@ -66,11 +69,11 @@ function LongShortRatio(props: any) {
       </div>
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 1 ? 'short-selected text-white/[.87]' : 'text-[#c3d8ff]/[.48]'}
-          ${userPosition !== null ? 'opacity-30' : ''}
-          text-center text-[14px] font-semibold hover:text-white/[.87]`}
+          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+          ${userPosition ? 'opacity-30' : ''}
+          text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
-          if (userPosition === null) {
+          if (!userPosition) {
             setSaleOrBuyIndex(1);
             analyticsLogSide(1, currentToken);
           }
@@ -86,43 +89,76 @@ function QuantityTips(props: any) {
   const {
     isInsuffBalance,
     isAmountTooSmall,
-    isWrongNetwork,
     isAmountNegative,
     estPriceFluctuation,
-    // isFluctuationLimit,
+    isFluctuationLimit,
     isPending,
     isLiquidatable,
     value
-    // getTestToken
+    //
   } = props;
   // price gap
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const isChecking = !isInsuffBalance && !isAmountTooSmall && !isPending && !estPriceFluctuation && !isLiquidatable;
   const isShow = value <= 0 || isChecking || isWrongNetwork || isAmountNegative;
-  return <div>{isShow ? <div className="row tbloverviewcontent" /> : null}</div>;
+
+  if (isShow) {
+    return <div className="row tbloverviewcontent" />;
+  }
+
+  const label = isPending ? (
+    'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
+  ) : isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isInsuffBalance ? (
+    <>
+      Not enough WETH (including transaction fee).
+      <a href="#" onClick={() => getTestToken()} className="ml-1 text-white underline">
+        Get WETH
+      </a>{' '}
+      first
+    </>
+  ) : isFluctuationLimit ? (
+    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : isLiquidatable ? (
+    'Resulting position DOES NOT meet the maintenance leverage requirement of 10x calculated based on Oracle Price.'
+  ) : estPriceFluctuation ? (
+    'Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : (
+    ''
+  );
+
+  const isRedText = isInsuffBalance || isAmountTooSmall || isFluctuationLimit || isLiquidatable;
+  return (
+    <div className={`quantity-tips-container ${(!isInsuffBalance && estPriceFluctuation) || isPending ? 'price-fluc' : ''}`}>
+      <div className={`${isRedText ? 'text-marketRed' : 'text-warn'} mb-2 text-[12px] leading-[20px]`}>{label}</div>
+    </div>
+  );
 }
 
 function QuantityEnter(props: any) {
   const {
     value,
     onChange,
-    isApproveRequired,
     isInsuffBalance,
-    wethBalance,
-    isLoginState,
-    isWrongNetwork,
     isAmountTooSmall,
     estPriceFluctuation,
     isFluctuationLimit,
     isLiquidatable,
     isPending,
-    disabled,
-    getTestToken
+    disabled
   } = props;
+
+  const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
+  const wethBalance = useNanostore(wsWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
 
-  const handleEnter = (target: any) => {
+  const handleEnter = (event: any) => {
+    const { target } = event;
     const { value: inputValue } = target;
 
     const reg = /^\d*(\.\d*)?$/;
@@ -150,17 +186,17 @@ function QuantityEnter(props: any) {
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-[#2574fb]" onClick={() => getTestToken()}>
+            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => getTestToken()}>
               Get WETH
             </button>
           </div>
         ) : null}
       </div>
+      {/* ${isError ? 'bg-marketRed' : ''} */}
       <div className="py-3">
         <div
-          className={`mb-3 rounded-[4px] bg-none p-[1px]
+          className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
             ${isFocus ? 'valid' : ''}
-            ${isError ? 'error' : ''}
             ${disabled ? 'opacity-30' : ''}
           `}>
           <div className="flex h-[48px] rounded-[4px] bg-[#242652] p-3">
@@ -171,21 +207,22 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               pattern="[0-9]*"
-              className={`${isApproveRequired ? ' blockCursor' : ''}
-                txt-white w-full border-none border-[242652] bg-[#242652]
-                text-right text-[15px] font-semibold outline-none
+              className={`${isApproveRequired ? 'cursor-not-allowed' : ''}
+                w-full border-none border-[#242652] bg-[#242652] text-right
+                text-[15px] font-semibold text-white outline-none
               `}
               value={value}
               placeholder="0.00"
               onChange={handleEnter}
               disabled={isApproveRequired || disabled}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              min={0}
+
               // onClick={e => {
               //   e.target.selectionStart = e.target.value.length;
               //   e.target.selectionEnd = e.target.value.length;
               // }}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              min={0}
             />
           </div>
         </div>
@@ -193,13 +230,11 @@ function QuantityEnter(props: any) {
       <QuantityTips
         isInsuffBalance={isInsuffBalance}
         isAmountTooSmall={isAmountTooSmall}
-        isWrongNetwork={isWrongNetwork}
         estPriceFluctuation={estPriceFluctuation}
         isFluctuationLimit={isFluctuationLimit}
         isLiquidatable={isLiquidatable}
         value={value}
         isPending={isPending}
-        getTestToken={getTestToken}
       />
     </>
   );
@@ -242,10 +277,10 @@ function DisplayValues(props: any) {
   return (
     <div
       className={`${className !== '' ? className : 'sumrow'}
-      mb-3 flex items-center
+      mb-[2px] flex items-center
     `}>
       <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
-      <div className={`flex-1 flex-shrink-0 text-right ${valueClassName}`}>
+      <div className={`flex-1 flex-shrink-0 text-right text-[#a3c2ff]/[.68] ${valueClassName}`}>
         <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
@@ -270,23 +305,7 @@ function DisplayValues(props: any) {
 function EstimatedValueDisplay(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    estimatedValue,
-    toleranceRate,
-    setToleranceRate,
-    // setIsInsuffBalance,
-    // wethBalance,
-    // isLoginState,
-    // fullWalletAddress,
-    // tokenRef,
-    currentToken,
-    leverageValue,
-    value,
-    isInsuffBalance,
-    isAmountTooSmall,
-    // estPriceFluctuation,
-    disabled
-  } = props;
+  const { estimatedValue, toleranceRate, setToleranceRate, leverageValue, value, isInsuffBalance, isAmountTooSmall, disabled } = props;
 
   // const isEstimatedValueEmpty = Object.keys(estimatedValue).length === 0;
   const { fee } = estimatedValue;
@@ -296,6 +315,8 @@ function EstimatedValueDisplay(props: any) {
   // const collateralCalc = isEstimatedValueEmpty ? 0 : cost.sub(feeInNumber);
   // const newCollateral = isEstimatedValueEmpty ? '-.--' : formatterValue(collateralCalc, 4);
   const sizeNotional = fee && cost && leverageValue ? ((costInNumber - feeInNumber) * Number(leverageValue))?.toFixed(4) : '-.--';
+  const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   // determine if input is valid or error state
   // const isValid = value > 0 && !isInsuffBalance && !isAmountTooSmall && !estPriceFluctuation;
@@ -334,10 +355,13 @@ function EstimatedValueDisplay(props: any) {
               }}
               onClick={e => {
                 // e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-                // logEvent(firebaseAnalytics, 'trade_open_add_slippageTolerance_pressed', {
-                //   wallet: fullWalletAddress.substring(2),
-                //   collection: currentToken
-                // });
+                if (firebaseAnalytics) {
+                  logEvent(firebaseAnalytics, 'trade_open_add_slippageTolerance_pressed', {
+                    wallet: fullWalletAddress.substring(2),
+                    collection: currentToken
+                  });
+                }
+
                 apiConnection.postUserEvent('trade_open_add_slippageTolerance_pressed', {
                   page,
                   collection: currentToken
@@ -381,17 +405,10 @@ function ConfirmButton(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const {
-    isLoginState,
     quantity,
     createTransaction,
-    isWrongNetwork,
-    isApproveRequired,
-    setIsApproveRequired,
     isInsuffBalance,
     isAmountTooSmall,
-    // fullWalletAddress,
-    // tokenRef,
-    currentToken,
     setQuantity,
     setEstimatedValue,
     setEstPriceFluctuation,
@@ -400,10 +417,13 @@ function ConfirmButton(props: any) {
     leverageValue,
     handleLeverageEnter,
     setToleranceRate,
-    getTestToken,
     isPending,
     isWaiting
   } = props;
+
+  const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   // const { isTethCollected, isWhitelisted, isDataFetch } = walletProvider;
   const isDataFetch = useNanostore(dataFetch);
@@ -413,6 +433,8 @@ function ConfirmButton(props: any) {
 
   const [isProcessingOpenPos, setIsProcessingOpenPos] = useState(false);
   const isNormal = isLoginState && !isWrongNetwork && quantity > 0 && !isInsuffBalance && !isAmountTooSmall;
+  const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   // sync isProcessing to store/tradePanel
   useEffect(() => {
@@ -457,10 +479,13 @@ function ConfirmButton(props: any) {
     if (!isLoginState || isWrongNetwork || !quantity) {
       return;
     }
-    // logEvent(firebaseAnalytics, 'confirm_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'confirm_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('confirm_pressed', {
       page,
       collection: currentToken
@@ -475,10 +500,12 @@ function ConfirmButton(props: any) {
   };
 
   const performApprove = async () => {
-    // logEvent(firebaseAnalytics, 'approve_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'approve_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('approve_pressed', {
       page,
       collection: currentToken
@@ -487,12 +514,14 @@ function ConfirmButton(props: any) {
     walletProvider
       .performApprove()
       .then(() => {
-        setIsApproveRequired(false);
+        wsIsApproveRequired.set(false);
         setIsProcessingOpenPos(false);
-        // logEvent(firebaseAnalytics, 'callbacks_performapprove_success', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   collection: currentToken
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performapprove_success', {
+            wallet: fullWalletAddress.substring(2),
+            collection: currentToken
+          });
+        }
         apiConnection.postUserEvent('callbacks_performapprove_success', {
           page,
           collection: currentToken
@@ -500,11 +529,13 @@ function ConfirmButton(props: any) {
       })
       .catch((error: any) => {
         setIsProcessingOpenPos(false);
-        // logEvent(firebaseAnalytics, 'callbacks_performapprove_fail', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   error_code: error?.code.toString(),
-        //   collection: currentToken
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performapprove_fail', {
+            wallet: fullWalletAddress.substring(2),
+            error_code: error?.code.toString(),
+            collection: currentToken
+          });
+        }
         apiConnection.postUserEvent('callbacks_performapprove_fail', {
           page,
           error_code: error?.code.toString(),
@@ -513,34 +544,17 @@ function ConfirmButton(props: any) {
       });
   };
 
-  // const performWhitelistRegister = () => {
-  //   logEvent(firebaseAnalytics, 'whitelist_register_pressed', {
-  //     wallet: fullWalletAddress.substring(2),
-  //     collection: currentToken
-  //   });
-  //   apiConnection.postUserEvent('whitelist_register_pressed', {
-  //     page,
-  //     collection: currentToken
-  //   });
-  //   window.open('https://gleam.io/kfydk/testnet-access-request', '_blank', 'noreferrer');
-  //   logEvent(firebaseAnalytics, 'whitelist_register_pressed', {
-  //     wallet: fullWalletAddress.substring(2)
-  //   });
-  //   apiConnection.postUserEvent('whitelist_register_pressed', {
-  //     page
-  //   });
-  // };
-
   const performGetTeth = () => {
-    // setIsProcessingOpenPos(true);
     getTestToken(() => setIsProcessingOpenPos(false));
   };
 
   const performSwitchGeorli = () => {
-    // logEvent(firebaseAnalytics, 'switchGoerli_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'switchGoerli_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('switchGoerli_pressed', {
       page,
       collection: currentToken
@@ -583,13 +597,13 @@ function ConfirmButton(props: any) {
     <div className="flex">
       <div
         className={`${disabled || isPending ? 'opacity-30' : ''}
-          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-[#2574fb]
+          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
           px-[10px] py-[14px] text-center
         `}
         onClick={onClickButton}>
-        <div className="w-full text-center">
+        <div className="w-full text-center text-[15px] font-semibold">
           {isProcessingOpenPos || isDataFetch ? (
-            <div className="col loadingindicator mx-auto">
+            <div className="flex justify-center">
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
             </div>
           ) : !isLoginState ? (
@@ -612,9 +626,11 @@ function ConfirmButton(props: any) {
 function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
   const isWhitelisted = useNanostore(whitelisted);
-  // const isTethCollected = useNanostore(tethCollected);
   const isTethCollected = Number(walletProvider.wethBalance) !== 0;
-  const { isLoginState, isWrongNetwork, isApproveRequired } = props;
+  const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
+
   if ((isLoginState && !isWrongNetwork && !isApproveRequired) || isDataFetch) {
     return <div className="row tbloverviewcontent" />;
   }
@@ -642,7 +658,7 @@ function Tips(props: any) {
   return (
     <div
       className="mb-[17px] flex h-[16px] items-center text-[16px]
-      font-medium leading-[16px] text-[#FFC24B]/[.87]">
+      font-medium leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span className="warning-text">{label}</span>
     </div>
@@ -651,24 +667,16 @@ function Tips(props: any) {
 
 function ExtendedEstimateComponent(props: any) {
   const router = useRouter();
+  const currentToken = useNanostore(wsCurrentToken);
   const { page } = pageTitleParser(router.asPath);
-  const {
-    fullWalletAddress,
-    tokenRef,
-    currentToken,
-    estimatedValue,
-    leverageValue,
-    userPosition,
-    value,
-    isAmountTooSmall,
-    isInsuffBalance
-  } = props;
+  const { estimatedValue, userPosition, value, isAmountTooSmall, isInsuffBalance } = props;
   const [showDetail, isShowDetail] = useState(false);
   const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
   const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
   const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
   const fee = formatterValue(estimatedValue.fee, 4);
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // hide component when there is no estimatedValue
   if (!estimatedValue || !estimatedValue.cost) return null;
@@ -684,14 +692,16 @@ function ExtendedEstimateComponent(props: any) {
     <div>
       <div className="row">
         <div
-          className="advancebtn selectbehaviour col-auto"
+          className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
             isShowDetail(!showDetail);
-            // logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
-            //   wallet: fullWalletAddress.substring(2),
-            //   is_advanced_data_shown: !showDetail,
-            //   collection: currentToken
-            // });
+            if (firebaseAnalytics) {
+              logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
+                wallet: fullWalletAddress.substring(2),
+                is_advanced_data_shown: !showDetail,
+                collection: currentToken
+              });
+            }
             apiConnection.postUserEvent('showAdvancedDetails_pressed', {
               page,
               is_advanced_data_shown: !showDetail,
@@ -700,9 +710,9 @@ function ExtendedEstimateComponent(props: any) {
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (
-            <Image src="/images/common/angle_up.svg" style={{ marginRight: '8px' }} alt="" width={12} height={12} />
+            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
           ) : (
-            <Image src="/images/common/angle_down.svg" style={{ marginRight: '8px' }} alt="" width={12} height={12} />
+            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
           )}
         </div>
       </div>
@@ -712,7 +722,7 @@ function ExtendedEstimateComponent(props: any) {
           {userPosition != null ? (
             <>
               <div className="row">
-                <div className="transactiondetail font-14-600">Estimated Blended Position</div>
+                <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               </div>
               {/* <DisplayValues
                 title="Position Type"
@@ -758,7 +768,7 @@ function ExtendedEstimateComponent(props: any) {
           ) : null}
 
           <div className="row">
-            <div className="transactiondetail font-14-600">
+            <div className="mb-2 mt-4 text-[14px] font-semibold text-white underline">
               Transaction Details
               {/* {userPosition != null ? '(Standalone Basis)' : null} */}
             </div>
@@ -789,23 +799,9 @@ function ExtendedEstimateComponent(props: any) {
 export default function TradeComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const {
-    isLoginState,
-    refreshPositions,
-    isWrongNetwork,
-    connectWallet,
-    getTestToken,
-    isApproveRequired,
-    setIsApproveRequired,
-    wethBalance,
-    fullWalletAddress,
-    // tokenRef,
-    currentToken,
-    userPosition,
-    tradingData
-  } = props;
+  const { refreshPositions, connectWallet, userPosition, tradingData } = props;
   const [saleOrBuyIndex, setSaleOrBuyIndex] = useState(0);
-  const [quantity, setQuantity] = useState('');
+  const [quantity, setQuantity] = useState('0');
   const [estimatedValue, setEstimatedValue] = useState({});
   const [exposureValue, setExposureValue] = useState(0);
   const [toleranceRate, setToleranceRate] = useState(0.5);
@@ -820,13 +816,18 @@ export default function TradeComponent(props: any) {
   const isProcessing = useNanostore(tradePanel.processing);
   const [isPending, setIsPending] = useState(false);
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
-  const [processToken, setProcessToken] = useState(null); // save current token while process tx
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapLmt = useNanostore(priceGapLimit);
+  const isLoginState = useNanostore(wsIsLogin);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const wethBalance = useNanostore(wsWethBalance);
+  const isApproveRequired = useNanostore(wsIsApproveRequired);
+  const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -864,10 +865,12 @@ export default function TradeComponent(props: any) {
     }
 
     // logging
-    // logEvent(firebaseAnalytics, 'trade_add_input_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   collection: currentToken
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'trade_add_input_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        collection: currentToken
+      });
+    }
     apiConnection.postUserEvent('trade_add_input_pressed', {
       page,
       collection: currentToken
@@ -1001,7 +1004,6 @@ export default function TradeComponent(props: any) {
   };
 
   const createTransaction = async function createTransaction(startTransaction = () => {}) {
-    setProcessToken(currentToken);
     walletProvider
       .createTransaction(
         saleOrBuyIndex,
@@ -1018,10 +1020,12 @@ export default function TradeComponent(props: any) {
         // if (currentToken === processToken) {
         refreshPositions();
         // }
-        // logEvent(firebaseAnalytics, 'callbacks_performtrades_success', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   collection: currentToken
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performtrades_success', {
+            wallet: fullWalletAddress.substring(2),
+            collection: currentToken
+          });
+        }
         apiConnection.postUserEvent('callbacks_performtrades_success', {
           page,
           collection: currentToken
@@ -1040,11 +1044,14 @@ export default function TradeComponent(props: any) {
           setTextErrorMessageShow(true);
         }
 
-        // logEvent(firebaseAnalytics, 'callbacks_performtrades_fail', {
-        //   wallet: fullWalletAddress.substring(2),
-        //   collection: currentToken,
-        //   error_code: error?.code?.toString()
-        // });
+        if (firebaseAnalytics) {
+          logEvent(firebaseAnalytics, 'callbacks_performtrades_fail', {
+            wallet: fullWalletAddress.substring(2),
+            collection: currentToken,
+            error_code: error?.code?.toString()
+          });
+        }
+
         apiConnection.postUserEvent('callbacks_performtrades_fail', {
           page,
           collection: currentToken,
@@ -1054,11 +1061,13 @@ export default function TradeComponent(props: any) {
   };
 
   function analyticsLogLeverageValue(index: any, currentCollection: any) {
-    // logEvent(firebaseAnalytics, 'leverage_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   leverage_value: index,
-    //   collection: currentCollection
-    // });
+    if (firebaseAnalytics) {
+      logEvent(firebaseAnalytics, 'leverage_pressed', {
+        wallet: fullWalletAddress.substring(2),
+        leverage_value: index,
+        collection: currentCollection
+      });
+    }
     apiConnection.postUserEvent('leverage_pressed', {
       page,
       leverage_value: index,
@@ -1105,27 +1114,20 @@ export default function TradeComponent(props: any) {
       <LongShortRatio
         saleOrBuyIndex={saleOrBuyIndex}
         setSaleOrBuyIndex={setSaleOrBuyIndex}
-        userPosition={userPosition}
+
         // tokenRef={tokenRef}
-        currentToken={currentToken}
-        fullWalletAddress={fullWalletAddress}
       />
       <QuantityEnter
         disabled={isProcessing || isWrongNetwork}
         value={quantity}
-        // isApproveRequired={isApproveRequired}
         onChange={(value: any) => {
           handleEnter(value);
         }}
         isInsuffBalance={isInsuffBalance}
-        wethBalance={wethBalance}
-        isLoginState={isLoginState}
-        isWrongNetwork={isWrongNetwork}
         isAmountTooSmall={isAmountTooSmall}
         estPriceFluctuation={estPriceFluctuation}
         isFluctuationLimit={isFluctuationLimit}
         isPending={isPending}
-        getTestToken={getTestToken}
         isLiquidatable={isLiquidatable}
       />
       <LeverageComponent
@@ -1148,11 +1150,7 @@ export default function TradeComponent(props: any) {
         toleranceRate={toleranceRate}
         setToleranceRate={setToleranceRate}
         setIsInsuffBalance={setIsInsuffBalance}
-        wethBalance={wethBalance}
-        isLoginState={isLoginState}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         leverageValue={leverageValue}
         value={quantity}
         isInsuffBalance={isInsuffBalance}
@@ -1160,17 +1158,11 @@ export default function TradeComponent(props: any) {
         estPriceFluctuation={estPriceFluctuation}
       />
       <ConfirmButton
-        isLoginState={isLoginState}
         quantity={quantity}
         createTransaction={createTransaction}
-        isWrongNetwork={isWrongNetwork}
-        isApproveRequired={isApproveRequired}
-        setIsApproveRequired={setIsApproveRequired}
         isInsuffBalance={isInsuffBalance}
         isAmountTooSmall={isAmountTooSmall}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         setQuantity={setQuantity}
         setEstimatedValue={setEstimatedValue}
         setEstPriceFluctuation={setEstPriceFluctuation}
@@ -1179,26 +1171,17 @@ export default function TradeComponent(props: any) {
         leverageValue={leverageValue}
         handleLeverageEnter={handleLeverageEnter}
         setToleranceRate={setToleranceRate}
-        getTestToken={getTestToken}
         isPending={isPending}
         isWaiting={isWaiting}
       />
       {textErrorMessageShow && isLoginState && !isWrongNetwork && !isApproveRequired && !isInsuffBalance ? (
         <p className="font-12 text-color-warning">{textErrorMessage}</p>
       ) : null}
-      <Tips
-        isLoginState={isLoginState}
-        isWrongNetwork={isWrongNetwork}
-        isApproveRequired={isApproveRequired}
-        isInsuffBalance={isInsuffBalance}
-      />
+      <Tips isInsuffBalance={isInsuffBalance} />
       <ExtendedEstimateComponent
         estimatedValue={estimatedValue}
-        fullWalletAddress={fullWalletAddress}
         // tokenRef={tokenRef}
-        currentToken={currentToken}
         leverageValue={leverageValue}
-        userPosition={userPosition}
         value={quantity}
         isAmountTooSmall={isAmountTooSmall}
         isInsuffBalance={isInsuffBalance}

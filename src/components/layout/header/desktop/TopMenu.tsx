@@ -57,7 +57,7 @@ function TopMenu(props: any) {
             <div
               className="after rounded-3px absolute bottom-0 left-0 right-0 top-0 h-3 w-0
               translate-y-0 transform bg-gradient-to-r from-pink-500
-              via-purple-500 to-blue-500 transition-all duration-200 "
+              via-purple-500 to-blue-500 transition-all duration-200"
             />
             <p>{name}</p>
             <div className="w-[9px]">

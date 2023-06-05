@@ -9,7 +9,7 @@ import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { useStore } from '@nanostores/react';
+import { useStore, useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
@@ -29,7 +29,10 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-const flashAnim = 'animate__animated animate__flash animate__infinite';
+import { wsCurrentChain, wsCurrentToken, wsIsLogin } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
+
+const flashAnim = 'flash';
 
 const getCollectionInformation = (collectionName: any) => {
   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -41,7 +44,7 @@ function SmallPriceIcon(props: any) {
   return (
     <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>{priceValue}</span>
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
   );
 }
@@ -52,7 +55,7 @@ const ChartDisplay = dynamic(() => import('./chartDisplay'), {
 
 function PriceIndicator(props: any) {
   const { priceChangeRatioAndValue } = props;
-  const { priceChangeRatio, priceChangeValue } = priceChangeRatioAndValue;
+  const { priceChangeRatio } = priceChangeRatioAndValue;
   const [localPriceChangeRatioAndValue, setLocalPriceChangeRatioAndValue] = useState({
     priceChangeRatio: '',
     priceChangeValue: ''
@@ -80,7 +83,7 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'text-[#78f363]' : 'text-[#ff5656]'}
+        ${isLike ? 'text-marketGreen' : 'text-marketRed'}
         `}>
       <div className="">
         <div className="col my-auto">-.-- (-.-- %)</div>
@@ -90,8 +93,8 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'text-[#78f363]' : 'text-[#ff5656]'}`}>
-      <img
+        ${isLike ? 'text-marketGreen' : 'text-marketRed'}`}>
+      <Image
         alt="Polygon_pos"
         src={
           isPositive(localPriceChangeRatioAndValue.priceChangeRatio)
@@ -110,38 +113,6 @@ function PriceIndicator(props: any) {
     </div>
   );
 }
-
-// function LabelDisplay(props: any) {
-//   const { title = '', value = '', className = '', children } = props;
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         {title}
-//         <span className={className}>{value}</span>
-//       </div>
-//     </div>
-//   );
-// }
-
-// function LabelDisplayWithTips(props: any) {
-//   const { title = '', value = '', className = '', children, placement = 'left', size = '20px', tips = '' } = props;
-
-//   return (
-//     <div className="row">
-//       <div className="col">
-//         {children}
-//         <TitleTips titleText={title} tipsText={tips} placement="top" />
-//         <span className={className}>{value}</span>
-//         {/* <TextTips
-//           tipsText="Resulting price of users' trades in the VAMM system based on the constant product formula"
-//           placement={placement}
-//           size={size}
-//         /> */}
-//       </div>
-//     </div>
-//   );
-// }
 
 function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
@@ -163,13 +134,9 @@ function ChartTimeTabs(props: any) {
 
   const componentReady = useRef();
 
-  // useEffect(() => {
-  //   componentReady.current = true;
-  // }, []);
-
   useEffect(() => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
-    const { offsetWidth, offsetLeft } = activeSegmentRef.current;
+    const { offsetLeft } = activeSegmentRef.current;
     const { style } = controlRef.current;
     style.setProperty('--highlight-width', '25px');
     style.setProperty('--highlight-x-pos', `${offsetLeft + 8}px`);
@@ -198,7 +165,7 @@ function ChartTimeTabs(props: any) {
             <label
               htmlFor={item.label}
               className={`block p-2 text-[14px] 
-                ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-[#A8CBFF]/[.75]'}`}>
+                ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-mediumEmphasis'}`}>
               {item.label}
             </label>
           </div>
@@ -230,7 +197,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
     }
   }));
-  const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
@@ -294,14 +260,14 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
 
         <div className="col-span-1 text-right">
           <div className="font-400 mb-[8px] mt-[6px] text-[14px]">
-            <span className="mr-[6px] text-[12px] text-[#a8cbff]/[.75]">Oracle:</span>
-            <span className="text-[12px] text-white/[.87]">{formatterValue(tradingData.twapPrice, 2, '', '-.--')}</span>
+            <span className="mr-[6px] text-[12px] text-mediumEmphasis">Oracle:</span>
+            <span className="text-[12px] text-highEmphasis">{formatterValue(tradingData.twapPrice, 2, '', '-.--')}</span>
           </div>
 
           <div>
-            <div className="text-[12px] text-[#a8cbff]/[.75]">VAMM - Oracle Price Gap:</div>
+            <div className="text-[12px] text-mediumEmphasis">VAMM - Oracle Price Gap:</div>
 
-            <div className="mt-1 flex w-full items-center justify-end text-[12px] text-white/[.87]">
+            <div className="mt-1 flex w-full items-center justify-end text-[12px] text-highEmphasis">
               <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice - oraclePrice).toFixed(2)} (${Math.abs(
                 priceGapPercentage
               ).toFixed(2)}%)`}</p>
@@ -319,7 +285,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       </div>
 
       <div className="px-[20px] text-[12px]">
-        <div className="text-[#a8cbff]/[.75]">
+        <div className="text-mediumEmphasis">
           <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
         </div>
         <div className="col text-highEmphasis">
@@ -378,6 +344,10 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
   // handle interval each 10s fetch volume
   useEffect(() => {
+    if (!currentToken) {
+      return;
+    }
+
     const interval = setInterval(() => {
       const { amm: currentAmm } = getCollectionInformation(currentToken);
       getDailySpotPriceGraphData(currentAmm).then(dayTradingDetails => {
@@ -456,7 +426,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
                 {!tradingData.longRatio ? '-.--' : formatterValue(tradingData.longRatio, 0, '%')}
               </span>
             </div>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col text-right">
               <span className="text-marketRed">Short</span>
               <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
                 {!tradingData.shortRatio ? '-.--' : formatterValue(tradingData.shortRatio, 0, '%')}
@@ -486,7 +456,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 });
 
 function ChartMobile(props: any, ref: any) {
-  const { tradingData, fullWalletAddress, tokenRef, currentToken, isLoginState, isWrongNetwork } = props;
+  const { tradingData } = props;
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
@@ -495,32 +465,9 @@ function ChartMobile(props: any, ref: any) {
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
-  const graphDataRef = useRef({});
   const proRef = useRef();
-
-  // const handleIsProShow = async () => {
-  //   const storageIsProShow = await localStorage.getItem('isProShow');
-  //   if (storageIsProShow === 'false') return setIsProShow(false);
-  //   return setIsProShow(true);
-
-  //   // if (isLoginState && fullWalletAddress) {
-  //   //   const storagefullWalletAddress = localStorage.getItem('fullWalletAddress');
-  //   //   if (storagefullWalletAddress !== fullWalletAddress) {
-  //   //     setIsProShow(true);
-  //   //     // save to local
-  //   //     localStorage.setItem('isProShow', 'true');
-  //   //     localStorage.setItem('fullWalletAddress', fullWalletAddress);
-  //   //   }
-  //   // }
-  // };
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, [fullWalletAddress, isLoginState]);
-
-  // useEffect(() => {
-  //   handleIsProShow();
-  // }, []);
+  const fullWalletAddress = walletProvider.holderAddress;
+  const currentToken = useNanostore(wsCurrentToken);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
@@ -575,8 +522,6 @@ function ChartMobile(props: any, ref: any) {
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          // tokenRef={tokenRef}
-          currentToken={currentToken}
           isProShow={isProShow}
           setIsProShow={setIsProShow}
         />
@@ -589,13 +534,7 @@ function ChartMobile(props: any, ref: any) {
             chartProContainerRef={chartProContainerRef}
           />
         </div>
-        <ProComponent
-          ref={proRef}
-          visible={isProShow}
-          tradingData={tradingData}
-          currentToken={currentToken}
-          selectedTimeIndex={selectedTimeIndex}
-        />
+        <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
       </div>
     </div>
   );

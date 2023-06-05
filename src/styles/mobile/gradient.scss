@@ -3,7 +3,7 @@
 }
 
 .btn-connect-before {
-  background: linear-gradient(180deg, #c187d0 0%, #3576f7 39.06%, #8d05f7 100%);
+  background: linear-gradient(180deg, #c187d0, #3576f7 39.06%, #8d05f7);
   -webkit-mask: -webkit-linear-gradient(#171833 0 0) content-box, -webkit-linear-gradient(#171833 0 0);
   -webkit-mask-composite: source-out;
   mask: -webkit-linear-gradient(#171833 0 0) content-box, -webkit-linear-gradient(#171833 0 0);
@@ -53,4 +53,61 @@
       transform: translateY(0px);
     }
   }
+}
+
+.market_user {
+  background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.trade-input-outline.valid {
+  background: linear-gradient(to right, rgba(4, 174, 252, 1), rgba(121, 90, 244, 1), rgba(247, 3, 217, 1));
+}
+
+.input-track {
+  background: linear-gradient(260.78deg, #f703d9 0.16%, #795af4 49.47%, #04aefc 106.6%);
+}
+
+.trade-tab {
+  background: linear-gradient(180deg, #171731, #0c0d1f);
+
+  &.selected {
+    background: linear-gradient(180deg, #171731, rgba(23, 23, 49, 0) 0.01%, rgba(23, 25, 56, 0.49) 34.9%, #172c76);
+  }
+
+  &:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(23, 23, 49, 0.5),
+      rgba(23, 23, 49, 0) 0.01%,
+      rgba(23, 25, 56, 0.25) 34.9%,
+      rgba(23, 44, 118, 0.5)
+    );
+  }
+}
+
+.trade-btn {
+  background: linear-gradient(267.54deg, rgba(247, 3, 217, 0.3) 3.52%, rgba(121, 90, 244, 0.3) 39.38%, rgba(4, 174, 252, 0.3) 80.93%);
+
+  &:hover {
+    background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
+  }
+}
+
+.share-container {
+  background: linear-gradient(180deg, #171731, #0c0d1f);
+
+  .image-bg {
+    background: url('/images/components/trade/bg_sharing_rise.png');
+    background-size: 100% 100%;
+  }
+}
+
+.mobile-menu-active {
+  background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

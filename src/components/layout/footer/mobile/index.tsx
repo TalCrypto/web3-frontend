@@ -1,51 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
-import Sidebar from '@/components/layout/footer/mobile/Sidebar';
+// import Sidebar from '@/components/layout/footer/mobile/Sidebar';
+import { connectWallet, updateTargetNetwork } from '@/utils/Wallet';
+import { wsIsLogin, wsIsShowTradingMobile, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
+import { useStore as useNanostore } from '@nanostores/react';
+import { walletProvider } from '@/utils/walletProvider';
+import MobileMenu from '@/components/trade/mobile/menu';
 
 function MobileFooter() {
-  const isLogin = false;
-  const isLoading = false;
-  const wethBalance = 0;
-  const isTethCollected = false;
-  const isNetworkSame = true;
-  const [isSidebarShow, setIsSidebarShow] = useState(false);
+  const isLogin = useNanostore(wsIsLogin);
+  const isWalletLoading = useNanostore(wsIsWalletLoading);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
+  const wethBalance = useNanostore(wsWethBalance);
+  const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
 
-  function handleGoToTrade() {}
+  const onClickBottomButton = async () => {
+    if (!isLogin) {
+      connectWallet(null, false);
+      return;
+    }
 
-  useEffect(() => {
-    const handleBodyClick = (event: any) => {
-      if (!event.target.closest('.footer') && !event.target.closest('.sidebar') && isSidebarShow) {
-        setIsSidebarShow(false);
-      }
-    };
-    document.body.addEventListener('click', handleBodyClick);
-    return () => {
-      document.body.removeEventListener('click', handleBodyClick);
-    };
-  }, [isSidebarShow]);
+    if (isWrongNetwork) {
+      updateTargetNetwork(null);
+      return;
+    }
+
+    if (!isTethCollected) {
+      return;
+    }
+
+    wsIsShowTradingMobile.set(true);
+  };
 
   return (
     <>
       <div
-        className="footer backface-visibility-hidden z-600 duration-400 fixed
-          bottom-0 left-0 box-border block h-[64px] w-full transform bg-[#202249]
+        className="backface-visibility-hidden z-600 duration-400 fixed
+          bottom-0 left-0 box-border block h-[64px] w-full transform bg-secondaryBlue
           pr-2 text-white md:hidden">
         <div
           className="box-border flex h-full w-full
             content-center items-center justify-normal overflow-hidden">
           <button
-            className="relative box-border h-full w-[124px]
-              flex-shrink-0 overflow-ellipsis whitespace-nowrap
-              bg-[#2574FB] text-xs font-semibold capitalize text-white/[.87]
+            className="relative box-border flex h-full w-[124px] flex-shrink-0
+              items-center justify-center overflow-ellipsis whitespace-nowrap
+              bg-primaryBlue text-xs font-semibold capitalize text-highEmphasis
               transition duration-100"
-            onClick={handleGoToTrade}>
-            {isLoading ? (
+            onClick={onClickBottomButton}>
+            {isWalletLoading ? (
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
             ) : !isLogin ? (
               'Connect Wallet'
-            ) : !isNetworkSame ? (
-              'Switch to Goerli'
+            ) : isWrongNetwork ? (
+              <>
+                Switch to <br /> Arbitrum
+              </>
             ) : !isTethCollected ? (
               'Get TETH'
             ) : (
@@ -53,12 +64,12 @@ function MobileFooter() {
             )}
           </button>
           {isLogin ? (
-            <div className="ml-6 flex-1 text-xs font-normal text-[#a8cbff]/[.75]">
+            <div className="ml-6 flex-1 text-xs font-normal text-mediumEmphasis">
               Wallet Balance
-              <div className="text-base font-semibold text-white/[.87]">{wethBalance} TETH</div>
+              <div className="text-base font-semibold text-highEmphasis">{wethBalance} TETH</div>
             </div>
           ) : (
-            <div className="ml-6 flex-1 text-xs font-normal text-[#a8cbff]/[.75]">
+            <div className="ml-6 flex-1 text-xs font-normal text-mediumEmphasis">
               Please connect
               <br />
               wallet to trade
@@ -66,19 +77,14 @@ function MobileFooter() {
           )}
           <button
             onClick={() => {
-              setIsSidebarShow(true);
+              setIsShowMobileMenu(true);
             }}>
             <Image src="/images/mobile/common/menu_icon.svg" alt="" width={40} height={40} />
           </button>
         </div>
       </div>
 
-      <div
-        className={`sidebar translate-z-0 fixed right-0 top-0
-        ${isSidebarShow ? 'block' : 'hidden'}
-        z-10 h-full w-[260px] text-white`}>
-        <Sidebar />
-      </div>
+      {isShowMobileMenu ? <MobileMenu setIsShowMobileMenu={setIsShowMobileMenu} /> : null}
     </>
   );
 }

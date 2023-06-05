@@ -3,14 +3,15 @@ import Image from 'next/image';
 // import moment from 'moment';
 import collectionList from '@/const/collectionList';
 import { getMarketOverview } from '@/utils/trading';
+import { useStore as useNanostore } from '@nanostores/react';
 
 import CollectionListModal from '@/components/trade/mobile/collection/CollectionListModal';
+import { wsCurrentToken } from '@/stores/WalletState';
 
-export default function Switcher(props: any) {
-  const { currentToken, setCurrentToken } = props;
-
+export default function Switcher() {
+  const currentToken = useNanostore(wsCurrentToken);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  const currentCollectionName = currentCollection.displayCollectionPair || 'BAYC';
+  const currentCollectionName = currentCollection.displayCollectionPair || 'DEGODS';
   const currentCollectionLogo = currentCollection.logo;
 
   const [popupOpened, setPopupOpened] = useState(false);
@@ -30,12 +31,12 @@ export default function Switcher(props: any) {
 
   return (
     <>
-      {/* <div className="fixed top-0 z-10 h-[48px] w-full bg-[#202249]"> */}
-      <div className="h-[48px] w-full bg-[#202249]">
+      {/* <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue"> */}
+      <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue">
         <div className="flex h-full px-5">
           <div className="flex items-center">
             <Image className="" src={currentCollectionLogo} width="24" height="24" alt="" />
-            <div className="ml-[6px] text-[15px] text-white/[.87]">{currentCollectionName}</div>
+            <div className="ml-[6px] text-[15px] text-highEmphasis">{currentCollectionName}</div>
           </div>
           <div className="flex flex-1 justify-end text-right">
             <Image
@@ -49,14 +50,7 @@ export default function Switcher(props: any) {
           </div>
         </div>
       </div>
-      {popupOpened ? (
-        <CollectionListModal
-          marketData={marketData}
-          setPopupOpened={setPopupOpened}
-          setCurrentToken={setCurrentToken}
-          currentToken={currentToken}
-        />
-      ) : null}
+      {popupOpened ? <CollectionListModal marketData={marketData} setPopupOpened={setPopupOpened} /> : null}
     </>
   );
 }

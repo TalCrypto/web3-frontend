@@ -16,8 +16,6 @@ $navbar-base-colorful-color: linear-gradient(267.54deg, #f703d9 3.52%, #795af4 3
   }
 
   .navbar-button {
-    @include font-weight-color(15px, 500);
-    @include colorful-border-color(linear-gradient(180deg, #c187d0 0%, #3576f7 39.06%, #8d05f7 100%), 1px, 100px);
     @include display-flex(center, row, center);
     position: relative;
     border: 0;

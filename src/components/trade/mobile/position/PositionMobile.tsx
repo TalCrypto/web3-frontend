@@ -2,6 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
+/* eslint-disable no-unused-vars */
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -16,7 +17,6 @@ import { firebaseAnalytics } from '@/const/firebaseConfig';
 // import { TypeWithIconByCollection } from '@/components/trade/desktop/information/TypeWithIcon';
 // import { getTradingActionType } from '@/components/trade/desktop/information/ActionType';
 
-// import IndividualShareContainer from '../dashboard/individualShareContainer';
 // import { PriceWithIcon } from '../../components/priceWithIcon';
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
@@ -27,7 +27,11 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
-import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
+import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
+import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
+
+// import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
+import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -41,7 +45,7 @@ function MedPriceIcon(props: any) {
         height={20}
         style={{ marginRight: '4px' }}
       />
-      <span className={`${isLoading ? 'animate__animated animate__flash animate__infinite' : ''}`}>{priceValue}</span>
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
   );
 }
@@ -50,32 +54,24 @@ export default function PositionMobile(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
-  const {
-    userPosition,
-    tradingData,
-    // tokenRef,
-    currentToken,
-    fullWalletAddress
-    // historyRecords,
-    // setFundingModalIsShow,
-    // setHistoryModalIsVisible
-  } = props;
+  const { tradingData } = props;
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapLmt = useNanostore(priceGapLimit);
+  const currentToken = useNanostore(wsCurrentToken);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
   // const isBadDebt = userPosition ? Number(utils.formatEther(userPosition.remainMarginLeverage)) === 0 : false;
 
   // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
-  const [showSharePosition, setShowSharePosition] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  const currentCollectionName = currentCollection.shortName || 'BAYC';
+  const currentCollectionName = currentCollection.shortName || 'DEGODS';
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // liquidation warning
   const positionType = userPosition ? (userPosition.size > 0 ? 'LONG' : 'SHORT') : null;
@@ -83,6 +79,8 @@ export default function PositionMobile(props: any) {
   const liquidationChanceLimit = 0.05;
 
   const [userInfo, setUserInfo] = useState({});
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
 
   const liquidationChanceWarning = () => {
     if (!userPosition || !tradingData.spotPrice || !tradingData.twapPrice || !priceGapLmt) return false;
@@ -117,6 +115,7 @@ export default function PositionMobile(props: any) {
   // leverage handling
   const isLeverageNegative = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) <= 0 : false;
   const isLeverageOver = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) > 100 : false;
+  const fullWalletAddress = walletProvider.holderAddress;
 
   // const size = '';
   // const currentPrice = '';
@@ -126,7 +125,7 @@ export default function PositionMobile(props: any) {
   let totalPnlValue = '';
   let numberTotalPnl = 0;
 
-  if (userPosition !== null && tradingData !== null) {
+  if (userPosition && tradingData) {
     // size = calculateNumber(userPosition.size, 4);
     // currentPrice = calculateNumber(tradingData.spotPrice, 2);
     // absoluteSize = Math.abs(Number(calculateNumber(userPosition.size, 4)));
@@ -153,32 +152,12 @@ export default function PositionMobile(props: any) {
     }
   }, [fullWalletAddress]);
 
-  // if (userPosition === null) {
-  //   return null;
-  // }
-
-  const clickShowSharePosition = (show: any) => {
-    setShowSharePosition(show);
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'share_position_performance_pressed', {
-        wallet: walletProvider?.holderAddress?.substring(2),
-        collection: currentToken
-      });
-    }
-
-    apiConnection.postUserEvent('share_position_performance_pressed', {
-      page,
-      collection: currentToken
-    });
-  };
+  if (!userPosition) {
+    return null;
+  }
 
   return (
-    <div className="positionpanel mb-[24px]">
-      {showSharePosition ? (
-        <IndividualShareContainer userPosition={[userPosition]} setShowShareComponent={setShowSharePosition} userInfo={userInfo} />
-      ) : null}
-
+    <div className="mb-[24px]">
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
@@ -186,8 +165,11 @@ export default function PositionMobile(props: any) {
           {collectionIsPending[currentCollection.amm] ? <div className="pending-reminder">Transaction Pending...</div> : null}
         </div>
         <div className="flex space-x-[24px]">
-          <div className="nav-icon-btn" onClick={() => clickShowSharePosition(true)}>
-            <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width="16" height="16" />
+          <div onClick={() => setShowFundingPaymentModal(true)}>
+            <Image alt="" src="/images/components/trade/position/trade_history.svg" width="16" height="16" />
+          </div>
+          <div onClick={() => setShowHistoryModal(true)}>
+            <Image alt="" src="/images/components/trade/position/funding_payment.svg" width="16" height="16" />
           </div>
         </div>
       </div>
@@ -195,13 +177,13 @@ export default function PositionMobile(props: any) {
       <div>
         <div className="px-5 pb-2 pt-6">
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Unrealized P/L</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
             <div className="text-15 font-400">
               <div>
                 <MedPriceIcon
-                  priceValue={userPosition === null ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
+                  priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
                   className={
-                    userPosition === null ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'
+                    !userPosition ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'
                   }
                   isLoading={isLoading || collectionIsPending[currentCollection.amm]}
                 />
@@ -210,16 +192,16 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Type</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
             <div>
-              <span className={userPosition === null ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
-                {userPosition === null ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
+              <span className={!userPosition ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
+                {!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
               </span>
             </div>
           </div>
 
           {/* <div className="flex mb-1">
-            <div className="text-[14px] text-[#a8cbff]/[.75] w-[120px]">Contract Size</div>
+            <div className="text-[14px] text-mediumEmphasis w-[120px]">Contract Size</div>
             <div className="flex w-[25%] space-x-[12px]">
               <MedPriceIcon
                 priceValue={absoluteSize}
@@ -231,7 +213,7 @@ export default function PositionMobile(props: any) {
           </div> */}
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Entry Price</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Entry Price</div>
             <div className="">
               <MedPriceIcon
                 priceValue={entryPrice}
@@ -242,7 +224,7 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Notional</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Notional</div>
             <div className="">
               <MedPriceIcon
                 priceValue={sizeInEth}
@@ -253,14 +235,11 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Leverage</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
 
             <div className="">
-              <span
-                className={`normalprice mr-1 ${
-                  isLoading || collectionIsPending[currentCollection.amm] ? 'animate__animated animate__flash animate__infinite' : ''
-                }`}>
-                {userPosition === null
+              <span className={`normalprice mr-1 ${isLoading || collectionIsPending[currentCollection.amm] ? 'flash' : ''}`}>
+                {!userPosition
                   ? '---'
                   : isLeverageNegative
                   ? 'N/A'
@@ -279,11 +258,11 @@ export default function PositionMobile(props: any) {
           </div>
 
           <div className="mb-1 flex">
-            <div className="w-[150px] text-[14px] text-[#a8cbff]/[.75]">Liqui. Price</div>
+            <div className="w-[150px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
             <div className="">
               <MedPriceIcon
                 priceValue={
-                  userPosition === null
+                  !userPosition
                     ? '---'
                     : Number(calculateNumber(userPosition.liquidationPrice, 2)) < 0
                     ? '0.00'
@@ -313,6 +292,11 @@ export default function PositionMobile(props: any) {
           </div>
         </div>
       </div>
+
+      {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
+      {showFundingPaymentModal ? (
+        <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
+      ) : null}
 
       {/* {isGapAboveLimit ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">

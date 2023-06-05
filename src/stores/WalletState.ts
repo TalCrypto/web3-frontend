@@ -18,3 +18,19 @@ export const wsUserInfo = atom(null);
 
 export const wsIsWrongNetwork = atom(false);
 export const wsIsWalletLoading = atom(false);
+
+export const wsIsApproveRequired = atom(false);
+
+export const wsChatInterval = atom(0);
+
+export const wsFullWalletAddress = atom('');
+
+export const wsCurrentToken = atom('DEGODS');
+
+export const wsHistoryGroupByMonth = atom([]);
+
+export const wsUserPosition = atom();
+
+export const wsIsShowTradingMobile = atom(false);
+
+export const wsMaxReduceValue = atom(0);

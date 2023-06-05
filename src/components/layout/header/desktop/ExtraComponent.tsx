@@ -8,14 +8,11 @@ import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
 import { tethCollected, inputCode, hasTraded } from '@/stores/UserState';
+import { getTestToken } from '@/utils/Wallet';
 
-interface ExtraComponentProps {
-  // getTestToken: any;
-  isWrongNetwork: boolean;
-  // updateTargetNetwork: any;
-}
+import { wsIsWrongNetwork } from '@/stores/WalletState';
 
-const ExtraComponent: React.FC<ExtraComponentProps> = ({ /* getTestToken, */ isWrongNetwork /* updateTargetNetwork */ }) => {
+const ExtraComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [referralCode, setReferralCode] = useState('');
   const [isError, setIsError] = useState(false);
@@ -24,6 +21,7 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ /* getTestToken, */ isW
   const [isShowReferral, setIsShowReferral] = useState(true);
   const isTethCollected = useNanostore(tethCollected);
   const isInputCode = useNanostore(inputCode);
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const onSwitchClick = () => {
     // updateTargetNetwork();
@@ -45,9 +43,10 @@ const ExtraComponent: React.FC<ExtraComponentProps> = ({ /* getTestToken, */ isW
       className="navbar-button"
       onClick={() => {
         setIsLoading(true);
-        // getTestToken(() => setIsLoading(false));
+        getTestToken(() => setIsLoading(false), null);
       }}>
       <div className="flex items-center space-x-1 px-3">
+        <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
         {!isLoading ? (
           <>
             <Image src="/images/components/layout/header/eth-tribe3.svg" width={16} height={16} alt="" />
