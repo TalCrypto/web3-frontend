@@ -178,10 +178,16 @@ export default function PositionDetails(props: any) {
     <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
       {showSharePosition ? <IndividualShareContainer setShowShareComponent={setShowSharePosition} userInfo={userInfo} /> : null}
       <div className=" mb-[36px] flex justify-between">
-        <div className="flex space-x-[6px]">
+        <div className="flex items-center space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
-          {collectionIsPending[currentCollection.amm] ? <div className="pending-reminder">Transaction Pending...</div> : null}
+          {collectionIsPending[currentCollection.amm] ? (
+            <div
+              className="ml-3 rounded-[2px] border-[1px] border-[#ffc24b]/[.87]
+            px-[3px] py-[1px] text-[12px] text-[#ffc24b]/[.87]">
+              Transaction Pending...
+            </div>
+          ) : null}
         </div>
         <div className="flex space-x-[24px]">
           <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>
