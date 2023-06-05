@@ -8,6 +8,9 @@ import { walletProvider } from '@/utils/walletProvider';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import Link from 'next/link';
 import { withRouter } from 'next/router';
+import { localeConversion } from '@/utils/localeConversion';
+import { calculateNumber } from '@/utils/calculateNumbers';
+import { userPoint } from '@/stores/airdrop';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -53,6 +56,13 @@ const MobileMenu = (props: any) => {
     setIsShowSocialFooter(!isShowSocialFooter);
   };
 
+  const userPointData = useNanostore(userPoint);
+  const { total, tradeVol, isBan } = userPointData;
+  const tradeVolume = calculateNumber(tradeVol.vol, 4);
+  const eligible = () => Number(tradeVolume) >= 5;
+
+  const points = eligible() && !isBan ? localeConversion(total) : '0.0';
+
   return (
     <div
       className="fixed bottom-0 left-0 right-0 top-0 z-10  h-screen w-full
@@ -66,7 +76,7 @@ const MobileMenu = (props: any) => {
             <div className="max-w-[calc(100%-50px)] ">
               <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">EMMMMMMMMMMMA</div>
               <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
-                Points: <span className="font-semibold">12</span>
+                Points: <span className="font-semibold">{points}</span>
               </span>
             </div>
           </div>
