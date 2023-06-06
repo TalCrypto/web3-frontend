@@ -136,14 +136,20 @@ function ChartTimeTabs(props: any) {
 
   useEffect(() => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
-    const { offsetWidth, offsetLeft } = activeSegmentRef.current;
+    const { offsetLeft } = activeSegmentRef.current;
     const { style } = controlRef.current;
-    style.setProperty('--highlight-width', '25px');
+    style.setProperty('--highlight-width', `25px`);
     style.setProperty('--highlight-x-pos', `${offsetLeft + 8}px`);
   }, [selectedTimeIndex, controlRef, contentArray]);
 
   return (
-    <div className="flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+    <div className="relative flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+      <div
+        className="absolute bottom-0 left-0 right-0 z-0 h-[3px]
+          w-[var(--highlight-width)] translate-x-[var(--highlight-x-pos)]
+          transform rounded-[2px] bg-[#5465ff] duration-300 ease-in-out"
+      />
+
       <div className="relative inline-flex w-full justify-between overflow-hidden text-center ">
         {contentArray.map((item: any, i: any) => (
           <div
@@ -153,9 +159,6 @@ function ChartTimeTabs(props: any) {
             }
             z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
             ref={item.ref}>
-            {i === selectedTimeIndex ? (
-              <div className="absolute bottom-0 left-[5px] right-[5px] z-0 h-[3px] rounded-[2px] bg-[#5465ff]" />
-            ) : null}
             <input
               type="radio"
               value={item.label}

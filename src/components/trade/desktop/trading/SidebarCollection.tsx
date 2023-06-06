@@ -1,7 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useEffect, useImperativeHandle, forwardRef, CSSProperties } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import collectionList from '@/const/collectionList';
@@ -89,13 +89,21 @@ function SidebarCollection(props: any, ref: any) {
   };
 
   const isHasPos = (amm: any) => overviewData.find((i: any) => i?.amm === amm) || false;
+  const yPos = activeIndex * 64 + (activeIndex > 2 ? 56 : 58);
 
   return (
     <>
       <div
-        className="side-collection absolute  mt-[9px] flex w-[44px]
-        flex-col rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-secondaryBlue
-        px-[6px] py-3">
+        className={`side-collection side-collection  sidebar-wrapper absolute mt-[9px]
+        flex w-[44px] flex-col rounded-l-[12px] border-b-0
+        border-[#71AAFF]/[.2] bg-secondaryBlue px-[6px] py-3`}
+        style={{ '--highlight-y-pos': `${yPos}px` } as CSSProperties}>
+        <div
+          className="transition-width absolute right-0 top-[6px] h-[52px] w-[52px]
+          translate-y-[var(--highlight-y-pos)] transform
+          rounded-l-[12px] bg-[#2574fb] transition duration-300 ease-in-out"
+        />
+
         <div
           className={`item ${isLoading ? 'loading' : ''}
             relative flex h-8 w-8 cursor-pointer items-center rounded-full 
@@ -124,9 +132,12 @@ function SidebarCollection(props: any, ref: any) {
             }
             relative mt-8 flex h-8 w-8 cursor-pointer items-center`}
             onClick={() => selectCollection(item.collection)}>
-            {selectedCollection.collection.toUpperCase() === item.collection.toUpperCase() ? (
-              <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-primaryBlue" />
-            ) : null}
+            {/* {selectedCollection.collection.toUpperCase() === item.collection.toUpperCase() ? (
+              <div
+                className="absolute right-[-6px] top-[-12px]
+                h-[48px] w-[48px] rounded-l-[12px] bg-primaryBlue"
+              />
+            ) : null} */}
             {item.isNew ? (
               <Image className="absolute right-[-12px] top-[-4px] z-[2]" src="/images/collections/new.svg" alt="" width={26} height={12} />
             ) : null}
