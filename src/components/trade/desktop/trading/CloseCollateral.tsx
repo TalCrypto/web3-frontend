@@ -737,8 +737,8 @@ function ExtendedEstimateComponent(props: any) {
           <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.--' : formatterValue(estimatedValue.fee, 5)} />
           {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
-          <div className="row detaillastrow">
-            <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">Price Impact</div>
+          <div className="flex justify-between">
+            <div className="col-auto text-[14px] text-[#a3c2ff]/[.48]">Price Impact</div>
             <div className="col contentsmallitem text-[14px] text-[#a3c2ff]/[.68]">
               <span className="value">{formatterValue(estimatedValue.priceImpact, 2)}</span> %
             </div>
