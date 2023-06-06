@@ -12,6 +12,7 @@ import Web3Modal from 'web3modal';
 import { Contract as MulticallContract, Provider as MulticallProvider } from '@tribe3/ethers-multicall';
 import { signInWithCustomToken, signOut, getAuth } from 'firebase/auth';
 
+import { showToast } from '@/components/common/Toast';
 import {
   getOpenPositionEstimation,
   getMarginAdjustmentEstimation,
@@ -26,7 +27,6 @@ import { apiConnection } from './apiConnection';
 import { firebaseAuth } from '../const/firebaseConfig';
 import tradePanelModal from '../stores/tradePanelModal';
 import collectionsLoading from '../stores/collectionsLoading';
-import { showToast } from '../components/common/Toast';
 import { fluctuationLimit, initialMarginRatio, priceGapLimit } from '../stores/priceGap';
 import { setPositionChanged } from '../stores/transaction';
 
