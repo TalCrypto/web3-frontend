@@ -179,7 +179,7 @@ function ChatInput(props: any) {
       <div className="col-1 newiconstate my-auto">
         <div className="mx-auto">
           <button className={`sendbutton${!allowSendMessage ? ' disable-send' : ''} p-0`} onClick={sendMessage}>
-            <Image src="/static/arrow_fill.svg" alt="" height={11.26} width={11.26} />
+            <Image src="/images/common/arrow_fill.svg" alt="" height={11.26} width={11.26} />
           </button>
         </div>
       </div>

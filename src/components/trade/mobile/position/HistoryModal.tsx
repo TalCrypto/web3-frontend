@@ -32,7 +32,7 @@ function ExplorerButton(props: any) {
 function LiquidationWarning() {
   return (
     <div className="liquidation-warning">
-      <Image src="../../../static/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
+      <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
       Your position has been liquidated because it no longer meet the collateral requirement.
     </div>
   );
@@ -363,7 +363,7 @@ const HistoryModal = (props: any) => {
                             {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
                               // <OverlayTrigger placement="top" overlay={<Tooltip>Collateral will not change.</Tooltip>}>
                               <Image
-                                src="/static/moreInfo.svg"
+                                src="/images/components/trade/history/more_info.svg"
                                 alt=""
                                 style={{ marginLeft: '6px', width: '16px', height: '16px', marginRight: '0px' }}
                               />

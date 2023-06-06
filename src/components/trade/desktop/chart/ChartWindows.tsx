@@ -405,12 +405,12 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
             //     </Tooltip>
             //   }>
             //   <div className="flex items-center">
-            //     <Image src="/static/alert_red.svg" width={20} height={20} />
+            //     <Image src="/images/common/alert/alert_red.svg" width={20} height={20} />
             //   </div>
             // </OverlayTrigger>
             <div>
               <div className="flex items-center">
-                <Image src="/static/alert_red.svg" width={20} height={20} alt="" />
+                <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
               </div>
             </div>
           ) : null}

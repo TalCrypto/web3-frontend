@@ -257,7 +257,7 @@ export default function PositionDetails(props: any) {
             {isLeverageNegative ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width="20" height="20" alt="" />}
                 tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
               />
             ) : null}
@@ -277,14 +277,14 @@ export default function PositionDetails(props: any) {
             {liquidationChanceWarning() && !liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/static/alert_yellow.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_yellow.svg" width="20" height="20" alt="" />}
                 tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
               />
             ) : null}
             {liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width="20" height="20" alt="" />}
                 tipsText="Your position is at risk of being liquidated. Please manage your risk."
               />
             ) : null}
@@ -303,7 +303,7 @@ export default function PositionDetails(props: any) {
       </div>
       {isGapAboveLimit ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
-          <Image src="/static/alert_yellow.svg" width={15} height={15} alt="" />
+          <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
           <p className="text-b3 text-warn">
             Warning: vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
             based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}

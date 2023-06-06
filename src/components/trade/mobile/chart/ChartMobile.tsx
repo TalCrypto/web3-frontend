@@ -275,7 +275,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
               {isGapAboveLimit ? (
                 <div>
                   <div className="flex items-center">
-                    <Image src="/static/alert_red.svg" width={20} height={20} alt="" />
+                    <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
                   </div>
                 </div>
               ) : null}

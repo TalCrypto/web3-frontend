@@ -31,7 +31,7 @@ function ExplorerButton(props: any) {
 function LiquidationWarning() {
   return (
     <div className="liquidation-warning">
-      <Image src="../../../static/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
+      <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
       Your position has been liquidated because it no longer meet the collateral requirement.
     </div>
   );
