@@ -9,7 +9,7 @@ function filter(filterFunction: any, params: any) {
     return (
       <div className={`type-with-icon flex ${className}`}>
         <div className="icon">
-          <Image src={targetCollection[0].image} alt="" width={24} height={24} />
+          <Image src={targetCollection[0].image} alt="" width={24} height={24} className="mr-[6px]" />
         </div>
         {showCollectionName ? <span>{targetCollection[0].shortName}</span> : null}
         <span>{content}</span>
