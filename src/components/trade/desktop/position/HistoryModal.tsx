@@ -375,11 +375,7 @@ const HistoryModal = (props: any) => {
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
                           // <OverlayTrigger placement="top" overlay={<Tooltip>Collateral will not change.</Tooltip>}>
-                          <Image
-                            src="/static/moreInfo.svg"
-                            alt=""
-                            style={{ marginLeft: '6px', width: '16px', height: '16px', marginRight: '0px' }}
-                          />
+                          <Image src="/images/components/trade/history/more_info.svg" alt="" width={16} height={16} className="ml-[6px]" />
                         ) : // </OverlayTrigger>
                         null}
                       </PriceWithIcon>
