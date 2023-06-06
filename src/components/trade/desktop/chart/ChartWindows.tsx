@@ -84,7 +84,7 @@ function PriceIndicator(props: any) {
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
         ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
-      <div className="col my-auto" style={{ marginRight: '16px', alignItems: 'center', display: 'flex' }}>
+      <div className="col mx-4 my-auto flex items-center">
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
     </div>
