@@ -22,12 +22,12 @@ const CustomToast: React.FC<CustomToastProps> = ({ title, message, linkUrl = '',
       />
     </div>
     <div>
-      <div className="text-14 font-600 mb-[4px] text-white">{title}</div>
-      <div className="text-12 font-400 mb-[4px] text-white">{message}</div>
+      <div className="mb-[4px] text-[14px] font-semibold text-white">{title}</div>
+      <div className="mb-[4px] text-[12px] font-normal text-white">{message}</div>
       <div className="flex items-center">
         {linkLabel && linkUrl ? (
-          <a href={linkUrl} target="_blank" rel="noreferrer" className="text-12 font-500 flex-1 text-primaryBlue no-underline">
-            {linkLabel} <Image src="/images/common/out.svg" alt="" width={16} height={16} />
+          <a href={linkUrl} target="_blank" rel="noreferrer" className="flex flex-1 text-[12px] font-medium text-primaryBlue no-underline">
+            {linkLabel} <Image src="/images/common/out.svg" className="ml-1" alt="" width={16} height={16} />
           </a>
         ) : null}
         {error ? <div className="closeButton">Close</div> : null}
