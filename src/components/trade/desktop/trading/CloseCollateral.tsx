@@ -973,7 +973,7 @@ export default function CloseCollateral(props: any) {
       <SectionDividers />
       <div className={`mb-4 flex items-center ${isProcessing ? 'disabled' : ''}`}>
         <div className="text-[14px] text-[#a3c2ff]/[.68]">Slippage Tolerance</div>
-        <div className="flex flex-1 justify-end">
+        <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-[#242652] bg-[#242652]
               px-[10px] py-[4px] text-white
@@ -983,9 +983,9 @@ export default function CloseCollateral(props: any) {
               title=""
               type="text"
               pattern="[0-9]*"
-              className="w-[90%] max-w-[100px]  border-[1px]
-                border-[#242652] bg-[#242652] text-[15px]
-                font-semibold outline-none"
+              className="w-[90%] max-w-[100px]  border-[1px] border-[#242652]
+                bg-[#242652] px-1 text-right
+                text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
               onChange={e => {
