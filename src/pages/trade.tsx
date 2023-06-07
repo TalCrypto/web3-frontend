@@ -131,7 +131,7 @@ function TradePage(props: TradePagePros) {
       // walletProvider.getFluctuationLimitRatio(currentCollection.amm);
       // walletProvider.getInitialMarginRatio(currentCollection.amm);
     }
-  }, [walletProvider.holderAddress, isLoginState, currentCollection, fetchUserTradingHistory]);
+  }, [walletProvider.holderAddress, isLoginState, currentCollection]);
 
   return (
     <>

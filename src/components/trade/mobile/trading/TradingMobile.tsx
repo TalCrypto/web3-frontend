@@ -96,7 +96,7 @@ function TradingMobile(props: any) {
       ) : null}
       <div
         className={`mb-[60px] flex ${userPosition ? 'h-[calc(100%-130px)]' : 'h-[calc(100%-60px)]'}
-          overflow-y-scroll rounded-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
+          overflow-y-scroll rounded-b-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
           bg-lightBlue p-6 px-[22px] py-[22px] text-white`}>
         <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
         <TradePanelModal
