@@ -73,8 +73,10 @@ function TradingWindow(props: any) {
             p-0 font-normal">
           {tabs.map((item, index) => (
             <div
-              className={`trade-tab flex w-full cursor-pointer items-center
-                justify-center text-[14px] font-semibold text-primaryBlue
+              className={`trade-tab flex w-full cursor-pointer items-center justify-center
+                text-[14px] font-semibold text-primaryBlue
+                ${index === 0 ? 'rounded-tl-[12px] ' : ''}
+                ${index === 2 ? 'rounded-tr-[12px] ' : ''}
                 ${tradeWindowIndex === index ? 'selected' : ''}`}
               onClick={() => {
                 onTabClick(index);

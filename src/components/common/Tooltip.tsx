@@ -29,7 +29,7 @@ const Tooltip: React.FC<TooltipProps> = ({ direction, content, children }) => {
     arrowClassName = '';
   } else if (direction === 'right') {
     containerClassName = 'left-[calc(100%+8px)] top-[50%-6px]';
-    arrowClassName = 'top-[calc(50%-7px)] left-[calc(0%-12px)] border-r-[#2c479c]';
+    arrowClassName = 'top-[calc(50%-7px)] left-[calc(0%-11px)] border-r-[#2c479c]';
   } else if (direction === 'left') {
     containerClassName = '';
     arrowClassName = '';
@@ -46,7 +46,7 @@ const Tooltip: React.FC<TooltipProps> = ({ direction, content, children }) => {
           `}>
         <div
           className={`pointer-events-none absolute 
-            z-10  border-[6px] border-transparent ${arrowClassName}`}
+            z-10 border-[6px] border-transparent ${arrowClassName}`}
         />
         <div className="whitespace-nowrap px-3 py-2 text-[12px]">{content}</div>
       </div>
