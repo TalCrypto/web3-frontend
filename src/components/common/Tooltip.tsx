@@ -22,8 +22,8 @@ const Tooltip: React.FC<TooltipProps> = ({ direction, content, children }) => {
   let arrowClassName = '';
 
   if (direction === 'top') {
-    containerClassName = 'bottom-[calc(100%+7px)] left-[50%] translate-x-[-50%]';
-    arrowClassName = 'ml-[6px] bottom-[-12px] left-[calc(50%-12px)] border-t-[#2c479c]';
+    containerClassName = 'bottom-[calc(100%+7px)] left-[calc(50%+3px)] translate-x-[-50%]';
+    arrowClassName = 'ml-[6px] bottom-[-11px] left-[calc(50%-12px)] border-t-[#2c479c]';
   } else if (direction === 'bottom') {
     containerClassName = '';
     arrowClassName = '';

@@ -3,11 +3,14 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
 import { createChart, ColorType, IChartApi } from 'lightweight-charts';
 import { formatDateTime } from '@/utils/date';
+import { wsSelectedTimeIndex } from '@/stores/WalletState';
+import { useStore as useNanostore } from '@nanostores/react';
 
 function ChartDisplay(props: any) {
-  const { selectedTimeIndex, lineChartData } = props;
+  const { lineChartData } = props;
   const chartContainerRef: any = useRef();
   const chartRef = useRef<IChartApi | null>(null);
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
 
   const colors = {
     backgroundColor: 'transparent',

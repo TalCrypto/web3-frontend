@@ -29,7 +29,7 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsIsLogin, wsChatInterval, wsCurrentToken } from '@/stores/WalletState';
+import { wsIsLogin, wsChatInterval, wsCurrentToken, wsSelectedTimeIndex } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 
 const flashAnim = 'flash';
@@ -132,7 +132,8 @@ function chartButtonLogged(index: any, currentCollection: any) {
 }
 
 function ChartTimeTabs(props: any) {
-  const { selectedTimeIndex, setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
+  const { isStartLoadingChart, setSelectedTimeIndex, contentArray = [], controlRef } = props;
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
 
   useEffect(() => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
@@ -180,7 +181,7 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart } = props;
+  const { tradingData, setSelectedTimeIndex, isStartLoadingChart } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const currentToken = useNanostore(wsCurrentToken);
@@ -238,7 +239,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             { label: '3M', ref: useRef() }
           ]}
           setSelectedTimeIndex={setSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
         />
       </div>
@@ -438,7 +438,8 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
 });
 
 const ProComponent = forwardRef((props: any, ref: any) => {
-  const { visible, onVisibleChanged, tradingData, currentToken, selectedTimeIndex } = props;
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const { visible, onVisibleChanged, tradingData, currentToken } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [dayVolume, setDayVolume] = useState(tradingData.dayVolume);
@@ -574,15 +575,14 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
 function ChartWindows(props: any, ref: any) {
   const { tradingData } = props;
-
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
-  const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
   const proRef = useRef();
   const currentToken = useNanostore(wsCurrentToken);
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
@@ -622,7 +622,7 @@ function ChartWindows(props: any, ref: any) {
 
   const handleSelectedTimeIndex = (index: any) => {
     chartButtonLogged(index, currentToken); // from tokenRef.current
-    setSelectedTimeIndex(index);
+    wsSelectedTimeIndex.set(index);
   };
 
   return (
@@ -632,7 +632,6 @@ function ChartWindows(props: any, ref: any) {
           ref={graphHeaderRef}
           tradingData={tradingData}
           setSelectedTimeIndex={handleSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
         />
         <div className="dividerslim" />
@@ -641,18 +640,12 @@ function ChartWindows(props: any, ref: any) {
             <ChartDisplay
               lineChartData={lineChartData}
               isStartLoadingChart={isStartLoadingChart}
-              selectedTimeIndex={selectedTimeIndex}
               chartProContainerRef={chartProContainerRef}
             />
           </div>
-          <ProComponent ref={proRef} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
+          <ProComponent ref={proRef} tradingData={tradingData} />
         </div>
-        <ChartFooter
-          tradingData={tradingData}
-          setSelectedTimeIndex={handleSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
-          isStartLoadingChart={isStartLoadingChart}
-        />
+        <ChartFooter tradingData={tradingData} setSelectedTimeIndex={handleSelectedTimeIndex} isStartLoadingChart={isStartLoadingChart} />
       </div>
     </div>
   );

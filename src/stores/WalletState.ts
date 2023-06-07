@@ -34,3 +34,5 @@ export const wsUserPosition = atom();
 export const wsIsShowTradingMobile = atom(false);
 
 export const wsMaxReduceValue = atom(0);
+
+export const wsSelectedTimeIndex = atom(0);
