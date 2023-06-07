@@ -50,7 +50,7 @@ const FundingPaymentModal = (props: any) => {
       w-full items-center justify-center bg-black/[.2] backdrop-blur-[4px]"
       onClick={() => setShowFundingPaymentModal(false)}>
       <div
-        className="relative h-[600px] w-[800px] rounded-[12px] border-[1px]
+        className="relative h-full w-full rounded-[12px] border-[1px]
         border-[#71aaff38] bg-lightBlue text-[14px] font-normal text-mediumEmphasis"
         onClick={e => e.stopPropagation()}>
         <div className="scrollable h-full overflow-y-scroll pb-[100px]">
