@@ -294,7 +294,9 @@ export default function PositionDetails(props: any) {
           <div className="w-[20%]">
             <MedPriceIcon
               priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
-              className={!userPosition ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'}
+              className={
+                !userPosition ? '' : Number(numberTotalPnl) > 0 ? 'text-marketGreen' : Number(numberTotalPnl) === 0 ? '' : 'text-marketRed'
+              }
               isLoading={isLoading || collectionIsPending[currentCollection.amm]}
             />
           </div>
