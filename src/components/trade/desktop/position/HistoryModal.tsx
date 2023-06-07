@@ -18,6 +18,7 @@ import { formatDateTime } from '@/utils/date';
 import { walletProvider } from '@/utils/walletProvider';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsHistoryGroupByMonth } from '@/stores/WalletState';
+import Tooltip from '@/components/common/Tooltip';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -189,14 +190,14 @@ const HistoryModal = (props: any) => {
         items-center justify-center overflow-auto bg-black bg-opacity-40"
       onClick={hide}>
       <div
-        className="relative mx-auto flex h-[600px] w-[830px] overflow-hidden
-          border-[1px] border-[#71aaff38] bg-secondaryBlue"
+        className="relative mx-auto flex h-[600px] w-[830px]
+          rounded-[12px] border-[1px] border-[#71aaff38] bg-secondaryBlue"
         onClick={e => {
           e.stopPropagation();
         }}>
         {Object.keys(historyRecordsByMonth).length === 0 ? (
           <div className="w-full">
-            <div className="flex justify-between px-6 py-[27px] text-[12px]">
+            <div className="flex justify-between rounded-[12px] px-6 py-[27px] text-[12px]">
               <div className="flex text-[16px] font-semibold text-white">
                 <Image className="mr-[6px]" src="/images/components/trade/position/history_title.svg" width={20} height={20} alt="" />
                 <span>Trade History</span>
@@ -223,7 +224,7 @@ const HistoryModal = (props: any) => {
                   <span>Trade History</span>
                 </div>
               </div>
-              <div className="h-[500px] overflow-auto p-1">
+              <div className="scrollable h-[500px] overflow-auto p-1">
                 {Object.keys(historyRecordsByMonth).map((month: any) => {
                   const records: any = historyRecordsByMonth[month];
                   return (
@@ -374,8 +375,15 @@ const HistoryModal = (props: any) => {
                         className="icon-label"
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
-                          // <OverlayTrigger placement="top" overlay={<Tooltip>Collateral will not change.</Tooltip>}>
-                          <Image src="/images/components/trade/history/more_info.svg" alt="" width={16} height={16} className="ml-[6px]" />
+                          <Tooltip direction="top" content="Collateral will not change.">
+                            <Image
+                              src="/images/components/trade/history/more_info.svg"
+                              alt=""
+                              width={16}
+                              height={16}
+                              className="ml-[6px] cursor-pointer"
+                            />
+                          </Tooltip>
                         ) : // </OverlayTrigger>
                         null}
                       </PriceWithIcon>

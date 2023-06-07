@@ -21,7 +21,7 @@ function base(props: any, image: any) {
 
   return (
     <div
-      className={`flex text-highEmphasis ${color} ${className}
+      className={`flex text-highEmphasis ${color} ${className} items-center
       ${large ? `text-[36px] font-semibold` : 'text-[14px]'}
       ${medium ? `text-[24px] font-semibold` : 'text-[14px]'}
     `}>

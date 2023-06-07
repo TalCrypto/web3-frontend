@@ -209,12 +209,11 @@ export default function PositionDetails(props: any) {
               setShowFundingPaymentModal={setShowFundingPaymentModal}
             />
           ) : null}
-
-          {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-          {showFundingPaymentModal ? (
-            <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
-          ) : null}
         </div>
+        {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
+        {showFundingPaymentModal ? (
+          <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
+        ) : null}
       </div>
       <div>
         <div className="mb-[12px] flex text-[14px] font-medium text-mediumEmphasis">

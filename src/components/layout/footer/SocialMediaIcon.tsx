@@ -1,6 +1,5 @@
 import React from 'react';
 import Tooltip from '@/components/common/Tooltip';
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 interface SocialMediaIconProps {
   linkUrl: string;
@@ -14,7 +13,7 @@ function SocialMediaIcon(props: SocialMediaIconProps) {
 
   return (
     <div>
-      <Tooltip direction="top" content={<div className="text-center text-[12px]">{label}</div>}>
+      <Tooltip direction="top" content={<div className="text-center">{label}</div>}>
         <span style={{ cursor: 'default' }}>
           <a href={linkUrl} target="_blank" rel="noreferrer" className="cursor-pointer">
             <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

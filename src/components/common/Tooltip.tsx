@@ -18,33 +18,37 @@ const Tooltip: React.FC<TooltipProps> = ({ direction, content, children }) => {
     setIsHovered(false);
   };
 
-  let style: any = {};
+  let containerClassName = '';
+  let arrowClassName = '';
 
   if (direction === 'top') {
-    style = { bottom: 'calc(100% + 7px)' };
+    containerClassName = 'bottom-[calc(100%+7px)] left-[50%] translate-x-[-50%]';
+    arrowClassName = 'ml-[6px] bottom-[-12px] left-[calc(50%-12px)] border-t-[#2c479c]';
   } else if (direction === 'bottom') {
-    style = {};
+    containerClassName = '';
+    arrowClassName = '';
   } else if (direction === 'right') {
-    style = {};
+    containerClassName = 'left-[calc(100%+8px)] top-[50%-6px]';
+    arrowClassName = 'top-[calc(50%-7px)] left-[calc(0%-12px)] border-r-[#2c479c]';
   } else if (direction === 'left') {
-    style = {};
+    containerClassName = '';
+    arrowClassName = '';
   }
 
   return (
     <div className="relative items-center" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div
         className={`
-            tooltip-content linear pointer-events-none absolute rounded-[4px]
-            bg-gray-800 text-white transition-opacity duration-300
-            ${isHovered ? 'opacity-100' : 'opacity-0'}            
-            ${direction === 'top' ? 'left-[50%] translate-x-[-50%]' : ''} 
-          `}
-        style={style}>
+            tooltip-content linear pointer-events-none absolute z-20
+             rounded-[4px] text-highEmphasis transition-opacity duration-300
+            ${isHovered ? 'opacity-100' : 'opacity-0'}
+            ${containerClassName} 
+          `}>
         <div
-          className="pointer-events-none absolute bottom-[-12px] left-[calc(50%-12px)]
-            z-10 ml-[6px] border-[6px] border-transparent border-t-[#2c479c]"
+          className={`pointer-events-none absolute 
+            z-10  border-[6px] border-transparent ${arrowClassName}`}
         />
-        <div className="px-3 py-2">{content}</div>
+        <div className="whitespace-nowrap px-3 py-2 text-[12px]">{content}</div>
       </div>
       {children}
     </div>
