@@ -832,7 +832,7 @@ function ExtendedEstimateComponent(props: any) {
 export default function TradeComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, connectWallet, userPosition, tradingData } = props;
+  const { refreshPositions, connectWallet, tradingData } = props;
   const [saleOrBuyIndex, setSaleOrBuyIndex] = useState(0);
   const [quantity, setQuantity] = useState('0');
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -861,6 +861,7 @@ export default function TradeComponent(props: any) {
   const isApproveRequired = useNanostore(wsIsApproveRequired);
   const fullWalletAddress = walletProvider.holderAddress;
   const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1110,7 +1111,7 @@ export default function TradeComponent(props: any) {
 
   useEffect(() => {
     if (userPosition) {
-      setSaleOrBuyIndex(Number(calculateNumber(userPosition.size, 4)) < 0 ? 1 : 0);
+      setSaleOrBuyIndex(userPosition.size < 0 ? 1 : 0);
     }
     if (isPending) {
       handleEnter(quantity);
