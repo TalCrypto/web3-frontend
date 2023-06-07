@@ -176,13 +176,7 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const {
-    tradingData,
-    setSelectedTimeIndex,
-    selectedTimeIndex,
-    isStartLoadingChart,
-    /* tokenRef, */ currentToken /* isProShow, setIsProShow */
-  } = props;
+  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, currentToken } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
 
@@ -460,8 +454,6 @@ function ChartMobile(props: any, ref: any) {
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
-  const [isProShow, setIsProShow] = useState(true);
-  const [isProVisible, setIsProVisible] = useState(false); // indicate pro component state after animation complete
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
@@ -504,7 +496,6 @@ function ChartMobile(props: any, ref: any) {
     gRef.reset();
     // graphDataRef.current.reset();
     const pRef: any = proRef.current;
-    pRef.reset();
     fetchChartData();
   }, [currentToken, selectedTimeIndex]); // from tokenRef.current
 
@@ -522,19 +513,15 @@ function ChartMobile(props: any, ref: any) {
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          isProShow={isProShow}
-          setIsProShow={setIsProShow}
         />
         <div ref={chartProContainerRef}>
           <ChartDisplay
             lineChartData={lineChartData}
             isStartLoadingChart={isStartLoadingChart}
             selectedTimeIndex={selectedTimeIndex}
-            isProShow={isProShow}
             chartProContainerRef={chartProContainerRef}
           />
         </div>
-        <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
       </div>
     </div>
   );

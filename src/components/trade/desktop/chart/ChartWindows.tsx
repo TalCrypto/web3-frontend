@@ -578,7 +578,6 @@ function ChartWindows(props: any, ref: any) {
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
-  const [isProShow, setIsProShow] = useState(true);
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
@@ -635,8 +634,6 @@ function ChartWindows(props: any, ref: any) {
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          isProShow={isProShow}
-          setIsProShow={setIsProShow}
         />
         <div className="dividerslim" />
         <div ref={chartProContainerRef} className="chart-pro-container mb-[16px] flex">
@@ -645,11 +642,10 @@ function ChartWindows(props: any, ref: any) {
               lineChartData={lineChartData}
               isStartLoadingChart={isStartLoadingChart}
               selectedTimeIndex={selectedTimeIndex}
-              isProShow={isProShow}
               chartProContainerRef={chartProContainerRef}
             />
           </div>
-          <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
+          <ProComponent ref={proRef} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
         </div>
         <ChartFooter
           tradingData={tradingData}
