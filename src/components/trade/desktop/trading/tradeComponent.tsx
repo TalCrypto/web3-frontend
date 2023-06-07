@@ -58,7 +58,7 @@ function LongShortRatio(props: any) {
         <Tooltip
           direction="top"
           content={
-            <div className="text-center text-highEmphasis">
+            <div className="text-center font-normal text-highEmphasis">
               To open a long position, please
               <br /> close your short position first
             </div>
@@ -88,7 +88,7 @@ function LongShortRatio(props: any) {
         <Tooltip
           direction="top"
           content={
-            <div className="text-center text-highEmphasis">
+            <div className="text-center font-normal text-highEmphasis">
               To open a short position, please
               <br /> close your long position first
             </div>
