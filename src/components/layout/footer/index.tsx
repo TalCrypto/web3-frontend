@@ -12,31 +12,31 @@ function Footer() {
         <div className="container flex py-[9px]">
           <div className="flex flex-1 space-x-[36px]">
             <SocialMediaIcon
-              // label="Discord"
+              label="Discord"
               linkUrl="https://discord.com/invite/v9xrD3rK9j"
               idName="discord-icon-mask"
               svgSource="/images/components/layout/footer/discord.svg"
             />
             <SocialMediaIcon
-              // label="Twitter"
+              label="Twitter"
               linkUrl="https://twitter.com/Tribe3Official"
               idName="twitter-icon-mask"
               svgSource="/images/components/layout/footer/twitter.svg"
             />
             <SocialMediaIcon
-              // label="Telegram"
+              label="Telegram"
               linkUrl="https://t.me/OfficialTribe3"
               idName="telegram-icon-mask"
               svgSource="/images/components/layout/footer/telegram.svg"
             />
             <SocialMediaIcon
-              // label="Mirror"
+              label="Mirror"
               linkUrl="https://mirror.xyz/tribe3.eth"
               idName="mirror-icon-mask"
               svgSource="/images/components/layout/footer/mirror.svg"
             />
             <SocialMediaIcon
-              // label="Docs"
+              label="Docs"
               linkUrl="https://tribe3.gitbook.io/tribe3/"
               idName="docs-icon-mask"
               svgSource="/images/components/layout/footer/docs.svg"
