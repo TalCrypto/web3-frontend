@@ -62,7 +62,7 @@ function LongShortRatio(props: any) {
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
-          ${!userPosition ? 'opacity-30' : ''}
+          ${userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
           if (!userPosition) {
