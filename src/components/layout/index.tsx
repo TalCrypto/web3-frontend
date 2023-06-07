@@ -9,7 +9,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => (
   <>
     <Header />
-    <div className="container w-full px-0 pb-12 text-white md:pb-10 md:pt-20">{children}</div>
+    <div className="w-full px-0 pb-12 text-white md:container md:pb-10 md:pt-20">{children}</div>
     <Footer />
   </>
 );
