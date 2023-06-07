@@ -28,6 +28,7 @@ import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurr
 import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
+import Tooltip from '@/components/common/Tooltip';
 
 function LongShortRatio(props: any) {
   const router = useRouter();
@@ -53,34 +54,66 @@ function LongShortRatio(props: any) {
 
   return (
     <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+      {userPosition && userPosition.size < 0 ? (
+        <Tooltip
+          direction="top"
+          content={
+            <div className="text-center text-highEmphasis">
+              To open a long position, please
+              <br /> close your short position first
+            </div>
+          }
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.15]'}
+          text-center text-[14px] font-semibold`}
+          key="long">
+          <div className="">LONG</div>
+        </Tooltip>
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
-          ${userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        onClick={() => {
-          if (!userPosition) {
-            setSaleOrBuyIndex(0);
-            analyticsLogSide(0, currentToken);
+          onClick={() => {
+            if (!userPosition) {
+              setSaleOrBuyIndex(0);
+              analyticsLogSide(0, currentToken);
+            }
+          }}>
+          LONG
+        </div>
+      )}
+
+      {userPosition && userPosition.size > 0 ? (
+        <Tooltip
+          direction="top"
+          content={
+            <div className="text-center text-highEmphasis">
+              To open a short position, please
+              <br /> close your long position first
+            </div>
           }
-        }}
-        key="long">
-        <div className="">LONG</div>
-      </div>
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
-          ${userPosition ? 'opacity-30' : ''}
-          text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        onClick={() => {
-          if (!userPosition) {
-            setSaleOrBuyIndex(1);
-            analyticsLogSide(1, currentToken);
-          }
-        }}
-        key="short">
-        <div className="">SHORT</div>
-      </div>
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.15]'}
+            text-center text-[14px] font-semibold`}
+          key="short">
+          <div className="">SHORT</div>
+        </Tooltip>
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+            text-center text-[14px] font-semibold hover:text-highEmphasis`}
+          key="short"
+          onClick={() => {
+            if (!userPosition) {
+              setSaleOrBuyIndex(1);
+              analyticsLogSide(1, currentToken);
+            }
+          }}>
+          SHORT
+        </div>
+      )}
     </div>
   );
 }

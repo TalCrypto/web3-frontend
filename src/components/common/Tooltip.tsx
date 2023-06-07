@@ -5,9 +5,10 @@ interface TooltipProps {
   direction: 'top' | 'bottom' | 'left' | 'right';
   content: string | React.ReactNode;
   children: React.ReactNode; // Add children prop
+  className?: string;
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ direction, content, children }) => {
+const Tooltip: React.FC<TooltipProps> = ({ direction, content, children, className = '' }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -36,7 +37,12 @@ const Tooltip: React.FC<TooltipProps> = ({ direction, content, children }) => {
   }
 
   return (
-    <div className="relative items-center" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div
+      className={`relative items-center
+        ${className || ''}
+      `}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}>
       <div
         className={`
             tooltip-content linear pointer-events-none absolute z-20
@@ -53,6 +59,10 @@ const Tooltip: React.FC<TooltipProps> = ({ direction, content, children }) => {
       {children}
     </div>
   );
+};
+
+Tooltip.defaultProps = {
+  className: ''
 };
 
 export default Tooltip;
