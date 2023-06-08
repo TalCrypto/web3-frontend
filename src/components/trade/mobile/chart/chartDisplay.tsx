@@ -146,7 +146,7 @@ function ChartDisplay(props: any) {
   }, [lineChartData]);
 
   return (
-    <div className="flex justify-center bg-[#0C0D20] py-6">
+    <div className="flex justify-center bg-darkBlue py-6">
       <div className="w-full" ref={chartContainerRef} />
     </div>
   );

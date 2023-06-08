@@ -47,7 +47,7 @@ export default function ConnectWalletModal() {
             <div
               className="mt-3 flex cursor-pointer flex-col items-center
                 justify-center rounded-md border border-solid
-                border-primaryBlue py-6 hover:bg-[#2574fb33]"
+                border-primaryBlue py-6 hover:bg-modal-item-hover"
               onClick={() => connectWallet(false)}>
               <Image src="/images/components/layout/header/okx-logo.svg" alt="" className="logo" width={imageSize} height={imageSize} />
               <div className="mt-[6px] text-[16px] font-semibold">OKX Wallet</div>
@@ -56,7 +56,7 @@ export default function ConnectWalletModal() {
             <div
               className="mt-3 flex cursor-pointer flex-col items-center
                 justify-center rounded-md border border-solid
-                border-primaryBlue py-6 hover:bg-[#2574fb33]"
+                border-primaryBlue py-6 hover:bg-modal-item-hover"
               onClick={() => connectWallet(false)}>
               <Image
                 src="/images/components/layout/header/metamask-logo.png"
@@ -71,7 +71,7 @@ export default function ConnectWalletModal() {
             <div
               className="mt-3 flex cursor-pointer flex-col items-center
                 justify-center rounded-md border border-solid
-                border-primaryBlue py-6 hover:bg-[#2574fb33]"
+                border-primaryBlue py-6 hover:bg-modal-item-hover"
               onClick={() => connectWallet(true)}>
               <Image
                 src="/images/components/layout/header/walletconnect-logo.png"

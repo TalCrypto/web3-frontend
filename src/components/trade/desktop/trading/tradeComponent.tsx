@@ -64,7 +64,7 @@ function LongShortRatio(props: any) {
             </div>
           }
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.15]'}
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
           text-center text-[14px] font-semibold`}
           key="long">
           <div className="">LONG</div>
@@ -72,7 +72,7 @@ function LongShortRatio(props: any) {
       ) : (
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
           onClick={() => {
             if (!userPosition) {
@@ -94,7 +94,7 @@ function LongShortRatio(props: any) {
             </div>
           }
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.15]'}
+            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
             text-center text-[14px] font-semibold`}
           key="short">
           <div className="">SHORT</div>
@@ -102,7 +102,7 @@ function LongShortRatio(props: any) {
       ) : (
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
             text-center text-[14px] font-semibold hover:text-highEmphasis`}
           key="short"
           onClick={() => {

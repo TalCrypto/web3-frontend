@@ -37,7 +37,22 @@ module.exports = {
         mediumEmphasis: '#a8cbffbf',
         marketRed: '#ff5656',
         marketGreen: '#78f363',
-        warn: '#ffc24bde'
+        warn: '#ffc24bde',
+
+        tooltipArrow: '#213676',
+
+        direction: {
+          unselected: {
+            normal: '#c3d8ff7a',
+            disabled: '#c3d8ff26'
+          }
+        },
+
+        modal: {
+          item: {
+            hover: '#2574fb33'
+          }
+        }
       },
       fontSize: {
         h1: [

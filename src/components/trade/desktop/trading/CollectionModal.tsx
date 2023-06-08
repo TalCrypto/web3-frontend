@@ -251,7 +251,7 @@ const CollectionModal = (props: any) => {
       }}>
       <div
         className="relative mx-auto mt-[80px] h-[600px] max-w-[940px]
-          rounded-[12px] border-[1px] border-[#a8cbff]/[.22] bg-[#0c0d20] text-[14px]
+          rounded-[12px] border-[1px] border-[#a8cbff]/[.22] bg-darkBlue text-[14px]
           font-normal leading-[17px] text-mediumEmphasis"
         onClick={e => {
           e.stopPropagation();

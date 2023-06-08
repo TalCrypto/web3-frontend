@@ -107,7 +107,7 @@ const MarketTrade = () => {
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
       <Cell
         items={['Time / Type', 'Action', 'Notional Size', 'Resulting Price', 'User ID', '']}
-        classNames={['col-span-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-1 px-3']}
+        classNames={['col-span-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-1']}
       />
       {marketHistory && marketHistory.length > 0 ? (
         marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
@@ -128,7 +128,7 @@ const MarketTrade = () => {
 
               <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
               <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
-              <div className="overflow-hidden text-ellipsis">
+              <div className="">
                 <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
                   {trimString(userId, 10) || walletAddressToShow(userAddress)}
                 </span>
@@ -138,7 +138,7 @@ const MarketTrade = () => {
               </div>,
               <ExplorerButton txHash={txHash} />
             ]}
-            classNames={['col-span-3 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-2 px-3', 'col-span-1 px-3']}
+            classNames={['col-span-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-1 px-3']}
           />
         ))
       ) : (

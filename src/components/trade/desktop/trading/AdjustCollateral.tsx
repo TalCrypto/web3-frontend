@@ -63,7 +63,7 @@ function SaleOrBuyRadio(props: any) {
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center 
           rounded-full text-center text-[14px] font-semibold hover:text-highEmphasis
-          ${className} ${marginIndex === index ? 'text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+          ${className} ${marginIndex === index ? 'text-highEmphasis' : 'text-direction-unselected-normal'}
         `}
         onClick={() => {
           setAdjustMarginValue(0);

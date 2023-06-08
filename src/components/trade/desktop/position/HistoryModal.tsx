@@ -217,7 +217,7 @@ const HistoryModal = (props: any) => {
           </div>
         ) : (
           <>
-            <div className="h-full w-[450px] rounded-l-[12px] bg-[#0c0d20]">
+            <div className="h-full w-[450px] rounded-l-[12px] bg-darkBlue">
               <div className="flex justify-between px-6 py-[27px] text-[12px]">
                 <div className="flex text-[16px] font-semibold text-white">
                   <Image className="mr-[6px]" src="/images/components/trade/position/history_title.svg" width={20} height={20} alt="" />

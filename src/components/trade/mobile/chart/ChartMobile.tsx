@@ -392,7 +392,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
   return (
     <div
-      className={`w-full whitespace-nowrap rounded-none bg-[#0C0D20]
+      className={`w-full whitespace-nowrap rounded-none bg-darkBlue
         px-[21px] py-[24px] ${visible ? 'visible' : ''}`}>
       <div className="content flex flex-col space-y-[24px]">
         <div className="flex text-[14px] text-mediumEmphasis">

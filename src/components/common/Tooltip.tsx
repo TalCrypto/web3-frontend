@@ -24,13 +24,13 @@ const Tooltip: React.FC<TooltipProps> = ({ direction, content, children, classNa
 
   if (direction === 'top') {
     containerClassName = 'bottom-[calc(100%+7px)] left-[calc(50%+3px)] translate-x-[-50%]';
-    arrowClassName = 'ml-[6px] bottom-[-11px] left-[calc(50%-12px)] border-t-[#2c479c]';
+    arrowClassName = 'ml-[6px] bottom-[-11px] left-[calc(50%-12px)] border-t-tooltipArrow';
   } else if (direction === 'bottom') {
     containerClassName = '';
     arrowClassName = '';
   } else if (direction === 'right') {
     containerClassName = 'left-[calc(100%+8px)] top-[50%-6px]';
-    arrowClassName = 'top-[calc(50%-7px)] left-[calc(0%-11px)] border-r-[#2c479c]';
+    arrowClassName = 'top-[calc(50%-7px)] left-[calc(0%-11px)] border-r-tooltipArrow';
   } else if (direction === 'left') {
     containerClassName = '';
     arrowClassName = '';

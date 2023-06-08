@@ -61,7 +61,7 @@ function LongShortRatio(props: any) {
     <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           ${userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
@@ -75,7 +75,7 @@ function LongShortRatio(props: any) {
       </div>
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           ${userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
