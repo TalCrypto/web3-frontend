@@ -117,8 +117,8 @@ const MobileMenu = (props: any) => {
                 <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
                   Avatar
                   <span
-                    className="ml-[6px] rounded-[2px] border-[1px] border-[#ffc34b]/[.87] px-[3px]
-                    py-[1px] text-[8px] text-[#ffc34b]/[.87]">
+                    className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
+                    py-[1px] text-[8px] text-comingSoon">
                     SOON
                   </span>
                 </Link>
@@ -127,8 +127,8 @@ const MobileMenu = (props: any) => {
                 <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
                   Battle
                   <span
-                    className="ml-[6px] rounded-[2px] border-[1px] border-[#ffc34b]/[.87] px-[3px]
-                    py-[1px] text-[8px] text-[#ffc34b]/[.87]">
+                    className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
+                    py-[1px] text-[8px] text-comingSoon">
                     SOON
                   </span>
                 </Link>

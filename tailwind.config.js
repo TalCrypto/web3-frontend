@@ -49,6 +49,7 @@ module.exports = {
           }
         },
 
+        comingSoon: '#ffc34bde',
         modal: {
           item: {
             hover: '#2574fb33'
