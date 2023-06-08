@@ -183,8 +183,8 @@ export default function PositionDetails(props: any) {
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
           {collectionIsPending[currentCollection.amm] ? (
             <div
-              className="ml-3 rounded-[2px] border-[1px] border-[#ffc24b]/[.87]
-            px-[3px] py-[1px] text-[12px] text-[#ffc24b]/[.87]">
+              className="ml-3 rounded-[2px] border-[1px] border-warn
+            px-[3px] py-[1px] text-[12px] text-warn">
               Transaction Pending...
             </div>
           ) : null}
@@ -288,7 +288,7 @@ export default function PositionDetails(props: any) {
               />
             ) : null}
             {isGapAboveLimit ? (
-              <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-[#FFC24B]" />
+              <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
             ) : null}
           </div>
           <div className="w-[20%]">

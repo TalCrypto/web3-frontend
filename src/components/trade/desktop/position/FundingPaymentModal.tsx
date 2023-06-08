@@ -162,7 +162,7 @@ const FundingPaymentModal = (props: any) => {
                   return (
                     <div
                       className={`flex cursor-pointer p-3
-                      ${idx % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-[#171833]'}`}
+                      ${idx % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}`}
                       key={`fp-row-${idx}`}>
                       <div className="flex min-w-[190px] items-center px-[18px]">
                         <div className="mr-2 h-[24px] w-[2px] rounded-[2px] bg-[#4287f5]" />

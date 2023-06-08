@@ -286,7 +286,7 @@ export default function PositionMobile(props: any) {
                 />
               ) : null}
               {isGapAboveLimit ? (
-                <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-[#FFC24B]" />
+                <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
             </div>
           </div>

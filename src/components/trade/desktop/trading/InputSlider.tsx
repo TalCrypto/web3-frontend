@@ -61,7 +61,7 @@ export default function InputSlider(props: any) {
               return (
                 <div
                   key={`mark-${i}`}
-                  className="h-[8px] w-[8px] cursor-pointer text-[14px] text-[#a3c2ff]/[.6]"
+                  className="h-[8px] w-[8px] cursor-pointer text-[14px] text-mediumEmphasis"
                   onClick={() => {
                     if (!disabled) onChange(i);
                   }}>

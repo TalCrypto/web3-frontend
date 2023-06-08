@@ -142,9 +142,9 @@ function QuantityEnter(props: any) {
   return (
     <>
       <div className={`mb-4 flex ${disabled ? 'disabled' : ''}`}>
-        <div className="flex-1 text-[14px] text-[#a3c2ff]/[.68]">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
+        <div className="flex-1 text-[14px] text-mediumEmphasis">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
         {isLoginState && !isWrongNetwork && marginIndex === 0 ? (
-          <div className="flex text-[14px] text-[#a3c2ff]/[.68]" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+          <div className="flex text-[14px] text-mediumEmphasis" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <div className="flex-1" style={{ display: 'flex', marginRight: '4px' }}>
               <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
             </div>
@@ -179,7 +179,7 @@ function QuantityEnter(props: any) {
                     showMaxValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">MAX</span>
+                <span className="text-center text-mediumEmphasis">MAX</span>
               </div>
               <div
                 className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
@@ -190,7 +190,7 @@ function QuantityEnter(props: any) {
                     showHalfValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">HALF</span>
+                <span className="text-center text-mediumEmphasis">HALF</span>
               </div>
             </div>
             <input
@@ -220,9 +220,9 @@ function UpdateValueDisplay(props: any) {
 
   return (
     <div className="mb-4 flex">
-      <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="w-[45%] text-[14px] text-mediumEmphasis">{title}</div>
       <div className="right">
-        <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue}</span>
+        <span className="text-[14px] font-semibold text-mediumEmphasis">{currentValue}</span>
         <span className="text-[14px] font-semibold text-highEmphasis">{' → '}</span>
         <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
           <span className="text-[14px] font-semibold">{newValue}</span>
@@ -238,8 +238,8 @@ function UpdateValueNoDataDisplay(props: any) {
 
   return (
     <div className="row adjustcollateralrow items-center">
-      <div className="col text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
-      <div className="col-auto text-[14px] font-semibold text-[#a3c2ff]/[.68]">
+      <div className="col text-[14px] text-mediumEmphasis">{title}</div>
+      <div className="col-auto text-[14px] font-semibold text-mediumEmphasis">
         <span>{`-.--${unit}`}</span>
       </div>
     </div>
@@ -261,7 +261,7 @@ function UpdatedCollateralValue(props: any) {
 
   return (
     <div className="mb-4 flex items-center">
-      <div className="text-[14px] text-[#a3c2ff]/[.68]">{marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}</div>
+      <div className="text-[14px] text-mediumEmphasis">{marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}</div>
       <div className="flex-1 text-right">
         <span className="text-[14px] font-semibold">{value}</span>
         <span className="text-[12px]" style={{ marginLeft: '4px' }}>

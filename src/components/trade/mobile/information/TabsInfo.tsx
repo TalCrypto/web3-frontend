@@ -44,7 +44,7 @@ function Cell(props: any) {
   return (
     <div
       className="relative mb-6 grid grid-cols-12 items-center whitespace-break-spaces
-      text-[12px] text-[#a3c2ff]/[.6]">
+      text-[12px] text-mediumEmphasis">
       {items.map((item: any, index: any) => (
         // eslint-disable-next-line react/no-array-index-key
         <div className={`${classNames[index]}`} key={index}>

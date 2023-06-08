@@ -133,7 +133,7 @@ function QuantityEnter(props: any) {
   return (
     <>
       <div className={`${disabled ? 'disabled' : ''}`}>
-        <div className="mb-3 text-[14px] text-[#a3c2ff]/[.68]">Amount to Close (Notional)</div>
+        <div className="mb-3 text-[14px] text-mediumEmphasis">Amount to Close (Notional)</div>
       </div>
       <div className="mb-3">
         <div
@@ -158,7 +158,7 @@ function QuantityEnter(props: any) {
                     showMaxValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">MAX</span>
+                <span className="text-center text-mediumEmphasis">MAX</span>
               </div>
               <div
                 className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
@@ -169,7 +169,7 @@ function QuantityEnter(props: any) {
                     showHalfValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">HALF</span>
+                <span className="text-center text-mediumEmphasis">HALF</span>
               </div>
             </div>
             <input
@@ -199,9 +199,9 @@ function UpdateValueDisplay(props: any) {
 
   return (
     <div className="mb-4 flex">
-      <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="w-[45%] text-[14px] text-mediumEmphasis">{title}</div>
       <div className="flex-1">
-        <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue + currentUnit}</span>
+        <span className="text-[14px] font-semibold text-mediumEmphasis">{currentValue + currentUnit}</span>
         <span className="text-[14px] font-semibold text-highEmphasis">{' → '}</span>
         <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
           <span className="text-[14px] font-semibold">{newValue}</span>
@@ -217,7 +217,7 @@ function UpdateValueNoDataDisplay(props: any) {
 
   return (
     <div className="flex items-center">
-      <div className="text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="text-[14px] text-mediumEmphasis">{title}</div>
       <div className="text-[14px] font-semibold text-highEmphasis">
         <span>-.--</span>
         <span className="text-[14px]">{unit}</span>
@@ -234,8 +234,8 @@ function DisplayValues(props: any) {
       className={`${className !== '' ? className : 'sumrow'}
       mb-[2px] flex items-center
     `}>
-      <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
-      <div className={`flex-1 flex-shrink-0 text-right text-[#a3c2ff]/[.68] ${valueClassName}`}>
+      <div className="text-[14px] text-mediumEmphasis">{title}</div>
+      <div className={`flex-1 flex-shrink-0 text-right text-mediumEmphasis ${valueClassName}`}>
         <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
@@ -699,7 +699,7 @@ function ExtendedEstimateComponent(props: any) {
                 <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               </div>
               {/* <div className="row detailrow">
-                <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">Position Type</div>
+                <div className="col-auto text-[14px] text-mediumEmphasis">Position Type</div>
                 <div className="col contentls">{isNewPosition ? (estimatedValue.newPosition.type === 'long' ? 'Long' : 'Short') : '---'}</div>
               </div> */}
               {/* <DisplayValues
@@ -738,8 +738,8 @@ function ExtendedEstimateComponent(props: any) {
           {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
           <div className="flex justify-between">
-            <div className="col-auto text-[14px] text-[#a3c2ff]/[.48]">Price Impact</div>
-            <div className="col contentsmallitem text-[14px] text-[#a3c2ff]/[.68]">
+            <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+            <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
               <span className="value">{formatterValue(estimatedValue.priceImpact, 2)}</span> %
             </div>
           </div>
@@ -972,7 +972,7 @@ export default function CloseCollateral(props: any) {
       />
       <SectionDividers />
       <div className={`mb-4 flex items-center ${isProcessing ? 'disabled' : ''}`}>
-        <div className="text-[14px] text-[#a3c2ff]/[.68]">Slippage Tolerance</div>
+        <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
         <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue
@@ -1049,7 +1049,7 @@ export default function CloseCollateral(props: any) {
       />
       {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
       {/* <div className="row">
-        <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">
+        <div className="col-auto text-[14px] text-mediumEmphasis">
           * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released
         </div>
       </div> */}

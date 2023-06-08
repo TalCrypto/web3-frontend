@@ -214,7 +214,7 @@ function QuantityEnter(props: any) {
   return (
     <>
       <div className={`mb-3 flex items-center ${disabled ? 'opacity-30' : ''}`}>
-        <div className="flex-1 text-[14px] text-[#a3c2ff]/[.68]">Collateral</div>
+        <div className="flex-1 text-[14px] text-mediumEmphasis">Collateral</div>
         {isLoginState && !isWrongNetwork ? (
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
@@ -312,8 +312,8 @@ function DisplayValues(props: any) {
       className={`${className !== '' ? className : 'sumrow'}
       mb-[2px] flex items-center
     `}>
-      <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
-      <div className={`flex-1 flex-shrink-0 text-right text-[#a3c2ff]/[.68] ${valueClassName}`}>
+      <div className="text-[14px] text-mediumEmphasis">{title}</div>
+      <div className={`flex-1 flex-shrink-0 text-right text-mediumEmphasis ${valueClassName}`}>
         <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
@@ -362,7 +362,7 @@ function EstimatedValueDisplay(props: any) {
     <>
       <div className="mb-3 flex items-center">
         <div className="font-14 text-color-secondary col-auto">
-          <div className="text-[14px] text-[#a3c2ff]/[.48]">Slippage Tolerance</div>
+          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
           {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
         </div>
         <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
@@ -420,7 +420,7 @@ function EstimatedValueDisplay(props: any) {
         </div>
       </div>
       <div className="mb-3 flex items-center">
-        <div className="text-[14px] text-[#a3c2ff]/[.48]">Total Balance Required</div>
+        <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
           <span className=" text-[14px]">
             {isError || value <= 0 ? '-.--' : estimatedValue.cost ? formatterValue(estimatedValue.cost, 4, '') : '-.--'}

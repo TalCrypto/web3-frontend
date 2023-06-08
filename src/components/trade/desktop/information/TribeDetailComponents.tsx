@@ -44,7 +44,7 @@ function Cell(props: any) {
   return (
     <div
       className="relative mb-6 grid grid-cols-12 items-center
-      text-[14px] text-[#a3c2ff]/[.6]">
+      text-[14px] text-mediumEmphasis">
       {items.map((item: any, index: any) => (
         <div className={`${classNames[index]}`} key={index}>
           {item}
