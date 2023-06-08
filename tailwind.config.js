@@ -31,6 +31,7 @@ module.exports = {
         primaryBluePressed: '#1e5dc9',
         secondaryBlue: '#202249',
         darkBlue: '#0C0D20',
+        mediumBlue: '#242652',
         lightBlue: '#171833',
         lightBlue50: '#12122a',
         highEmphasis: '#ffffffde',

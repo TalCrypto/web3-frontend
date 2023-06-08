@@ -53,7 +53,7 @@ function LongShortRatio(props: any) {
   }
 
   return (
-    <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">
+    <div className="mb-6 flex h-[40px] rounded-full bg-mediumBlue">
       {userPosition && userPosition.size < 0 ? (
         <Tooltip
           direction="top"
@@ -232,7 +232,7 @@ function QuantityEnter(props: any) {
             ${isFocus ? 'valid' : ''}
             ${disabled ? 'opacity-30' : ''}
           `}>
-          <div className="flex h-[48px] rounded-[4px] bg-[#242652] p-3">
+          <div className="flex h-[48px] rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width="24" height="24" padding-right="12dp" className="betIcon" />
             <div className="ml-[4px] flex items-center justify-center">
               <span className="input-with-text text-[12px] font-semibold">WETH</span>
@@ -241,7 +241,7 @@ function QuantityEnter(props: any) {
               type="text"
               pattern="[0-9]*"
               className={`${isApproveRequired ? 'cursor-not-allowed' : ''}
-                w-full border-none border-[#242652] bg-[#242652] text-right
+                w-full border-none border-mediumBlue bg-mediumBlue text-right
                 text-[15px] font-semibold text-white outline-none
               `}
               value={value}
@@ -368,14 +368,14 @@ function EstimatedValueDisplay(props: any) {
         <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
           <div
             className={`flex max-w-[100px] justify-end
-            rounded-[4px] bg-[#242652] px-[10px] py-1
+            rounded-[4px] bg-mediumBlue px-[10px] py-1
             ${disabled ? 'opacity-30' : ''}`}>
             <input
               disabled={disabled}
               title=""
               type="text"
               pattern="[0-9]*"
-              className="w-[90%] border-none border-[#242652] bg-[#242652] text-right
+              className="w-[90%] border-none border-mediumBlue bg-mediumBlue text-right
                 text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}

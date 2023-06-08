@@ -141,7 +141,7 @@ function QuantityEnter(props: any) {
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
-          <div className="flex h-12 items-center rounded-[4px] bg-[#242652] p-3">
+          <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width="18" height="24" className="" />
             <div className="inputweth">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
@@ -175,7 +175,7 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               pattern="[0-9]*"
-              className={`w-full border-none border-[#242652] bg-[#242652]
+              className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none
                   ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
               value={closeValue === 0 ? '' : closeValue}
@@ -975,7 +975,7 @@ export default function CloseCollateral(props: any) {
         <div className="text-[14px] text-[#a3c2ff]/[.68]">Slippage Tolerance</div>
         <div className="flex flex-1 justify-end text-right">
           <div
-            className={`rounded-[4px] border-[#242652] bg-[#242652]
+            className={`rounded-[4px] border-mediumBlue bg-mediumBlue
               px-[10px] py-[4px] text-white
               ${isProcessing ? 'disabled' : ''}`}>
             <input
@@ -983,8 +983,8 @@ export default function CloseCollateral(props: any) {
               title=""
               type="text"
               pattern="[0-9]*"
-              className="w-[90%] max-w-[100px]  border-[1px] border-[#242652]
-                bg-[#242652] px-1 text-right
+              className="w-[90%] max-w-[100px]  border-[1px] border-mediumBlue
+                bg-mediumBlue px-1 text-right
                 text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}

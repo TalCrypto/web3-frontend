@@ -23,7 +23,7 @@ export default function InputSlider(props: any) {
   return (
     <div className="relative">
       <input
-        className={`h-[4px] w-full appearance-none rounded-[5px] bg-[#242652]
+        className={`h-[4px] w-full appearance-none rounded-[5px] bg-mediumBlue
           ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         disabled={disabled}
         type="range"

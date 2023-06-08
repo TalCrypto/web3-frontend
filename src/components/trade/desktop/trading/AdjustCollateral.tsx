@@ -76,7 +76,7 @@ function SaleOrBuyRadio(props: any) {
       </div>
     );
   });
-  return <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">{radioGroup}</div>;
+  return <div className="mb-6 flex h-[40px] rounded-full bg-mediumBlue">{radioGroup}</div>;
 }
 
 function QuantityEnter(props: any) {
@@ -163,7 +163,7 @@ function QuantityEnter(props: any) {
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
-          <div className="flex h-12 items-center rounded-[4px] bg-[#242652] p-3">
+          <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width="18" height="24" className="" />
             <div className="inputweth">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
@@ -196,7 +196,7 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               pattern="[0-9]*"
-              className={`w-full border-none border-[#242652] bg-[#242652]
+              className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none
                   ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
               value={value}
