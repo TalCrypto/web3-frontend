@@ -2,28 +2,31 @@ import React, { useState } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 // import Sidebar from '@/components/layout/footer/mobile/Sidebar';
-import { connectWallet, updateTargetNetwork } from '@/utils/Wallet';
-import { wsIsLogin, wsIsShowTradingMobile, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
+import { wsIsShowTradingMobile } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
-import { walletProvider } from '@/utils/walletProvider';
 import MobileMenu from '@/components/trade/mobile/menu';
+import { $userIsConnecting, $userWethBalance } from '@/stores/user';
+import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
+import { CHAINS } from '@/const/supportedChains';
 
 function MobileFooter() {
-  const isLogin = useNanostore(wsIsLogin);
-  const isWalletLoading = useNanostore(wsIsWalletLoading);
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
-  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
-  const wethBalance = useNanostore(wsWethBalance);
+  const { chain } = useNetwork();
+  const { connect } = useConnect();
+  const { switchNetwork } = useSwitchNetwork();
+  const { isConnected } = useAccount();
+  const isConnecting = useNanostore($userIsConnecting);
+  const wethBalance = useNanostore($userWethBalance);
   const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
+  const isTethCollected = wethBalance !== 0;
 
   const onClickBottomButton = async () => {
-    if (!isLogin) {
-      connectWallet(null, false);
+    if (!isConnected) {
+      connect();
       return;
     }
 
-    if (isWrongNetwork) {
-      updateTargetNetwork(null);
+    if (chain?.unsupported && switchNetwork) {
+      switchNetwork(CHAINS[0].id);
       return;
     }
 
@@ -49,11 +52,11 @@ function MobileFooter() {
               bg-primaryBlue text-xs font-semibold capitalize text-highEmphasis
               transition duration-100"
             onClick={onClickBottomButton}>
-            {isWalletLoading ? (
+            {isConnecting ? (
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
-            ) : !isLogin ? (
+            ) : !isConnected ? (
               'Connect Wallet'
-            ) : isWrongNetwork ? (
+            ) : chain?.unsupported ? (
               <>
                 Switch to <br /> Arbitrum
               </>
@@ -63,10 +66,10 @@ function MobileFooter() {
               'Trade'
             )}
           </button>
-          {isLogin ? (
+          {isConnected ? (
             <div className="ml-6 flex-1 text-xs font-normal text-mediumEmphasis">
               Wallet Balance
-              <div className="text-base font-semibold text-highEmphasis">{wethBalance} TETH</div>
+              <div className="text-base font-semibold text-highEmphasis">{wethBalance} WETH</div>
             </div>
           ) : (
             <div className="ml-6 flex-1 text-xs font-normal text-mediumEmphasis">

@@ -3,7 +3,6 @@
 // import React from 'react';
 import { signInWithCustomToken /* , signOut */ } from 'firebase/auth';
 import { firebaseAuth } from '@/const/firebaseConfig';
-import { walletProvider } from './walletProvider';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
 import {
@@ -68,45 +67,45 @@ export const apiConnection = {
   },
   postUserContent: async function postUserContent(address: string) {
     const postUserUrl = `${authUrl}/users`;
-    const postData = { userAddress: address };
-    try {
-      const callPost = await fetch(postUserUrl, {
-        method: 'POST',
-        body: JSON.stringify(postData),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const returnData = await callPost.json();
-      return Promise.resolve(returnData);
-    } catch (error) {
-      walletProvider.disconnectWallet();
-      return Promise.reject(error);
-    }
+    // const postData = { userAddress: address };
+    // try {
+    //   const callPost = await fetch(postUserUrl, {
+    //     method: 'POST',
+    //     body: JSON.stringify(postData),
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   });
+    //   const returnData = await callPost.json();
+    //   return Promise.resolve(returnData);
+    // } catch (error) {
+    //   walletProvider.disconnectWallet();
+    //   return Promise.reject(error);
+    // }
   },
   postAuthUser: async function postAuthUser(nonce: any) {
     const postAuthUserUrl = `${authUrl}/users/auth`;
-    if (!walletProvider || !walletProvider.provider) return Promise.reject();
-    const providerSigner = walletProvider.provider.getSigner(walletProvider.holderAddress);
-    const messageHex = `\x19Ethereum Signed Message:\nHi there! Welcome to Tribe3!\n\nClick to log in to access your very own profile on Tribe3. Please note that this will not execute any blockchain transaction nor it will cost you any gas fee.\n\nYour Nonce: ${nonce}`;
-    const signedMessage = await providerSigner.signMessage(messageHex);
-    const postData = { publicAddress: walletProvider.holderAddress, signature: signedMessage };
-    try {
-      const callPost = await fetch(postAuthUserUrl, {
-        method: 'POST',
-        body: JSON.stringify(postData),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const returnData = await callPost.json();
-      return Promise.resolve(returnData);
-    } catch (error) {
-      walletProvider.disconnectWallet();
-      return Promise.reject(error);
-    }
+    // if (!walletProvider || !walletProvider.provider) return Promise.reject();
+    // const providerSigner = walletProvider.provider.getSigner(walletProvider.holderAddress);
+    // const messageHex = `\x19Ethereum Signed Message:\nHi there! Welcome to Tribe3!\n\nClick to log in to access your very own profile on Tribe3. Please note that this will not execute any blockchain transaction nor it will cost you any gas fee.\n\nYour Nonce: ${nonce}`;
+    // const signedMessage = await providerSigner.signMessage(messageHex);
+    // const postData = { publicAddress: walletProvider.holderAddress, signature: signedMessage };
+    // try {
+    //   const callPost = await fetch(postAuthUserUrl, {
+    //     method: 'POST',
+    //     body: JSON.stringify(postData),
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   });
+    //   const returnData = await callPost.json();
+    //   return Promise.resolve(returnData);
+    // } catch (error) {
+    //   walletProvider.disconnectWallet();
+    //   return Promise.reject(error);
+    // }
   },
-  followUser: async function followUser(followerAddress: any, firebaseToken: any, userAddress = walletProvider.holderAddress) {
+  followUser: async function followUser(followerAddress: any, firebaseToken: any, userAddress: string) {
     const url = `${authUrl}/users/follow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };
@@ -122,7 +121,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  unfollowUser: async function unfollowUser(followerAddress: string, firebaseToken: string, userAddress = walletProvider.holderAddress) {
+  unfollowUser: async function unfollowUser(followerAddress: string, firebaseToken: string, userAddress: string) {
     const url = `${authUrl}/users/unfollow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };
@@ -148,12 +147,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  updateUserInfo: async function updateUserInfo(
-    username: string,
-    about: string,
-    firebaseToken: string,
-    userAddress = walletProvider.holderAddress
-  ) {
+  updateUserInfo: async function updateUserInfo(username: string, about: string, firebaseToken: string, userAddress: string) {
     const url = `${authUrl}/users/update`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, username, about };
@@ -167,22 +161,6 @@ export const apiConnection = {
       return Promise.resolve(result);
     } catch (err) {
       return Promise.reject(err);
-    }
-  },
-  switchAccount: async function switchAccount(holderAddress = walletProvider.holderAddress) {
-    const postUserContent = await this.postUserContent(holderAddress);
-    const { nonce } = postUserContent.data;
-    const postAuthUser = await this.postAuthUser(nonce);
-    const firToken = postAuthUser.data.token;
-
-    if (!firebaseAuth) return Promise.reject();
-
-    try {
-      const userCredential = await signInWithCustomToken(firebaseAuth, firToken);
-      const { user } = userCredential;
-      return Promise.resolve(user);
-    } catch (error) {
-      return Promise.reject(error);
     }
   },
   getUserFollowers: async function getUserFollowers(targetUser: any, user: any) {
@@ -261,7 +239,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  finishTrade: async function finishTrade(txHash: any, firebaseToken: string, userAddress = walletProvider.holderAddress) {
+  finishTrade: async function finishTrade(txHash: any, firebaseToken: string, userAddress: string) {
     const url = `${authUrl}/users/trade/completed`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { txHash, userAddress };
@@ -277,7 +255,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  useReferralCode: async function useReferralCode(code: any, firebaseToken: any, userAddress = walletProvider.holderAddress) {
+  useReferralCode: async function useReferralCode(code: any, firebaseToken: any, userAddress: string) {
     const url = `${authUrl}/users/referral/code`;
     const body = { code, userAddress };
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
@@ -296,7 +274,7 @@ export const apiConnection = {
   getIPInformation: async function getIPInformation() {
     // const url = 'https://api.ipregistry.co/?key=tryout';
   },
-  getPointHistoryList: async function getPointHistoryList(address = walletProvider.holderAddress) {
+  getPointHistoryList: async function getPointHistoryList(address: string) {
     const url = `${authUrl}/achievement/history?userAddress=${address}&pageSize=30&pageNo=1`;
     try {
       const call = await fetch(url);
@@ -306,12 +284,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  postUserEvent: async function postUserEvent(
-    eventName: string,
-    fields: any,
-    wallet = walletProvider.holderAddress,
-    deviceType = 'desktop'
-  ) {
+  postUserEvent: async function postUserEvent(eventName: string, fields: any, wallet: string, deviceType = 'desktop') {
     const url = `${authUrl}/users/event`;
     const defaultParams = await eventParams.get();
     const params = {
@@ -356,7 +329,7 @@ export const apiConnection = {
 
     return Promise.resolve();
   },
-  checkUserIsWhitelisted: async function checkUserIsWhitelisted(address = walletProvider.holderAddress) {
+  checkUserIsWhitelisted: async function checkUserIsWhitelisted(address: string) {
     const url = `${authUrl}/users/whitelist/${address}`;
     try {
       const call = await fetch(url);
@@ -366,7 +339,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  checkUserHasPartialClose: async function checkUserHasPartialClose(address = walletProvider.holderAddress) {
+  checkUserHasPartialClose: async function checkUserHasPartialClose(address: string) {
     const url = `${authUrl}/users/hasPartialClosed?userAddress=${address}`;
     try {
       const call = await fetch(url);
@@ -376,7 +349,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  validateUserTradingState: async function validateUserTradingState(firebaseToken: string, userAddress = walletProvider.holderAddress) {
+  validateUserTradingState: async function validateUserTradingState(firebaseToken: string, userAddress: string) {
     const url = `${authUrl}/users/trade/validateState`;
     const body = { userAddress };
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
@@ -402,7 +375,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserTradingHistory: async function getUserTradingHistory(userAddress = walletProvider.holderAddress, ammAddress = '') {
+  getUserTradingHistory: async function getUserTradingHistory(userAddress: string, ammAddress = '') {
     const url = `${authUrl}/tradeHistory?trader=${userAddress}${!ammAddress ? '' : `&amm=${ammAddress}`}`;
     try {
       const call = await fetch(url);
@@ -412,7 +385,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserPoint: async function getUserPoint(userAddress = walletProvider.holderAddress) {
+  getUserPoint: async function getUserPoint(userAddress: string) {
     const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge`;
     let defaultData = { ...defaultUserPoint };
 
@@ -438,7 +411,7 @@ export const apiConnection = {
     }
   },
 
-  getUserPointLite: async function getUserPointLite(userAddress = walletProvider.holderAddress) {
+  getUserPointLite: async function getUserPointLite(userAddress: string) {
     const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge`;
     let defaultData = { total: 0, rank: 0 };
     try {
@@ -488,7 +461,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getReferralList: async function getReferralList(userAddress = walletProvider.holderAddress) {
+  getReferralList: async function getReferralList(userAddress: string) {
     const url = `${authUrl}/points/referral/reward/detail/${userAddress}`;
     try {
       isReferralListLoading.set(true);

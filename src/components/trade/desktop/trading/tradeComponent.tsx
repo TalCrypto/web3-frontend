@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
-import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
@@ -25,7 +24,6 @@ import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
-import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
 
@@ -114,7 +112,7 @@ function QuantityTips(props: any) {
   ) : isInsuffBalance ? (
     <>
       Not enough WETH (including transaction fee).
-      <a href="#" onClick={() => getTestToken()} className="ml-1 text-white underline">
+      <a href="#" onClick={() => {}} className="ml-1 text-white underline">
         Get WETH
       </a>{' '}
       first
@@ -186,7 +184,7 @@ function QuantityEnter(props: any) {
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => getTestToken()}>
+            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => {}}>
               Get WETH
             </button>
           </div>
@@ -545,7 +543,7 @@ function ConfirmButton(props: any) {
   };
 
   const performGetTeth = () => {
-    getTestToken(() => setIsProcessingOpenPos(false));
+    // getTestToken(() => setIsProcessingOpenPos(false));
   };
 
   const performSwitchGeorli = () => {
@@ -671,8 +669,8 @@ function ExtendedEstimateComponent(props: any) {
   const { page } = pageTitleParser(router.asPath);
   const { estimatedValue, userPosition, value, isAmountTooSmall, isInsuffBalance } = props;
   const [showDetail, isShowDetail] = useState(false);
-  const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
-  const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
+  // const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
+  // const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
   const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
   const fee = formatterValue(estimatedValue.fee, 4);

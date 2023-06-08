@@ -1,29 +1,29 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-shadow */
 import { Address } from 'wagmi';
 import { Chain, arbitrum, arbitrumGoerli } from 'wagmi/chains';
+import { AMM } from '@/const/collectionList';
+import { DEFAULT_CHAIN } from '@/const/supportedChains';
 
-export enum AMM {
-  BAYC = 'bayc',
-  MAYC = 'mayc',
-  AZUKI = 'azuki',
-  PUNKS = 'punks',
-  DEGODS = 'degods',
-  CAPTAINZ = 'captainz'
-}
-
-interface AddressConfig {
+export interface AddressConfig {
+  ch: Address;
+  chViewer: Address;
   weth: Address;
   amms: {
-    [value in AMM]?: string;
+    [value in AMM]?: Address;
   };
 }
 
 // ensure to call with supported chains
-export const getAddressConfig = (chain: Chain): AddressConfig => {
-  switch (chain.id) {
+export const getAddressConfig = (chain: Chain, unsupported: boolean): AddressConfig => {
+  let tar: Chain = chain;
+  if (unsupported) {
+    tar = DEFAULT_CHAIN;
+  }
+  switch (tar.id) {
     case arbitrum.id:
       return {
+        ch: '0x01b6407ADf740d135ddF1eBDD1529407845773F3',
+        chViewer: '0x74183D4Afe2f5bd240f24CD690323629A02dF08f',
         weth: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
         amms: {
           [AMM.BAYC]: '0xd490246758b4dFED5Fb8576cB9Ac20073BB111dD',
@@ -36,6 +36,8 @@ export const getAddressConfig = (chain: Chain): AddressConfig => {
       };
     case arbitrumGoerli.id:
       return {
+        ch: '0x8e9aed761C1f73A0f41D7a2fd51E38b76B3601a2',
+        chViewer: '0x1251B47a95f7F5BD1F9D3904C93197959139D1D8',
         weth: '0xB7a08f35E16958A610857e212Fd0F0bc8623A317',
         amms: {
           [AMM.BAYC]: '0x1812DBda7a954E829a6AdA968CEE0d3F315dDBa2',

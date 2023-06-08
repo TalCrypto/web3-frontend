@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
@@ -16,7 +16,7 @@ import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNu
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 
-import collectionList from '@/const/collectionList';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
 
 import {
   getDailySpotPriceGraphData,
@@ -30,14 +30,11 @@ import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
 import { wsIsLogin, wsChatInterval, wsCurrentToken } from '@/stores/WalletState';
-import { walletProvider } from '@/utils/walletProvider';
+import { Address, useAccount, useNetwork } from 'wagmi';
+import { $currentAMM } from '@/stores/trading';
+import { getAddressConfig } from '@/const/addresses';
 
 const flashAnim = 'flash';
-
-const getCollectionInformation = (collectionName: any) => {
-  const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
-  return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-};
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
@@ -114,21 +111,24 @@ function PriceIndicator(props: any) {
   );
 }
 
-function chartButtonLogged(index: any, currentCollection: any) {
+function chartButtonLogged(index: any, currentAmm: AMM, address: string) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
-  const fullWalletAddress = walletProvider.holderAddress;
 
   if (firebaseAnalytics) {
     logEvent(firebaseAnalytics, eventName, {
-      wallet: fullWalletAddress.substring(2),
-      collection: currentCollection
+      wallet: address.substring(2),
+      collection: currentAmm
     });
   }
-  apiConnection.postUserEvent(eventName, {
-    wallet: fullWalletAddress,
-    collection: currentCollection,
-    page: 'Trade'
-  });
+  apiConnection.postUserEvent(
+    eventName,
+    {
+      wallet: address,
+      collection: currentAmm,
+      page: 'Trade'
+    },
+    address
+  );
 }
 
 function ChartTimeTabs(props: any) {
@@ -177,10 +177,11 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart } = props;
+  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, currentAmm } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const currentToken = useNanostore(wsCurrentToken);
+  const selectedCollection = getCollectionInformation(currentAmm);
 
   useImperativeHandle(ref, () => ({
     reset() {
@@ -193,8 +194,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
     }
   }));
-
-  const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
 
   return (
     <div className="flex w-full flex-row items-center justify-start text-[16px]">
@@ -244,9 +243,9 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
 });
 
 const ChartFooter = forwardRef((props: any, ref: any) => {
-  const { tradingData } = props;
+  const { tradingData, currentAmm } = props;
   const currentToken = useNanostore(wsCurrentToken);
-  const selectedCollection = getCollectionInformation(currentToken); // from tokenRef.current
+  const selectedCollection = getCollectionInformation(currentAmm);
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
   const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
@@ -435,7 +434,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
 });
 
 const ProComponent = forwardRef((props: any, ref: any) => {
-  const { visible, onVisibleChanged, tradingData, currentToken, selectedTimeIndex } = props;
+  const { visible, onVisibleChanged, tradingData, currentToken, selectedTimeIndex, ammAddress } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [dayVolume, setDayVolume] = useState(tradingData.dayVolume);
@@ -467,8 +466,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
     }
 
     const interval = setInterval(() => {
-      const { amm: currentAmm } = getCollectionInformation(currentToken);
-      getDailySpotPriceGraphData(currentAmm).then(dayTradingDetails => {
+      getDailySpotPriceGraphData(ammAddress).then(dayTradingDetails => {
         const vol = dayTradingDetails == null ? BigNumber.from(0) : dayTradingDetails.volume;
         setDayVolume(vol);
       });
@@ -571,6 +569,8 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
 function ChartWindows(props: any, ref: any) {
   const { tradingData } = props;
+  const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
@@ -580,20 +580,28 @@ function ChartWindows(props: any, ref: any) {
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
   const proRef = useRef();
-  const currentToken = useNanostore(wsCurrentToken);
+  const currentAmm = useNanostore($currentAMM);
+  const [ammAddress, setAmmAddress] = useState<Address | undefined>();
 
-  const fetchChartData = async function fetchChartData() {
+  useEffect(() => {
+    if (chain && currentAmm) {
+      const addressConfig = getAddressConfig(chain, chain.unsupported ?? false);
+      setAmmAddress(addressConfig.amms[currentAmm]);
+    }
+  }, [currentAmm]);
+
+  const fetchChartData = useCallback(async () => {
+    if (!ammAddress) return;
     setIsStartLoadingChart(true);
-    const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
     let chartData: any = {};
     if (selectedTimeIndex === 0) {
-      chartData = await getDailySpotPriceGraphData(currentAmm);
+      chartData = await getDailySpotPriceGraphData(ammAddress);
     } else if (selectedTimeIndex === 1) {
-      chartData = await getWeeklySpotPriceGraphData(currentAmm);
+      chartData = await getWeeklySpotPriceGraphData(ammAddress);
     } else if (selectedTimeIndex === 2) {
-      chartData = await getMonthlySpotPriceGraphData(currentAmm);
+      chartData = await getMonthlySpotPriceGraphData(ammAddress);
     } else {
-      chartData = await getThreeMonthlySpotPriceGraphData(currentAmm);
+      chartData = await getThreeMonthlySpotPriceGraphData(ammAddress);
     }
     const graphRef: any = graphHeaderRef.current;
     graphRef?.setGraphOtherValue(chartData);
@@ -606,7 +614,7 @@ function ChartWindows(props: any, ref: any) {
     });
     setLineChartData(dynamicDataSet);
     setIsStartLoadingChart(false);
-  };
+  }, [ammAddress]);
 
   useImperativeHandle(ref, () => ({ fetchChartData }));
 
@@ -616,10 +624,12 @@ function ChartWindows(props: any, ref: any) {
     const pRef: any = proRef.current;
     pRef.reset();
     fetchChartData();
-  }, [currentToken, selectedTimeIndex]); // from tokenRef.current
+  }, [currentAmm, selectedTimeIndex]); // from tokenRef.current
 
   const handleSelectedTimeIndex = (index: any) => {
-    chartButtonLogged(index, currentToken); // from tokenRef.current
+    if (address && currentAmm) {
+      chartButtonLogged(index, currentAmm, address);
+    }
     setSelectedTimeIndex(index);
   };
 
@@ -634,6 +644,7 @@ function ChartWindows(props: any, ref: any) {
           isStartLoadingChart={isStartLoadingChart}
           isProShow={isProShow}
           setIsProShow={setIsProShow}
+          currentAmm={currentAmm}
         />
         <div className="dividerslim" />
         <div ref={chartProContainerRef} className="chart-pro-container mb-[16px] flex">
@@ -646,13 +657,20 @@ function ChartWindows(props: any, ref: any) {
               chartProContainerRef={chartProContainerRef}
             />
           </div>
-          <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
+          <ProComponent
+            ref={proRef}
+            visible={isProShow}
+            tradingData={tradingData}
+            selectedTimeIndex={selectedTimeIndex}
+            ammAddress={ammAddress}
+          />
         </div>
         <ChartFooter
           tradingData={tradingData}
           setSelectedTimeIndex={handleSelectedTimeIndex}
           selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
+          currentAmm={currentAmm}
         />
       </div>
     </div>

@@ -1,9 +1,46 @@
-export default [
-  {
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-shadow */
+
+export enum AMM {
+  BAYC = 'bayc',
+  MAYC = 'mayc',
+  AZUKI = 'azuki',
+  PUNKS = 'punks',
+  DEGODS = 'degods',
+  CAPTAINZ = 'captainz'
+}
+
+export const DEFAULT_AMM: AMM = AMM.DEGODS;
+
+export interface CollectionInfo {
+  name: string;
+  title: string;
+  image: string;
+  collection: string;
+  contract: string;
+  logo: string;
+  sidebarLogo: string;
+  collectionName: string;
+  collectionType: string;
+  contractId: string;
+  homeUrl: string;
+  twitterUrl: string;
+  discordUrl: string;
+  etherscanUrl: string;
+  shortName: string;
+  displayCollectionPair: string;
+  isNew: boolean;
+}
+
+export type CollectionInfos = {
+  [value in AMM]: CollectionInfo;
+};
+
+export const collectionsInfos: CollectionInfos = {
+  [AMM.DEGODS]: {
     name: 'DEGODS/ETH',
     title: 'DeGods',
     image: '/images/collections/small/degods.svg',
-    amm: process.env.NEXT_PUBLIC_DEGODS_AMM_ADDRESS || '',
     collection: 'DEGODS',
     contract: process.env.NEXT_PUBLIC_DEGODS_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/degods.svg',
@@ -19,11 +56,10 @@ export default [
     displayCollectionPair: 'DEGODS/WETH',
     isNew: true
   },
-  {
+  [AMM.CAPTAINZ]: {
     name: 'CAPTAINZ/ETH',
     title: 'Captainz',
     image: '/images/collections/small/captainz.svg',
-    amm: process.env.NEXT_PUBLIC_CAPTAINZ_AMM_ADDRESS || '',
     collection: 'CAPTAINZ',
     contract: process.env.NEXT_PUBLIC_CAPTAINZ_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/captainz.svg',
@@ -39,11 +75,10 @@ export default [
     displayCollectionPair: 'CAPTAINZ/WETH',
     isNew: true
   },
-  {
+  [AMM.BAYC]: {
     name: 'BAYC/ETH',
     title: 'Bored Ape Yacht Club',
     image: '/images/collections/small/bayc.svg',
-    amm: process.env.NEXT_PUBLIC_AMM_ADDRESS || '',
     collection: 'BAYC',
     contract: process.env.NEXT_PUBLIC_BAYC_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/bayc.svg',
@@ -59,11 +94,10 @@ export default [
     displayCollectionPair: 'BAYC/WETH',
     isNew: false
   },
-  {
+  [AMM.MAYC]: {
     name: 'MAYC/ETH',
     title: 'Mutant Ape Yacht Club',
     image: '/images/collections/small/mayc.svg',
-    amm: process.env.NEXT_PUBLIC_MAYC_AMM_ADDRESS || '',
     collection: 'MAYC',
     contract: process.env.NEXT_PUBLIC_MAYC_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/mayc.svg',
@@ -79,11 +113,10 @@ export default [
     displayCollectionPair: 'MAYC/WETH',
     isNew: false
   },
-  {
+  [AMM.AZUKI]: {
     name: 'AZUKI/ETH',
     title: 'Azuki',
     image: '/images/collections/small/azuki.svg',
-    amm: process.env.NEXT_PUBLIC_AZUKI_AMM_ADDRESS || '',
     collection: 'AZUKI',
     contract: process.env.NEXT_PUBLIC_AZUKI_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/azuki.svg',
@@ -99,11 +132,10 @@ export default [
     displayCollectionPair: 'AZUKI/WETH',
     isNew: false
   },
-  {
+  [AMM.PUNKS]: {
     name: 'PUNKS/ETH',
     title: 'CRYPTOPUNKS',
     image: '/images/collections/small/cryptopunks.svg',
-    amm: process.env.NEXT_PUBLIC_CRYPTOPUNKS_AMM_ADDRESS || '',
     collection: 'C',
     contract: process.env.NEXT_PUBLIC_CRYPTOPUNKS_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/cryptopunks.svg',
@@ -192,4 +224,6 @@ export default [
   //   etherscanUrl: 'https://etherscan.io/token/0x7Bd29408f11D2bFC23c34f18275bBf23bB716Bc7',
   //   shortName: 'MEEBITS'
   // }
-];
+};
+
+export const getCollectionInformation = (amm: AMM): CollectionInfo => collectionsInfos[amm];

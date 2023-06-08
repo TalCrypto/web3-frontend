@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { calculateNumber } from '@/utils/calculateNumbers';
-import { walletProvider } from '@/utils/walletProvider';
 
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { apiConnection } from '@/utils/apiConnection';
@@ -32,7 +31,6 @@ import {
   wsWethBalance,
   wsMaxReduceValue
 } from '@/stores/WalletState';
-import { getTestToken } from '@/utils/Wallet';
 
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
@@ -151,7 +149,7 @@ function QuantityEnter(props: any) {
             {/* {marginIndex === 0 ? 'Balance' : 'Free Collateral'} */}
             <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-b2 text-primaryBlue" onClick={() => getTestToken()}>
+            <button type="button" className="ml-[8px] text-b2 text-primaryBlue" onClick={() => {}}>
               Get WETH
             </button>
           </div>

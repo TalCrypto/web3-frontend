@@ -2,75 +2,60 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
 import React, { useEffect, useState } from 'react';
-import { useStore as useNanostore } from '@nanostores/react';
+import { useStore as useNanostore, useStore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
+
 import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
+import { $userIsConnecting, $userInfo, $userWethBalance } from '@/stores/user';
+import { useWeb3Modal } from '@web3modal/react';
+import { useAccount, useNetwork } from 'wagmi';
 
-import { wsIsWalletLoading, wsIsWrongNetwork } from '@/stores/WalletState';
+const ConnectWalletButton: React.FC = () => {
+  const isConnecting = useStore($userIsConnecting);
+  const { isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const wethBalance = useStore($userWethBalance);
+  const userInfo = useStore($userInfo);
+  const { open } = useWeb3Modal();
+  const [showUserName, setShowUserName] = useState('');
 
-import { connectWallet } from '@/utils/Wallet';
-
-interface ConnectWalletButtonProps {
-  isLogin: boolean;
-  accountInfo: {
-    address: string;
-    balance: number;
-  };
-  callBalance: any;
-  userInfo: any;
-}
-
-const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
-  const { isLogin, accountInfo, callBalance, userInfo } = props;
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
-
-  const { address, balance } = accountInfo;
-  const showWethBalaceLabel = !isLogin ? '' : isWrongNetwork ? '-.-- WETH' : `${Number(balance).toFixed(2)} WETH`;
-  const [showDisconnectTooltip, setShowDisconnectTooltip] = useState(false);
-  const isNotSetUsername = !userInfo || !userInfo.username;
-
-  let showUserName = '';
-
-  if (isNotSetUsername) {
-    showUserName = '';
-  } else if (userInfo.username && userInfo.username.length <= 10) {
-    showUserName = userInfo.username;
-  } else if (userInfo.username && userInfo.username.length > 10) {
-    showUserName = `${userInfo.username.substring(0, 10)}...`;
-  } else {
-    showUserName = '';
-  }
-
-  const isWalletLoading = useNanostore(wsIsWalletLoading);
-  const [isBalanceLoading, setIsBalanceLoading] = useState(false);
+  // if (isNotSetUsername) {
+  //   showUserName = '';
+  // } else if (userInfo.username && userInfo.username.length <= 10) {
+  //   showUserName = userInfo.username;
+  // } else if (userInfo.username && userInfo.username.length > 10) {
+  //   showUserName = `${userInfo.username.substring(0, 10)}...`;
+  // } else {
+  //   showUserName = '';
+  // }
 
   useEffect(() => {
-    setIsBalanceLoading(true);
-    const timer = setTimeout(() => setIsBalanceLoading(false), 1000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [balance]);
-
-  const handleClick = () => {
-    if (isLogin) return;
-    if (isWalletLoading) return;
-    connectWallet(() => {}, true);
-  };
+    if (!userInfo) return;
+    if (userInfo.username && userInfo.username.length <= 10) {
+      setShowUserName(userInfo.username);
+    } else if (userInfo.username.length > 10) {
+      setShowUserName(`${userInfo.username.substring(0, 10)}...`);
+    } else if (userInfo.userAddress) {
+      setShowUserName(`${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}`);
+    }
+  }, [userInfo]);
 
   return (
-    <div className={`navbar-outer${isLogin ? ' connected' : ''}`}>
-      <button type="button" className={`navbar-button ${!isLogin ? 'not-connected' : 'connected'}`} onClick={handleClick}>
+    <div className={`navbar-outer${isConnected ? ' connected' : ''}`}>
+      <button
+        type="button"
+        className={`navbar-button ${!isConnected ? 'not-connected' : 'connected'}`}
+        onClick={() => (chain?.unsupported ? open({ route: 'SelectNetwork' }) : !isConnected ? open() : null)}>
         <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
-        <div className={`container ${!isLogin ? 'flex flex-row-reverse' : ''}`} id="login-btn">
-          {isWalletLoading ? (
+        <div className={`container ${!isConnected ? 'flex flex-row-reverse' : ''}`} id="login-btn">
+          {isConnecting ? (
             <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
           ) : (
             <>
-              {isLogin ? (
+              {isConnected ? (
                 <>
-                  <span className="text-transparent">{isNotSetUsername ? address : isLogin ? showUserName : ''}</span>
+                  <span className="text-transparent">{showUserName}</span>
                   <Image
                     src="/images/components/layout/header/connect_button.svg"
                     width={24}
@@ -78,8 +63,8 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
                     alt=""
                     className="mx-2 my-0 h-[24px] w-[24px]"
                   />
-                  <span>{showWethBalaceLabel}</span>
-                  {isWrongNetwork ? (
+                  <span>{`${wethBalance.toFixed(2)} WETH`}</span>
+                  {chain?.unsupported ? (
                     <Image
                       src="/images/components/layout/header/incorrect-network.png"
                       alt=""
@@ -106,14 +91,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
         </div>
       </button>
 
-      <ProfileContent
-        address={address}
-        balance={balance}
-        showDisconnectTooltip={showDisconnectTooltip}
-        setShowDisconnectTooltip={setShowDisconnectTooltip}
-        callBalance={callBalance}
-        userInfo={userInfo}
-      />
+      {userInfo && <ProfileContent balance={wethBalance} userInfo={userInfo} isWrongNetwork={chain?.unsupported ?? false} />}
     </div>
   );
 };

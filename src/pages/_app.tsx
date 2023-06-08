@@ -7,22 +7,22 @@ import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import Layout from '@/components/layout';
 import '@/styles/globals.css';
 import '@/styles/all.scss';
-import { DEV_CHAINS, PROD_CHAINS } from '@/const/supportedChains';
+import { CHAINS, DEFAULT_CHAIN } from '@/const/supportedChains';
+import UserDataUpdater from '@/components/updaters/UserDataUpdater';
+import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
+import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
-const env = process.env.NODE_ENV;
 
-const chains = env === 'production' ? PROD_CHAINS : DEV_CHAINS;
-
-const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
+const { publicClient } = configureChains(CHAINS, [w3mProvider({ projectId })]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ projectId, version: 1, chains }),
+  connectors: w3mConnectors({ projectId, version: 1, chains: CHAINS }),
   publicClient
 });
 
-const ethereumClient = new EthereumClient(wagmiConfig, chains);
+const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -31,12 +31,14 @@ export default function App({ Component, pageProps }: AppProps) {
         <Layout>
           <Component {...pageProps} />
         </Layout>
+        <UserDataUpdater />
+        <TradingDataUpdater />
       </WagmiConfig>
 
       <Web3Modal
         projectId={projectId}
         ethereumClient={ethereumClient}
-        defaultChain={chains[0]}
+        defaultChain={DEFAULT_CHAIN}
         explorerRecommendedWalletIds={[
           'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // metamask
           '971e689d0a5be527bac79629b4ee9b925e82208e5168b733496a09c0faed0709', // okx wallet
@@ -51,6 +53,8 @@ export default function App({ Component, pageProps }: AppProps) {
           '--w3m-background-border-radius': '0.5rem'
         }}
       />
+
+      <TransferTokenModal />
     </>
   );
 }

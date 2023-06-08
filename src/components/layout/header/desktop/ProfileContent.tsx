@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, { forwardRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 // import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
@@ -8,14 +8,15 @@ import Image from 'next/image';
 import { pageTitleParser } from '@/utils/eventLog';
 import { apiConnection } from '@/utils/apiConnection';
 // import { firebaseAnalytics } from '@/const/firebaseConfig';
-import NetworkNameDisplay from '@/utils/NetworkNameDisplay';
-import { walletProvider } from '@/utils/walletProvider';
 
-import { disconnectWallet, getTestToken, updateTargetNetwork } from '@/utils/Wallet';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentChain, wsIsWrongNetwork } from '@/stores/WalletState';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
+import { $userPositionInfos, UserInfo } from '@/stores/user';
+import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
+import { AMM } from '@/const/collectionList';
+import { $showTransferTokenModal } from '@/stores/modal';
+import { CHAINS } from '@/const/supportedChains';
 
 interface PriceContentProps {
   priceValue: string;
@@ -47,6 +48,8 @@ interface TopContentProps {
 }
 
 const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) => {
+  const { address } = useAccount();
+  if (!address) return null;
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
@@ -54,18 +57,14 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
     e.preventDefault();
     const eventName = 'wallet_view_profile_pressed';
 
-    const fullWalletAddress = walletProvider.holderAddress;
-
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, eventName, {
-        wallet: fullWalletAddress.substring(2)
+        wallet: address.toString().substring(2)
       });
     }
-    apiConnection.postUserEvent(eventName, {
-      page
-    });
+    apiConnection.postUserEvent(eventName, { page }, address);
 
-    router.push(`/userprofile/${walletProvider.holderAddress}`);
+    router.push(`/userprofile/${address.toString()}`);
   };
 
   return (
@@ -91,7 +90,7 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
       <div className="px-6 pb-0 pt-2 text-[14px] font-medium text-mediumEmphasis">User ID</div>
       <div className="view-page-row px-[24px] py-[14px]">
         <div />
-        <Link href={`/userprofile/${walletProvider.holderAddress}`}>
+        <Link href={`/userprofile/${address.toString()}`}>
           <div className="button cursor-pointer text-[16px] font-semibold text-primaryBlue" onClick={clickViewProfile}>
             <span>View Profile</span>
             <div className="ml-[4px]">
@@ -104,16 +103,21 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
   );
 };
 
-interface BottomContentProps {
-  address: string;
-  balance: number;
-  callBalance: { portfolio: string };
-}
+const BottomContent: React.FC<{ balance: number; isWrongNetwork: boolean }> = ({ balance, isWrongNetwork }) => {
+  const { address, connector } = useAccount();
+  const { chain } = useNetwork();
 
-const BottomContent: React.FC<BottomContentProps> = ({ address, balance, callBalance }) => {
-  const currentChain = useNanostore(wsCurrentChain);
-  const currentNetworkName = NetworkNameDisplay(currentChain);
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  if (!address || !connector || !chain) return null;
+
+  const userPositionInfos = useNanostore($userPositionInfos);
+  const [totalCollateral, setTotalCollateral] = useState<number>(0);
+
+  useEffect(() => {
+    if (userPositionInfos) {
+      const total = Object.keys(userPositionInfos).reduce((prev, curr) => prev + userPositionInfos[curr as AMM].collateral, 0);
+      setTotalCollateral(total);
+    }
+  }, [userPositionInfos]);
 
   return (
     <div className="bottoms">
@@ -123,7 +127,7 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, balance, callBal
         h-[64px] rounded-lg border border-solid border-primaryBlue">
         <div className="content px-4 py-3">
           <div className="start">
-            {walletProvider.provider && walletProvider.provider.connection.url === 'metamask' ? (
+            {connector.name === 'metamask' ? (
               <div className="mr-4 h-[34px] w-[34px]">
                 <Image src="/images/components/layout/header/metamask-logo.png" width={34} height={34} alt="" />
               </div>
@@ -134,7 +138,7 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, balance, callBal
             )}
             <div>
               <div className="gradient-bg !bg-clip-text text-transparent">{address}</div>
-              <div className="text-[12px] font-medium text-mediumEmphasis">{currentNetworkName}</div>
+              <div className="text-[12px] font-medium text-mediumEmphasis">{chain.name}</div>
             </div>
           </div>
           <div className="flex items-center">
@@ -149,20 +153,20 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, balance, callBal
       </div>
       <PriceContent
         title="Total Account Value:"
-        priceValue={isWrongNetwork ? '0.0000' : (Number(balance) + Number(callBalance.portfolio)).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : (balance + totalCollateral).toFixed(4)}
         isLargeText
         notLastRow={false}
       />
       <div className="mx-6 my-0 h-[1px] bg-[#414368]" />
       <PriceContent
         title="Portfolio Collateral:"
-        priceValue={isWrongNetwork ? '0.0000' : Number(callBalance.portfolio).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : totalCollateral.toFixed(4)}
         isLargeText={false}
         notLastRow
       />
       <PriceContent
         title="Wallet Balance:"
-        priceValue={isWrongNetwork ? '0.0000' : Number(balance).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : balance.toFixed(4)}
         isLargeText={false}
         notLastRow={false}
       />
@@ -171,37 +175,47 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, balance, callBal
 };
 
 interface ProfileContentProps {
-  address: string;
   balance: number;
-  showDisconnectTooltip: boolean;
-  setShowDisconnectTooltip: (value: boolean) => void;
-  callBalance: { portfolio: string };
-  userInfo: { username: string } | null;
+  userInfo: UserInfo;
+  isWrongNetwork: boolean;
 }
 
-const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = (props, ref) => {
-  const { address, balance, showDisconnectTooltip, setShowDisconnectTooltip, callBalance, userInfo } = props;
-  const isNotSetUsername = !userInfo || !userInfo.username;
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+const DisconnectButton: React.FC = () => {
+  const { disconnect } = useDisconnect();
+  return (
+    <div
+      className="function-btn mt-6 cursor-pointer text-[16px]
+    font-semibold text-primaryBlue"
+      onClick={() => disconnect()}>
+      Disconnect Wallet
+    </div>
+  );
+};
 
-  let userName = '';
+const SwitchNetworkButton: React.FC = () => {
+  const { switchNetwork } = useSwitchNetwork();
+  if (!switchNetwork) return null;
+  return (
+    <div
+      className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
+bg-primaryBlue text-[14px] font-semibold text-white"
+      onClick={() => switchNetwork(CHAINS[0].id)}>
+      Switch to Arbitrum
+    </div>
+  );
+};
 
-  if (isNotSetUsername) {
+const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = ({ balance, userInfo, isWrongNetwork }) => {
+  let userName: string;
+  let isNotSetUsername: boolean = false;
+  if (!userInfo.username) {
+    isNotSetUsername = true;
     userName = 'Unnamed';
   } else if (userInfo.username.length > 10) {
     userName = `${userInfo.username.substring(0, 10)}...`;
   } else {
     userName = userInfo.username;
   }
-
-  const disconnectWalletAction = () => {
-    disconnectWallet();
-    setShowDisconnectTooltip(false);
-  };
-
-  const onGeWethClick = async () => {
-    await getTestToken(null, null);
-  };
 
   return (
     <div
@@ -212,7 +226,7 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       id="profile-content">
       <li className="m-0 list-none p-0">
         <TopContent username={userName} isNotSetUsername={isNotSetUsername} />
-        <BottomContent address={address} balance={balance} callBalance={callBalance} />
+        <BottomContent balance={balance} isWrongNetwork={isWrongNetwork} />
       </li>
 
       <li className="m-0 list-none p-0">
@@ -221,27 +235,17 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
             <div
               className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
                 bg-primaryBlue text-[14px] font-semibold text-white"
-              onClick={onGeWethClick}>
+              onClick={() => $showTransferTokenModal.set(true)}>
               Get WETH
             </div>
           ) : (
-            <div
-              className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
-            bg-primaryBlue text-[14px] font-semibold text-white"
-              onClick={() => updateTargetNetwork()}>
-              Switch to Arbitrum
-            </div>
+            <SwitchNetworkButton />
           )}
-          <div
-            className="function-btn mt-6 cursor-pointer text-[16px]
-              font-semibold text-primaryBlue"
-            onClick={disconnectWalletAction}>
-            Disconnect Wallet
-          </div>
+          <DisconnectButton />
         </div>
       </li>
     </div>
   );
 };
 
-export default React.forwardRef(ProfileContent);
+export default ProfileContent;
