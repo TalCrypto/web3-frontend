@@ -133,8 +133,6 @@ function ChartTimeTabs(props: any) {
   const { setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
   const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
 
-  const componentReady = useRef();
-
   useEffect(() => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
     const { offsetLeft } = activeSegmentRef.current;
@@ -144,18 +142,20 @@ function ChartTimeTabs(props: any) {
   }, [selectedTimeIndex, controlRef, contentArray]);
 
   return (
-    <div className="flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+    <div className="relative flex px-0 text-center" ref={controlRef}>
       <div
-        className={`relative inline-flex w-full justify-between overflow-hidden text-center ${componentReady.current ? 'ready' : 'idle'}`}>
+        className="absolute bottom-0 left-0 right-0 z-0 h-[3px]
+          w-[var(--highlight-width)] translate-x-[var(--highlight-x-pos)]
+          transform rounded-[2px] bg-[#5465ff] duration-300 ease-in-out"
+      />
+
+      <div className="relative inline-flex w-full justify-between overflow-hidden text-center">
         {contentArray.map((item: any, i: any) => (
           <div
             key={item.label}
-            className={`segment ${i === selectedTimeIndex ? 'active' : ''} ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
+            className={`segment ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
             z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
             ref={item.ref}>
-            {i === selectedTimeIndex ? (
-              <div className="absolute bottom-0 left-[6px] right-[6px] z-0 h-[3px] rounded-[2px] bg-[#5465ff]" />
-            ) : null}
             <input
               type="radio"
               value={item.label}
@@ -203,9 +203,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
 
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
 
-  const hours = '';
-  const minutes = '';
-  const seconds = '';
   const rateLong = '-.--';
   const rateShort = '-.--';
   let longSide = '';
@@ -214,13 +211,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
   if (tradingData && tradingData.fundingRateLong) {
     const rawdata = utils.formatEther(tradingData.fundingRateLong);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-    const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateLong = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
     if (Number(numberRawdata) > 0) {
       longSide = 'Pay';
     } else {
@@ -231,13 +221,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
   if (tradingData && tradingData.fundingRateShort) {
     const rawdata = utils.formatEther(tradingData.fundingRateShort);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-    const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateShort = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
     if (Number(numberRawdata) > 0) {
       shortSide = 'Get';
     } else {
