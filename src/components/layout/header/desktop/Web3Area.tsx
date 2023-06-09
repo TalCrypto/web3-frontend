@@ -25,7 +25,7 @@ import {
 
 import {
   setIsWhitelisted,
-  setIsTethCollected,
+  setIsWethCollected,
   setIsDataFetch,
   setIsHasPartialClose,
   setIsHasTraded,
@@ -46,13 +46,13 @@ async function fetchUserData() {
   const isTargetNetwork = await walletProvider.isTargetNetwork();
   if (isTargetNetwork) {
     try {
-      // const [isTeth, isWhitelist, isInputCode] = await Promise.allSettled([
-      //   walletProvider.checkIsTethCollected(),
+      // const [isWeth, isWhitelist, isInputCode] = await Promise.allSettled([
+      //   walletProvider.checkIsWethCollected(),
       //   walletProvider.checkIsWhitelisted(),
       //   walletProvider.checkIsInputCode()
       // ]);
       setIsWhitelisted(walletProvider.isWhitelisted);
-      setIsTethCollected(walletProvider.isTethCollected);
+      setIsWethCollected(walletProvider.isWethCollected);
       return Promise.resolve(true);
     } catch (error) {
       return Promise.reject();

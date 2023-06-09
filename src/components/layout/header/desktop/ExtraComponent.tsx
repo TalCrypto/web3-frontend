@@ -7,7 +7,7 @@ import { getAuth } from 'firebase/auth';
 import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
-import { tethCollected, inputCode, hasTraded } from '@/stores/UserState';
+import { wethCollected, inputCode, hasTraded } from '@/stores/UserState';
 import { getTestToken } from '@/utils/Wallet';
 
 import { wsIsWrongNetwork } from '@/stores/WalletState';
@@ -19,7 +19,7 @@ const ExtraComponent = () => {
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [inVerify, setInVerify] = useState(false);
   const [isShowReferral, setIsShowReferral] = useState(true);
-  const isTethCollected = useNanostore(tethCollected);
+  const isWethCollected = useNanostore(wethCollected);
   const isInputCode = useNanostore(inputCode);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
@@ -121,7 +121,7 @@ const ExtraComponent = () => {
   };
 
   let inputRefferalCode = null;
-  if (isTethCollected && !isInputCode && !hasTraded && isShowReferral) {
+  if (isWethCollected && !isInputCode && !hasTraded && isShowReferral) {
     inputRefferalCode = (
       <div>
         {isShowAlert ? (

@@ -1,7 +1,7 @@
 /* eslint-disable prefer-destructuring */
 import { walletProvider } from '@/utils/walletProvider';
 import { utils } from 'ethers';
-import { setIsWhitelisted, setIsTethCollected, userIsLogin, userWalletAddress } from '@/stores/UserState';
+import { setIsWhitelisted, setIsWethCollected, userIsLogin, userWalletAddress } from '@/stores/UserState';
 import { apiConnection } from '@/utils/apiConnection';
 import {
   wsCurrentChain,
@@ -24,13 +24,13 @@ async function fetchUserData() {
   const isTargetNetwork = await walletProvider.isTargetNetwork();
   if (isTargetNetwork) {
     try {
-      // const [isTeth, isWhitelist, isInputCode] = await Promise.allSettled([
-      //   walletProvider.checkIsTethCollected(),
+      // const [isWeth, isWhitelist, isInputCode] = await Promise.allSettled([
+      //   walletProvider.checkIsWethCollected(),
       //   walletProvider.checkIsWhitelisted(),
       //   walletProvider.checkIsInputCode()
       // ]);
       setIsWhitelisted(walletProvider.isWhitelisted);
-      setIsTethCollected(walletProvider.isTethCollected);
+      setIsWethCollected(walletProvider.isWethCollected);
       return Promise.resolve(true);
     } catch (error) {
       return Promise.reject();
@@ -180,7 +180,7 @@ export const updateTargetNetwork = (callback: any = null) => {
 };
 
 export const getTestToken = async (callback: any = null, successHandle: any = null) => {
-  // logEventByName('getTeth_pressed');
+  // logEventByName('getWeth_pressed');
   wsIsShowTransferTokenModal.set(true);
   const isGoerliEthCollected = await walletProvider.checkIsGoerliEthCollected();
   if (!isGoerliEthCollected) {
@@ -216,8 +216,8 @@ export const getTestToken = async (callback: any = null, successHandle: any = nu
       }
       if (error.error.message === 'execution reverted: You have already claimed') {
         // errorMessage = {
-        //   title: 'Failed to claim test TETH!',
-        //   message: <div>Failed to claim test TETH! Each user will only be entitled to receive a maximum of 20 TETH.</div>
+        //   title: 'Failed to claim test WETH!',
+        //   message: <div>Failed to claim test WETH! Each user will only be entitled to receive a maximum of 20 WETH.</div>
         // };
       } else {
         // const errmsg = error.error.message;

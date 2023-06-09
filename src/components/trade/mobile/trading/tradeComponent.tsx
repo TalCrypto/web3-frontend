@@ -431,11 +431,11 @@ function ConfirmButton(props: any) {
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
 
-  // const { isTethCollected, isWhitelisted, isDataFetch } = walletProvider;
+  // const { isWethCollected, isWhitelisted, isDataFetch } = walletProvider;
   const isDataFetch = useNanostore(dataFetch);
   // const isWhitelisted = useNanostore(whitelisted);
-  // const isTethCollected = useNanostore(tethCollected);
-  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
+  // const isWethCollected = useNanostore(wethCollected);
+  const isWethCollected = Number(walletProvider.wethBalance) !== 0;
 
   const [isProcessingOpenPos, setIsProcessingOpenPos] = useState(false);
   const isNormal = isLoginState && !isWrongNetwork && quantity > 0 && !isInsuffBalance && !isAmountTooSmall;
@@ -550,7 +550,7 @@ function ConfirmButton(props: any) {
       });
   };
 
-  const performGetTeth = () => {
+  const performGetWeth = () => {
     getTestToken(() => setIsProcessingOpenPos(false));
   };
 
@@ -577,7 +577,7 @@ function ConfirmButton(props: any) {
   };
 
   let disabled = !isNormal;
-  if (!isLoginState || isWrongNetwork || !isTethCollected || isApproveRequired) {
+  if (!isLoginState || isWrongNetwork || !isWethCollected || isApproveRequired) {
     disabled = false;
   } else if (isWaiting) {
     disabled = true;
@@ -590,8 +590,8 @@ function ConfirmButton(props: any) {
       connectWallet();
     } else if (isWrongNetwork) {
       performSwitchGeorli();
-    } else if (!isTethCollected) {
-      performGetTeth();
+    } else if (!isWethCollected) {
+      performGetWeth();
     } else if (isApproveRequired) {
       performApprove();
     } else if (isNormal && !isProcessingOpenPos && !isPending && !disabled) {
@@ -616,7 +616,7 @@ function ConfirmButton(props: any) {
             'Connect Wallet'
           ) : isWrongNetwork ? (
             'Switch to Arbitrum'
-          ) : !isTethCollected ? (
+          ) : !isWethCollected ? (
             'Get WETH'
           ) : isApproveRequired ? (
             'Approve'
@@ -632,7 +632,7 @@ function ConfirmButton(props: any) {
 function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
   const isWhitelisted = useNanostore(whitelisted);
-  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
+  const isWethCollected = Number(walletProvider.wethBalance) !== 0;
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
@@ -644,7 +644,7 @@ function Tips(props: any) {
     'Please connect the wallets to trade !'
   ) : isWrongNetwork ? (
     'Wrong Network, please switch to Arbitrum!'
-  ) : !isTethCollected ? (
+  ) : !isWethCollected ? (
     'Please get WETH first !'
   ) : isApproveRequired ? (
     <>

@@ -232,7 +232,7 @@ interface WalletProvider {
   web3Modal: Web3Modal | null;
   holderAddress: string;
   isWhitelisted: boolean;
-  isTethCollected: boolean;
+  isWethCollected: boolean;
   isInputCode: boolean;
   isNetworkSame: boolean;
   isDataFetch: boolean;
@@ -257,7 +257,7 @@ interface WalletProvider {
   adjustPositionMargin: any;
   getTestToken: any;
   checkIsGoerliEthCollected: any;
-  checkIsTethCollected: any;
+  checkIsWethCollected: any;
   checkIsInputCode: any;
   getWethBalance: any;
   checkAllowance: any;
@@ -285,7 +285,7 @@ export const walletProvider: WalletProvider = {
   web3Modal: null,
   holderAddress: '',
   isWhitelisted: false,
-  isTethCollected: false,
+  isWethCollected: false,
   isInputCode: false,
   isNetworkSame: false,
   isDataFetch: false,
@@ -310,7 +310,7 @@ export const walletProvider: WalletProvider = {
     await this.web3Modal.clearCachedProvider();
     this.provider = null;
     this.isWhitelisted = false;
-    this.isTethCollected = false;
+    this.isWethCollected = false;
     this.isInputCode = false;
     this.isNetworkSame = false;
     this.holderAddress = '';
@@ -670,13 +670,13 @@ export const walletProvider: WalletProvider = {
       return false;
     }
   },
-  checkIsTethCollected: async function checkIsTethCollected() {
+  checkIsWethCollected: async function checkIsWethCollected() {
     // const providerSigner = this.provider.getSigner(this.holderAddress);
     // const faucetInstance = new ethers.Contract(faucetAddress, faucetABI, providerSigner);
     // try {
     //   const tx = await faucetInstance.claimCount(this.holderAddress);
-    //   this.isTethCollected = tx > 0;
-    //   return this.isTethCollected;
+    //   this.isWethCollected = tx > 0;
+    //   return this.isWethCollected;
     // } catch (error) {
     //   return false;
     // }

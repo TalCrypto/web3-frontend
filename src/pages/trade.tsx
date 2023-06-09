@@ -7,7 +7,7 @@ import collectionList from '@/const/collectionList';
 import { getTradingOverview, getTraderPositionInfo, getTraderPositionHistory } from '@/utils/trading';
 import { walletProvider } from '@/utils/walletProvider';
 import { calculateNumber } from '@/utils/calculateNumbers';
-import { setIsTethCollected } from '@/stores/UserState';
+import { setIsWethCollected } from '@/stores/UserState';
 import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
 import SidebarCollection from '@/components/trade/desktop/trading/SidebarCollection';
 import InformationWindow from '@/components/trade/desktop/information/InformationWindow';
@@ -80,8 +80,8 @@ function TradePage(props: TradePagePros) {
       wsMaxReduceValue.set(Number(calculateNumber(maxReduce, 4)));
       // const latestHistoryRecords = await getTraderPositionHistory(currentAmm, walletProvider.holderAddress);
       // setHistoryRecords(latestHistoryRecords === null ? [] : latestHistoryRecords);
-      const isCollected = await walletProvider.checkIsTethCollected();
-      setIsTethCollected(isCollected);
+      const isCollected = await walletProvider.checkIsWethCollected();
+      setIsWethCollected(isCollected);
       const newBalance = await walletProvider.getWethBalance(walletProvider.holderAddress);
       wsWethBalance.set(Number(newBalance));
 

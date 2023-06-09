@@ -12,7 +12,7 @@ function MobileFooter() {
   const isLogin = useNanostore(wsIsLogin);
   const isWalletLoading = useNanostore(wsIsWalletLoading);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
-  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
+  const isWethCollected = Number(walletProvider.wethBalance) !== 0;
   const wethBalance = useNanostore(wsWethBalance);
   const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
 
@@ -27,7 +27,7 @@ function MobileFooter() {
       return;
     }
 
-    if (!isTethCollected) {
+    if (!isWethCollected) {
       return;
     }
 
@@ -57,8 +57,8 @@ function MobileFooter() {
               <>
                 Switch to <br /> Arbitrum
               </>
-            ) : !isTethCollected ? (
-              'Get TETH'
+            ) : !isWethCollected ? (
+              'Get WETH'
             ) : (
               'Trade'
             )}
@@ -66,7 +66,7 @@ function MobileFooter() {
           {isLogin ? (
             <div className="ml-6 flex-1 text-xs font-normal text-mediumEmphasis">
               Wallet Balance
-              <div className="text-base font-semibold text-highEmphasis">{wethBalance} TETH</div>
+              <div className="text-base font-semibold text-highEmphasis">{wethBalance} WETH</div>
             </div>
           ) : (
             <div className="ml-6 flex-1 text-xs font-normal text-mediumEmphasis">
