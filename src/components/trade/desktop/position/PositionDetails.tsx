@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
@@ -84,7 +84,7 @@ export default function PositionDetails(props: any) {
     };
   }, [currentAmm, positionInfo]);
 
-  const liquidationChanceWarning = useCallback(() => {
+  const liquidationChanceWarning = () => {
     if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.oraclePrice) return false;
 
     const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.spotPrice : tradingData.oraclePrice;
@@ -102,9 +102,9 @@ export default function PositionDetails(props: any) {
     )
       return true;
     return false;
-  }, [positionInfo, tradingData]);
+  };
 
-  const liquidationRiskWarning = useCallback(() => {
+  const liquidationRiskWarning = () => {
     if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.oraclePrice) return false;
 
     const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.spotPrice : tradingData.oraclePrice;
@@ -112,32 +112,29 @@ export default function PositionDetails(props: any) {
     if (positionInfo.size > 0 && selectedPriceForCalc <= positionInfo.liquidationPrice) return true; // long
     if (positionInfo.size < 0 && selectedPriceForCalc >= positionInfo.liquidationPrice) return true; // short
     return false;
-  }, [positionInfo, tradingData]);
+  };
 
-  const clickShowSharePosition = useCallback(
-    (show: boolean) => {
-      setShowSharePosition(show);
-      if (firebaseAnalytics && address && currentAmm) {
-        logEvent(firebaseAnalytics, 'share_position_performance_pressed', {
-          wallet: address?.substring(2),
+  const clickShowSharePosition = (show: boolean) => {
+    setShowSharePosition(show);
+    if (firebaseAnalytics && address && currentAmm) {
+      logEvent(firebaseAnalytics, 'share_position_performance_pressed', {
+        wallet: address?.substring(2),
+        collection: currentAmm
+      });
+    }
+
+    if (address && currentAmm) {
+      apiConnection.postUserEvent(
+        'share_position_performance_pressed',
+        {
+          page,
           collection: currentAmm
-        });
-      }
+        },
+        address
+      );
+    }
+  };
 
-      if (address && currentAmm) {
-        apiConnection.postUserEvent(
-          'share_position_performance_pressed',
-          {
-            page,
-            collection: currentAmm
-          },
-          address
-        );
-      }
-    },
-    [address, currentAmm]
-  );
-  
   if (!positionInfo || positionInfo.size === 0 || !collectionInfo) {
     return null;
   }
@@ -193,7 +190,11 @@ export default function PositionDetails(props: any) {
             </span>
           </div>
           <div className="flex w-[25%] space-x-[12px]">
-            <MedPriceIcon priceValue={positionInfo.size.toFixed(4).replace("-", "")} isLoading={isLoading || isPending} image={collectionInfo.image} />
+            <MedPriceIcon
+              priceValue={positionInfo.size.toFixed(4).replace('-', '')}
+              isLoading={isLoading || isPending}
+              image={collectionInfo.image}
+            />
             <div>/</div>
             <MedPriceIcon priceValue={positionInfo.currentNotional.toFixed(4)} className="normalprice" isLoading={isLoading || isPending} />
           </div>
