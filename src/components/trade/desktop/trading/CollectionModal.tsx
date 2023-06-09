@@ -4,15 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import { utils } from 'ethers';
 import Image from 'next/image';
-import collectionList from '@/const/collectionList';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
-import { walletProvider } from '@/utils/walletProvider';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
+import { $mktOverview } from '@/stores/trading';
+import { useMarketOverview } from '@/hooks/market';
 
-const SortingIndicator = (props: any) => {
+const SortingIndicator = (props: number) => {
   const { value } = props;
 
   return (
@@ -28,8 +28,8 @@ const SortingIndicator = (props: any) => {
 
 const CollectionModal = (props: any) => {
   const { visible, setVisible, selectCollection } = props;
-  const [isLoading, setIsLoading] = useState(false);
-  const [overviewData, setOverviewData] = useState([]);
+  const [trigerUpdate, setTriggerUpdate] = useState(false);
+  const { isLoading, data: overviewData } = useMarketOverview(trigerUpdate);
   const [periodIndex, setPeriodIndex] = useState(0);
   const initSorting = { collection: 0, futurePrice: 0, priceGap: 0, timeChange: 0, dayVolume: 1, fundingRate: 0, timeValue: 0 };
   const [positionSorting, setPositionSorting] = useState(initSorting);
@@ -37,21 +37,7 @@ const CollectionModal = (props: any) => {
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
-  function fetchOverview() {
-    setIsLoading(true);
-
-    walletProvider
-      .fetchMarketOverview()
-      .then((data: any) => {
-        setIsLoading(false);
-        // console.log('fetchMarketOverview', data);
-        setPositionSorting({ ...initSorting });
-        setOverviewData(data);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }
+  const updateOverviewData = setTriggerUpdate(state => !state);
 
   useEffect(() => {
     const temp = [...overviewData];
