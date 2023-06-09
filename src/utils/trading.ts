@@ -29,10 +29,10 @@ import collectionList from '../const/collectionList';
 
 const EthDater = require('ethereum-block-by-date');
 
-const clearingHouseABI = require('../abi/clearingHouse.json');
-const clearingHouseViewerABI = require('../abi/clearingHouseViewer.json');
-const ammABI = require('../abi/amm.json');
-const tokenABI = require('../abi/token.json');
+const clearingHouseABI = require('@/const/abi/clearingHouse.json');
+const clearingHouseViewerABI = require('@/const/abi/clearingHouseViewer.json');
+const ammABI = require('@/const/abi/amm.json');
+const tokenABI = require('@/const/abi/token.json');
 
 const tokenAddr = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
 const clearingHouseAddr = process.env.NEXT_PUBLIC_CLEARING_ADDRESS;

@@ -100,7 +100,7 @@ const MarketTrade = (props: any) => {
     <div className="mx-[20px]">
       <Cell
         items={['User ID', 'Action / Type', 'Notional Size / Resulting Price', '']}
-        classNames={['col-span-4', 'col-span-3 pl-3', 'col-span-4 px-3', 'col-span-1 px-3']}
+        classNames={['col-span-4', 'col-span-3 pl-3', 'col-span-4 pl-3', 'col-span-1 pl-3']}
       />
       {marketHistory && marketHistory.length > 0 ? (
         marketHistory
@@ -139,7 +139,7 @@ const MarketTrade = (props: any) => {
 
                 <ExplorerButton txHash={txHash} />
               ]}
-              classNames={['col-span-4 pl-3', 'col-span-3 px-3', 'col-span-3 px-3', 'col-span-2 px-3']}
+              classNames={['col-span-4 pl-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 pl-3']}
             />
           ))
       ) : (

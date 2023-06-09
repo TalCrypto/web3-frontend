@@ -157,7 +157,7 @@ export default function PositionMobile(props: any) {
   }
 
   return (
-    <div className="mb-[24px]">
+    <div className="my-6">
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />

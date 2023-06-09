@@ -4,7 +4,7 @@ import collectionList from '../const/collectionList';
 
 const url: string = process.env.NEXT_PUBLIC_WSS_PROVIDER_URL ?? '';
 const wssProvider = new ethers.providers.WebSocketProvider(url);
-const ammABI = require('../abi/amm.json');
+const ammABI = require('@/const/abi/amm.json');
 
 export const getLatestTwapPrice = async (nftAddr: string): Promise<number> => {
   const filterCollection = collectionList.filter(item => item.contract === nftAddr);

@@ -506,7 +506,7 @@ function ChartMobile(props: any, ref: any) {
   };
 
   return (
-    <div className="chartWindow mb-[36px]">
+    <div className="chartWindow">
       <div className="">
         <ChartHeaders
           ref={graphHeaderRef}

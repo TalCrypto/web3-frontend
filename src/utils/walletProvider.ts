@@ -30,11 +30,11 @@ import collectionsLoading from '../stores/collectionsLoading';
 import { fluctuationLimit, initialMarginRatio, priceGapLimit } from '../stores/priceGap';
 import { setPositionChanged } from '../stores/transaction';
 
-const tokenABI = require('../abi/token.json');
-const clearingHseABI = require('../abi/clearingHouse.json');
-const faucetABI = require('../abi/faucet.json');
-const ammABI = require('../abi/amm.json');
-const clearingHouseViewerABI = require('../abi/clearingHouseViewer.json');
+const tokenABI = require('@/const/abi/token.json');
+const clearingHseABI = require('@/const/abi/clearingHouse.json');
+const faucetABI = require('@/const/abi/faucet.json');
+const ammABI = require('@/const/abi/amm.json');
+const clearingHouseViewerABI = require('@/const/abi/clearingHouseViewer.json');
 
 const clearingHouseViewerAddr = process.env.NEXT_PUBLIC_CLEARING_HOUSE_VIEWER_ADDRESS;
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY;
