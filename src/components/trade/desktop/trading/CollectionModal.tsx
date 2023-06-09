@@ -9,10 +9,9 @@ import { calculateNumber } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
-import { $mktOverview } from '@/stores/trading';
 import { useMarketOverview } from '@/hooks/market';
 
-const SortingIndicator = (props: number) => {
+const SortingIndicator = props => {
   const { value } = props;
 
   return (
