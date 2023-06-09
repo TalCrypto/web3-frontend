@@ -14,7 +14,7 @@ export default function Switcher() {
   const currentCollectionName = currentCollection.displayCollectionPair || 'DEGODS';
   const currentCollectionLogo = currentCollection.logo;
 
-  const [popupOpened, setPopupOpened] = useState(false);
+  const [isShowModal, setIsShowModal] = useState(false);
   const [marketData, setMarketData] = useState([]);
 
   const fetchMarketOverview = async () => {
@@ -25,7 +25,7 @@ export default function Switcher() {
   };
 
   const onSwitcherClick = async () => {
-    setPopupOpened(true);
+    setIsShowModal(true);
     await fetchMarketOverview();
   };
 
@@ -50,7 +50,7 @@ export default function Switcher() {
           </div>
         </div>
       </div>
-      {popupOpened ? <CollectionListModal marketData={marketData} setPopupOpened={setPopupOpened} /> : null}
+      <CollectionListModal marketData={marketData} isShowModal={isShowModal} setIsShowModal={setIsShowModal} />
     </>
   );
 }

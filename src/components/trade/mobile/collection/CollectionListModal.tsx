@@ -7,7 +7,7 @@ import { calculateNumber, formatterValue, isPositive } from '@/utils/calculateNu
 import { wsCurrentToken } from '@/stores/WalletState';
 
 export default function CollectionListModal(props: any) {
-  const { marketData, setPopupOpened } = props;
+  const { marketData, isShowModal, setIsShowModal } = props;
   const currentToken = useNanostore(wsCurrentToken);
 
   const handleMap = (item: any, index: any) => {
@@ -26,7 +26,7 @@ export default function CollectionListModal(props: any) {
           //   new_collection: collections[0].collection
           // });
           wsCurrentToken.set(collections[0].collection || 'DEGODS');
-          setPopupOpened(false);
+          setIsShowModal(false);
         }}>
         <Image src={item.logo} className="" alt="" width={32} height={32} />
         <div className="ml-[6px] flex-1">
@@ -61,12 +61,17 @@ export default function CollectionListModal(props: any) {
 
   return (
     <div
-      className="t-0 fixed bottom-0 left-0 right-0 z-10 h-full w-full
-       bg-black/[.3] backdrop-blur-[4px]"
+      className={`t-0 fixed bottom-0 left-0 right-0 z-10 w-full
+        ${isShowModal ? 'h-full' : 'h-0'}
+       bg-black/[.3] backdrop-blur-[4px]`}
       onClick={() => {
-        setPopupOpened(false);
+        setIsShowModal(false);
       }}>
-      <div className="absolute bottom-0 w-full bg-secondaryBlue">
+      <div
+        className={`absolute bottom-0 w-full bg-secondaryBlue
+        ${isShowModal ? 'bottom-0' : 'bottom-[-336px]'}
+        transition-bottom duration-500
+      `}>
         {collectionList.filter(collection => collection.collectionName !== currentToken).map(handleMap)}
       </div>
     </div>
