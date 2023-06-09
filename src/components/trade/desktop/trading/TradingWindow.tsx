@@ -64,7 +64,7 @@ function TradingWindow(props: any) {
   };
 
   return (
-    <div className="ml-[44px] mr-[20px] w-full 2xl:w-[400px]" style={{ height: 'fit-content' }}>
+    <div className="w-full 2xl:w-[400px]" style={{ height: 'fit-content' }}>
       {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null}
       {userPosition ? (
         <div

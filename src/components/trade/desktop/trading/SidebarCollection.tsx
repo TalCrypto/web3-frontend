@@ -95,7 +95,7 @@ function SidebarCollection(props: any, ref: any) {
   return (
     <>
       <div
-        className={`side-collection side-collection  sidebar-wrapper absolute mt-[9px]
+        className={`side-collection side-collection sidebar-wrapper absolute ml-[-44px] mt-[9px]
         flex w-[44px] flex-col rounded-l-[12px] border-b-0
         border-[#71AAFF]/[.2] bg-secondaryBlue px-[6px] py-3`}
         style={{ '--highlight-y-pos': `${yPos}px` } as CSSProperties}>
