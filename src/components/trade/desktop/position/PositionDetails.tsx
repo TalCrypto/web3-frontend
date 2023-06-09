@@ -85,9 +85,9 @@ export default function PositionDetails(props: any) {
   }, [currentAmm, positionInfo]);
 
   const liquidationChanceWarning = () => {
-    if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.oraclePrice) return false;
+    if (!positionInfo || !tradingData || !tradingData.vammPrice || !tradingData.oraclePrice) return false;
 
-    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.spotPrice : tradingData.oraclePrice;
+    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.vammPrice : tradingData.oraclePrice;
 
     if (
       positionInfo.size > 0 && // long
@@ -105,9 +105,9 @@ export default function PositionDetails(props: any) {
   };
 
   const liquidationRiskWarning = () => {
-    if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.oraclePrice) return false;
+    if (!positionInfo || !tradingData || !tradingData.vammPrice || !tradingData.oraclePrice) return false;
 
-    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.spotPrice : tradingData.oraclePrice;
+    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.vammPrice : tradingData.oraclePrice;
 
     if (positionInfo.size > 0 && selectedPriceForCalc <= positionInfo.liquidationPrice) return true; // long
     if (positionInfo.size < 0 && selectedPriceForCalc >= positionInfo.liquidationPrice) return true; // short

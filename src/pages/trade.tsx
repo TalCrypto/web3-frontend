@@ -30,7 +30,6 @@ import { useAccount } from 'wagmi';
 function TradePage(props: WithRouterProps) {
   const { router } = props;
   const { isConnected } = useAccount();
-  const [isShowPopup, setIsShowPopup] = useState(false);
   // const maxReduceValue = useNanostore(wsMaxReduceValue);
   // const [maxReduceValue, setMaxReduceValue] = useState('');
   // const [historyRecords, setHistoryRecords] = useState([]);
@@ -132,7 +131,7 @@ function TradePage(props: WithRouterProps) {
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
-                <SidebarCollection isShowPopup={isShowPopup} setIsShowPopup={setIsShowPopup} />
+                <SidebarCollection/>
 
                 <TradingWindow refreshPositions={null} />
               </div>

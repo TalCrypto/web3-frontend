@@ -15,6 +15,17 @@ export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   return positionInfo;
 };
 
+export const usePositionInfosIsLoading = (): boolean => {
+  const [isLoading, setIsLoading] = useState(true);
+  const positionInfos = useNanostore($userPositionInfos);
+  useEffect(() => {
+    if (positionInfos && Object.keys(positionInfos).length === Object.keys(AMM).length) {
+      setIsLoading(false);
+    }
+  }, [positionInfos]);
+  return isLoading;
+};
+
 export const useTradingData = (amm?: AMM): CollectionTradingData | undefined => {
   const tradingData = useNanostore($tradingData);
   const [ammTradingData, setAmmTradingData] = useState<CollectionTradingData | undefined>();

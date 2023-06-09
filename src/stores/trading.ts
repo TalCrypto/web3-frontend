@@ -2,7 +2,7 @@ import { AMM } from '@/const/collectionList';
 import { atom, map } from 'nanostores';
 
 export interface CollectionTradingData {
-  spotPrice: number;
+  vammPrice: number;
   oraclePrice: number;
   shortSize: number;
   longSize: number;
@@ -18,12 +18,12 @@ export interface CollectionTradingData {
   fundingPeriod: number;
 }
 
-type TradingData = {
+export type TradingData = {
   // eslint-disable-next-line no-unused-vars
   [value in AMM]?: CollectionTradingData;
 };
 
-type TransactionPendings = {
+export type TransactionPendings = {
   // eslint-disable-next-line no-unused-vars
   [value in AMM]?: boolean;
 };

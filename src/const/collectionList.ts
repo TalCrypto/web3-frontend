@@ -13,6 +13,7 @@ export enum AMM {
 export const DEFAULT_AMM: AMM = AMM.DEGODS;
 
 export interface CollectionInfo {
+  amm: AMM;
   name: string;
   title: string;
   image: string;
@@ -38,6 +39,7 @@ export type CollectionInfos = {
 
 export const collectionsInfos: CollectionInfos = {
   [AMM.DEGODS]: {
+    amm: AMM.DEGODS,
     name: 'DEGODS/ETH',
     title: 'DeGods',
     image: '/images/collections/small/degods.svg',
@@ -57,6 +59,7 @@ export const collectionsInfos: CollectionInfos = {
     isNew: true
   },
   [AMM.CAPTAINZ]: {
+    amm: AMM.CAPTAINZ,
     name: 'CAPTAINZ/ETH',
     title: 'Captainz',
     image: '/images/collections/small/captainz.svg',
@@ -76,6 +79,7 @@ export const collectionsInfos: CollectionInfos = {
     isNew: true
   },
   [AMM.BAYC]: {
+    amm: AMM.BAYC,
     name: 'BAYC/ETH',
     title: 'Bored Ape Yacht Club',
     image: '/images/collections/small/bayc.svg',
@@ -95,6 +99,7 @@ export const collectionsInfos: CollectionInfos = {
     isNew: false
   },
   [AMM.MAYC]: {
+    amm: AMM.MAYC,
     name: 'MAYC/ETH',
     title: 'Mutant Ape Yacht Club',
     image: '/images/collections/small/mayc.svg',
@@ -114,6 +119,7 @@ export const collectionsInfos: CollectionInfos = {
     isNew: false
   },
   [AMM.AZUKI]: {
+    amm: AMM.AZUKI,
     name: 'AZUKI/ETH',
     title: 'Azuki',
     image: '/images/collections/small/azuki.svg',
@@ -133,6 +139,7 @@ export const collectionsInfos: CollectionInfos = {
     isNew: false
   },
   [AMM.PUNKS]: {
+    amm: AMM.PUNKS,
     name: 'PUNKS/ETH',
     title: 'CRYPTOPUNKS',
     image: '/images/collections/small/cryptopunks.svg',

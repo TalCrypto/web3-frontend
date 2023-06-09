@@ -49,7 +49,7 @@ export interface UserPositionInfo {
 
 export type UserPositionInfos = {
   // eslint-disable-next-line no-unused-vars
-  [value in AMM]: UserPositionInfo;
+  [value in AMM]?: UserPositionInfo;
 };
 
 export const $userWethBalance = atom(0);
