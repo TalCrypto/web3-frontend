@@ -4,7 +4,7 @@ import { $userPositionInfos, UserPositionInfo } from '@/stores/user';
 import { $tradingData, $transactionPendings, CollectionTradingData } from '@/stores/trading';
 import { CollectionInfo, getCollectionInformation, AMM } from '@/const/collectionList';
 
-export const usePositionInfo = (amm: AMM | undefined): UserPositionInfo | undefined => {
+export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   const positionInfos = useNanostore($userPositionInfos);
   const [positionInfo, setPositionInfo] = useState<UserPositionInfo | undefined>();
   useEffect(() => {
@@ -15,7 +15,7 @@ export const usePositionInfo = (amm: AMM | undefined): UserPositionInfo | undefi
   return positionInfo;
 };
 
-export const useTradingData = (amm: AMM | undefined): CollectionTradingData | undefined => {
+export const useTradingData = (amm?: AMM): CollectionTradingData | undefined => {
   const tradingData = useNanostore($tradingData);
   const [ammTradingData, setAmmTradingData] = useState<CollectionTradingData | undefined>();
   useEffect(() => {
@@ -26,7 +26,7 @@ export const useTradingData = (amm: AMM | undefined): CollectionTradingData | un
   return ammTradingData;
 };
 
-export const useTransactionIsPending = (amm: AMM | undefined): boolean => {
+export const useTransactionIsPending = (amm?: AMM): boolean => {
   const pendings = useNanostore($transactionPendings);
   const [isPending, setIsPending] = useState(false);
   useEffect(() => {
@@ -37,7 +37,7 @@ export const useTransactionIsPending = (amm: AMM | undefined): boolean => {
   return isPending;
 };
 
-export const useCollectionInfo = (amm: AMM | undefined): CollectionInfo | undefined => {
+export const useCollectionInfo = (amm?: AMM): CollectionInfo | undefined => {
   const [info, setInfo] = useState<CollectionInfo | undefined>();
   useEffect(() => {
     if (amm) {

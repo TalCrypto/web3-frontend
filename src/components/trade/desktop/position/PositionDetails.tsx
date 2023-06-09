@@ -46,6 +46,8 @@ function MedPriceIcon(props: any) {
   );
 }
 
+const liquidationChanceLimit = 0.05;
+
 export default function PositionDetails(props: any) {
   const router = useRouter();
   const { address } = useAccount();
@@ -66,76 +68,11 @@ export default function PositionDetails(props: any) {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
 
-  const vAMMPrice = tradingData?.spotPrice ?? 0;
-  const oraclePrice = tradingData?.oraclePrice ?? 0;
-  const priceGap: number = vAMMPrice !== 0 && oraclePrice !== 0 ? vAMMPrice / oraclePrice - 1 : 0;
-  const priceGapLmt = useNanostore(priceGapLimit);
-
-  // price gap
-  const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
-  const isBadDebt = positionInfo ? positionInfo.leverage === 0 : false;
-
-  // liquidation warning
-  const positionType = positionInfo ? (positionInfo.size > 0 ? 'LONG' : 'SHORT') : null;
-  const liquidationPrice = positionInfo ? Number(utils.formatEther(positionInfo.liquidationPrice)) : null;
-  const liquidationChanceLimit = 0.05;
-
   useEffect(() => {
     if (router) {
       setPage(pageTitleParser(router.asPath));
     }
   }, [router]);
-
-  const liquidationChanceWarning = useCallback(() => {
-    if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.twapPrice || !priceGapLmt) return false;
-
-    const selectedPriceForCalc = !isGapAboveLimit ? vAMMPrice : oraclePrice;
-
-    if (
-      positionType === 'LONG' &&
-      Number(liquidationPrice) < selectedPriceForCalc &&
-      selectedPriceForCalc < Number(liquidationPrice) * (1 + liquidationChanceLimit)
-    )
-      return true;
-    if (
-      positionType === 'SHORT' &&
-      Number(liquidationPrice) > selectedPriceForCalc &&
-      selectedPriceForCalc > Number(liquidationPrice) * (1 - liquidationChanceLimit)
-    )
-      return true;
-    return false;
-  }, [positionInfo, tradingData]);
-
-  const liquidationRiskWarning = useCallback(() => {
-    if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.twapPrice || !priceGapLmt) return false;
-
-    const selectedPriceForCalc = !isGapAboveLimit ? vAMMPrice : oraclePrice;
-
-    if (positionType === 'LONG' && selectedPriceForCalc <= Number(liquidationPrice)) return true;
-    if (positionType === 'SHORT' && selectedPriceForCalc >= Number(liquidationPrice)) return true;
-    return false;
-  }, [positionInfo, tradingData]);
-
-  // leverage handling
-  const isLeverageNegative = positionInfo ? positionInfo.leverage <= 0 : false;
-  const isLeverageOver = positionInfo ? positionInfo.leverage > 100 : false;
-
-  // const size = '';
-  // const currentPrice = '';
-  let sizeInEth = '';
-  let absoluteSize = 0;
-  let totalPnlValue = '';
-  let numberTotalPnl = 0;
-
-  if (positionInfo && tradingData) {
-    // size = calculateNumber(positionInfo.size, 4);
-    // currentPrice = calculateNumber(tradingData.spotPrice, 2);
-    absoluteSize = Math.abs(Number(calculateNumber(positionInfo.size, 4)));
-    sizeInEth = `${calculateNumber(positionInfo.currentNotional, 4)} `;
-    const calc = positionInfo.unrealizedPnl;
-    totalPnlValue = formatterValue(calc, 4);
-    numberTotalPnl = Number(totalPnlValue);
-  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -147,9 +84,35 @@ export default function PositionDetails(props: any) {
     };
   }, [currentAmm, positionInfo]);
 
-  if (!positionInfo || positionInfo.size === 0 || !collectionInfo) {
-    return null;
-  }
+  const liquidationChanceWarning = useCallback(() => {
+    if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.oraclePrice) return false;
+
+    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.spotPrice : tradingData.oraclePrice;
+
+    if (
+      positionInfo.size > 0 && // long
+      positionInfo.liquidationPrice < selectedPriceForCalc &&
+      selectedPriceForCalc < positionInfo.liquidationPrice * (1 + liquidationChanceLimit)
+    )
+      return true;
+    if (
+      positionInfo.size < 0 && // short
+      positionInfo.liquidationPrice > selectedPriceForCalc &&
+      selectedPriceForCalc > positionInfo.liquidationPrice * (1 - liquidationChanceLimit)
+    )
+      return true;
+    return false;
+  }, [positionInfo, tradingData]);
+
+  const liquidationRiskWarning = useCallback(() => {
+    if (!positionInfo || !tradingData || !tradingData.spotPrice || !tradingData.oraclePrice) return false;
+
+    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.spotPrice : tradingData.oraclePrice;
+
+    if (positionInfo.size > 0 && selectedPriceForCalc <= positionInfo.liquidationPrice) return true; // long
+    if (positionInfo.size < 0 && selectedPriceForCalc >= positionInfo.liquidationPrice) return true; // short
+    return false;
+  }, [positionInfo, tradingData]);
 
   const clickShowSharePosition = useCallback(
     (show: boolean) => {
@@ -174,8 +137,10 @@ export default function PositionDetails(props: any) {
     },
     [address, currentAmm]
   );
-
-  // const marginRatio = Number(calculateNumber(positionInfo.marginRatio, 2)) * 100;
+  
+  if (!positionInfo || positionInfo.size === 0 || !collectionInfo) {
+    return null;
+  }
 
   return (
     <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
@@ -228,21 +193,21 @@ export default function PositionDetails(props: any) {
             </span>
           </div>
           <div className="flex w-[25%] space-x-[12px]">
-            <MedPriceIcon priceValue={absoluteSize} isLoading={isLoading || isPending} image={collectionInfo.image} />
+            <MedPriceIcon priceValue={positionInfo.size.toFixed(4).replace("-", "")} isLoading={isLoading || isPending} image={collectionInfo.image} />
             <div>/</div>
-            <MedPriceIcon priceValue={sizeInEth} className="normalprice" isLoading={isLoading || isPending} />
+            <MedPriceIcon priceValue={positionInfo.currentNotional.toFixed(4)} className="normalprice" isLoading={isLoading || isPending} />
           </div>
           <div className="flex w-[20%] pl-12">
             <span className={`normalprice mr-1 ${isLoading || isPending ? 'flash' : ''}`}>
               {!positionInfo
                 ? '---'
-                : isLeverageNegative
+                : positionInfo.leverage <= 0
                 ? 'N/A'
-                : isLeverageOver
+                : positionInfo.leverage > 100
                 ? '100.00 x +'
-                : formatterValue(positionInfo.leverage, 2, 'x')}
+                : `${positionInfo.leverage.toFixed(2)} x`}
             </span>
-            {isLeverageNegative ? (
+            {positionInfo.leverage <= 0 ? (
               <TitleTips
                 placement="top"
                 titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
@@ -259,7 +224,7 @@ export default function PositionDetails(props: any) {
                   ? '0.00'
                   : calculateNumber(positionInfo.liquidationPrice, 2)
               }
-              className={`normalprice ${isGapAboveLimit ? 'text-warn' : ''} `}
+              className={`normalprice ${tradingData?.isOverPriceGap ? 'text-warn' : ''} `}
               isLoading={isLoading || isPending}
             />
             {liquidationChanceWarning() && !liquidationRiskWarning() ? (
@@ -276,25 +241,25 @@ export default function PositionDetails(props: any) {
                 tipsText="Your position is at risk of being liquidated. Please manage your risk."
               />
             ) : null}
-            {isGapAboveLimit ? (
+            {tradingData?.isOverPriceGap ? (
               <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-[#FFC24B]" />
             ) : null}
           </div>
           <div className="w-[20%]">
             <MedPriceIcon
-              priceValue={!positionInfo ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
-              className={!positionInfo ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'}
+              priceValue={positionInfo.unrealizedPnl === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
+              className={positionInfo.unrealizedPnl > 0 ? 'risevalue' : positionInfo.unrealizedPnl === 0 ? '' : 'dropvalue'}
               isLoading={isLoading || isPending}
             />
           </div>
         </div>
       </div>
-      {isGapAboveLimit ? (
+      {tradingData?.isOverPriceGap ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
           <Image src="/static/alert_yellow.svg" width={15} height={15} alt="" />
           <p className="text-b3 text-warn">
             Warning: vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
-            based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
+            based on vAMM price). {positionInfo.leverage <= 0 ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
             <a
               target="_blank"
               href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"

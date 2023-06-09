@@ -1,21 +1,21 @@
-import { AMM, DEFAULT_AMM } from '@/const/collectionList';
+import { AMM } from '@/const/collectionList';
 import { atom, map } from 'nanostores';
 
 export interface CollectionTradingData {
-  spotPrice: string;
-  oraclePrice: string;
-  twapPrice: string;
-  shortSize: string;
-  longSize: string;
-  shortRatio: string;
-  longRatio: string;
-  nextFundingTime: string;
-  fundingRateLong: string;
-  fundingRateShort: string;
-  todayHigh: string;
-  todayLow: string;
-  dayVolume: string;
-  fundingPeriod: string;
+  spotPrice: number;
+  oraclePrice: number;
+  shortSize: number;
+  longSize: number;
+  shortRatio: number;
+  longRatio: number;
+  nextFundingTime: number;
+  fundingRateLong: number;
+  fundingRateShort: number;
+  isOverPriceGap: boolean;
+  todayHigh: number;
+  todayLow: number;
+  dayVolume: number;
+  fundingPeriod: number;
 }
 
 type TradingData = {
