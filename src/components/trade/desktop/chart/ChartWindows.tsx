@@ -31,6 +31,7 @@ import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
 import { wsIsLogin, wsChatInterval, wsCurrentToken, wsSelectedTimeIndex } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
+import Tooltip from '@/components/common/Tooltip';
 
 const flashAnim = 'flash';
 
@@ -368,7 +369,16 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
         </OverlayTrigger> */}
 
         <div>
-          <p className="cursor-default">VAMM - Oracle Price Gap:</p>
+          <Tooltip
+            direction="top"
+            content={
+              <p className="mx-2 text-center text-b3">
+                Price difference between the
+                <br /> vAMM and the oracle prices
+              </p>
+            }>
+            <p className="cursor-default">VAMM - Oracle Price Gap:</p>
+          </Tooltip>
         </div>
 
         <div className="flex items-center space-x-[4px]">
@@ -423,7 +433,20 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
               <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
             </span>
           }
-          tipsText="The rate of the funding payment. Funding payment is paid to/by either short or long positions based on the difference between spot and vAMM price. Funding payment happens once every 3 hours, which is calculated on a 3-hour simple weighted rolling average basis."
+          tipsText={
+            <div className="text-center">
+              The rate of the funding <br />
+              payment. Funding payment is <br />
+              paid to/by either short or long <br />
+              positions based on the <br />
+              difference between spot and <br />
+              vAMM price. Funding payment <br />
+              happens once every 3 hours, <br />
+              which is calculated on a 3-hour <br />
+              simple weighted rolling average <br />
+              basis.
+            </div>
+          }
           placement="top"
         />
         <div className="col text-highEmphasis">
