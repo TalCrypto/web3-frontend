@@ -40,11 +40,13 @@ function SmallPriceIcon(props: any) {
 }
 
 function Cell(props: any) {
-  const { items, classNames, rowStyle } = props;
+  const { items, classNames, isHeader } = props;
   return (
     <div
-      className="relative mb-6 grid grid-cols-12 items-center whitespace-break-spaces
-      text-[12px] text-mediumEmphasis">
+      className={`relative mb-6 grid grid-cols-12 whitespace-break-spaces
+        text-[12px] text-mediumEmphasis
+        ${isHeader ? 'font-normal' : 'items-center'}
+      `}>
       {items.map((item: any, index: any) => (
         // eslint-disable-next-line react/no-array-index-key
         <div className={`${classNames[index]}`} key={index}>
@@ -101,6 +103,7 @@ const MarketTrade = (props: any) => {
       <Cell
         items={['User ID', 'Action / Type', 'Notional Size / Resulting Price', '']}
         classNames={['col-span-4', 'col-span-3 pl-3', 'col-span-4 pl-3', 'col-span-1 pl-3']}
+        isHeader
       />
       {marketHistory && marketHistory.length > 0 ? (
         marketHistory
