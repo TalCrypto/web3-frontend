@@ -217,6 +217,9 @@ function QuantityEnter(props: any) {
         <div className="flex-1 text-[14px] text-mediumEmphasis">Collateral</div>
         {isLoginState && !isWrongNetwork ? (
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+            <div className="mr-1 flex flex-1">
+              <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
+            </div>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
             <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => getTestToken()}>
