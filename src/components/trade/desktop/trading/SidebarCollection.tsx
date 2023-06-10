@@ -90,40 +90,43 @@ function SidebarCollection(props: any, ref: any) {
   };
 
   const isHasPos = (amm: any) => overviewData.find((i: any) => i?.amm === amm) || false;
-  const yPos = activeIndex * 64 + (activeIndex > 2 ? 56 : 58);
+  const yPos = activeIndex * 68 + (activeIndex > 1 ? 64 : 62);
 
   return (
     <>
       <div
-        className={`side-collection side-collection sidebar-wrapper absolute ml-[-44px] mt-[9px]
+        className={`side-collection side-collection sidebar-wrapper absolute ml-[-44px] mt-4
         flex w-[44px] flex-col rounded-l-[12px] border-b-0
-        border-[#71AAFF]/[.2] bg-secondaryBlue px-[6px] py-3`}
+        border-[#71AAFF]/[.2] bg-secondaryBlue px-1 py-3`}
         style={{ '--highlight-y-pos': `${yPos}px` } as CSSProperties}>
         <div
-          className="transition-width absolute right-0 top-[6px] h-[52px] w-[52px]
+          className="transition-width absolute right-0 top-[6px] h-[48px] w-[48px]
           translate-y-[var(--highlight-y-pos)] transform
           rounded-l-[12px] bg-[#2574fb] transition duration-300 ease-in-out"
         />
-
         <div
           className={`item ${isLoading ? 'loading' : ''}
-            relative flex h-8 w-8 cursor-pointer items-center rounded-full 
+            relative flex cursor-pointer items-center justify-center rounded-full
              hover:border-[hsla(0,0%,100%,.2)]`}
           onClick={() => setIsColModalVisible(true)}>
           <Image
             src="/images/collections/more.svg"
-            width="32"
-            height="32"
+            width={32}
+            height={32}
             alt=""
-            className="border-[4px] border-transparent hover:border-[4px]"
+            className="rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
           />
-          {/* {isLoading ? (
-            <div className="loading-indicator">
-              <div className="spinner-border spinner-border-sm text-light" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+          {isLoading ? (
+            <div
+              className="loading-indicator absolute left-[4px] top-[3px] flex h-7
+                  w-7 items-center justify-center rounded-full text-[10px]">
+              <div
+                className="spinner-border inline-block h-4 w-4
+                    animate-spin rounded-full border-2 border-solid
+                  border-white border-r-transparent"
+              />
             </div>
-          ) : null} */}
+          ) : null}
         </div>
         {collectionList.map(item => (
           <div
@@ -131,48 +134,41 @@ function SidebarCollection(props: any, ref: any) {
             className={`${selectedCollection.collection.toLocaleLowerCase() === item.collection.toLocaleLowerCase() ? 'active' : ''} ${
               isLoading ? 'loading' : ''
             }
-            relative mt-8 flex h-8 w-8 cursor-pointer items-center`}
+            relative mt-8 flex cursor-pointer items-center`}
             onClick={() => selectCollection(item.collection)}>
-            {/* {selectedCollection.collection.toUpperCase() === item.collection.toUpperCase() ? (
-              <div
-                className="absolute right-[-6px] top-[-12px]
-                h-[48px] w-[48px] rounded-l-[12px] bg-primaryBlue"
-              />
-            ) : null} */}
             <Tooltip direction="right" content={item.displayCollectionPair}>
               {item.isNew ? (
-                <Image
-                  className="absolute right-[-12px] top-[-4px] z-[2]"
-                  src="/images/collections/new.svg"
-                  alt=""
-                  width={26}
-                  height={12}
-                />
+                <Image className="absolute right-0 top-[-4px] z-[2]" src="/images/collections/new.svg" alt="" width={26} height={12} />
               ) : null}
               <Image
                 src={item.sidebarLogo}
-                width="32"
-                height="32"
+                width={36}
+                height={36}
                 alt=""
                 className="z-[1] rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
               />
               {isHasPos(item.amm) ? (
                 <Image
-                  className="absolute bottom-[3px] right-[-2px] z-10"
+                  className="absolute bottom-[3px] right-0 z-10"
                   src="/images/mobile/pages/trade/shopping-bag-green.svg"
-                  width="14"
-                  height="14"
+                  width={14}
+                  height={14}
                   alt=""
                 />
               ) : null}
             </Tooltip>
-            {/* {isLoading ? (
-              <div className="loading-indicator">
-                <div className="spinner-border spinner-border-sm text-light" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+
+            {isLoading ? (
+              <div
+                className="loading-indicator absolute left-[4px] top-[4px] flex h-7
+                  w-7 items-center justify-center rounded-full text-[10px]">
+                <div
+                  className="spinner-border inline-block h-4 w-4
+                    animate-spin rounded-full border-2 border-solid
+                  border-white border-r-transparent"
+                />
               </div>
-            ) : null} */}
+            ) : null}
           </div>
         ))}
       </div>

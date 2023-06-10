@@ -102,8 +102,8 @@ function PriceIndicator(props: any) {
             : '/images/components/trade/chart/polygon_neg.svg'
         }
         className="ml-4 mr-2"
-        width="16"
-        height="16"
+        width={16}
+        height={16}
       />
       <div>
         <div className="mr-4">
@@ -214,7 +214,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
           <div className="col newcontenttext mb-[16px]">
             <div className="text-14 font-400 flex space-x-[12px] text-highEmphasis">
               <div className="flex items-center space-x-[6px]">
-                {/* <Image className="" src={selectedCollection.logo} width="16" height="16" alt="" /> */}
+                {/* <Image className="" src={selectedCollection.logo} width={16} height={16} alt="" /> */}
                 <span>{selectedCollection.displayCollectionPair}</span>
               </div>
               <div className="text-14 font-400 flex text-highEmphasis">

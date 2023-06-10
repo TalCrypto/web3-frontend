@@ -120,7 +120,7 @@ const FundingPaymentModal = (props: any) => {
         onClick={e => e.stopPropagation()}>
         <div className="px-6 pt-[26px]">
           <div className="flex items-center space-x-[6px]">
-            <Image src={currentCollection.image} width="24" height="24" alt="" />
+            <Image src={currentCollection.image} width={24} height={24} alt="" />
             <p className="font-600 text-[16px] text-highEmphasis">{currentCollection.shortName} Funding Payment History</p>
           </div>
           <div className="flex">
@@ -133,7 +133,7 @@ const FundingPaymentModal = (props: any) => {
             </div>
           </div>
           <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setShowFundingPaymentModal(false)}>
-            <Image src="/images/components/common/modal/close.svg" width="16" height="16" alt="" />
+            <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
         </div>
         <div className="body">

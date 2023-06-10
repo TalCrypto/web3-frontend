@@ -101,8 +101,8 @@ function PriceIndicator(props: any) {
             ? '/images/components/trade/chart/polygon_pos.svg'
             : '/images/components/trade/chart/polygon_neg.svg'
         }
-        width="16"
-        height="16"
+        width={16}
+        height={16}
       />
       <div>
         <div className="mr-4">

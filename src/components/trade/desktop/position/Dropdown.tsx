@@ -41,21 +41,21 @@ const Dropdown = (props: any) => {
         className="flex cursor-pointer px-3
           py-4 text-highEmphasis hover:bg-white/[.1]"
         onClick={onClickViewHistory}>
-        <Image className="mr-[6px]" alt="" src="/images/components/trade/position/trade_history.svg" width="16" height="16" />
+        <Image className="mr-[6px]" alt="" src="/images/components/trade/position/trade_history.svg" width={16} height={16} />
         <span>View History</span>
       </div>
       <div
         className="flex cursor-pointer px-3
           py-4 text-highEmphasis hover:bg-white/[.1]"
         onClick={onClickViewPortfolio}>
-        <Image className="mr-[6px]" alt="" src="/images/components/trade/position/position.svg" width="16" height="16" />
+        <Image className="mr-[6px]" alt="" src="/images/components/trade/position/position.svg" width={16} height={16} />
         <span>View Portfolio</span>
       </div>
       <div
         className="flex cursor-pointer px-3
           py-4 text-highEmphasis hover:bg-white/[.1]"
         onClick={onClickFundingPayment}>
-        <Image className="mr-[6px]" alt="" src="/images/components/trade/position/funding_payment.svg" width="16" height="16" />
+        <Image className="mr-[6px]" alt="" src="/images/components/trade/position/funding_payment.svg" width={16} height={16} />
         <span>View Funding Payment</span>
       </div>
     </div>

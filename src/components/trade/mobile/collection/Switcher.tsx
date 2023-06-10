@@ -35,7 +35,7 @@ export default function Switcher() {
       <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue">
         <div className="flex h-full px-5">
           <div className="flex items-center">
-            <Image className="" src={currentCollectionLogo} width="24" height="24" alt="" />
+            <Image className="" src={currentCollectionLogo} width={24} height={24} alt="" />
             <div className="ml-[6px] text-[15px] text-highEmphasis">{currentCollectionName}</div>
           </div>
           <div className="flex flex-1 justify-end text-right">
@@ -43,8 +43,8 @@ export default function Switcher() {
               className="cursor-pointer"
               src="/images/mobile/common/switcher.svg"
               onClick={onSwitcherClick}
-              width="24"
-              height="24"
+              width={24}
+              height={24}
               alt=""
             />
           </div>

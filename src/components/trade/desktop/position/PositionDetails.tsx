@@ -179,7 +179,7 @@ export default function PositionDetails(props: any) {
       {showSharePosition ? <IndividualShareContainer setShowShareComponent={setShowSharePosition} userInfo={userInfo} /> : null}
       <div className=" mb-[36px] flex justify-between">
         <div className="flex items-center space-x-[6px]">
-          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
+          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
           {collectionIsPending[currentCollection.amm] ? (
             <div
@@ -191,14 +191,14 @@ export default function PositionDetails(props: any) {
         </div>
         <div className="flex space-x-[24px]">
           <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>
-            <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width="16" height="16" />
+            <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width={16} height={16} />
           </div>
 
           <div
             className="open-dropdown flex h-[20px] w-[20px] cursor-pointer
             justify-center hover:rounded-full hover:bg-white/[.2]"
             onClick={() => setShowDropdown(!showDropdown)}>
-            <Image alt="" src="/images/components/trade/position/menu.svg" width="16" height="16" />
+            <Image alt="" src="/images/components/trade/position/menu.svg" width={16} height={16} />
           </div>
 
           {showDropdown ? (
@@ -256,7 +256,7 @@ export default function PositionDetails(props: any) {
             {isLeverageNegative ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                 tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
               />
             ) : null}
@@ -276,14 +276,14 @@ export default function PositionDetails(props: any) {
             {liquidationChanceWarning() && !liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/images/common/alert/alert_yellow.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
                 tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
               />
             ) : null}
             {liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                 tipsText="Your position is at risk of being liquidated. Please manage your risk."
               />
             ) : null}

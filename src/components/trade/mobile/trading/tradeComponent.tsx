@@ -206,7 +206,7 @@ function QuantityEnter(props: any) {
             ${disabled ? 'opacity-30' : ''}
           `}>
           <div className="flex h-[48px] rounded-[4px] bg-mediumBlue p-3">
-            <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width="24" height="24" padding-right="12dp" className="betIcon" />
+            <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={24} height={24} padding-right="12dp" className="betIcon" />
             <div className="ml-[4px] flex items-center justify-center">
               <span className="input-with-text text-[12px] font-semibold">WETH</span>
             </div>

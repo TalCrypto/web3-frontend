@@ -142,7 +142,7 @@ function QuantityEnter(props: any) {
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
-            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width="18" height="24" className="" />
+            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} className="" />
             <div className="inputweth">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>

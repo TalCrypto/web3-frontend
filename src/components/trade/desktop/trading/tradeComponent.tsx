@@ -236,7 +236,7 @@ function QuantityEnter(props: any) {
             ${disabled ? 'opacity-30' : ''}
           `}>
           <div className="flex h-[48px] rounded-[4px] bg-mediumBlue p-3">
-            <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width="24" height="24" padding-right="12dp" className="betIcon" />
+            <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={24} height={24} padding-right="12dp" className="betIcon" />
             <div className="ml-[4px] flex items-center justify-center">
               <span className="input-with-text text-[12px] font-semibold">WETH</span>
             </div>
@@ -657,7 +657,6 @@ function ConfirmButton(props: any) {
 
 function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
-  const isWhitelisted = useNanostore(whitelisted);
   const isWethCollected = Number(walletProvider.wethBalance) !== 0;
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);

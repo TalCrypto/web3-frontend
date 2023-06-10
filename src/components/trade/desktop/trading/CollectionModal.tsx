@@ -201,7 +201,7 @@ const CollectionModal = (props: any) => {
           <div className="flex-1 basis-1/4 px-[18px]">
             <div className="flex">
               <div>
-                <Image src={logo} width="24" height="24" alt="" />
+                <Image src={logo} width={24} height={24} alt="" />
               </div>
               <div className="ml-[6px]">
                 <p className="mb-1 text-[14px] text-highEmphasis">{collectionName}</p>
@@ -266,14 +266,14 @@ const CollectionModal = (props: any) => {
             <Image
               className="cursor-pointer"
               src="/images/common/refresh.svg"
-              width="24"
-              height="24"
+              width={24}
+              height={24}
               alt=""
               onClick={() => fetchOverview()}
             />
           </div>
           <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setVisible(false)}>
-            <Image src="/images/components/common/modal/close.svg" width="16" height="16" alt="" />
+            <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
         </div>
         <div className="body">

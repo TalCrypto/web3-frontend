@@ -33,7 +33,7 @@ const PriceContent: React.FC<PriceContentProps> = ({ priceValue, title, isLargeT
         <div
           className={`icon-row 
             ${isLargeText ? 'text-[24px] font-semibold' : 'text-[16px] font-medium'}`}>
-          <Image src={iconImage} alt="" className="mr-2 h-[18px] w-[18px]" width="18" height="18" />
+          <Image src={iconImage} alt="" className="mr-2 h-[18px] w-[18px]" width={18} height={18} />
           {priceValue}
         </div>
       </div>
