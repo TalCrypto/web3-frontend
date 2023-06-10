@@ -102,48 +102,46 @@ const MarketTrade = (props: any) => {
     <div className="mx-[20px]">
       <Cell
         items={['User ID', 'Action / Type', 'Notional Size / Resulting Price', '']}
-        classNames={['col-span-4', 'col-span-3 pl-3', 'col-span-4 pl-3', 'col-span-1 pl-3']}
+        classNames={['col-span-4', 'col-span-3 pl-1 pr-3', 'col-span-5 pl-6', '']}
         isHeader
       />
+
       {marketHistory && marketHistory.length > 0 ? (
         marketHistory
           .slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount)
           .map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
-            <Cell
-              key={`market_${timestamp}_${index}`}
-              rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
-              items={[
-                <div className="time relative">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
+            <div
+              className={`relative mb-6 grid grid-cols-12 items-center
+                whitespace-break-spaces text-[12px] text-mediumEmphasis`}>
+              <div className="time relative col-span-4">
+                <div className="absolute left-[-10px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
 
-                  <span>{formatDateTime(timestamp)}</span>
-                  <div className="h-[6px] w-full" />
-                  <span className="market_user" onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                    {trimString(userId, 10) || walletAddressToShow(userAddress) || ' '}
-                  </span>
-                  {fullWalletAddress === userAddress ? (
-                    <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
-                      YOU
-                    </span>
-                  ) : null}
-                </div>,
-                <div>
-                  <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
-                    {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
-                  </span>
-                  <div className="h-[6px] w-full" />
-                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>
-                </div>,
-                <div>
-                  <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />
-                  <div className="h-[6px] w-full" />
-                  <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
-                </div>,
+                <span>{formatDateTime(timestamp)}</span>
+                <div className="h-[6px] w-full" />
+                <span className="market_user" onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                  {trimString(userId, 10) || walletAddressToShow(userAddress) || ' '}
+                </span>
+                {fullWalletAddress === userAddress ? (
+                  <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">YOU</span>
+                ) : null}
+              </div>
+              <div className="col-span-4">
+                <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
+                  {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
+                </span>
+                <div className="h-[6px] w-full" />
+                <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>
+              </div>
+              <div className="col-span-3 pl-2">
+                <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />
+                <div className="h-[6px] w-full" />
+                <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
+              </div>
 
+              <div className="col-span-1">
                 <ExplorerButton txHash={txHash} />
-              ]}
-              classNames={['col-span-4 pl-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 pl-3']}
-            />
+              </div>
+            </div>
           ))
       ) : (
         <div className="item-center flex justify-center">
