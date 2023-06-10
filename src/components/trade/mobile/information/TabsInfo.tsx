@@ -223,13 +223,10 @@ const SpotTable = (props: any) => {
 
           return (
             <Cell
-              classNames={['col-span-4 px-3', 'col-span-3 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 px-1']}
+              classNames={['col-span-4', 'col-span-3 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 px-1']}
               key={`spot_${key_value}`}
               items={[
-                <div className="relative">
-                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
-                  {formatDateTimeFromString(event_timestamp)}
-                </div>,
+                <div className="relative border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(event_timestamp)}</div>,
                 <div className="flex items-center text-[14px] text-[#6286e3]">
                   <Image src={src} className="mr-1 rounded-[5px]" alt="" width={24} height={24} />
                   {`#${assetToken}` || 'No Name'}
@@ -284,17 +281,14 @@ const FundingPaymentHistory = () => {
             <Cell
               key={`funding_${timestamp}`}
               items={[
-                <div className="time relative">
-                  <div className="absolute left-[-12px] top-0 mt-[-6px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
-                  {formatDateTime(timestamp)}
-                </div>,
+                <div className="time border-l-[2px] border-primaryBlue px-3">{formatDateTime(timestamp)}</div>,
                 <div>
                   {`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 5))).toFixed(5)} %`} /&nbsp;
                   {`${rateShort > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateShort * 100, 5))).toFixed(5)} %`}
                 </div>
               ]}
               classNames={[
-                'col-span-4 px-3',
+                'col-span-4',
                 `col-span-8 text-right text-[14px] market ${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`
               ]}
             />
