@@ -90,7 +90,7 @@ function SidebarCollection(props: any, ref: any) {
   };
 
   const isHasPos = (amm: any) => overviewData.find((i: any) => i?.amm === amm) || false;
-  const yPos = activeIndex * 68 + (activeIndex > 1 ? 64 : 62);
+  const yPos = activeIndex * 68 + (activeIndex > 1 ? 64 : 60);
 
   return (
     <>
