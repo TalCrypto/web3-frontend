@@ -306,7 +306,7 @@ const MobileMenu = (props: any) => {
           <Image
             src="/images/mobile/common/close.svg"
             alt=""
-            className="fixed bottom-[5px] right-[10px]"
+            className="fixed bottom-[5px] right-[20px]"
             width={40}
             height={40}
             onClick={() => setIsShowMobileMenu(false)}
