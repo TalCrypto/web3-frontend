@@ -10,7 +10,7 @@ function Header() {
     <>
       <div
         className="fixed left-0 right-0 top-0 z-20 hidden
-        w-full  shadow-md backdrop-blur-3xl md:block">
+        w-full shadow-md backdrop-blur-3xl md:block">
         <div className="navbar container px-0">
           <div className="flex">
             <Link href="/trade/degods">

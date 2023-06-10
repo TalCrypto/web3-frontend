@@ -134,11 +134,15 @@ function ChartTimeTabs(props: any) {
   const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
 
   useEffect(() => {
+    if (selectedTimeIndex < 0) {
+      return;
+    }
+
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
-    const { offsetLeft } = activeSegmentRef.current;
+    const { offsetLeft, offsetWidth } = activeSegmentRef.current;
     const { style } = controlRef.current;
-    style.setProperty('--highlight-width', '25px');
-    style.setProperty('--highlight-x-pos', `${offsetLeft + 8}px`);
+    style.setProperty('--highlight-width', `${offsetWidth}px`);
+    style.setProperty('--highlight-x-pos', `${offsetLeft}px`);
   }, [selectedTimeIndex, controlRef, contentArray]);
 
   return (
@@ -153,8 +157,10 @@ function ChartTimeTabs(props: any) {
         {contentArray.map((item: any, i: any) => (
           <div
             key={item.label}
-            className={`segment ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
-            z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
+            className={`segment z-1 relative ml-4 flex
+              w-full cursor-pointer items-center
+              justify-center pb-[6px] text-center
+              text-mediumEmphasis hover:text-highEmphasis`}
             ref={item.ref}>
             <input
               type="radio"
@@ -165,7 +171,7 @@ function ChartTimeTabs(props: any) {
             />
             <label
               htmlFor={item.label}
-              className={`block p-2 text-[14px] 
+              className={`block text-[14px] 
                 ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-mediumEmphasis'}`}>
               {item.label}
             </label>

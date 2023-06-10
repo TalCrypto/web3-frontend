@@ -161,7 +161,7 @@ function TradePage(props: TradePagePros) {
                 <TradingWindow refreshPositions={fetchPositions} tradingData={tradingData} />
               </div>
 
-              <div className="mx-[20px] block 2xl:ml-[49px] 2xl:flex-1">
+              <div className="block 2xl:ml-[49px] 2xl:flex-1">
                 <ChartWindows tradingData={tradingData} />
                 {isLoginState ? <PositionDetails tradingData={tradingData} /> : null}
 
