@@ -283,14 +283,16 @@ const FundingPaymentHistory = () => {
               items={[
                 <div className="time border-l-[2px] border-primaryBlue px-3">{formatDateTime(timestamp)}</div>,
                 <div>
-                  {`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 5))).toFixed(5)} %`} /&nbsp;
-                  {`${rateShort > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateShort * 100, 5))).toFixed(5)} %`}
+                  <span className={`${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`}>
+                    {`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 5))).toFixed(5)} %`}
+                  </span>{' '}
+                  <span className="text-highEmphasis">/&nbsp;</span>
+                  <span className={`${rateShort > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+                    {`${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 5))).toFixed(5)} %`}
+                  </span>
                 </div>
               ]}
-              classNames={[
-                'col-span-4',
-                `col-span-8 text-right text-[14px] market ${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`
-              ]}
+              classNames={['col-span-4', `col-span-8 text-right text-[14px]}`]}
             />
           ))
       ) : (
