@@ -69,14 +69,14 @@ function TradingWindow(props: any) {
       {userPosition ? (
         <div
           className="border-b-none flex h-[50px] justify-between
-            rounded-t-[12px] border-[1px] border-[#71aaff]/[.2]
+            rounded-t-[6px] border-[1px] border-[#71aaff]/[.2]
             p-0 font-normal">
           {tabs.map((item, index) => (
             <div
               className={`trade-tab flex w-full cursor-pointer items-center justify-center
                 text-[14px] font-semibold text-primaryBlue
-                ${index === 0 ? 'rounded-tl-[12px] ' : ''}
-                ${index === 2 ? 'rounded-tr-[12px] ' : ''}
+                ${index === 0 ? 'rounded-tl-[6px] ' : ''}
+                ${index === 2 ? 'rounded-tr-[6px] ' : ''}
                 ${tradeWindowIndex === index ? 'selected' : ''}`}
               onClick={() => {
                 onTabClick(index);
@@ -89,9 +89,9 @@ function TradingWindow(props: any) {
         </div>
       ) : null}
       <div
-        className="mb-[60px] flex 
-        rounded-b-[6px] border-[1px] border-[#71aaff]/[.2]
-      bg-lightBlue p-4 px-[36px] py-[32px] text-white">
+        className={`mb-[60px] flex rounded-b-[6px] border-[1px] border-[#71aaff]/[.2]
+          ${userPosition ? '' : 'rounded-t-[6px]'}
+        bg-lightBlue p-4 px-[36px] py-[32px] text-white`}>
         <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
         <TradePanelModal
           isShow={isTradePanelModalShow}
