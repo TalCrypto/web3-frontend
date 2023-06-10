@@ -629,7 +629,7 @@ function ConfirmButton(props: any) {
     <div className="flex">
       <div
         className={`${disabled || isPending ? 'opacity-30' : ''}
-          mb-4 flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
+          flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
           px-[10px] py-[14px] text-center
         `}
         onClick={onClickButton}>
@@ -689,7 +689,7 @@ function Tips(props: any) {
 
   return (
     <div
-      className="flex h-[16px] items-center text-[12px]
+      className="mt-4 flex h-[16px] items-center text-[12px]
       font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span className="">{label}</span>
