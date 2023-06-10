@@ -33,6 +33,7 @@ import {
 import { formatDateTime } from '@/utils/date';
 import { apiConnection } from '@/utils/apiConnection';
 import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
+import { ThreeDots } from 'react-loader-spinner';
 
 interface TradePagePros {
   router: any;
@@ -47,9 +48,11 @@ function TradePage(props: TradePagePros) {
   const { router } = props;
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [tradingData, setTradingData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const maxReduceValue = useNanostore(wsMaxReduceValue);
   // const [maxReduceValue, setMaxReduceValue] = useState('');
   // const [historyRecords, setHistoryRecords] = useState([]);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
 
@@ -133,6 +136,14 @@ function TradePage(props: TradePagePros) {
     }
   }, [walletProvider.holderAddress, isLoginState, currentCollection]);
 
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [currentToken, userPosition]);
+
   return (
     <>
       <PageHeader
@@ -163,7 +174,13 @@ function TradePage(props: TradePagePros) {
         <div className="block bg-lightBlue md:hidden">
           <Switcher />
 
-          <div className="mt-10">
+          <div className="mt-12">
+            {isLoading ? (
+              <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
+                <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+              </div>
+            ) : null}
+
             <ChartMobile tradingData={tradingData} />
 
             {isLoginState ? <PositionMobile tradingData={tradingData} /> : null}
