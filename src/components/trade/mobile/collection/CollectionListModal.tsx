@@ -69,7 +69,7 @@ export default function CollectionListModal(props: any) {
       }}>
       <div
         className={`absolute bottom-0 w-full bg-secondaryBlue
-        ${isShowModal ? 'bottom-0' : 'bottom-[-336px]'}
+        ${isShowModal ? 'bottom-0' : 'bottom-[-400px]'}
         transition-bottom duration-500
       `}>
         {collectionList.filter(collection => collection.collectionName !== currentToken).map(handleMap)}
