@@ -58,7 +58,7 @@ function LongShortRatio(props: any) {
   }
 
   return (
-    <div className="mb-6 flex h-[40px] rounded-full bg-mediumBlue">
+    <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
@@ -663,10 +663,10 @@ function Tips(props: any) {
 
   return (
     <div
-      className="mb-[17px] flex h-[16px] items-center text-[16px]
-      font-medium leading-[16px] text-warn">
+      className="flex h-[16px] items-center text-[12px]
+      font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
-      <span className="warning-text">{label}</span>
+      <span className="">{label}</span>
     </div>
   );
 }

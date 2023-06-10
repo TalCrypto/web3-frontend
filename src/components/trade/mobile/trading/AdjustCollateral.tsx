@@ -76,7 +76,7 @@ function SaleOrBuyRadio(props: any) {
       </div>
     );
   });
-  return <div className="mb-6 flex h-[40px] rounded-full bg-mediumBlue">{radioGroup}</div>;
+  return <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">{radioGroup}</div>;
 }
 
 function QuantityEnter(props: any) {

@@ -91,7 +91,7 @@ function TradingWindow(props: any) {
       <div
         className={`mb-[60px] flex rounded-b-[6px] border-[1px] border-[#71aaff]/[.2]
           ${userPosition ? '' : 'rounded-t-[6px]'}
-        bg-lightBlue p-4 px-[36px] py-[32px] text-white`}>
+        bg-lightBlue p-4 px-6 py-9 text-white`}>
         <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
         <TradePanelModal
           isShow={isTradePanelModalShow}

@@ -53,7 +53,7 @@ function LongShortRatio(props: any) {
   }
 
   return (
-    <div className="mb-6 flex h-[40px] rounded-full bg-mediumBlue">
+    <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
       {userPosition && userPosition.size < 0 ? (
         <Tooltip
           direction="top"
@@ -417,12 +417,8 @@ function EstimatedValueDisplay(props: any) {
         unitClassName="font-12"
       />
       {/* <DisplayValuesWithTooltips title="Transaction Fee" value={fee} unit="WETH" tipsText="0.5% of the notional amount of the trade" /> */}
-      <div className="row">
-        <div className="col">
-          <div className="mb-6 h-[1px] bg-[#2e3064]" />
-        </div>
-      </div>
-      <div className="mb-3 flex items-center">
+      <div className="my-4 h-[1px] bg-[#2e3064]" />
+      <div className="mb-4 flex items-center">
         <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
           <span className=" text-[14px]">
@@ -633,7 +629,7 @@ function ConfirmButton(props: any) {
     <div className="flex">
       <div
         className={`${disabled || isPending ? 'opacity-30' : ''}
-          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
+          mb-4 flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
           px-[10px] py-[14px] text-center
         `}
         onClick={onClickButton}>
@@ -693,10 +689,10 @@ function Tips(props: any) {
 
   return (
     <div
-      className="mb-[17px] flex h-[16px] items-center text-[16px]
-      font-medium leading-[16px] text-warn">
+      className="flex h-[16px] items-center text-[12px]
+      font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
-      <span className="warning-text">{label}</span>
+      <span className="">{label}</span>
     </div>
   );
 }
