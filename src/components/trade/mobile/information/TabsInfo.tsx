@@ -32,7 +32,7 @@ import { wsCurrentToken } from '@/stores/WalletState';
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
   return (
-    <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
+    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
       <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={16} height={16} />
       <span>{priceValue}</span>
     </div>
@@ -233,7 +233,7 @@ const SpotTable = (props: any) => {
                 </div>,
                 <div className="price">
                   {isUSDC ? (
-                    <PriceWithUsdc priceValue={priceValue} className="margin-16 text-14 font-400" />
+                    <PriceWithUsdc priceValue={priceValue} className="margin-16 font-400 text-[14px]" />
                   ) : (
                     <SmallPriceIcon priceValue={priceValue} />
                   )}

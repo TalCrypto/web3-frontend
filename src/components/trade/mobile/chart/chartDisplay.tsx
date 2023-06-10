@@ -29,7 +29,8 @@ function ChartDisplay(props: any) {
     chartRef.current = createChart(chartContainerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: colors.backgroundColor },
-        textColor: colors.textColor
+        textColor: colors.textColor,
+        fontFamily: 'Montserrat'
       },
       grid: {
         vertLines: { visible: false },
@@ -71,7 +72,8 @@ function ChartDisplay(props: any) {
         chartRef.current = createChart(chartContainerRef.current, {
           layout: {
             background: { type: ColorType.Solid, color: colors.backgroundColor },
-            textColor: colors.textColor
+            textColor: colors.textColor,
+            fontFamily: 'Montserrat'
           },
           grid: {
             vertLines: { visible: false },

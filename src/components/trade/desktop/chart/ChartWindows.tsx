@@ -43,7 +43,7 @@ const getCollectionInformation = (collectionName: any) => {
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
   return (
-    <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
+    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
       <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
@@ -212,18 +212,18 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             />
           </div> */}
           <div className="col newcontenttext mb-[16px]">
-            <div className="text-14 font-400 flex space-x-[12px] text-highEmphasis">
-              <div className="flex items-center space-x-[6px]">
+            <div className="font-400 flex space-x-[12px] text-[14px] text-highEmphasis">
+              <div className="flex items-center space-x-[6px] text-[14px] font-normal">
                 {/* <Image className="" src={selectedCollection.logo} width={16} height={16} alt="" /> */}
                 <span>{selectedCollection.displayCollectionPair}</span>
               </div>
-              <div className="text-14 font-400 flex text-highEmphasis">
+              <div className="font-400 flex text-[14px] text-highEmphasis">
                 <SmallPriceIcon priceValue={`${formatterValue(tradingData.twapPrice, 2, '', '-.--')} (Oracle)`} />
               </div>
             </div>
           </div>
           <div className="flex">
-            <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={32} height={32} large />
+            <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={30} height={30} large />
             <PriceIndicator priceChangeRatioAndValue={priceChangeRatioAndValue} />
           </div>
         </div>
@@ -358,16 +358,6 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
   return (
     <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
       <div className="flex items-center space-x-[12px]">
-        {/* <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip>
-              <p className="text-b3">Price difference between the vAMM and the oracle prices</p>
-            </Tooltip>
-          }>
-          <p className="cursor-default">VAMM - Oracle Price Gap:</p>
-        </OverlayTrigger> */}
-
         <div>
           <Tooltip
             direction="top"
@@ -388,36 +378,6 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
           ).toFixed(2)}%)`}</p>
 
           {isGapAboveLimit ? (
-            // <OverlayTrigger
-            //   placement="top"
-            //   onToggle={handleToggleAlertOverlay}
-            //   show={showAlertOverlay}
-            //   overlay={
-            //     <Tooltip>
-            //       <div className="">
-            //         <p className="mb-[10px] text-left text-b3">
-            //           vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at Oracle Price (note that P&L is still calculated based on
-            //           vAMM price)
-            //         </p>
-            //         {!isAlertTooltipHasShown ? (
-            //           <div className="flex justify-end">
-            //             <button
-            //               className="rounded border border-highEmphasis px-[14px] py-[7px] text-b3"
-            //               onClick={() => {
-            //                 setShowAlertOverlay(false);
-            //                 showPopup.setKey(selectedCollection.collection, true);
-            //               }}>
-            //               Got it !
-            //             </button>
-            //           </div>
-            //         ) : null}
-            //       </div>
-            //     </Tooltip>
-            //   }>
-            //   <div className="flex items-center">
-            //     <Image src="/images/common/alert/alert_red.svg" width={20} height={20} />
-            //   </div>
-            // </OverlayTrigger>
             <div>
               <div className="flex items-center">
                 <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
@@ -506,20 +466,6 @@ const ProComponent = forwardRef((props: any, ref: any) => {
   // animation
   useEffect(() => {
     const element = document.querySelector('.pro-data-container');
-    // if (!visible) {
-    //   element.classList.add('display-none');
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    //   return;
-    // }
-
-    // using animate.stye
-    // if (visible) {
-    //   element.classList.remove('animate__animated', 'animate__slideOutRight');
-    //   element.classList.add('animate__animated', 'animate__slideInRight');
-    // } else {
-    //   element.classList.remove('animate__animated', 'animate__slideInRight');
-    //   element.classList.add('animate__animated', 'animate__slideOutRight');
-    // }
 
     const timer1 = setTimeout(() => {
       if (onVisibleChanged) onVisibleChanged(visible);
@@ -528,22 +474,12 @@ const ProComponent = forwardRef((props: any, ref: any) => {
     return () => {
       clearTimeout(timer1);
     };
-
-    // if (visible) {
-    //   // element.classList.remove('display-none');
-    //   element.style.width = '261px';
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    // } else {
-    //   // element.classList.add('display-none');
-    //   element.style.width = '0px';
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    // }
   }, [visible, onVisibleChanged]);
 
   return (
     <div className={`w-[261px] whitespace-nowrap rounded-none bg-black px-[34px] py-[26px] ${visible ? 'visible' : ''}`}>
       <div className="content ml-[12px] flex flex-col space-y-[24px]">
-        <div className="flex text-[14px] text-mediumEmphasis">
+        <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>
             <SmallPriceIcon
@@ -560,7 +496,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
           </div>
         </div>
         <div>
-          <div className="text-14 flex text-mediumEmphasis">
+          <div className="flex text-[14px] text-mediumEmphasis">
             <div className="flex flex-1 flex-col">
               <span className="text-marketGreen">Long</span>
               <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
@@ -585,7 +521,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
             />
           </div>
         </div>
-        <div className="text-medium flex text-[12px]">
+        <div className="text-medium flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">Volume (24Hr)</p>
             <SmallPriceIcon priceValue={!dayVolume ? '-.--' : formatterValue(dayVolume, 2)} isLoading={!dayVolume} />

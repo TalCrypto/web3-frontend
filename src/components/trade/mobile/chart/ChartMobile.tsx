@@ -42,7 +42,7 @@ const getCollectionInformation = (collectionName: any) => {
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
   return (
-    <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
+    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
       <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
@@ -397,7 +397,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
           </div>
         </div>
         <div>
-          <div className="text-14 flex text-mediumEmphasis">
+          <div className="flex text-[14px] text-mediumEmphasis">
             <div className="flex flex-1 flex-col">
               <span className="text-marketGreen">Long</span>
               <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
