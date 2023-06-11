@@ -212,7 +212,7 @@ function QuantityEnter(props: any) {
             </div>
             <input
               type="text"
-              pattern="[0-9]*"
+              // pattern="[0-9]*"
               className={`${isApproveRequired ? 'cursor-not-allowed' : ''}
                 w-full border-none border-mediumBlue bg-mediumBlue text-right
                 text-[15px] font-semibold text-white outline-none
@@ -347,7 +347,7 @@ function EstimatedValueDisplay(props: any) {
               disabled={disabled}
               title=""
               type="text"
-              pattern="[0-9]*"
+              // pattern="[0-9]*"
               className="w-[90%] border-none border-mediumBlue bg-mediumBlue text-right
                 text-[15px] font-semibold outline-none"
               placeholder="0.0 "

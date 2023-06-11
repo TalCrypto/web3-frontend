@@ -17,6 +17,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, ogTitle, ogDesc }) => (
     <meta name="twitter:title" content={ogTitle} />
     <meta name="twitter:description" content={ogDesc} />
     <meta name="twitter:site" content="@Tribe3Official" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   </Head>
 );
 

@@ -174,7 +174,7 @@ function QuantityEnter(props: any) {
             </div>
             <input
               type="text"
-              pattern="[0-9]*"
+              // pattern="[0-9]*"
               className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none
                   ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
@@ -982,7 +982,7 @@ export default function CloseCollateral(props: any) {
               disabled={isProcessing}
               title=""
               type="text"
-              pattern="[0-9]*"
+              // pattern="[0-9]*"
               className="text-[15px]font-semibold w-[90%]  max-w-[100px] border-[1px]
                 border-mediumBlue bg-mediumBlue px-1 outline-none"
               placeholder="0.0 "
