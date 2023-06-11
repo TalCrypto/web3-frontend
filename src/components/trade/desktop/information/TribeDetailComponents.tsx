@@ -128,17 +128,21 @@ const MarketTrade = () => {
 
               <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
               <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
-              <div className="">
+              <div className="relative overflow-x-hidden text-ellipsis">
                 <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
                   {trimString(userId, 10) || walletAddressToShow(userAddress)}
                 </span>
                 {fullWalletAddress === userAddress ? (
-                  <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">YOU</span>
+                  <span
+                    className="absolute right-0 top-[1px] ml-1 rounded-sm
+                    bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
+                    YOU
+                  </span>
                 ) : null}
               </div>,
               <ExplorerButton txHash={txHash} />
             ]}
-            classNames={['col-span-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-1 px-3']}
+            classNames={['col-span-3 pl-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2 ', 'col-span-1 px-3']}
           />
         ))
       ) : (
