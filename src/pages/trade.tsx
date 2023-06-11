@@ -129,6 +129,18 @@ function TradePage(props: TradePagePros) {
   };
 
   useEffect(() => {
+    // if ((walletProvider.holderAddress && !eventPageView) || localStorage.getItem('isLoggedin') !== 'true') {
+    //   apiConnection.postUserEvent('page_trade_view', {
+    //     page: 'Trade'
+    //   });
+    //   setEventPageView(true);
+
+    //   collectionsLoading.getCollectionsLoading();
+    // }
+    fetchPositions();
+  }, [walletProvider.holderAddress]);
+
+  useEffect(() => {
     if (isLoginState && walletProvider.holderAddress && currentCollection) {
       fetchUserTradingHistory();
       // walletProvider.getFluctuationLimitRatio(currentCollection.amm);

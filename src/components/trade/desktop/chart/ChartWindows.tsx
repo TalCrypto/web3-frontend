@@ -156,9 +156,7 @@ function ChartTimeTabs(props: any) {
       const isVisibleNow = window.getComputedStyle(element).display !== 'none';
       if (isVisibleNow && !isVisible) {
         setIsVisible(true);
-        console.log('Component displayed again');
         updateSelectedTimeIndex();
-        console.log(selectedTimeIndex);
       } else if (!isVisibleNow && isVisible) {
         setIsVisible(false);
       }
