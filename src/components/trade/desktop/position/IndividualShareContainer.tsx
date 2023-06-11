@@ -9,11 +9,10 @@ import collectionList from '@/const/collectionList';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { apiConnection } from '@/utils/apiConnection';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { walletProvider } from '@/utils/walletProvider';
 import { pageTitleParser } from '@/utils/eventLog';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { wsUserPosition } from '@/stores/WalletState';
+import { wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
 
 function LargeEthPrice(props: any) {
@@ -91,7 +90,7 @@ export default function IndividualShareContainer(props: any) {
       // }
     });
 
-    const fullWalletAddress = walletProvider.holderAddress;
+    const fullWalletAddress = useNanostore(wsFullWalletAddress);
     const eventName = 'share_position_performance_download_pressed';
 
     if (firebaseAnalytics) {
@@ -113,7 +112,7 @@ export default function IndividualShareContainer(props: any) {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(content)}`;
     window.open(url);
 
-    const fullWalletAddress = walletProvider.holderAddress;
+    const fullWalletAddress = useNanostore(wsFullWalletAddress);
     const eventName = 'share_position_performance_twitter_pressed';
 
     if (firebaseAnalytics) {

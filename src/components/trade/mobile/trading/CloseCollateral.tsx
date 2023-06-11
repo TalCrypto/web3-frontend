@@ -26,7 +26,7 @@ import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
-import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition, wsFullWalletAddress } from '@/stores/WalletState';
 
 function SectionDividers() {
   return (
@@ -67,7 +67,7 @@ function QuantityEnter(props: any) {
 
   const [isFocus, setIsFocus] = useState(false);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
 
@@ -315,7 +315,7 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   } = props;
 
   const isHasPartialClose = useNanostore(hasPartialClose);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
 
@@ -810,7 +810,7 @@ export default function CloseCollateral(props: any) {
   const [isPending, setIsPending] = useState(false);
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const userPosition: any = useNanostore(wsUserPosition);
 
   const actionButtonRef = useRef();
@@ -921,7 +921,7 @@ export default function CloseCollateral(props: any) {
   useEffect(() => {
     setCloseValue(0);
     handleEnter(0);
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div>

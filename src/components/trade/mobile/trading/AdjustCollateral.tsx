@@ -30,7 +30,8 @@ import {
   wsCurrentToken,
   wsUserPosition,
   wsWethBalance,
-  wsMaxReduceValue
+  wsMaxReduceValue,
+  wsFullWalletAddress
 } from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
 
@@ -39,7 +40,7 @@ function SaleOrBuyRadio(props: any) {
   const { page } = pageTitleParser(router.asPath);
   const { marginIndex, setMarginIndex, setMarginEstimation, setAdjustMarginValue } = props;
   // const radioButtonIndex = marginIndex ? 0 : 1;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   function getAnalyticsLongShort(index: any) {
@@ -336,7 +337,7 @@ function ActionButtons(props: any) {
     isWaiting
   } = props;
   const [isAdjustingMargin, setIsAdjustingMargin] = useState(false);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const currentToken = useNanostore(wsCurrentToken);
 
@@ -676,7 +677,7 @@ export default function AdjustCollateral(props: any) {
   const minimalMarginChecking = Number(adjustMarginValue) !== 0 && Number(adjustMarginValue) < 0.01 && adjustMarginValue !== 0;
   const initialMarginChecker = marginEstimation !== null && marginIndex === 1 && Number(utils.formatEther(userPosition.marginRatio)) < 20;
   const reduceMarginChecking = Number(maxReduceValue) - 0.0001 < 0 && marginIndex === 1;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const handleMarginEnter = async function handleMarginEnter(marginValue: any) {
     setTextErrorMessage('');
@@ -737,7 +738,7 @@ export default function AdjustCollateral(props: any) {
   useEffect(() => {
     setAdjustMarginValue(0);
     handleMarginEnter('');
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div>

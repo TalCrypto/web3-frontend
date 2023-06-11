@@ -27,7 +27,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { updateTradeInformation } from '@/utils/TradeInformation';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
 import { walletProvider } from '@/utils/walletProvider';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -66,7 +66,7 @@ interface IOpenseaData {
 function ExplorerButton(props: any) {
   const { txHash, collection } = props;
   const etherscanUrl = `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const getAnalyticsMktEtherscan = () => {
     if (firebaseAnalytics) {
@@ -94,7 +94,7 @@ function ExplorerButton(props: any) {
 const MarketTrade = () => {
   const router = useRouter();
   const marketHistory = useNanostore(tsMarketHistory);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -156,7 +156,7 @@ const MarketTrade = () => {
 
 const SpotTable = () => {
   const openseaData = useNanostore(tsSportPriceList);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   return (

@@ -22,6 +22,7 @@ import Switcher from '@/components/trade/mobile/collection/Switcher';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
   wsCurrentToken,
+  wsFullWalletAddress,
   wsHistoryGroupByMonth,
   wsIsLogin,
   wsIsShowTradingMobile,
@@ -59,6 +60,7 @@ function TradePage(props: TradePagePros) {
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const currentToken = useNanostore(wsCurrentToken);
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
 
@@ -146,7 +148,7 @@ function TradePage(props: TradePagePros) {
       // walletProvider.getFluctuationLimitRatio(currentCollection.amm);
       // walletProvider.getInitialMarginRatio(currentCollection.amm);
     }
-  }, [walletProvider.holderAddress, isLoginState, currentCollection]);
+  }, [fullWalletAddress, isLoginState, currentCollection]);
 
   useEffect(() => {
     setIsLoading(true);

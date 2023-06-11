@@ -10,7 +10,7 @@ import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
 import collectionList from '@/const/collectionList';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 
 const FundingPaymentModal = (props: any) => {
   const { setShowFundingPaymentModal } = props;
@@ -38,7 +38,7 @@ const FundingPaymentModal = (props: any) => {
     } else {
       setIsLoading(false);
     }
-  }, [walletProvider.holderAddress]);
+  }, [wsFullWalletAddress]);
 
   const handleBackClick = () => {
     setShowFundingPaymentModal(false);

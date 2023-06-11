@@ -23,7 +23,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
-import { wsCurrentToken, wsIsLogin, wsUserPosition } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress, wsIsLogin, wsUserPosition } from '@/stores/WalletState';
 
 import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
@@ -75,7 +75,7 @@ export default function PositionDetails(props: any) {
   const positionType = userPosition ? (userPosition.size > 0 ? 'LONG' : 'SHORT') : null;
   const liquidationPrice = userPosition ? Number(utils.formatEther(userPosition.liquidationPrice)) : null;
   const liquidationChanceLimit = 0.05;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);

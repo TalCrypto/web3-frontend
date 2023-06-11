@@ -129,6 +129,8 @@ export const addEventListener = () => {
   });
   walletProvider.provider.provider.on('accountsChanged', (addresses: any) => {
     walletProvider.holderAddress = addresses[0];
+    wsFullWalletAddress.set(addresses[0]);
+    handleConnectedWalletUpdate(walletProvider.holderAddress, null);
     // debounceCheck();
   });
 };

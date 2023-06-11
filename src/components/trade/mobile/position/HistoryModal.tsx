@@ -16,9 +16,8 @@ import { logEvent } from 'firebase/analytics';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { walletProvider } from '@/utils/walletProvider';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsHistoryGroupByMonth } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -73,7 +72,7 @@ const defaultSelectedRecord = {
 
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const historyRecordsByMonth = useNanostore(wsHistoryGroupByMonth);
   const currentToken = useNanostore(wsCurrentToken);
 

@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
+import { wsFullWalletAddress, wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { connectWallet, disconnectWallet, updateTargetNetwork } from '@/utils/Wallet';
-import { walletProvider } from '@/utils/walletProvider';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import Link from 'next/link';
 import { withRouter } from 'next/router';
@@ -18,7 +17,7 @@ const MobileMenu = (props: any) => {
   const isWalletLoading = useNanostore(wsIsWalletLoading);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const wethBalance = useNanostore(wsWethBalance);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);

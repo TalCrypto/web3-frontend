@@ -29,7 +29,15 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import {
+  wsIsLogin,
+  wsIsWrongNetwork,
+  wsWethBalance,
+  wsIsApproveRequired,
+  wsCurrentToken,
+  wsUserPosition,
+  wsFullWalletAddress
+} from '@/stores/WalletState';
 // const { isWhitelisted } = walletProvider;
 import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
@@ -39,7 +47,7 @@ function LongShortRatio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
 
@@ -321,7 +329,7 @@ function EstimatedValueDisplay(props: any) {
   // const collateralCalc = isEstimatedValueEmpty ? 0 : cost.sub(feeInNumber);
   // const newCollateral = isEstimatedValueEmpty ? '-.--' : formatterValue(collateralCalc, 4);
   const sizeNotional = fee && cost && leverageValue ? ((costInNumber - feeInNumber) * Number(leverageValue))?.toFixed(4) : '-.--';
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   // determine if input is valid or error state
@@ -439,7 +447,7 @@ function ConfirmButton(props: any) {
 
   const [isProcessingOpenPos, setIsProcessingOpenPos] = useState(false);
   const isNormal = isLoginState && !isWrongNetwork && quantity > 0 && !isInsuffBalance && !isAmountTooSmall;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   // sync isProcessing to store/tradePanel
@@ -682,7 +690,7 @@ function ExtendedEstimateComponent(props: any) {
   const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
   const fee = formatterValue(estimatedValue.fee, 4);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const userPosition: any = useNanostore(wsUserPosition);
 
   // hide component when there is no estimatedValue
@@ -827,7 +835,7 @@ export default function TradeComponent(props: any) {
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const wethBalance = useNanostore(wsWethBalance);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   // price gap
@@ -1108,7 +1116,7 @@ export default function TradeComponent(props: any) {
     setQuantity('');
     setEstimatedValue({});
     setLeverageValue(1);
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div>

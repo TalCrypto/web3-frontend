@@ -29,7 +29,7 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsIsLogin, wsChatInterval, wsCurrentToken, wsSelectedTimeIndex } from '@/stores/WalletState';
+import { wsIsLogin, wsChatInterval, wsCurrentToken, wsSelectedTimeIndex, wsFullWalletAddress } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 import Tooltip from '@/components/common/Tooltip';
 
@@ -117,7 +117,7 @@ function PriceIndicator(props: any) {
 
 function chartButtonLogged(index: any, currentCollection: any) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   if (firebaseAnalytics) {
     logEvent(firebaseAnalytics, eventName, {

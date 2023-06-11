@@ -13,7 +13,7 @@ import { walletProvider } from '@/utils/walletProvider';
 
 import { disconnectWallet, getTestToken, updateTargetNetwork } from '@/utils/Wallet';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentChain, wsIsWrongNetwork } from '@/stores/WalletState';
+import { wsCurrentChain, wsFullWalletAddress, wsIsWrongNetwork } from '@/stores/WalletState';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
 
@@ -49,12 +49,11 @@ interface TopContentProps {
 const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) => {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const clickViewProfile = (e: React.MouseEvent) => {
     e.preventDefault();
     const eventName = 'wallet_view_profile_pressed';
-
-    const fullWalletAddress = walletProvider.holderAddress;
 
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, eventName, {
@@ -65,7 +64,7 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
       page
     });
 
-    router.push(`/userprofile/${walletProvider.holderAddress}`);
+    router.push(`/userprofile/${fullWalletAddress}`);
   };
 
   return (
@@ -91,7 +90,7 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
       <div className="px-6 pb-0 pt-2 text-[14px] font-medium text-mediumEmphasis">User ID</div>
       <div className="view-page-row px-[24px] py-[14px]">
         <div />
-        <Link href={`/userprofile/${walletProvider.holderAddress}`}>
+        <Link href={`/userprofile/${fullWalletAddress}`}>
           <div className="button cursor-pointer text-[16px] font-semibold text-primaryBlue" onClick={clickViewProfile}>
             <span>View Profile</span>
             <div className="ml-[4px]">

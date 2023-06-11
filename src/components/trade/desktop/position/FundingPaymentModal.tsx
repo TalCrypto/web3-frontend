@@ -11,7 +11,7 @@ import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
 import collectionList from '@/const/collectionList';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 
 const FundingPaymentModal = (props: any) => {
   const { setShowFundingPaymentModal, tradingData } = props;
@@ -25,6 +25,7 @@ const FundingPaymentModal = (props: any) => {
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
   const [interval, setI] = useState(null);
   const [nextFundingTime, setNextFundingTime] = useState(0);
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const currentAmm = currentCollection.amm;
   const hadKey = Object.keys(tradingData).length > 0;
@@ -107,7 +108,7 @@ const FundingPaymentModal = (props: any) => {
     } else {
       setIsLoading(false);
     }
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div

@@ -16,7 +16,7 @@ import { db, firebaseAnalytics } from '@/const/firebaseConfig';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsIsLogin } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress, wsIsLogin } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 
 const getCollectionInformation = (curentCollection: any) => {
@@ -70,7 +70,7 @@ function ChatDisplays(props: any) {
   const [isScrollButtonShow, setIsScrollButtonShow] = useState(true);
   const messagesEndRef = useRef(null);
   const messageRef = useRef(null);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   // const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 
@@ -121,7 +121,7 @@ function ChatInput(props: any) {
   const [messageInfo, setMessageInfo] = useState('');
   const allowSendMessage = isLoginState && messageInfo.trim().length > 0;
   const [pressTime, setPressTime] = useState(0);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   const logUserEvent = (eventName: any) => {

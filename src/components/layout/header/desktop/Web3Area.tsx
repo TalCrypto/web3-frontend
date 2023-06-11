@@ -20,7 +20,8 @@ import {
   wsWalletAddress,
   wsWethBalance,
   wsIsShowErrorSwitchNetworkModal,
-  wsIsWalletLoading
+  wsIsWalletLoading,
+  wsFullWalletAddress
 } from '@/stores/WalletState';
 
 import {
@@ -86,10 +87,12 @@ function Web3Area() {
     totalRatio: '0',
     portfolioRatio: '0'
   };
-  const [callBalance, setCallBalance] = useState(balanceOriginData);
+  const [callBalance, setCallBalance] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [isDataFetched, setIsDataFetched] = useState(false);
   const [tokenErrorTitle, setTokenErrorTitle] = useState('');
+
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   // State from the index
   const [balance, setBalance] = useState(0);
@@ -124,24 +127,24 @@ function Web3Area() {
   }, []);
 
   useEffect(() => {
-    const holderAddr = walletProvider.holderAddress;
+    const holderAddr = fullWalletAddress;
     if (holderAddr) {
-      // walletProvider.getUserCollectionsInfo(walletProvider.holderAddress).then(userPosition => {
-      //   const portfolio = userPosition.reduce(
-      //     (pre: any, item: any) => (!item ? Number(pre) + 0 : Number(pre) + Number(calculateNumber(item.realMargin, 4))),
-      //     0
-      //   );
-      //   setCallBalance({
-      //     portfolio,
-      //     available: walletProvider.wethBalance
-      //   });
-      // });
+      walletProvider.getUserCollectionsInfo(fullWalletAddress).then((userPosition: any) => {
+        const portfolio = userPosition.reduce(
+          (pre: any, item: any) => (!item ? Number(pre) + 0 : Number(pre) + Number(calculateNumber(item.realMargin, 4))),
+          0
+        );
+        setCallBalance({
+          portfolio,
+          available: walletProvider.wethBalance
+        });
+      });
       apiConnection.getUserInfo(holderAddr).then(result => {
         setUserInfo(result.data);
       });
     }
 
-    if (walletProvider.holderAddress) {
+    if (fullWalletAddress) {
       // new initial data
       // getInitialData();
 
@@ -182,7 +185,7 @@ function Web3Area() {
       //   apiConnection.getLeaderboard();
       // }
     }
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div
@@ -205,7 +208,7 @@ function Web3Area() {
         </Link>
       )}
 
-      {isDataFetched && isLogin ? (
+      {isLogin ? (
         <div className="hidden md:block">
           <ExtraComponent />
         </div>

@@ -29,7 +29,7 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsCurrentChain, wsCurrentToken, wsIsLogin, wsSelectedTimeIndex } from '@/stores/WalletState';
+import { wsCurrentChain, wsCurrentToken, wsFullWalletAddress, wsIsLogin, wsSelectedTimeIndex } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 
 const flashAnim = 'flash';
@@ -469,7 +469,7 @@ function ChartMobile(props: any, ref: any) {
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
   const proRef = useRef();
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
 

@@ -31,7 +31,7 @@ import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
 // import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
-import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -115,7 +115,7 @@ export default function PositionMobile(props: any) {
   // leverage handling
   const isLeverageNegative = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) <= 0 : false;
   const isLeverageOver = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) > 100 : false;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   // const size = '';
   // const currentPrice = '';
