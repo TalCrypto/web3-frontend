@@ -112,7 +112,8 @@ const MarketTrade = (props: any) => {
           .map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
             <div
               className={`relative mb-6 grid grid-cols-12 items-center
-                whitespace-break-spaces text-[12px] text-mediumEmphasis`}>
+                whitespace-break-spaces text-[12px] text-mediumEmphasis`}
+              key={`market_${timestamp}_${index}`}>
               <div className="time relative col-span-4">
                 <div className="absolute left-[-10px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
 

@@ -8,7 +8,7 @@ import { walletProvider } from '@/utils/walletProvider';
 import { apiConnection } from '@/utils/apiConnection';
 
 import { wethCollected, inputCode, hasTraded } from '@/stores/UserState';
-import { getTestToken } from '@/utils/Wallet';
+import { getTestToken, updateTargetNetwork } from '@/utils/Wallet';
 
 import { wsIsWrongNetwork } from '@/stores/WalletState';
 
@@ -24,16 +24,15 @@ const ExtraComponent = () => {
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
   const onSwitchClick = () => {
-    // updateTargetNetwork();
+    updateTargetNetwork();
   };
 
   if (isWrongNetwork) {
     return (
-      <button type="button" className="navbar-button" onClick={onSwitchClick}>
-        <div className="container flex flex-row-reverse" id="whitelist-register-btn">
-          Switch to Arbitrum
-        </div>
-      </button>
+      <div className="navbar-button relative flex cursor-pointer items-center space-x-1 px-3" onClick={onSwitchClick}>
+        <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
+        Switch to Arbitrum
+      </div>
     );
   }
 

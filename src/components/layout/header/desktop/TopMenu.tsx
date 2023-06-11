@@ -99,7 +99,7 @@ function TopMenu(props: any) {
   return (
     <div
       className="hidden items-center space-x-[20px]
-        text-mediumEmphasis lg:flex">
+        text-mediumEmphasis xl:flex">
       {listUI}
     </div>
   );

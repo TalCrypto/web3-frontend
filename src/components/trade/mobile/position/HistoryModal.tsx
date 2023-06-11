@@ -228,8 +228,8 @@ const HistoryModal = (props: any) => {
         ) : (
           <>
             {!isShowDetail ? (
-              <div className="h-full w-[450px] bg-darkBlue">
-                <div className="h-[500px] overflow-auto">
+              <div className="h-full w-full bg-darkBlue">
+                <div className="h-full overflow-auto pb-[60px]">
                   {Object.keys(historyRecordsByMonth).map((month: any) => {
                     const records: any = historyRecordsByMonth[month];
                     return (
@@ -365,7 +365,9 @@ const HistoryModal = (props: any) => {
                               <Image
                                 src="/images/components/trade/history/more_info.svg"
                                 alt=""
-                                style={{ marginLeft: '6px', width: '16px', height: '16px', marginRight: '0px' }}
+                                width={16}
+                                height={16}
+                                className="ml-[6px] mr-0"
                               />
                             ) : // </OverlayTrigger>
                             null}

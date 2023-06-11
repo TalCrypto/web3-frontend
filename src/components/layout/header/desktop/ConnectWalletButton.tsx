@@ -63,7 +63,7 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
     <div className={`navbar-outer${isLogin ? ' connected' : ''}`}>
       <button type="button" className={`navbar-button ${!isLogin ? 'not-connected' : 'connected'}`} onClick={handleClick}>
         <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
-        <div className={`container ${!isLogin ? 'flex flex-row-reverse' : ''}`} id="login-btn">
+        <div className="flex flex-row items-center justify-center px-5" id="login-btn">
           {isWalletLoading ? (
             <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
           ) : (

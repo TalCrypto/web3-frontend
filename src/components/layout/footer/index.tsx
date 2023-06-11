@@ -9,7 +9,7 @@ function Footer() {
       <div
         className="fixed bottom-0 left-0 right-0 hidden bg-black
           bg-opacity-30 shadow-md backdrop-blur-lg md:flex">
-        <div className="container flex !px-0 py-[9px]">
+        <div className="content-container flex !px-0 py-[9px]">
           <div className="flex flex-1 space-x-[36px]">
             <SocialMediaIcon
               label="Discord"

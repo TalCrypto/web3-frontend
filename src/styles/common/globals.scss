@@ -60,3 +60,50 @@ body {
     width: 0;
   }
 }
+
+// @media (min-width: 400px) {
+//   .content-container {
+//     max-width: 400px;
+//   }
+// }
+
+// @media (min-width: 600px) {
+//   .content-container {
+//     max-width: 600px;
+//   }
+// }
+
+.content-container {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 840px) {
+  .content-container {
+    max-width: 740px;
+  }
+}
+
+@media (min-width: 968px) {
+  .content-container {
+    max-width: 868px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .content-container {
+    max-width: 1000px;
+  }
+}
+
+@media (min-width: 1300px) {
+  .content-container {
+    max-width: 1200px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .content-container {
+    max-width: 1300px;
+  }
+}
