@@ -93,11 +93,13 @@ function SidebarCollection(props: any, ref: any) {
   const yPos = activeIndex * 68 + (activeIndex > 1 ? 64 : 60);
 
   return (
-    <>
+    <div
+      className={`absolute ml-[-45px] mt-4 flex w-[45px]
+        flex-col rounded-l-[12px] bg-gradient-to-r from-[#71aaff66]
+        to-[#ffffff00] py-[1px] pl-[1px]
+      `}>
       <div
-        className={`side-collection side-collection sidebar-wrapper absolute ml-[-44px] mt-4
-        flex w-[44px] flex-col rounded-l-[12px] border-b-0
-        border-[#71AAFF]/[.2] bg-secondaryBlue px-1 py-3`}
+        className="flex w-[44px] flex-col rounded-l-[12px] bg-secondaryBlue px-1 py-3"
         style={{ '--highlight-y-pos': `${yPos}px` } as CSSProperties}>
         <div
           className="transition-width absolute right-0 top-[6px] h-[48px] w-[48px]
@@ -173,7 +175,7 @@ function SidebarCollection(props: any, ref: any) {
         ))}
       </div>
       <CollectionModal visible={isColModalVisible} setVisible={setIsColModalVisible} selectCollection={selectCollection} />
-    </>
+    </div>
   );
 }
 export default forwardRef(SidebarCollection);

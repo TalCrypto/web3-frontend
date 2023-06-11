@@ -721,7 +721,7 @@ function ExtendedEstimateComponent(props: any) {
 
   return (
     <div>
-      <div className="row">
+      <div className="mt-6">
         <div
           className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {

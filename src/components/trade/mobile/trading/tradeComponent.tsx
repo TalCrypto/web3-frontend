@@ -697,7 +697,7 @@ function ExtendedEstimateComponent(props: any) {
 
   return (
     <div>
-      <div className="row">
+      <div className="mt-6">
         <div
           className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
@@ -783,13 +783,7 @@ function ExtendedEstimateComponent(props: any) {
           {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Transaction Fee" value={fee} unit="WETH" />
           <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
-          <DisplayValues
-            title={
-              <TitleTips titleText="Price Impact" tipsText="The change in price resulted directly from a particular trade in the VAMM" />
-            }
-            value={formatterValue(estimatedValue.priceImpact, 2)}
-            unit="%"
-          />
+          <DisplayValues title="Price Impact" value={formatterValue(estimatedValue.priceImpact, 2)} unit="%" />
           {userPosition != null ? null : (
             <DisplayValues
               title="Liquidation Price"

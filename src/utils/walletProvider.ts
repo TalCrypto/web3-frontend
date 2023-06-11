@@ -247,6 +247,7 @@ interface WalletProvider {
   connectWallet: any;
   initialConnectWallet: any;
   isTargetNetwork: any;
+  setHolderAddress: any;
   getHolderAddress: any;
   setCurrentToken: any;
   getCurrentToken: any;
@@ -398,6 +399,10 @@ export const walletProvider: WalletProvider = {
     }
     this.isNetworkSame = result;
     return result;
+  },
+  setHolderAddress: async function setHolderAddress(address: any) {
+    this.holderAddress = address;
+    return this.holderAddress;
   },
   getHolderAddress: async function getHolderAddress() {
     if (!this.provider) return null;
