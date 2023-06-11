@@ -51,7 +51,6 @@ export default function CollectionListModal(props: any) {
               width={16}
               height={16}
             />
-
             <span className="ml-1">{formatterValue(Math.abs(Number(priceChangeRatio24h)), 2, '%')}</span>
           </div>
         </div>
@@ -62,17 +61,17 @@ export default function CollectionListModal(props: any) {
   return (
     <div
       className={`t-0 fixed bottom-0 left-0 right-0 z-10 w-full
-        ${isShowModal ? 'h-full' : 'h-0'}
+        ${isShowModal && marketData.length > 0 ? 'h-full' : 'h-0'}
        bg-black/[.3] backdrop-blur-[4px]`}
       onClick={() => {
         setIsShowModal(false);
       }}>
       <div
         className={`absolute bottom-0 w-full bg-secondaryBlue
-        ${isShowModal ? 'bottom-0' : 'bottom-[-400px]'}
+        ${isShowModal && marketData.length > 0 ? 'bottom-0' : 'bottom-[-400px]'}
         transition-bottom duration-500
       `}>
-        {collectionList.filter(collection => collection.collectionName !== currentToken).map(handleMap)}
+        {isShowModal ? collectionList.filter(collection => collection.collectionName !== currentToken).map(handleMap) : null}
       </div>
     </div>
   );

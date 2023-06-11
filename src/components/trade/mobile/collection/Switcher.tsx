@@ -7,6 +7,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import CollectionListModal from '@/components/trade/mobile/collection/CollectionListModal';
 import { wsCurrentToken } from '@/stores/WalletState';
+import { $isSwitcherFirstRender, $marketData } from '@/stores/switcher';
 
 export default function Switcher() {
   const currentToken = useNanostore(wsCurrentToken);
@@ -15,19 +16,29 @@ export default function Switcher() {
   const currentCollectionLogo = currentCollection.logo;
 
   const [isShowModal, setIsShowModal] = useState(false);
-  const [marketData, setMarketData] = useState([]);
+  const marketData = useNanostore($marketData);
+  const isFirstRender = useNanostore($isSwitcherFirstRender);
 
   const fetchMarketOverview = async () => {
     const ammList = collectionList.map(({ amm }) => amm).filter(item => item !== '');
     const contractList = collectionList.map(({ contract }) => contract).filter(item => item !== '');
     const data: any = await getMarketOverview(ammList, contractList, '');
-    setMarketData(data);
+    $marketData.set(data);
   };
 
   const onSwitcherClick = async () => {
+    if (isShowModal) return;
+
     setIsShowModal(true);
     await fetchMarketOverview();
   };
+
+  if (isFirstRender) {
+    fetchMarketOverview();
+    $isSwitcherFirstRender.set(false);
+  }
+
+  // fetchMarketOverview();
 
   return (
     <>
