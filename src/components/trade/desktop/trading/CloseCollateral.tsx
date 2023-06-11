@@ -326,7 +326,7 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
 
   function startClosePosition() {
     setIsClosingPosition(false);
-    setCloseValue('');
+    setCloseValue(0);
     setEstimatedValue({});
     setToleranceRate(0.5);
     // refreshPositions();
