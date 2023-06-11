@@ -1,8 +1,7 @@
 /* eslint-disable max-len */
 import React from 'react';
-// import * as htmlToImage from 'html-to-image';
-// import download from 'downloadjs';
-// import moment from 'moment';
+import * as htmlToImage from 'html-to-image';
+import download from 'downloadjs';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 
@@ -75,18 +74,22 @@ export default function IndividualShareContainer(props: any) {
     setShowShareComponent(false);
   };
   const downloadRank = () => {
-    // const target = document.getElementById('image-bg');
-    // htmlToImage.toJpeg(target).then((dataUrl: any) => {
-    //   if (window.screen.width > 800) {
-    //     download(dataUrl, `my-result-${filteredCollection.collectionName}.jpeg`);
-    //   } else {
-    //     const image = new Image();
-    //     image.src = dataUrl;
-    //     const w = window.open('');
-    //     w.document.write(image.outerHTML);
-    //     w.document.close();
-    //   }
-    // });
+    const target = document.getElementById('image-bg');
+
+    if (!target) return;
+
+    htmlToImage.toJpeg(target).then((dataUrl: any) => {
+      // if (window.screen.width > 800) {
+      download(dataUrl, `my-result-${filteredCollection.collectionName}.jpeg`);
+      // } else {
+      //   const image = new Image(null);
+      //   image.src = dataUrl;
+      //   const w = window.open('');
+      //   if (!w) return;
+      //   w.document.write(image.outerHTML);
+      //   w.document.close();
+      // }
+    });
 
     const fullWalletAddress = walletProvider.holderAddress;
     const eventName = 'share_position_performance_download_pressed';

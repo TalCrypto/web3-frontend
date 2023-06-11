@@ -17,10 +17,13 @@
   "dependencies": {
     "@nanostores/react": "^0.4.1",
     "@tribe3/ethers-multicall": "^1.0.1",
+    "@types/downloadjs": "^1.4.3",
     "@walletconnect/web3-provider": "^1.8.0",
+    "downloadjs": "^1.4.7",
     "ethereum-block-by-date": "^1.4.7",
     "ethers": "^5.7.2",
     "firebase": "^9.22.0",
+    "html-to-image": "^1.10.8",
     "lightweight-charts": "^4.0.1",
     "localforage": "^1.10.0",
     "nanostores": "^0.8.1",

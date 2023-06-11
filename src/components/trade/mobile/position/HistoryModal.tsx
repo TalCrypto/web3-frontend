@@ -211,7 +211,7 @@ const HistoryModal = (props: any) => {
       className="fixed inset-0 z-10 flex h-screen
         items-center justify-center overflow-auto bg-black bg-opacity-40">
       <div
-        className="relative mx-auto flex h-[600px] w-[830px] overflow-hidden
+        className="relative mx-auto flex h-full w-full overflow-hidden
           border-[1px] border-[#71aaff38] bg-secondaryBlue"
         onClick={e => {
           e.stopPropagation();
