@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
 
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
@@ -135,14 +135,42 @@ function chartButtonLogged(index: any, currentCollection: any) {
 function ChartTimeTabs(props: any) {
   const { isStartLoadingChart, setSelectedTimeIndex, contentArray = [], controlRef } = props;
   const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
+  const updateSelectedTimeIndex = () => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
     const { offsetLeft, offsetWidth } = activeSegmentRef.current;
     const { style } = controlRef.current;
     style.setProperty('--highlight-width', `${offsetWidth}px`);
     style.setProperty('--highlight-x-pos', `${offsetLeft}px`);
+  };
+
+  useEffect(() => {
+    updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
+
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      const element = document.getElementById('divTradeWindow');
+      if (element === null) return;
+      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
+      if (isVisibleNow && !isVisible) {
+        setIsVisible(true);
+        console.log('Component displayed again');
+        updateSelectedTimeIndex();
+        console.log(selectedTimeIndex);
+      } else if (!isVisibleNow && isVisible) {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isVisible, selectedTimeIndex]);
 
   return (
     <div className="relative flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>

@@ -152,7 +152,7 @@ function TradePage(props: TradePagePros) {
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>
-        <div className="trading-window hidden md:block">
+        <div className="trading-window hidden md:block" id="divTradeWindow">
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
@@ -171,7 +171,7 @@ function TradePage(props: TradePagePros) {
           </div>
         </div>
 
-        <div className="block bg-lightBlue md:hidden">
+        <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
           <Switcher />
 
           <div className="mt-12">
