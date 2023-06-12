@@ -320,7 +320,7 @@ function DisplayValues(props: any) {
 
   return (
     <div
-      className={`${className !== '' ? className : 'sumrow'}
+      className={`${className !== '' ? className : ''}
       mb-[2px] flex items-center
     `}>
       <div className="text-[14px] text-mediumEmphasis">{title}</div>
@@ -330,21 +330,6 @@ function DisplayValues(props: any) {
     </div>
   );
 }
-
-// function DisplayValuesWithTooltips(props: any) {
-//   const { title, value, unit = '', tipsText = '', size = '20px' } = props;
-
-//   return (
-//     <div className="row sumrow align-items-center">
-//       <div className="font-14 text-color-secondary col-auto">
-//         <TitleTips titleText={title} tipsText={tipsText} />
-//       </div>
-//       <div className="col font-12-600 text-color-secondary contentsmallitem">
-//         <span className="value">{value}</span> {unit}
-//       </div>
-//     </div>
-//   );
-// }
 
 function EstimatedValueDisplay(props: any) {
   const router = useRouter();

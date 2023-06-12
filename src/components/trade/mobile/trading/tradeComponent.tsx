@@ -285,7 +285,7 @@ function DisplayValues(props: any) {
 
   return (
     <div
-      className={`${className !== '' ? className : 'sumrow'}
+      className={`${className !== '' ? className : ''}
       mb-[2px] flex items-center
     `}>
       <div className="text-[14px] text-mediumEmphasis">{title}</div>
@@ -295,21 +295,6 @@ function DisplayValues(props: any) {
     </div>
   );
 }
-
-// function DisplayValuesWithTooltips(props: any) {
-//   const { title, value, unit = '', tipsText = '', size = '20px' } = props;
-
-//   return (
-//     <div className="row sumrow align-items-center">
-//       <div className="font-14 text-color-secondary col-auto">
-//         <TitleTips titleText={title} tipsText={tipsText} />
-//       </div>
-//       <div className="col font-12-600 text-color-secondary contentsmallitem">
-//         <span className="value">{value}</span> {unit}
-//       </div>
-//     </div>
-//   );
-// }
 
 function EstimatedValueDisplay(props: any) {
   const router = useRouter();
@@ -599,29 +584,31 @@ function ConfirmButton(props: any) {
   };
 
   return (
-    <div className="flex">
-      <div
-        className={`${disabled || isPending ? 'opacity-30' : ''}
-          flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
-          px-[10px] py-[14px] text-center
-        `}
-        onClick={onClickButton}>
-        <div className="w-full text-center text-[15px] font-semibold">
-          {isProcessingOpenPos || isDataFetch ? (
-            <div className="flex justify-center">
-              <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
-            </div>
-          ) : !isLoginState ? (
-            'Connect Wallet'
-          ) : isWrongNetwork ? (
-            'Switch to Arbitrum'
-          ) : !isWethCollected ? (
-            'Get WETH'
-          ) : isApproveRequired ? (
-            'Approve'
-          ) : (
-            'Trade'
-          )}
+    <div className="pb-6">
+      <div className="flex">
+        <div
+          className={`${disabled || isPending ? 'opacity-30' : ''}
+            flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
+            px-[10px] py-[14px] text-center
+          `}
+          onClick={onClickButton}>
+          <div className="w-full text-center text-[15px] font-semibold">
+            {isProcessingOpenPos || isDataFetch ? (
+              <div className="flex justify-center">
+                <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+              </div>
+            ) : !isLoginState ? (
+              'Connect Wallet'
+            ) : isWrongNetwork ? (
+              'Switch to Arbitrum'
+            ) : !isWethCollected ? (
+              'Get WETH'
+            ) : isApproveRequired ? (
+              'Approve'
+            ) : (
+              'Trade'
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -694,32 +681,37 @@ function ExtendedEstimateComponent(props: any) {
   if (isError || value <= 0) return null;
 
   return (
-    <div>
-      <div className="mt-6">
-        <div
-          className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-          onClick={() => {
-            isShowDetail(!showDetail);
-            if (firebaseAnalytics) {
-              logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
-                wallet: fullWalletAddress.substring(2),
-                is_advanced_data_shown: !showDetail,
-                collection: currentToken
-              });
-            }
-            apiConnection.postUserEvent('showAdvancedDetails_pressed', {
-              page,
+    <div className="pb-6">
+      <div
+        className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
+        onClick={() => {
+          isShowDetail(!showDetail);
+          if (firebaseAnalytics) {
+            logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
+              wallet: fullWalletAddress.substring(2),
               is_advanced_data_shown: !showDetail,
               collection: currentToken
             });
-          }}>
-          {showDetail ? 'Hide' : 'Show'} Advanced Details
-          {showDetail ? (
-            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
-          ) : (
-            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
-          )}
-        </div>
+          }
+          apiConnection.postUserEvent('showAdvancedDetails_pressed', {
+            page,
+            is_advanced_data_shown: !showDetail,
+            collection: currentToken
+          });
+
+          if (!showDetail) {
+            window.scrollTo({
+              top: document.body.scrollHeight - window.innerHeight,
+              behavior: 'smooth'
+            });
+          }
+        }}>
+        {showDetail ? 'Hide' : 'Show'} Advanced Details
+        {showDetail ? (
+          <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+        ) : (
+          <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+        )}
       </div>
 
       {showDetail ? (

@@ -100,10 +100,10 @@ function TradingMobile(props: any) {
         </div>
       ) : null}
       <div
-        className={`mb-[60px] flex ${userPosition ? 'h-[calc(100%-130px)]' : 'h-[calc(100%-60px)]'}
+        className={`flex ${userPosition ? 'h-[calc(100%-100px)]' : 'h-[calc(100%-50px)]'}
           overflow-y-scroll rounded-b-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
-          bg-lightBlue p-6 px-[22px] py-[22px] text-white`}>
-        <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
+          bg-lightBlue p-[22px] text-white`}>
+        <div className="w-full pb-6">{userPosition ? displayComponent : tradeComponent}</div>
         <TradePanelModal
           isShow={isTradePanelModalShow}
           setIsShow={tradePanelModal.setIsShow}

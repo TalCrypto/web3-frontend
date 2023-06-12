@@ -231,7 +231,7 @@ function DisplayValues(props: any) {
 
   return (
     <div
-      className={`${className !== '' ? className : 'sumrow'}
+      className={`${className !== '' ? className : ''}
       mb-[2px] flex items-center
     `}>
       <div className="text-[14px] text-mediumEmphasis">{title}</div>
@@ -650,36 +650,13 @@ function EstimationComponent(props: any) {
           unit="x"
         />
       )}
-      {/* {!userPosition || estimatedValue === null ? (
-        <UpdateValueNoDataDisplay title="Collateral Ratio" unit="%" />
-      ) : (
-        <UpdateValueDisplay
-          title="Collateral Ratio"
-          
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMarginRatio, 2)}
-          currentUnit="%"
-          newValue={
-            !isNewPosition
-              ? '-.--'
-              : Number(closeValue) === Number(currentMaxValue)
-              ? '0.00'
-              : calculateNumber(estimatedValue.newPosition.marginRatio, 2)
-          }
-          unit="%"
-        />
-      )} */}
       <SectionDividers />
-      {/* <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.fee, 5)} /> */}
-      {/* <DisplayValues title="Price Impact" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.priceImpact, 2, '%')} /> */}
     </div>
   );
 }
 
 function ExtendedEstimateComponent(props: any) {
   const { displayAdvanceDetail, estimatedValue = {}, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
-  // const targetCollection = collectionList.filter(({ collection }) => collection === currentToken); // from tokenRef.current
-  // const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-  // const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
 
   // determine if input is valid or error state
@@ -692,58 +669,31 @@ function ExtendedEstimateComponent(props: any) {
   return (
     <div>
       {displayAdvanceDetail !== 0 ? (
-        <>
+        <div className="pb-4">
           {Number(closeValue) < Number(currentMaxValue) ? (
-            <>
-              <div className="row">
-                <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
-              </div>
-              {/* <div className="row detailrow">
-                <div className="col-auto text-[14px] text-mediumEmphasis">Position Type</div>
-                <div className="col contentls">{isNewPosition ? (estimatedValue.newPosition.type === 'long' ? 'Long' : 'Short') : '---'}</div>
-              </div> */}
-              {/* <DisplayValues
-                title="Contract Size"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.size, 4) : '-.--'}
-                unit={currentType}
-              /> */}
-              {/* <DisplayValues
-                title="Notional"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.marketValue, 2) : '-.--'}
-                unit="WETH"
-              /> */}
+            <div className="pb-4">
+              <div className="mb-1 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               <DisplayValues title="Collateral" value={isNewPosition ? formatterValue(estimatedValue.collateral, 4) : '-.--'} unit="WETH" />
               <DisplayValues
                 title="Average Entry Price"
                 value={isNewPosition ? formatterValue(estimatedValue.newPosition.entryPrice, 2) : '-.--'}
                 unit="WETH"
               />
-              {/* <DisplayValues
-                title="Collateral Ratio"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.marginRatio, 2) : '-.--'}
-                unit="%"
-              /> */}
               <DisplayValues
                 title="Liquidation Price"
                 value={isNewPosition ? formatterValue(estimatedValue.newPosition.liquidationPrice, 2) : '-.--'}
                 unit="WETH"
               />
-            </>
+            </div>
           ) : null}
 
           <div className="row">
-            <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
+            <div className="mb-1 text-[14px] font-semibold text-white underline">Transaction Details</div>
           </div>
           <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.--' : formatterValue(estimatedValue.fee, 5)} />
-          {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
-          <div className="row detaillastrow">
-            <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
-            <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
-              <span className="value">{formatterValue(estimatedValue.priceImpact, 2)}</span> %
-            </div>
-          </div>
-        </>
+          <DisplayValues title="Price Impact" value={formatterValue(estimatedValue.priceImpact, 2)} unit="%" />
+        </div>
       ) : null}
     </div>
   );
@@ -752,19 +702,7 @@ function ExtendedEstimateComponent(props: any) {
 function CloseSlider(props: any) {
   const { closeValue, currentMaxValue, onChange, setCloseValue, disabled } = props;
   const numMax = Number(currentMaxValue);
-  // const marks = {
-  //   0: {
-  //     style: { fontSize: '12px' },
-  //     label: '0'
-  //   },
-  //   numMax: {
-  //     style: { fontSize: '12px', textAlign: 'end', transform: 'translateX(-95%)' },
-  //     label: 'Total Notional Value'
-  //   }
-  // };
-  // const tooltipStyling = {
-  //   open: true
-  // };
+
   return (
     <div className={`${disabled ? 'disabled' : ''}`}>
       <InputSlider
@@ -1047,13 +985,8 @@ export default function CloseCollateral(props: any) {
         isBadDebt={isBadDebt}
       />
       {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
-      {/* <div className="row">
-        <div className="col-auto text-[14px] text-mediumEmphasis">
-          * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released
-        </div>
-      </div> */}
       {estimatedValue /* && estimatedValue.newPosition */ && !minValueComparison && !maxValueComparison && closeValue > 0 ? (
-        <div className="mt-6">
+        <div className="pb-4">
           <div
             className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
             onClick={() => setDisplayAdvanceDetail(displayAdvanceDetail ? 0 : 1)}>
