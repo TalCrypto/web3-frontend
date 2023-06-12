@@ -32,30 +32,6 @@ const CollectionUpdater: React.FC<{ chViewer: Contract; amm: Contract }> = ({ ch
   return null;
 };
 
-const PositionInfoUpdater: React.FC<{ chViewer: Contract; ammAddr: Address }> = ({ chViewer, ammAddr }) => {
-  const { address } = useAccount();
-  if (!address) return null;
-  const { data, isError, isLoading } = useContractRead({
-    ...chViewer,
-    functionName: 'getTraderPositionInfoWithoutPriceImpact',
-    args: [ammAddr, address],
-    watch: true
-  });
-
-  console.log(data, isError, isLoading);
-
-  // const [spotPrice, nextFundingTimeInfo, fundingPeriodInfo, longSize, shortSize, fundingRateInfo] = await multicallProvider.all([
-  //   ammContract.getSpotPrice(),
-  //   ammContract.nextFundingTime(),
-  //   ammContract.fundingPeriod(),
-  //   ammContract.longPositionSize(),
-  //   ammContract.shortPositionSize(),
-  //   clearingHouseViewerContract.getFundingRates(ammAddr)
-  // ]);
-
-  return null;
-};
-
 const TradingDataUpdater: React.FC = () => {
   const { chain } = useNetwork();
   const [amms, setAmms] = useState<Array<keyof typeof AMM> | undefined>();
@@ -75,14 +51,9 @@ const TradingDataUpdater: React.FC = () => {
   return (
     <>
       {amms.map(ammKey => {
-        const amm: Contract | undefined = contracts.amms[AMM[ammKey]];
+        const amm = contracts.amms[AMM[ammKey]];
         if (!amm) return null;
         return <CollectionUpdater key={ammKey} chViewer={contracts.chViewer} amm={amm} />;
-      })}
-      {amms.map(ammKey => {
-        const amm: Contract | undefined = contracts.amms[AMM[ammKey]];
-        if (!amm) return null;
-        return <PositionInfoUpdater key={ammKey} chViewer={contracts.chViewer} ammAddr={amm.address} />;
       })}
     </>
   );

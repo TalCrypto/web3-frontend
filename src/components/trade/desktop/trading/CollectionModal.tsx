@@ -9,134 +9,129 @@ import { calculateNumber } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
-import { useMarketOverview } from '@/hooks/market';
+import { CollectionOverview, useMarketOverview } from '@/hooks/market';
+import { getCollectionInformation } from '@/const/collectionList';
 
-const SortingIndicator = props => {
-  const { value } = props;
-
-  return (
-    <Image
-      className="icon"
-      alt=""
-      width={16}
-      height={16}
-      src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
-    />
-  );
-};
+const SortingIndicator = ({ value }: { value: number }) => (
+  <Image
+    className="icon"
+    alt=""
+    width={16}
+    height={16}
+    src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
+  />
+);
 
 const CollectionModal = (props: any) => {
   const { visible, setVisible, selectCollection } = props;
   const [trigerUpdate, setTriggerUpdate] = useState(false);
   const { isLoading, data: overviewData } = useMarketOverview(trigerUpdate);
   const [periodIndex, setPeriodIndex] = useState(0);
-  const initSorting = { collection: 0, futurePrice: 0, priceGap: 0, timeChange: 0, dayVolume: 1, fundingRate: 0, timeValue: 0 };
+  const initSorting = { collection: 0, vammPrice: 0, priceGap: 0, timeChange: 0, dayVolume: 1, fundingRate: 0, timeValue: 0 };
   const [positionSorting, setPositionSorting] = useState(initSorting);
   const [sortedData, setSortedData] = useState(overviewData);
-  const isLoginState = useNanostore(wsIsLogin);
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
-  const updateOverviewData = setTriggerUpdate(state => !state);
+  const updateOverviewData = () => setTriggerUpdate(state => !state);
 
   useEffect(() => {
-    const temp = [...overviewData];
-    const { dayVolume } = positionSorting;
-    setSortedData(temp);
-    if (dayVolume !== 0) {
-      const tempSort = temp.sort((a: any, b: any) => {
-        const dayVol = Number(calculateNumber(a.volume, 4)) - Number(calculateNumber(b.volume, 4));
-        return -dayVol;
-      });
-      setSortedData(tempSort);
+    if (overviewData) {
+      const temp = [...overviewData];
+      const { dayVolume } = positionSorting;
+      setSortedData(temp);
+      if (dayVolume !== 0) {
+        const tempSort = temp.sort((a: any, b: any) => {
+          const dayVol = a.volume - b.volume;
+          return -dayVol;
+        });
+        setSortedData(tempSort);
+      }
     }
   }, [overviewData, positionSorting]);
 
   useEffect(() => {
-    const temp = [...overviewData];
-    const { dayVolume, fundingRate, futurePrice, priceGap, timeValue } = positionSorting;
-    if (dayVolume !== 0) {
-      const tempSort = temp.sort((a: any, b: any) => {
-        const dayVol = Number(calculateNumber(a.volume, 4)) - Number(calculateNumber(b.volume, 4));
-        return dayVolume === 1 ? -dayVol : dayVol;
-      });
-      setSortedData(tempSort);
-    }
-    if (fundingRate !== 0) {
-      const tempSort = temp.sort((a: any, b: any) => {
-        const fundRate = Number(calculateNumber(a.fundingRate, 4)) - Number(calculateNumber(b.fundingRate, 4));
-        return fundingRate === 1 ? -fundRate : fundRate;
-      });
-      setSortedData(tempSort);
-    }
-    if (futurePrice !== 0) {
-      const tempSort = temp.sort((a: any, b: any) => {
-        const futPrice = Number(calculateNumber(a.futurePrice, 4)) - Number(calculateNumber(b.futurePrice, 4));
-        return futurePrice === 1 ? -futPrice : futPrice;
-      });
-      setSortedData(tempSort);
-    }
-    if (priceGap !== 0) {
-      const tempSort = temp.sort((a: any, b: any) => {
-        const avAMMPrice = !a.futurePrice ? 0 : Number(utils.formatEther(a.futurePrice));
-        const aoraclePrice = !a.spotPrice ? 0 : Number(utils.formatEther(a.spotPrice));
-        const bvAMMPrice = !b.futurePrice ? 0 : Number(utils.formatEther(b.futurePrice));
-        const boraclePrice = !b.spotPrice ? 0 : Number(utils.formatEther(b.spotPrice));
-        const apGap = avAMMPrice && aoraclePrice ? avAMMPrice / aoraclePrice - 1 : 0;
-        const bpGap = bvAMMPrice && boraclePrice ? bvAMMPrice / boraclePrice - 1 : 0;
-        const pGap = Number(apGap) - Number(bpGap);
-        return priceGap === 1 ? -pGap : pGap;
-      });
-      setSortedData(tempSort);
-    }
-    if (timeValue !== 0) {
-      let tempSort = [];
-      switch (periodIndex) {
-        case 0:
-          tempSort = temp.sort((a: any, b: any) => {
-            const timeVal = Number(calculateNumber(a.priceChangeRatio24h, 4)) - Number(calculateNumber(b.priceChangeRatio24h, 4));
-            return timeValue === 1 ? -timeVal : timeVal;
-          });
-          break;
-
-        case 1:
-          tempSort = temp.sort((a: any, b: any) => {
-            const timeVal = Number(calculateNumber(a.priceChangeRatio7d, 4)) - Number(calculateNumber(b.priceChangeRatio7d, 4));
-            return timeValue === 1 ? -timeVal : timeVal;
-          });
-          break;
-
-        case 2:
-          tempSort = temp.sort((a: any, b: any) => {
-            const timeVal = Number(calculateNumber(a.priceChangeRatio30d, 4)) - Number(calculateNumber(b.priceChangeRatio30d, 4));
-            return timeValue === 1 ? -timeVal : timeVal;
-          });
-          break;
-
-        default:
-          tempSort = temp.sort((a: any, b: any) => {
-            const timeVal = Number(calculateNumber(a.priceChangeRatio24h, 4)) - Number(calculateNumber(b.priceChangeRatio24h, 4));
-            return timeValue === 1 ? -timeVal : timeVal;
-          });
-          break;
+    if (overviewData) {
+      const temp = [...overviewData];
+      const { dayVolume, fundingRate, vammPrice, priceGap, timeValue } = positionSorting;
+      if (dayVolume !== 0) {
+        const tempSort = temp.sort((a: any, b: any) => {
+          const dayVol = a.volume - b.volume;
+          return dayVolume === 1 ? -dayVol : dayVol;
+        });
+        setSortedData(tempSort);
       }
-      setSortedData(tempSort);
+      if (fundingRate !== 0) {
+        const tempSort = temp.sort((a: any, b: any) => {
+          const fundRate = a.fundingRate - b.fundingRate;
+          return fundingRate === 1 ? -fundRate : fundRate;
+        });
+        setSortedData(tempSort);
+      }
+      if (vammPrice !== 0) {
+        const tempSort = temp.sort((a: any, b: any) => {
+          const futPrice = a.vammPrice - b.vammPrice;
+          return vammPrice === 1 ? -futPrice : futPrice;
+        });
+        setSortedData(tempSort);
+      }
+      if (priceGap !== 0) {
+        const tempSort = temp.sort((a: any, b: any) => {
+          const avAMMPrice = !a.vammPrice ? 0 : a.vammPrice;
+          const aoraclePrice = !a.oraclePrice ? 0 : a.oraclePrice;
+          const bvAMMPrice = !b.vammPrice ? 0 : b.vammPrice;
+          const boraclePrice = !b.oraclePrice ? 0 : b.oraclePrice;
+          const apGap = avAMMPrice && aoraclePrice ? avAMMPrice / aoraclePrice - 1 : 0;
+          const bpGap = bvAMMPrice && boraclePrice ? bvAMMPrice / boraclePrice - 1 : 0;
+          const pGap = apGap - bpGap;
+          return priceGap === 1 ? -pGap : pGap;
+        });
+        setSortedData(tempSort);
+      }
+      if (timeValue !== 0) {
+        let tempSort = [];
+        switch (periodIndex) {
+          case 0:
+            tempSort = temp.sort((a: any, b: any) => {
+              const timeVal = a.priceChangeRatio24h - b.priceChangeRatio24h;
+              return timeValue === 1 ? -timeVal : timeVal;
+            });
+            break;
+
+          case 1:
+            tempSort = temp.sort((a: any, b: any) => {
+              const timeVal = a.priceChangeRatio7d - b.priceChangeRatio7d;
+              return timeValue === 1 ? -timeVal : timeVal;
+            });
+            break;
+
+          case 2:
+            tempSort = temp.sort((a: any, b: any) => {
+              const timeVal = a.priceChangeRatio30d - b.priceChangeRatio30d;
+              return timeValue === 1 ? -timeVal : timeVal;
+            });
+            break;
+
+          default:
+            tempSort = temp.sort((a: any, b: any) => {
+              const timeVal = a.priceChangeRatio24h - b.priceChangeRatio24h;
+              return timeValue === 1 ? -timeVal : timeVal;
+            });
+            break;
+        }
+        setSortedData(tempSort);
+      }
     }
   }, [positionSorting, periodIndex, overviewData]);
-
-  useEffect(() => {
-    fetchOverview();
-  }, [isLoginState, isWrongNetwork]);
 
   if (!visible) return null;
 
   const renderData = () =>
-    sortedData.map((tradingData: any, index: any) => {
-      const targetCollection = collectionList.filter(collectionItem => collectionItem.amm === tradingData.amm);
-      const targetItem = targetCollection[0];
-      const { logo, collection, collectionName, displayCollectionPair } = targetItem;
+    sortedData &&
+    sortedData.map((tradingData: CollectionOverview, index: any) => {
+      const targetCollection = getCollectionInformation(tradingData.amm);
+      const { logo, collection, collectionName, displayCollectionPair } = targetCollection;
 
-      const vAMMPrice = !tradingData.futurePrice ? 0 : Number(utils.formatEther(tradingData.futurePrice));
-      const oraclePrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
+      const vAMMPrice = !tradingData.vammPrice ? 0 : Number(utils.formatEther(tradingData.vammPrice));
+      const oraclePrice = !tradingData.oraclePrice ? 0 : Number(utils.formatEther(tradingData.oraclePrice));
       const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
       const priceGapPercentage = priceGap * 100;
 
@@ -248,14 +243,7 @@ const CollectionModal = (props: any) => {
                 leading-[24px] text-highEmphasis">
               Collections
             </p>
-            <Image
-              className="cursor-pointer"
-              src="/images/common/refresh.svg"
-              width="24"
-              height="24"
-              alt=""
-              onClick={() => fetchOverview()}
-            />
+            <Image className="cursor-pointer" src="/images/common/refresh.svg" width="24" height="24" alt="" onClick={updateOverviewData} />
           </div>
           <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setVisible(false)}>
             <Image src="/images/components/common/modal/close.svg" width="16" height="16" alt="" />
@@ -268,9 +256,9 @@ const CollectionModal = (props: any) => {
                 <div className="flex-1 basis-1/4 px-[18px]">Collection</div>
                 <div
                   className="basis-1/5 cursor-pointer px-[18px]"
-                  onClick={() => setPositionSorting({ ...initSorting, futurePrice: (positionSorting.futurePrice + 1) % 3 })}>
+                  onClick={() => setPositionSorting({ ...initSorting, vammPrice: (positionSorting.vammPrice + 1) % 3 })}>
                   <div className="flex">
-                    vAMM Price <SortingIndicator value={positionSorting.futurePrice} />
+                    vAMM Price <SortingIndicator value={positionSorting.vammPrice} />
                   </div>
                   <p>Oracle Price</p>
                 </div>

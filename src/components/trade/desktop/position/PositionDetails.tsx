@@ -10,14 +10,12 @@ import Image from 'next/image';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
-import { utils } from 'ethers';
 
 import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
-import { priceGapLimit } from '@/stores/priceGap';
 
 import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
 

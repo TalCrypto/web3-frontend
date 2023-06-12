@@ -340,7 +340,7 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
     spotPrice: BigInt(positions[0] ? positions[0].spotPrice : 0)
   };
 
-  return positions.length > 0 ? result : null;
+  return result;
 };
 
 export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
