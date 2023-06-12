@@ -36,13 +36,13 @@ import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/Wa
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
-    <div className={`text-15 font-400 flex text-highEmphasis ${className}`}>
+    <div className={`font-400 flex text-[14px] text-highEmphasis ${className}`}>
       <Image
         src={image || '/images/components/layout/header/eth-tribe3.svg'}
         className="icon"
         alt=""
-        width={20}
-        height={20}
+        width={16}
+        height={16}
         style={{ marginRight: '4px' }}
       />
       <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
@@ -157,12 +157,11 @@ export default function PositionMobile(props: any) {
   }
 
   return (
-    <div className="my-6">
+    <div className="bg-lightBlue pb-3 pt-6">
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
-          {collectionIsPending[currentCollection.amm] ? <div className="pending-reminder">Transaction Pending...</div> : null}
         </div>
         <div className="flex space-x-[24px]">
           <div onClick={() => setShowFundingPaymentModal(true)}>
@@ -176,28 +175,21 @@ export default function PositionMobile(props: any) {
 
       <div>
         <div className="px-5 pb-2 pt-6">
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
             <div className="text-15 font-400">
               <div>
                 <MedPriceIcon
                   priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
-                  className={
-                    !userPosition ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'
-                  }
                   isLoading={isLoading || collectionIsPending[currentCollection.amm]}
                 />
               </div>
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
-            <div>
-              <span className={!userPosition ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
-                {!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
-              </span>
-            </div>
+            <div className="text-[14px]">{!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}</div>
           </div>
 
           {/* <div className="flex mb-1">
@@ -212,7 +204,7 @@ export default function PositionMobile(props: any) {
             </div>
           </div> */}
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Entry Price</div>
             <div className="">
               <MedPriceIcon
@@ -223,7 +215,7 @@ export default function PositionMobile(props: any) {
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Notional</div>
             <div className="">
               <MedPriceIcon
@@ -234,7 +226,7 @@ export default function PositionMobile(props: any) {
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
 
             <div className="">
@@ -257,7 +249,7 @@ export default function PositionMobile(props: any) {
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
             <div className="">
               <MedPriceIcon

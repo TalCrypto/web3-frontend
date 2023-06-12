@@ -188,7 +188,7 @@ function TradePage(props: TradePagePros) {
         <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
           <Switcher />
 
-          <div className="mt-12">
+          <div className="mt-12 bg-darkBlue">
             {isLoading ? (
               <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
                 <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
@@ -201,7 +201,7 @@ function TradePage(props: TradePagePros) {
 
             <InformationMobile tradingData={tradingData} />
 
-            {isShowTradingMobile ? <TradingMobile refreshPositions={fetchPositions} tradingData={tradingData} /> : null}
+            <TradingMobile refreshPositions={fetchPositions} tradingData={tradingData} />
           </div>
         </div>
       </main>

@@ -517,7 +517,7 @@ function ChartMobile(props: any, ref: any) {
   };
 
   return (
-    <div className="chartWindow">
+    <div className="bg-lightBlue">
       <div className="">
         <ChartHeaders
           ref={graphHeaderRef}

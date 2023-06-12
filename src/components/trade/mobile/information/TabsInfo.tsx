@@ -99,81 +99,87 @@ const MarketTrade = (props: any) => {
   };
 
   return (
-    <div className="mx-[20px]">
-      <Cell
-        items={[
-          'User ID',
-          <>
-            Action /<br />
-            Type
-          </>,
-          <>
-            Notional Size /<br />
-            Resulting Price
-          </>,
-          ''
-        ]}
-        classNames={['col-span-4', 'col-span-3 pl-1 pr-3', 'col-span-5 pl-6', '']}
-        isHeader
-      />
+    <>
+      <div className="mx-[20px]">
+        <Cell
+          items={[
+            'User ID',
+            <>
+              Action /<br />
+              Type
+            </>,
+            <>
+              Notional Size /<br />
+              Resulting Price
+            </>,
+            ''
+          ]}
+          classNames={['col-span-4', 'col-span-3 pl-1 pr-3', 'col-span-5 pl-6', '']}
+          isHeader
+        />
 
-      {marketHistory && marketHistory.length > 0 ? (
-        marketHistory
-          .slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount)
-          .map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
-            <div
-              className={`relative mb-6 grid grid-cols-12 items-center
+        {marketHistory && marketHistory.length > 0 ? (
+          marketHistory
+            .slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount)
+            .map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
+              <div
+                className={`relative mb-6 grid grid-cols-12 items-center
                 whitespace-break-spaces text-[12px] text-mediumEmphasis`}
-              key={`market_${timestamp}_${index}`}>
-              <div className="time relative col-span-4">
-                <div className="absolute left-[-10px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
+                key={`market_${timestamp}_${index}`}>
+                <div className="time relative col-span-4">
+                  <div className="absolute left-[-10px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
 
-                <span>{formatDateTime(timestamp)}</span>
-                <div className="h-[6px] w-full" />
-                <span className="market_user" onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                  {trimString(userId, 10) || walletAddressToShow(userAddress) || ' '}
-                </span>
-                {fullWalletAddress === userAddress ? (
-                  <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">YOU</span>
-                ) : null}
-              </div>
-              <div className="col-span-4">
-                <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
-                  {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
-                </span>
-                <div className="h-[6px] w-full" />
-                <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>
-              </div>
-              <div className="col-span-3 pl-2">
-                <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />
-                <div className="h-[6px] w-full" />
-                <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
-              </div>
+                  <span>{formatDateTime(timestamp)}</span>
+                  <div className="h-[6px] w-full" />
+                  <span className="market_user" onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                    {trimString(userId, 10) || walletAddressToShow(userAddress) || ' '}
+                  </span>
+                  {fullWalletAddress === userAddress ? (
+                    <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
+                      YOU
+                    </span>
+                  ) : null}
+                </div>
+                <div className="col-span-4">
+                  <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
+                    {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
+                  </span>
+                  <div className="h-[6px] w-full" />
+                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>
+                </div>
+                <div className="col-span-3 pl-2">
+                  <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />
+                  <div className="h-[6px] w-full" />
+                  <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
+                </div>
 
-              <div className="col-span-1">
-                <ExplorerButton txHash={txHash} />
+                <div className="col-span-1">
+                  <ExplorerButton txHash={txHash} />
+                </div>
               </div>
-            </div>
-          ))
-      ) : (
-        <div className="item-center flex justify-center">
-          <span className="body1 my-40 text-center text-mediumEmphasis">There is no market history.</span>
-        </div>
-      )}
-
-      {marketHistory && marketHistory.length > 0 ? (
-        displayCount >= marketHistory.length ? null : (
-          <div
-            className="text-center text-[14px] font-semibold text-primaryBlue"
-            onClick={() => {
-              // logHelper('overview_show_more_pressed', holderAddress, { collection });
-              setDisplayCount(displayCount + 5);
-            }}>
-            Show More
+            ))
+        ) : (
+          <div className="item-center flex justify-center">
+            <span className="body1 my-40 text-center text-mediumEmphasis">There is no market history.</span>
           </div>
-        )
-      ) : null}
-    </div>
+        )}
+      </div>
+
+      <div className="bg-darkBlue py-[35px] text-center">
+        {marketHistory && marketHistory.length > 0 ? (
+          displayCount >= marketHistory.length ? null : (
+            <span
+              className="text-center text-[14px] font-semibold text-primaryBlue"
+              onClick={() => {
+                // logHelper('overview_show_more_pressed', holderAddress, { collection });
+                setDisplayCount(displayCount + 5);
+              }}>
+              Show More
+            </span>
+          )
+        ) : null}
+      </div>
+    </>
   );
 };
 
@@ -193,89 +199,93 @@ const SpotTable = (props: any) => {
   const currentToken = useNanostore(wsCurrentToken);
 
   return (
-    <div className="mx-[20px]">
-      <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-3 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
-      {openseaData && openseaData.length > 0 ? (
-        openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
-          const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
-          const src = !asset
-            ? asset_bundle.assets[0].image_preview_url
-            : !asset.image_preview_url
-            ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
-            : asset.image_preview_url;
-          let isEth = false;
-          let isUSDC = false;
-          if (payment_token !== null) {
-            isEth = payment_token.symbol === 'ETH' || payment_token.symbol === 'WETH';
-            isUSDC = payment_token.symbol === 'USDC';
-          }
-          const transactionHash = transaction.transaction_hash;
-          const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
-          const getAnalyticsSpotEthers = () => {
-            if (firebaseAnalytics) {
-              logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
-                wallet: fullWalletAddress.substring(2),
+    <>
+      <div className="mx-[20px]">
+        <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-3 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
+        {openseaData && openseaData.length > 0 ? (
+          openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
+            const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
+            const src = !asset
+              ? asset_bundle.assets[0].image_preview_url
+              : !asset.image_preview_url
+              ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
+              : asset.image_preview_url;
+            let isEth = false;
+            let isUSDC = false;
+            if (payment_token !== null) {
+              isEth = payment_token.symbol === 'ETH' || payment_token.symbol === 'WETH';
+              isUSDC = payment_token.symbol === 'USDC';
+            }
+            const transactionHash = transaction.transaction_hash;
+            const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
+            const getAnalyticsSpotEthers = () => {
+              if (firebaseAnalytics) {
+                logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
+                  wallet: fullWalletAddress.substring(2),
+                  transaction: transactionHash.substring(2),
+                  token: assetToken,
+                  collection: currentToken
+                });
+              }
+              apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
+                page: 'Trade',
                 transaction: transactionHash.substring(2),
                 token: assetToken,
                 collection: currentToken
               });
-            }
-            apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
-              page: 'Trade',
-              transaction: transactionHash.substring(2),
-              token: assetToken,
-              collection: currentToken
-            });
-          };
-          const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
-          const priceValue = !total_price
-            ? '0.00'
-            : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
-          const key_value = assetCreationDate + event_timestamp + assetToken;
+            };
+            const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
+            const priceValue = !total_price
+              ? '0.00'
+              : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
+            const key_value = assetCreationDate + event_timestamp + assetToken;
 
-          return (
-            <Cell
-              classNames={['col-span-4', 'col-span-3 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 px-1']}
-              key={`spot_${key_value}`}
-              items={[
-                <div className="relative border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(event_timestamp)}</div>,
-                <div className="flex items-center text-[14px] text-[#6286e3]">
-                  <Image src={src} className="mr-1 rounded-[5px]" alt="" width={24} height={24} />
-                  {`#${assetToken}` || 'No Name'}
-                </div>,
-                <div className="price">
-                  {isUSDC ? (
-                    <PriceWithUsdc priceValue={priceValue} className="margin-16 font-400 text-[14px]" />
-                  ) : (
-                    <SmallPriceIcon priceValue={priceValue} />
-                  )}
-                </div>,
-                <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
-                  <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
-                </a>
-              ]}
-            />
-          );
-        })
-      ) : (
-        <div className="item-center flex justify-center">
-          <span className="body1 my-40 text-center text-mediumEmphasis">There is no spot info.</span>
-        </div>
-      )}
-
-      {openseaData && openseaData.length > 0 ? (
-        displayCount >= openseaData.length ? null : (
-          <div
-            className="text-center text-[14px] font-semibold text-primaryBlue"
-            onClick={() => {
-              // logHelper('overview_show_more_pressed', holderAddress, { collection });
-              setDisplayCount(displayCount + 5);
-            }}>
-            Show More
+            return (
+              <Cell
+                classNames={['col-span-4', 'col-span-3 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 px-1']}
+                key={`spot_${key_value}`}
+                items={[
+                  <div className="relative border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(event_timestamp)}</div>,
+                  <div className="flex items-center text-[14px] text-[#6286e3]">
+                    <Image src={src} className="mr-1 rounded-[5px]" alt="" width={24} height={24} />
+                    {`#${assetToken}` || 'No Name'}
+                  </div>,
+                  <div className="price">
+                    {isUSDC ? (
+                      <PriceWithUsdc priceValue={priceValue} className="margin-16 font-400 text-[14px]" />
+                    ) : (
+                      <SmallPriceIcon priceValue={priceValue} />
+                    )}
+                  </div>,
+                  <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
+                    <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
+                  </a>
+                ]}
+              />
+            );
+          })
+        ) : (
+          <div className="item-center flex justify-center">
+            <span className="body1 my-40 text-center text-mediumEmphasis">There is no spot info.</span>
           </div>
-        )
-      ) : null}
-    </div>
+        )}
+      </div>
+
+      <div className="bg-darkBlue py-[35px] text-center">
+        {openseaData && openseaData.length > 0 ? (
+          displayCount >= openseaData.length ? null : (
+            <span
+              className="text-center text-[14px] font-semibold text-primaryBlue"
+              onClick={() => {
+                // logHelper('overview_show_more_pressed', holderAddress, { collection });
+                setDisplayCount(displayCount + 5);
+              }}>
+              Show More
+            </span>
+          )
+        ) : null}
+      </div>
+    </>
   );
 };
 
@@ -284,48 +294,52 @@ const FundingPaymentHistory = () => {
   const [displayCount, setDisplayCount] = useState(10);
 
   return fundingPaymentHistory !== null ? (
-    <div className="scrollable mx-[20px] h-full overflow-y-scroll">
-      <Cell items={['Time', 'Funding Rate Long / Short']} classNames={['col-span-4 px-3', 'col-span-8 text-right']} />
-      {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
-        fundingPaymentHistory
-          .slice(0, displayCount > fundingPaymentHistory.length ? fundingPaymentHistory.length : displayCount)
-          .map(({ timestamp, rateLong, rateShort } /* index */) => (
-            <Cell
-              key={`funding_${timestamp}`}
-              items={[
-                <div className="time border-l-[2px] border-primaryBlue px-3">{formatDateTime(timestamp)}</div>,
-                <div>
-                  <span className={`${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`}>
-                    {`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 5))).toFixed(5)} %`}
-                  </span>{' '}
-                  <span className="text-highEmphasis">/&nbsp;</span>
-                  <span className={`${rateShort > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
-                    {`${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 5))).toFixed(5)} %`}
-                  </span>
-                </div>
-              ]}
-              classNames={['col-span-4', `col-span-8 text-right text-[14px]}`]}
-            />
-          ))
-      ) : (
-        <div className="item-center flex justify-center">
-          <span className="body1 my-40 text-center text-mediumEmphasis">You have no funding payment history.</span>
-        </div>
-      )}
-
-      {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
-        displayCount >= fundingPaymentHistory.length ? null : (
-          <div
-            className="text-center text-[14px] font-semibold text-primaryBlue"
-            onClick={() => {
-              // logHelper('overview_show_more_pressed', holderAddress, { collection });
-              setDisplayCount(displayCount + 5);
-            }}>
-            Show More
+    <>
+      <div className="scrollable mx-[20px] h-full overflow-y-scroll">
+        <Cell items={['Time', 'Funding Rate Long / Short']} classNames={['col-span-4 px-3', 'col-span-8 text-right']} />
+        {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
+          fundingPaymentHistory
+            .slice(0, displayCount > fundingPaymentHistory.length ? fundingPaymentHistory.length : displayCount)
+            .map(({ timestamp, rateLong, rateShort } /* index */) => (
+              <Cell
+                key={`funding_${timestamp}`}
+                items={[
+                  <div className="time border-l-[2px] border-primaryBlue px-3">{formatDateTime(timestamp)}</div>,
+                  <div>
+                    <span className={`${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`}>
+                      {`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 5))).toFixed(5)} %`}
+                    </span>{' '}
+                    <span className="text-highEmphasis">/&nbsp;</span>
+                    <span className={`${rateShort > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+                      {`${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 5))).toFixed(5)} %`}
+                    </span>
+                  </div>
+                ]}
+                classNames={['col-span-4', `col-span-8 text-right text-[14px]}`]}
+              />
+            ))
+        ) : (
+          <div className="item-center flex justify-center">
+            <span className="body1 my-40 text-center text-mediumEmphasis">You have no funding payment history.</span>
           </div>
-        )
-      ) : null}
-    </div>
+        )}
+      </div>
+
+      <div className="bg-darkBlue py-[35px] text-center">
+        {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
+          displayCount >= fundingPaymentHistory.length ? null : (
+            <span
+              className="text-center text-[14px] font-semibold text-primaryBlue"
+              onClick={() => {
+                // logHelper('overview_show_more_pressed', holderAddress, { collection });
+                setDisplayCount(displayCount + 5);
+              }}>
+              Show More
+            </span>
+          )
+        ) : null}
+      </div>
+    </>
   ) : null;
 };
 

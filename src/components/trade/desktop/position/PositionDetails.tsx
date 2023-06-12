@@ -32,7 +32,7 @@ import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaym
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
-    <div className={`text-15 font-400 flex text-highEmphasis ${className}`}>
+    <div className={`font-400 flex text-[15px] text-highEmphasis ${className}`}>
       <Image
         src={image || '/images/common/symbols/eth-tribe3.svg'}
         className="icon"
@@ -180,7 +180,7 @@ export default function PositionDetails(props: any) {
       <div className=" mb-[36px] flex justify-between">
         <div className="flex items-center space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
-          <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
+          <div className="font-600 text-[16px] text-highEmphasis">My {currentCollectionName} Position</div>
           {collectionIsPending[currentCollection.amm] ? (
             <div
               className="ml-3 rounded-[2px] border-[1px] border-warn
