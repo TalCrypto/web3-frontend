@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { calculateNumber, formatterValue, isPositive } from '@/utils/calculateNumbers';
 import { wsCurrentToken } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
+import { useRouter } from 'next/router';
 
 export default function CollectionListModal(props: any) {
   const { marketData, isShowModal, setIsShowModal } = props;
@@ -15,6 +17,7 @@ export default function CollectionListModal(props: any) {
     const collections = collectionList.filter((param: any) => item.amm === param.amm);
     const defaultValues = { futurePrice: 0, priceChangeRatio24h: 0 };
     const { futurePrice, priceChangeRatio24h } = targetCollection.length !== 0 ? targetCollection[0] : defaultValues;
+    const router = useRouter();
 
     return (
       <div
@@ -25,7 +28,9 @@ export default function CollectionListModal(props: any) {
           //   current_collection: collectionInfo.collection,
           //   new_collection: collections[0].collection
           // });
+          walletProvider.setCurrentToken(item.collection);
           wsCurrentToken.set(collections[0].collection || 'DEGODS');
+          router.push(`/trade/${item.collection.toLowerCase()}`, undefined, { shallow: true });
           setIsShowModal(false);
         }}>
         <Image src={item.logo} className="" alt="" width={32} height={32} />
