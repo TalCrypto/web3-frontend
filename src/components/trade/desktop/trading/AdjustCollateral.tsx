@@ -496,7 +496,7 @@ function QuantityTips(props: any) {
     (value === 0 ||
       (!balanceChecking && !marginRatioChecker && !minimalMarginChecking && !initialMarginChecker && !reduceMarginChecking && !isPending))
   ) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
 
   const label =

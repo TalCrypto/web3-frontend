@@ -545,7 +545,7 @@ function QuantityTips(props: any) {
   const { maxValueComparison, minValueComparison, estPriceFluctuation, isFluctuationLimit, isBadDebt, isPending, closeValue } = props;
 
   if ((closeValue <= 0 && !isBadDebt) || (!maxValueComparison && !minValueComparison && !estPriceFluctuation && !isPending && !isBadDebt)) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
 
   const label = isPending

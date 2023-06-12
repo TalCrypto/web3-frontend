@@ -145,7 +145,7 @@ function QuantityTips(props: any) {
   const isShow = value <= 0 || isChecking || isWrongNetwork || isAmountNegative;
 
   if (isShow) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
 
   const label = isPending ? (
@@ -671,7 +671,7 @@ function Tips(props: any) {
   const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   if ((isLoginState && !isWrongNetwork && !isApproveRequired) || isDataFetch) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
   const label = !isLoginState ? (
     'Please connect the wallets to trade !'
@@ -708,7 +708,7 @@ function ExtendedEstimateComponent(props: any) {
   const router = useRouter();
   const currentToken = useNanostore(wsCurrentToken);
   const { page } = pageTitleParser(router.asPath);
-  const { estimatedValue, userPosition, value, isAmountTooSmall, isInsuffBalance } = props;
+  const { estimatedValue, value, isAmountTooSmall, isInsuffBalance } = props;
   const [showDetail, isShowDetail] = useState(false);
   const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
   const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
@@ -716,6 +716,7 @@ function ExtendedEstimateComponent(props: any) {
   const isNewPosition = 'newPosition' in estimatedValue;
   const fee = formatterValue(estimatedValue.fee, 4);
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // hide component when there is no estimatedValue
   if (!estimatedValue || !estimatedValue.cost) return null;

@@ -107,7 +107,7 @@ function SidebarCollection(props: any, ref: any) {
           rounded-l-[12px] bg-[#2574fb] transition duration-300 ease-in-out"
         />
         <div
-          className={`item ${isLoading ? 'loading' : ''}
+          className={`item ${isLoading ? 'opacity-30' : ''}
             relative flex cursor-pointer items-center justify-center rounded-full
              hover:border-[hsla(0,0%,100%,.2)]`}
           onClick={() => setIsColModalVisible(true)}>
@@ -133,9 +133,7 @@ function SidebarCollection(props: any, ref: any) {
         {collectionList.map(item => (
           <div
             key={`sidecol-${item.collection}`}
-            className={`${selectedCollection.collection.toLocaleLowerCase() === item.collection.toLocaleLowerCase() ? 'active' : ''} ${
-              isLoading ? 'loading' : ''
-            }
+            className={`${isLoading ? 'opacity-30' : ''}
             relative mt-8 flex cursor-pointer items-center`}
             onClick={() => selectCollection(item.collection)}>
             <Tooltip direction="right" content={item.displayCollectionPair}>

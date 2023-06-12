@@ -8,16 +8,11 @@ import { utils } from 'ethers';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
-// import { logEvent } from 'firebase/analytics';
-// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-// import { Tooltip } from 'react-bootstrap';
 import { useRouter } from 'next/router';
-// import { debounce } from 'lodash';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
 import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
-// import { firebaseAnalytics } from '@/const/firebaseConfig';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
@@ -38,7 +33,6 @@ import {
   wsUserPosition,
   wsFullWalletAddress
 } from '@/stores/WalletState';
-// const { isWhitelisted } = walletProvider;
 import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
@@ -70,7 +64,6 @@ function LongShortRatio(props: any) {
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
-          ${userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
           if (!userPosition) {
@@ -84,7 +77,6 @@ function LongShortRatio(props: any) {
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
-          ${userPosition ? 'opacity-30' : ''}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
           if (!userPosition) {
@@ -118,7 +110,7 @@ function QuantityTips(props: any) {
   const isShow = value <= 0 || isChecking || isWrongNetwork || isAmountNegative;
 
   if (isShow) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
 
   const label = isPending ? (
@@ -198,6 +190,9 @@ function QuantityEnter(props: any) {
         <div className="flex-1 text-[14px] text-mediumEmphasis">Collateral</div>
         {isLoginState && !isWrongNetwork ? (
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+            <div className="mr-1 flex flex-1">
+              <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
+            </div>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
             <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => getTestToken()}>
@@ -395,12 +390,8 @@ function EstimatedValueDisplay(props: any) {
         unitClassName="font-12"
       />
       {/* <DisplayValuesWithTooltips title="Transaction Fee" value={fee} unit="WETH" tipsText="0.5% of the notional amount of the trade" /> */}
-      <div className="row">
-        <div className="col">
-          <div className="mb-6 h-[1px] bg-[#2e3064]" />
-        </div>
-      </div>
-      <div className="mb-3 flex items-center">
+      <div className="my-4 h-[1px] bg-[#2e3064]" />
+      <div className="mb-4 flex items-center">
         <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
           <span className=" text-[14px]">
@@ -611,7 +602,7 @@ function ConfirmButton(props: any) {
     <div className="flex">
       <div
         className={`${disabled || isPending ? 'opacity-30' : ''}
-          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
+          flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
           px-[10px] py-[14px] text-center
         `}
         onClick={onClickButton}>
@@ -639,14 +630,13 @@ function ConfirmButton(props: any) {
 
 function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
-  const isWhitelisted = useNanostore(whitelisted);
   const isWethCollected = Number(walletProvider.wethBalance) !== 0;
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   if ((isLoginState && !isWrongNetwork && !isApproveRequired) || isDataFetch) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
   const label = !isLoginState ? (
     'Please connect the wallets to trade !'
@@ -671,7 +661,7 @@ function Tips(props: any) {
 
   return (
     <div
-      className="flex h-[16px] items-center text-[12px]
+      className="mt-4 flex h-[16px] items-center text-[12px]
       font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span className="">{label}</span>
@@ -808,7 +798,7 @@ function ExtendedEstimateComponent(props: any) {
 export default function TradeComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, connectWallet, userPosition, tradingData } = props;
+  const { refreshPositions, connectWallet, tradingData } = props;
   const [saleOrBuyIndex, setSaleOrBuyIndex] = useState(0);
   const [quantity, setQuantity] = useState('0');
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -837,6 +827,7 @@ export default function TradeComponent(props: any) {
   const isApproveRequired = useNanostore(wsIsApproveRequired);
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1086,7 +1077,7 @@ export default function TradeComponent(props: any) {
 
   useEffect(() => {
     if (userPosition) {
-      setSaleOrBuyIndex(Number(calculateNumber(userPosition.size, 4)) < 0 ? 1 : 0);
+      setSaleOrBuyIndex(userPosition.size < 0 ? 1 : 0);
     }
     if (isPending) {
       handleEnter(quantity);
