@@ -126,19 +126,19 @@ const MarketTrade = (props: any) => {
                 className={`relative mb-6 grid grid-cols-12 items-center
                 whitespace-break-spaces text-[12px] text-mediumEmphasis`}
                 key={`market_${timestamp}_${index}`}>
-                <div className="time relative col-span-4">
-                  <div className="absolute left-[-10px] top-0 mt-[3px] h-[34px] w-[2px] rounded-[30px] bg-primaryBlue" />
-
+                <div className="time relative col-span-4 border-l-[2px] border-primaryBlue pl-2">
                   <span>{formatDateTime(timestamp)}</span>
                   <div className="h-[6px] w-full" />
-                  <span className="market_user" onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                    {trimString(userId, 10) || walletAddressToShow(userAddress) || ' '}
-                  </span>
-                  {fullWalletAddress === userAddress ? (
-                    <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
-                      YOU
+                  <div className="max-w-[100px] overflow-x-hidden text-ellipsis">
+                    <span className="market_user " onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                      {trimString(userId, 10) || walletAddressToShow(userAddress) || ' '}
                     </span>
-                  ) : null}
+                    {fullWalletAddress === userAddress ? (
+                      <span className="ml-1 rounded-sm bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
+                        YOU
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="col-span-4">
                   <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
