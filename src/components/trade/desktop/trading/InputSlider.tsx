@@ -73,13 +73,14 @@ export default function InputSlider(props: any) {
         </>
       ) : null}
       <div
-        className="pointer-events-none absolute top-2 h-[14px] w-[14px] cursor-pointer
-        rounded-full border-[2px] border-[#04aefc] bg-white"
+        className="input-slider pointer-events-none absolute top-2 flex h-[14px]
+        w-[14px] cursor-pointer items-center justify-center rounded-full"
         style={{
-          left: `calc(${fill}% - ${lerp(-1, 15, alphaFill)}px)`,
+          left: `calc(${fill}% - ${lerp(1, 14, alphaFill)}px)`,
           opacity: disabled ? '0.6' : '1'
-        }}
-      />
+        }}>
+        <div className="h-[10px] w-[10px] rounded-full bg-white" />
+      </div>
     </div>
   );
 }
