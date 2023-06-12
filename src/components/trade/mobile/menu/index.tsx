@@ -279,7 +279,7 @@ const MobileMenu = (props: any) => {
                     text-[12px] text-highEmphasis"
                   onClick={onBtnGetWethClick}>
                   <Image src="/images/mobile/common/get_weth.svg" alt="" className="mb-2" width={40} height={40} />
-                  Get Weth
+                  Get WETH
                 </div>
               </div>
             </div>
