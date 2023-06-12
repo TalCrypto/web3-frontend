@@ -101,7 +101,18 @@ const MarketTrade = (props: any) => {
   return (
     <div className="mx-[20px]">
       <Cell
-        items={['User ID', 'Action / Type', 'Notional Size / Resulting Price', '']}
+        items={[
+          'User ID',
+          <>
+            Action /<br />
+            Type
+          </>,
+          <>
+            Notional Size /<br />
+            Resulting Price
+          </>,
+          ''
+        ]}
         classNames={['col-span-4', 'col-span-3 pl-1 pr-3', 'col-span-5 pl-6', '']}
         isHeader
       />
