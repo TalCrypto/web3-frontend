@@ -392,7 +392,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
                 <br /> vAMM and the oracle prices
               </p>
             }>
-            <p className="cursor-default">VAMM - Oracle Price Gap:</p>
+            <p className="cursor-default text-mediumEmphasis">VAMM - Oracle Price Gap:</p>
           </Tooltip>
         </div>
 
@@ -414,7 +414,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
       <div className="flex space-x-[12px]">
         <TitleTips
           titleText={
-            <span className="flex w-[209px] justify-between">
+            <span className="flex w-[209px] justify-between text-mediumEmphasis">
               <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
             </span>
           }
