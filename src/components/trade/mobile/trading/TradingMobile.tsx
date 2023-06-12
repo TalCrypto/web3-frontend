@@ -119,8 +119,8 @@ function TradingMobile(props: any) {
         <Image
           src="/images/mobile/common/angle-right.svg"
           className="absolute left-[22px] cursor-pointer"
-          width={8}
-          height={12}
+          width={14}
+          height={14}
           alt=""
           onClick={handleBackClick}
         />
