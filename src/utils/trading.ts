@@ -1,9 +1,3 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-use-before-define */
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable import/no-cycle */
-/* eslint-disable indent */
-import { utils, BigNumber } from 'ethers';
 import { apiConnection } from '@/utils/apiConnection';
 import {
   // getOpenInterest,
@@ -66,9 +60,9 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
 
   let rawGraphDataIndex = 0;
 
-  let high = BigNumber.from(0);
-  let low = BigNumber.from(0);
-  let volume = BigNumber.from(0);
+  let high = 0n;
+  let low = 0n;
+  let volume = 0n;
 
   for (let i = 0; i < totalRound; i += 1) {
     const currentRoundStartTime = startRoundTime + i * interval;
@@ -80,11 +74,11 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
       // No raw graph data for this round
       if (graphData.length > 0) {
         // use previous raw graph data if available
-        const lastRoundClose = BigNumber.from(graphData[graphData.length - 1].close);
-        if (lastRoundClose.gt(high)) {
+        const lastRoundClose = BigInt(graphData[graphData.length - 1].close);
+        if (lastRoundClose > high) {
           high = lastRoundClose;
         }
-        if (low.isZero() || lastRoundClose.lt(low)) {
+        if (low === 0n || lastRoundClose < low) {
           low = lastRoundClose;
         }
         graphData.push({
@@ -97,29 +91,29 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
         });
       } else if (latestPriceBeforeRange) {
         // use latest price before range if available
-        if (latestPriceBeforeRange.spotPrice.gt(high)) {
+        if (latestPriceBeforeRange.spotPrice > high) {
           high = latestPriceBeforeRange.spotPrice;
         }
-        if (low.isZero() || latestPriceBeforeRange.spotPrice.lt(low)) {
+        if (low === 0n || latestPriceBeforeRange.spotPrice < low) {
           low = latestPriceBeforeRange.spotPrice;
         }
         graphData.push({
           round: i + 1,
-          avgPrice: latestPriceBeforeRange.spotPrice.toString(),
-          open: latestPriceBeforeRange.spotPrice.toString(),
-          close: latestPriceBeforeRange.spotPrice.toString(),
+          avgPrice: latestPriceBeforeRange.spotPrice,
+          open: latestPriceBeforeRange.spotPrice,
+          close: latestPriceBeforeRange.spotPrice,
           start: currentRoundStartTime,
           end: currentRoundEndTime
         });
       }
     } else if (currentRoundStartTime === rawGraphData.start) {
-      if (rawGraphData.high.gt(high)) {
+      if (rawGraphData.high > high) {
         high = rawGraphData.high;
       }
-      if (low.isZero() || rawGraphData.low.lt(low)) {
+      if (low === 0n || rawGraphData.low < low) {
         low = rawGraphData.low;
       }
-      volume = volume.add(rawGraphData.volume);
+      volume += rawGraphData.volume;
       graphData.push({
         round: i + 1,
         avgPrice: rawGraphData.avgPrice.toString(),
@@ -133,13 +127,13 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
   }
 
   const baseData = graphData[0];
-  let priceChangeRatio = BigNumber.from(0);
-  let priceChangeValue = BigNumber.from(0);
+  let priceChangeRatio = 0n;
+  let priceChangeValue = 0n;
   if (baseData && rawGraphDatas.length > 1) {
-    const basePrice = BigNumber.from(baseData.open);
+    const basePrice = BigInt(baseData.open);
     const priceNow = rawGraphDatas[rawGraphDatas.length - 1].close;
-    priceChangeValue = priceNow.sub(basePrice);
-    priceChangeRatio = priceNow.sub(basePrice).mul(utils.parseEther('1')).div(basePrice).mul(100);
+    priceChangeValue = priceNow - basePrice;
+    priceChangeRatio = (((priceNow - basePrice) * BigInt(1e18)) / basePrice) * 100n;
   }
 
   return { graphData, priceChangeValue, priceChangeRatio, high, low, volume };
@@ -196,15 +190,12 @@ export async function getAccountValueGraphData(ammAddrList: any, walletAddr: str
 
   const currentGraphItems = spotPriceGraphDataList.map((graphDatas: any) => graphDatas.graphData.shift());
   const roundPositionHistories = previousPositionList;
-  let currentTokenBalance = previousBalanceHistory == null ? BigNumber.from(0) : previousBalanceHistory.balance;
+  let currentTokenBalance = previousBalanceHistory == null ? 0n : previousBalanceHistory.balance;
 
   const marginsCarryOverToNextRound = previousMarginChangedEvents.map((events: any, index: number) =>
     events
       .filter((event: any) => event.timestamp > roundPositionHistories[index].timestamp)
-      .reduce(
-        (acc: any, event: any) => acc.add(BigNumber.from(event.amount.toString())).sub(BigNumber.from(event.fundingPayment.toString())),
-        BigNumber.from(0)
-      )
+      .reduce((acc: any, event: any) => acc + BigInt(event.amount.toString()) - BigInt(event.fundingPayment.toString()), 0n)
   );
 
   const graphData = [];
@@ -213,9 +204,9 @@ export async function getAccountValueGraphData(ammAddrList: any, walletAddr: str
     const currentRoundStartTime = startRoundTime + i * interval;
     const currentRoundEndTime = currentRoundStartTime + interval;
 
-    let currentRoundEstimatedPnL = BigNumber.from(0);
-    let currentRoundMargin = BigNumber.from(0);
-    let currentRoundPortfolioCollateralValue = BigNumber.from(0);
+    let currentRoundEstimatedPnL = 0n;
+    let currentRoundMargin = 0n;
+    let currentRoundPortfolioCollateralValue = 0n;
 
     for (let j = 0; j < spotPriceGraphDataList.length; j += 1) {
       const roundData = currentGraphItems[j];
@@ -241,47 +232,51 @@ export async function getAccountValueGraphData(ammAddrList: any, walletAddr: str
             if (lastPositionForThisRoundIndex > -1) {
               positionHistoryList[j].splice(0, lastPositionForThisRoundIndex);
               roundPositionHistories[j] = positionHistoryList[j].shift(); // Move to next positionHistory
-              marginsCarryOverToNextRound[j] = BigNumber.from(0);
+              marginsCarryOverToNextRound[j] = 0n;
             }
           }
 
-          currentRoundMargin = currentRoundMargin.add(marginsCarryOverToNextRound[j]);
+          currentRoundMargin += marginsCarryOverToNextRound[j];
 
           if (roundPositionHistories[j]) {
             const currentEntryPrice = roundPositionHistories[j].size.isZero()
-              ? BigNumber.from(0)
-              : roundPositionHistories[j].notional.mul(utils.parseEther('1')).div(roundPositionHistories[j].size.abs());
+              ? 0n
+              : (roundPositionHistories[j].notional * BigInt(1e18)) / roundPositionHistories[j].size.abs();
             const currentEstimatedPnL = roundPositionHistories[j].size.isZero()
-              ? BigNumber.from(0)
-              : BigNumber.from(roundData.close).sub(currentEntryPrice).mul(roundPositionHistories[j].size).div(utils.parseEther('1'));
-            currentRoundEstimatedPnL = currentRoundEstimatedPnL.add(currentEstimatedPnL);
-            currentRoundMargin = currentRoundMargin.add(roundPositionHistories[j].margin);
+              ? 0n
+              : ((BigInt(roundData.close) - currentEntryPrice) * roundPositionHistories[j].size) / BigInt(1e18);
+            currentRoundEstimatedPnL += currentEstimatedPnL;
+            currentRoundMargin += roundPositionHistories[j].margin;
 
             // Handle margin changed event
             if (marginChangedEventHistoryList[j]) {
-              let marginSum = BigNumber.from(0);
+              let marginSum = 0n;
               let shouldUpdateMarginsCarryOver = false;
               if (!roundPositionHistories[j].marginAdjusted) {
                 for (let k = 0; k < marginChangedEventHistoryList[j].length; k += 1) {
                   const event = marginChangedEventHistoryList[j][k];
                   if (event.timestamp >= roundPositionHistories[j].timestamp && event.timestamp < currentRoundEndTime) {
-                    currentRoundMargin = currentRoundMargin.add(event.amount).sub(event.fundingPayment);
-                    marginSum = marginSum.add(event.amount).sub(event.fundingPayment);
+                    currentRoundMargin += event.amount;
+                    currentRoundMargin -= event.fundingPayment;
+                    marginSum += event.amount;
+                    marginSum -= event.fundingPayment;
                     shouldUpdateMarginsCarryOver = true;
                   }
                 }
                 roundPositionHistories[j].marginAdjusted = true;
-                if (shouldUpdateMarginsCarryOver) marginsCarryOverToNextRound[j] = marginsCarryOverToNextRound[j].add(marginSum);
+                if (shouldUpdateMarginsCarryOver) marginsCarryOverToNextRound[j] += marginSum;
               } else {
                 for (let k = 0; k < marginChangedEventHistoryList[j].length; k += 1) {
                   const event = marginChangedEventHistoryList[j][k];
                   if (event.timestamp >= currentRoundStartTime && event.timestamp < currentRoundEndTime) {
-                    currentRoundMargin = currentRoundMargin.add(event.amount).sub(event.fundingPayment);
-                    marginSum = marginSum.add(event.amount).sub(event.fundingPayment);
+                    currentRoundMargin += event.amount;
+                    currentRoundMargin -= event.fundingPayment;
+                    marginSum += event.amount;
+                    marginSum -= event.fundingPayment;
                     shouldUpdateMarginsCarryOver = true;
                   }
                 }
-                if (shouldUpdateMarginsCarryOver) marginsCarryOverToNextRound[j] = marginsCarryOverToNextRound[j].add(marginSum);
+                if (shouldUpdateMarginsCarryOver) marginsCarryOverToNextRound[j] += marginSum;
               }
             }
           }
@@ -291,8 +286,8 @@ export async function getAccountValueGraphData(ammAddrList: any, walletAddr: str
       }
     }
 
-    currentRoundPortfolioCollateralValue = currentRoundMargin.add(currentRoundEstimatedPnL);
-    const currentRoundAccountValue = currentRoundPortfolioCollateralValue.add(currentTokenBalance);
+    currentRoundPortfolioCollateralValue = currentRoundMargin + currentRoundEstimatedPnL;
+    const currentRoundAccountValue = currentRoundPortfolioCollateralValue + currentTokenBalance;
 
     graphData.push({
       round: i + 1,
@@ -306,10 +301,10 @@ export async function getAccountValueGraphData(ammAddrList: any, walletAddr: str
 
   return {
     graphData,
-    priceChangeValue: BigNumber.from(0),
-    priceChangeRatio: BigNumber.from(0),
-    high: BigNumber.from(0),
-    low: BigNumber.from(0)
+    priceChangeValue: 0n,
+    priceChangeRatio: 0n,
+    high: 0n,
+    low: 0n
   };
 }
 

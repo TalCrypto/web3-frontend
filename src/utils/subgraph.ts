@@ -1,4 +1,3 @@
-import { BigNumber, utils } from 'ethers';
 import { binarySearch } from '@/utils/arrayHelper';
 
 const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
@@ -33,11 +32,11 @@ export const getLatestDayTradingDetails = async (ammAddr: string) => {
   const result = {
     amm: dayTradeData[0].amm,
     startTime: Number(dayTradeData[0].timestamp),
-    open: BigNumber.from(dayTradeData[0].open),
-    high: BigNumber.from(dayTradeData[0].high),
-    low: BigNumber.from(dayTradeData[0].low),
-    close: BigNumber.from(dayTradeData[0].close),
-    volume: BigNumber.from(dayTradeData[0].volume),
+    open: BigInt(dayTradeData[0].open),
+    high: BigInt(dayTradeData[0].high),
+    low: BigInt(dayTradeData[0].low),
+    close: BigInt(dayTradeData[0].close),
+    volume: BigInt(dayTradeData[0].volume),
     txCount: Number(dayTradeData[0].txCount)
   };
 
@@ -59,9 +58,9 @@ export const getOpenInterest = async (ammAddr: string) => {
   })
     .then(res => res.json())
     .then(resJson => ({
-      balance: BigNumber.from(resJson.data.amm.positionBalance),
-      notional: BigNumber.from(resJson.data.amm.openInterestNotional),
-      size: BigNumber.from(resJson.data.amm.openInterestSize)
+      balance: BigInt(resJson.data.amm.positionBalance),
+      notional: BigInt(resJson.data.amm.openInterestNotional),
+      size: BigInt(resJson.data.amm.openInterestSize)
     }))
     .catch(() => null);
 
@@ -97,16 +96,16 @@ export const getPositionHistory = async (ammAddr: string, walletArr: string) => 
     .then(resJson => resJson.data.positionChangedEvents);
 
   const result = positions.map((position: any) => {
-    const exchangedPositionSize = BigNumber.from(position.exchangedPositionSize);
-    const positionSizeAfter = BigNumber.from(position.positionSizeAfter);
+    const exchangedPositionSize = BigInt(position.exchangedPositionSize);
+    const positionSizeAfter = BigInt(position.positionSizeAfter);
     let type = 'unknown';
 
-    if (positionSizeAfter.eq(0)) {
+    if (positionSizeAfter === 0n) {
       // Close
       type = 'close';
     } else {
       // Open position
-      type = exchangedPositionSize.isNegative() ? 'short' : 'long';
+      type = exchangedPositionSize < 0n ? 'short' : 'long';
     }
 
     return {
@@ -115,9 +114,9 @@ export const getPositionHistory = async (ammAddr: string, walletArr: string) => 
       exchangedPositionSize,
       positionSizeAfter,
       entryPrice: Math.abs(position.positionNotional) / Math.abs(position.exchangedPositionSize),
-      spotPrice: BigNumber.from(position.spotPrice),
-      fee: BigNumber.from(position.fee),
-      realizedPnl: BigNumber.from(position.realizedPnl),
+      spotPrice: BigInt(position.spotPrice),
+      fee: BigInt(position.fee),
+      realizedPnl: BigInt(position.realizedPnl),
       txHash: position.id.split('-')[0]
     };
   });
@@ -157,10 +156,10 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
     .then(resJson => resJson.data.positionChangedEvents);
 
   const result = positions.map((position: any) => {
-    const exchangedPositionSize = BigNumber.from(position.exchangedPositionSize);
-    const positionSizeAfter = BigNumber.from(position.positionSizeAfter);
+    const exchangedPositionSize = BigInt(position.exchangedPositionSize);
+    const positionSizeAfter = BigInt(position.positionSizeAfter);
     let type = 'unknown';
-    type = exchangedPositionSize.isNegative() ? 'short' : 'long';
+    type = exchangedPositionSize < 0n ? 'short' : 'long';
 
     return {
       timestamp: Number(position.timestamp),
@@ -169,12 +168,12 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
       exchangedPositionSize,
       positionSizeAfter,
       entryPrice: Math.abs(position.positionNotional) / Math.abs(position.exchangedPositionSize),
-      spotPrice: BigNumber.from(position.spotPrice),
-      fee: BigNumber.from(position.fee),
-      realizedPnl: BigNumber.from(position.realizedPnl),
+      spotPrice: BigInt(position.spotPrice),
+      fee: BigInt(position.fee),
+      realizedPnl: BigInt(position.realizedPnl),
       txHash: position.id.split('-')[0],
-      positionNotional: BigNumber.from(position.positionNotional),
-      amount: BigNumber.from(position.amount)
+      positionNotional: BigInt(position.positionNotional),
+      amount: BigInt(position.amount)
     };
   });
 
@@ -220,11 +219,11 @@ export const getMarketHistory = async (ammAddr: string) => {
       finalPositions.push({
         amm: position.amm,
         timestamp: Number(position.timestamp),
-        exchangedPositionSize: BigNumber.from(position.exchangedPositionSize), // BAYC
-        positionNotional: BigNumber.from(position.positionNotional), // ETH paid
-        positionSizeAfter: BigNumber.from(position.positionSizeAfter), // ETH size after
-        liquidationPenalty: BigNumber.from(position.liquidationPenalty),
-        spotPrice: BigNumber.from(position.spotPrice),
+        exchangedPositionSize: BigInt(position.exchangedPositionSize), // BAYC
+        positionNotional: BigInt(position.positionNotional), // ETH paid
+        positionSizeAfter: BigInt(position.positionSizeAfter), // ETH size after
+        liquidationPenalty: BigInt(position.liquidationPenalty),
+        spotPrice: BigInt(position.spotPrice),
         userAddress: position.trader,
         txHash: position.id.split('-')[0]
       });
@@ -261,11 +260,11 @@ export const getFundingPaymentHistory = async (ammAddr: string) => {
     .then(resJson => (resJson.data ? resJson.data.fundingRateUpdatedEvents : []));
 
   const result = fundingPaymentHistory.map((history: any) => {
-    const rateLong = BigNumber.from(history.rateLong);
-    const rateShort = BigNumber.from(history.rateShort);
-    const underlyingPrice = BigNumber.from(history.underlyingPrice);
-    const amountLong = underlyingPrice.mul(rateLong).div(utils.parseEther('1'));
-    const amountShort = underlyingPrice.mul(rateLong).div(utils.parseEther('1'));
+    const rateLong = BigInt(history.rateLong);
+    const rateShort = BigInt(history.rateShort);
+    const underlyingPrice = BigInt(history.underlyingPrice);
+    const amountLong = (underlyingPrice * rateLong) / BigInt(1e18);
+    const amountShort = (underlyingPrice * rateLong) / BigInt(1e18);
 
     return {
       amm: history.amm,
@@ -307,7 +306,7 @@ export const getSpotPriceAfter = async (ammAddr: string, timestamp: number, limi
 
   const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
-    spotPrice: BigNumber.from(position.spotPrice)
+    spotPrice: BigInt(position.spotPrice)
   }));
 
   return positions.length > 0 ? result : null;
@@ -338,7 +337,7 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
 
   const result = {
     timestamp: Number(positions[0] ? positions[0].timestamp : 0),
-    spotPrice: BigNumber.from(positions[0] ? positions[0].spotPrice : 0)
+    spotPrice: BigInt(positions[0] ? positions[0].spotPrice : 0)
   };
 
   return positions.length > 0 ? result : null;
@@ -377,12 +376,12 @@ export const getGraphDataAfter = async (ammAddr: string, timestamp: number, reso
   const result = graphDatas.map((data: any) => ({
     start: Number(data.startTime),
     end: Number(data.endTime),
-    open: BigNumber.from(data.open),
-    close: BigNumber.from(data.close),
-    high: BigNumber.from(data.high),
-    low: BigNumber.from(data.low),
-    volume: BigNumber.from(data.volume),
-    avgPrice: BigNumber.from(data.average)
+    open: BigInt(data.open),
+    close: BigInt(data.close),
+    high: BigInt(data.high),
+    low: BigInt(data.low),
+    volume: BigInt(data.volume),
+    avgPrice: BigInt(data.average)
   }));
 
   return graphDatas.length > 0 ? result : [];
@@ -416,9 +415,9 @@ export const getPositionHistoryAfter = async (ammAddr: string, walletAddr: strin
 
   const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
-    size: BigNumber.from(position.positionSizeAfter),
-    notional: BigNumber.from(position.openNotionalAfter),
-    margin: BigNumber.from(position.margin)
+    size: BigInt(position.positionSizeAfter),
+    notional: BigInt(position.openNotionalAfter),
+    margin: BigInt(position.margin)
   }));
 
   return positions.length > 0 ? result : [];
@@ -452,9 +451,9 @@ export const getPositionHistoryBefore = async (ammAddr: string, walletAddr: stri
 
   const result = {
     timestamp: Number(positions[0].timestamp),
-    size: BigNumber.from(positions[0].positionSizeAfter),
-    notional: BigNumber.from(positions[0].openNotionalAfter),
-    margin: BigNumber.from(positions[0].margin)
+    size: BigInt(positions[0].positionSizeAfter),
+    notional: BigInt(positions[0].openNotionalAfter),
+    margin: BigInt(positions[0].margin)
   };
 
   return positions.length > 0 ? result : null;
@@ -485,7 +484,7 @@ export const getTokenBalanceAfter = async (walletAddr: string, timestamp: number
 
   const result = histories.map((history: any) => ({
     timestamp: Number(history.timestamp),
-    balance: BigNumber.from(history.balance)
+    balance: BigInt(history.balance)
   }));
 
   return histories.length > 0 ? result : [];
@@ -516,7 +515,7 @@ export const getTokenBalanceBefore = async (walletAddr: string, timestamp: numbe
 
   const result = {
     timestamp: Number(histories[0].timestamp),
-    balance: BigNumber.from(histories[0].balance)
+    balance: BigInt(histories[0].balance)
   };
 
   return histories.length > 0 ? result : null;
@@ -549,8 +548,8 @@ export const getMarginChangedEventAfter = async (ammAddr: string, walletAddr: st
 
   const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
-    amount: BigNumber.from(event.amount),
-    fundingPayment: BigNumber.from(event.fundingPayment)
+    amount: BigInt(event.amount),
+    fundingPayment: BigInt(event.fundingPayment)
   }));
 
   return events.length > 0 ? result : [];
@@ -583,8 +582,8 @@ export const getMarginChangedEventBefore = async (ammAddr: string, walletAddr: s
 
   const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
-    amount: BigNumber.from(event.amount),
-    fundingPayment: BigNumber.from(event.fundingPayment)
+    amount: BigInt(event.amount),
+    fundingPayment: BigInt(event.fundingPayment)
   }));
 
   return events.length > 0 ? result : [];
@@ -612,7 +611,7 @@ export const getAllAmmPosition = async (walletAddr: string) => {
 
   const result = positions.map((event: any) => ({
     amm: event.amm,
-    positionSize: BigNumber.from(event.positionSize)
+    positionSize: BigInt(event.positionSize)
   }));
 
   return positions.length > 0 ? result : [];
