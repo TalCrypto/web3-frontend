@@ -115,9 +115,8 @@ function PriceIndicator(props: any) {
   );
 }
 
-function chartButtonLogged(index: any, currentCollection: any) {
+function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   if (firebaseAnalytics) {
     logEvent(firebaseAnalytics, eventName, {
@@ -568,6 +567,7 @@ function ChartWindows(props: any, ref: any) {
   const proRef = useRef();
   const currentToken = useNanostore(wsCurrentToken);
   const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
@@ -606,7 +606,7 @@ function ChartWindows(props: any, ref: any) {
   }, [currentToken, selectedTimeIndex]); // from tokenRef.current
 
   const handleSelectedTimeIndex = (index: any) => {
-    chartButtonLogged(index, currentToken); // from tokenRef.current
+    chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
     wsSelectedTimeIndex.set(index);
   };
 

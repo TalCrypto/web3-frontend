@@ -26,7 +26,6 @@ import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWith
 import { useStore as useNanostore } from '@nanostores/react';
 import { updateTradeInformation } from '@/utils/TradeInformation';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
-import { walletProvider } from '@/utils/walletProvider';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 
 function SmallPriceIcon(props: any) {
@@ -40,7 +39,7 @@ function SmallPriceIcon(props: any) {
 }
 
 function Cell(props: any) {
-  const { items, classNames, rowStyle } = props;
+  const { items, classNames } = props;
   return (
     <div
       className="relative mb-6 grid grid-cols-12 items-center
@@ -107,7 +106,14 @@ const MarketTrade = () => {
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
       <Cell
         items={['Time / Type', 'Action', 'Notional Size', 'Resulting Price', 'User ID', '']}
-        classNames={['col-span-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-1']}
+        classNames={[
+          'col-span-3 text-[12px]',
+          'col-span-2 text-[12px]',
+          'col-span-2 text-[12px]',
+          'col-span-2 text-[12px]',
+          'col-span-2 text-[12px]',
+          'col-span-1'
+        ]}
       />
       {marketHistory && marketHistory.length > 0 ? (
         marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
@@ -118,7 +124,7 @@ const MarketTrade = () => {
               <div className="time relative">
                 <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
-                <span>{formatDateTime(timestamp)}</span>
+                <span className="text-[12px]">{formatDateTime(timestamp)}</span>
                 <br />
                 <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
                   {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
@@ -161,7 +167,10 @@ const SpotTable = () => {
 
   return (
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
-      <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-3', 'col-span-3 px-3 ', 'col-span-4 px-3 ', 'col-span-1 px-3 ']} />
+      <Cell
+        items={['Time', 'Item', 'Price', '']}
+        classNames={['col-span-3 text-[12px]', 'col-span-3 px-3 text-[12px]', 'col-span-4 px-3 text-[12px]', 'col-span-1 px-3 text-[12px]']}
+      />
       {openseaData && openseaData && openseaData.length > 0 ? (
         openseaData?.map((data: IOpenseaData) => {
           const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
@@ -205,12 +214,11 @@ const SpotTable = () => {
               classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
               key={`spot_${key_value}`}
               items={[
-                <div className="relative">
-                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-primaryBlue" />
-
+                <div className="relative text-[12px]">
+                  <div className="absolute left-[-12px] top-0 mt-[-8px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
                   {formatDateTimeFromString(event_timestamp)}
                 </div>,
-                <div className="flex items-center text-[14px] text-[#6286e3]">
+                <div className="flex items-center text-[12px] text-[#6286e3]">
                   <Image src={src} className="mr-3 rounded-[5px]" alt="" width={40} height={40} />
                   {`#${assetToken}` || 'No Name'}
                 </div>,
@@ -244,15 +252,15 @@ const FundingPaymentHistory = () => {
     <div className="scrollable mx-[46px] h-full overflow-y-scroll">
       <Cell
         items={['Time', 'Funding Rate (LONG)', 'Funding Rate (SHORT)']}
-        classNames={['col-span-4', 'col-span-4 px-3', 'col-span-4 px-3']}
+        classNames={['col-span-4 text-[12px]', 'col-span-4 px-3 text-[12px]', 'col-span-4 px-3 text-[12px]']}
       />
       {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
         fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
           <Cell
             key={`funding_${timestamp}`}
             items={[
-              <div className="time relative">
-                <div className="absolute left-[-12px] top-0 mt-[3px] h-[14px] w-[3px] rounded-[30px] bg-primaryBlue" />
+              <div className="time relative text-[12px]">
+                <div className="absolute left-[-12px] top-0 mt-[-8px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
                 {formatDateTime(timestamp)}
               </div>,
               <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 4))).toFixed(4)} %`}</div>,
