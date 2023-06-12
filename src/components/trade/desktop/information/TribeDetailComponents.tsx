@@ -103,59 +103,64 @@ const MarketTrade = () => {
   };
 
   return (
-    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
-      <Cell
-        items={['Time / Type', 'Action', 'Notional Size', 'Resulting Price', 'User ID', '']}
-        classNames={[
-          'col-span-3 text-[12px]',
-          'col-span-2 text-[12px]',
-          'col-span-2 text-[12px]',
-          'col-span-2 text-[12px]',
-          'col-span-2 text-[12px]',
-          'col-span-1'
-        ]}
-      />
-      {marketHistory && marketHistory.length > 0 ? (
-        marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
-          <Cell
-            key={`market_${timestamp}_${index}`}
-            rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
-            items={[
-              <div className="time relative">
-                <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
+    <div className="h-full">
+      <div className="mx-[46px]">
+        <Cell
+          items={['Time / Type', 'Action', 'Notional Size', 'Resulting Price', 'User ID', '']}
+          classNames={[
+            'col-span-3 text-[12px]',
+            'col-span-2 text-[12px]',
+            'col-span-2 text-[12px]',
+            'col-span-2 text-[12px]',
+            'col-span-2 text-[12px]',
+            'col-span-1'
+          ]}
+        />
+      </div>
 
-                <span className="text-[12px]">{formatDateTime(timestamp)}</span>
-                <br />
-                <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
-                  {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
-                </span>
-              </div>,
-              <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>,
+      <div className="scrollable mr-1 h-full overflow-y-scroll pl-[46px] pr-[42px]">
+        {marketHistory && marketHistory.length > 0 ? (
+          marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
+            <Cell
+              key={`market_${timestamp}_${index}`}
+              rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
+              items={[
+                <div className="time relative">
+                  <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
-              <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
-              <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
-              <div className="relative overflow-x-hidden text-ellipsis">
-                <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                  {trimString(userId, 10) || walletAddressToShow(userAddress)}
-                </span>
-                {fullWalletAddress === userAddress ? (
-                  <span
-                    className="absolute right-0 top-[1px] ml-1 rounded-sm
-                    bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
-                    YOU
+                  <span className="text-[12px]">{formatDateTime(timestamp)}</span>
+                  <br />
+                  <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
+                    {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
                   </span>
-                ) : null}
-              </div>,
-              <ExplorerButton txHash={txHash} />
-            ]}
-            classNames={['col-span-3 pl-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2 ', 'col-span-1 px-3']}
-          />
-        ))
-      ) : (
-        <div className="item-center flex justify-center">
-          <span className="body1 my-40 text-center text-mediumEmphasis">There is no market history.</span>
-        </div>
-      )}
+                </div>,
+                <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>,
+
+                <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
+                <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
+                <div className="relative overflow-x-hidden text-ellipsis">
+                  <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                    {trimString(userId, 10) || walletAddressToShow(userAddress)}
+                  </span>
+                  {fullWalletAddress === userAddress ? (
+                    <span
+                      className="absolute right-0 top-[1px] ml-1 rounded-sm
+                    bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
+                      YOU
+                    </span>
+                  ) : null}
+                </div>,
+                <ExplorerButton txHash={txHash} />
+              ]}
+              classNames={['col-span-3 pl-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2 ', 'col-span-1 px-3']}
+            />
+          ))
+        ) : (
+          <div className="item-center flex justify-center">
+            <span className="body1 my-40 text-center text-mediumEmphasis">There is no market history.</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -166,81 +171,91 @@ const SpotTable = () => {
   const currentToken = useNanostore(wsCurrentToken);
 
   return (
-    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
-      <Cell
-        items={['Time', 'Item', 'Price', '']}
-        classNames={['col-span-3 text-[12px]', 'col-span-3 px-3 text-[12px]', 'col-span-4 px-3 text-[12px]', 'col-span-1 px-3 text-[12px]']}
-      />
-      {openseaData && openseaData && openseaData.length > 0 ? (
-        openseaData?.map((data: IOpenseaData) => {
-          const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
-          const src = !asset
-            ? asset_bundle.assets[0].image_preview_url
-            : !asset.image_preview_url
-            ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
-            : asset.image_preview_url;
-          let isEth = false;
-          let isUSDC = false;
-          if (payment_token !== null) {
-            isEth = payment_token.symbol === 'ETH' || payment_token.symbol === 'WETH';
-            isUSDC = payment_token.symbol === 'USDC';
-          }
-          const transactionHash = transaction.transaction_hash;
-          const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
-          const getAnalyticsSpotEthers = () => {
-            if (firebaseAnalytics) {
-              logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
-                wallet: fullWalletAddress.substring(2),
+    <div className="h-full">
+      <div className="mx-[46px]">
+        <Cell
+          items={['Time', 'Item', 'Price', '']}
+          classNames={[
+            'col-span-3 text-[12px]',
+            'col-span-3 px-3 text-[12px]',
+            'col-span-4 px-3 text-[12px]',
+            'col-span-1 px-3 text-[12px]'
+          ]}
+        />
+      </div>
+
+      <div className="scrollable mr-1 h-full overflow-y-scroll pl-[46px] pr-[42px]">
+        {openseaData && openseaData && openseaData.length > 0 ? (
+          openseaData?.map((data: IOpenseaData) => {
+            const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
+            const src = !asset
+              ? asset_bundle.assets[0].image_preview_url
+              : !asset.image_preview_url
+              ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
+              : asset.image_preview_url;
+            let isEth = false;
+            let isUSDC = false;
+            if (payment_token !== null) {
+              isEth = payment_token.symbol === 'ETH' || payment_token.symbol === 'WETH';
+              isUSDC = payment_token.symbol === 'USDC';
+            }
+            const transactionHash = transaction.transaction_hash;
+            const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
+            const getAnalyticsSpotEthers = () => {
+              if (firebaseAnalytics) {
+                logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
+                  wallet: fullWalletAddress.substring(2),
+                  transaction: transactionHash.substring(2),
+                  token: assetToken,
+                  collection: currentToken // from tokenRef.current
+                });
+              }
+              apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
+                page: 'Trade',
                 transaction: transactionHash.substring(2),
                 token: assetToken,
                 collection: currentToken // from tokenRef.current
               });
-            }
-            apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
-              page: 'Trade',
-              transaction: transactionHash.substring(2),
-              token: assetToken,
-              collection: currentToken // from tokenRef.current
-            });
-          };
-          const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
-          const priceValue = !total_price
-            ? '0.00'
-            : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
-          const key_value = assetCreationDate + event_timestamp + assetToken;
+            };
+            const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
+            const priceValue = !total_price
+              ? '0.00'
+              : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
+            const key_value = assetCreationDate + event_timestamp + assetToken;
 
-          return (
-            <Cell
-              classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
-              key={`spot_${key_value}`}
-              items={[
-                <div className="relative text-[12px]">
-                  <div className="absolute left-[-12px] top-0 mt-[-8px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
-                  {formatDateTimeFromString(event_timestamp)}
-                </div>,
-                <div className="flex items-center text-[12px] text-[#6286e3]">
-                  <Image src={src} className="mr-3 rounded-[5px]" alt="" width={40} height={40} />
-                  {`#${assetToken}` || 'No Name'}
-                </div>,
-                <div className="price">
-                  {isUSDC ? (
-                    <PriceWithUsdc priceValue={priceValue} className="margin-16 font-400 text-[14px]" />
-                  ) : (
-                    <SmallPriceIcon priceValue={priceValue} />
-                  )}
-                </div>,
-                <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
-                  <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
-                </a>
-              ]}
-            />
-          );
-        })
-      ) : (
-        <div className="item-center flex justify-center">
-          <span className="body1 my-40 text-center text-mediumEmphasis">There is no spot info.</span>
-        </div>
-      )}
+            return (
+              <Cell
+                classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
+                key={`spot_${key_value}`}
+                items={[
+                  <div className="relative text-[12px]">
+                    <div className="absolute left-[-12px] top-0 mt-[-8px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
+                    {formatDateTimeFromString(event_timestamp)}
+                  </div>,
+                  <div className="flex items-center text-[12px] text-[#6286e3]">
+                    <Image src={src} className="mr-3 rounded-[5px]" alt="" width={40} height={40} />
+                    {`#${assetToken}` || 'No Name'}
+                  </div>,
+                  <div className="price">
+                    {isUSDC ? (
+                      <PriceWithUsdc priceValue={priceValue} className="margin-16 font-400 text-[14px]" />
+                    ) : (
+                      <SmallPriceIcon priceValue={priceValue} />
+                    )}
+                  </div>,
+                  <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
+                    <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
+                  </a>
+                ]}
+              />
+            );
+          })
+        ) : (
+          <div className="item-center flex justify-center">
+            <span className="body1 my-40 text-center text-mediumEmphasis">There is no spot info.</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -249,35 +264,40 @@ const FundingPaymentHistory = () => {
   const fundingPaymentHistory = useNanostore(tsFundingPaymentHistory);
 
   return fundingPaymentHistory !== null ? (
-    <div className="scrollable mx-[46px] h-full overflow-y-scroll">
-      <Cell
-        items={['Time', 'Funding Rate (LONG)', 'Funding Rate (SHORT)']}
-        classNames={['col-span-4 text-[12px]', 'col-span-4 px-3 text-[12px]', 'col-span-4 px-3 text-[12px]']}
-      />
-      {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
-        fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
-          <Cell
-            key={`funding_${timestamp}`}
-            items={[
-              <div className="time relative text-[12px]">
-                <div className="absolute left-[-12px] top-0 mt-[-8px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
-                {formatDateTime(timestamp)}
-              </div>,
-              <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 4))).toFixed(4)} %`}</div>,
-              <div>{`${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 4))).toFixed(4)} %`}</div>
-            ]}
-            classNames={[
-              'col-span-4 px-3',
-              `col-span-4 px-3 market ${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`,
-              `col-span-4 px-3 market ${rateLong > 0 ? 'text-marketGreen' : 'text-marketRed'}`
-            ]}
-          />
-        ))
-      ) : (
-        <div className="item-center flex justify-center">
-          <span className="body1 my-40 text-center text-mediumEmphasis">You have no funding payment history.</span>
-        </div>
-      )}
+    <div className="h-full">
+      <div className="mx-[46px]">
+        <Cell
+          items={['Time', 'Funding Rate (LONG)', 'Funding Rate (SHORT)']}
+          classNames={['col-span-4 text-[12px]', 'col-span-4 px-3 text-[12px]', 'col-span-4 px-3 text-[12px]']}
+        />
+      </div>
+
+      <div className="scrollable mr-1 h-full overflow-y-scroll pl-[46px] pr-[42px]">
+        {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
+          fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
+            <Cell
+              key={`funding_${timestamp}`}
+              items={[
+                <div className="time relative text-[12px]">
+                  <div className="absolute left-[-12px] top-0 mt-[-8px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
+                  {formatDateTime(timestamp)}
+                </div>,
+                <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 4))).toFixed(4)} %`}</div>,
+                <div>{`${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 4))).toFixed(4)} %`}</div>
+              ]}
+              classNames={[
+                'col-span-4 px-3',
+                `col-span-4 px-3 market ${rateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}`,
+                `col-span-4 px-3 market ${rateLong > 0 ? 'text-marketGreen' : 'text-marketRed'}`
+              ]}
+            />
+          ))
+        ) : (
+          <div className="item-center flex justify-center">
+            <span className="body1 my-40 text-center text-mediumEmphasis">You have no funding payment history.</span>
+          </div>
+        )}
+      </div>
     </div>
   ) : null;
 };
