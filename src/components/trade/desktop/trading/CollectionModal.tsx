@@ -17,10 +17,10 @@ const SortingIndicator = (props: any) => {
 
   return (
     <Image
-      className="icon"
+      className="ml-1"
       alt=""
-      width={16}
-      height={16}
+      width={10}
+      height={10}
       src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
     />
   );
@@ -284,7 +284,7 @@ const CollectionModal = (props: any) => {
                 <div
                   className="basis-1/5 cursor-pointer px-[18px]"
                   onClick={() => setPositionSorting({ ...initSorting, futurePrice: (positionSorting.futurePrice + 1) % 3 })}>
-                  <div className="flex">
+                  <div className="mb-1 flex">
                     vAMM Price <SortingIndicator value={positionSorting.futurePrice} />
                   </div>
                   <p>Oracle Price</p>
@@ -292,14 +292,14 @@ const CollectionModal = (props: any) => {
                 <div
                   className="basis-1/4 cursor-pointer px-[18px]"
                   onClick={() => setPositionSorting({ ...initSorting, priceGap: (positionSorting.priceGap + 1) % 3 })}>
-                  <div className="flex">
+                  <div className="mb-1 flex">
                     vAMM-Oracle <SortingIndicator value={positionSorting.priceGap} />
                   </div>
                   <p>Price Gap</p>
                 </div>
                 <div className="basis-1/6 cursor-pointer px-[18px]">
                   <div
-                    className="flex text-right"
+                    className="mb-1 flex justify-end"
                     onClick={() => setPositionSorting({ ...initSorting, timeValue: (positionSorting.timeValue + 1) % 3 })}>
                     Change <SortingIndicator value={positionSorting.timeValue} />
                   </div>
@@ -334,13 +334,13 @@ const CollectionModal = (props: any) => {
                   </div>
                 </div>
                 <div
-                  className="basis-1/6 cursor-pointer px-[18px] text-right"
+                  className="basis-1/6 cursor-pointer pl-[12px]"
                   onClick={() => setPositionSorting({ ...initSorting, dayVolume: (positionSorting.dayVolume + 1) % 3 })}>
-                  <div className="flex">
+                  <div className="mb-1 flex">
                     24hr Volume <SortingIndicator value={positionSorting.dayVolume} />
                   </div>
                 </div>
-                <div className="basis-1/5 px-[18px] text-right">Funding Rate</div>
+                <div className="basis-1/5 px-[18px]">Funding Rate</div>
               </div>
             </div>
             <div className="tbody">
