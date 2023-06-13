@@ -10,6 +10,7 @@ import { withRouter } from 'next/router';
 import { localeConversion } from '@/utils/localeConversion';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { userPoint } from '@/stores/airdrop';
+import { $isShowMobileModal } from '@/stores/common';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -308,7 +309,10 @@ const MobileMenu = (props: any) => {
             className="fixed bottom-[5px] right-[20px]"
             width={40}
             height={40}
-            onClick={() => setIsShowMobileMenu(false)}
+            onClick={() => {
+              setIsShowMobileMenu(false);
+              $isShowMobileModal.set(true);
+            }}
           />
         </div>
       </div>

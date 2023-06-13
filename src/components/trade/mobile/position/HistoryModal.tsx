@@ -18,6 +18,7 @@ import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
+import { $isShowMobileModal } from '@/stores/common';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -178,6 +179,7 @@ const HistoryModal = (props: any) => {
       setIsShowDetail(false);
     } else {
       setShowHistoryModal(false);
+      $isShowMobileModal.set(false);
     }
   };
 
@@ -209,8 +211,8 @@ const HistoryModal = (props: any) => {
     <div
       className={`fixed inset-0 z-10 h-screen w-full
         ${showHistoryModal ? 'left-[0]' : 'left-[100%]'}
-        transition-left overflow-auto bg-black
-        bg-opacity-40 duration-500
+        transition-left z-[12] overflow-auto
+        bg-black bg-opacity-40 duration-500
       `}>
       <div
         className="relative top-0 mx-auto h-[calc(100%-50px)] w-full overflow-hidden

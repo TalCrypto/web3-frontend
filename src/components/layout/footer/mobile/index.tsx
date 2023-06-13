@@ -7,6 +7,7 @@ import { wsIsLogin, wsIsShowTradingMobile, wsIsWalletLoading, wsIsWrongNetwork, 
 import { useStore as useNanostore } from '@nanostores/react';
 import { walletProvider } from '@/utils/walletProvider';
 import MobileMenu from '@/components/trade/mobile/menu';
+import { $isShowMobileModal } from '@/stores/common';
 
 function MobileFooter() {
   const isLogin = useNanostore(wsIsLogin);
@@ -32,6 +33,7 @@ function MobileFooter() {
     }
 
     wsIsShowTradingMobile.set(true);
+    $isShowMobileModal.set(true);
   };
 
   return (
@@ -85,6 +87,7 @@ function MobileFooter() {
               className="absolute bottom-[5px] right-0"
               onClick={() => {
                 setIsShowMobileMenu(true);
+                $isShowMobileModal.set(true);
               }}>
               <Image src="/images/mobile/common/menu_icon.svg" alt="" width={40} height={40} />
             </button>

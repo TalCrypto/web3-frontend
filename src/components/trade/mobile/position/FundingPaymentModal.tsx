@@ -11,6 +11,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import collectionList from '@/const/collectionList';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
+import { $isShowMobileModal } from '@/stores/common';
 
 const FundingPaymentModal = (props: any) => {
   const { showFundingPaymentModal, setShowFundingPaymentModal } = props;
@@ -42,14 +43,15 @@ const FundingPaymentModal = (props: any) => {
 
   const handleBackClick = () => {
     setShowFundingPaymentModal(false);
+    $isShowMobileModal.set(false);
   };
 
   return (
     <div
       className={`fixed bottom-0 left-0 top-0 z-10 flex h-full w-full
         ${showFundingPaymentModal ? 'left-[0]' : 'left-[100%]'}
-        transition-left w-full items-center justify-center bg-black/[.2]
-        backdrop-blur-[4px] duration-500
+        transition-left z-[12] w-full items-center justify-center
+        bg-black/[.2] backdrop-blur-[4px] duration-500
       `}
       onClick={() => setShowFundingPaymentModal(false)}>
       <div
