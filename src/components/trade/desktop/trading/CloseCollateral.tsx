@@ -614,7 +614,7 @@ function EstimationComponent(props: any) {
               Collateral&nbsp;
               {Number(closeValue) > 0 && Number(closeValue) < Number(currentMaxValue) ? (
                 <TitleTips
-                  titleText={<Image src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
+                  titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
                   tipsText="Collateral will not change."
                   placement="top"
                 />
