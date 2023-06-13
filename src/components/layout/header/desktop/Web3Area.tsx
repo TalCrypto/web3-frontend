@@ -120,6 +120,7 @@ function Web3Area() {
 
     auth.onAuthStateChanged(user => {
       alert(5);
+      alert(localStorageLogin === 'true');
       if (user && localStorageLogin === 'true') {
         alert(3);
         connectWallet(null, false);
