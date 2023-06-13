@@ -37,8 +37,8 @@ function MobileFooter() {
   return (
     <>
       <div
-        className="backface-visibility-hidden z-600 duration-400 fixed
-          bottom-0 left-0 box-border block h-[49px] w-full transform bg-secondaryBlue
+        className="backface-visibility-hidden duration-400 fixed bottom-0
+          left-0 z-10 box-border block h-[49px] w-full transform bg-secondaryBlue
           pr-5 text-white md:hidden">
         <div
           className="box-border flex h-full w-full
