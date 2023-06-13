@@ -65,7 +65,7 @@ export default function CollectionListModal(props: any) {
 
   return (
     <div
-      className={`t-0 fixed bottom-0 left-0 right-0 z-10 w-full
+      className={`t-0 fixed bottom-0 left-0 right-0 z-[12] w-full
         ${isShowModal && marketData.length > 0 ? 'h-full' : 'h-0'}
        bg-black/[.3] backdrop-blur-[4px]`}
       onClick={() => {
