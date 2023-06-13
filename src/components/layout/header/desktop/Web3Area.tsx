@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-alert */
 import React, { useState, useEffect } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
@@ -112,26 +111,19 @@ function Web3Area() {
   useEffect(() => {
     const auth = firebaseAuth;
     const localStorageLogin = localStorage.getItem('isLoggedin');
-    alert(localStorage.getItem('isLoggedin'));
-    alert(localStorageLogin);
     if (!auth) return;
 
-    alert(2);
-
     auth.onAuthStateChanged(user => {
-      alert(5);
-      alert(localStorageLogin === 'true');
-      alert(user);
-      if (user && localStorageLogin === 'true') {
-        alert(3);
+      if (localStorageLogin === 'true') {
         connectWallet(null, false);
-        alert(4);
+      } else {
+        wsIsWalletLoading.set(false);
+      }
 
+      if (user) {
         user.getIdToken(true).then(tokenId => {
           walletProvider.firebaseIdToken = tokenId;
         });
-      } else {
-        wsIsWalletLoading.set(false);
       }
     });
   }, []);
