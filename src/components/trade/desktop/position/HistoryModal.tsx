@@ -5,19 +5,16 @@
 
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-import { getTradingActionTypeFromAPI } from '@/components/trade/desktop/information/ActionType';
-import collectionList from '@/const/collectionList';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { apiConnection } from '@/utils/apiConnection';
-import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
-import { BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { walletProvider } from '@/utils/walletProvider';
-import { useStore as useNanostore } from '@nanostores/react';
-import { wsHistoryGroupByMonth } from '@/stores/WalletState';
+import { useAccount } from 'wagmi';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
+import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
+import { getTradingActionTypeFromAPI } from '@/utils/actionType';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -50,39 +47,19 @@ function DetailRowWithPriceIcon(props: any) {
   );
 }
 
-const defaultSelectedRecord = {
-  exchangedPositionSize: 0,
-  ammAddress: '',
-  entryPrice: '',
-  timestamp: 0,
-  txHash: '',
-  totalFundingPayment: '',
-  amount: '',
-  realizedPnl: '',
-  fundingPayment: '',
-  positionNotional: '',
-  notionalChange: '',
-  collateralChange: 0,
-  margin: '',
-  liquidationPenalty: '',
-  openNotional: '',
-  fee: '',
-  positionSizeAfter: ''
-};
-
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
-  const fullWalletAddress = walletProvider.holderAddress;
-  const historyRecordsByMonth = useNanostore(wsHistoryGroupByMonth);
+  const { address } = useAccount();
+  const historyRecordsByMonth = usePsHistoryByMonth();
 
-  const [selectedRecord, setSelectedRecord] = useState(defaultSelectedRecord);
+  const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 
   const hide = () => {
     setShowHistoryModal(false);
   };
 
   useEffect(() => {
-    const recordMonths: any = Object.keys(historyRecordsByMonth);
+    const recordMonths: Array<string> = Object.keys(historyRecordsByMonth);
     if (recordMonths.length > 0) {
       const record = historyRecordsByMonth[recordMonths[0]]?.[0];
       setSelectedRecord(record);
@@ -108,79 +85,85 @@ const HistoryModal = (props: any) => {
   );
 
   // detail data, selected record
-  const tradeType = getTradingActionTypeFromAPI(selectedRecord);
+  const tradeType = selectedRecord ? getTradingActionTypeFromAPI(selectedRecord) : '';
   const isFundingPaymentRecord = tradeType === 'Full Close' || tradeType === 'Full Liquidation';
   const isLiquidation = tradeType === 'Partial Liquidation' || tradeType === 'Full Liquidation';
   const isAdjustCollateral = tradeType === 'Add Collateral' || tradeType === 'Reduce Collateral';
   const isFullClose = tradeType === 'Full Close';
   const typeClassName =
-    Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) > 0
+    selectedRecord && selectedRecord.exchangedPositionSize > 0
       ? 'text-marketGreen'
-      : Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) < 0
+      : selectedRecord && selectedRecord.exchangedPositionSize < 0
       ? 'text-marketRed'
       : '';
 
-  const amountNumber = !selectedRecord.amount ? BigNumber.from(0) : BigNumber.from(selectedRecord.amount);
-  const realizedPnlNumber = !selectedRecord.realizedPnl ? BigNumber.from(0) : BigNumber.from(selectedRecord.realizedPnl);
-  const fundingPaymentNumber = !selectedRecord.fundingPayment ? BigNumber.from(0) : BigNumber.from(selectedRecord.fundingPayment);
-  const positionNotionalNumber = !selectedRecord.positionNotional ? BigNumber.from(0) : BigNumber.from(selectedRecord.positionNotional);
-  const notionalChangeNumber = !selectedRecord.notionalChange ? BigNumber.from(0) : BigNumber.from(selectedRecord.notionalChange);
-  const collateralChangeNumber = !selectedRecord.collateralChange ? BigNumber.from(0) : BigNumber.from(selectedRecord.collateralChange);
-  const marginNumber = !selectedRecord.margin ? BigNumber.from(0) : BigNumber.from(selectedRecord.margin);
-  const liquidationPenaltyNumber = !selectedRecord.liquidationPenalty
-    ? BigNumber.from(0)
-    : BigNumber.from(selectedRecord.liquidationPenalty);
-  const openNotionalNumber = !selectedRecord.positionNotional ? BigNumber.from(0) : BigNumber.from(selectedRecord.openNotional);
+  const amountNumber = selectedRecord?.amount;
+  const realizedPnlNumber = selectedRecord?.realizedPnl;
+  const fundingPaymentNumber = selectedRecord?.fundingPayment;
+  const positionNotionalNumber = selectedRecord?.positionNotional;
+  const notionalChangeNumber = selectedRecord?.notionalChange;
+  const collateralChangeNumber = selectedRecord?.collateralChange;
+  const marginNumber = selectedRecord?.margin;
+  const liquidationPenaltyNumber = selectedRecord?.liquidationPenalty;
+  const openNotionalNumber = selectedRecord?.openNotional;
 
   const collateralChange =
     tradeType === 'Partial Close'
       ? '-.--'
       : isLiquidation
-      ? Number(calculateNumber(marginNumber, 4))
+      ? marginNumber
       : isFundingPaymentRecord
-      ? -Number(calculateNumber(amountNumber.abs().add(realizedPnlNumber).sub(fundingPaymentNumber), 4))
+      ? -(Math.abs(amountNumber ?? 0) + (realizedPnlNumber ?? 0) - (fundingPaymentNumber ?? 0)).toFixed(4)
       : isAdjustCollateral
-      ? Number(calculateNumber(collateralChangeNumber.add(fundingPaymentNumber), 4))
-      : formatterValue(selectedRecord.collateralChange, 4);
-  const fundingPayment =
-    selectedRecord.totalFundingPayment === '0' ? '0.0000' : Number(calculateNumber(selectedRecord.totalFundingPayment, 4));
-  const fee = isLiquidation || isAdjustCollateral ? '-.--' : Math.abs(Number(calculateNumber(selectedRecord.fee, 6)));
+      ? (collateralChangeNumber ?? 0 + (fundingPaymentNumber ?? 0)).toFixed(4)
+      : collateralChangeNumber?.toFixed(4);
+  const fundingPayment = !selectedRecord
+    ? '-.--'
+    : selectedRecord.totalFundingPayment !== 0
+    ? selectedRecord.totalFundingPayment.toFixed(4)
+    : '0.0000';
+  const fee = isLiquidation || isAdjustCollateral || !selectedRecord ? '-.--' : selectedRecord.fee.toFixed(6);
   const contractSize =
     !selectedRecord || isAdjustCollateral
       ? '-.--'
       : isLiquidation
-      ? Math.abs(Number(calculateNumber(selectedRecord.positionSizeAfter, 4)))
-      : Math.abs(Number(calculateNumber(selectedRecord.exchangedPositionSize, 4)));
-  const notionalChange = isAdjustCollateral
-    ? '-.--'
-    : isLiquidation
-    ? Number(calculateNumber(openNotionalNumber, 4))
-    : isFundingPaymentRecord
-    ? -Number(calculateNumber(positionNotionalNumber.sub(realizedPnlNumber), 4)).toFixed(4)
-    : Number(calculateNumber(notionalChangeNumber.sub(realizedPnlNumber), 4)).toFixed(4);
-  const liquidationPenalty = isLiquidation ? -Number(calculateNumber(liquidationPenaltyNumber, 4)) : '-.--';
+      ? Math.abs(selectedRecord.positionSizeAfter).toFixed(4)
+      : Math.abs(selectedRecord.exchangedPositionSize).toFixed(4);
+  const notionalChange =
+    !selectedRecord || isAdjustCollateral
+      ? '-.--'
+      : isLiquidation
+      ? openNotionalNumber?.toFixed(4)
+      : isFundingPaymentRecord
+      ? -Number((positionNotionalNumber ?? 0 - (realizedPnlNumber ?? 0)).toFixed(4))
+      : (notionalChangeNumber ?? 0 - (realizedPnlNumber ?? 0)).toFixed(4);
+  const liquidationPenalty = isLiquidation ? -Number(liquidationPenaltyNumber?.toFixed(4)) : '-.--';
 
-  const logTradeButton = (e: any, txHash: any, amm: any) => {
+  const logTradeButton = (e: any, txHash: any, amm: AMM) => {
     if (!selectedRecord) {
       e.preventDefault();
       return;
     }
-
-    const filtering = collectionList.filter((item: any) => item.amm.toUpperCase() === amm.toUpperCase());
-    const logCollection = filtering[0].collection;
-    if (firebaseAnalytics) {
+    if (!address) return;
+    const filtering = getCollectionInformation(amm);
+    const logCollection = filtering.collection;
+    if (firebaseAnalytics && address) {
       logEvent(firebaseAnalytics, 'dashboard_position_view_history_etherscan_pressed', {
-        wallet: fullWalletAddress.substring(2),
+        wallet: address.substring(2),
         transaction: txHash.substring(2),
         collection: logCollection
       });
     }
 
-    apiConnection.postUserEvent('dashboard_position_view_history_etherscan_pressed', {
-      page: 'Dashboard',
-      transaction: txHash.substring(2),
-      collection: logCollection
-    });
+    apiConnection.postUserEvent(
+      'dashboard_position_view_history_etherscan_pressed',
+      {
+        page: 'Dashboard',
+        transaction: txHash.substring(2),
+        collection: logCollection
+      },
+      address
+    );
   };
 
   return (
@@ -225,7 +208,7 @@ const HistoryModal = (props: any) => {
               </div>
               <div className="h-[500px] overflow-auto p-1">
                 {Object.keys(historyRecordsByMonth).map((month: any) => {
-                  const records: any = historyRecordsByMonth[month];
+                  const records: Array<PositionHistoryRecord> = historyRecordsByMonth[month];
                   return (
                     <div key={`group-${month}`} className="mb-1 bg-lightBlue">
                       <div
@@ -246,40 +229,29 @@ const HistoryModal = (props: any) => {
                         />
                       </div>
                       <div id={`group-${month}`} className="collapsible">
-                        {records.map((record: any, idx: any) => {
+                        {records.map((record: PositionHistoryRecord, idx: any) => {
                           const currentRecordType = getTradingActionTypeFromAPI(record);
-                          const recordAmount = BigNumber.from(record.amount).abs();
-                          const recordFee = !record.fee ? BigNumber.from(0) : BigNumber.from(record.fee);
-                          const recordRealizedPnl = !record.realizedPnl ? BigNumber.from(0) : BigNumber.from(record.realizedPnl);
-                          const recordRealizedFundingPayment = !record.fundingPayment
-                            ? BigNumber.from(0)
-                            : BigNumber.from(record.fundingPayment);
-                          const recordCollateralChange = !record.collateralChange
-                            ? BigNumber.from(0)
-                            : BigNumber.from(record.collateralChange);
+                          const recordAmount = Math.abs(record.amount);
+                          const recordFee = record.fee;
+                          const recordRealizedPnl = record.realizedPnl;
+                          const recordRealizedFundingPayment = record.fundingPayment;
+                          const recordCollateralChange = record.collateralChange;
                           const balance =
                             currentRecordType === 'Open' || currentRecordType === 'Add' || currentRecordType === 'Add Collateral'
-                              ? -Math.abs(
-                                  Number(calculateNumber(recordAmount.add(recordFee).add(recordRealizedFundingPayment), 4))
-                                ).toFixed(4)
+                              ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment).toFixed(4)
                               : currentRecordType === 'Reduce Collateral'
-                              ? Math.abs(Number(calculateNumber(recordCollateralChange.add(recordRealizedFundingPayment), 4))).toFixed(4)
+                              ? Math.abs(recordCollateralChange + recordRealizedFundingPayment).toFixed(4)
                               : currentRecordType === 'Full Close'
-                              ? Math.abs(
-                                  Number(
-                                    calculateNumber(recordAmount.add(recordRealizedPnl).sub(recordFee).sub(recordRealizedFundingPayment), 4)
-                                  )
-                                ).toFixed(4)
-                              : -Math.abs(Number(calculateNumber(record.fee, 4))).toFixed(4);
+                              ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment).toFixed(4)
+                              : -Math.abs(recordFee).toFixed(4);
                           return (
                             <div
                               key={`item-${idx}-${record.timestamp}`}
                               className={`flex cursor-pointer justify-between
                                 border-b-[1px] border-b-secondaryBlue 
                                 px-6 py-[10px] text-highEmphasis
-                                ${record.timestamp === selectedRecord.timestamp ? 'bg-secondaryBlue' : ''}`}
+                                ${selectedRecord && record.timestamp === selectedRecord.timestamp ? 'bg-secondaryBlue' : ''}`}
                               onClick={() => {
-                                setSelectedRecord(defaultSelectedRecord);
                                 setSelectedRecord(record);
                               }}>
                               <div className="flex max-w-[75%]">
@@ -333,41 +305,33 @@ const HistoryModal = (props: any) => {
               </div>
               <div className="flex items-center justify-center text-[16px] text-highEmphasis">
                 <span>Details</span>
-                <ExplorerButton
-                  className="mr-[6px]"
-                  txHash={selectedRecord.txHash}
-                  onClick={(e: any) => logTradeButton(e, selectedRecord.txHash, selectedRecord.ammAddress)}
-                />
+                {selectedRecord && (
+                  <ExplorerButton
+                    className="mr-[6px]"
+                    txHash={selectedRecord.txHash}
+                    onClick={(e: any) => logTradeButton(e, selectedRecord.txHash, selectedRecord.amm)}
+                  />
+                )}
               </div>
               {isLiquidation ? <LiquidationWarning /> : null}
               <div className="p-3 text-mediumEmphasis">
-                {detailRow(
-                  'Collection',
-                  selectedRecord.ammAddress ? (
-                    <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} showCollectionName />
-                  ) : (
-                    '-'
-                  )
-                )}
-                {detailRow('Action', getTradingActionTypeFromAPI(selectedRecord)) || '-'}
-                {detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
-                {detailRow(
-                  'Entry Price',
-                  selectedRecord.entryPrice === 'NaN' || selectedRecord.entryPrice === 'Infinity' || !selectedRecord.entryPrice
-                    ? '0.00'
-                    : Number(formatterValue(Number(BigNumber.from(selectedRecord.entryPrice)), 2)).toFixed(2)
-                )}
-                {detailRow(
-                  'Type',
-                  <span className={typeClassName}>
-                    {Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) > 0
-                      ? 'LONG'
-                      : Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) < 0
-                      ? 'SHORT'
-                      : '-.--'}
-                  </span>
-                )}
-                {!isLiquidation
+                {selectedRecord &&
+                  detailRow(
+                    'Collection',
+                    selectedRecord.amm ? <TypeWithIconByAmm className="icon-label" amm={selectedRecord.amm} showCollectionName /> : '-'
+                  )}
+                {(selectedRecord && detailRow('Action', getTradingActionTypeFromAPI(selectedRecord))) || '-'}
+                {selectedRecord &&
+                  detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
+                {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                {selectedRecord &&
+                  detailRow(
+                    'Type',
+                    <span className={typeClassName}>
+                      {selectedRecord.exchangedPositionSize > 0 ? 'LONG' : selectedRecord.exchangedPositionSize < 0 ? 'SHORT' : '-.--'}
+                    </span>
+                  )}
+                {!isLiquidation && selectedRecord
                   ? detailRow(
                       'Collateral Change',
                       <PriceWithIcon
@@ -384,11 +348,13 @@ const HistoryModal = (props: any) => {
                         null}
                       </PriceWithIcon>
                     )
-                  : detailRow(
+                  : selectedRecord
+                  ? detailRow(
                       'Resulting Collateral',
                       <PriceWithIcon className="icon-label" priceValue={selectedRecord.ammAddress ? `${collateralChange}` : '--.--'} />
-                    )}
-                {isLiquidation
+                    )
+                  : null}
+                {isLiquidation && selectedRecord
                   ? detailRow(
                       'Resulting Contract Size',
                       selectedRecord.ammAddress ? (
@@ -397,23 +363,29 @@ const HistoryModal = (props: any) => {
                         '-'
                       )
                     )
-                  : detailRow(
+                  : selectedRecord
+                  ? detailRow(
                       'Contract Size',
                       selectedRecord.ammAddress ? (
                         <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
                       ) : (
                         '-'
                       )
-                    )}
-                {isLiquidation
+                    )
+                  : null}
+                {isLiquidation && selectedRecord
                   ? detailRow('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
                   : detailRow(
                       'Notional Change',
                       <PriceWithIcon className="icon-label" priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
                     )}
-                {!isLiquidation ? detailRow('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
-                {isLiquidation ? <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} /> : null}
-                {isFullClose ? <DetailRowWithPriceIcon label="Funding Payment" content={fundingPayment} /> : null}
+                {!isLiquidation && selectedRecord
+                  ? detailRow('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />)
+                  : null}
+                {isLiquidation && selectedRecord ? (
+                  <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} />
+                ) : null}
+                {isFullClose && selectedRecord ? <DetailRowWithPriceIcon label="Funding Payment" content={fundingPayment} /> : null}
               </div>
             </div>
           </>

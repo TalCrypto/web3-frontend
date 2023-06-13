@@ -2,7 +2,7 @@ import { getAddressConfig } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
 import { Contract, Contracts, getContracts } from '@/const/contracts';
 import React, { useEffect, useState } from 'react';
-import { Address, useAccount, useContractRead, useContractReads, useNetwork } from 'wagmi';
+import { useContractReads, useNetwork } from 'wagmi';
 
 const CollectionUpdater: React.FC<{ chViewer: Contract; amm: Contract }> = ({ chViewer, amm }) => {
   const { data, isError, isLoading } = useContractReads({

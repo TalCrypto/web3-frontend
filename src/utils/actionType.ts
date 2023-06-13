@@ -1,3 +1,4 @@
+import { PositionHistoryRecord } from '@/hooks/psHistory';
 import { formatterValue } from '@/utils/calculateNumbers';
 
 export function getTradingActionType(item: any) {
@@ -19,7 +20,7 @@ export function getTradingActionType(item: any) {
   return actionType;
 }
 
-export function getTradingActionTypeFromAPI(item: any, isMobile = false) {
+export function getTradingActionTypeFromAPI(item: PositionHistoryRecord, isMobile = false) {
   let actionType = '';
   if (item.type === 'adjust') {
     const collateralNumber = Number(formatterValue(item.collateralChange, 18));

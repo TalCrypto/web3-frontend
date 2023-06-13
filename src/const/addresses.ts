@@ -50,3 +50,14 @@ export const getAddressConfig = (chain: Chain, unsupported: boolean): AddressCon
       throw new Error('unsupported chain');
   }
 };
+
+export const getAMMByAddress = (chain: Chain, unsupported: boolean, address: Address): AMM | undefined => {
+  const addressConfig = getAddressConfig(chain, unsupported);
+  const ammKeys = Object.keys(addressConfig.amms) as AMM[];
+  for (let i = 0; i < ammKeys.length; i += 1) {
+    if (addressConfig.amms[ammKeys[i]] === address) {
+      return ammKeys[i];
+    }
+  }
+  return undefined;
+};

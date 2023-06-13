@@ -16,7 +16,7 @@ import { firebaseAnalytics } from '@/const/firebaseConfig';
 
 import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
-import { getTradingActionTypeFromAPI } from '@/components/trade/desktop/information/ActionType';
+import { getTradingActionTypeFromAPI } from '@/utils/actionType';
 import { trimString } from '@/utils/string';
 
 import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
@@ -24,10 +24,10 @@ import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { updateTradeInformation } from '@/utils/TradeInformation';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
-import { walletProvider } from '@/utils/walletProvider';
 import { wsCurrentToken } from '@/stores/WalletState';
+import { updateTradeInformation } from '@/utils/TradeInformation';
+import { walletProvider } from '@/utils/walletProvider';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;

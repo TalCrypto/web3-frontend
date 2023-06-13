@@ -6,7 +6,7 @@
 
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-import { getTradingActionTypeFromAPI } from '@/components/trade/desktop/information/ActionType';
+import { getTradingActionTypeFromAPI } from '@/utils/actionType';
 import collectionList from '@/const/collectionList';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { apiConnection } from '@/utils/apiConnection';
@@ -16,9 +16,9 @@ import { logEvent } from 'firebase/analytics';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { walletProvider } from '@/utils/walletProvider';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsHistoryGroupByMonth } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
