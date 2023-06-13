@@ -22,7 +22,7 @@ function OverFluctuationError(props: any) {
         <div className="col">
           Your transaction has failed due to high price fluctuation. <br />
           <br /> Please try again with smaller notional value
-          <div className="confirm" onClick={closeWindow}>
+          <div className="cursor-pointer" onClick={closeWindow}>
             <div className="text">OK</div>
           </div>
         </div>

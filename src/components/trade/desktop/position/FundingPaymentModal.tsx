@@ -162,7 +162,7 @@ const FundingPaymentModal = (props: any) => {
                   const value = Number(calculateNumber(item.fundingPaymentPnl, 6))?.toFixed(6);
                   return (
                     <div
-                      className={`flex cursor-pointer p-3
+                      className={`flex p-3
                       ${idx % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}`}
                       key={`fp-row-${idx}`}>
                       <div className="flex min-w-[190px] items-center px-[18px]">

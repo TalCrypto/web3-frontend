@@ -42,7 +42,7 @@ function DetailRowWithPriceIcon(props: any) {
   const { label, content } = props;
   const numberVal = Number(content);
   return (
-    <div className="flex justify-between text-[14px]">
+    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 text-[14px]">
       <div className="">{label}</div>
       <div className="text-white">
         <PriceWithIcon className={`icon-label ${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
