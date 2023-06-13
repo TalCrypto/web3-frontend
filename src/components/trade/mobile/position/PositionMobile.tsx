@@ -164,10 +164,10 @@ export default function PositionMobile(props: any) {
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
         </div>
         <div className="flex space-x-[24px]">
-          <div onClick={() => setShowFundingPaymentModal(true)}>
+          <div onClick={() => setShowHistoryModal(true)}>
             <Image alt="" src="/images/components/trade/position/trade_history.svg" width={16} height={16} />
           </div>
-          <div onClick={() => setShowHistoryModal(true)}>
+          <div onClick={() => setShowFundingPaymentModal(true)}>
             <Image alt="" src="/images/components/trade/position/funding_payment.svg" width={16} height={16} />
           </div>
         </div>
