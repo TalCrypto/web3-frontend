@@ -11,7 +11,6 @@ import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
@@ -219,9 +218,9 @@ export default function PositionDetails(props: any) {
               priceValue={
                 !positionInfo
                   ? '---'
-                  : Number(calculateNumber(positionInfo.liquidationPrice, 2)) < 0
+                  : positionInfo.liquidationPrice < 0
                   ? '0.00'
-                  : calculateNumber(positionInfo.liquidationPrice, 2)
+                  : positionInfo.liquidationPrice.toFixed(2)
               }
               className={`normalprice ${tradingData?.isOverPriceGap ? 'text-warn' : ''} `}
               isLoading={isLoading || isPending}
