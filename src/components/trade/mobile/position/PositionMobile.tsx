@@ -181,6 +181,15 @@ export default function PositionMobile(props: any) {
               <div>
                 <MedPriceIcon
                   priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
+                  className={
+                    !userPosition
+                      ? ''
+                      : Number(numberTotalPnl) > 0
+                      ? 'text-marketGreen'
+                      : Number(numberTotalPnl) === 0
+                      ? ''
+                      : 'text-marketRed'
+                  }
                   isLoading={isLoading || collectionIsPending[currentCollection.amm]}
                 />
               </div>
@@ -189,7 +198,11 @@ export default function PositionMobile(props: any) {
 
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
-            <div className="text-[14px]">{!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}</div>
+            <div
+              className={`text-[14px]
+              ${!userPosition ? '' : userPosition.size > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+              {!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
+            </div>
           </div>
 
           {/* <div className="flex mb-1">
