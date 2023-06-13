@@ -172,14 +172,13 @@ const BottomContent: React.FC<BottomContentProps> = ({ address, balance, callBal
 interface ProfileContentProps {
   address: string;
   balance: number;
-  showDisconnectTooltip: boolean;
   setShowDisconnectTooltip: (value: boolean) => void;
   callBalance: { portfolio: string };
   userInfo: { username: string } | null;
 }
 
 const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = (props, ref) => {
-  const { address, balance, showDisconnectTooltip, setShowDisconnectTooltip, callBalance, userInfo } = props;
+  const { address, balance, setShowDisconnectTooltip, callBalance, userInfo } = props;
   const isNotSetUsername = !userInfo || !userInfo.username;
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 

@@ -195,7 +195,7 @@ const MobileMenu = (props: any) => {
         <Image
           src="/images/mobile/menu/social.svg"
           alt=""
-          className="fixed right-[20px] top-[340px]"
+          className="fixed bottom-[260px] right-[20px]"
           width={40}
           height={40}
           onClick={onBtnClickSocial}

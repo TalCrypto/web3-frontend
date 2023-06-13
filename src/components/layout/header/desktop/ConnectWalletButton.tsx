@@ -109,7 +109,6 @@ const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = props => {
       <ProfileContent
         address={address}
         balance={balance}
-        showDisconnectTooltip={showDisconnectTooltip}
         setShowDisconnectTooltip={setShowDisconnectTooltip}
         callBalance={callBalance}
         userInfo={userInfo}

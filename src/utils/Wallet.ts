@@ -80,6 +80,7 @@ const logout = () => {
 };
 
 const handleConnectedWalletUpdate = (holderAddress: string, callback: any) => {
+  wsFullWalletAddress.set(holderAddress);
   wsWalletAddress.set(`${holderAddress.substring(0, 7)}...${holderAddress.slice(-3)}`);
   walletProvider.checkIsTargetNetworkWithChain().then((result: any) => {
     wsCurrentChain.set(result.holderChain);
@@ -111,6 +112,7 @@ function successfulConnectWalletCallback(callback: any = null) {
 }
 
 const resetState = () => {
+  wsFullWalletAddress.set('');
   wsWalletAddress.set('');
   userWalletAddress.set('');
   userIsLogin.set(false);
