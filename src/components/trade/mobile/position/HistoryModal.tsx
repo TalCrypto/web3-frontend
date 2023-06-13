@@ -304,9 +304,9 @@ const HistoryModal = (props: any) => {
             </div>
 
             <div
-              className={`absolute top-0 h-full w-full bg-darkBlue
+              className={`absolute top-0 h-full w-full bg-darkBlue pb-5
                 ${isShowDetail ? 'left-[0]' : 'left-[100%]'}
-                transition-left duration-500
+                transition-left scrollable overflow-y-scroll duration-500
               `}>
               <div
                 className="mb-[6px] flex items-center justify-between

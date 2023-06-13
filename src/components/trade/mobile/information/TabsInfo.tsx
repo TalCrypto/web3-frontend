@@ -80,7 +80,7 @@ function ExplorerButton(props: any) {
 
   return (
     <a href={etherscanUrl} target="_blank" rel="noreferrer">
-      <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={20} height={20} />
+      <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={16} height={16} />
     </a>
   );
 }
@@ -153,7 +153,7 @@ const MarketTrade = (props: any) => {
                   <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />
                 </div>
 
-                <div className="col-span-1">
+                <div className="col-span-1 flex justify-end">
                   <ExplorerButton txHash={txHash} />
                 </div>
               </div>
@@ -192,7 +192,7 @@ interface IOpenseaData {
   transaction: any;
 }
 
-const SpotTable = (props: any) => {
+const SpotTable = () => {
   const [displayCount, setDisplayCount] = useState(10);
   const openseaData = useNanostore(tsSportPriceList);
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
@@ -201,7 +201,7 @@ const SpotTable = (props: any) => {
   return (
     <>
       <div className="mx-[20px]">
-        <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-3 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
+        <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-4 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
         {openseaData && openseaData.length > 0 ? (
           openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
             const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
@@ -242,12 +242,12 @@ const SpotTable = (props: any) => {
 
             return (
               <Cell
-                classNames={['col-span-4', 'col-span-3 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 px-1']}
+                classNames={['col-span-4', 'col-span-4 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 flex justify-end']}
                 key={`spot_${key_value}`}
                 items={[
                   <div className="relative border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(event_timestamp)}</div>,
                   <div className="flex items-center text-[14px] text-[#6286e3]">
-                    <Image src={src} className="mr-1 rounded-[5px]" alt="" width={24} height={24} />
+                    <Image src={src} className="mr-1 rounded-[5px]" alt="" width={16} height={16} />
                     {`#${assetToken}` || 'No Name'}
                   </div>,
                   <div className="price">
@@ -258,7 +258,7 @@ const SpotTable = (props: any) => {
                     )}
                   </div>,
                   <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
-                    <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
+                    <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={16} height={16} />
                   </a>
                 ]}
               />

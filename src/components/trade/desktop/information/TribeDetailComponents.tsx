@@ -85,7 +85,7 @@ function ExplorerButton(props: any) {
 
   return (
     <a href={etherscanUrl} target="_blank" rel="noreferrer">
-      <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={20} height={20} />
+      <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={16} height={16} />
     </a>
   );
 }
@@ -177,7 +177,7 @@ const SpotTable = () => {
           items={['Time', 'Item', 'Price', '']}
           classNames={[
             'col-span-3 text-[12px]',
-            'col-span-3 px-3 text-[12px]',
+            'col-span-4 px-3 text-[12px]',
             'col-span-4 px-3 text-[12px]',
             'col-span-1 px-3 text-[12px]'
           ]}
@@ -225,7 +225,7 @@ const SpotTable = () => {
 
             return (
               <Cell
-                classNames={['col-span-3 px-3', 'col-span-3 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
+                classNames={['col-span-3 px-3', 'col-span-4 px-3', 'col-span-4 px-3', 'col-span-1 px-3']}
                 key={`spot_${key_value}`}
                 items={[
                   <div className="relative text-[12px]">
@@ -244,7 +244,7 @@ const SpotTable = () => {
                     )}
                   </div>,
                   <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
-                    <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={24} height={24} />
+                    <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={20} height={20} />
                   </a>
                 ]}
               />
