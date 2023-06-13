@@ -10,10 +10,10 @@ import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
 import collectionList from '@/const/collectionList';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 
 const FundingPaymentModal = (props: any) => {
-  const { setShowFundingPaymentModal } = props;
+  const { showFundingPaymentModal, setShowFundingPaymentModal } = props;
 
   const currentToken = useNanostore(wsCurrentToken);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
@@ -38,7 +38,7 @@ const FundingPaymentModal = (props: any) => {
     } else {
       setIsLoading(false);
     }
-  }, [walletProvider.holderAddress]);
+  }, [wsFullWalletAddress]);
 
   const handleBackClick = () => {
     setShowFundingPaymentModal(false);
@@ -46,11 +46,14 @@ const FundingPaymentModal = (props: any) => {
 
   return (
     <div
-      className="fixed bottom-0 left-0 top-0 z-10 flex  h-full
-      w-full items-center justify-center bg-black/[.2] backdrop-blur-[4px]"
+      className={`fixed bottom-0 left-0 top-0 z-10 flex h-full w-full
+        ${showFundingPaymentModal ? 'left-[0]' : 'left-[100%]'}
+        transition-left w-full items-center justify-center bg-black/[.2]
+        backdrop-blur-[4px] duration-500
+      `}
       onClick={() => setShowFundingPaymentModal(false)}>
       <div
-        className="relative h-[600px] w-[800px] rounded-[12px] border-[1px]
+        className="relative h-full w-full rounded-[12px] border-[1px]
         border-[#71aaff38] bg-lightBlue text-[14px] font-normal text-mediumEmphasis"
         onClick={e => e.stopPropagation()}>
         <div className="scrollable h-full overflow-y-scroll pb-[100px]">
@@ -115,8 +118,8 @@ const FundingPaymentModal = (props: any) => {
           <Image
             src="/images/mobile/common/angle-right.svg"
             className="fixed left-[22px] cursor-pointer"
-            width={8}
-            height={12}
+            width={14}
+            height={14}
             alt=""
             onClick={handleBackClick}
           />

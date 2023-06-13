@@ -43,6 +43,7 @@ function TradingMobile(props: any) {
   const userPosition: any = useNanostore(wsUserPosition);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
   const currentCollectionName = currentCollection.collectionName || 'DEGODS';
+  const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
 
   const traderConnectWallet = () => {
     connectWallet(() => {}, true);
@@ -72,7 +73,11 @@ function TradingMobile(props: any) {
   };
 
   return (
-    <div className="fixed left-0 top-0 z-[12] h-full w-full bg-lightBlue 2xl:w-[400px]">
+    <div
+      className={`fixed top-0 z-[12] h-full w-full bg-lightBlue 2xl:w-[400px]
+      ${isShowTradingMobile ? 'left-[0]' : 'left-[100%]'}
+      transition-left duration-500
+    `}>
       {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null}
       {userPosition ? (
         <div
@@ -95,10 +100,10 @@ function TradingMobile(props: any) {
         </div>
       ) : null}
       <div
-        className={`mb-[60px] flex ${userPosition ? 'h-[calc(100%-130px)]' : 'h-[calc(100%-60px)]'}
-          overflow-y-scroll rounded-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
-          bg-lightBlue p-6 px-[22px] py-[22px] text-white`}>
-        <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
+        className={`flex ${userPosition ? 'h-[calc(100%-100px)]' : 'h-[calc(100%-50px)]'}
+          overflow-y-scroll rounded-b-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
+          bg-lightBlue p-[22px] text-white`}>
+        <div className="w-full pb-6">{userPosition ? displayComponent : tradeComponent}</div>
         <TradePanelModal
           isShow={isTradePanelModalShow}
           setIsShow={tradePanelModal.setIsShow}
@@ -108,14 +113,14 @@ function TradingMobile(props: any) {
       </div>
 
       <div
-        className="fixed bottom-0 flex h-[50px] w-full items-center justify-center
+        className="absolute bottom-0 flex h-[50px] w-full items-center justify-center
         bg-secondaryBlue px-[22px] py-4 text-[15px] text-white
       ">
         <Image
           src="/images/mobile/common/angle-right.svg"
-          className="fixed left-[22px] cursor-pointer"
-          width={8}
-          height={12}
+          className="absolute left-[22px] cursor-pointer"
+          width={14}
+          height={14}
           alt=""
           onClick={handleBackClick}
         />

@@ -33,6 +33,7 @@ function TradePage(props: WithRouterProps) {
   // const maxReduceValue = useNanostore(wsMaxReduceValue);
   // const [maxReduceValue, setMaxReduceValue] = useState('');
   // const [historyRecords, setHistoryRecords] = useState([]);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
 
@@ -127,7 +128,7 @@ function TradePage(props: WithRouterProps) {
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>
-        <div className="trading-window hidden md:block">
+        <div className="trading-window hidden md:block" id="divTradeWindow">
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
@@ -136,7 +137,7 @@ function TradePage(props: WithRouterProps) {
                 <TradingWindow refreshPositions={null} />
               </div>
 
-              <div className="ml-[30px] block 2xl:flex-1">
+              <div className="block 2xl:ml-[49px] 2xl:flex-1">
                 <ChartWindows />
                 {isConnected ? <PositionDetails /> : null}
 
@@ -146,17 +147,23 @@ function TradePage(props: WithRouterProps) {
           </div>
         </div>
 
-        <div className="block bg-lightBlue md:hidden">
+        <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
           <Switcher />
 
-          <div className="mt-10">
-            <ChartMobile />
+          <div className="mt-12 bg-darkBlue">
+            {isLoading ? (
+              <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
+                <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+              </div>
+            ) : null}
+
+            <ChartMobile tradingData={tradingData} />
 
             {isConnected ? <PositionMobile /> : null}
 
             <InformationMobile />
 
-            {isShowTradingMobile ? <TradingMobile refreshPositions={null} /> : null}
+            <TradingMobile />
           </div>
         </div>
       </main>

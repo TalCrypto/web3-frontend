@@ -11,10 +11,9 @@ import { logEvent } from 'firebase/analytics';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { useAccount } from 'wagmi';
-import { AMM, getCollectionInformation } from '@/const/collectionList';
-import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
-import { getTradingActionTypeFromAPI } from '@/utils/actionType';
+import { useStore as useNanostore } from '@nanostores/react';
+import { wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
+import Tooltip from '@/components/common/Tooltip';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -28,7 +27,7 @@ function ExplorerButton(props: any) {
 function LiquidationWarning() {
   return (
     <div className="liquidation-warning">
-      <Image src="../../../static/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
+      <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
       Your position has been liquidated because it no longer meet the collateral requirement.
     </div>
   );
@@ -49,8 +48,8 @@ function DetailRowWithPriceIcon(props: any) {
 
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
-  const { address } = useAccount();
-  const historyRecordsByMonth = usePsHistoryByMonth();
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
+  const historyRecordsByMonth = useNanostore(wsHistoryGroupByMonth);
 
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 
@@ -172,14 +171,14 @@ const HistoryModal = (props: any) => {
         items-center justify-center overflow-auto bg-black bg-opacity-40"
       onClick={hide}>
       <div
-        className="relative mx-auto flex h-[600px] w-[830px] overflow-hidden
-          border-[1px] border-[#71aaff38] bg-secondaryBlue"
+        className="relative mx-auto flex h-[600px] w-[830px]
+          rounded-[12px] border-[1px] border-[#71aaff38] bg-secondaryBlue"
         onClick={e => {
           e.stopPropagation();
         }}>
         {Object.keys(historyRecordsByMonth).length === 0 ? (
           <div className="w-full">
-            <div className="flex justify-between px-6 py-[27px] text-[12px]">
+            <div className="flex justify-between rounded-[12px] px-6 py-[27px] text-[12px]">
               <div className="flex text-[16px] font-semibold text-white">
                 <Image className="mr-[6px]" src="/images/components/trade/position/history_title.svg" width={20} height={20} alt="" />
                 <span>Trade History</span>
@@ -199,14 +198,14 @@ const HistoryModal = (props: any) => {
           </div>
         ) : (
           <>
-            <div className="h-full w-[450px] bg-[#0c0d20]">
+            <div className="h-full w-[450px] rounded-l-[12px] bg-darkBlue">
               <div className="flex justify-between px-6 py-[27px] text-[12px]">
                 <div className="flex text-[16px] font-semibold text-white">
                   <Image className="mr-[6px]" src="/images/components/trade/position/history_title.svg" width={20} height={20} alt="" />
                   <span>Trade History</span>
                 </div>
               </div>
-              <div className="h-[500px] overflow-auto p-1">
+              <div className="scrollable h-[500px] overflow-auto p-1">
                 {Object.keys(historyRecordsByMonth).map((month: any) => {
                   const records: Array<PositionHistoryRecord> = historyRecordsByMonth[month];
                   return (
@@ -338,12 +337,15 @@ const HistoryModal = (props: any) => {
                         className="icon-label"
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
-                          // <OverlayTrigger placement="top" overlay={<Tooltip>Collateral will not change.</Tooltip>}>
-                          <Image
-                            src="/static/moreInfo.svg"
-                            alt=""
-                            style={{ marginLeft: '6px', width: '16px', height: '16px', marginRight: '0px' }}
-                          />
+                          <Tooltip direction="top" content="Collateral will not change.">
+                            <Image
+                              src="/images/components/trade/history/more_info.svg"
+                              alt=""
+                              width={16}
+                              height={16}
+                              className="ml-[6px] cursor-pointer"
+                            />
+                          </Tooltip>
                         ) : // </OverlayTrigger>
                         null}
                       </PriceWithIcon>

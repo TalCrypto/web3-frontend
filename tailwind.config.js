@@ -31,13 +31,30 @@ module.exports = {
         primaryBluePressed: '#1e5dc9',
         secondaryBlue: '#202249',
         darkBlue: '#0C0D20',
+        mediumBlue: '#242652',
         lightBlue: '#171833',
         lightBlue50: '#12122a',
         highEmphasis: '#ffffffde',
         mediumEmphasis: '#a8cbffbf',
         marketRed: '#ff5656',
         marketGreen: '#78f363',
-        warn: '#ffc24bde'
+        warn: '#ffc24bde',
+
+        tooltipArrow: '#213676',
+
+        direction: {
+          unselected: {
+            normal: '#c3d8ff7a',
+            disabled: '#c3d8ff26'
+          }
+        },
+
+        comingSoon: '#ffc34bde',
+        modal: {
+          item: {
+            hover: '#2574fb33'
+          }
+        }
       },
       fontSize: {
         h1: [

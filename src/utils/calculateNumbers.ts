@@ -13,7 +13,7 @@ export const isPositive = (value: any): boolean => Number(calculateNumber(value,
 
 export const formatterValue = (value: number, toFixedNumber: number, suffix = '', defaultValue = '0.00'): string => {
   if (!value) {
-    return defaultValue;
+    return `${defaultValue} ${suffix}`;
   }
   return `${calculateNumber(value, toFixedNumber)} ${suffix}`;
 };

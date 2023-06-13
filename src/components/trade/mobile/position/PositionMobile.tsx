@@ -31,18 +31,18 @@ import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
 // import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
-import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
-    <div className={`text-15 font-400 flex text-highEmphasis ${className}`}>
+    <div className={`font-400 flex text-[14px] text-highEmphasis ${className}`}>
       <Image
         src={image || '/images/components/layout/header/eth-tribe3.svg'}
         className="icon"
         alt=""
-        width={20}
-        height={20}
+        width={16}
+        height={16}
         style={{ marginRight: '4px' }}
       />
       <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
@@ -115,7 +115,7 @@ export default function PositionMobile(props: any) {
   // leverage handling
   const isLeverageNegative = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) <= 0 : false;
   const isLeverageOver = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) > 100 : false;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   // const size = '';
   // const currentPrice = '';
@@ -157,47 +157,39 @@ export default function PositionMobile(props: any) {
   }
 
   return (
-    <div className="mb-[24px]">
+    <div className="bg-lightBlue pb-3 pt-6">
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">
-          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
+          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
-          {collectionIsPending[currentCollection.amm] ? <div className="pending-reminder">Transaction Pending...</div> : null}
         </div>
         <div className="flex space-x-[24px]">
-          <div onClick={() => setShowFundingPaymentModal(true)}>
-            <Image alt="" src="/images/components/trade/position/trade_history.svg" width="16" height="16" />
-          </div>
           <div onClick={() => setShowHistoryModal(true)}>
-            <Image alt="" src="/images/components/trade/position/funding_payment.svg" width="16" height="16" />
+            <Image alt="" src="/images/components/trade/position/trade_history.svg" width={16} height={16} />
+          </div>
+          <div onClick={() => setShowFundingPaymentModal(true)}>
+            <Image alt="" src="/images/components/trade/position/funding_payment.svg" width={16} height={16} />
           </div>
         </div>
       </div>
 
       <div>
         <div className="px-5 pb-2 pt-6">
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
             <div className="text-15 font-400">
               <div>
                 <MedPriceIcon
                   priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
-                  className={
-                    !userPosition ? '' : Number(numberTotalPnl) > 0 ? 'risevalue' : Number(numberTotalPnl) === 0 ? '' : 'dropvalue'
-                  }
                   isLoading={isLoading || collectionIsPending[currentCollection.amm]}
                 />
               </div>
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
-            <div>
-              <span className={!userPosition ? '' : userPosition.size > 0 ? 'risevalue' : 'dropvalue'}>
-                {!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
-              </span>
-            </div>
+            <div className="text-[14px]">{!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}</div>
           </div>
 
           {/* <div className="flex mb-1">
@@ -212,7 +204,7 @@ export default function PositionMobile(props: any) {
             </div>
           </div> */}
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Entry Price</div>
             <div className="">
               <MedPriceIcon
@@ -223,7 +215,7 @@ export default function PositionMobile(props: any) {
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Notional</div>
             <div className="">
               <MedPriceIcon
@@ -234,7 +226,7 @@ export default function PositionMobile(props: any) {
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
 
             <div className="">
@@ -250,14 +242,14 @@ export default function PositionMobile(props: any) {
               {isLeverageNegative ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                  titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
                 />
               ) : null}
             </div>
           </div>
 
-          <div className="mb-1 flex">
+          <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
             <div className="">
               <MedPriceIcon
@@ -274,33 +266,36 @@ export default function PositionMobile(props: any) {
               {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/static/alert_yellow.svg" width="20" height="20" alt="" />}
+                  titleText={<Image className="" src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
                 />
               ) : null}
               {liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                  titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is at risk of being liquidated. Please manage your risk."
                 />
               ) : null}
               {isGapAboveLimit ? (
-                <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-[#FFC24B]" />
+                <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
             </div>
           </div>
         </div>
       </div>
 
-      {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-      {showFundingPaymentModal ? (
-        <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
-      ) : null}
+      <HistoryModal showHistoryModal={showHistoryModal} setShowHistoryModal={setShowHistoryModal} />
+
+      <FundingPaymentModal
+        showFundingPaymentModal={showFundingPaymentModal}
+        tradingData={tradingData}
+        setShowFundingPaymentModal={setShowFundingPaymentModal}
+      />
 
       {/* {isGapAboveLimit ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
-          <Image src="/static/alert_yellow.svg" width={15} height={15} alt="" />
+          <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
           <p className="text-b3 text-warn">
             Warning: vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
             based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}

@@ -11,7 +11,7 @@ import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
 import collectionList from '@/const/collectionList';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken } from '@/stores/WalletState';
+import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 
 const FundingPaymentModal = (props: any) => {
   const { setShowFundingPaymentModal, tradingData } = props;
@@ -25,6 +25,7 @@ const FundingPaymentModal = (props: any) => {
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
   const [interval, setI] = useState(null);
   const [nextFundingTime, setNextFundingTime] = useState(0);
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const currentAmm = currentCollection.amm;
   const hadKey = Object.keys(tradingData).length > 0;
@@ -107,7 +108,7 @@ const FundingPaymentModal = (props: any) => {
     } else {
       setIsLoading(false);
     }
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div
@@ -120,7 +121,7 @@ const FundingPaymentModal = (props: any) => {
         onClick={e => e.stopPropagation()}>
         <div className="px-6 pt-[26px]">
           <div className="flex items-center space-x-[6px]">
-            <Image src={currentCollection.image} width="24" height="24" alt="" />
+            <Image src={currentCollection.image} width={24} height={24} alt="" />
             <p className="font-600 text-[16px] text-highEmphasis">{currentCollection.shortName} Funding Payment History</p>
           </div>
           <div className="flex">
@@ -133,7 +134,7 @@ const FundingPaymentModal = (props: any) => {
             </div>
           </div>
           <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setShowFundingPaymentModal(false)}>
-            <Image src="/images/components/common/modal/close.svg" width="16" height="16" alt="" />
+            <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
         </div>
         <div className="body">
@@ -162,7 +163,7 @@ const FundingPaymentModal = (props: any) => {
                   return (
                     <div
                       className={`flex cursor-pointer p-3
-                      ${idx % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-[#171833]'}`}
+                      ${idx % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}`}
                       key={`fp-row-${idx}`}>
                       <div className="flex min-w-[190px] items-center px-[18px]">
                         <div className="mr-2 h-[24px] w-[2px] rounded-[2px] bg-[#4287f5]" />

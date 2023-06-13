@@ -21,9 +21,8 @@ function base(props: any, image: any) {
 
   return (
     <div
-      className={`flex text-highEmphasis ${color} ${className}
-      ${large ? `text-[36px] font-semibold` : 'text-[14px]'}
-      ${medium ? `text-[24px] font-semibold` : 'text-[14px]'}
+      className={`flex text-highEmphasis ${color} ${className} items-center
+      ${large ? `text-[32px] font-semibold` : medium ? `text-[24px] font-semibold` : 'text-[14px]'}
     `}>
       {image}
       {localValue}

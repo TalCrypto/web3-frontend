@@ -25,8 +25,8 @@ function InformationWindow(props: any) {
 
   const Tabs = ['Market Trades', 'Spot Transactions', 'Funding Payment History'].map((item, index) => (
     <div
-      className={`tab flex w-[33%] cursor-pointer items-center
-        justify-center text-center text-[16px] font-semibold
+      className={`tab flex w-[34%] cursor-pointer items-center
+        justify-center text-center text-[16px] font-semibold text-highEmphasis
         ${activeTab === index ? 'selected' : ''}`}
       key={item}
       onClick={() => setActiveTab(index)}>

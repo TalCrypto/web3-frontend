@@ -29,7 +29,7 @@ import { usePositionInfo, useTradingData, useTransactionIsPending, useCollection
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
-    <div className={`text-15 font-400 flex text-highEmphasis ${className}`}>
+    <div className={`font-400 flex text-[15px] text-highEmphasis ${className}`}>
       <Image
         src={image || '/images/common/symbols/eth-tribe3.svg'}
         className="icon"
@@ -140,21 +140,27 @@ export default function PositionDetails(props: any) {
     <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
       {showSharePosition ? <IndividualShareContainer setShowShareComponent={setShowSharePosition} userInfo={userInfo} /> : null}
       <div className=" mb-[36px] flex justify-between">
-        <div className="flex space-x-[6px]">
-          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width="20" height="20" alt="" />
-          <div className="text-16 font-600 text-highEmphasis">My {collectionInfo.shortName} Position</div>
-          {isPending ? <div className="pending-reminder">Transaction Pending...</div> : null}
+        <div className="flex items-center space-x-[6px]">
+          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
+          <div className="font-600 text-[16px] text-highEmphasis">My {currentCollectionName} Position</div>
+          {isPending ? (
+            <div
+              className="ml-3 rounded-[2px] border-[1px] border-warn
+            px-[3px] py-[1px] text-[12px] text-warn">
+              Transaction Pending...
+            </div>
+          ) : null}
         </div>
         <div className="flex space-x-[24px]">
           <div className="cursor-pointer" onClick={() => clickShowSharePosition(true)}>
-            <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width="16" height="16" />
+            <Image alt="" src="/images/mobile/pages/trade/share_icon.svg" width={16} height={16} />
           </div>
 
           <div
             className="open-dropdown flex h-[20px] w-[20px] cursor-pointer
             justify-center hover:rounded-full hover:bg-white/[.2]"
             onClick={() => setShowDropdown(!showDropdown)}>
-            <Image alt="" src="/images/components/trade/position/menu.svg" width="16" height="16" />
+            <Image alt="" src="/images/components/trade/position/menu.svg" width={16} height={16} />
           </div>
 
           {showDropdown ? (
@@ -165,12 +171,11 @@ export default function PositionDetails(props: any) {
               setShowFundingPaymentModal={setShowFundingPaymentModal}
             />
           ) : null}
-
-          {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-          {showFundingPaymentModal ? (
-            <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
-          ) : null}
         </div>
+        {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
+        {showFundingPaymentModal ? (
+          <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
+        ) : null}
       </div>
       <div>
         <div className="mb-[12px] flex text-[14px] font-medium text-mediumEmphasis">
@@ -208,7 +213,7 @@ export default function PositionDetails(props: any) {
             {positionInfo.leverage <= 0 ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                 tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
               />
             ) : null}
@@ -228,25 +233,25 @@ export default function PositionDetails(props: any) {
             {liquidationChanceWarning() && !liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/static/alert_yellow.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
                 tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
               />
             ) : null}
             {liquidationRiskWarning() ? (
               <TitleTips
                 placement="top"
-                titleText={<Image className="" src="/static/alert_red.svg" width="20" height="20" alt="" />}
+                titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                 tipsText="Your position is at risk of being liquidated. Please manage your risk."
               />
             ) : null}
             {tradingData?.isOverPriceGap ? (
-              <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-[#FFC24B]" />
+              <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
             ) : null}
           </div>
           <div className="w-[20%]">
             <MedPriceIcon
               priceValue={positionInfo.unrealizedPnl === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
-              className={positionInfo.unrealizedPnl > 0 ? 'risevalue' : positionInfo.unrealizedPnl === 0 ? '' : 'dropvalue'}
+              className={positionInfo.unrealizedPnl > 0 ? 'text-marketGreen' : positionInfo.unrealizedPnl === 0 ? '' : 'text-marketRed'}
               isLoading={isLoading || isPending}
             />
           </div>
@@ -254,7 +259,7 @@ export default function PositionDetails(props: any) {
       </div>
       {tradingData?.isOverPriceGap ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
-          <Image src="/static/alert_yellow.svg" width={15} height={15} alt="" />
+          <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
           <p className="text-b3 text-warn">
             Warning: vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
             based on vAMM price). {positionInfo.leverage <= 0 ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}

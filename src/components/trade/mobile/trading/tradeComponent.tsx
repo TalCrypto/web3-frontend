@@ -8,16 +8,11 @@ import { utils } from 'ethers';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
-// import { logEvent } from 'firebase/analytics';
-// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-// import { Tooltip } from 'react-bootstrap';
 import { useRouter } from 'next/router';
-// import { debounce } from 'lodash';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
 import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
-// import { firebaseAnalytics } from '@/const/firebaseConfig';
 import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
@@ -29,8 +24,15 @@ import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { wsIsLogin, wsIsWrongNetwork, wsWethBalance, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
-// const { isWhitelisted } = walletProvider;
+import {
+  wsIsLogin,
+  wsIsWrongNetwork,
+  wsWethBalance,
+  wsIsApproveRequired,
+  wsCurrentToken,
+  wsUserPosition,
+  wsFullWalletAddress
+} from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
@@ -39,7 +41,7 @@ function LongShortRatio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
 
@@ -58,11 +60,10 @@ function LongShortRatio(props: any) {
   }
 
   return (
-    <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">
+    <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
-          ${!userPosition ? 'opacity-30' : ''}
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
           if (!userPosition) {
@@ -75,8 +76,7 @@ function LongShortRatio(props: any) {
       </div>
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
-          ${userPosition ? 'opacity-30' : ''}
+          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
           if (!userPosition) {
@@ -110,7 +110,7 @@ function QuantityTips(props: any) {
   const isShow = value <= 0 || isChecking || isWrongNetwork || isAmountNegative;
 
   if (isShow) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
 
   const label = isPending ? (
@@ -187,9 +187,12 @@ function QuantityEnter(props: any) {
   return (
     <>
       <div className={`mb-3 flex items-center ${disabled ? 'opacity-30' : ''}`}>
-        <div className="flex-1 text-[14px] text-[#a3c2ff]/[.68]">Collateral</div>
+        <div className="flex-1 text-[14px] text-mediumEmphasis">Collateral</div>
         {isLoginState && !isWrongNetwork ? (
           <div className="font-14 text-color-secondary flex" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+            <div className="mr-1 flex flex-1">
+              <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
+            </div>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
             <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => getTestToken()}>
@@ -205,16 +208,16 @@ function QuantityEnter(props: any) {
             ${isFocus ? 'valid' : ''}
             ${disabled ? 'opacity-30' : ''}
           `}>
-          <div className="flex h-[48px] rounded-[4px] bg-[#242652] p-3">
-            <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width="24" height="24" padding-right="12dp" className="betIcon" />
+          <div className="flex h-[48px] rounded-[4px] bg-mediumBlue p-3">
+            <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={24} height={24} padding-right="12dp" className="betIcon" />
             <div className="ml-[4px] flex items-center justify-center">
               <span className="input-with-text text-[12px] font-semibold">WETH</span>
             </div>
             <input
               type="text"
-              pattern="[0-9]*"
+              // pattern="[0-9]*"
               className={`${isApproveRequired ? 'cursor-not-allowed' : ''}
-                w-full border-none border-[#242652] bg-[#242652] text-right
+                w-full border-none border-mediumBlue bg-mediumBlue text-right
                 text-[15px] font-semibold text-white outline-none
               `}
               value={value}
@@ -282,31 +285,16 @@ function DisplayValues(props: any) {
 
   return (
     <div
-      className={`${className !== '' ? className : 'sumrow'}
+      className={`${className !== '' ? className : ''}
       mb-[2px] flex items-center
     `}>
-      <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
-      <div className={`flex-1 flex-shrink-0 text-right text-[#a3c2ff]/[.68] ${valueClassName}`}>
+      <div className="text-[14px] text-mediumEmphasis">{title}</div>
+      <div className={`flex-1 flex-shrink-0 text-right text-mediumEmphasis ${valueClassName}`}>
         <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
   );
 }
-
-// function DisplayValuesWithTooltips(props: any) {
-//   const { title, value, unit = '', tipsText = '', size = '20px' } = props;
-
-//   return (
-//     <div className="row sumrow align-items-center">
-//       <div className="font-14 text-color-secondary col-auto">
-//         <TitleTips titleText={title} tipsText={tipsText} />
-//       </div>
-//       <div className="col font-12-600 text-color-secondary contentsmallitem">
-//         <span className="value">{value}</span> {unit}
-//       </div>
-//     </div>
-//   );
-// }
 
 function EstimatedValueDisplay(props: any) {
   const router = useRouter();
@@ -321,7 +309,7 @@ function EstimatedValueDisplay(props: any) {
   // const collateralCalc = isEstimatedValueEmpty ? 0 : cost.sub(feeInNumber);
   // const newCollateral = isEstimatedValueEmpty ? '-.--' : formatterValue(collateralCalc, 4);
   const sizeNotional = fee && cost && leverageValue ? ((costInNumber - feeInNumber) * Number(leverageValue))?.toFixed(4) : '-.--';
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   // determine if input is valid or error state
@@ -335,20 +323,20 @@ function EstimatedValueDisplay(props: any) {
     <>
       <div className="mb-3 flex items-center">
         <div className="font-14 text-color-secondary col-auto">
-          <div className="text-[14px] text-[#a3c2ff]/[.48]">Slippage Tolerance</div>
+          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
           {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
         </div>
         <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
           <div
             className={`flex max-w-[100px] justify-end
-            rounded-[4px] bg-[#242652] px-[10px] py-1
+            rounded-[4px] bg-mediumBlue px-[10px] py-1
             ${disabled ? 'opacity-30' : ''}`}>
             <input
               disabled={disabled}
               title=""
               type="text"
-              pattern="[0-9]*"
-              className="w-[90%] border-none border-[#242652] bg-[#242652] text-right
+              // pattern="[0-9]*"
+              className="w-[90%] border-none border-mediumBlue bg-mediumBlue text-right
                 text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
@@ -387,13 +375,9 @@ function EstimatedValueDisplay(props: any) {
         unitClassName="font-12"
       />
       {/* <DisplayValuesWithTooltips title="Transaction Fee" value={fee} unit="WETH" tipsText="0.5% of the notional amount of the trade" /> */}
-      <div className="row">
-        <div className="col">
-          <div className="mb-6 h-[1px] bg-[#2e3064]" />
-        </div>
-      </div>
-      <div className="mb-3 flex items-center">
-        <div className="text-[14px] text-[#a3c2ff]/[.48]">Total Balance Required</div>
+      <div className="my-4 h-[1px] bg-[#2e3064]" />
+      <div className="mb-4 flex items-center">
+        <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
           <span className=" text-[14px]">
             {isError || value <= 0 ? '-.--' : estimatedValue.cost ? formatterValue(estimatedValue.cost, 4, '') : '-.--'}
@@ -431,15 +415,15 @@ function ConfirmButton(props: any) {
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
 
-  // const { isTethCollected, isWhitelisted, isDataFetch } = walletProvider;
+  // const { isWethCollected, isWhitelisted, isDataFetch } = walletProvider;
   const isDataFetch = useNanostore(dataFetch);
   // const isWhitelisted = useNanostore(whitelisted);
-  // const isTethCollected = useNanostore(tethCollected);
-  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
+  // const isWethCollected = useNanostore(wethCollected);
+  const isWethCollected = Number(walletProvider.wethBalance) !== 0;
 
   const [isProcessingOpenPos, setIsProcessingOpenPos] = useState(false);
   const isNormal = isLoginState && !isWrongNetwork && quantity > 0 && !isInsuffBalance && !isAmountTooSmall;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   // sync isProcessing to store/tradePanel
@@ -550,7 +534,7 @@ function ConfirmButton(props: any) {
       });
   };
 
-  const performGetTeth = () => {
+  const performGetWeth = () => {
     getTestToken(() => setIsProcessingOpenPos(false));
   };
 
@@ -577,7 +561,7 @@ function ConfirmButton(props: any) {
   };
 
   let disabled = !isNormal;
-  if (!isLoginState || isWrongNetwork || !isTethCollected || isApproveRequired) {
+  if (!isLoginState || isWrongNetwork || !isWethCollected || isApproveRequired) {
     disabled = false;
   } else if (isWaiting) {
     disabled = true;
@@ -590,8 +574,8 @@ function ConfirmButton(props: any) {
       connectWallet();
     } else if (isWrongNetwork) {
       performSwitchGeorli();
-    } else if (!isTethCollected) {
-      performGetTeth();
+    } else if (!isWethCollected) {
+      performGetWeth();
     } else if (isApproveRequired) {
       performApprove();
     } else if (isNormal && !isProcessingOpenPos && !isPending && !disabled) {
@@ -600,29 +584,31 @@ function ConfirmButton(props: any) {
   };
 
   return (
-    <div className="flex">
-      <div
-        className={`${disabled || isPending ? 'opacity-30' : ''}
-          mb-[24px] flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
-          px-[10px] py-[14px] text-center
-        `}
-        onClick={onClickButton}>
-        <div className="w-full text-center text-[15px] font-semibold">
-          {isProcessingOpenPos || isDataFetch ? (
-            <div className="flex justify-center">
-              <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
-            </div>
-          ) : !isLoginState ? (
-            'Connect Wallet'
-          ) : isWrongNetwork ? (
-            'Switch to Arbitrum'
-          ) : !isTethCollected ? (
-            'Get WETH'
-          ) : isApproveRequired ? (
-            'Approve'
-          ) : (
-            'Trade'
-          )}
+    <div className="pb-6">
+      <div className="flex">
+        <div
+          className={`${disabled || isPending ? 'opacity-30' : ''}
+            flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
+            px-[10px] py-[14px] text-center
+          `}
+          onClick={onClickButton}>
+          <div className="w-full text-center text-[15px] font-semibold">
+            {isProcessingOpenPos || isDataFetch ? (
+              <div className="flex justify-center">
+                <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+              </div>
+            ) : !isLoginState ? (
+              'Connect Wallet'
+            ) : isWrongNetwork ? (
+              'Switch to Arbitrum'
+            ) : !isWethCollected ? (
+              'Get WETH'
+            ) : isApproveRequired ? (
+              'Approve'
+            ) : (
+              'Trade'
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -631,20 +617,19 @@ function ConfirmButton(props: any) {
 
 function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
-  const isWhitelisted = useNanostore(whitelisted);
-  const isTethCollected = Number(walletProvider.wethBalance) !== 0;
+  const isWethCollected = Number(walletProvider.wethBalance) !== 0;
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
 
   if ((isLoginState && !isWrongNetwork && !isApproveRequired) || isDataFetch) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
   const label = !isLoginState ? (
     'Please connect the wallets to trade !'
   ) : isWrongNetwork ? (
     'Wrong Network, please switch to Arbitrum!'
-  ) : !isTethCollected ? (
+  ) : !isWethCollected ? (
     'Please get WETH first !'
   ) : isApproveRequired ? (
     <>
@@ -663,10 +648,10 @@ function Tips(props: any) {
 
   return (
     <div
-      className="mb-[17px] flex h-[16px] items-center text-[16px]
-      font-medium leading-[16px] text-warn">
+      className="mt-4 flex h-[16px] items-center text-[12px]
+      font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
-      <span className="warning-text">{label}</span>
+      <span className="">{label}</span>
     </div>
   );
 }
@@ -675,14 +660,15 @@ function ExtendedEstimateComponent(props: any) {
   const router = useRouter();
   const currentToken = useNanostore(wsCurrentToken);
   const { page } = pageTitleParser(router.asPath);
-  const { estimatedValue, userPosition, value, isAmountTooSmall, isInsuffBalance } = props;
+  const { estimatedValue, value, isAmountTooSmall, isInsuffBalance } = props;
   const [showDetail, isShowDetail] = useState(false);
   const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
   const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
   const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
   const fee = formatterValue(estimatedValue.fee, 4);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // hide component when there is no estimatedValue
   if (!estimatedValue || !estimatedValue.cost) return null;
@@ -695,32 +681,37 @@ function ExtendedEstimateComponent(props: any) {
   if (isError || value <= 0) return null;
 
   return (
-    <div>
-      <div className="row">
-        <div
-          className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-          onClick={() => {
-            isShowDetail(!showDetail);
-            if (firebaseAnalytics) {
-              logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
-                wallet: fullWalletAddress.substring(2),
-                is_advanced_data_shown: !showDetail,
-                collection: currentToken
-              });
-            }
-            apiConnection.postUserEvent('showAdvancedDetails_pressed', {
-              page,
+    <div className="pb-6">
+      <div
+        className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
+        onClick={() => {
+          isShowDetail(!showDetail);
+          if (firebaseAnalytics) {
+            logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
+              wallet: fullWalletAddress.substring(2),
               is_advanced_data_shown: !showDetail,
               collection: currentToken
             });
-          }}>
-          {showDetail ? 'Hide' : 'Show'} Advanced Details
-          {showDetail ? (
-            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
-          ) : (
-            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
-          )}
-        </div>
+          }
+          apiConnection.postUserEvent('showAdvancedDetails_pressed', {
+            page,
+            is_advanced_data_shown: !showDetail,
+            collection: currentToken
+          });
+
+          if (!showDetail) {
+            window.scrollTo({
+              top: document.body.scrollHeight - window.innerHeight,
+              behavior: 'smooth'
+            });
+          }
+        }}>
+        {showDetail ? 'Hide' : 'Show'} Advanced Details
+        {showDetail ? (
+          <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+        ) : (
+          <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+        )}
       </div>
 
       {showDetail ? (
@@ -782,13 +773,7 @@ function ExtendedEstimateComponent(props: any) {
           {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Transaction Fee" value={fee} unit="WETH" />
           <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
-          <DisplayValues
-            title={
-              <TitleTips titleText="Price Impact" tipsText="The change in price resulted directly from a particular trade in the VAMM" />
-            }
-            value={formatterValue(estimatedValue.priceImpact, 2)}
-            unit="%"
-          />
+          <DisplayValues title="Price Impact" value={formatterValue(estimatedValue.priceImpact, 2)} unit="%" />
           {userPosition != null ? null : (
             <DisplayValues
               title="Liquidation Price"
@@ -805,7 +790,7 @@ function ExtendedEstimateComponent(props: any) {
 export default function TradeComponent(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, connectWallet, userPosition, tradingData } = props;
+  const { refreshPositions, connectWallet, tradingData } = props;
   const [saleOrBuyIndex, setSaleOrBuyIndex] = useState(0);
   const [quantity, setQuantity] = useState('0');
   const [estimatedValue, setEstimatedValue] = useState({});
@@ -832,8 +817,9 @@ export default function TradeComponent(props: any) {
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const wethBalance = useNanostore(wsWethBalance);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
+  const userPosition: any = useNanostore(wsUserPosition);
 
   // price gap
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
@@ -1083,7 +1069,7 @@ export default function TradeComponent(props: any) {
 
   useEffect(() => {
     if (userPosition) {
-      setSaleOrBuyIndex(Number(calculateNumber(userPosition.size, 4)) < 0 ? 1 : 0);
+      setSaleOrBuyIndex(userPosition.size < 0 ? 1 : 0);
     }
     if (isPending) {
       handleEnter(quantity);
@@ -1113,7 +1099,7 @@ export default function TradeComponent(props: any) {
     setQuantity('');
     setEstimatedValue({});
     setLeverageValue(1);
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div>

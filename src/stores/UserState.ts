@@ -4,7 +4,7 @@ import { atom } from 'nanostores';
 
 export const dataFetch = atom(false);
 export const whitelisted = atom(false);
-export const tethCollected = atom(false);
+export const wethCollected = atom(false);
 export const inputCode = atom(false);
 export const hasPartialClose = atom(false);
 export const hasTraded = atom(false);
@@ -21,8 +21,8 @@ export const setIsWhitelisted = (value: boolean) => {
   whitelisted.set(value);
 };
 
-export const setIsTethCollected = (value: boolean) => {
-  tethCollected.set(value);
+export const setIsWethCollected = (value: boolean) => {
+  wethCollected.set(value);
 };
 
 export const setIsInputCode = (value: boolean) => {

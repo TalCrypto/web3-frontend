@@ -7,6 +7,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import CollectionListModal from '@/components/trade/mobile/collection/CollectionListModal';
 import { wsCurrentToken } from '@/stores/WalletState';
+import { $isSwitcherFirstRender, $marketData } from '@/stores/switcher';
 
 export default function Switcher() {
   const currentToken = useNanostore(wsCurrentToken);
@@ -14,43 +15,45 @@ export default function Switcher() {
   const currentCollectionName = currentCollection.displayCollectionPair || 'DEGODS';
   const currentCollectionLogo = currentCollection.logo;
 
-  const [popupOpened, setPopupOpened] = useState(false);
-  const [marketData, setMarketData] = useState([]);
+  const [isShowModal, setIsShowModal] = useState(false);
+  const marketData = useNanostore($marketData);
+  const isFirstRender = useNanostore($isSwitcherFirstRender);
 
   const fetchMarketOverview = async () => {
     const ammList = collectionList.map(({ amm }) => amm).filter(item => item !== '');
     const contractList = collectionList.map(({ contract }) => contract).filter(item => item !== '');
     const data: any = await getMarketOverview(ammList, contractList, '');
-    setMarketData(data);
+    $marketData.set(data);
   };
 
   const onSwitcherClick = async () => {
-    setPopupOpened(true);
+    if (isShowModal) return;
+
+    setIsShowModal(true);
     await fetchMarketOverview();
   };
 
+  if (isFirstRender) {
+    fetchMarketOverview();
+    $isSwitcherFirstRender.set(false);
+  }
+
+  // fetchMarketOverview();
+
   return (
     <>
-      {/* <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue"> */}
-      <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue">
+      <div className="fixed top-0 z-10 h-[48px] w-full bg-secondaryBlue" onClick={onSwitcherClick}>
         <div className="flex h-full px-5">
           <div className="flex items-center">
-            <Image className="" src={currentCollectionLogo} width="24" height="24" alt="" />
+            <Image className="" src={currentCollectionLogo} width={24} height={24} alt="" />
             <div className="ml-[6px] text-[15px] text-highEmphasis">{currentCollectionName}</div>
           </div>
           <div className="flex flex-1 justify-end text-right">
-            <Image
-              className="cursor-pointer"
-              src="/images/mobile/common/switcher.svg"
-              onClick={onSwitcherClick}
-              width="24"
-              height="24"
-              alt=""
-            />
+            <Image src="/images/mobile/common/switcher.svg" width={24} height={24} alt="" />
           </div>
         </div>
       </div>
-      {popupOpened ? <CollectionListModal marketData={marketData} setPopupOpened={setPopupOpened} /> : null}
+      <CollectionListModal marketData={marketData} isShowModal={isShowModal} setIsShowModal={setIsShowModal} />
     </>
   );
 }

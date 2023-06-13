@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
@@ -29,7 +29,7 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsCurrentChain, wsCurrentToken, wsIsLogin } from '@/stores/WalletState';
+import { wsCurrentChain, wsCurrentToken, wsFullWalletAddress, wsIsLogin, wsSelectedTimeIndex } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 
 const flashAnim = 'flash';
@@ -42,7 +42,7 @@ const getCollectionInformation = (collectionName: any) => {
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
   return (
-    <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
+    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
       <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
@@ -101,8 +101,8 @@ function PriceIndicator(props: any) {
             ? '/images/components/trade/chart/polygon_pos.svg'
             : '/images/components/trade/chart/polygon_neg.svg'
         }
-        width="16"
-        height="16"
+        width={16}
+        height={16}
       />
       <div>
         <div className="mr-4">
@@ -130,31 +130,60 @@ function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection
 }
 
 function ChartTimeTabs(props: any) {
-  const { selectedTimeIndex, setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
+  const { setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const [isVisible, setIsVisible] = useState(false);
 
-  const componentReady = useRef();
+  const updateSelectedTimeIndex = () => {
+    const activeSegmentRef = contentArray[selectedTimeIndex].ref;
+    const { offsetLeft, offsetWidth } = activeSegmentRef.current;
+    const { style } = controlRef.current;
+    style.setProperty('--highlight-width', `${offsetWidth}px`);
+    style.setProperty('--highlight-x-pos', `${offsetLeft}px`);
+  };
 
   useEffect(() => {
-    const activeSegmentRef = contentArray[selectedTimeIndex].ref;
-    const { offsetLeft } = activeSegmentRef.current;
-    const { style } = controlRef.current;
-    style.setProperty('--highlight-width', '25px');
-    style.setProperty('--highlight-x-pos', `${offsetLeft + 8}px`);
+    updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
 
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      const element = document.getElementById('divTradeMobile');
+      if (element === null) return;
+      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
+      if (isVisibleNow && !isVisible) {
+        setIsVisible(true);
+        updateSelectedTimeIndex();
+      } else if (!isVisibleNow && isVisible) {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isVisible, selectedTimeIndex]);
+
   return (
-    <div className="flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+    <div className="relative flex px-0 text-center" ref={controlRef}>
       <div
-        className={`relative inline-flex w-full justify-between overflow-hidden text-center ${componentReady.current ? 'ready' : 'idle'}`}>
+        className="absolute bottom-0 left-0 right-0 z-0 h-[3px]
+          w-[var(--highlight-width)] translate-x-[var(--highlight-x-pos)]
+          transform rounded-[2px] bg-[#5465ff] duration-300 ease-in-out"
+      />
+
+      <div className="relative inline-flex w-full justify-between overflow-hidden text-center">
         {contentArray.map((item: any, i: any) => (
           <div
             key={item.label}
-            className={`segment ${i === selectedTimeIndex ? 'active' : ''} ${isStartLoadingChart ? 'waitCursor' : 'presscursor'}
-            z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
+            className={`segment z-1 relative ml-4 flex
+              w-full cursor-pointer items-center
+              justify-center pb-[6px] text-center
+              text-mediumEmphasis hover:text-highEmphasis`}
             ref={item.ref}>
-            {i === selectedTimeIndex ? (
-              <div className="absolute bottom-0 left-[6px] right-[6px] z-0 h-[3px] rounded-[2px] bg-[#5465ff]" />
-            ) : null}
             <input
               type="radio"
               value={item.label}
@@ -164,7 +193,7 @@ function ChartTimeTabs(props: any) {
             />
             <label
               htmlFor={item.label}
-              className={`block p-2 text-[14px] 
+              className={`block text-[14px] 
                 ${i === selectedTimeIndex ? 'font-semibold text-white' : 'text-mediumEmphasis'}`}>
               {item.label}
             </label>
@@ -176,13 +205,7 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const {
-    tradingData,
-    setSelectedTimeIndex,
-    selectedTimeIndex,
-    isStartLoadingChart,
-    /* tokenRef, */ currentToken /* isProShow, setIsProShow */
-  } = props;
+  const { tradingData, setSelectedTimeIndex, isStartLoadingChart, currentToken } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
 
@@ -208,9 +231,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
 
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
 
-  const hours = '';
-  const minutes = '';
-  const seconds = '';
   const rateLong = '-.--';
   const rateShort = '-.--';
   let longSide = '';
@@ -219,13 +239,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
   if (tradingData && tradingData.fundingRateLong) {
     const rawdata = utils.formatEther(tradingData.fundingRateLong);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-    const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateLong = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
     if (Number(numberRawdata) > 0) {
       longSide = 'Pay';
     } else {
@@ -236,13 +249,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
   if (tradingData && tradingData.fundingRateShort) {
     const rawdata = utils.formatEther(tradingData.fundingRateShort);
     const numberRawdata = (Number(rawdata) * 100).toFixed(4);
-    const absoluteNumber = Math.abs(Number(numberRawdata));
-    // rateShort = (
-    //   <span>
-    //     &nbsp;
-    //     {`${absoluteNumber}%`}
-    //   </span>
-    // );
     if (Number(numberRawdata) > 0) {
       shortSide = 'Get';
     } else {
@@ -275,7 +281,7 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
               {isGapAboveLimit ? (
                 <div>
                   <div className="flex items-center">
-                    <Image src="/static/alert_red.svg" width={20} height={20} alt="" />
+                    <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
                   </div>
                 </div>
               ) : null}
@@ -308,7 +314,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             { label: '3M', ref: useRef() }
           ]}
           setSelectedTimeIndex={setSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
         />
       </div>
@@ -317,10 +322,11 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
 });
 
 const ProComponent = forwardRef((props: any, ref: any) => {
-  const { visible, onVisibleChanged, tradingData, currentToken, selectedTimeIndex } = props;
+  const { visible, onVisibleChanged, tradingData, currentToken } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [dayVolume, setDayVolume] = useState(tradingData.dayVolume);
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
   const displayTimeKey = ['24Hr', '1W', '1M', '3M'][selectedTimeIndex];
 
   useImperativeHandle(ref, () => ({
@@ -397,7 +403,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
   return (
     <div
-      className={`w-full whitespace-nowrap rounded-none bg-[#0C0D20]
+      className={`w-full whitespace-nowrap rounded-none bg-darkBlue
         px-[21px] py-[24px] ${visible ? 'visible' : ''}`}>
       <div className="content flex flex-col space-y-[24px]">
         <div className="flex text-[14px] text-mediumEmphasis">
@@ -419,7 +425,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
           </div>
         </div>
         <div>
-          <div className="text-14 flex text-mediumEmphasis">
+          <div className="flex text-[14px] text-mediumEmphasis">
             <div className="flex flex-1 flex-col">
               <span className="text-marketGreen">Long</span>
               <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
@@ -458,16 +464,14 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 function ChartMobile(props: any, ref: any) {
   const { tradingData } = props;
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
-  const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
-  const [isProShow, setIsProShow] = useState(true);
-  const [isProVisible, setIsProVisible] = useState(false); // indicate pro component state after animation complete
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
   const proRef = useRef();
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
@@ -504,37 +508,30 @@ function ChartMobile(props: any, ref: any) {
     gRef.reset();
     // graphDataRef.current.reset();
     const pRef: any = proRef.current;
-    pRef.reset();
     fetchChartData();
   }, [currentToken, selectedTimeIndex]); // from tokenRef.current
 
   const handleSelectedTimeIndex = (index: any) => {
     chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
-    setSelectedTimeIndex(index);
+    wsSelectedTimeIndex.set(index);
   };
 
   return (
-    <div className="chartWindow mb-[36px]">
+    <div className="bg-lightBlue">
       <div className="">
         <ChartHeaders
           ref={graphHeaderRef}
           tradingData={tradingData}
           setSelectedTimeIndex={handleSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          isProShow={isProShow}
-          setIsProShow={setIsProShow}
         />
         <div ref={chartProContainerRef}>
           <ChartDisplay
             lineChartData={lineChartData}
             isStartLoadingChart={isStartLoadingChart}
-            selectedTimeIndex={selectedTimeIndex}
-            isProShow={isProShow}
             chartProContainerRef={chartProContainerRef}
           />
         </div>
-        <ProComponent ref={proRef} visible={isProShow} tradingData={tradingData} selectedTimeIndex={selectedTimeIndex} />
       </div>
     </div>
   );

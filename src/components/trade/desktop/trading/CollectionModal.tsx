@@ -12,15 +12,18 @@ import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 import { CollectionOverview, useMarketOverview } from '@/hooks/market';
 import { getCollectionInformation } from '@/const/collectionList';
 
-const SortingIndicator = ({ value }: { value: number }) => (
-  <Image
-    className="icon"
-    alt=""
-    width={16}
-    height={16}
-    src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
-  />
-);
+const SortingIndicator = ({ value }: { value: number }) => {
+
+  return (
+    <Image
+      className="ml-1"
+      alt=""
+      width={10}
+      height={10}
+      src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
+    />
+  );
+};
 
 const CollectionModal = (props: any) => {
   const { visible, setVisible, selectCollection } = props;
@@ -181,7 +184,7 @@ const CollectionModal = (props: any) => {
           <div className="flex-1 basis-1/4 px-[18px]">
             <div className="flex">
               <div>
-                <Image src={logo} width="24" height="24" alt="" />
+                <Image src={logo} width={24} height={24} alt="" />
               </div>
               <div className="ml-[6px]">
                 <p className="mb-1 text-[14px] text-highEmphasis">{collectionName}</p>
@@ -231,7 +234,7 @@ const CollectionModal = (props: any) => {
       }}>
       <div
         className="relative mx-auto mt-[80px] h-[600px] max-w-[940px]
-          rounded-[12px] border-[1px] border-[#a8cbff]/[.22] bg-[#0c0d20] text-[14px]
+          rounded-[12px] border-[1px] border-[#a8cbff]/[.22] bg-darkBlue text-[14px]
           font-normal leading-[17px] text-mediumEmphasis"
         onClick={e => {
           e.stopPropagation();
@@ -243,10 +246,17 @@ const CollectionModal = (props: any) => {
                 leading-[24px] text-highEmphasis">
               Collections
             </p>
-            <Image className="cursor-pointer" src="/images/common/refresh.svg" width="24" height="24" alt="" onClick={updateOverviewData} />
+            <Image
+              className="cursor-pointer"
+              src="/images/common/refresh.svg"
+              width={24}
+              height={24}
+              alt=""
+              onClick={updateOverviewData}
+            />
           </div>
           <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setVisible(false)}>
-            <Image src="/images/components/common/modal/close.svg" width="16" height="16" alt="" />
+            <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
         </div>
         <div className="body">
@@ -257,7 +267,7 @@ const CollectionModal = (props: any) => {
                 <div
                   className="basis-1/5 cursor-pointer px-[18px]"
                   onClick={() => setPositionSorting({ ...initSorting, vammPrice: (positionSorting.vammPrice + 1) % 3 })}>
-                  <div className="flex">
+                  <div className="mb-1 flex">
                     vAMM Price <SortingIndicator value={positionSorting.vammPrice} />
                   </div>
                   <p>Oracle Price</p>
@@ -265,14 +275,14 @@ const CollectionModal = (props: any) => {
                 <div
                   className="basis-1/4 cursor-pointer px-[18px]"
                   onClick={() => setPositionSorting({ ...initSorting, priceGap: (positionSorting.priceGap + 1) % 3 })}>
-                  <div className="flex">
+                  <div className="mb-1 flex">
                     vAMM-Oracle <SortingIndicator value={positionSorting.priceGap} />
                   </div>
                   <p>Price Gap</p>
                 </div>
                 <div className="basis-1/6 cursor-pointer px-[18px]">
                   <div
-                    className="flex text-right"
+                    className="mb-1 flex justify-end"
                     onClick={() => setPositionSorting({ ...initSorting, timeValue: (positionSorting.timeValue + 1) % 3 })}>
                     Change <SortingIndicator value={positionSorting.timeValue} />
                   </div>
@@ -307,13 +317,13 @@ const CollectionModal = (props: any) => {
                   </div>
                 </div>
                 <div
-                  className="basis-1/6 cursor-pointer px-[18px] text-right"
+                  className="basis-1/6 cursor-pointer pl-[12px]"
                   onClick={() => setPositionSorting({ ...initSorting, dayVolume: (positionSorting.dayVolume + 1) % 3 })}>
-                  <div className="flex">
+                  <div className="mb-1 flex">
                     24hr Volume <SortingIndicator value={positionSorting.dayVolume} />
                   </div>
                 </div>
-                <div className="basis-1/5 px-[18px] text-right">Funding Rate</div>
+                <div className="basis-1/5 px-[18px]">Funding Rate</div>
               </div>
             </div>
             <div className="tbody">

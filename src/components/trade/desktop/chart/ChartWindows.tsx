@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
 
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
@@ -29,17 +29,16 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsIsLogin, wsChatInterval, wsCurrentToken } from '@/stores/WalletState';
-import { Address, useAccount, useNetwork } from 'wagmi';
-import { $currentAMM } from '@/stores/trading';
-import { getAddressConfig } from '@/const/addresses';
+import { wsIsLogin, wsChatInterval, wsCurrentToken, wsSelectedTimeIndex, wsFullWalletAddress } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
+import Tooltip from '@/components/common/Tooltip';
 
 const flashAnim = 'flash';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
   return (
-    <div className={`text-14 flex items-center space-x-[6px] text-highEmphasis ${className}`}>
+    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
       <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
@@ -81,7 +80,7 @@ function PriceIndicator(props: any) {
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
         ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
-      <div className="col my-auto" style={{ marginRight: '16px', alignItems: 'center', display: 'flex' }}>
+      <div className="col mx-4 my-auto flex items-center">
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
     </div>
@@ -98,8 +97,8 @@ function PriceIndicator(props: any) {
             : '/images/components/trade/chart/polygon_neg.svg'
         }
         className="ml-4 mr-2"
-        width="16"
-        height="16"
+        width={16}
+        height={16}
       />
       <div>
         <div className="mr-4">
@@ -111,7 +110,7 @@ function PriceIndicator(props: any) {
   );
 }
 
-function chartButtonLogged(index: any, currentAmm: AMM, address: string) {
+function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
 
   if (firebaseAnalytics) {
@@ -132,30 +131,60 @@ function chartButtonLogged(index: any, currentAmm: AMM, address: string) {
 }
 
 function ChartTimeTabs(props: any) {
-  const { selectedTimeIndex, setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
+  const { isStartLoadingChart, setSelectedTimeIndex, contentArray = [], controlRef } = props;
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const updateSelectedTimeIndex = () => {
+    const activeSegmentRef = contentArray[selectedTimeIndex].ref;
+    const { offsetLeft, offsetWidth } = activeSegmentRef.current;
+    const { style } = controlRef.current;
+    style.setProperty('--highlight-width', `${offsetWidth}px`);
+    style.setProperty('--highlight-x-pos', `${offsetLeft}px`);
+  };
 
   useEffect(() => {
-    const activeSegmentRef = contentArray[selectedTimeIndex].ref;
-    const { offsetWidth, offsetLeft } = activeSegmentRef.current;
-    const { style } = controlRef.current;
-    style.setProperty('--highlight-width', '25px');
-    style.setProperty('--highlight-x-pos', `${offsetLeft + 8}px`);
+    updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
 
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      const element = document.getElementById('divTradeWindow');
+      if (element === null) return;
+      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
+      if (isVisibleNow && !isVisible) {
+        setIsVisible(true);
+        updateSelectedTimeIndex();
+      } else if (!isVisibleNow && isVisible) {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isVisible, selectedTimeIndex]);
+
   return (
-    <div className="flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+    <div className="relative flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+      <div
+        className="absolute bottom-0 left-0 right-0 z-0 h-[3px]
+          w-[var(--highlight-width)] translate-x-[var(--highlight-x-pos)]
+          transform rounded-[2px] bg-[#5465ff] duration-300 ease-in-out"
+      />
+
       <div className="relative inline-flex w-full justify-between overflow-hidden text-center ">
         {contentArray.map((item: any, i: any) => (
           <div
             key={item.label}
-            className={`segment text-mediumEmphasis hover:text-highEmphasis ${i === selectedTimeIndex ? 'active' : ''} ${
-              isStartLoadingChart ? 'waitCursor' : 'presscursor'
-            }
-            z-1 relative flex w-full cursor-pointer items-center justify-center text-center`}
+            className={`segment z-1 relative ml-4 flex
+              w-full cursor-pointer items-center
+              justify-center pb-[6px] text-center
+              text-mediumEmphasis hover:text-highEmphasis`}
             ref={item.ref}>
-            {i === selectedTimeIndex ? (
-              <div className="absolute bottom-0 left-[5px] right-[5px] z-0 h-[3px] rounded-[2px] bg-[#5465ff]" />
-            ) : null}
             <input
               type="radio"
               value={item.label}
@@ -165,7 +194,7 @@ function ChartTimeTabs(props: any) {
             />
             <label
               htmlFor={item.label}
-              className={`block p-2 text-[16px] 
+              className={`block text-[14px] font-normal
                 ${i === selectedTimeIndex ? 'font-semibold text-white' : ''}`}>
               {item.label}
             </label>
@@ -177,7 +206,7 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, selectedTimeIndex, isStartLoadingChart, currentAmm } = props;
+  const { tradingData, setSelectedTimeIndex, isStartLoadingChart } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const currentToken = useNanostore(wsCurrentToken);
@@ -206,18 +235,18 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             />
           </div> */}
           <div className="col newcontenttext mb-[16px]">
-            <div className="text-14 font-400 flex space-x-[12px] text-highEmphasis">
-              <div className="flex items-center space-x-[6px]">
-                {/* <Image className="" src={selectedCollection.logo} width="16" height="16" alt="" /> */}
+            <div className="font-400 flex space-x-[12px] text-[14px] text-highEmphasis">
+              <div className="flex items-center space-x-[6px] text-[14px] font-normal">
+                {/* <Image className="" src={selectedCollection.logo} width={16} height={16} alt="" /> */}
                 <span>{selectedCollection.displayCollectionPair}</span>
               </div>
-              <div className="text-14 font-400 flex text-highEmphasis">
+              <div className="font-400 flex text-[14px] text-highEmphasis">
                 <SmallPriceIcon priceValue={`${formatterValue(tradingData.twapPrice, 2, '', '-.--')} (Oracle)`} />
               </div>
             </div>
           </div>
           <div className="flex">
-            <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={32} height={32} large />
+            <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={30} height={30} large />
             <PriceIndicator priceChangeRatioAndValue={priceChangeRatioAndValue} />
           </div>
         </div>
@@ -234,7 +263,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             { label: '3M', ref: useRef() }
           ]}
           setSelectedTimeIndex={setSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
         />
       </div>
@@ -353,18 +381,17 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
   return (
     <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
       <div className="flex items-center space-x-[12px]">
-        {/* <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip>
-              <p className="text-b3">Price difference between the vAMM and the oracle prices</p>
-            </Tooltip>
-          }>
-          <p className="cursor-default">VAMM - Oracle Price Gap:</p>
-        </OverlayTrigger> */}
-
         <div>
-          <p className="cursor-default">VAMM - Oracle Price Gap:</p>
+          <Tooltip
+            direction="top"
+            content={
+              <p className="mx-2 text-center text-b3">
+                Price difference between the
+                <br /> vAMM and the oracle prices
+              </p>
+            }>
+            <p className="cursor-default text-mediumEmphasis">VAMM - Oracle Price Gap:</p>
+          </Tooltip>
         </div>
 
         <div className="flex items-center space-x-[4px]">
@@ -374,39 +401,9 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
           ).toFixed(2)}%)`}</p>
 
           {isGapAboveLimit ? (
-            // <OverlayTrigger
-            //   placement="top"
-            //   onToggle={handleToggleAlertOverlay}
-            //   show={showAlertOverlay}
-            //   overlay={
-            //     <Tooltip>
-            //       <div className="">
-            //         <p className="mb-[10px] text-left text-b3">
-            //           vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at Oracle Price (note that P&L is still calculated based on
-            //           vAMM price)
-            //         </p>
-            //         {!isAlertTooltipHasShown ? (
-            //           <div className="flex justify-end">
-            //             <button
-            //               className="rounded border border-highEmphasis px-[14px] py-[7px] text-b3"
-            //               onClick={() => {
-            //                 setShowAlertOverlay(false);
-            //                 showPopup.setKey(selectedCollection.collection, true);
-            //               }}>
-            //               Got it !
-            //             </button>
-            //           </div>
-            //         ) : null}
-            //       </div>
-            //     </Tooltip>
-            //   }>
-            //   <div className="flex items-center">
-            //     <Image src="/static/alert_red.svg" width={20} height={20} />
-            //   </div>
-            // </OverlayTrigger>
             <div>
               <div className="flex items-center">
-                <Image src="/static/alert_red.svg" width={20} height={20} alt="" />
+                <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
               </div>
             </div>
           ) : null}
@@ -415,11 +412,24 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
       <div className="flex space-x-[12px]">
         <TitleTips
           titleText={
-            <span className="flex w-[209px] justify-between">
+            <span className="flex w-[209px] justify-between text-mediumEmphasis">
               <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
             </span>
           }
-          tipsText="The rate of the funding payment. Funding payment is paid to/by either short or long positions based on the difference between spot and vAMM price. Funding payment happens once every 3 hours, which is calculated on a 3-hour simple weighted rolling average basis."
+          tipsText={
+            <div className="text-center">
+              The rate of the funding <br />
+              payment. Funding payment is <br />
+              paid to/by either short or long <br />
+              positions based on the <br />
+              difference between spot and <br />
+              vAMM price. Funding payment <br />
+              happens once every 3 hours, <br />
+              which is calculated on a 3-hour <br />
+              simple weighted rolling average <br />
+              basis.
+            </div>
+          }
           placement="top"
         />
         <div className="col text-highEmphasis">
@@ -434,7 +444,8 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
 });
 
 const ProComponent = forwardRef((props: any, ref: any) => {
-  const { visible, onVisibleChanged, tradingData, currentToken, selectedTimeIndex, ammAddress } = props;
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const { visible, onVisibleChanged, tradingData, currentToken } = props;
   const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
   const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
   const [dayVolume, setDayVolume] = useState(tradingData.dayVolume);
@@ -477,20 +488,6 @@ const ProComponent = forwardRef((props: any, ref: any) => {
   // animation
   useEffect(() => {
     const element = document.querySelector('.pro-data-container');
-    // if (!visible) {
-    //   element.classList.add('display-none');
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    //   return;
-    // }
-
-    // using animate.stye
-    // if (visible) {
-    //   element.classList.remove('animate__animated', 'animate__slideOutRight');
-    //   element.classList.add('animate__animated', 'animate__slideInRight');
-    // } else {
-    //   element.classList.remove('animate__animated', 'animate__slideInRight');
-    //   element.classList.add('animate__animated', 'animate__slideOutRight');
-    // }
 
     const timer1 = setTimeout(() => {
       if (onVisibleChanged) onVisibleChanged(visible);
@@ -499,22 +496,12 @@ const ProComponent = forwardRef((props: any, ref: any) => {
     return () => {
       clearTimeout(timer1);
     };
-
-    // if (visible) {
-    //   // element.classList.remove('display-none');
-    //   element.style.width = '261px';
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    // } else {
-    //   // element.classList.add('display-none');
-    //   element.style.width = '0px';
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    // }
   }, [visible, onVisibleChanged]);
 
   return (
     <div className={`w-[261px] whitespace-nowrap rounded-none bg-black px-[34px] py-[26px] ${visible ? 'visible' : ''}`}>
       <div className="content ml-[12px] flex flex-col space-y-[24px]">
-        <div className="flex text-[14px] text-mediumEmphasis">
+        <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>
             <SmallPriceIcon
@@ -531,7 +518,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
           </div>
         </div>
         <div>
-          <div className="text-14 flex text-mediumEmphasis">
+          <div className="flex text-[14px] text-mediumEmphasis">
             <div className="flex flex-1 flex-col">
               <span className="text-marketGreen">Long</span>
               <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
@@ -556,7 +543,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
             />
           </div>
         </div>
-        <div className="text-medium flex text-[12px]">
+        <div className="text-medium flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">Volume (24Hr)</p>
             <SmallPriceIcon priceValue={!dayVolume ? '-.--' : formatterValue(dayVolume, 2)} isLoading={!dayVolume} />
@@ -569,26 +556,15 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
 function ChartWindows(props: any, ref: any) {
   const { tradingData } = props;
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-
   const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
-  const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
-  const [isProShow, setIsProShow] = useState(true);
 
   const chartProContainerRef = useRef(null);
   const graphHeaderRef = useRef();
   const proRef = useRef();
-  const currentAmm = useNanostore($currentAMM);
-  const [ammAddress, setAmmAddress] = useState<Address | undefined>();
-
-  useEffect(() => {
-    if (chain && currentAmm) {
-      const addressConfig = getAddressConfig(chain, chain.unsupported ?? false);
-      setAmmAddress(addressConfig.amms[currentAmm]);
-    }
-  }, [currentAmm]);
+  const currentToken = useNanostore(wsCurrentToken);
+  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const fetchChartData = useCallback(async () => {
     if (!ammAddress) return;
@@ -627,10 +603,8 @@ function ChartWindows(props: any, ref: any) {
   }, [currentAmm, selectedTimeIndex]); // from tokenRef.current
 
   const handleSelectedTimeIndex = (index: any) => {
-    if (address && currentAmm) {
-      chartButtonLogged(index, currentAmm, address);
-    }
-    setSelectedTimeIndex(index);
+    chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
+    wsSelectedTimeIndex.set(index);
   };
 
   return (
@@ -640,11 +614,7 @@ function ChartWindows(props: any, ref: any) {
           ref={graphHeaderRef}
           tradingData={tradingData}
           setSelectedTimeIndex={handleSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
-          isProShow={isProShow}
-          setIsProShow={setIsProShow}
-          currentAmm={currentAmm}
         />
         <div className="dividerslim" />
         <div ref={chartProContainerRef} className="chart-pro-container mb-[16px] flex">
@@ -652,26 +622,12 @@ function ChartWindows(props: any, ref: any) {
             <ChartDisplay
               lineChartData={lineChartData}
               isStartLoadingChart={isStartLoadingChart}
-              selectedTimeIndex={selectedTimeIndex}
-              isProShow={isProShow}
               chartProContainerRef={chartProContainerRef}
             />
           </div>
-          <ProComponent
-            ref={proRef}
-            visible={isProShow}
-            tradingData={tradingData}
-            selectedTimeIndex={selectedTimeIndex}
-            ammAddress={ammAddress}
-          />
+          <ProComponent ref={proRef} tradingData={tradingData} />
         </div>
-        <ChartFooter
-          tradingData={tradingData}
-          setSelectedTimeIndex={handleSelectedTimeIndex}
-          selectedTimeIndex={selectedTimeIndex}
-          isStartLoadingChart={isStartLoadingChart}
-          currentAmm={currentAmm}
-        />
+        <ChartFooter tradingData={tradingData} setSelectedTimeIndex={handleSelectedTimeIndex} isStartLoadingChart={isStartLoadingChart} />
       </div>
     </div>
   );

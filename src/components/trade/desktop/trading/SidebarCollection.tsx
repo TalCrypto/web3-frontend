@@ -56,30 +56,42 @@ function SidebarCollection() {
   };
 
   return (
-    <>
+    <div
+      className={`absolute ml-[-45px] mt-4 flex w-[45px]
+        flex-col rounded-l-[12px] bg-gradient-to-r from-[#71aaff66]
+        to-[#ffffff00] py-[1px] pl-[1px]
+      `}>
       <div
-        className="side-collection absolute  mt-[9px] flex w-[44px]
-        flex-col rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-secondaryBlue
-        px-[6px] py-3">
+        className="flex w-[44px] flex-col rounded-l-[12px] bg-secondaryBlue px-1 py-3"
+        style={{ '--highlight-y-pos': `${yPos}px` } as CSSProperties}>
         <div
-          className={`item ${isLoading ? 'loading' : ''}
-            relative flex h-8 w-8 cursor-pointer items-center rounded-full 
+          className="transition-width absolute right-0 top-[6px] h-[48px] w-[48px]
+          translate-y-[var(--highlight-y-pos)] transform
+          rounded-l-[12px] bg-[#2574fb] transition duration-300 ease-in-out"
+        />
+        <div
+          className={`item ${isLoading ? 'opacity-30' : ''}
+            relative flex cursor-pointer items-center justify-center rounded-full
              hover:border-[hsla(0,0%,100%,.2)]`}
           onClick={() => setIsColModalVisible(true)}>
           <Image
             src="/images/collections/more.svg"
-            width="32"
-            height="32"
+            width={32}
+            height={32}
             alt=""
-            className="border-[4px] border-transparent hover:border-[4px]"
+            className="rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
           />
-          {/* {isLoading ? (
-            <div className="loading-indicator">
-              <div className="spinner-border spinner-border-sm text-light" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+          {isLoading ? (
+            <div
+              className="loading-indicator absolute left-[4px] top-[3px] flex h-7
+                  w-7 items-center justify-center rounded-full text-[10px]">
+              <div
+                className="spinner-border inline-block h-4 w-4
+                    animate-spin rounded-full border-2 border-solid
+                  border-white border-r-transparent"
+              />
             </div>
-          ) : null} */}
+          ) : null}
         </div>
         {Object.keys(AMM)
           .map(ammKey => getCollectionInformation(AMM[ammKey as keyof typeof AMM]))
@@ -131,7 +143,7 @@ function SidebarCollection() {
           ))}
       </div>
       <CollectionModal visible={isColModalVisible} setVisible={setIsColModalVisible} selectCollection={selectCollection} />
-    </>
+    </div>
   );
 }
 export default SidebarCollection;

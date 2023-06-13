@@ -23,7 +23,7 @@ export default function InputSlider(props: any) {
   return (
     <div className="relative">
       <input
-        className={`h-[4px] w-full appearance-none rounded-[5px] bg-[#242652]
+        className={`ml-[2px] h-[4px] w-[calc(100%-10px)] appearance-none rounded-[5px] bg-mediumBlue
           ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         disabled={disabled}
         type="range"
@@ -37,13 +37,13 @@ export default function InputSlider(props: any) {
       />
       <div
         className={`input-track input-track pointer-events-none absolute left-0
-          mt-[-11px] h-[4px] w-full rounded-[5px]
+          mt-[-11px] h-[4px] w-full rounded-[5px] pr-[5px]
         ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         style={{ width: `${fill}%` }}
       />
       {marks ? (
         <>
-          <div className="pointer-events-none absolute top-[11px] flex w-full justify-between">
+          <div className="pointer-events-none absolute top-[11px] flex w-full justify-between pr-[5px]">
             {Object.keys(marks).map(i => (
               <div
                 key={`dot-${i}`}
@@ -61,7 +61,7 @@ export default function InputSlider(props: any) {
               return (
                 <div
                   key={`mark-${i}`}
-                  className="h-[8px] w-[8px] cursor-pointer text-[14px] text-[#a3c2ff]/[.6]"
+                  className="cursor-pointer text-[14px] text-mediumEmphasis"
                   onClick={() => {
                     if (!disabled) onChange(i);
                   }}>
@@ -73,13 +73,14 @@ export default function InputSlider(props: any) {
         </>
       ) : null}
       <div
-        className="pointer-events-none absolute top-2 h-[14px] w-[14px] cursor-pointer
-        rounded-full border-[2px] border-[#04aefc] bg-white"
+        className="input-slider pointer-events-none absolute top-2 flex h-[14px]
+        w-[14px] cursor-pointer items-center justify-center rounded-full"
         style={{
-          left: `calc(${fill}% - ${lerp(-1, 15, alphaFill)}px)`,
+          left: `calc(${fill}% - ${lerp(0, 14, alphaFill)}px)`,
           opacity: disabled ? '0.6' : '1'
-        }}
-      />
+        }}>
+        <div className="h-[10px] w-[10px] rounded-full bg-white" />
+      </div>
     </div>
   );
 }

@@ -26,7 +26,7 @@ import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
-import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition, wsFullWalletAddress } from '@/stores/WalletState';
 
 function SectionDividers() {
   return (
@@ -67,7 +67,7 @@ function QuantityEnter(props: any) {
 
   const [isFocus, setIsFocus] = useState(false);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
 
@@ -133,7 +133,7 @@ function QuantityEnter(props: any) {
   return (
     <>
       <div className={`${disabled ? 'disabled' : ''}`}>
-        <div className="mb-3 text-[14px] text-[#a3c2ff]/[.68]">Amount to Close (Notional)</div>
+        <div className="mb-3 text-[14px] text-mediumEmphasis">Amount to Close (Notional)</div>
       </div>
       <div className="mb-3">
         <div
@@ -141,8 +141,8 @@ function QuantityEnter(props: any) {
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
-          <div className="flex h-12 items-center rounded-[4px] bg-[#242652] p-3">
-            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width="18" height="24" className="" />
+          <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
+            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} className="" />
             <div className="inputweth">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
@@ -158,7 +158,7 @@ function QuantityEnter(props: any) {
                     showMaxValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">MAX</span>
+                <span className="text-center text-mediumEmphasis">MAX</span>
               </div>
               <div
                 className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
@@ -169,13 +169,13 @@ function QuantityEnter(props: any) {
                     showHalfValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">HALF</span>
+                <span className="text-center text-mediumEmphasis">HALF</span>
               </div>
             </div>
             <input
               type="text"
-              pattern="[0-9]*"
-              className={`w-full border-none border-[#242652] bg-[#242652]
+              // pattern="[0-9]*"
+              className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none
                   ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
               value={closeValue === 0 ? '' : closeValue}
@@ -199,9 +199,9 @@ function UpdateValueDisplay(props: any) {
 
   return (
     <div className="mb-4 flex">
-      <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="w-[45%] text-[14px] text-mediumEmphasis">{title}</div>
       <div className="flex-1">
-        <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue + currentUnit}</span>
+        <span className="text-[14px] font-semibold text-mediumEmphasis">{currentValue + currentUnit}</span>
         <span className="text-[14px] font-semibold text-highEmphasis">{' → '}</span>
         <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
           <span className="text-[14px] font-semibold">{newValue}</span>
@@ -217,7 +217,7 @@ function UpdateValueNoDataDisplay(props: any) {
 
   return (
     <div className="flex items-center">
-      <div className="text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="text-[14px] text-mediumEmphasis">{title}</div>
       <div className="text-[14px] font-semibold text-highEmphasis">
         <span>-.--</span>
         <span className="text-[14px]">{unit}</span>
@@ -231,11 +231,11 @@ function DisplayValues(props: any) {
 
   return (
     <div
-      className={`${className !== '' ? className : 'sumrow'}
+      className={`${className !== '' ? className : ''}
       mb-[2px] flex items-center
     `}>
-      <div className="text-[14px] text-[#a3c2ff]/[.48]">{title}</div>
-      <div className={`flex-1 flex-shrink-0 text-right text-[#a3c2ff]/[.68] ${valueClassName}`}>
+      <div className="text-[14px] text-mediumEmphasis">{title}</div>
+      <div className={`flex-1 flex-shrink-0 text-right text-mediumEmphasis ${valueClassName}`}>
         <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
@@ -315,7 +315,7 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   } = props;
 
   const isHasPartialClose = useNanostore(hasPartialClose);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
 
@@ -326,7 +326,7 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
 
   function startClosePosition() {
     setIsClosingPosition(false);
-    setCloseValue('');
+    setCloseValue(0);
     setEstimatedValue({});
     setToleranceRate(0.5);
     // refreshPositions();
@@ -545,7 +545,7 @@ function QuantityTips(props: any) {
   const { maxValueComparison, minValueComparison, estPriceFluctuation, isFluctuationLimit, isBadDebt, isPending, closeValue } = props;
 
   if ((closeValue <= 0 && !isBadDebt) || (!maxValueComparison && !minValueComparison && !estPriceFluctuation && !isPending && !isBadDebt)) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
 
   const label = isPending
@@ -650,36 +650,13 @@ function EstimationComponent(props: any) {
           unit="x"
         />
       )}
-      {/* {!userPosition || estimatedValue === null ? (
-        <UpdateValueNoDataDisplay title="Collateral Ratio" unit="%" />
-      ) : (
-        <UpdateValueDisplay
-          title="Collateral Ratio"
-          
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMarginRatio, 2)}
-          currentUnit="%"
-          newValue={
-            !isNewPosition
-              ? '-.--'
-              : Number(closeValue) === Number(currentMaxValue)
-              ? '0.00'
-              : calculateNumber(estimatedValue.newPosition.marginRatio, 2)
-          }
-          unit="%"
-        />
-      )} */}
       <SectionDividers />
-      {/* <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.fee, 5)} /> */}
-      {/* <DisplayValues title="Price Impact" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.priceImpact, 2, '%')} /> */}
     </div>
   );
 }
 
 function ExtendedEstimateComponent(props: any) {
   const { displayAdvanceDetail, estimatedValue = {}, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
-  // const targetCollection = collectionList.filter(({ collection }) => collection === currentToken); // from tokenRef.current
-  // const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-  // const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
 
   // determine if input is valid or error state
@@ -692,58 +669,31 @@ function ExtendedEstimateComponent(props: any) {
   return (
     <div>
       {displayAdvanceDetail !== 0 ? (
-        <>
+        <div className="pb-4">
           {Number(closeValue) < Number(currentMaxValue) ? (
-            <>
-              <div className="row">
-                <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
-              </div>
-              {/* <div className="row detailrow">
-                <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">Position Type</div>
-                <div className="col contentls">{isNewPosition ? (estimatedValue.newPosition.type === 'long' ? 'Long' : 'Short') : '---'}</div>
-              </div> */}
-              {/* <DisplayValues
-                title="Contract Size"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.size, 4) : '-.--'}
-                unit={currentType}
-              /> */}
-              {/* <DisplayValues
-                title="Notional"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.marketValue, 2) : '-.--'}
-                unit="WETH"
-              /> */}
+            <div className="pb-4">
+              <div className="mb-1 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               <DisplayValues title="Collateral" value={isNewPosition ? formatterValue(estimatedValue.collateral, 4) : '-.--'} unit="WETH" />
               <DisplayValues
                 title="Average Entry Price"
                 value={isNewPosition ? formatterValue(estimatedValue.newPosition.entryPrice, 2) : '-.--'}
                 unit="WETH"
               />
-              {/* <DisplayValues
-                title="Collateral Ratio"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.marginRatio, 2) : '-.--'}
-                unit="%"
-              /> */}
               <DisplayValues
                 title="Liquidation Price"
                 value={isNewPosition ? formatterValue(estimatedValue.newPosition.liquidationPrice, 2) : '-.--'}
                 unit="WETH"
               />
-            </>
+            </div>
           ) : null}
 
           <div className="row">
-            <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
+            <div className="mb-1 text-[14px] font-semibold text-white underline">Transaction Details</div>
           </div>
           <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.--' : formatterValue(estimatedValue.fee, 5)} />
-          {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
-          <div className="row detaillastrow">
-            <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">Price Impact</div>
-            <div className="col contentsmallitem text-[14px] text-[#a3c2ff]/[.68]">
-              <span className="value">{formatterValue(estimatedValue.priceImpact, 2)}</span> %
-            </div>
-          </div>
-        </>
+          <DisplayValues title="Price Impact" value={formatterValue(estimatedValue.priceImpact, 2)} unit="%" />
+        </div>
       ) : null}
     </div>
   );
@@ -752,19 +702,7 @@ function ExtendedEstimateComponent(props: any) {
 function CloseSlider(props: any) {
   const { closeValue, currentMaxValue, onChange, setCloseValue, disabled } = props;
   const numMax = Number(currentMaxValue);
-  // const marks = {
-  //   0: {
-  //     style: { fontSize: '12px' },
-  //     label: '0'
-  //   },
-  //   numMax: {
-  //     style: { fontSize: '12px', textAlign: 'end', transform: 'translateX(-95%)' },
-  //     label: 'Total Notional Value'
-  //   }
-  // };
-  // const tooltipStyling = {
-  //   open: true
-  // };
+
   return (
     <div className={`${disabled ? 'disabled' : ''}`}>
       <InputSlider
@@ -810,7 +748,7 @@ export default function CloseCollateral(props: any) {
   const [isPending, setIsPending] = useState(false);
   const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const userPosition: any = useNanostore(wsUserPosition);
 
   const actionButtonRef = useRef();
@@ -921,7 +859,7 @@ export default function CloseCollateral(props: any) {
   useEffect(() => {
     setCloseValue(0);
     handleEnter(0);
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div>
@@ -972,20 +910,19 @@ export default function CloseCollateral(props: any) {
       />
       <SectionDividers />
       <div className={`mb-4 flex items-center ${isProcessing ? 'disabled' : ''}`}>
-        <div className="text-[14px] text-[#a3c2ff]/[.68]">Slippage Tolerance</div>
-        <div className="flex flex-1 justify-end">
+        <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        <div className="flex flex-1 justify-end text-right">
           <div
-            className={`rounded-[4px] border-[#242652] bg-[#242652]
+            className={`rounded-[4px] border-mediumBlue bg-mediumBlue
               px-[10px] py-[4px] text-white
               ${isProcessing ? 'disabled' : ''}`}>
             <input
               disabled={isProcessing}
               title=""
               type="text"
-              pattern="[0-9]*"
-              className="w-[90%] max-w-[100px]  border-[1px]
-                border-[#242652] bg-[#242652] text-[15px]
-                font-semibold outline-none"
+              // pattern="[0-9]*"
+              className="text-[15px]font-semibold w-[90%]  max-w-[100px] border-[1px]
+                border-mediumBlue bg-mediumBlue px-1 outline-none"
               placeholder="0.0 "
               value={toleranceRate}
               onChange={e => {
@@ -1048,13 +985,8 @@ export default function CloseCollateral(props: any) {
         isBadDebt={isBadDebt}
       />
       {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
-      {/* <div className="row">
-        <div className="col-auto text-[14px] text-[#a3c2ff]/[.68]">
-          * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released
-        </div>
-      </div> */}
       {estimatedValue /* && estimatedValue.newPosition */ && !minValueComparison && !maxValueComparison && closeValue > 0 ? (
-        <div className="row">
+        <div className="pb-4">
           <div
             className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
             onClick={() => setDisplayAdvanceDetail(displayAdvanceDetail ? 0 : 1)}>

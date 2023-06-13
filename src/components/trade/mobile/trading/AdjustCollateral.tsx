@@ -30,7 +30,8 @@ import {
   wsCurrentToken,
   wsUserPosition,
   wsWethBalance,
-  wsMaxReduceValue
+  wsMaxReduceValue,
+  wsFullWalletAddress
 } from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
 
@@ -39,7 +40,7 @@ function SaleOrBuyRadio(props: any) {
   const { page } = pageTitleParser(router.asPath);
   const { marginIndex, setMarginIndex, setMarginEstimation, setAdjustMarginValue } = props;
   // const radioButtonIndex = marginIndex ? 0 : 1;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
 
   function getAnalyticsLongShort(index: any) {
@@ -63,7 +64,7 @@ function SaleOrBuyRadio(props: any) {
       <div
         className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center 
           rounded-full text-center text-[14px] font-semibold hover:text-highEmphasis
-          ${className} ${marginIndex === index ? 'text-highEmphasis' : 'text-[#c3d8ff]/[.48]'}
+          ${className} ${marginIndex === index ? 'text-highEmphasis' : 'text-direction-unselected-normal'}
         `}
         onClick={() => {
           setAdjustMarginValue(0);
@@ -76,7 +77,7 @@ function SaleOrBuyRadio(props: any) {
       </div>
     );
   });
-  return <div className="mb-6 flex h-[40px] rounded-full bg-[#242652]">{radioGroup}</div>;
+  return <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">{radioGroup}</div>;
 }
 
 function QuantityEnter(props: any) {
@@ -142,9 +143,9 @@ function QuantityEnter(props: any) {
   return (
     <>
       <div className={`mb-4 flex ${disabled ? 'disabled' : ''}`}>
-        <div className="flex-1 text-[14px] text-[#a3c2ff]/[.68]">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
+        <div className="flex-1 text-[14px] text-mediumEmphasis">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
         {isLoginState && !isWrongNetwork && marginIndex === 0 ? (
-          <div className="flex text-[14px] text-[#a3c2ff]/[.68]" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+          <div className="flex text-[14px] text-mediumEmphasis" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <div className="flex-1" style={{ display: 'flex', marginRight: '4px' }}>
               <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
             </div>
@@ -163,8 +164,8 @@ function QuantityEnter(props: any) {
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
-          <div className="flex h-12 items-center rounded-[4px] bg-[#242652] p-3">
-            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width="18" height="24" className="" />
+          <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
+            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} className="" />
             <div className="inputweth">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
@@ -179,7 +180,7 @@ function QuantityEnter(props: any) {
                     showMaxValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">MAX</span>
+                <span className="text-center text-mediumEmphasis">MAX</span>
               </div>
               <div
                 className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
@@ -190,13 +191,13 @@ function QuantityEnter(props: any) {
                     showHalfValue();
                   }
                 }}>
-                <span className="text-center text-[#a3c2ff]/[.6]">HALF</span>
+                <span className="text-center text-mediumEmphasis">HALF</span>
               </div>
             </div>
             <input
               type="text"
-              pattern="[0-9]*"
-              className={`w-full border-none border-[#242652] bg-[#242652]
+              // pattern="[0-9]*"
+              className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none
                   ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
               value={value}
@@ -220,9 +221,9 @@ function UpdateValueDisplay(props: any) {
 
   return (
     <div className="mb-4 flex">
-      <div className="w-[45%] text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
+      <div className="w-[45%] text-[14px] text-mediumEmphasis">{title}</div>
       <div className="right">
-        <span className="text-[14px] font-semibold text-[#a3c2ff]/[.68]">{currentValue}</span>
+        <span className="text-[14px] font-semibold text-mediumEmphasis">{currentValue}</span>
         <span className="text-[14px] font-semibold text-highEmphasis">{' → '}</span>
         <span className={unitSizing === 'normal' ? 'text-[12px]' : ''}>
           <span className="text-[14px] font-semibold">{newValue}</span>
@@ -238,8 +239,8 @@ function UpdateValueNoDataDisplay(props: any) {
 
   return (
     <div className="row adjustcollateralrow items-center">
-      <div className="col text-[14px] text-[#a3c2ff]/[.68]">{title}</div>
-      <div className="col-auto text-[14px] font-semibold text-[#a3c2ff]/[.68]">
+      <div className="col text-[14px] text-mediumEmphasis">{title}</div>
+      <div className="col-auto text-[14px] font-semibold text-mediumEmphasis">
         <span>{`-.--${unit}`}</span>
       </div>
     </div>
@@ -261,7 +262,7 @@ function UpdatedCollateralValue(props: any) {
 
   return (
     <div className="mb-4 flex items-center">
-      <div className="text-[14px] text-[#a3c2ff]/[.68]">{marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}</div>
+      <div className="text-[14px] text-mediumEmphasis">{marginIndex === 0 ? 'Total Balance Required' : 'Total Balance Returned'}</div>
       <div className="flex-1 text-right">
         <span className="text-[14px] font-semibold">{value}</span>
         <span className="text-[12px]" style={{ marginLeft: '4px' }}>
@@ -336,7 +337,7 @@ function ActionButtons(props: any) {
     isWaiting
   } = props;
   const [isAdjustingMargin, setIsAdjustingMargin] = useState(false);
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const currentToken = useNanostore(wsCurrentToken);
 
@@ -495,7 +496,7 @@ function QuantityTips(props: any) {
     (value === 0 ||
       (!balanceChecking && !marginRatioChecker && !minimalMarginChecking && !initialMarginChecker && !reduceMarginChecking && !isPending))
   ) {
-    return <div className="row tbloverviewcontent" />;
+    return null;
   }
 
   const label =
@@ -676,7 +677,7 @@ export default function AdjustCollateral(props: any) {
   const minimalMarginChecking = Number(adjustMarginValue) !== 0 && Number(adjustMarginValue) < 0.01 && adjustMarginValue !== 0;
   const initialMarginChecker = marginEstimation !== null && marginIndex === 1 && Number(utils.formatEther(userPosition.marginRatio)) < 20;
   const reduceMarginChecking = Number(maxReduceValue) - 0.0001 < 0 && marginIndex === 1;
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const handleMarginEnter = async function handleMarginEnter(marginValue: any) {
     setTextErrorMessage('');
@@ -737,7 +738,7 @@ export default function AdjustCollateral(props: any) {
   useEffect(() => {
     setAdjustMarginValue(0);
     handleMarginEnter('');
-  }, [walletProvider.holderAddress]);
+  }, [fullWalletAddress]);
 
   return (
     <div>

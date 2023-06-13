@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
+import { wsFullWalletAddress, wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { connectWallet, disconnectWallet, updateTargetNetwork } from '@/utils/Wallet';
-import { walletProvider } from '@/utils/walletProvider';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import Link from 'next/link';
 import { withRouter } from 'next/router';
@@ -18,7 +17,7 @@ const MobileMenu = (props: any) => {
   const isWalletLoading = useNanostore(wsIsWalletLoading);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
 
-  const fullWalletAddress = walletProvider.holderAddress;
+  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const wethBalance = useNanostore(wsWethBalance);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
@@ -67,7 +66,7 @@ const MobileMenu = (props: any) => {
     <div
       className="fixed bottom-0 left-0 right-0 top-0 z-10  h-screen w-full
         overflow-auto bg-lightBlue">
-      <div className="mt-[18px] flex">
+      <div className="flex h-full pt-[18px]">
         <div className="w-full pl-[20px] text-[14px] text-highEmphasis">
           <div className="flex w-full items-center">
             <div className="mr-3 w-[60px]">
@@ -80,70 +79,75 @@ const MobileMenu = (props: any) => {
               </span>
             </div>
           </div>
-
-          <div className="my-[18px]">
-            <Link
-              href="/portfolio"
-              className={`
+          <div className="scrollable mt-[36px] h-[calc(100%-361px)] overflow-y-scroll">
+            <div className="pb-[35px]">
+              <Link
+                href="/portfolio"
+                className={`
                 ${router.route.toLowerCase() === '/portfolio' ? 'mobile-menu-active font-semibold' : ''}
               `}>
-              Portfolio
-            </Link>
-          </div>
-          <div className="my-[18px]">
-            <Link
-              href="/trade"
-              className={`
+                Portfolio
+              </Link>
+            </div>
+            <div className="pb-[35px]">
+              <Link
+                href="/trade"
+                className={`
                 ${router.route.toLowerCase() === '/trade' ? 'mobile-menu-active font-semibold' : ''}
               `}>
-              Trade
-            </Link>
-          </div>
-          {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
-          <div className="my-[18px] flex items-center" onClick={() => setIsOthersOpen(!isOthersOpen)}>
-            {/* <Link href="/others">Others</Link> */}
-            Others
-            <Image
-              className={`ml-2 ${isOthersOpen ? 'rotate-90' : ''}`}
-              src="/images/mobile/common/angle-right.png"
-              alt=""
-              width={6}
-              height={10}
-            />
-          </div>
-          {isOthersOpen ? (
-            <>
-              <div className="my-[18px] ml-5">
-                <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
-                  Avatar
-                  <span
-                    className="ml-[6px] rounded-[2px] border-[1px] border-[#ffc34b]/[.87] px-[3px]
-                    py-[1px] text-[8px] text-[#ffc34b]/[.87]">
-                    SOON
-                  </span>
-                </Link>
-              </div>
-              <div className="my-[18px] ml-5">
-                <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
-                  Battle
-                  <span
-                    className="ml-[6px] rounded-[2px] border-[1px] border-[#ffc34b]/[.87] px-[3px]
-                    py-[1px] text-[8px] text-[#ffc34b]/[.87]">
-                    SOON
-                  </span>
-                </Link>
-              </div>
-            </>
-          ) : null}
+                Trade
+              </Link>
+            </div>
+            {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
+            <div className="flex items-center pb-[35px]" onClick={() => setIsOthersOpen(!isOthersOpen)}>
+              {/* <Link href="/others">Others</Link> */}
+              Others
+              <Image
+                className={`ml-2 ${isOthersOpen ? 'rotate-90' : ''}`}
+                src="/images/mobile/common/angle-right.png"
+                alt=""
+                width={6}
+                height={10}
+              />
+            </div>
+            {isOthersOpen ? (
+              <>
+                <div className="ml-5 pb-[35px]">
+                  <Link
+                    href="/airdrop"
+                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    Avatar
+                    <span
+                      className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
+                    py-[1px] text-[8px] text-comingSoon">
+                      SOON
+                    </span>
+                  </Link>
+                </div>
+                <div className="ml-5 pb-[35px]">
+                  <Link
+                    href="/airdrop"
+                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    Battle
+                    <span
+                      className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
+                    py-[1px] text-[8px] text-comingSoon">
+                      SOON
+                    </span>
+                  </Link>
+                </div>
+              </>
+            ) : null}
 
-          <div className="my-[18px]">
-            <Link
-              href="/airdrop"
-              className={`
+            <div className="pb-[35px]">
+              <Link
+                href="/airdrop"
+                className={`
             ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
             `}>
-              Airdrop
-            </Link>
+                Airdrop
+              </Link>
+            </div>
           </div>
         </div>
         {isShowSocialFooter ? (
@@ -275,7 +279,7 @@ const MobileMenu = (props: any) => {
                     text-[12px] text-highEmphasis"
                   onClick={onBtnGetWethClick}>
                   <Image src="/images/mobile/common/get_weth.svg" alt="" className="mb-2" width={40} height={40} />
-                  Get Weth
+                  Get WETH
                 </div>
               </div>
             </div>
@@ -301,7 +305,7 @@ const MobileMenu = (props: any) => {
           <Image
             src="/images/mobile/common/close.svg"
             alt=""
-            className="fixed bottom-[5px] right-[10px]"
+            className="fixed bottom-[5px] right-[20px]"
             width={40}
             height={40}
             onClick={() => setIsShowMobileMenu(false)}

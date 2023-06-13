@@ -21,7 +21,7 @@ function InformationMobile(props: any) {
     setActiveTab(index);
   };
 
-  const Tabs = ['Market Trade', 'Spot Transactions', 'Funding Payment'].map((item, index) => (
+  const Tabs = ['Market Trades', 'Spot Transactions', 'Funding Payment'].map((item, index) => (
     <div
       className={`tab cursor-pointer px-[16px] py-[6px]
         ${activeTab === index ? 'selected' : ''}`}
@@ -33,8 +33,8 @@ function InformationMobile(props: any) {
 
   return (
     <div
-      className="mb-[24px] mr-auto mt-[20px] cursor-default overflow-hidden
-      whitespace-nowrap rounded-[6px] border-0 border-t-[1px] border-t-[#71AAFF]/[.12] p-0 pb-10">
+      className="mr-auto mt-[6px] cursor-default overflow-hidden whitespace-nowrap
+      rounded-[6px] border-0 border-t-[1px] border-t-[#71AAFF]/[.12] bg-lightBlue p-0">
       <div
         className="info-tab no-scrollable mb-6 flex items-center overflow-x-scroll
           border-b-[2px] border-b-[#71AAFF]/[.12]">

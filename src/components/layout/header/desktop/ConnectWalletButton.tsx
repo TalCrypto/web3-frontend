@@ -48,7 +48,7 @@ const ConnectWalletButton: React.FC = () => {
         className={`navbar-button ${!isConnected ? 'not-connected' : 'connected'}`}
         onClick={() => (chain?.unsupported ? open({ route: 'SelectNetwork' }) : !isConnected ? open() : null)}>
         <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
-        <div className={`container ${!isConnected ? 'flex flex-row-reverse' : ''}`} id="login-btn">
+        <div className="flex flex-row items-center justify-center px-5" id="login-btn">
           {isConnecting ? (
             <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
           ) : (
