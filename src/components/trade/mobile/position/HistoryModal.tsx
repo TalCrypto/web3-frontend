@@ -71,7 +71,7 @@ const defaultSelectedRecord = {
 };
 
 const HistoryModal = (props: any) => {
-  const { setShowHistoryModal } = props;
+  const { showHistoryModal, setShowHistoryModal } = props;
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const historyRecordsByMonth = useNanostore(wsHistoryGroupByMonth);
   const currentToken = useNanostore(wsCurrentToken);
@@ -207,10 +207,13 @@ const HistoryModal = (props: any) => {
 
   return (
     <div
-      className="fixed inset-0 z-10 flex h-screen
-        items-center justify-center overflow-auto bg-black bg-opacity-40">
+      className={`fixed inset-0 z-10 h-screen w-full
+        ${showHistoryModal ? 'left-[0]' : 'left-[100%]'}
+        transition-left overflow-auto bg-black
+        bg-opacity-40 duration-500
+      `}>
       <div
-        className="relative mx-auto flex h-full w-full overflow-hidden
+        className="relative top-0 mx-auto h-[calc(100%-50px)] w-full overflow-hidden
           border-[1px] border-[#71aaff38] bg-secondaryBlue"
         onClick={e => {
           e.stopPropagation();
@@ -226,197 +229,199 @@ const HistoryModal = (props: any) => {
           </div>
         ) : (
           <>
-            {!isShowDetail ? (
-              <div className="h-full w-full bg-darkBlue">
-                <div className="h-full overflow-auto pb-[60px]">
-                  {Object.keys(historyRecordsByMonth).map((month: any) => {
-                    const records: any = historyRecordsByMonth[month];
-                    return (
-                      <div id={`group-${month}`} className="collapsible">
-                        {records.map((record: any, idx: any) => {
-                          const currentRecordType = getTradingActionTypeFromAPI(record);
-                          const recordAmount = BigNumber.from(record.amount).abs();
-                          const recordFee = !record.fee ? BigNumber.from(0) : BigNumber.from(record.fee);
-                          const recordRealizedPnl = !record.realizedPnl ? BigNumber.from(0) : BigNumber.from(record.realizedPnl);
-                          const recordRealizedFundingPayment = !record.fundingPayment
-                            ? BigNumber.from(0)
-                            : BigNumber.from(record.fundingPayment);
-                          const recordCollateralChange = !record.collateralChange
-                            ? BigNumber.from(0)
-                            : BigNumber.from(record.collateralChange);
-                          const balance =
-                            currentRecordType === 'Open' || currentRecordType === 'Add' || currentRecordType === 'Add Collateral'
-                              ? -Math.abs(
-                                  Number(calculateNumber(recordAmount.add(recordFee).add(recordRealizedFundingPayment), 4))
-                                ).toFixed(4)
-                              : currentRecordType === 'Reduce Collateral'
-                              ? Math.abs(Number(calculateNumber(recordCollateralChange.add(recordRealizedFundingPayment), 4))).toFixed(4)
-                              : currentRecordType === 'Full Close'
-                              ? Math.abs(
-                                  Number(
-                                    calculateNumber(recordAmount.add(recordRealizedPnl).sub(recordFee).sub(recordRealizedFundingPayment), 4)
-                                  )
-                                ).toFixed(4)
-                              : -Math.abs(Number(calculateNumber(record.fee, 4))).toFixed(4);
-                          return (
-                            <div
-                              key={`item-${idx}-${record.timestamp}`}
-                              className={`flex cursor-pointer justify-between
+            <div className="relative h-full w-full bg-darkBlue">
+              <div className="h-full w-full overflow-auto pb-[10px]">
+                {Object.keys(historyRecordsByMonth).map((month: any) => {
+                  const records: any = historyRecordsByMonth[month];
+                  return (
+                    <div id={`group-${month}`} className="collapsible">
+                      {records.map((record: any, idx: any) => {
+                        const currentRecordType = getTradingActionTypeFromAPI(record);
+                        const recordAmount = BigNumber.from(record.amount).abs();
+                        const recordFee = !record.fee ? BigNumber.from(0) : BigNumber.from(record.fee);
+                        const recordRealizedPnl = !record.realizedPnl ? BigNumber.from(0) : BigNumber.from(record.realizedPnl);
+                        const recordRealizedFundingPayment = !record.fundingPayment
+                          ? BigNumber.from(0)
+                          : BigNumber.from(record.fundingPayment);
+                        const recordCollateralChange = !record.collateralChange
+                          ? BigNumber.from(0)
+                          : BigNumber.from(record.collateralChange);
+                        const balance =
+                          currentRecordType === 'Open' || currentRecordType === 'Add' || currentRecordType === 'Add Collateral'
+                            ? -Math.abs(Number(calculateNumber(recordAmount.add(recordFee).add(recordRealizedFundingPayment), 4))).toFixed(
+                                4
+                              )
+                            : currentRecordType === 'Reduce Collateral'
+                            ? Math.abs(Number(calculateNumber(recordCollateralChange.add(recordRealizedFundingPayment), 4))).toFixed(4)
+                            : currentRecordType === 'Full Close'
+                            ? Math.abs(
+                                Number(
+                                  calculateNumber(recordAmount.add(recordRealizedPnl).sub(recordFee).sub(recordRealizedFundingPayment), 4)
+                                )
+                              ).toFixed(4)
+                            : -Math.abs(Number(calculateNumber(record.fee, 4))).toFixed(4);
+                        return (
+                          <div
+                            key={`item-${idx}-${record.timestamp}`}
+                            className={`flex cursor-pointer justify-between
                                 border-b-[1px] border-b-secondaryBlue 
                                 px-5 py-[10px] text-highEmphasis`}
-                              onClick={() => onClickRow(record)}>
-                              <div className="flex max-w-[75%]">
-                                <div className="mr-2 w-[2px] rounded-[2px] bg-primaryBlue" />
-                                <div className="flex flex-col">
-                                  <span className="text-[12px] text-mediumEmphasis">
-                                    {formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}
-                                  </span>
-                                  <span>
-                                    <TypeWithIconByAmm
-                                      className="icon-label"
-                                      amm={record.ammAddress}
-                                      showCollectionName
-                                      content={` - ${currentRecordType}`}
-                                    />
-                                  </span>
-                                </div>
-                              </div>
-                              <div
-                                className="flex flex-col items-end justify-between text-end
-                                  text-[14px] text-mediumEmphasis">
-                                <span className="title">Wallet Balance</span>
-                                <PriceWithIcon
-                                  className={`icon-label ${Number(balance) > 0 ? 'plus' : Number(balance) < 0 ? 'text-marketRed' : ''}`}
-                                  priceValue={`${Number(balance) > 0 ? '+' : ''}${
-                                    Number(balance) === 0 ? '--.--' : Number(balance).toFixed(4)
-                                  }`}
-                                />
+                            onClick={() => onClickRow(record)}>
+                            <div className="flex max-w-[75%]">
+                              <div className="mr-2 w-[2px] rounded-[2px] bg-primaryBlue" />
+                              <div className="flex flex-col">
+                                <span className="text-[12px] text-mediumEmphasis">
+                                  {formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}
+                                </span>
+                                <span>
+                                  <TypeWithIconByAmm
+                                    className="icon-label"
+                                    amm={record.ammAddress}
+                                    showCollectionName
+                                    content={` - ${currentRecordType}`}
+                                  />
+                                </span>
                               </div>
                             </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                </div>
+                            <div
+                              className="flex flex-col items-end justify-between text-end
+                                  text-[14px] text-mediumEmphasis">
+                              <span className="title">Wallet Balance</span>
+                              <PriceWithIcon
+                                className={`icon-label ${Number(balance) > 0 ? 'plus' : Number(balance) < 0 ? 'text-marketRed' : ''}`}
+                                priceValue={`${Number(balance) > 0 ? '+' : ''}${
+                                  Number(balance) === 0 ? '--.--' : Number(balance).toFixed(4)
+                                }`}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
               </div>
-            ) : (
-              <div className="flex-1 bg-darkBlue">
-                <div
-                  className="mb-[6px] flex items-center justify-between
+            </div>
+
+            <div
+              className={`absolute top-0 h-full w-full bg-darkBlue
+                ${isShowDetail ? 'left-[0]' : 'left-[100%]'}
+                transition-left duration-500
+              `}>
+              <div
+                className="mb-[6px] flex items-center justify-between
                     bg-lightBlue px-5 py-6 text-[16px] text-highEmphasis">
-                  <div>
-                    <span>Wallet Balance</span>
-                    <PriceWithIcon
-                      className={`icon-label ${Number(selectedBalance) > 0 ? 'plus' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}`}
-                      priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
-                        Number(selectedBalance) === 0 ? '--.--' : Number(selectedBalance).toFixed(4)
-                      }`}
-                    />
-                  </div>
-                  <ExplorerButton
-                    className="mr-[6px]"
-                    txHash={selectedRecord.txHash}
-                    onClick={(e: any) => logTradeButton(e, selectedRecord.txHash, selectedRecord.ammAddress)}
+                <div>
+                  <span>Wallet Balance</span>
+                  <PriceWithIcon
+                    className={`icon-label ${Number(selectedBalance) > 0 ? 'plus' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}`}
+                    priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
+                      Number(selectedBalance) === 0 ? '--.--' : Number(selectedBalance).toFixed(4)
+                    }`}
                   />
                 </div>
-                <div className="text-mediumEmphasis">
-                  <div className="mb-[6px]  bg-lightBlue">
-                    {isLiquidation ? <LiquidationWarning /> : null}
-                    {detailRow(
-                      'Collection',
-                      selectedRecord.ammAddress ? (
-                        <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} showCollectionName />
-                      ) : (
-                        '-'
+                <ExplorerButton
+                  className="mr-[6px]"
+                  txHash={selectedRecord.txHash}
+                  onClick={(e: any) => logTradeButton(e, selectedRecord.txHash, selectedRecord.ammAddress)}
+                />
+              </div>
+              <div className="text-mediumEmphasis">
+                <div className="mb-[6px]  bg-lightBlue">
+                  {isLiquidation ? <LiquidationWarning /> : null}
+                  {detailRow(
+                    'Collection',
+                    selectedRecord.ammAddress ? (
+                      <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} showCollectionName />
+                    ) : (
+                      '-'
+                    )
+                  )}
+                  {detailRow('Action', getTradingActionTypeFromAPI(selectedRecord)) || '-'}
+                  {detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
+                  {detailRow(
+                    'Entry Price',
+                    selectedRecord.entryPrice === 'NaN' || selectedRecord.entryPrice === 'Infinity' || !selectedRecord.entryPrice
+                      ? '0.00'
+                      : Number(formatterValue(Number(BigNumber.from(selectedRecord.entryPrice)), 2)).toFixed(2)
+                  )}
+                  {detailRow(
+                    'Type',
+                    <span className={typeClassName}>
+                      {Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) > 0
+                        ? 'LONG'
+                        : Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) < 0
+                        ? 'SHORT'
+                        : '-.--'}
+                    </span>
+                  )}
+                </div>
+                <div className="bg-lightBlue">
+                  {!isLiquidation
+                    ? detailRow(
+                        'Collateral Change',
+                        <PriceWithIcon
+                          className="icon-label"
+                          priceValue={
+                            selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
+                          }>
+                          {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
+                            // <OverlayTrigger placement="top" overlay={<Tooltip>Collateral will not change.</Tooltip>}>
+                            <Image
+                              src="/images/components/trade/history/more_info.svg"
+                              alt=""
+                              width={16}
+                              height={16}
+                              className="ml-[6px] mr-0"
+                            />
+                          ) : // </OverlayTrigger>
+                          null}
+                        </PriceWithIcon>
                       )
-                    )}
-                    {detailRow('Action', getTradingActionTypeFromAPI(selectedRecord)) || '-'}
-                    {detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
-                    {detailRow(
-                      'Entry Price',
-                      selectedRecord.entryPrice === 'NaN' || selectedRecord.entryPrice === 'Infinity' || !selectedRecord.entryPrice
-                        ? '0.00'
-                        : Number(formatterValue(Number(BigNumber.from(selectedRecord.entryPrice)), 2)).toFixed(2)
-                    )}
-                    {detailRow(
-                      'Type',
-                      <span className={typeClassName}>
-                        {Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) > 0
-                          ? 'LONG'
-                          : Number(formatterValue(selectedRecord.exchangedPositionSize, 4)) < 0
-                          ? 'SHORT'
-                          : '-.--'}
-                      </span>
-                    )}
-                  </div>
-                  <div className="bg-lightBlue">
-                    {!isLiquidation
-                      ? detailRow(
-                          'Collateral Change',
-                          <PriceWithIcon
-                            className="icon-label"
-                            priceValue={
-                              selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
-                            }>
-                            {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
-                              // <OverlayTrigger placement="top" overlay={<Tooltip>Collateral will not change.</Tooltip>}>
-                              <Image
-                                src="/images/components/trade/history/more_info.svg"
-                                alt=""
-                                width={16}
-                                height={16}
-                                className="ml-[6px] mr-0"
-                              />
-                            ) : // </OverlayTrigger>
-                            null}
-                          </PriceWithIcon>
+                    : detailRow(
+                        'Resulting Collateral',
+                        <PriceWithIcon className="icon-label" priceValue={selectedRecord.ammAddress ? `${collateralChange}` : '--.--'} />
+                      )}
+                  {isLiquidation
+                    ? detailRow(
+                        'Resulting Contract Size',
+                        selectedRecord.ammAddress ? (
+                          <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
+                        ) : (
+                          '-'
                         )
-                      : detailRow(
-                          'Resulting Collateral',
-                          <PriceWithIcon className="icon-label" priceValue={selectedRecord.ammAddress ? `${collateralChange}` : '--.--'} />
-                        )}
-                    {isLiquidation
-                      ? detailRow(
-                          'Resulting Contract Size',
-                          selectedRecord.ammAddress ? (
-                            <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
-                          ) : (
-                            '-'
-                          )
+                      )
+                    : detailRow(
+                        'Contract Size',
+                        selectedRecord.ammAddress ? (
+                          <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
+                        ) : (
+                          '-'
                         )
-                      : detailRow(
-                          'Contract Size',
-                          selectedRecord.ammAddress ? (
-                            <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
-                          ) : (
-                            '-'
-                          )
-                        )}
-                    {isLiquidation
-                      ? detailRow('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
-                      : detailRow(
-                          'Notional Change',
-                          <PriceWithIcon className="icon-label" priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
-                        )}
-                    {!isLiquidation ? detailRow('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
-                    {isLiquidation ? <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} /> : null}
-                    {isFullClose ? <DetailRowWithPriceIcon label="Funding Payment" content={fundingPayment} /> : null}
-                  </div>
+                      )}
+                  {isLiquidation
+                    ? detailRow('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
+                    : detailRow(
+                        'Notional Change',
+                        <PriceWithIcon className="icon-label" priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
+                      )}
+                  {!isLiquidation ? detailRow('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
+                  {isLiquidation ? <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} /> : null}
+                  {isFullClose ? <DetailRowWithPriceIcon label="Funding Payment" content={fundingPayment} /> : null}
                 </div>
               </div>
-            )}
+            </div>
           </>
         )}
       </div>
 
       <div
-        className="fixed bottom-0 flex h-[50px] w-full items-center justify-center
+        className="absolute bottom-0 flex h-[50px] w-full items-center justify-center
         bg-secondaryBlue px-[22px] py-4 text-[15px] text-white
       ">
         <Image
           src="/images/mobile/common/angle-right.svg"
-          className="fixed left-[22px] cursor-pointer"
+          className="absolute left-[22px] cursor-pointer"
           width={14}
           height={14}
           alt=""

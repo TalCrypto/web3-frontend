@@ -285,10 +285,13 @@ export default function PositionMobile(props: any) {
         </div>
       </div>
 
-      {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-      {showFundingPaymentModal ? (
-        <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
-      ) : null}
+      <HistoryModal showHistoryModal={showHistoryModal} setShowHistoryModal={setShowHistoryModal} />
+
+      <FundingPaymentModal
+        showFundingPaymentModal={showFundingPaymentModal}
+        tradingData={tradingData}
+        setShowFundingPaymentModal={setShowFundingPaymentModal}
+      />
 
       {/* {isGapAboveLimit ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">

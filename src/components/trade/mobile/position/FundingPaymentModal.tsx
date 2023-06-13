@@ -13,7 +13,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 
 const FundingPaymentModal = (props: any) => {
-  const { setShowFundingPaymentModal } = props;
+  const { showFundingPaymentModal, setShowFundingPaymentModal } = props;
 
   const currentToken = useNanostore(wsCurrentToken);
   const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
@@ -46,8 +46,11 @@ const FundingPaymentModal = (props: any) => {
 
   return (
     <div
-      className="fixed bottom-0 left-0 top-0 z-10 flex  h-full
-      w-full items-center justify-center bg-black/[.2] backdrop-blur-[4px]"
+      className={`fixed bottom-0 left-0 top-0 z-10 flex h-full w-full
+        ${showFundingPaymentModal ? 'left-[0]' : 'left-[100%]'}
+        transition-left w-full items-center justify-center bg-black/[.2]
+        backdrop-blur-[4px] duration-500
+      `}
       onClick={() => setShowFundingPaymentModal(false)}>
       <div
         className="relative h-full w-full rounded-[12px] border-[1px]
