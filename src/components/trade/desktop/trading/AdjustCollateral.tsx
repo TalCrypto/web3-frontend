@@ -34,6 +34,7 @@ import {
   wsFullWalletAddress
 } from '@/stores/WalletState';
 import { getTestToken } from '@/utils/Wallet';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
@@ -293,27 +294,24 @@ function AdjustMarginButton(props: any) {
 
   if (isChecked1 || isChecked2) {
     return (
-      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#272955]">
+      <PrimaryButton className="h-[46px] w-full" isDisabled>
         <div className="text-center font-semibold text-[#373961]">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
-      </div>
+      </PrimaryButton>
     );
   }
   if (isAdjustingMargin) {
     return (
-      <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-primaryBlue">
-        <div className="col loadingindicator confirmtradingbtntextallow mx-auto text-center">
+      <PrimaryButton className="h-[46px] w-full">
+        <div className="col mx-auto text-center">
           <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
         </div>
-      </div>
+      </PrimaryButton>
     );
   }
   return (
-    <div
-      className="mb-6 flex h-[46px] w-full cursor-pointer
-        items-center justify-center rounded-[6px] bg-primaryBlue hover:bg-[#5190fc]"
-      onClick={adjustPositionMargin}>
+    <PrimaryButton className="h-[46px] w-full " onClick={adjustPositionMargin}>
       <div className="center font-semibold text-white">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
-    </div>
+    </PrimaryButton>
   );
 }
 

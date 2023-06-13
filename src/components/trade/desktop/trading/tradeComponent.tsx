@@ -37,6 +37,7 @@ import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
 import Tooltip from '@/components/common/Tooltip';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 function LongShortRatio(props: any) {
   const router = useRouter();
@@ -620,10 +621,10 @@ function ConfirmButton(props: any) {
 
   return (
     <div className="flex">
-      <div
+      <PrimaryButton
+        isDisabled={disabled}
         className={`${disabled || isPending ? 'opacity-30' : ''}
-          flex h-[46px] w-full cursor-pointer items-center rounded-[4px] bg-primaryBlue
-          px-[10px] py-[14px] text-center
+          h-[46px] w-full px-[10px] py-[14px]
         `}
         onClick={onClickButton}>
         <div className="w-full text-center text-[15px] font-semibold">
@@ -643,7 +644,7 @@ function ConfirmButton(props: any) {
             'Trade'
           )}
         </div>
-      </div>
+      </PrimaryButton>
     </div>
   );
 }

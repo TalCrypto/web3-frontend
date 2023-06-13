@@ -269,7 +269,7 @@ function AdjustMarginButton(props: any) {
   if (isClosingPosition) {
     return (
       <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-primaryBlue">
-        <div className="col loadingindicator confirmtradingbtntextallow mx-auto text-center">
+        <div className="col mx-auto text-center">
           <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
         </div>
       </div>

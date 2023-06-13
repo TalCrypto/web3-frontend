@@ -123,3 +123,13 @@
 .input-slider {
   background: linear-gradient(270deg, #f703d9, #795af4, #04aefc);
 }
+
+.btn-primary {
+  &:hover {
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), #2574fb;
+  }
+
+  &:active {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #2574fb;
+  }
+}

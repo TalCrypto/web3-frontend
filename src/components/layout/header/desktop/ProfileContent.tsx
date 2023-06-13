@@ -16,6 +16,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentChain, wsFullWalletAddress, wsIsWrongNetwork } from '@/stores/WalletState';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 interface PriceContentProps {
   priceValue: string;
@@ -216,19 +217,13 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       <li className="m-0 list-none p-0">
         <div className="normal-buttons m-6 mt-3">
           {!isWrongNetwork ? (
-            <div
-              className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
-                bg-primaryBlue text-[14px] font-semibold text-white"
-              onClick={onGeWethClick}>
+            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={onGeWethClick}>
               Get WETH
-            </div>
+            </PrimaryButton>
           ) : (
-            <div
-              className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
-            bg-primaryBlue text-[14px] font-semibold text-white"
-              onClick={() => updateTargetNetwork()}>
+            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={() => updateTargetNetwork()}>
               Switch to Arbitrum
-            </div>
+            </PrimaryButton>
           )}
           <div
             className="function-btn mt-6 cursor-pointer text-[16px]

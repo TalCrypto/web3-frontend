@@ -312,13 +312,13 @@ function TribeDetailComponents(props: any) {
 
   return (
     <>
-      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <MarketTrade />
       </div>
-      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <SpotTable />
       </div>
-      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <FundingPaymentHistory />
       </div>
     </>
