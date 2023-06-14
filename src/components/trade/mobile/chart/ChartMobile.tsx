@@ -4,6 +4,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
+import { ThreeDots } from 'react-loader-spinner';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
@@ -517,23 +518,33 @@ function ChartMobile(props: any, ref: any) {
   };
 
   return (
-    <div className="bg-lightBlue">
-      <div className="">
-        <ChartHeaders
-          ref={graphHeaderRef}
-          tradingData={tradingData}
-          setSelectedTimeIndex={handleSelectedTimeIndex}
-          isStartLoadingChart={isStartLoadingChart}
-        />
-        <div ref={chartProContainerRef}>
-          <ChartDisplay
-            lineChartData={lineChartData}
-            isStartLoadingChart={isStartLoadingChart}
-            chartProContainerRef={chartProContainerRef}
-          />
+    <>
+      {!tradingData && (
+        <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
+          <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
         </div>
-      </div>
-    </div>
+      )}
+
+      {tradingData && (
+        <div className="bg-lightBlue">
+          <div className="">
+            <ChartHeaders
+              ref={graphHeaderRef}
+              tradingData={tradingData}
+              setSelectedTimeIndex={handleSelectedTimeIndex}
+              isStartLoadingChart={isStartLoadingChart}
+            />
+            <div ref={chartProContainerRef}>
+              <ChartDisplay
+                lineChartData={lineChartData}
+                isStartLoadingChart={isStartLoadingChart}
+                chartProContainerRef={chartProContainerRef}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

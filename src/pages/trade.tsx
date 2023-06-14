@@ -14,15 +14,11 @@ import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 
-import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin, wsIsShowTradingMobile } from '@/stores/WalletState';
 import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 import { WithRouterProps } from 'next/dist/client/with-router';
-import { $currentAMM, $tradingData } from '@/stores/trading';
+import { $currentAMM } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { useAccount } from 'wagmi';
-import { useTradingData } from '@/hooks/collection';
-import { ThreeDots } from 'react-loader-spinner';
 
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -32,8 +28,6 @@ import { ThreeDots } from 'react-loader-spinner';
 function TradePage(props: WithRouterProps) {
   const { router } = props;
   const { isConnected } = useAccount();
-  const currentAmm = useNanostore($currentAMM);
-  const tradingData = useTradingData(currentAmm);
   // const maxReduceValue = useNanostore(wsMaxReduceValue);
   // const [maxReduceValue, setMaxReduceValue] = useState('');
   // const [historyRecords, setHistoryRecords] = useState([]);
@@ -152,13 +146,7 @@ function TradePage(props: WithRouterProps) {
           <Switcher />
 
           <div className="mt-12 bg-darkBlue">
-            {!tradingData ? (
-              <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
-                <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
-              </div>
-            ) : null}
-
-            <ChartMobile tradingData={tradingData} />
+            <ChartMobile />
 
             {isConnected ? <PositionMobile /> : null}
 
