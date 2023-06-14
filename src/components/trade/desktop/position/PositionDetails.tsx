@@ -21,10 +21,10 @@ import IndividualShareContainer from '@/components/trade/desktop/position/Indivi
 import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaymentModal';
-import { $currentAMM, $transactionPendings } from '@/stores/trading';
-import { useAccount, useTransaction } from 'wagmi';
-import { $userInfo } from '@/stores/user';
-import { usePositionInfo, useTradingData, useTransactionIsPending, useCollectionInfo } from '@/hooks/collection';
+import { $currentAMM } from '@/stores/trading';
+import { useAccount } from 'wagmi';
+import { usePositionInfo, useTradingData, useTransactionIsPending } from '@/hooks/collection';
+import { getCollectionInformation } from '@/const/collectionList';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -52,7 +52,7 @@ export default function PositionDetails(props: any) {
   const positionInfo = usePositionInfo(currentAmm);
   const tradingData = useTradingData(currentAmm);
   const isPending = useTransactionIsPending(currentAmm);
-  const collectionInfo = useCollectionInfo(currentAmm);
+  const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
   // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
   const [showSharePosition, setShowSharePosition] = useState(false);
