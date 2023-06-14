@@ -17,6 +17,7 @@ import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { AMM } from '@/const/collectionList';
 import { $showTransferTokenModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 interface PriceContentProps {
   priceValue: string;
@@ -182,46 +183,33 @@ const BottomContent: React.FC<{ balance: number; isWrongNetwork: boolean }> = ({
 
 interface ProfileContentProps {
   balance: number;
-  userInfo: UserInfo;
+  setShowDisconnectTooltip: (value: boolean) => void;
+  userInfo: { username: string } | null;
   isWrongNetwork: boolean;
 }
 
-const DisconnectButton: React.FC = () => {
+const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = (props, ref) => {
+  const { balance, setShowDisconnectTooltip, isWrongNetwork, userInfo } = props;
+  const isNotSetUsername = !userInfo || !userInfo.username;
+  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const { disconnect } = useDisconnect();
-  return (
-    <div
-      className="function-btn mt-6 cursor-pointer text-[16px]
-    font-semibold text-primaryBlue"
-      onClick={() => disconnect()}>
-      Disconnect Wallet
-    </div>
-  );
-};
-
-const SwitchNetworkButton: React.FC = () => {
   const { switchNetwork } = useSwitchNetwork();
-  if (!switchNetwork) return null;
-  return (
-    <div
-      className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
-bg-primaryBlue text-[14px] font-semibold text-white"
-      onClick={() => switchNetwork(CHAINS[0].id)}>
-      Switch to Arbitrum
-    </div>
-  );
-};
 
-const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = ({ balance, userInfo, isWrongNetwork }) => {
-  let userName: string;
-  let isNotSetUsername: boolean = false;
-  if (!userInfo.username) {
-    isNotSetUsername = true;
+  let userName = '';
+
+  if (isNotSetUsername) {
     userName = 'Unnamed';
   } else if (userInfo.username.length > 10) {
     userName = `${userInfo.username.substring(0, 10)}...`;
   } else {
     userName = userInfo.username;
   }
+
+  const disconnectWalletAction = () => {
+    disconnect();
+    setShowDisconnectTooltip(false);
+  };
+
 
   return (
     <div
@@ -238,16 +226,20 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       <li className="m-0 list-none p-0">
         <div className="normal-buttons m-6 mt-3">
           {!isWrongNetwork ? (
-            <div
-              className="btn-switch-goerli h-[42px] cursor-pointer rounded-lg
-                bg-primaryBlue text-[14px] font-semibold text-white"
-              onClick={() => $showTransferTokenModal.set(true)}>
+            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={() => $showTransferTokenModal.set(true)}>
               Get WETH
-            </div>
+            </PrimaryButton>
           ) : (
-            <SwitchNetworkButton />
+            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={() => switchNetwork(CHAINS[0].id)}>
+              Switch to Arbitrum
+            </PrimaryButton>
           )}
-          <DisconnectButton />
+          <div
+            className="function-btn mt-6 cursor-pointer text-[16px]
+              font-semibold text-primaryBlue"
+            onClick={disconnectWalletAction}>
+            Disconnect Wallet
+          </div>
         </div>
       </li>
     </div>

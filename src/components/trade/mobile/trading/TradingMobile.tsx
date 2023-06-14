@@ -12,6 +12,7 @@ import { connectWallet } from '@/utils/Wallet';
 import { wsCurrentToken, wsIsShowTradingMobile, wsUserPosition } from '@/stores/WalletState';
 import Image from 'next/image';
 import collectionList from '@/const/collectionList';
+import { $isShowMobileModal } from '@/stores/common';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -70,6 +71,7 @@ function TradingMobile(props: any) {
 
   const handleBackClick = () => {
     wsIsShowTradingMobile.set(false);
+    $isShowMobileModal.set(false);
   };
 
   return (

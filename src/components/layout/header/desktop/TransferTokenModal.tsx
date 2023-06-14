@@ -38,7 +38,7 @@ const TransferTokenModal = () => {
 
   return (
     <div
-      className="fixed inset-0 z-10 flex h-screen cursor-pointer items-center
+      className="fixed inset-0 z-10 flex h-screen items-center
         justify-center overflow-auto bg-black bg-opacity-40"
       onClick={() => $showTransferTokenModal.set(false)}>
       <div
@@ -51,7 +51,7 @@ const TransferTokenModal = () => {
             alt=""
             width={16}
             height={16}
-            className="button"
+            className="cursor-pointer"
             onClick={() => $showTransferTokenModal.set(false)}
           />
         </div>

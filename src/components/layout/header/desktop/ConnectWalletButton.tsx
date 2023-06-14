@@ -91,7 +91,7 @@ const ConnectWalletButton: React.FC = () => {
         </div>
       </button>
 
-      {userInfo && <ProfileContent balance={wethBalance} userInfo={userInfo} isWrongNetwork={chain?.unsupported ?? false} />}
+      <ProfileContent balance={wethBalance} userInfo={userInfo} isWrongNetwork={chain?.unsupported ?? false} setShowDisconnectTooltip={setShowDisconnectTooltip}/>
     </div>
   );
 };

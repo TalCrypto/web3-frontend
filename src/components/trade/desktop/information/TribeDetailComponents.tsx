@@ -90,7 +90,7 @@ function ExplorerButton(props: any) {
   };
 
   return (
-    <a href={etherscanUrl} target="_blank" rel="noreferrer">
+    <a href={etherscanUrl} target="_blank" rel="noreferrer" className="cursor-pointer">
       <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={16} height={16} />
     </a>
   );
@@ -146,8 +146,8 @@ const MarketTrade = ({ amm }: { amm: AMM }) => {
 
                   <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />,
                   <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />,
-                  <div className="relative overflow-x-hidden text-ellipsis">
-                    <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
+                  <div className="relative cursor-pointer overflow-x-hidden text-ellipsis" onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
+                    <span className="market_user cursor-pointer" >
                       {trimString(record.userId, 10) || walletAddressToShow(record.userAddress)}
                     </span>
                     {address === record.userAddress ? (
@@ -256,7 +256,12 @@ const SpotTable = ({ amm }: { amm: AMM }) => {
                       <SmallPriceIcon priceValue={priceValue} />
                     )}
                   </div>,
-                  <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
+                  <a
+                    href={`https://etherscan.io/tx/${transactionHash}`}
+                    className="cursor-pointer"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={getAnalyticsSpotEthers}>
                     <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={20} height={20} />
                   </a>
                 ]}
@@ -323,13 +328,13 @@ function TribeDetailComponents(props: any) {
 
   return (
     <>
-      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <MarketTrade amm={currentAmm} />
       </div>
-      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <SpotTable amm={currentAmm} />
       </div>
-      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
+      <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <FundingPaymentHistory amm={currentAmm} />
       </div>
     </>

@@ -48,8 +48,8 @@ export default function PartialCloseModal(props: any) {
           <div className="mt-7">
             <button
               className="z-700 partial-button relative min-w-[160px] flex-1
-                rounded-full border-[1px] border-[#3576f7] px-4 py-[3px]
-                text-[14px] text-highEmphasis"
+                cursor-pointer rounded-full border-[1px] border-[#3576f7] px-4
+                py-[3px] text-[14px] text-highEmphasis "
               onClick={e => {
                 e.stopPropagation();
                 onClickSubmit();
@@ -58,8 +58,8 @@ export default function PartialCloseModal(props: any) {
             </button>
             <button
               className="z-700 partial-button relative ml-3 min-w-[160px]
-                flex-1 rounded-full border-[1px] border-[#3576f7] px-4 py-[3px]
-                text-[14px] text-highEmphasis"
+                flex-1 cursor-pointer rounded-full border-[1px] border-[#3576f7] px-4
+                py-[3px] text-[14px] text-highEmphasis"
               onClick={e => {
                 e.preventDefault();
                 dismissModal();

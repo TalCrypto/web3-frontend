@@ -18,6 +18,7 @@ import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
+import { $isShowMobileModal } from '@/stores/common';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -41,7 +42,7 @@ function DetailRowWithPriceIcon(props: any) {
   const { label, content } = props;
   const numberVal = Number(content);
   return (
-    <div className="flex justify-between text-[14px]">
+    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 text-[14px]">
       <div className="">{label}</div>
       <div className="text-white">
         <PriceWithIcon className={`icon-label ${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
@@ -178,6 +179,7 @@ const HistoryModal = (props: any) => {
       setIsShowDetail(false);
     } else {
       setShowHistoryModal(false);
+      $isShowMobileModal.set(false);
     }
   };
 
@@ -209,8 +211,8 @@ const HistoryModal = (props: any) => {
     <div
       className={`fixed inset-0 z-10 h-screen w-full
         ${showHistoryModal ? 'left-[0]' : 'left-[100%]'}
-        transition-left overflow-auto bg-black
-        bg-opacity-40 duration-500
+        transition-left z-[12] overflow-auto
+        bg-black bg-opacity-40 duration-500
       `}>
       <div
         className="relative top-0 mx-auto h-[calc(100%-50px)] w-full overflow-hidden

@@ -24,7 +24,7 @@ import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
 import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
-import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
+import PartialCloseModal from '@/components/trade/mobile/trading/PartialCloseModal';
 
 import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition, wsFullWalletAddress } from '@/stores/WalletState';
 
@@ -269,7 +269,7 @@ function AdjustMarginButton(props: any) {
   if (isClosingPosition) {
     return (
       <div className="mb-6 flex h-[46px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-primaryBlue">
-        <div className="col loadingindicator confirmtradingbtntextallow mx-auto text-center">
+        <div className="col mx-auto text-center">
           <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
         </div>
       </div>
@@ -576,10 +576,37 @@ function QuantityTips(props: any) {
   );
 }
 
+const CollateralToolTip = (props: any) => {
+  const { isShow, setIsShow } = props;
+  if (!isShow) {
+    return null;
+  }
+
+  const dismissModal = () => {
+    setIsShow(false);
+  };
+
+  return (
+    <div
+      className={`fixed inset-0 z-10 flex h-screen items-center
+        justify-center overflow-auto bg-black bg-opacity-40 px-6`}
+      onClick={dismissModal}>
+      <div
+        className={`relative mx-auto w-full overflow-hidden
+          rounded-[12px] bg-secondaryBlue`}>
+        <div className="relative p-6 text-center leading-[20px]">
+          <div className="text-[12px] text-highEmphasis">Collateral will not change.</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function EstimationComponent(props: any) {
   const { estimatedValue = {}, sizeInEth, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
   const isNewPosition = 'newPosition' in estimatedValue;
   const userPosition: any = useNanostore(wsUserPosition);
+  const [isShowCollateralToolTip, setIsShowCollateralToolTip] = useState(false);
 
   // determine if input is valid or error state
   let isError = isAmountTooSmall || isAmountTooLarge;
@@ -613,11 +640,18 @@ function EstimationComponent(props: any) {
             <span className="flex">
               Collateral&nbsp;
               {Number(closeValue) > 0 && Number(closeValue) < Number(currentMaxValue) ? (
-                <TitleTips
-                  titleText={<Image src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                  tipsText="Collateral will not change."
-                  placement="top"
-                />
+                <>
+                  <Image
+                    src="/images/components/trade/alert.svg"
+                    width={16}
+                    height={16}
+                    alt=""
+                    onClick={() => {
+                      setIsShowCollateralToolTip(true);
+                    }}
+                  />
+                  <CollateralToolTip isShow={isShowCollateralToolTip} setIsShow={setIsShowCollateralToolTip} />
+                </>
               ) : null}
             </span>
           }

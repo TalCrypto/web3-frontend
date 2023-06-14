@@ -16,6 +16,7 @@ import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
 import { getTradingActionTypeFromAPI } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
+import { $isShowMobileModal } from '@/stores/common';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -39,7 +40,7 @@ function DetailRowWithPriceIcon(props: any) {
   const { label, content } = props;
   const numberVal = Number(content);
   return (
-    <div className="mb-6 flex justify-between text-[14px]">
+    <div className="mt-6 flex justify-between text-[14px]">
       <div className="">{label}</div>
       <div className="text-white">
         <PriceWithIcon className={`icon-label ${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
@@ -57,6 +58,7 @@ const HistoryModal = (props: any) => {
 
   const hide = () => {
     setShowHistoryModal(false);
+    $isShowMobileModal.set(false);
   };
 
   useEffect(() => {

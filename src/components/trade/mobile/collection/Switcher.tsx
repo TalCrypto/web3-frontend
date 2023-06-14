@@ -7,7 +7,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import CollectionListModal from '@/components/trade/mobile/collection/CollectionListModal';
 import { wsCurrentToken } from '@/stores/WalletState';
-import { $isSwitcherFirstRender, $marketData } from '@/stores/switcher';
+import { $isShowMobileModal, $isSwitcherFirstRender, $marketData } from '@/stores/common';
 
 export default function Switcher() {
   const currentToken = useNanostore(wsCurrentToken);
@@ -30,6 +30,7 @@ export default function Switcher() {
     if (isShowModal) return;
 
     setIsShowModal(true);
+    $isShowMobileModal.set(true);
     await fetchMarketOverview();
   };
 

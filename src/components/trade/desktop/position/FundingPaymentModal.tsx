@@ -86,7 +86,10 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
     <div
       className="fixed bottom-0 left-0 top-0 z-10 flex  h-full
       w-full items-center justify-center bg-black/[.2] backdrop-blur-[4px]"
-      onClick={() => setShowFundingPaymentModal(false)}>
+      onClick={() => {
+        setShowFundingPaymentModal(false);
+        $isShowMobileModal.set(false);
+      }}>
       <div
         className="relative h-[600px] w-[800px] rounded-[12px] border-[1px]
         border-[#71aaff38] bg-lightBlue text-[14px] font-normal text-mediumEmphasis"
@@ -105,7 +108,12 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
               </span>
             </div>
           </div>
-          <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setShowFundingPaymentModal(false)}>
+          <div
+            className="absolute right-6 top-6 cursor-pointer"
+            onClick={() => {
+              setShowFundingPaymentModal(false);
+              $isShowMobileModal.set(false);
+            }}>
             <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
         </div>
@@ -134,7 +142,7 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
                   const value = item.fundingPaymentPnl.toFixed(6);
                   return (
                     <div
-                      className={`flex cursor-pointer p-3
+                      className={`flex p-3
                       ${idx % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}`}
                       key={`fp-row-${idx}`}>
                       <div className="flex min-w-[190px] items-center px-[18px]">

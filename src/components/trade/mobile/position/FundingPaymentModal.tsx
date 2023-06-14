@@ -11,6 +11,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import collectionList from '@/const/collectionList';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
+import { $isShowMobileModal } from '@/stores/common';
 
 const FundingPaymentModal = (props: any) => {
   const { showFundingPaymentModal, setShowFundingPaymentModal } = props;
@@ -42,14 +43,15 @@ const FundingPaymentModal = (props: any) => {
 
   const handleBackClick = () => {
     setShowFundingPaymentModal(false);
+    $isShowMobileModal.set(false);
   };
 
   return (
     <div
       className={`fixed bottom-0 left-0 top-0 z-10 flex h-full w-full
         ${showFundingPaymentModal ? 'left-[0]' : 'left-[100%]'}
-        transition-left w-full items-center justify-center bg-black/[.2]
-        backdrop-blur-[4px] duration-500
+        transition-left z-[12] w-full items-center justify-center
+        bg-black/[.2] backdrop-blur-[4px] duration-500
       `}
       onClick={() => setShowFundingPaymentModal(false)}>
       <div
@@ -100,7 +102,7 @@ const FundingPaymentModal = (props: any) => {
       </div>
 
       <div
-        className="fixed bottom-0 h-[100px] w-full
+        className="absolute bottom-0 h-[100px] w-full
         bg-secondaryBlue  text-[15px] text-white
       ">
         <div className="flex h-[50px] w-full justify-between px-[22px] py-4">
@@ -117,7 +119,7 @@ const FundingPaymentModal = (props: any) => {
         <div className="flex h-[50px] w-full items-center justify-center px-[22px] py-4">
           <Image
             src="/images/mobile/common/angle-right.svg"
-            className="fixed left-[22px] cursor-pointer"
+            className="absolute left-[22px] cursor-pointer"
             width={14}
             height={14}
             alt=""

@@ -184,7 +184,7 @@ export default function PositionDetails(props: any) {
         </div>
         <div className="flex text-[15px] font-normal text-highEmphasis">
           <div className="w-[15%]">
-            <span className={!positionInfo ? '' : positionInfo.size > 0 ? 'risevalue' : 'dropvalue'}>
+            <span className={!positionInfo ? '' : positionInfo.size > 0 ? 'text-marketGreen' : 'text-marketRed'}>
               {!positionInfo ? '---' : positionInfo.size > 0 ? 'LONG' : 'SHORT'}
             </span>
           </div>

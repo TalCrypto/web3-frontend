@@ -6,7 +6,7 @@
 
 import { utils } from 'ethers';
 import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -669,6 +669,7 @@ function ExtendedEstimateComponent(props: any) {
   const fee = formatterValue(estimatedValue.fee, 4);
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const userPosition: any = useNanostore(wsUserPosition);
+  const elementRef = useRef(null);
 
   // hide component when there is no estimatedValue
   if (!estimatedValue || !estimatedValue.cost) return null;
@@ -700,9 +701,19 @@ function ExtendedEstimateComponent(props: any) {
           });
 
           if (!showDetail) {
+            // if (elementRef.current) {
+            //   const ref: any = elementRef.current;
+            //   ref.scrollIntoView();
+            // }
+            // window.scrollTo({
+            //   top: 3000,
+            //   behavior: 'smooth'
+            // });
             window.scrollTo({
-              top: document.body.scrollHeight - window.innerHeight,
-              behavior: 'smooth'
+              top: 100000,
+              behavior: 'auto'
+              /* you can also use 'auto' behaviour 
+                 in place of 'smooth' */
             });
           }
         }}>
@@ -781,6 +792,7 @@ function ExtendedEstimateComponent(props: any) {
               unit="WETH"
             />
           )}
+          <div ref={elementRef} />
         </div>
       ) : null}
     </div>

@@ -10,6 +10,7 @@ import { withRouter } from 'next/router';
 import { localeConversion } from '@/utils/localeConversion';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { userPoint } from '@/stores/airdrop';
+import { $isShowMobileModal } from '@/stores/common';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -152,7 +153,7 @@ const MobileMenu = (props: any) => {
         </div>
         {isShowSocialFooter ? (
           <div
-            className="fixed left-0 top-0 z-10 h-full w-full"
+            className="absolute left-0 top-0 z-10 h-full w-full"
             onClick={() => {
               setIsShowSocialFooter(false);
             }}>
@@ -195,7 +196,7 @@ const MobileMenu = (props: any) => {
         <Image
           src="/images/mobile/menu/social.svg"
           alt=""
-          className="fixed right-[20px] top-[340px]"
+          className="fixed bottom-[260px] right-[20px]"
           width={40}
           height={40}
           onClick={onBtnClickSocial}
@@ -308,7 +309,10 @@ const MobileMenu = (props: any) => {
             className="fixed bottom-[5px] right-[20px]"
             width={40}
             height={40}
-            onClick={() => setIsShowMobileMenu(false)}
+            onClick={() => {
+              setIsShowMobileMenu(false);
+              $isShowMobileModal.set(false);
+            }}
           />
         </div>
       </div>
