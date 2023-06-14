@@ -7,6 +7,7 @@ import { calculateNumber, formatterValue, isPositive } from '@/utils/calculateNu
 import { wsCurrentToken } from '@/stores/WalletState';
 import { walletProvider } from '@/utils/walletProvider';
 import { useRouter } from 'next/router';
+import { $isShowMobileModal } from '@/stores/common';
 
 export default function CollectionListModal(props: any) {
   const { marketData, isShowModal, setIsShowModal } = props;
@@ -70,6 +71,7 @@ export default function CollectionListModal(props: any) {
        bg-black/[.3] backdrop-blur-[4px]`}
       onClick={() => {
         setIsShowModal(false);
+        $isShowMobileModal.set(false);
       }}>
       <div
         className={`absolute bottom-0 w-full bg-secondaryBlue
