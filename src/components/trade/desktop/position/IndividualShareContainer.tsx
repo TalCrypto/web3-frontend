@@ -5,15 +5,14 @@ import download from 'downloadjs';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 
-import collectionList from '@/const/collectionList';
-import { calculateNumber } from '@/utils/calculateNumbers';
+import { CollectionInfo } from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { pageTitleParser } from '@/utils/eventLog';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
+import { $userInfo, UserPositionInfo } from '@/stores/user';
 
 function LargeEthPrice(props: any) {
   const { pnlValue } = props;
@@ -45,27 +44,22 @@ function NormalEthPrice(props: any) {
   );
 }
 
-export default function IndividualShareContainer(props: any) {
-  const { setShowShareComponent, userInfo } = props;
-  const userPosition: any = useNanostore(wsUserPosition);
-
-  const ammTitle = userPosition.pair;
-  const filteringCollection = collectionList.filter((item: any) => item.name === ammTitle);
-  const filteredCollection = filteringCollection[0];
-  const pnlStatus = userPosition.unrealizedPnl
-    ? Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0
-    : Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0;
-  const side = Number(calculateNumber(userPosition.size, 4)) > 0;
-  const leverage = Number(calculateNumber(userPosition.remainMarginLeverage, 2)).toFixed(2);
-  const pnlValue = userPosition.unrealizedPnl
-    ? calculateNumber(userPosition.unrealizedPnl, 4)
-    : calculateNumber(userPosition.unrealizedPnl, 4);
-  const entryPrice = calculateNumber(userPosition.entryPrice, 2);
-  const futurePrice = userPosition.spotPrice ? calculateNumber(userPosition.spotPrice, 2) : calculateNumber(userPosition.currentPrice, 2);
-  const currentPositionName = filteredCollection.collectionName;
+export default function IndividualShareContainer(props: {
+  positionInfo: UserPositionInfo;
+  collectionInfo: CollectionInfo;
+  setShowShareComponent: any;
+}) {
+  const { setShowShareComponent, positionInfo, collectionInfo } = props;
   const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-  console.log(userInfo);
+  const userInfo = useNanostore($userInfo);
+  const pnlStatus = positionInfo.unrealizedPnl >= 0;
+  const side = positionInfo.size > 0;
+  const leverage = positionInfo.leverage.toFixed(2);
+  const pnlValue = positionInfo.unrealizedPnl.toFixed(2);
+  const entryPrice = positionInfo.entryPrice.toFixed(2);
+  const futurePrice = positionInfo.vammPrice.toFixed(2);
+  const currentPositionName = collectionInfo.collectionName;
+
   const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;
   const showUserId = userInfo?.username === '' ? userAddress : userInfo?.username;
 
@@ -79,7 +73,7 @@ export default function IndividualShareContainer(props: any) {
 
     htmlToImage.toJpeg(target).then((dataUrl: any) => {
       // if (window.screen.width > 800) {
-      download(dataUrl, `my-result-${filteredCollection.collectionName}.jpeg`);
+      download(dataUrl, `my-result-${collectionInfo.collectionName}.jpeg`);
       // } else {
       //   const image = new Image(null);
       //   image.src = dataUrl;
@@ -90,20 +84,24 @@ export default function IndividualShareContainer(props: any) {
       // }
     });
 
-    const fullWalletAddress = useNanostore(wsFullWalletAddress);
     const eventName = 'share_position_performance_download_pressed';
 
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, eventName, {
-        wallet: fullWalletAddress.substring(2),
+        wallet: userAddress.substring(2),
         collection: currentPositionName
       });
     }
-
-    apiConnection.postUserEvent(eventName, {
-      page,
-      collection: currentPositionName
-    });
+    if (router && userInfo) {
+      apiConnection.postUserEvent(
+        eventName,
+        {
+          page: pageTitleParser(router.asPath),
+          collection: currentPositionName
+        },
+        userInfo.userAddress
+      );
+    }
   };
   const shareToTwitter = () => {
     const content = `Taking a ${
@@ -112,20 +110,25 @@ export default function IndividualShareContainer(props: any) {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(content)}`;
     window.open(url);
 
-    const fullWalletAddress = useNanostore(wsFullWalletAddress);
     const eventName = 'share_position_performance_twitter_pressed';
 
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, eventName, {
-        wallet: fullWalletAddress.substring(2),
+        wallet: userAddress.substring(2),
         collection: currentPositionName
       });
     }
 
-    apiConnection.postUserEvent(eventName, {
-      page,
-      collection: currentPositionName
-    });
+    if (router && userInfo) {
+      apiConnection.postUserEvent(
+        eventName,
+        {
+          page: pageTitleParser(router.asPath),
+          collection: currentPositionName
+        },
+        userInfo.userAddress
+      );
+    }
   };
 
   return (
@@ -142,10 +145,10 @@ export default function IndividualShareContainer(props: any) {
             id="image-bg">
             <div className="mt-4">
               <div className="ml-6">
-                <Image src={filteredCollection.logo} alt="" width={64} height={64} />
+                <Image src={collectionInfo.logo} alt="" width={64} height={64} />
                 <div className="mt-2 flex items-baseline">
                   <div className="pr-[6px] text-[18px] font-bold text-white/[.95]">
-                    <span className="">{filteredCollection.displayCollectionPair}</span>
+                    <span className="">{collectionInfo.displayCollectionPair}</span>
                   </div>
                   <div className="p-0 text-[14px] font-semibold text-[#98bbfe]/[.89]">
                     <span>Perpetual Contract</span>

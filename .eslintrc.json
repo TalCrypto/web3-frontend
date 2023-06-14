@@ -48,7 +48,7 @@
     "jsx-a11y/alt-text": 1,
     "react/no-array-index-key": 1,
     "react/self-closing-comp": 1,
-    "operator-linebreak": ["error", "after"],
+    "operator-linebreak": 1,
     "react/jsx-no-bind": 0,
     "react/jsx-no-useless-fragment": 1,
     "react-hooks/rules-of-hooks": 0,

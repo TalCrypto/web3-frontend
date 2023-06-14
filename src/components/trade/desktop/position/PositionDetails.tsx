@@ -49,13 +49,10 @@ export default function PositionDetails(props: any) {
   const router = useRouter();
   const { address } = useAccount();
   const currentAmm = useNanostore($currentAMM);
-  const userInfo = useNanostore($userInfo);
   const positionInfo = usePositionInfo(currentAmm);
   const tradingData = useTradingData(currentAmm);
   const isPending = useTransactionIsPending(currentAmm);
   const collectionInfo = useCollectionInfo(currentAmm);
-
-  const [page, setPage] = useState<any>();
 
   // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
   const [showSharePosition, setShowSharePosition] = useState(false);
@@ -64,12 +61,6 @@ export default function PositionDetails(props: any) {
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
-
-  useEffect(() => {
-    if (router) {
-      setPage(pageTitleParser(router.asPath));
-    }
-  }, [router]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -124,7 +115,7 @@ export default function PositionDetails(props: any) {
       apiConnection.postUserEvent(
         'share_position_performance_pressed',
         {
-          page,
+          page: pageTitleParser(router.asPath),
           collection: currentAmm
         },
         address
@@ -138,7 +129,13 @@ export default function PositionDetails(props: any) {
 
   return (
     <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
-      {showSharePosition ? <IndividualShareContainer setShowShareComponent={setShowSharePosition} userInfo={userInfo} /> : null}
+      {showSharePosition ? (
+        <IndividualShareContainer
+          positionInfo={positionInfo}
+          collectionInfo={collectionInfo}
+          setShowShareComponent={setShowSharePosition}
+        />
+      ) : null}
       <div className=" mb-[36px] flex justify-between">
         <div className="flex items-center space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
