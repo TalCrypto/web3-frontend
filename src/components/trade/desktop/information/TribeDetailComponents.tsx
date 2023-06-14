@@ -146,8 +146,10 @@ const MarketTrade = ({ amm }: { amm: AMM }) => {
 
                   <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />,
                   <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />,
-                  <div className="relative cursor-pointer overflow-x-hidden text-ellipsis" onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
-                    <span className="market_user cursor-pointer" >
+                  <div
+                    className="relative cursor-pointer overflow-x-hidden text-ellipsis"
+                    onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
+                    <span className="market_user cursor-pointer">
                       {trimString(record.userId, 10) || walletAddressToShow(record.userAddress)}
                     </span>
                     {address === record.userAddress ? (

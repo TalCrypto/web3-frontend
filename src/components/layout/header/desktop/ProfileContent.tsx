@@ -210,7 +210,6 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
     setShowDisconnectTooltip(false);
   };
 
-
   return (
     <div
       className="profile-content z-2 transition-visibility invisible
