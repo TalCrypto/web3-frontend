@@ -102,7 +102,7 @@ const FundingPaymentModal = (props: any) => {
       </div>
 
       <div
-        className="fixed bottom-0 h-[100px] w-full
+        className="absolute bottom-0 h-[100px] w-full
         bg-secondaryBlue  text-[15px] text-white
       ">
         <div className="flex h-[50px] w-full justify-between px-[22px] py-4">
@@ -119,7 +119,7 @@ const FundingPaymentModal = (props: any) => {
         <div className="flex h-[50px] w-full items-center justify-center px-[22px] py-4">
           <Image
             src="/images/mobile/common/angle-right.svg"
-            className="fixed left-[22px] cursor-pointer"
+            className="absolute left-[22px] cursor-pointer"
             width={14}
             height={14}
             alt=""
