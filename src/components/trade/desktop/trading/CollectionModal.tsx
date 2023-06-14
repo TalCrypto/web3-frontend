@@ -7,23 +7,18 @@ import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { calculateNumber } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
-import { useStore as useNanostore } from '@nanostores/react';
-import { wsIsLogin, wsIsWrongNetwork } from '@/stores/WalletState';
 import { CollectionOverview, useMarketOverview } from '@/hooks/market';
 import { getCollectionInformation } from '@/const/collectionList';
 
-const SortingIndicator = ({ value }: { value: number }) => {
-
-  return (
-    <Image
-      className="ml-1"
-      alt=""
-      width={10}
-      height={10}
-      src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
-    />
-  );
-};
+const SortingIndicator = ({ value }: { value: number }) => (
+  <Image
+    className="ml-1"
+    alt=""
+    width={10}
+    height={10}
+    src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
+  />
+);
 
 const CollectionModal = (props: any) => {
   const { visible, setVisible, selectCollection } = props;
@@ -246,14 +241,7 @@ const CollectionModal = (props: any) => {
                 leading-[24px] text-highEmphasis">
               Collections
             </p>
-            <Image
-              className="cursor-pointer"
-              src="/images/common/refresh.svg"
-              width={24}
-              height={24}
-              alt=""
-              onClick={updateOverviewData}
-            />
+            <Image className="cursor-pointer" src="/images/common/refresh.svg" width={24} height={24} alt="" onClick={updateOverviewData} />
           </div>
           <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setVisible(false)}>
             <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />

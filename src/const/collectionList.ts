@@ -31,6 +31,7 @@ export interface CollectionInfo {
   shortName: string;
   displayCollectionPair: string;
   isNew: boolean;
+  sort: number;
 }
 
 export type CollectionInfos = {
@@ -56,7 +57,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/token/0x1821363abc9E33f1bfbE3f96F7C68ECa7f6Af2BD',
     shortName: 'DEGODS',
     displayCollectionPair: 'DEGODS/WETH',
-    isNew: true
+    isNew: true,
+    sort: 1
   },
   [AMM.CAPTAINZ]: {
     amm: AMM.CAPTAINZ,
@@ -76,7 +78,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/address/0x769272677fab02575e84945f03eca517acc544cc',
     shortName: 'CAPTAINZ',
     displayCollectionPair: 'CAPTAINZ/WETH',
-    isNew: true
+    isNew: true,
+    sort: 2
   },
   [AMM.BAYC]: {
     amm: AMM.BAYC,
@@ -96,7 +99,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
     shortName: 'BAYC',
     displayCollectionPair: 'BAYC/WETH',
-    isNew: false
+    isNew: false,
+    sort: 3
   },
   [AMM.MAYC]: {
     amm: AMM.MAYC,
@@ -116,7 +120,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/token/0x60e4d786628fea6478f785a6d7e704777c86a7c6',
     shortName: 'MAYC',
     displayCollectionPair: 'MAYC/WETH',
-    isNew: false
+    isNew: false,
+    sort: 4
   },
   [AMM.AZUKI]: {
     amm: AMM.AZUKI,
@@ -136,7 +141,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/token/0xed5af388653567af2f388e6224dc7c4b3241c544',
     shortName: 'AZUKI',
     displayCollectionPair: 'AZUKI/WETH',
-    isNew: false
+    isNew: false,
+    sort: 5
   },
   [AMM.PUNKS]: {
     amm: AMM.PUNKS,
@@ -156,7 +162,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/token/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb',
     shortName: 'PUNKS',
     displayCollectionPair: 'PUNKS/WETH',
-    isNew: false
+    isNew: false,
+    sort: 6
   }
   // {
   //   name: 'DOODLES/ETH',
