@@ -61,9 +61,7 @@ function SidebarCollection() {
         flex-col rounded-l-[12px] bg-gradient-to-r from-[#71aaff66]
         to-[#ffffff00] py-[1px] pl-[1px]
       `}>
-      <div
-        className="flex w-[44px] flex-col rounded-l-[12px] bg-secondaryBlue px-1 py-3"
-        style={{ '--highlight-y-pos': `${yPos}px` } as CSSProperties}>
+      <div className="flex w-[44px] flex-col rounded-l-[12px] bg-secondaryBlue px-1 py-3">
         <div
           className="transition-width absolute right-0 top-[6px] h-[48px] w-[48px]
           translate-y-[var(--highlight-y-pos)] transform

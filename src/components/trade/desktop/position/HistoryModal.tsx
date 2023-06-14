@@ -11,8 +11,10 @@ import { logEvent } from 'firebase/analytics';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { useStore as useNanostore } from '@nanostores/react';
-import { wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
+import { useAccount } from 'wagmi';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
+import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
+import { getTradingActionTypeFromAPI } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
 
 function ExplorerButton(props: any) {
@@ -48,8 +50,8 @@ function DetailRowWithPriceIcon(props: any) {
 
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const historyRecordsByMonth = useNanostore(wsHistoryGroupByMonth);
+  const { address } = useAccount();
+  const historyRecordsByMonth = usePsHistoryByMonth();
 
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 

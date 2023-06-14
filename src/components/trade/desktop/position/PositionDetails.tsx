@@ -142,7 +142,7 @@ export default function PositionDetails(props: any) {
       <div className=" mb-[36px] flex justify-between">
         <div className="flex items-center space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
-          <div className="font-600 text-[16px] text-highEmphasis">My {currentCollectionName} Position</div>
+          <div className="font-600 text-[16px] text-highEmphasis">My {collectionInfo.name} Position</div>
           {isPending ? (
             <div
               className="ml-3 rounded-[2px] border-[1px] border-warn
@@ -220,13 +220,7 @@ export default function PositionDetails(props: any) {
           </div>
           <div className="relative flex w-[20%] space-x-[3px] pl-4">
             <MedPriceIcon
-              priceValue={
-                !positionInfo
-                  ? '---'
-                  : positionInfo.liquidationPrice < 0
-                  ? '0.00'
-                  : positionInfo.liquidationPrice.toFixed(2)
-              }
+              priceValue={!positionInfo ? '---' : positionInfo.liquidationPrice < 0 ? '0.00' : positionInfo.liquidationPrice.toFixed(2)}
               className={`normalprice ${tradingData?.isOverPriceGap ? 'text-warn' : ''} `}
               isLoading={isLoading || isPending}
             />

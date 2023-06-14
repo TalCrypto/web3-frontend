@@ -52,7 +52,6 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
   if (!address) return null;
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
   const clickViewProfile = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -115,7 +114,13 @@ const BottomContent: React.FC<{ balance: number; isWrongNetwork: boolean }> = ({
 
   useEffect(() => {
     if (userPositionInfos) {
-      const total = Object.keys(userPositionInfos).reduce((prev, curr) => prev + userPositionInfos[curr as AMM].collateral, 0);
+      const total = Object.keys(userPositionInfos).reduce((prev, curr) => {
+        const pos = userPositionInfos[curr as AMM];
+        if (pos) {
+          return prev + pos.collateral;
+        }
+        return prev;
+      }, 0);
       setTotalCollateral(total);
     }
   }, [userPositionInfos]);

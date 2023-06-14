@@ -21,6 +21,8 @@ import { WithRouterProps } from 'next/dist/client/with-router';
 import { $currentAMM, $tradingData } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { useAccount } from 'wagmi';
+import { useTradingData } from '@/hooks/collection';
+import { ThreeDots } from 'react-loader-spinner';
 
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -30,12 +32,11 @@ import { useAccount } from 'wagmi';
 function TradePage(props: WithRouterProps) {
   const { router } = props;
   const { isConnected } = useAccount();
+  const currentAmm = useNanostore($currentAMM);
+  const tradingData = useTradingData(currentAmm);
   // const maxReduceValue = useNanostore(wsMaxReduceValue);
   // const [maxReduceValue, setMaxReduceValue] = useState('');
   // const [historyRecords, setHistoryRecords] = useState([]);
-  const userPosition: any = useNanostore(wsUserPosition);
-
-  const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
 
   useEffect(() => {
     const collection = router?.query?.collection;
@@ -132,7 +133,7 @@ function TradePage(props: WithRouterProps) {
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
-                <SidebarCollection/>
+                <SidebarCollection />
 
                 <TradingWindow refreshPositions={null} />
               </div>
@@ -151,7 +152,7 @@ function TradePage(props: WithRouterProps) {
           <Switcher />
 
           <div className="mt-12 bg-darkBlue">
-            {isLoading ? (
+            {!tradingData ? (
               <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
                 <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
               </div>

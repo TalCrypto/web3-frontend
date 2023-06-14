@@ -60,7 +60,7 @@ function MobileFooter() {
                 <br />
                 Wallet
               </>
-            ) : isWrongNetwork ? (
+            ) : chain?.unsupported ? (
               <>
                 Switch to <br /> Arbitrum
               </>
