@@ -251,7 +251,7 @@ export default function PositionMobile(props: any) {
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
 
-            <div className="">
+            <div className="text-[14px]">
               <span className={`normalprice mr-1 ${isLoading || collectionIsPending[currentCollection.amm] ? 'flash' : ''}`}>
                 {!userPosition
                   ? '---'
