@@ -1,33 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-array-index-key */
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
-import { apiConnection } from '@/utils/apiConnection';
-import { calculateNumber } from '@/utils/calculateNumbers';
-import { walletProvider } from '@/utils/walletProvider';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { utils } from 'ethers';
 import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
-import collectionList from '@/const/collectionList';
-import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
+import { CollectionTradingData } from '@/stores/trading';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
+import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 
-const FundingPaymentModal = (props: any) => {
-  const { setShowFundingPaymentModal, tradingData } = props;
-
-  const currentToken = useNanostore(wsCurrentToken);
-  const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [fpRecords, setFpRecords] = useState([]);
-  const [fpTotal, setFpTotal] = useState(0);
+const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: AMM; setShowFundingPaymentModal: any }) => {
+  const { setShowFundingPaymentModal, tradingData, amm } = props;
+  const { total: fpTotal, fpRecords } = useFundingPaymentHistory(amm);
+  const collectionInfo = getCollectionInformation(amm);
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
   const [interval, setI] = useState(null);
   const [nextFundingTime, setNextFundingTime] = useState(0);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
 
-  const currentAmm = currentCollection.amm;
   const hadKey = Object.keys(tradingData).length > 0;
   let hours = '';
   let minutes = '';
@@ -38,22 +27,20 @@ const FundingPaymentModal = (props: any) => {
   let shortSide = '';
 
   if (tradingData && tradingData.fundingRateLong) {
-    const rawData = utils.formatEther(tradingData.fundingRateLong);
-    const numberRawData = (Number(rawData) * 100).toFixed(4);
+    const numberRawData = (tradingData.fundingRateLong * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawData));
     rateLong = ` ${absoluteNumber}%`;
-    if (Number(numberRawData) > 0) {
+    if (tradingData.fundingRateLong > 0) {
       longSide = 'pay';
     } else {
       longSide = 'get';
     }
   }
   if (tradingData && tradingData.fundingRateShort) {
-    const rawData = utils.formatEther(tradingData.fundingRateShort);
-    const numberRawData = (Number(rawData) * 100).toFixed(4);
+    const numberRawData = (tradingData.fundingRateShort * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawData));
     rateShort = ` ${absoluteNumber}%`;
-    if (Number(numberRawData) > 0) {
+    if (tradingData.fundingRateShort > 0) {
       shortSide = 'get';
     } else {
       shortSide = 'pay';
@@ -95,21 +82,6 @@ const FundingPaymentModal = (props: any) => {
     startCountdown();
   }
 
-  useEffect(() => {
-    setIsLoading(true);
-    setFpTotal(0);
-    if (walletProvider.holderAddress) {
-      apiConnection.getUserFundingPaymentHistoryWithAmm(walletProvider.holderAddress, currentAmm).then(data => {
-        const total: any = Number(calculateNumber(data.data.total, 6))?.toFixed(6);
-        setFpTotal(total);
-        setFpRecords(data.data.fundingPaymentPnlHistory);
-        setIsLoading(false);
-      });
-    } else {
-      setIsLoading(false);
-    }
-  }, [fullWalletAddress]);
-
   return (
     <div
       className="fixed bottom-0 left-0 top-0 z-10 flex  h-full
@@ -121,8 +93,8 @@ const FundingPaymentModal = (props: any) => {
         onClick={e => e.stopPropagation()}>
         <div className="px-6 pt-[26px]">
           <div className="flex items-center space-x-[6px]">
-            <Image src={currentCollection.image} width={24} height={24} alt="" />
-            <p className="font-600 text-[16px] text-highEmphasis">{currentCollection.shortName} Funding Payment History</p>
+            <Image src={collectionInfo.image} width={24} height={24} alt="" />
+            <p className="font-600 text-[16px] text-highEmphasis">{collectionInfo.shortName} Funding Payment History</p>
           </div>
           <div className="flex">
             <div className="flex-1" />
@@ -151,15 +123,15 @@ const FundingPaymentModal = (props: any) => {
                 </div>
               </div>
             </div>
-            <div className={`scrollable max-h-[460px] overflow-y-scroll ${fpRecords.length > 0 ? 'pb-[60px]' : ''}`}>
-              {isLoading ? (
+            <div className={`scrollable max-h-[460px] overflow-y-scroll ${fpRecords && fpRecords.length > 0 ? 'pb-[60px]' : ''}`}>
+              {!fpRecords ? (
                 <div className="flex min-w-[400px] items-center justify-center">
                   <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
                 </div>
               ) : fpRecords.length > 0 ? (
-                fpRecords.map((item: any, idx: any) => {
+                fpRecords.map((item, idx) => {
                   const timeValue = formatDateTime(item.timestamp, 'L HH:mm');
-                  const value = Number(calculateNumber(item.fundingPaymentPnl, 6))?.toFixed(6);
+                  const value = item.fundingPaymentPnl.toFixed(6);
                   return (
                     <div
                       className={`flex cursor-pointer p-3
@@ -186,14 +158,14 @@ const FundingPaymentModal = (props: any) => {
               )}
             </div>
           </div>
-          {fpRecords.length > 0 ? (
+          {fpRecords && fpRecords.length > 0 ? (
             <div
               className="absolute bottom-0 flex w-[100%] items-center justify-end
                 rounded-b-[12px] border-t-[1px] border-t-[#71aaff38] bg-lightBlue">
               <div className="mx-[36px] my-[30px] flex items-center">
                 <span className="mr-[36px] text-highEmphasis">Total Received: </span>
                 <PriceWithIcon
-                  priceValue={fpTotal > 0 ? `+${fpTotal}` : fpTotal === 0 ? '0.000000' : fpTotal}
+                  priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : fpTotal === 0 ? '0.000000' : fpTotal.toFixed(6)}
                   className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
                 />
               </div>

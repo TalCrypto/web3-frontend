@@ -36,7 +36,7 @@ export const usePositionHistory = (): Array<PositionHistoryRecord> => {
   const { chain } = useNetwork();
   const [history, setHistory] = useState<Array<PositionHistoryRecord>>([]);
   useEffect(() => {
-    if (address && chain) {
+    if (address && chain && !chain.unsupported) {
       apiConnection.getUserTradingHistory(address).then(res => {
         const data = res.data.tradeHistory.map(
           (item: {

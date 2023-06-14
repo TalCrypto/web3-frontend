@@ -170,8 +170,8 @@ export default function PositionDetails(props: any) {
           ) : null}
         </div>
         {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-        {showFundingPaymentModal ? (
-          <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} />
+        {showFundingPaymentModal && tradingData && currentAmm ? (
+          <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} amm={currentAmm} />
         ) : null}
       </div>
       <div>
