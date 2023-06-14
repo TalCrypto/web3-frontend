@@ -311,7 +311,7 @@ const MobileMenu = (props: any) => {
             height={40}
             onClick={() => {
               setIsShowMobileMenu(false);
-              $isShowMobileModal.set(true);
+              $isShowMobileModal.set(false);
             }}
           />
         </div>
