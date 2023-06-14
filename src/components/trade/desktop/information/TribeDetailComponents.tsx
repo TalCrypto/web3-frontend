@@ -5,13 +5,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect } from 'react';
+import React from 'react';
 // import moment from 'moment';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
-import { /* calculateNumber, */ formatterValue, isPositive, formatterUSDC } from '@/utils/calculateNumbers';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 
 import { apiConnection } from '@/utils/apiConnection';
@@ -24,8 +23,11 @@ import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
-import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
+import { useFundingRatesHistory, useMarketHistory, useOpenSeaData } from '@/hooks/market';
+import { AMM } from '@/const/collectionList';
+import { $currentAMM } from '@/stores/trading';
+import { useAccount } from 'wagmi';
+import { formatBigIntString } from '@/utils/bigInt';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -64,22 +66,27 @@ interface IOpenseaData {
 function ExplorerButton(props: any) {
   const { txHash, collection } = props;
   const etherscanUrl = `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
+  const { address } = useAccount();
 
   const getAnalyticsMktEtherscan = () => {
-    if (firebaseAnalytics) {
+    if (firebaseAnalytics && address) {
       logEvent(firebaseAnalytics, 'tribedetail_markettrades_etherscan_pressed', {
         collection,
-        wallet: fullWalletAddress.substring(2),
+        wallet: address.substring(2),
         transaction: txHash.substring(2)
       });
     }
-
-    apiConnection.postUserEvent('tribedetail_markettrades_etherscan_pressed', {
-      page: 'Trade',
-      transaction: txHash.substring(2),
-      collection
-    });
+    if (address) {
+      apiConnection.postUserEvent(
+        'tribedetail_markettrades_etherscan_pressed',
+        {
+          page: 'Trade',
+          transaction: txHash.substring(2),
+          collection
+        },
+        address
+      );
+    }
   };
 
   return (
@@ -89,10 +96,10 @@ function ExplorerButton(props: any) {
   );
 }
 
-const MarketTrade = () => {
+const MarketTrade = ({ amm }: { amm: AMM }) => {
   const router = useRouter();
-  const marketHistory = useNanostore(tsMarketHistory);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
+  const marketHistory = useMarketHistory(amm);
+  const { address } = useAccount();
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -119,41 +126,43 @@ const MarketTrade = () => {
 
       <div className="scrollable mr-1 h-full overflow-y-scroll pl-[46px] pr-[42px]">
         {marketHistory && marketHistory.length > 0 ? (
-          marketHistory.map(({ timestamp, exchangedPositionSize, positionNotional, spotPrice, userAddress, userId, txHash }, index) => (
-            <Cell
-              key={`market_${timestamp}_${index}`}
-              rowStyle={fullWalletAddress === userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
-              items={[
-                <div className="time relative">
-                  <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
+          marketHistory
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .map((record, index) => (
+              <Cell
+                key={`market_${record.timestamp}_${index}`}
+                rowStyle={address === record.userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
+                items={[
+                  <div className="time relative">
+                    <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
-                  <span className="text-[12px]">{formatDateTime(timestamp)}</span>
-                  <br />
-                  <span className={`market ${isPositive(exchangedPositionSize) ? 'text-marketGreen' : 'text-marketRed'}`}>
-                    {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
-                  </span>
-                </div>,
-                <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>,
-
-                <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
-                <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
-                <div className="relative overflow-x-hidden text-ellipsis">
-                  <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                    {trimString(userId, 10) || walletAddressToShow(userAddress)}
-                  </span>
-                  {fullWalletAddress === userAddress ? (
-                    <span
-                      className="absolute right-0 top-[1px] ml-1 rounded-sm
-                    bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
-                      YOU
+                    <span className="text-[12px]">{formatDateTime(record.timestamp)}</span>
+                    <br />
+                    <span className={`market ${record.exchangedPositionSize > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+                      {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
                     </span>
-                  ) : null}
-                </div>,
-                <ExplorerButton txHash={txHash} />
-              ]}
-              classNames={['col-span-3 pl-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2 ', 'col-span-1 px-3']}
-            />
-          ))
+                  </div>,
+                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI({ type: '', collateralChange: 0, ...record })}</span>,
+
+                  <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />,
+                  <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />,
+                  <div className="relative overflow-x-hidden text-ellipsis">
+                    <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
+                      {trimString(record.userId, 10) || walletAddressToShow(record.userAddress)}
+                    </span>
+                    {address === record.userAddress ? (
+                      <span
+                        className="absolute right-0 top-[1px] ml-1 rounded-sm
+                    bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
+                        YOU
+                      </span>
+                    ) : null}
+                  </div>,
+                  <ExplorerButton txHash={record.txHash} />
+                ]}
+                classNames={['col-span-3 pl-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2 ', 'col-span-1 px-3']}
+              />
+            ))
         ) : (
           <div className="item-center flex justify-center">
             <span className="body1 my-40 text-center text-mediumEmphasis">There is no market history.</span>
@@ -164,10 +173,9 @@ const MarketTrade = () => {
   );
 };
 
-const SpotTable = () => {
-  const openseaData = useNanostore(tsSportPriceList);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
+const SpotTable = ({ amm }: { amm: AMM }) => {
+  const { address } = useAccount();
+  const openseaData = useOpenSeaData(amm);
 
   return (
     <div className="h-full">
@@ -201,25 +209,31 @@ const SpotTable = () => {
             const transactionHash = transaction.transaction_hash;
             const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
             const getAnalyticsSpotEthers = () => {
-              if (firebaseAnalytics) {
+              if (firebaseAnalytics && address) {
                 logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
-                  wallet: fullWalletAddress.substring(2),
+                  wallet: address.substring(2),
                   transaction: transactionHash.substring(2),
                   token: assetToken,
-                  collection: currentToken // from tokenRef.current
+                  collection: amm // from tokenRef.current
                 });
               }
-              apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
-                page: 'Trade',
-                transaction: transactionHash.substring(2),
-                token: assetToken,
-                collection: currentToken // from tokenRef.current
-              });
+              if (address) {
+                apiConnection.postUserEvent(
+                  'tribedetail_spottransaction_etherscan_pressed',
+                  {
+                    page: 'Trade',
+                    transaction: transactionHash.substring(2),
+                    token: assetToken,
+                    collection: amm // from tokenRef.current
+                  },
+                  address
+                );
+              }
             };
             const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
             const priceValue = !total_price
               ? '0.00'
-              : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
+              : localeConversion(isUSDC ? formatBigIntString(total_price, 6).toFixed(2) : formatBigIntString(total_price).toFixed(2));
             const key_value = assetCreationDate + event_timestamp + assetToken;
 
             return (
@@ -259,8 +273,8 @@ const SpotTable = () => {
   );
 };
 
-const FundingPaymentHistory = () => {
-  const fundingPaymentHistory = useNanostore(tsFundingPaymentHistory);
+const FundingPaymentHistory = ({ amm }: { amm: AMM }) => {
+  const fundingPaymentHistory = useFundingRatesHistory(amm);
 
   return fundingPaymentHistory !== null ? (
     <div className="h-full">
@@ -281,8 +295,8 @@ const FundingPaymentHistory = () => {
                   <div className="absolute left-[-12px] top-0 mt-[-8px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
                   {formatDateTime(timestamp)}
                 </div>,
-                <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(Number(formatterValue(rateLong * 100, 4))).toFixed(4)} %`}</div>,
-                <div>{`${rateShort > 0 ? '+' : '-'}${Math.abs(Number(formatterValue(rateShort * 100, 4))).toFixed(4)} %`}</div>
+                <div>{`${rateLong > 0 ? '-' : '+'}${Math.abs(rateLong * 100).toFixed(4)} %`}</div>,
+                <div>{`${rateShort > 0 ? '+' : '-'}${Math.abs(rateShort * 100).toFixed(4)} %`}</div>
               ]}
               classNames={[
                 'col-span-4 px-3',
@@ -303,22 +317,20 @@ const FundingPaymentHistory = () => {
 
 function TribeDetailComponents(props: any) {
   const { activeTab } = props;
-  const currentToken = useNanostore(wsCurrentToken);
+  const currentAmm = useNanostore($currentAMM);
 
-  useEffect(() => {
-    updateTradeInformation(currentToken);
-  }, [currentToken]);
+  if (!currentAmm) return null;
 
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%]`}>
-        <MarketTrade />
+        <MarketTrade amm={currentAmm} />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%]`}>
-        <SpotTable />
+        <SpotTable amm={currentAmm} />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%]`}>
-        <FundingPaymentHistory />
+        <FundingPaymentHistory amm={currentAmm} />
       </div>
     </>
   );

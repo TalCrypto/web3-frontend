@@ -5,50 +5,45 @@ export function getTradingActionType(item: any) {
   let actionType = '';
   if (formatterValue(item.exchangedPositionSize, 18) === formatterValue(item.positionSizeAfter, 18)) {
     actionType = 'Open';
-  } else if (Number(formatterValue(item.positionSizeAfter, 18)) === 0) {
+  } else if (item.positionSizeAfter === 0) {
     actionType = 'Full Close';
-  } else if (
-    Math.sign(Number(formatterValue(item.exchangedPositionSize, 18))) === Math.sign(Number(formatterValue(item.positionSizeAfter, 18)))
-  ) {
+  } else if (Math.sign(item.exchangedPositionSize) === Math.sign(item.positionSizeAfter)) {
     actionType = 'Add';
-  } else if (
-    Math.sign(Number(formatterValue(item.exchangedPositionSize, 18))) !== Math.sign(Number(formatterValue(item.positionSizeAfter, 18)))
-  ) {
+  } else if (Math.sign(item.exchangedPositionSize) !== Math.sign(item.positionSizeAfter)) {
     actionType = 'Partial Close';
   }
 
   return actionType;
 }
 
-export function getTradingActionTypeFromAPI(item: PositionHistoryRecord, isMobile = false) {
+export function getTradingActionTypeFromAPI(
+  item: { type: string; collateralChange: number; exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number },
+  isMobile = false
+) {
   let actionType = '';
   if (item.type === 'adjust') {
-    const collateralNumber = Number(formatterValue(item.collateralChange, 18));
+    const collateralNumber = item.collateralChange;
     if (collateralNumber > 0) {
       actionType = 'Add Collateral';
     } else {
       actionType = 'Reduce Collateral';
     }
   } else {
-    const liquidationPenaltyNumber = Number(formatterValue(item.liquidationPenalty, 18));
+    const liquidationPenaltyNumber = item.liquidationPenalty;
     if (liquidationPenaltyNumber !== 0) {
-      const positionSizeAfterNumber = Number(formatterValue(item.positionSizeAfter, 18));
+      const positionSizeAfterNumber = item.positionSizeAfter;
       if (positionSizeAfterNumber === 0) {
         actionType = !isMobile ? 'Full Liquidation' : 'Full Liquid.';
       } else {
         actionType = !isMobile ? 'Partial Liquidation' : 'Partial Liquid.';
       }
-    } else if (formatterValue(item.exchangedPositionSize, 18) === formatterValue(item.positionSizeAfter, 18)) {
+    } else if (item.exchangedPositionSize === item.positionSizeAfter) {
       actionType = 'Open';
-    } else if (Number(formatterValue(item.positionSizeAfter, 18)) === 0) {
+    } else if (item.positionSizeAfter === 0) {
       actionType = 'Full Close';
-    } else if (
-      Math.sign(Number(formatterValue(item.exchangedPositionSize, 18))) === Math.sign(Number(formatterValue(item.positionSizeAfter, 18)))
-    ) {
+    } else if (Math.sign(item.exchangedPositionSize) === Math.sign(item.positionSizeAfter)) {
       actionType = 'Add';
-    } else if (
-      Math.sign(Number(formatterValue(item.exchangedPositionSize, 18))) !== Math.sign(Number(formatterValue(item.positionSizeAfter, 18)))
-    ) {
+    } else if (Math.sign(item.exchangedPositionSize) !== Math.sign(item.positionSizeAfter)) {
       actionType = 'Partial Close';
     }
   }

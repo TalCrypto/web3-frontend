@@ -12,8 +12,7 @@ import Image from 'next/image';
 // import { firebaseAnalytics } from '@/const/firebaseConfig';
 // import { apiConnection } from '@/utils/apiConnection';
 
-function InformationWindow(props: any) {
-  const { tradingData, tokenRef } = props;
+function InformationWindow() {
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -47,10 +46,10 @@ function InformationWindow(props: any) {
       </div>
       <div className="display-content h-full">
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
-          <TribeDetailComponents tradingData={tradingData} tokenRef={tokenRef} activeTab={activeTab} />
+          <TribeDetailComponents activeTab={activeTab} />
         </div>
         <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
-          <ChatComponent tokenRef={tokenRef} />
+          <ChatComponent />
         </div>
         <div className={`${detailHeaderIndex === 2 ? 'block' : 'hidden'} h-full`}>
           <ComingSoonWindow />

@@ -47,6 +47,11 @@ export const getAddressConfig = (chain: Chain): { chainId: number; config: Addre
   return { chainId, config };
 };
 
+export const getAMMAddress = (chain: Chain, amm: AMM): Address | undefined => {
+  const { config: addressConfig } = getAddressConfig(chain);
+  return addressConfig.amms[amm];
+};
+
 export const getAMMByAddress = (chain: Chain, address: Address): AMM | undefined => {
   const { config: addressConfig } = getAddressConfig(chain);
   const amms = Object.keys(addressConfig.amms) as AMM[];

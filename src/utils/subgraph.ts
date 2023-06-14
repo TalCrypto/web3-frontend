@@ -217,13 +217,13 @@ export const getMarketHistory = async (ammAddr: string) => {
         userAddresses.push(position.trader);
       }
       finalPositions.push({
-        amm: position.amm,
-        timestamp: Number(position.timestamp),
-        exchangedPositionSize: BigInt(position.exchangedPositionSize), // BAYC
-        positionNotional: BigInt(position.positionNotional), // ETH paid
-        positionSizeAfter: BigInt(position.positionSizeAfter), // ETH size after
-        liquidationPenalty: BigInt(position.liquidationPenalty),
-        spotPrice: BigInt(position.spotPrice),
+        ammAddress: position.amm,
+        timestamp: position.timestamp,
+        exchangedPositionSize: position.exchangedPositionSize, // BAYC
+        positionNotional: position.positionNotional, // ETH paid
+        positionSizeAfter: position.positionSizeAfter, // ETH size after
+        liquidationPenalty: position.liquidationPenalty,
+        spotPrice: position.spotPrice,
         userAddress: position.trader,
         txHash: position.id.split('-')[0]
       });
@@ -259,25 +259,7 @@ export const getFundingPaymentHistory = async (ammAddr: string) => {
     .then(res => res.json())
     .then(resJson => (resJson.data ? resJson.data.fundingRateUpdatedEvents : []));
 
-  const result = fundingPaymentHistory.map((history: any) => {
-    const rateLong = BigInt(history.rateLong);
-    const rateShort = BigInt(history.rateShort);
-    const underlyingPrice = BigInt(history.underlyingPrice);
-    const amountLong = (underlyingPrice * rateLong) / BigInt(1e18);
-    const amountShort = (underlyingPrice * rateLong) / BigInt(1e18);
-
-    return {
-      amm: history.amm,
-      timestamp: Number(history.timestamp),
-      underlyingPrice,
-      rateLong,
-      rateShort,
-      amountLong,
-      amountShort
-    };
-  });
-
-  return fundingPaymentHistory.length > 0 ? result : null;
+  return fundingPaymentHistory.length > 0 ? fundingPaymentHistory : null;
 };
 
 export const getSpotPriceAfter = async (ammAddr: string, timestamp: number, limit: number, offset: number) => {

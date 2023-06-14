@@ -2,10 +2,14 @@ import { AMM } from '@/const/collectionList';
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $tradingData } from '@/stores/trading';
-import { useNetwork } from 'wagmi';
-import { getAMMByAddress, getSupportedAMMAddresses } from '@/const/addresses';
+import { Address, useContractEvent, useNetwork } from 'wagmi';
+import { getAMMAddress, getAMMByAddress, getAddressConfig, getSupportedAMMAddresses } from '@/const/addresses';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
-import { getDailySpotPriceGraphData } from '@/utils/trading';
+import { getDailySpotPriceGraphData, getFundingPaymentHistory, getMarketHistory } from '@/utils/trading';
+import { formatBigIntString } from '@/utils/bigInt';
+import { getAddress } from 'viem';
+import { getCHContract } from '@/const/contracts';
+import { getBaycFromMainnet } from '@/utils/opensea';
 
 export interface CollectionOverview {
   amm: AMM;
@@ -80,4 +84,150 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
     getGraphData();
   }, [triggerUpdate, tradingData, chain]);
   return { isLoading, data };
+};
+
+export interface MarketHistoryRecord {
+  ammAddress: string;
+  timestamp: number;
+  exchangedPositionSize: number;
+  positionNotional: number;
+  positionSizeAfter: number;
+  liquidationPenalty: number;
+  spotPrice: number;
+  userAddress: Address;
+  userId: string;
+  txHash: string;
+}
+
+export const useMarketHistory = (amm: AMM) => {
+  const { chain } = useNetwork();
+  const [history, setHistory] = useState<Array<MarketHistoryRecord>>();
+  useEffect(() => {
+    function fetch() {
+      if (chain) {
+        const { config: addrConf } = getAddressConfig(chain);
+        const ammAddr = addrConf.amms[amm];
+        if (ammAddr) {
+          getMarketHistory(ammAddr).then(res => {
+            setHistory(
+              res.map(
+                (record: {
+                  ammAddress: string;
+                  timestamp: string;
+                  exchangedPositionSize: string;
+                  positionNotional: string;
+                  positionSizeAfter: string;
+                  liquidationPenalty: string;
+                  spotPrice: string;
+                  userAddress: string;
+                  userId: string;
+                  txHash: string;
+                }) => ({
+                  ammAddress: record.ammAddress,
+                  timestamp: Number(record.timestamp),
+                  exchangedPositionSize: formatBigIntString(record.exchangedPositionSize),
+                  positionNotional: formatBigIntString(record.positionNotional),
+                  positionSizeAfter: formatBigIntString(record.positionSizeAfter),
+                  liquidationPenalty: formatBigIntString(record.liquidationPenalty),
+                  spotPrice: formatBigIntString(record.spotPrice),
+                  userAddress: getAddress(record.userAddress),
+                  userId: record.userId,
+                  txHash: record.txHash
+                })
+              )
+            );
+          });
+        }
+      }
+    }
+
+    fetch();
+
+    const timer = setInterval(fetch, 2000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [amm, chain]);
+
+  return history;
+};
+
+export const useOpenSeaData = (amm: AMM) => {
+  const { chain } = useNetwork();
+  const [data, setData] = useState<any>([]);
+  useEffect(() => {
+    function fetch() {
+      if (chain) {
+        const { config: addrConf } = getAddressConfig(chain);
+        const ammAddr = addrConf.amms[amm];
+        if (ammAddr) {
+          getBaycFromMainnet(ammAddr)
+            .then(res => {
+              // from tokenRef.current
+              setData(res);
+            })
+            .catch(err => setData([]));
+        }
+      }
+    }
+
+    fetch();
+
+    const timer = setInterval(fetch, 2000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [amm, chain]);
+  return data;
+};
+
+export interface FundingRatesRecord {
+  amm: Address;
+  timestamp: number;
+  underlyingPrice: number;
+  rateLong: number;
+  rateShort: number;
+  amountLong: number;
+  amountShort: number;
+}
+
+export const useFundingRatesHistory = (amm: AMM) => {
+  const { chain } = useNetwork();
+  const [data, setData] = useState<Array<FundingRatesRecord>>();
+  useEffect(() => {
+    function fetch() {
+      if (chain) {
+        const { config: addrConf } = getAddressConfig(chain);
+        const ammAddr = addrConf.amms[amm];
+        if (ammAddr) {
+          getFundingPaymentHistory(ammAddr)
+            .then(res => {
+              setData(
+                res.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
+                  amm: getAddress(record.amm),
+                  timestamp: Number(record.timestamp),
+                  underlyingPrice: formatBigIntString(record.underlyingPrice),
+                  rateLong: formatBigIntString(record.rateLong),
+                  rateShort: formatBigIntString(record.rateShort),
+                  amountLong: formatBigIntString(record.rateLong) * formatBigIntString(record.underlyingPrice),
+                  amountShort: formatBigIntString(record.rateShort) * formatBigIntString(record.underlyingPrice)
+                }))
+              );
+            })
+            .catch(err => setData([]));
+        }
+      }
+    }
+
+    fetch();
+
+    const timer = setInterval(fetch, 2000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [amm, chain]);
+  return data;
 };

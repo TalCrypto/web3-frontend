@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userPositionInfos, UserPositionInfo } from '@/stores/user';
 import { $tradingData, $transactionPendings, CollectionTradingData } from '@/stores/trading';
-import { CollectionInfo, getCollectionInformation, AMM } from '@/const/collectionList';
+import { AMM } from '@/const/collectionList';
 import { useNetwork } from 'wagmi';
 import { getSupportedAMMs } from '@/const/addresses';
 
