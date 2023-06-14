@@ -18,6 +18,7 @@ import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
 import Tooltip from '@/components/common/Tooltip';
+import { $isShowMobileModal } from '@/stores/common';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -79,6 +80,7 @@ const HistoryModal = (props: any) => {
 
   const hide = () => {
     setShowHistoryModal(false);
+    $isShowMobileModal.set(false);
   };
 
   useEffect(() => {

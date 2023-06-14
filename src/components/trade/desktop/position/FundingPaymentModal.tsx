@@ -12,6 +12,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import collectionList from '@/const/collectionList';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
+import { $isShowMobileModal } from '@/stores/common';
 
 const FundingPaymentModal = (props: any) => {
   const { setShowFundingPaymentModal, tradingData } = props;
@@ -114,7 +115,10 @@ const FundingPaymentModal = (props: any) => {
     <div
       className="fixed bottom-0 left-0 top-0 z-10 flex  h-full
       w-full items-center justify-center bg-black/[.2] backdrop-blur-[4px]"
-      onClick={() => setShowFundingPaymentModal(false)}>
+      onClick={() => {
+        setShowFundingPaymentModal(false);
+        $isShowMobileModal.set(false);
+      }}>
       <div
         className="relative h-[600px] w-[800px] rounded-[12px] border-[1px]
         border-[#71aaff38] bg-lightBlue text-[14px] font-normal text-mediumEmphasis"
@@ -133,7 +137,12 @@ const FundingPaymentModal = (props: any) => {
               </span>
             </div>
           </div>
-          <div className="absolute right-6 top-6 cursor-pointer" onClick={() => setShowFundingPaymentModal(false)}>
+          <div
+            className="absolute right-6 top-6 cursor-pointer"
+            onClick={() => {
+              setShowFundingPaymentModal(false);
+              $isShowMobileModal.set(false);
+            }}>
             <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
         </div>

@@ -32,6 +32,7 @@ import FundingPaymentModal from '@/components/trade/mobile/position/FundingPayme
 
 // import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
 import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
+import { $isShowMobileModal } from '@/stores/common';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -164,10 +165,18 @@ export default function PositionMobile(props: any) {
           <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
         </div>
         <div className="flex space-x-[24px]">
-          <div onClick={() => setShowHistoryModal(true)}>
+          <div
+            onClick={() => {
+              setShowHistoryModal(true);
+              $isShowMobileModal.set(true);
+            }}>
             <Image alt="" src="/images/components/trade/position/trade_history.svg" width={16} height={16} />
           </div>
-          <div onClick={() => setShowFundingPaymentModal(true)}>
+          <div
+            onClick={() => {
+              setShowFundingPaymentModal(true);
+              $isShowMobileModal.set(true);
+            }}>
             <Image alt="" src="/images/components/trade/position/funding_payment.svg" width={16} height={16} />
           </div>
         </div>
