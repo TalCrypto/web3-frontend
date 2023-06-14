@@ -1,19 +1,22 @@
-import { getAddressConfig } from '@/const/addresses';
+import { getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
-import { Contract, Contracts, getContracts } from '@/const/contracts';
+import { getAMMContract, getCHViewerContract } from '@/const/contracts';
 import React, { useEffect, useState } from 'react';
-import { useContractReads, useNetwork } from 'wagmi';
+import { Chain, useContractReads, useNetwork } from 'wagmi';
 
-const CollectionUpdater: React.FC<{ chViewer: Contract; amm: Contract }> = ({ chViewer, amm }) => {
+const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm }) => {
+  const ammContract = getAMMContract(chain, amm);
+  if (!ammContract) return null;
+  const chViewerContract = getCHViewerContract(chain);
   const { data, isError, isLoading } = useContractReads({
     contracts: [
-      { ...amm, functionName: 'getSpotPrice' },
-      { ...amm, functionName: 'getUnderlyingPrice' },
-      { ...amm, functionName: 'nextFundingTime' },
-      { ...amm, functionName: 'fundingPeriod' },
-      { ...amm, functionName: 'longPositionSize' },
-      { ...amm, functionName: 'shortPositionSize' },
-      { ...chViewer, functionName: 'getFundingRates', args: [amm.address] }
+      { ...ammContract, functionName: 'getSpotPrice' },
+      { ...ammContract, functionName: 'getUnderlyingPrice' },
+      { ...ammContract, functionName: 'nextFundingTime' },
+      { ...ammContract, functionName: 'fundingPeriod' },
+      { ...ammContract, functionName: 'longPositionSize' },
+      { ...ammContract, functionName: 'shortPositionSize' },
+      { ...chViewerContract, functionName: 'getFundingRates', args: [ammContract.address] }
     ],
     watch: true
   });
@@ -34,27 +37,20 @@ const CollectionUpdater: React.FC<{ chViewer: Contract; amm: Contract }> = ({ ch
 
 const TradingDataUpdater: React.FC = () => {
   const { chain } = useNetwork();
-  const [amms, setAmms] = useState<Array<keyof typeof AMM> | undefined>();
-  const [contracts, setContracts] = useState<Contracts | undefined>();
+  const [amms, setAmms] = useState<Array<AMM>>();
   useEffect(() => {
     if (chain) {
-      const ammArray = getAddressConfig(chain, chain.unsupported ?? false);
-      const ammKeys = Object.keys(ammArray.amms) as Array<keyof typeof AMM>;
-      setAmms(ammKeys);
-      const conts = getContracts(chain, chain.unsupported ?? false);
-      setContracts(conts);
+      setAmms(getSupportedAMMs(chain));
     }
   }, [chain]);
 
-  if (!amms || !contracts) return null;
+  if (!amms || !chain) return null;
 
   return (
     <>
-      {amms.map(ammKey => {
-        const amm = contracts.amms[AMM[ammKey]];
-        if (!amm) return null;
-        return <CollectionUpdater key={ammKey} chViewer={contracts.chViewer} amm={amm} />;
-      })}
+      {amms.map(amm => (
+        <CollectionUpdater key={amm} amm={amm} chain={chain} />
+      ))}
     </>
   );
 };

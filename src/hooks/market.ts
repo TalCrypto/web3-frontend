@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $tradingData } from '@/stores/trading';
 import { useNetwork } from 'wagmi';
-import { getAddressConfig } from '@/const/addresses';
+import { getAMMByAddress, getSupportedAMMAddresses } from '@/const/addresses';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
 import { getDailySpotPriceGraphData } from '@/utils/trading';
 
@@ -40,22 +40,22 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
         const ts24hr = nowTs - 1 * 24 * 3600;
         const ts7Days = nowTs - 7 * 24 * 3600;
         const ts30Days = nowTs - 30 * 24 * 3600;
-        const ammAddrs = getAddressConfig(chain, chain?.unsupported ?? false).amms;
-        const amms = Object.keys(ammAddrs) as Array<AMM>;
-        const ammAddrList = amms.map(amm => ammAddrs[amm]) as Array<string>;
+        const ammAddrList = getSupportedAMMAddresses(chain);
         const graphDataList = await Promise.all(ammAddrList.map(ammAddr => getDailySpotPriceGraphData(ammAddr)));
         const priceList24hrAgo = await Promise.all(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts24hr)));
         const priceList7daysAgo = await Promise.all(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts7Days)));
         const priceList30daysAgo = await Promise.all(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts30Days)));
         const results = [];
-        for (let i = 0; i < amms.length; i += 1) {
-          const amm = amms[i];
+        for (let i = 0; i < ammAddrList.length; i += 1) {
+          const ammAddr = ammAddrList[i];
+          const amm = getAMMByAddress(chain, ammAddr);
+          if (!amm) break;
           const basePrice24h = Number(priceList24hrAgo[i].spotPrice / BigInt(1e18));
           const basePrice7d = Number(priceList7daysAgo[i].spotPrice / BigInt(1e18));
           const basePrice30d = Number(priceList30daysAgo[i].spotPrice / BigInt(1e18));
           const ammTradingData = tradingData[amm];
 
-          if (!ammTradingData) return;
+          if (!ammTradingData) break;
 
           const result = {
             amm,

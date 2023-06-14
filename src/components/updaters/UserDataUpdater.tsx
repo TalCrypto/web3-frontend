@@ -1,19 +1,22 @@
-import { getAddressConfig } from '@/const/addresses';
+import { getAddressConfig, getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
-import { getContracts, Contract, Contracts } from '@/const/contracts';
+import { getAMMContract, getCHViewerContract } from '@/const/contracts';
 import { setIsConnecting, setUserInfo, setWethBalance } from '@/stores/user';
 import { apiConnection } from '@/utils/apiConnection';
 import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
-import { Address, useAccount, useContractRead, useBalance, useNetwork } from 'wagmi';
+import { Address, useAccount, useContractRead, useBalance, useNetwork, Chain } from 'wagmi';
 
-const PositionInfoUpdater: React.FC<{ chViewer: Contract; ammAddr: Address }> = ({ chViewer, ammAddr }) => {
+const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm }) => {
   const { address } = useAccount();
   if (!address) return null;
+  const ammContract = getAMMContract(chain, amm);
+  if (!ammContract) return null;
+  const chViewer = getCHViewerContract(chain);
   const { data, isError, isLoading } = useContractRead({
     ...chViewer,
     functionName: 'getTraderPositionInfoWithoutPriceImpact',
-    args: [ammAddr, address],
+    args: [ammContract.address, address],
     watch: true
   });
 
@@ -37,8 +40,7 @@ const UserDataUpdater: React.FC = () => {
   const { chain } = useNetwork();
   const { isOpen } = useWeb3Modal();
   const { data } = useBalance({ address, token: wethAddr, watch: true });
-  const [amms, setAmms] = useState<Array<keyof typeof AMM> | undefined>();
-  const [contracts, setContracts] = useState<Contracts | undefined>();
+  const [amms, setAmms] = useState<Array<AMM>>();
 
   useEffect(() => {
     if (address) {
@@ -59,25 +61,20 @@ const UserDataUpdater: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    if (chain && isConnected) {
-      const addressConf = getAddressConfig(chain, chain.unsupported ?? false);
+    if (chain && isConnected && !chain.unsupported) {
+      const { config: addressConf } = getAddressConfig(chain);
       setWethAddr(addressConf.weth);
-      const ammKeys = Object.keys(addressConf.amms) as Array<keyof typeof AMM>;
-      setAmms(ammKeys);
-      const conts = getContracts(chain, chain.unsupported ?? false);
-      setContracts(conts);
+      setAmms(getSupportedAMMs(chain));
     }
   }, [chain, isConnected]);
 
-  if (!amms || !contracts) return null;
+  if (!amms || !chain) return null;
 
   return (
     <>
-      {amms.map(ammKey => {
-        const amm = contracts.amms[AMM[ammKey]];
-        if (!amm) return null;
-        return <PositionInfoUpdater key={ammKey} chViewer={contracts.chViewer} ammAddr={amm.address} />;
-      })}
+      {amms.map(amm => (
+        <PositionInfoUpdater key={amm} chain={chain} amm={amm} />
+      ))}
     </>
   );
 };

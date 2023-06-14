@@ -62,7 +62,7 @@ export const usePositionHistory = (): Array<PositionHistoryRecord> => {
             openNotional: string;
             previousOpenNotional: string;
           }) => ({
-            amm: getAMMByAddress(chain, chain.unsupported ?? false, getAddress(item.ammAddress)),
+            amm: getAMMByAddress(chain, getAddress(item.ammAddress)),
             txHash: String(item.txHash),
             entryPrice: Number(BigInt(item.entryPrice) / BigInt(1e18)),
             ammAddress: getAddress(item.ammAddress),
