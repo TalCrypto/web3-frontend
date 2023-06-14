@@ -84,7 +84,7 @@ function ExplorerButton(props: any) {
   };
 
   return (
-    <a href={etherscanUrl} target="_blank" rel="noreferrer">
+    <a href={etherscanUrl} target="_blank" rel="noreferrer" className="cursor-pointer">
       <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={16} height={16} />
     </a>
   );
@@ -138,10 +138,10 @@ const MarketTrade = () => {
 
                 <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />,
                 <SmallPriceIcon priceValue={formatterValue(spotPrice, 2)} />,
-                <div className="relative overflow-x-hidden text-ellipsis">
-                  <span className="market_user cursor-pointer" onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                    {trimString(userId, 10) || walletAddressToShow(userAddress)}
-                  </span>
+                <div
+                  className="relative cursor-pointer overflow-x-hidden text-ellipsis"
+                  onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                  <span className="market_user cursor-pointer">{trimString(userId, 10) || walletAddressToShow(userAddress)}</span>
                   {fullWalletAddress === userAddress ? (
                     <span
                       className="absolute right-0 top-[1px] ml-1 rounded-sm
@@ -243,7 +243,12 @@ const SpotTable = () => {
                       <SmallPriceIcon priceValue={priceValue} />
                     )}
                   </div>,
-                  <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
+                  <a
+                    href={`https://etherscan.io/tx/${transactionHash}`}
+                    className="cursor-pointer"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={getAnalyticsSpotEthers}>
                     <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={20} height={20} />
                   </a>
                 ]}
