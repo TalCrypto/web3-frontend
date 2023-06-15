@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userPositionInfos, UserPositionInfo } from '@/stores/user';
-import { $tradingData, $transactionPendings, CollectionTradingData } from '@/stores/trading';
+import {
+  $chartData,
+  $dailyVolume,
+  $isTradingDataInitializing,
+  $tradingData,
+  $transactionPendings,
+  ChartData,
+  CollectionTradingData
+} from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { useNetwork } from 'wagmi';
 import { getSupportedAMMs } from '@/const/addresses';
@@ -25,12 +33,20 @@ export const usePositionInfosIsLoading = (): boolean => {
   return isLoading;
 };
 
-export const useTradingData = (amm?: AMM): CollectionTradingData | undefined => {
+export const useTradingData = (): { isLoading: boolean; tradingData?: CollectionTradingData } => {
   const tradingData = useNanostore($tradingData);
-  return amm ? tradingData[amm] : undefined;
+  const isLoading = useNanostore($isTradingDataInitializing);
+  return { isLoading, tradingData };
 };
 
 export const useTransactionIsPending = (amm?: AMM): boolean => {
   const pendings = useNanostore($transactionPendings);
   return amm ? Boolean(pendings[amm]) : false;
+};
+
+export const useChartData = (): { isLoading: boolean; chartData?: ChartData; dailyVolume?: number } => {
+  const isLoading = useNanostore($isTradingDataInitializing);
+  const chartData = useNanostore($chartData);
+  const dailyVolume = useNanostore($dailyVolume);
+  return { isLoading, chartData, dailyVolume };
 };

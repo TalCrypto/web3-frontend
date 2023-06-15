@@ -3,6 +3,8 @@ import { AMM } from '@/const/collectionList';
 import { getAMMContract, getCHViewerContract } from '@/const/contracts';
 import React, { useEffect, useState } from 'react';
 import { Chain, useContractReads, useNetwork } from 'wagmi';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $currentAMM, $isTradingDataInitializing } from '@/stores/trading';
 
 const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm }) => {
   const ammContract = getAMMContract(chain, amm);
@@ -21,6 +23,8 @@ const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm })
     watch: true
   });
 
+  $isTradingDataInitializing.set(isLoading);
+
   console.log(data, isError, isLoading);
 
   // const [spotPrice, nextFundingTimeInfo, fundingPeriodInfo, longSize, shortSize, fundingRateInfo] = await multicallProvider.all([
@@ -37,22 +41,10 @@ const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm })
 
 const TradingDataUpdater: React.FC = () => {
   const { chain } = useNetwork();
-  const [amms, setAmms] = useState<Array<AMM>>();
-  useEffect(() => {
-    if (chain) {
-      setAmms(getSupportedAMMs(chain));
-    }
-  }, [chain]);
+  const currentAMM = useNanostore($currentAMM);
 
-  if (!amms || !chain) return null;
-
-  return (
-    <>
-      {amms.map(amm => (
-        <CollectionUpdater key={amm} amm={amm} chain={chain} />
-      ))}
-    </>
-  );
+  if (!currentAMM || !chain) return null;
+  return <CollectionUpdater key={currentAMM} amm={currentAMM} chain={chain} />;
 };
 
 export default TradingDataUpdater;

@@ -116,9 +116,9 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
       volume += rawGraphData.volume;
       graphData.push({
         round: i + 1,
-        avgPrice: rawGraphData.avgPrice.toString(),
-        open: rawGraphData.open.toString(),
-        close: rawGraphData.close.toString(),
+        avgPrice: rawGraphData.avgPrice,
+        open: rawGraphData.open,
+        close: rawGraphData.close,
         start: currentRoundStartTime,
         end: currentRoundEndTime
       });

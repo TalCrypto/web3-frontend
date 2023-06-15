@@ -50,7 +50,7 @@ export default function PositionDetails(props: any) {
   const { address } = useAccount();
   const currentAmm = useNanostore($currentAMM);
   const positionInfo = usePositionInfo(currentAmm);
-  const tradingData = useTradingData(currentAmm);
+  const { tradingData } = useTradingData();
   const isPending = useTransactionIsPending(currentAmm);
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 

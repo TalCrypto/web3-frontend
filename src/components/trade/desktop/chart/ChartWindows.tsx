@@ -3,35 +3,25 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-import { utils, BigNumber } from 'ethers';
 import { logEvent } from 'firebase/analytics';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-
-import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 
-import {
-  getDailySpotPriceGraphData,
-  getMonthlySpotPriceGraphData,
-  getWeeklySpotPriceGraphData,
-  getThreeMonthlySpotPriceGraphData
-} from '@/utils/trading';
-
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
-import { showPopup, priceGapLimit } from '@/stores/priceGap';
 
-import { wsIsLogin, wsChatInterval, wsCurrentToken, wsSelectedTimeIndex, wsFullWalletAddress } from '@/stores/WalletState';
-import { walletProvider } from '@/utils/walletProvider';
 import Tooltip from '@/components/common/Tooltip';
+import { Address } from 'wagmi';
+import { $currentAMM, $selectedTimeIndex } from '@/stores/trading';
+import { useChartData, useTradingData } from '@/hooks/collection';
 
 const flashAnim = 'flash';
 
@@ -49,37 +39,14 @@ const ChartDisplay = dynamic(() => import('./chartDisplay'), {
   ssr: false
 });
 
-function PriceIndicator(props: any) {
-  const { priceChangeRatioAndValue } = props;
-  const { priceChangeRatio, priceChangeValue } = priceChangeRatioAndValue;
-  const [localPriceChangeRatioAndValue, setLocalPriceChangeRatioAndValue] = useState({
-    priceChangeRatio: '',
-    priceChangeValue: ''
-  });
+function PriceIndicator(props: { isStartLoadingChart: boolean; priceChangeValue: number; priceChangeRatio: number }) {
+  const { priceChangeValue, priceChangeRatio, isStartLoadingChart } = props;
 
-  const [isPriceChange, setIsPriceChange] = useState(false);
-
-  useEffect(() => {
-    setIsPriceChange(true);
-    if (priceChangeRatio) {
-      setTimeout(() => {
-        setLocalPriceChangeRatioAndValue(priceChangeRatioAndValue);
-        setIsPriceChange(false);
-      }, 300);
-    }
-  }, [priceChangeRatioAndValue, priceChangeRatio]);
-
-  if (!localPriceChangeRatioAndValue.priceChangeRatio) {
-    return null;
-  }
-
-  const isLike = isPositive(localPriceChangeRatioAndValue.priceChangeRatio) ? 1 : 0;
-
-  return isPriceChange ? (
+  return isStartLoadingChart || !priceChangeValue || !priceChangeRatio ? (
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
+        ${priceChangeRatio && priceChangeRatio > 0 ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
       <div className="col mx-4 my-auto flex items-center">
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
@@ -88,52 +55,52 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
+        ${priceChangeRatio > 0 ? 'border-marketGreen text-marketGreen' : 'border-marketRed text-marketRed'}`}>
       <Image
         alt="Polygon_pos"
-        src={
-          isPositive(localPriceChangeRatioAndValue.priceChangeRatio)
-            ? '/images/components/trade/chart/polygon_pos.svg'
-            : '/images/components/trade/chart/polygon_neg.svg'
-        }
+        src={priceChangeRatio > 0 ? '/images/components/trade/chart/polygon_pos.svg' : '/images/components/trade/chart/polygon_neg.svg'}
         className="ml-4 mr-2"
         width={16}
         height={16}
       />
       <div>
         <div className="mr-4">
-          {`${formatterValue(Math.abs(Number(localPriceChangeRatioAndValue.priceChangeValue)), 2, '')}
-          (${formatterValue(Math.abs(Number(localPriceChangeRatioAndValue.priceChangeRatio)), 2, '%')})`}
+          {priceChangeValue.toFixed(2)}
+          {`${priceChangeRatio.toFixed(2)}%`}
         </div>
       </div>
     </div>
   );
 }
 
-function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
+function chartButtonLogged(index: any, fullWalletAddress: Address, currentAmm: AMM) {
   const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
 
   if (firebaseAnalytics) {
     logEvent(firebaseAnalytics, eventName, {
-      wallet: address.substring(2),
+      wallet: fullWalletAddress.substring(2),
       collection: currentAmm
     });
   }
   apiConnection.postUserEvent(
     eventName,
     {
-      wallet: address,
+      wallet: fullWalletAddress,
       collection: currentAmm,
       page: 'Trade'
     },
-    address
+    fullWalletAddress
   );
 }
 
 function ChartTimeTabs(props: any) {
-  const { isStartLoadingChart, setSelectedTimeIndex, contentArray = [], controlRef } = props;
-  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
-  const [isVisible, setIsVisible] = useState(false);
+  const { contentArray = [], controlRef, isStartLoadingChart } = props;
+  const selectedTimeIndex = useNanostore($selectedTimeIndex);
+
+  const setSelectedTimeIndex = (index: number) => {
+    // chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
+    $selectedTimeIndex.set(index);
+  };
 
   const updateSelectedTimeIndex = () => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
@@ -147,26 +114,26 @@ function ChartTimeTabs(props: any) {
     updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
 
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      const element = document.getElementById('divTradeWindow');
-      if (element === null) return;
-      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
-      if (isVisibleNow && !isVisible) {
-        setIsVisible(true);
-        updateSelectedTimeIndex();
-      } else if (!isVisibleNow && isVisible) {
-        setIsVisible(false);
-      }
-    };
+  // useLayoutEffect(() => {
+  //   const handleResize = () => {
+  //     const element = document.getElementById('divTradeWindow');
+  //     if (element === null) return;
+  //     const isVisibleNow = window.getComputedStyle(element).display !== 'none';
+  //     if (isVisibleNow && !isVisible) {
+  //       setIsVisible(true);
+  //       updateSelectedTimeIndex();
+  //     } else if (!isVisibleNow && isVisible) {
+  //       setIsVisible(false);
+  //     }
+  //   };
 
-    window.addEventListener('resize', handleResize);
-    handleResize();
+  //   window.addEventListener('resize', handleResize);
+  //   handleResize();
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isVisible, selectedTimeIndex]);
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, [isVisible, selectedTimeIndex]);
 
   return (
     <div className="relative flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
@@ -177,7 +144,7 @@ function ChartTimeTabs(props: any) {
       />
 
       <div className="relative inline-flex w-full justify-between overflow-hidden text-center ">
-        {contentArray.map((item: any, i: any) => (
+        {contentArray.map((item: any, i: number) => (
           <div
             key={item.label}
             className={`segment z-1 relative ml-4 flex
@@ -205,24 +172,11 @@ function ChartTimeTabs(props: any) {
   );
 }
 
-const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, isStartLoadingChart } = props;
-  const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
-  const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
-  const currentToken = useNanostore(wsCurrentToken);
-  const selectedCollection = getCollectionInformation(currentAmm);
-
-  useImperativeHandle(ref, () => ({
-    reset() {
-      setCurrentTagMaxAndMinValue({ max: '-.--', min: '-.--' });
-      setPriceChangeRatioAndValue({ priceChangeRatio: '', priceChangeValue: '' });
-    },
-    setGraphOtherValue(params: any) {
-      const { high, low, priceChangeRatio, priceChangeValue } = params;
-      setCurrentTagMaxAndMinValue({ max: formatterValue(high, 2), min: formatterValue(low, 2) });
-      setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
-    }
-  }));
+const ChartHeaders = () => {
+  const currentAMM = useNanostore($currentAMM);
+  const { tradingData } = useTradingData();
+  const { isLoading: isStartLoadingChart, chartData } = useChartData();
+  const collectionInfo = currentAMM ? getCollectionInformation(currentAMM) : null;
 
   return (
     <div className="flex w-full flex-row items-center justify-start text-[16px]">
@@ -238,23 +192,26 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             <div className="font-400 flex space-x-[12px] text-[14px] text-highEmphasis">
               <div className="flex items-center space-x-[6px] text-[14px] font-normal">
                 {/* <Image className="" src={selectedCollection.logo} width={16} height={16} alt="" /> */}
-                <span>{selectedCollection.displayCollectionPair}</span>
+                <span>{collectionInfo ? collectionInfo.displayCollectionPair : ''}</span>
               </div>
               <div className="font-400 flex text-[14px] text-highEmphasis">
-                <SmallPriceIcon priceValue={`${formatterValue(tradingData.twapPrice, 2, '', '-.--')} (Oracle)`} />
+                <SmallPriceIcon priceValue={`${tradingData ? tradingData.oraclePrice.toFixed(2) : '-.--'} (Oracle)`} />
               </div>
             </div>
           </div>
           <div className="flex">
-            <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={30} height={30} large />
-            <PriceIndicator priceChangeRatioAndValue={priceChangeRatioAndValue} />
+            <PriceWithIcon priceValue={tradingData ? tradingData.vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
+            <PriceIndicator
+              priceChangeValue={chartData ? chartData.priceChangeValue : 0}
+              priceChangeRatio={chartData ? chartData.priceChangeRatio : 0}
+              isStartLoadingChart={isStartLoadingChart}
+            />
           </div>
         </div>
       </div>
       <div className="flex flex-1 items-end justify-end">
         <ChartTimeTabs
           name="group-1"
-          callback={(val: any) => setSelectedTimeIndex(val)}
           controlRef={useRef()}
           contentArray={[
             { label: '1D', ref: useRef() },
@@ -262,58 +219,32 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             { label: '1M', ref: useRef() },
             { label: '3M', ref: useRef() }
           ]}
-          setSelectedTimeIndex={setSelectedTimeIndex}
           isStartLoadingChart={isStartLoadingChart}
         />
       </div>
     </div>
   );
-});
+};
 
-const ChartFooter = forwardRef((props: any, ref: any) => {
-  const { tradingData, currentAmm } = props;
-  const currentToken = useNanostore(wsCurrentToken);
-  const selectedCollection = getCollectionInformation(currentAmm);
+const ChartFooter = (props: any, ref: any) => {
+  const DEFAULT_TIME = '-- : -- : --';
+  const { isLoading, tradingData } = useTradingData();
+  const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
 
-  const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
-  const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
+  const vAMMPrice = !tradingData ? 0 : tradingData.vammPrice;
+  const oraclePrice = !tradingData ? 0 : tradingData.oraclePrice;
+  const isGapAboveLimit = !tradingData ? false : tradingData.isOverPriceGap;
 
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
-  const priceGapLmt = useNanostore(priceGapLimit);
 
-  const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
-  const popup: any = showPopup.get();
-  const isAlertTooltipHasShown = selectedCollection ? popup[selectedCollection.collection] : false;
-
-  const [showAlertOverlay, setShowAlertOverlay] = useState(false);
-
-  const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  const [nextFundingTime, setNextFundingTime] = useState(0);
-  const hadKey = Object.keys(tradingData).length > 0;
-
-  const interval = useNanostore(wsChatInterval);
-
-  let hours = '';
-  let minutes = '';
-  let seconds = '';
   let rateLong = '-.--';
   let rateShort = '-.--';
   let longSide = '';
   let shortSide = '';
 
-  // react to pricegap store, so tooltip can show on first load
-  useEffect(() => {
-    if (!isAlertTooltipHasShown) {
-      setShowAlertOverlay(isGapAboveLimit);
-    } else {
-      setShowAlertOverlay(false);
-    }
-  }, [isGapAboveLimit, isAlertTooltipHasShown]);
-
   if (tradingData && tradingData.fundingRateLong) {
-    const rawdata = utils.formatEther(tradingData.fundingRateLong);
-    const numberRawdata = (Number(rawdata) * 100).toFixed(4);
+    const numberRawdata = (tradingData.fundingRateLong * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
     rateLong = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
@@ -323,8 +254,7 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
     }
   }
   if (tradingData && tradingData.fundingRateShort) {
-    const rawdata = utils.formatEther(tradingData.fundingRateShort);
-    const numberRawdata = (Number(rawdata) * 100).toFixed(4);
+    const numberRawdata = (tradingData.fundingRateShort * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
     rateShort = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
@@ -334,49 +264,40 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
     }
   }
 
-  function startCountdown() {
-    if (!hadKey) {
-      setTimeLabel('-- : -- : --');
-      return;
+  useEffect(() => {
+    let timer: any;
+    if (isLoading || !tradingData) {
+      setTimeLabel(DEFAULT_TIME);
+    } else {
+      let endTime = tradingData.nextFundingTime * 1000;
+      const { fundingPeriod } = tradingData;
+      let hours;
+      let minutes;
+      let seconds;
+      timer = setInterval(() => {
+        let difference = endTime - Date.now();
+        if (difference < 0) {
+          endTime = Date.now() + fundingPeriod * 1000;
+          difference = endTime - Date.now();
+        }
+        hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
+          .toString()
+          .padStart(2, '0');
+        minutes = Math.floor((difference / 1000 / 60) % 60)
+          .toString()
+          .padStart(2, '0');
+        seconds = Math.floor((difference / 1000) % 60)
+          .toString()
+          .padStart(2, '0');
+        setTimeLabel(`${hours}:${minutes}:${seconds}`);
+      }, 1000);
     }
-    let endTime = tradingData.nextFundingTime * 1000;
-    const { fundingPeriod } = tradingData;
-    if (interval !== null) {
-      clearInterval(interval);
-    }
-    const intervalTime: any = setInterval(() => {
-      let difference = endTime - Date.now();
-      if (difference < 0) {
-        endTime = Date.now() + fundingPeriod * 1000;
-        difference = endTime - Date.now();
+    return () => {
+      if (timer) {
+        clearInterval(timer);
       }
-      hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-        .toString()
-        .padStart(2, '0');
-      minutes = Math.floor((difference / 1000 / 60) % 60)
-        .toString()
-        .padStart(2, '0');
-      seconds = Math.floor((difference / 1000) % 60)
-        .toString()
-        .padStart(2, '0');
-      setTimeLabel(`${hours}:${minutes}:${seconds}`);
-    }, 1000);
-    wsChatInterval.set(intervalTime);
-  }
-
-  if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-    setNextFundingTime(tradingData.nextFundingTime);
-    startCountdown();
-  }
-
-  const handleToggleAlertOverlay = (show: any) => {
-    if (show) {
-      setShowAlertOverlay(true);
-    } else if (isAlertTooltipHasShown) {
-      // hide on mouse exit, only if has shown
-      setShowAlertOverlay(false);
-    }
-  };
+    };
+  }, [tradingData, isLoading]);
 
   return (
     <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
@@ -441,104 +362,50 @@ const ChartFooter = forwardRef((props: any, ref: any) => {
       </div>
     </div>
   );
-});
+};
 
-const ProComponent = forwardRef((props: any, ref: any) => {
-  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
-  const { visible, onVisibleChanged, tradingData, currentToken } = props;
-  const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
-  const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
-  const [dayVolume, setDayVolume] = useState(tradingData.dayVolume);
+const ProComponent = () => {
+  const { isLoading: isTradingDataLoading, tradingData } = useTradingData();
+  const { isLoading: isChartDataLoading, chartData, dailyVolume } = useChartData();
+  const selectedTimeIndex = useNanostore($selectedTimeIndex);
+
   const displayTimeKey = ['24Hr', '1W', '1M', '3M'][selectedTimeIndex];
 
-  useImperativeHandle(ref, () => ({
-    reset() {
-      setCurrentTagMaxAndMinValue({ max: '-.--', min: '-.--' });
-      setPriceChangeRatioAndValue({ priceChangeRatio: '', priceChangeValue: '' });
-    },
-    setGraphOtherValue(params: any) {
-      const { high, low, priceChangeRatio, priceChangeValue } = params;
-      setCurrentTagMaxAndMinValue({ max: formatterValue(high, 2), min: formatterValue(low, 2) });
-      setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
-    }
-  }));
-
-  // handle trading data changed, set volume
-  useEffect(() => {
-    if (tradingData.dayVolume) {
-      setDayVolume(tradingData.dayVolume);
-    }
-  }, [tradingData]);
-
-  // handle interval each 10s fetch volume
-  useEffect(() => {
-    if (!currentToken) {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      getDailySpotPriceGraphData(ammAddress).then(dayTradingDetails => {
-        const vol = dayTradingDetails == null ? BigNumber.from(0) : dayTradingDetails.volume;
-        setDayVolume(vol);
-      });
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [currentToken]);
-
-  // animation
-  useEffect(() => {
-    const element = document.querySelector('.pro-data-container');
-
-    const timer1 = setTimeout(() => {
-      if (onVisibleChanged) onVisibleChanged(visible);
-    }, 500);
-
-    return () => {
-      clearTimeout(timer1);
-    };
-  }, [visible, onVisibleChanged]);
-
   return (
-    <div className={`w-[261px] whitespace-nowrap rounded-none bg-black px-[34px] py-[26px] ${visible ? 'visible' : ''}`}>
+    <div className="visible w-[261px] whitespace-nowrap rounded-none bg-black px-[34px] py-[26px]">
       <div className="content ml-[12px] flex flex-col space-y-[24px]">
         <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>
-            <SmallPriceIcon
-              priceValue={!currentTagMaxAndMinValue.max ? '-.--' : currentTagMaxAndMinValue.max}
-              isLoading={currentTagMaxAndMinValue.max === '-.--'}
-            />
+            <SmallPriceIcon priceValue={chartData?.high} isLoading={isChartDataLoading || !chartData} />
           </div>
           <div className="flex flex-1 flex-col items-end">
             <p className="mb-[6px]">{displayTimeKey} Low</p>
-            <SmallPriceIcon
-              priceValue={!currentTagMaxAndMinValue.min ? '-.--' : currentTagMaxAndMinValue.min}
-              isLoading={currentTagMaxAndMinValue.min === '-.--'}
-            />
+            <SmallPriceIcon priceValue={chartData?.low} isLoading={isChartDataLoading || !chartData} />
           </div>
         </div>
         <div>
           <div className="flex text-[14px] text-mediumEmphasis">
             <div className="flex flex-1 flex-col">
               <span className="text-marketGreen">Long</span>
-              <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
-                {!tradingData.longRatio ? '-.--' : formatterValue(tradingData.longRatio, 0, '%')}
+              <span className={`text-highEmphasis ${isTradingDataLoading || !tradingData ? flashAnim : ''}`}>
+                {!tradingData ? '-.--' : `${tradingData.longRatio.toFixed(0)}%`}
               </span>
             </div>
             <div className="flex flex-1 flex-col items-end">
               <span className="text-marketRed">Short</span>
-              <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
-                {!tradingData.shortRatio ? '-.--' : formatterValue(tradingData.shortRatio, 0, '%')}
+              <span className={`text-highEmphasis ${isTradingDataLoading || !tradingData ? flashAnim : ''}`}>
+                {!tradingData ? '-.--' : `${tradingData.shortRatio.toFixed(0)}%`}
               </span>
             </div>
           </div>
           <div className="flex space-x-[3px]">
             <div
-              style={{ width: `${calculateNumber(tradingData.longRatio, 0)}%` }}
+              style={{ width: `${tradingData ? tradingData.longRatio.toFixed(0) : 0}%` }}
               className="flex h-[6px] rounded-l-[10px] bg-marketGreen"
             />
             <div
-              style={{ width: `${calculateNumber(tradingData.shortRatio, 0)}%` }}
+              style={{ width: `${tradingData ? tradingData.shortRatio.toFixed(0) : 0}%` }}
               className="flex h-[6px] rounded-r-[10px] bg-marketRed"
             />
           </div>
@@ -546,91 +413,30 @@ const ProComponent = forwardRef((props: any, ref: any) => {
         <div className="text-medium flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">Volume (24Hr)</p>
-            <SmallPriceIcon priceValue={!dayVolume ? '-.--' : formatterValue(dayVolume, 2)} isLoading={!dayVolume} />
+            <SmallPriceIcon priceValue={!dailyVolume ? '-.--' : dailyVolume.toFixed(2)} isLoading={!dailyVolume || isChartDataLoading} />
           </div>
         </div>
       </div>
     </div>
   );
-});
+};
 
 function ChartWindows(props: any, ref: any) {
-  const { tradingData } = props;
-  const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
-  const [lineChartData, setLineChartData] = useState([]);
-
-  const chartProContainerRef = useRef(null);
-  const graphHeaderRef = useRef();
-  const proRef = useRef();
-  const currentToken = useNanostore(wsCurrentToken);
-  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-
-  const fetchChartData = useCallback(async () => {
-    if (!ammAddress) return;
-    setIsStartLoadingChart(true);
-    let chartData: any = {};
-    if (selectedTimeIndex === 0) {
-      chartData = await getDailySpotPriceGraphData(ammAddress);
-    } else if (selectedTimeIndex === 1) {
-      chartData = await getWeeklySpotPriceGraphData(ammAddress);
-    } else if (selectedTimeIndex === 2) {
-      chartData = await getMonthlySpotPriceGraphData(ammAddress);
-    } else {
-      chartData = await getThreeMonthlySpotPriceGraphData(ammAddress);
-    }
-    const graphRef: any = graphHeaderRef.current;
-    graphRef?.setGraphOtherValue(chartData);
-    const pRef: any = proRef.current;
-    pRef?.setGraphOtherValue(chartData);
-
-    const dynamicDataSet = chartData.graphData.map((params: any) => {
-      const { end, avgPrice } = params;
-      return { time: end, value: utils.formatEther(avgPrice) };
-    });
-    setLineChartData(dynamicDataSet);
-    setIsStartLoadingChart(false);
-  }, [ammAddress]);
-
-  useImperativeHandle(ref, () => ({ fetchChartData }));
-
-  useEffect(() => {
-    const gRef: any = graphHeaderRef.current;
-    gRef.reset();
-    const pRef: any = proRef.current;
-    pRef.reset();
-    fetchChartData();
-  }, [currentAmm, selectedTimeIndex]); // from tokenRef.current
-
-  const handleSelectedTimeIndex = (index: any) => {
-    chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
-    wsSelectedTimeIndex.set(index);
-  };
-
   return (
     <div className="chartWindow mb-[36px]">
       <div className="">
-        <ChartHeaders
-          ref={graphHeaderRef}
-          tradingData={tradingData}
-          setSelectedTimeIndex={handleSelectedTimeIndex}
-          isStartLoadingChart={isStartLoadingChart}
-        />
+        <ChartHeaders />
         <div className="dividerslim" />
-        <div ref={chartProContainerRef} className="chart-pro-container mb-[16px] flex">
+        <div className="chart-pro-container mb-[16px] flex">
           <div className="chartcontainer flex-1">
-            <ChartDisplay
-              lineChartData={lineChartData}
-              isStartLoadingChart={isStartLoadingChart}
-              chartProContainerRef={chartProContainerRef}
-            />
+            <ChartDisplay />
           </div>
-          <ProComponent ref={proRef} tradingData={tradingData} />
+          <ProComponent />
         </div>
-        <ChartFooter tradingData={tradingData} setSelectedTimeIndex={handleSelectedTimeIndex} isStartLoadingChart={isStartLoadingChart} />
+        <ChartFooter />
       </div>
     </div>
   );
 }
 
-export default forwardRef(ChartWindows);
+export default ChartWindows;
