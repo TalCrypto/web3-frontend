@@ -2,13 +2,12 @@ import { AMM } from '@/const/collectionList';
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $tradingData } from '@/stores/trading';
-import { Address, useContractEvent, useNetwork } from 'wagmi';
-import { getAMMAddress, getAMMByAddress, getAddressConfig, getSupportedAMMAddresses } from '@/const/addresses';
+import { Address, useNetwork } from 'wagmi';
+import { getAMMByAddress, getAddressConfig, getSupportedAMMAddresses } from '@/const/addresses';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
 import { getDailySpotPriceGraphData, getFundingPaymentHistory, getMarketHistory } from '@/utils/trading';
 import { formatBigIntString } from '@/utils/bigInt';
 import { getAddress } from 'viem';
-import { getCHContract } from '@/const/contracts';
 import { getBaycFromMainnet } from '@/utils/opensea';
 
 export interface CollectionOverview {
@@ -57,23 +56,22 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
           const basePrice24h = Number(priceList24hrAgo[i].spotPrice / BigInt(1e18));
           const basePrice7d = Number(priceList7daysAgo[i].spotPrice / BigInt(1e18));
           const basePrice30d = Number(priceList30daysAgo[i].spotPrice / BigInt(1e18));
-          const ammTradingData = tradingData[amm];
 
-          if (!ammTradingData) break;
+          if (!tradingData) break;
 
           const result = {
             amm,
-            vammPrice: ammTradingData.vammPrice,
-            oraclePrice: ammTradingData.oraclePrice,
+            vammPrice: tradingData.vammPrice,
+            oraclePrice: tradingData.oraclePrice,
             priceChangeRatio24h: Number(graphDataList[i].priceChangeRatio / BigInt(1e18)),
-            priceChangeRatio7d: basePrice7d !== 0 ? ((ammTradingData.vammPrice ?? 0 - basePrice7d) / basePrice7d) * 100 : undefined,
-            priceChangeRatio30d: basePrice30d !== 0 ? ((ammTradingData.vammPrice ?? 0 - basePrice30d) / basePrice30d) * 100 : undefined,
-            priceChange24h: ammTradingData.vammPrice - basePrice24h,
-            priceChange7d: ammTradingData.vammPrice - basePrice7d,
-            priceChange30d: ammTradingData.vammPrice - basePrice30d,
+            priceChangeRatio7d: basePrice7d !== 0 ? ((tradingData.vammPrice ?? 0 - basePrice7d) / basePrice7d) * 100 : undefined,
+            priceChangeRatio30d: basePrice30d !== 0 ? ((tradingData.vammPrice ?? 0 - basePrice30d) / basePrice30d) * 100 : undefined,
+            priceChange24h: tradingData.vammPrice - basePrice24h,
+            priceChange7d: tradingData.vammPrice - basePrice7d,
+            priceChange30d: tradingData.vammPrice - basePrice30d,
             volume: Number(graphDataList[i].volume / BigInt(1e18)),
-            fundingRateShort: ammTradingData.fundingRateShort,
-            fundingRateLong: ammTradingData.fundingRateLong
+            fundingRateShort: tradingData.fundingRateShort,
+            fundingRateLong: tradingData.fundingRateLong
           };
           results.push(result);
         }

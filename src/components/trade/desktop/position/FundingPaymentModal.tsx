@@ -88,7 +88,7 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
       w-full items-center justify-center bg-black/[.2] backdrop-blur-[4px]"
       onClick={() => {
         setShowFundingPaymentModal(false);
-        $isShowMobileModal.set(false);
+        // $isShowMobileModal.set(false);
       }}>
       <div
         className="relative h-[600px] w-[800px] rounded-[12px] border-[1px]
@@ -112,7 +112,7 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
             className="absolute right-6 top-6 cursor-pointer"
             onClick={() => {
               setShowFundingPaymentModal(false);
-              $isShowMobileModal.set(false);
+              // $isShowMobileModal.set(false);
             }}>
             <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
