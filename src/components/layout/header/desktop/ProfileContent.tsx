@@ -15,7 +15,7 @@ import { logEvent } from 'firebase/analytics';
 import { $userPositionInfos, UserInfo } from '@/stores/user';
 import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { AMM } from '@/const/collectionList';
-import { $showTransferTokenModal } from '@/stores/modal';
+import { $showSwitchNetworkErrorModal, $showTransferTokenModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
 import PrimaryButton from '@/components/common/PrimaryButton';
 
@@ -183,15 +183,13 @@ const BottomContent: React.FC<{ balance: number; isWrongNetwork: boolean }> = ({
 
 interface ProfileContentProps {
   balance: number;
-  setShowDisconnectTooltip: (value: boolean) => void;
-  userInfo: { username: string } | null;
   isWrongNetwork: boolean;
+  userInfo: UserInfo;
 }
 
-const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = (props, ref) => {
-  const { balance, setShowDisconnectTooltip, isWrongNetwork, userInfo } = props;
+const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = props => {
+  const { balance, isWrongNetwork, userInfo } = props;
   const isNotSetUsername = !userInfo || !userInfo.username;
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const { disconnect } = useDisconnect();
   const { switchNetwork } = useSwitchNetwork();
 
@@ -207,7 +205,15 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
 
   const disconnectWalletAction = () => {
     disconnect();
-    setShowDisconnectTooltip(false);
+    // setShowDisconnectTooltip(false);
+  };
+
+  const switchToDefaultChain = () => {
+    if (switchNetwork) {
+      switchNetwork(CHAINS[0].id);
+    } else {
+      $showSwitchNetworkErrorModal.set(true);
+    }
   };
 
   return (
@@ -229,7 +235,7 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
               Get WETH
             </PrimaryButton>
           ) : (
-            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={() => switchNetwork(CHAINS[0].id)}>
+            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={switchToDefaultChain}>
               Switch to Arbitrum
             </PrimaryButton>
           )}

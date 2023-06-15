@@ -3,7 +3,6 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { wsFullWalletAddress, wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
-import { connectWallet, disconnectWallet, updateTargetNetwork } from '@/utils/Wallet';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import Link from 'next/link';
 import { withRouter } from 'next/router';

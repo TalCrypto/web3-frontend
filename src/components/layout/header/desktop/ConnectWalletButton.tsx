@@ -30,8 +30,9 @@ const ConnectWalletButton: React.FC = () => {
   //   showUserName = '';
   // }
 
+  if (!userInfo) return null;
+
   useEffect(() => {
-    if (!userInfo) return;
     if (userInfo.username && userInfo.username.length <= 10) {
       setShowUserName(userInfo.username);
     } else if (userInfo.username.length > 10) {
@@ -91,12 +92,7 @@ const ConnectWalletButton: React.FC = () => {
         </div>
       </button>
 
-      <ProfileContent
-        balance={wethBalance}
-        userInfo={userInfo}
-        isWrongNetwork={chain?.unsupported ?? false}
-        setShowDisconnectTooltip={setShowDisconnectTooltip}
-      />
+      <ProfileContent balance={wethBalance} userInfo={userInfo} isWrongNetwork={chain?.unsupported ?? false} />
     </div>
   );
 };

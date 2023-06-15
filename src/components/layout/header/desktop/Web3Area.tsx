@@ -2,8 +2,8 @@
 import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import { wsIsShowErrorSwitchNetworkModal } from '@/stores/WalletState';
 import AirdropPoint from '@/components/layout/header/desktop/AirdropPoint';
+import { $showSwitchNetworkErrorModal } from '@/stores/modal';
 import ConnectWalletButton from './ConnectWalletButton';
 import TransferTokenModal from './TransferTokenModal';
 import ErrorModal from './ErrorModal';
@@ -29,7 +29,7 @@ import ErrorModal from './ErrorModal';
 // }
 
 function Web3Area() {
-  const isShowErrorSwitchNetworkModal = useNanostore(wsIsShowErrorSwitchNetworkModal);
+  const isShowErrorSwitchNetworkModal = useNanostore($showSwitchNetworkErrorModal);
 
   // const showTokenError = useNanostore();
   // const isShowGeorliModal = useNanostore();

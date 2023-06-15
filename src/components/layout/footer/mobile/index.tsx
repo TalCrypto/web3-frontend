@@ -8,6 +8,7 @@ import MobileMenu from '@/components/trade/mobile/menu';
 import { $userIsConnecting, $userWethBalance } from '@/stores/user';
 import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { CHAINS } from '@/const/supportedChains';
+import { $isShowMobileModal } from '@/stores/common';
 
 function MobileFooter() {
   const { chain } = useNetwork();
