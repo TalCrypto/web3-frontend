@@ -1,1 +1,3 @@
-export const formatBigInt = (value: string, decimal = 18): number => Number(BigInt(value) / BigInt(10 ** decimal));
+export const formatBigInt = (value: string | bigint | number, decimal = 18): number => Number(BigInt(value) / BigInt(10 ** decimal));
+
+export const parseBigInt = (value: string | number, decimal = 18): bigint => BigInt(Number(value) * 10 ** decimal);

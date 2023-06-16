@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Chain, useContractReads, useNetwork } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $isTradingDataInitializing } from '@/stores/trading';
+import { ammAbi, chViewerAbi } from '@/const/abi';
 
 const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm }) => {
   const ammContract = getAMMContract(chain, amm);
@@ -12,13 +13,13 @@ const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm })
   const chViewerContract = getCHViewerContract(chain);
   const { data, isError, isLoading } = useContractReads({
     contracts: [
-      { ...ammContract, functionName: 'getSpotPrice' },
-      { ...ammContract, functionName: 'getUnderlyingPrice' },
-      { ...ammContract, functionName: 'nextFundingTime' },
-      { ...ammContract, functionName: 'fundingPeriod' },
-      { ...ammContract, functionName: 'longPositionSize' },
-      { ...ammContract, functionName: 'shortPositionSize' },
-      { ...chViewerContract, functionName: 'getFundingRates', args: [ammContract.address] }
+      { ...ammContract, abi: ammAbi, functionName: 'getSpotPrice' },
+      { ...ammContract, abi: ammAbi, functionName: 'getUnderlyingPrice' },
+      { ...ammContract, abi: ammAbi, functionName: 'nextFundingTime' },
+      { ...ammContract, abi: ammAbi, functionName: 'fundingPeriod' },
+      { ...ammContract, abi: ammAbi, functionName: 'longPositionSize' },
+      { ...ammContract, abi: ammAbi, functionName: 'shortPositionSize' },
+      { ...chViewerContract, abi: chViewerAbi, functionName: 'getFundingRates', args: [ammContract.address] }
     ],
     watch: true
   });
@@ -44,7 +45,7 @@ const TradingDataUpdater: React.FC = () => {
   const currentAmm = useNanostore($currentAmm);
 
   if (!currentAmm || !chain) return null;
-  return <CollectionUpdater key={currentAmm} amm={currentAmm} chain={chain} />;
+  return <CollectionUpdater amm={currentAmm} chain={chain} />;
 };
 
 export default TradingDataUpdater;

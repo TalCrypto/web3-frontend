@@ -1,3 +1,4 @@
+import { chViewerAbi } from '@/const/abi';
 import { getAddressConfig, getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
 import { getAMMContract, getCHViewerContract } from '@/const/contracts';
@@ -15,6 +16,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm 
   const chViewer = getCHViewerContract(chain);
   const { data, isError, isLoading } = useContractRead({
     ...chViewer,
+    abi: chViewerAbi,
     functionName: 'getTraderPositionInfoWithoutPriceImpact',
     args: [ammContract.address, address],
     watch: true
