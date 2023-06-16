@@ -51,7 +51,7 @@
     "operator-linebreak": ["warn", "after"],
     "react/jsx-no-bind": 0,
     "react/jsx-no-useless-fragment": 1,
-    "react-hooks/rules-of-hooks": 0,
+    "react-hooks/rules-of-hooks": 2,
     "react/jsx-one-expression-per-line": 0,
     "dot-notation": 0,
     "indent": 1,

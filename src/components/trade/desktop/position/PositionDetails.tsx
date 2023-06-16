@@ -25,6 +25,7 @@ import { $currentAmm } from '@/stores/trading';
 import { useAccount } from 'wagmi';
 import { usePositionInfo, useTradingData, useTransactionIsPending } from '@/hooks/collection';
 import { getCollectionInformation } from '@/const/collectionList';
+import { $userAddress } from '@/stores/user';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -47,7 +48,7 @@ const liquidationChanceLimit = 0.05;
 
 export default function PositionDetails(props: any) {
   const router = useRouter();
-  const { address } = useAccount();
+  const address = useNanostore($userAddress);
   const currentAmm = useNanostore($currentAmm);
   const positionInfo = usePositionInfo(currentAmm);
   const { tradingData } = useTradingData();

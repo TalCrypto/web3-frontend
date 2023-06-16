@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
+import { useStore as useNanostore } from '@nanostores/react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { withRouter } from 'next/router';
 import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
@@ -18,9 +19,9 @@ import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 import { WithRouterProps } from 'next/dist/client/with-router';
 import { $currentAmm } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
-import { useAccount } from 'wagmi';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
+import { $userIsConnected } from '@/stores/user';
 
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -29,7 +30,7 @@ import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader
 
 function TradePage(props: WithRouterProps) {
   const { router } = props;
-  const { isConnected } = useAccount();
+  const isConnected = useNanostore($userIsConnected);
   // const maxReduceValue = useNanostore(wsMaxReduceValue);
   // const [maxReduceValue, setMaxReduceValue] = useState('');
   // const [historyRecords, setHistoryRecords] = useState([]);
@@ -131,7 +132,7 @@ function TradePage(props: WithRouterProps) {
               <div className="flex">
                 <SidebarCollection />
 
-                <TradingWindow />
+                {/* <TradingWindow /> */}
               </div>
 
               <div className="block 2xl:ml-[49px] 2xl:flex-1">
@@ -144,7 +145,7 @@ function TradePage(props: WithRouterProps) {
           </div>
         </div>
 
-        <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
+        {/* <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
           <Switcher />
 
           <div className="mt-12 bg-darkBlue">
@@ -156,7 +157,7 @@ function TradePage(props: WithRouterProps) {
 
             <TradingMobile />
           </div>
-        </div>
+        </div> */}
         <CollectionConfigLoader />
         <ChartDataUpdater />
       </main>

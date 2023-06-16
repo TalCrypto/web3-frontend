@@ -19,7 +19,7 @@ export type TransactionPendings = {
   [value in AMM]?: boolean;
 };
 
-export const $tradingData = map<CollectionTradingData>();
+export const $tradingData = atom<CollectionTradingData | undefined>();
 
 export const $isTradingDataInitializing = atom(false);
 

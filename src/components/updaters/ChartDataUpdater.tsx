@@ -1,5 +1,6 @@
 import { getAMMAddress } from '@/const/addresses';
 import { $chartData, $currentAmm, $dailyVolume, $isChartDataInitializing, $selectedTimeIndex } from '@/stores/trading';
+import { $currentChain } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 import {
   getDailySpotPriceGraphData,
@@ -9,10 +10,9 @@ import {
 } from '@/utils/trading';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useEffect } from 'react';
-import { useNetwork } from 'wagmi';
 
 const ChartDataUpdater = () => {
-  const { chain } = useNetwork();
+  const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
 

@@ -9,6 +9,7 @@ import { getDailySpotPriceGraphData, getFundingPaymentHistory, getMarketHistory 
 import { formatBigInt } from '@/utils/bigInt';
 import { getAddress } from 'viem';
 import { getBaycFromMainnet } from '@/utils/opensea';
+import { $currentChain } from '@/stores/user';
 
 export interface CollectionOverview {
   amm: AMM;
@@ -32,7 +33,7 @@ export interface GetMktOverview {
 
 export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
   const tradingData = useNanostore($tradingData);
-  const { chain } = useNetwork();
+  const chain = useNanostore($currentChain);
   const [data, setData] = useState<Array<CollectionOverview>>();
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -98,7 +99,7 @@ export interface MarketHistoryRecord {
 }
 
 export const useMarketHistory = (amm: AMM) => {
-  const { chain } = useNetwork();
+  const chain = useNanostore($currentChain);
   const [history, setHistory] = useState<Array<MarketHistoryRecord>>();
   useEffect(() => {
     function fetch() {
@@ -152,7 +153,7 @@ export const useMarketHistory = (amm: AMM) => {
 };
 
 export const useOpenSeaData = (amm: AMM) => {
-  const { chain } = useNetwork();
+  const chain = useNanostore($currentChain);
   const [data, setData] = useState<any>([]);
   useEffect(() => {
     function fetch() {
@@ -192,7 +193,7 @@ export interface FundingRatesRecord {
 }
 
 export const useFundingRatesHistory = (amm: AMM) => {
-  const { chain } = useNetwork();
+  const chain = useNanostore($currentChain);
   const [data, setData] = useState<Array<FundingRatesRecord>>();
   useEffect(() => {
     function fetch() {

@@ -12,12 +12,17 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/',
-        destination: '/trade/degods'
-      },
-      {
         source: '/trade/:collection',
         destination: '/trade?collection=:collection'
+      }
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/trade/degods',
+        permanent: false
       }
     ];
   }

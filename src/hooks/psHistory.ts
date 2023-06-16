@@ -4,7 +4,8 @@ import { apiConnection } from '@/utils/apiConnection';
 import { formatBigInt } from '@/utils/bigInt';
 import { useEffect, useState } from 'react';
 import { Address, getAddress } from 'viem';
-import { useAccount, useNetwork } from 'wagmi';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $userAddress, $currentChain } from '@/stores/user';
 
 export interface PositionHistoryRecord {
   amm: AMM;
@@ -33,11 +34,11 @@ export interface PositionHistoryRecord {
 
 // notice don't use store for history
 export const usePositionHistory = (): Array<PositionHistoryRecord> => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const address = useNanostore($userAddress);
+  const chain = useNanostore($currentChain);
   const [history, setHistory] = useState<Array<PositionHistoryRecord>>([]);
   useEffect(() => {
-    if (address && chain && !chain.unsupported) {
+    if (address && chain) {
       apiConnection.getUserTradingHistory(address).then(res => {
         const data = res.data.tradeHistory.map(
           (item: {

@@ -3,7 +3,8 @@ import { AMM } from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { formatBigInt } from '@/utils/bigInt';
 import { useEffect, useState } from 'react';
-import { useAccount, useNetwork } from 'wagmi';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $currentChain, $userAddress } from '@/stores/user';
 
 export interface FundingPaymentRecord {
   timestamp: number;
@@ -11,12 +12,12 @@ export interface FundingPaymentRecord {
 }
 
 export const useFundingPaymentHistory = (amm: AMM) => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const address = useNanostore($userAddress);
+  const chain = useNanostore($currentChain);
   const [fpRecords, setFpRecords] = useState<Array<FundingPaymentRecord>>();
   const [total, setTotal] = useState<number>(0);
   useEffect(() => {
-    if (address && chain && !chain.unsupported) {
+    if (address && chain) {
       const { config: addressConfig } = getAddressConfig(chain);
       const ammAddress = addressConfig.amms[amm];
       if (ammAddress) {

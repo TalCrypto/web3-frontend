@@ -48,12 +48,12 @@ function InformationWindow() {
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
           <TribeDetailComponents activeTab={activeTab} />
         </div>
-        <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
+        {/* <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
           <ChatComponent />
         </div>
         <div className={`${detailHeaderIndex === 2 ? 'block' : 'hidden'} h-full`}>
           <ComingSoonWindow />
-        </div>
+        </div> */}
       </div>
     </div>
   );

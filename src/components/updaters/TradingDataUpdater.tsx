@@ -1,19 +1,14 @@
-import { getAMMContract, getCHViewerContract } from '@/const/contracts';
+import { Contract, getAMMContract, getCHViewerContract } from '@/const/contracts';
 import React, { useEffect } from 'react';
-import { useContractReads, useNetwork } from 'wagmi';
+import { useContractReads } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $collectionConfig, $currentAmm, $isTradingDataInitializing, $tradingData } from '@/stores/trading';
 import { ammAbi, chViewerAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
+import { $currentChain } from '@/stores/user';
 
-const TradingDataUpdater: React.FC = () => {
-  const { chain } = useNetwork();
-  const currentAmm = useNanostore($currentAmm);
+const Updater = ({ ammContract, chViewerContract }: { ammContract: Contract; chViewerContract: Contract }) => {
   const collectionConfig = useNanostore($collectionConfig);
-  if (!currentAmm || !chain) return null;
-  const ammContract = getAMMContract(chain, currentAmm);
-  if (!ammContract) return null;
-  const chViewerContract = getCHViewerContract(chain);
   const { data, isLoading } = useContractReads({
     contracts: [
       { ...ammContract, abi: ammAbi, functionName: 'getSpotPrice' },
@@ -26,16 +21,16 @@ const TradingDataUpdater: React.FC = () => {
     watch: true
   });
 
-  $isTradingDataInitializing.set(isLoading);
-  if (!data) return null;
-  const vammPrice = data[0].result;
-  const oraclePrice = data[1].result;
-  const nextFundingTime = data[2].result;
-  const longSize = data[3].result;
-  const shortSize = data[4].result;
-  const fundingRates = data[5].result;
-  const fundingRateLong = fundingRates ? fundingRates[0] : null;
-  const fundingRateShort = fundingRates ? fundingRates[1] : null;
+  console.log('data', data);
+
+  const vammPrice = data ? data[0].result : 0n;
+  const oraclePrice = data ? data[1].result : 0n;
+  const nextFundingTime = data ? data[2].result : 0n;
+  const longSize = data ? data[3].result : 0n;
+  const shortSize = data ? data[4].result : 0n;
+  const fundingRates = data ? data[5].result : null;
+  const fundingRateLong = fundingRates ? fundingRates[0] : 0n;
+  const fundingRateShort = fundingRates ? fundingRates[1] : 0n;
 
   useEffect(() => {
     if (
@@ -69,7 +64,26 @@ const TradingDataUpdater: React.FC = () => {
     }
   }, [vammPrice, oraclePrice, nextFundingTime, longSize, shortSize, fundingRateLong, fundingRateShort, collectionConfig]);
 
+  useEffect(() => {
+    $isTradingDataInitializing.set(isLoading);
+  }, [isLoading]);
+
   return null;
+};
+
+const TradingDataUpdater: React.FC = () => {
+  const chain = useNanostore($currentChain);
+  const currentAmm = useNanostore($currentAmm);
+  console.log('updater--------------------1');
+  if (!currentAmm || !chain) return null;
+
+  const ammContract = getAMMContract(chain, currentAmm);
+  console.log('updater--------------------2', chain, currentAmm, ammContract);
+  if (!ammContract) return null;
+  console.log('updater--------------------3');
+  const chViewerContract = getCHViewerContract(chain);
+
+  return <Updater ammContract={ammContract} chViewerContract={chViewerContract} />;
 };
 
 export default TradingDataUpdater;

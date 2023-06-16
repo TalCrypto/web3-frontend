@@ -9,15 +9,15 @@ import CollectionModal from '@/components/trade/desktop/trading/CollectionModal'
 import { useStore as useNanostore } from '@nanostores/react';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm } from '@/stores/trading';
-import { $userPositionInfos } from '@/stores/user';
+import { $currentChain, $userAddress, $userPositionInfos } from '@/stores/user';
 import { useAccount, useNetwork } from 'wagmi';
 import { usePositionInfosIsLoading } from '@/hooks/collection';
 import { getSupportedAMMs } from '@/const/addresses';
 
 function SidebarCollection() {
   const router = useRouter();
-  const { chain } = useNetwork();
-  const { address } = useAccount();
+  const chain = useNanostore($currentChain);
+  const address = useNanostore($userAddress);
   const currentAmm = useNanostore($currentAmm);
   const positionInfos = useNanostore($userPositionInfos);
   const [isColModalVisible, setIsColModalVisible] = useState(false);

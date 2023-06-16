@@ -1,6 +1,6 @@
 import { AMM } from '@/const/collectionList';
 import { atom, map } from 'nanostores';
-import { Address } from 'wagmi';
+import { Address, Chain } from 'wagmi';
 
 export interface UserInfo {
   username: string;
@@ -54,9 +54,11 @@ export type UserPositionInfos = {
 
 export const $userWethBalance = atom(0);
 export const $userIsConnecting = atom(false);
-
+export const $userIsConnected = atom(false);
+export const $userIsWrongNetwork = atom(false);
+export const $userAddress = atom<Address | undefined>();
 export const $userInfo = atom<UserInfo | undefined>();
-
+export const $currentChain = atom<Chain | undefined>();
 export const $userPositionInfos = map<UserPositionInfos>();
 
 export const setWethBalance = (val: number) => {

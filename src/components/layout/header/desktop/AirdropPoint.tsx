@@ -1,19 +1,20 @@
 import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import Link from 'next/link';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { $userPoint } from '@/stores/airdrop';
 import { localeConversion } from '@/utils/localeConversion';
 import { isEligable } from '@/utils/airdrop';
-import { useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
+import { $userIsConnected } from '@/stores/user';
 
 const AirdropPoint: React.FC = () => {
-  const { isConnected } = useAccount();
+  const router = useRouter();
+  const isConnected = useNanostore($userIsConnected);
   const airdropPoints = useNanostore($userPoint);
   if (!isConnected) return null;
   return (
-    <Link href="/airdrop" className="hidden md:block">
+    <div className="hidden md:block" onClick={() => router.push('/airdrop')}>
       <div
         className="flex h-[32px] cursor-pointer items-center space-x-[4px] rounded-full
         border-[1px] border-warn px-[16px] py-[6px] text-warn hover:bg-warn/20">
@@ -28,7 +29,7 @@ const AirdropPoint: React.FC = () => {
           </>
         )}
       </div>
-    </Link>
+    </div>
   );
 };
 

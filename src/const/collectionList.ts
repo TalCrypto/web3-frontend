@@ -9,8 +9,7 @@ export enum AMM {
   DEGODS = 'degods',
   CAPTAINZ = 'captainz'
 }
-
-export const DEFAULT_AMM: AMM = AMM.DEGODS;
+export const DEFAULT_AMM: AMM = process.env.NODE_ENV === 'production' ? AMM.DEGODS : AMM.BAYC;
 
 export interface CollectionInfo {
   amm: AMM;

@@ -5,18 +5,18 @@ import Image from 'next/image';
 import { wsIsShowTradingMobile } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
 import MobileMenu from '@/components/trade/mobile/menu';
-import { $userIsConnecting, $userWethBalance } from '@/stores/user';
-import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
+import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import { useConnect, useSwitchNetwork } from 'wagmi';
 import { CHAINS } from '@/const/supportedChains';
 import { $isShowMobileModal } from '@/stores/common';
 
 function MobileFooter() {
-  const { chain } = useNetwork();
   const { connect } = useConnect();
   const { switchNetwork } = useSwitchNetwork();
-  const { isConnected } = useAccount();
+  const isConnected = useNanostore($userIsConnected);
   const isConnecting = useNanostore($userIsConnecting);
   const wethBalance = useNanostore($userWethBalance);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
   const isWethCollected = wethBalance !== 0;
 
@@ -26,7 +26,7 @@ function MobileFooter() {
       return;
     }
 
-    if (chain?.unsupported && switchNetwork) {
+    if (isWrongNetwork && switchNetwork) {
       switchNetwork(CHAINS[0].id);
       return;
     }
@@ -62,7 +62,7 @@ function MobileFooter() {
                 <br />
                 Wallet
               </>
-            ) : chain?.unsupported ? (
+            ) : isWrongNetwork ? (
               <>
                 Switch to <br /> Arbitrum
               </>

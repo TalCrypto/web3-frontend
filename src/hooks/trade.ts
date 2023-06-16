@@ -2,12 +2,13 @@
 /* eslint-disable indent */
 import { getAMMAddress } from '@/const/addresses';
 import { useEffect, useState } from 'react';
-import { useAccount, useContractRead, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { useContractRead, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { absBigInt, formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/contracts';
 import { chAbi, chViewerAbi, wethAbi } from '@/const/abi';
+import { $userAddress, $currentChain } from '@/stores/user';
 
 // eslint-disable-next-line no-shadow
 export enum Side {
@@ -25,8 +26,8 @@ export const useOpenPosition = (args: {
   isClose: boolean;
 }) => {
   const amm = useNanostore($currentAmm);
-  const { chain } = useNetwork();
-  const { address } = useAccount();
+  const chain = useNanostore($currentChain);
+  const address = useNanostore($userAddress);
   const [side, setSide] = useState(0);
   const [notionalAmount, setNotionalAmount] = useState(0n);
   const [sizeLimit, setSizeLimit] = useState(0n);
@@ -203,8 +204,8 @@ export const useOpenPosition = (args: {
  */
 export const useAdjustCollateral = (deltaMargin: number) => {
   const amm = useNanostore($currentAmm);
-  const { chain } = useNetwork();
-  const { address } = useAccount();
+  const chain = useNanostore($currentChain);
+  const address = useNanostore($userAddress);
   const [dmargin, setDmargin] = useState(0n);
   if (!amm || !chain) return;
   const ammAddr = getAMMAddress(chain, amm);

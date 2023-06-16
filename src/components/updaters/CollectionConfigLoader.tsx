@@ -2,17 +2,12 @@ import React, { useEffect } from 'react';
 import { useContractReads, useNetwork } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $collectionConfig, $currentAmm } from '@/stores/trading';
-import { getAMMContract, getCHContract } from '@/const/contracts';
+import { getAMMContract, getCHContract, Contract } from '@/const/contracts';
 import { ammAbi, chAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
+import { $currentChain } from '@/stores/user';
 
-const CollectionConfigLoader: React.FC = () => {
-  const { chain } = useNetwork();
-  const currentAmm = useNanostore($currentAmm);
-  if (!currentAmm || !chain) return null;
-  const ammContract = getAMMContract(chain, currentAmm);
-  if (!ammContract) return null;
-  const chContract = getCHContract(chain);
+const Loader = ({ ammContract, chContract }: { ammContract: Contract; chContract: Contract }) => {
   const { data } = useContractReads({
     contracts: [
       { ...ammContract, abi: ammAbi, functionName: 'initMarginRatio' },
@@ -20,10 +15,9 @@ const CollectionConfigLoader: React.FC = () => {
       { ...chContract, abi: chAbi, functionName: 'LIQ_SWITCH_RATIO' }
     ]
   });
-  if (!data) return null;
-  const initMarginRatio = data[0].result;
-  const fundingPeriod = data[1].result;
-  const liqSwitchRatio = data[2].result;
+  const initMarginRatio = data ? data[0].result : 0n;
+  const fundingPeriod = data ? data[1].result : 0n;
+  const liqSwitchRatio = data ? data[2].result : 0n;
   useEffect(() => {
     if (initMarginRatio && fundingPeriod && liqSwitchRatio) {
       $collectionConfig.set({
@@ -33,8 +27,18 @@ const CollectionConfigLoader: React.FC = () => {
       });
     }
   }, [initMarginRatio, fundingPeriod, liqSwitchRatio]);
-
   return null;
+};
+
+const CollectionConfigLoader: React.FC = () => {
+  const chain = useNanostore($currentChain);
+  const currentAmm = useNanostore($currentAmm);
+  if (!currentAmm || !chain) return null;
+  const ammContract = getAMMContract(chain, currentAmm);
+  if (!ammContract) return null;
+  const chContract = getCHContract(chain);
+
+  return <Loader ammContract={ammContract} chContract={chContract} />;
 };
 
 export default CollectionConfigLoader;

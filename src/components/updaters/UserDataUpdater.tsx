@@ -1,62 +1,75 @@
 import { chViewerAbi } from '@/const/abi';
-import { getAddressConfig, getSupportedAMMs } from '@/const/addresses';
+import { getAMMAddress, getAddressConfig, getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
-import { getAMMContract, getCHViewerContract } from '@/const/contracts';
-import { $userPositionInfos, setIsConnecting, setUserInfo, setWethBalance } from '@/stores/user';
+import { getCHViewerContract } from '@/const/contracts';
+import {
+  $currentChain,
+  $userAddress,
+  $userIsConnected,
+  $userIsWrongNetwork,
+  $userPositionInfos,
+  setIsConnecting,
+  setUserInfo,
+  setWethBalance
+} from '@/stores/user';
 import { apiConnection } from '@/utils/apiConnection';
 import { formatBigInt } from '@/utils/bigInt';
 import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
-import { Address, useAccount, useContractRead, useBalance, useNetwork, Chain } from 'wagmi';
+import { useStore as useNanostore } from '@nanostores/react';
+import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
 
-const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm }) => {
-  const { address } = useAccount();
-  if (!address) return null;
-  const ammContract = getAMMContract(chain, amm);
-  if (!ammContract) return null;
+const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Address; trader: Address }> = ({
+  chain,
+  amm,
+  ammAddress,
+  trader
+}) => {
   const chViewer = getCHViewerContract(chain);
   const { data } = useContractRead({
     ...chViewer,
     abi: chViewerAbi,
     functionName: 'getTraderPositionInfoWithoutPriceImpact',
-    args: [ammContract.address, address],
+    args: [ammAddress, trader],
     watch: true
   });
 
-  if (!data) return null;
-  const size = formatBigInt(data.positionSize);
-  const collateral = formatBigInt(data.margin);
-  const openNotional = formatBigInt(data.openNotional);
-  const currentNotional = formatBigInt(data.positionNotional);
-  const unrealizedPnl = formatBigInt(data.unrealizedPnl);
-  const marginRatio = formatBigInt(data.marginRatio);
-  const entryPrice = formatBigInt(data.avgEntryPrice);
-  const openLeverage = formatBigInt(data.openLeverage);
-  const liquidationPrice = formatBigInt(data.liquidationPrice);
-  const vammPrice = formatBigInt(data.spotPrice);
-  const leverage = formatBigInt(data.leverage);
-  const fundingPayment = formatBigInt(data.fundingPayment);
-  const { isLiquidatable } = data;
+  const size = data ? formatBigInt(data.positionSize) : 0;
+  const collateral = data ? formatBigInt(data.margin) : 0;
+  const openNotional = data ? formatBigInt(data.openNotional) : 0;
+  const currentNotional = data ? formatBigInt(data.positionNotional) : 0;
+  const unrealizedPnl = data ? formatBigInt(data.unrealizedPnl) : 0;
+  const marginRatio = data ? formatBigInt(data.marginRatio) : 0;
+  const entryPrice = data ? formatBigInt(data.avgEntryPrice) : 0;
+  const openLeverage = data ? formatBigInt(data.openLeverage) : 0;
+  const liquidationPrice = data ? formatBigInt(data.liquidationPrice) : 0;
+  const vammPrice = data ? formatBigInt(data.spotPrice) : 0;
+  const leverage = data ? formatBigInt(data.leverage) : 0;
+  const fundingPayment = data ? formatBigInt(data.fundingPayment) : 0;
+  const isLiquidatable = data ? data.isLiquidatable : false;
   useEffect(() => {
-    $userPositionInfos.setKey(amm, {
-      amm: ammContract.address,
-      size,
-      collateral,
-      openNotional,
-      currentNotional,
-      unrealizedPnl,
-      marginRatio,
-      entryPrice,
-      openLeverage,
-      liquidationPrice,
-      vammPrice,
-      leverage,
-      fundingPayment,
-      isLiquidatable
-    });
+    if (amm) {
+      $userPositionInfos.setKey(amm, {
+        amm: ammAddress,
+        size,
+        collateral,
+        openNotional,
+        currentNotional,
+        unrealizedPnl,
+        marginRatio,
+        entryPrice,
+        openLeverage,
+        liquidationPrice,
+        vammPrice,
+        leverage,
+        fundingPayment,
+        isLiquidatable
+      });
+    }
   }, [
     amm,
-    ammContract.address,
+    chain,
+    ammAddress,
     size,
     collateral,
     openNotional,
@@ -87,6 +100,7 @@ const UserDataUpdater: React.FC = () => {
       apiConnection.getUserInfo(address).then(result => {
         setUserInfo(result.data);
       });
+      $userAddress.set(address);
     }
   }, [address]);
 
@@ -108,13 +122,26 @@ const UserDataUpdater: React.FC = () => {
     }
   }, [chain, isConnected]);
 
+  useEffect(() => {
+    $userIsWrongNetwork.set(chain?.unsupported ?? false);
+    $currentChain.set(chain);
+  }, [chain]);
+
+  useEffect(() => {
+    $userIsConnected.set(isConnected);
+  }, [isConnected]);
+
   if (!amms || !chain) return null;
 
   return (
     <>
-      {amms.map(amm => (
-        <PositionInfoUpdater key={amm} chain={chain} amm={amm} />
-      ))}
+      {amms.map(amm => {
+        const ammAddr = getAMMAddress(chain, amm);
+        if (ammAddr && address) {
+          return <PositionInfoUpdater key={amm} chain={chain} amm={amm} ammAddress={ammAddr} trader={address} />;
+        }
+        return null;
+      })}
     </>
   );
 };

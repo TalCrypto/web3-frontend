@@ -12,7 +12,7 @@ import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { logEvent } from 'firebase/analytics';
-import { $userPositionInfos, UserInfo } from '@/stores/user';
+import { $userAddress, $userInfo, $userPositionInfos, UserInfo } from '@/stores/user';
 import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { AMM } from '@/const/collectionList';
 import { $showSwitchNetworkErrorModal, $showTransferTokenModal } from '@/stores/modal';
@@ -49,8 +49,7 @@ interface TopContentProps {
 }
 
 const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) => {
-  const { address } = useAccount();
-  if (!address) return null;
+  const address = useNanostore($userAddress);
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
 
@@ -60,12 +59,12 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
 
     if (firebaseAnalytics) {
       logEvent(firebaseAnalytics, eventName, {
-        wallet: address.toString().substring(2)
+        wallet: address ? address.toString().substring(2) : ''
       });
     }
-    apiConnection.postUserEvent(eventName, { page }, address);
+    apiConnection.postUserEvent(eventName, { page }, address || '');
 
-    router.push(`/userprofile/${address.toString()}`);
+    router.push(`/userprofile/${address ? address.toString() : ''}`);
   };
 
   return (
@@ -91,7 +90,7 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
       <div className="px-6 pb-0 pt-2 text-[14px] font-medium text-mediumEmphasis">User ID</div>
       <div className="view-page-row px-[24px] py-[14px]">
         <div />
-        <Link href={`/userprofile/${address.toString()}`}>
+        <Link href={`/userprofile/${address || ''}`}>
           <div className="button cursor-pointer text-[16px] font-semibold text-primaryBlue" onClick={clickViewProfile}>
             <span>View Profile</span>
             <div className="ml-[4px]">
@@ -104,91 +103,14 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
   );
 };
 
-const BottomContent: React.FC<{ balance: number; isWrongNetwork: boolean }> = ({ balance, isWrongNetwork }) => {
-  const { address, connector } = useAccount();
-  const { chain } = useNetwork();
-
-  if (!address || !connector || !chain) return null;
-
-  const userPositionInfos = useNanostore($userPositionInfos);
-  const [totalCollateral, setTotalCollateral] = useState<number>(0);
-
-  useEffect(() => {
-    if (userPositionInfos) {
-      const total = Object.keys(userPositionInfos).reduce((prev, curr) => {
-        const pos = userPositionInfos[curr as AMM];
-        if (pos) {
-          return prev + pos.collateral;
-        }
-        return prev;
-      }, 0);
-      setTotalCollateral(total);
-    }
-  }, [userPositionInfos]);
-
-  return (
-    <div className="bottoms">
-      <div className="p-6 text-[18px] font-semibold">Connected Wallet</div>
-      <div
-        className="connected-wallet mx-6 my-0
-        h-[64px] rounded-lg border border-solid border-primaryBlue">
-        <div className="content px-4 py-3">
-          <div className="start">
-            {connector.name === 'metamask' ? (
-              <div className="mr-4 h-[34px] w-[34px]">
-                <Image src="/images/components/layout/header/metamask-logo.png" width={34} height={34} alt="" />
-              </div>
-            ) : (
-              <div className="mr-4 h-[34px] w-[34px]">
-                <Image src="/images/components/layout/header/walletconnect-logo.png" width={34} height={34} alt="" />
-              </div>
-            )}
-            <div>
-              <div className="gradient-bg !bg-clip-text text-transparent">{address}</div>
-              <div className="text-[12px] font-medium text-mediumEmphasis">{chain.name}</div>
-            </div>
-          </div>
-          <div className="flex items-center">
-            {isWrongNetwork ? (
-              <div className="mr-1 text-[12px] font-medium text-marketRed">
-                Wrong <br /> Network
-              </div>
-            ) : null}
-            <div className={`h-2 w-2 rounded-full ${!isWrongNetwork ? 'bg-marketGreen' : 'bg-marketRed'}`} />
-          </div>
-        </div>
-      </div>
-      <PriceContent
-        title="Total Account Value:"
-        priceValue={isWrongNetwork ? '0.0000' : (balance + totalCollateral).toFixed(4)}
-        isLargeText
-        notLastRow={false}
-      />
-      <div className="mx-6 my-0 h-[1px] bg-[#414368]" />
-      <PriceContent
-        title="Portfolio Collateral:"
-        priceValue={isWrongNetwork ? '0.0000' : totalCollateral.toFixed(4)}
-        isLargeText={false}
-        notLastRow
-      />
-      <PriceContent
-        title="Wallet Balance:"
-        priceValue={isWrongNetwork ? '0.0000' : balance.toFixed(4)}
-        isLargeText={false}
-        notLastRow={false}
-      />
-    </div>
-  );
-};
-
 interface ProfileContentProps {
   balance: number;
   isWrongNetwork: boolean;
-  userInfo: UserInfo;
 }
 
 const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = props => {
-  const { balance, isWrongNetwork, userInfo } = props;
+  const { balance, isWrongNetwork } = props;
+  const userInfo = useNanostore($userInfo);
   const isNotSetUsername = !userInfo || !userInfo.username;
   const { disconnect } = useDisconnect();
   const { switchNetwork } = useSwitchNetwork();
@@ -225,7 +147,7 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       id="profile-content">
       <li className="m-0 list-none p-0">
         <TopContent username={userName} isNotSetUsername={isNotSetUsername} />
-        <BottomContent balance={balance} isWrongNetwork={isWrongNetwork} />
+        {/* <BottomContent balance={balance} isWrongNetwork={isWrongNetwork} /> */}
       </li>
 
       <li className="m-0 list-none p-0">

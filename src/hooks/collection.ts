@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $userPositionInfos, UserPositionInfo } from '@/stores/user';
+import { $currentChain, $userPositionInfos, UserPositionInfo } from '@/stores/user';
 import {
   $chartData,
   $dailyVolume,
@@ -20,7 +20,7 @@ export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
 };
 
 export const usePositionInfosIsLoading = (): boolean => {
-  const { chain } = useNetwork();
+  const chain = useNanostore($currentChain);
   const [isLoading, setIsLoading] = useState(true);
   const positionInfos = useNanostore($userPositionInfos);
 

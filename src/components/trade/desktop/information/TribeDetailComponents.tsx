@@ -28,6 +28,7 @@ import { AMM } from '@/const/collectionList';
 import { $currentAmm } from '@/stores/trading';
 import { useAccount } from 'wagmi';
 import { formatBigInt } from '@/utils/bigInt';
+import { $userAddress } from '@/stores/user';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -66,7 +67,7 @@ interface IOpenseaData {
 function ExplorerButton(props: any) {
   const { txHash, collection } = props;
   const etherscanUrl = `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`;
-  const { address } = useAccount();
+  const address = useNanostore($userAddress);
 
   const getAnalyticsMktEtherscan = () => {
     if (firebaseAnalytics && address) {
@@ -99,7 +100,7 @@ function ExplorerButton(props: any) {
 const MarketTrade = ({ amm }: { amm: AMM }) => {
   const router = useRouter();
   const marketHistory = useMarketHistory(amm);
-  const { address } = useAccount();
+  const address = useNanostore($userAddress);
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -176,7 +177,7 @@ const MarketTrade = ({ amm }: { amm: AMM }) => {
 };
 
 const SpotTable = ({ amm }: { amm: AMM }) => {
-  const { address } = useAccount();
+  const address = useNanostore($userAddress);
   const openseaData = useOpenSeaData(amm);
 
   return (
