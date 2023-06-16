@@ -8,7 +8,7 @@ import { apiConnection } from '@/utils/apiConnection';
 import CollectionModal from '@/components/trade/desktop/trading/CollectionModal';
 import { useStore as useNanostore } from '@nanostores/react';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
-import { $currentAMM } from '@/stores/trading';
+import { $currentAmm } from '@/stores/trading';
 import { $userPositionInfos } from '@/stores/user';
 import { useAccount, useNetwork } from 'wagmi';
 import { usePositionInfosIsLoading } from '@/hooks/collection';
@@ -18,7 +18,7 @@ function SidebarCollection() {
   const router = useRouter();
   const { chain } = useNetwork();
   const { address } = useAccount();
-  const currentAmm = useNanostore($currentAMM);
+  const currentAmm = useNanostore($currentAmm);
   const positionInfos = useNanostore($userPositionInfos);
   const [isColModalVisible, setIsColModalVisible] = useState(false);
   const isLoading = usePositionInfosIsLoading();

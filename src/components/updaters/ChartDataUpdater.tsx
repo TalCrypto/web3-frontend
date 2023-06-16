@@ -1,5 +1,5 @@
 import { getAMMAddress } from '@/const/addresses';
-import { $chartData, $currentAMM, $dailyVolume, $isChartDataInitializing, $selectedTimeIndex } from '@/stores/trading';
+import { $chartData, $currentAmm, $dailyVolume, $isChartDataInitializing, $selectedTimeIndex } from '@/stores/trading';
 import { formatBigIntString } from '@/utils/bigInt';
 import {
   getDailySpotPriceGraphData,
@@ -13,7 +13,7 @@ import { useNetwork } from 'wagmi';
 
 const ChartDataUpdater = () => {
   const { chain } = useNetwork();
-  const currentAMM = useNanostore($currentAMM);
+  const currentAmm = useNanostore($currentAmm);
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
 
   useEffect(() => {
@@ -27,8 +27,8 @@ const ChartDataUpdater = () => {
         volume: bigint;
       };
       let dailyVolume: number = 0;
-      if (chain && currentAMM) {
-        const ammAddr = getAMMAddress(chain, currentAMM);
+      if (chain && currentAmm) {
+        const ammAddr = getAMMAddress(chain, currentAmm);
         if (!ammAddr) return;
         if (selectedTimeIndex === 0) {
           chartData = await getDailySpotPriceGraphData(ammAddr);
@@ -70,7 +70,7 @@ const ChartDataUpdater = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [selectedTimeIndex, currentAMM, chain]);
+  }, [selectedTimeIndex, currentAmm, chain]);
 
   return null;
 };

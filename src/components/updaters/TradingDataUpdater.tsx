@@ -4,7 +4,7 @@ import { getAMMContract, getCHViewerContract } from '@/const/contracts';
 import React, { useEffect, useState } from 'react';
 import { Chain, useContractReads, useNetwork } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAMM, $isTradingDataInitializing } from '@/stores/trading';
+import { $currentAmm, $isTradingDataInitializing } from '@/stores/trading';
 
 const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm }) => {
   const ammContract = getAMMContract(chain, amm);
@@ -41,10 +41,10 @@ const CollectionUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm })
 
 const TradingDataUpdater: React.FC = () => {
   const { chain } = useNetwork();
-  const currentAMM = useNanostore($currentAMM);
+  const currentAmm = useNanostore($currentAmm);
 
-  if (!currentAMM || !chain) return null;
-  return <CollectionUpdater key={currentAMM} amm={currentAMM} chain={chain} />;
+  if (!currentAmm || !chain) return null;
+  return <CollectionUpdater key={currentAmm} amm={currentAmm} chain={chain} />;
 };
 
 export default TradingDataUpdater;

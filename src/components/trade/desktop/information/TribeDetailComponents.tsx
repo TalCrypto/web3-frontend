@@ -25,7 +25,7 @@ import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWith
 import { useStore as useNanostore } from '@nanostores/react';
 import { useFundingRatesHistory, useMarketHistory, useOpenSeaData } from '@/hooks/market';
 import { AMM } from '@/const/collectionList';
-import { $currentAMM } from '@/stores/trading';
+import { $currentAmm } from '@/stores/trading';
 import { useAccount } from 'wagmi';
 import { formatBigIntString } from '@/utils/bigInt';
 
@@ -324,7 +324,7 @@ const FundingPaymentHistory = ({ amm }: { amm: AMM }) => {
 
 function TribeDetailComponents(props: any) {
   const { activeTab } = props;
-  const currentAmm = useNanostore($currentAMM);
+  const currentAmm = useNanostore($currentAmm);
 
   if (!currentAmm) return null;
 

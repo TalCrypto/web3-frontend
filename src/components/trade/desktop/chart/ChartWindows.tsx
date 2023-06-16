@@ -20,7 +20,7 @@ import { apiConnection } from '@/utils/apiConnection';
 
 import Tooltip from '@/components/common/Tooltip';
 import { Address } from 'wagmi';
-import { $currentAMM, $selectedTimeIndex } from '@/stores/trading';
+import { $currentAmm, $selectedTimeIndex } from '@/stores/trading';
 import { useChartData, useTradingData } from '@/hooks/collection';
 
 const flashAnim = 'flash';
@@ -173,10 +173,10 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartHeaders = () => {
-  const currentAMM = useNanostore($currentAMM);
+  const currentAmm = useNanostore($currentAmm);
   const { tradingData } = useTradingData();
   const { isLoading: isStartLoadingChart, chartData } = useChartData();
-  const collectionInfo = currentAMM ? getCollectionInformation(currentAMM) : null;
+  const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
   return (
     <div className="flex w-full flex-row items-center justify-start text-[16px]">

@@ -24,7 +24,7 @@ export const $tradingData = map<CollectionTradingData>();
 
 export const $isTradingDataInitializing = atom(false);
 
-export const $currentAMM = atom<AMM | undefined>();
+export const $currentAmm = atom<AMM | undefined>();
 
 export const $transactionPendings = map<TransactionPendings>();
 

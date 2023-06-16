@@ -21,7 +21,7 @@ import IndividualShareContainer from '@/components/trade/desktop/position/Indivi
 import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaymentModal';
-import { $currentAMM } from '@/stores/trading';
+import { $currentAmm } from '@/stores/trading';
 import { useAccount } from 'wagmi';
 import { usePositionInfo, useTradingData, useTransactionIsPending } from '@/hooks/collection';
 import { getCollectionInformation } from '@/const/collectionList';
@@ -48,7 +48,7 @@ const liquidationChanceLimit = 0.05;
 export default function PositionDetails(props: any) {
   const router = useRouter();
   const { address } = useAccount();
-  const currentAmm = useNanostore($currentAMM);
+  const currentAmm = useNanostore($currentAmm);
   const positionInfo = usePositionInfo(currentAmm);
   const { tradingData } = useTradingData();
   const isPending = useTransactionIsPending(currentAmm);

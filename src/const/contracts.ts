@@ -1,4 +1,4 @@
-import { AddressConfig, getAddressConfig } from '@/const/addresses';
+import { getAddressConfig } from '@/const/addresses';
 import { Chain } from 'wagmi/chains';
 import { Address } from 'wagmi';
 import { AMM } from '@/const/collectionList';

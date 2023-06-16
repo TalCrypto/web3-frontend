@@ -16,7 +16,7 @@ import Switcher from '@/components/trade/mobile/collection/Switcher';
 
 import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 import { WithRouterProps } from 'next/dist/client/with-router';
-import { $currentAMM } from '@/stores/trading';
+import { $currentAmm } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { useAccount } from 'wagmi';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
@@ -36,7 +36,7 @@ function TradePage(props: WithRouterProps) {
   useEffect(() => {
     const collection = router?.query?.collection;
     if (collection) {
-      $currentAMM.set(collection as AMM);
+      $currentAmm.set(collection as AMM);
     }
   }, [router]);
 
@@ -130,7 +130,7 @@ function TradePage(props: WithRouterProps) {
               <div className="flex">
                 <SidebarCollection />
 
-                <TradingWindow refreshPositions={null} />
+                <TradingWindow />
               </div>
 
               <div className="block 2xl:ml-[49px] 2xl:flex-1">

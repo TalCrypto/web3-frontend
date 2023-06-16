@@ -165,7 +165,7 @@ export const useOpenSeaData = (amm: AMM) => {
               // from tokenRef.current
               setData(res);
             })
-            .catch(err => setData([]));
+            .catch(() => setData([]));
         }
       }
     }
@@ -214,7 +214,7 @@ export const useFundingRatesHistory = (amm: AMM) => {
                 }))
               );
             })
-            .catch(err => setData([]));
+            .catch(() => setData([]));
         }
       }
     }
