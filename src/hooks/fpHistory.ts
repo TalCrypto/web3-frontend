@@ -1,7 +1,7 @@
 import { getAddressConfig } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
-import { formatBigIntString } from '@/utils/bigInt';
+import { formatBigInt } from '@/utils/bigInt';
 import { useEffect, useState } from 'react';
 import { useAccount, useNetwork } from 'wagmi';
 
@@ -21,11 +21,11 @@ export const useFundingPaymentHistory = (amm: AMM) => {
       const ammAddress = addressConfig.amms[amm];
       if (ammAddress) {
         apiConnection.getUserFundingPaymentHistoryWithAmm(address, ammAddress).then(res => {
-          setTotal(formatBigIntString(res.data.total));
+          setTotal(formatBigInt(res.data.total));
           setFpRecords(
             res.data.fundingPaymentPnlHistory.map((item: { timestamp: number; fundingPaymentPnl: string }) => ({
               timestamp: Number(item.timestamp),
-              fundingPaymentPnl: formatBigIntString(item.fundingPaymentPnl)
+              fundingPaymentPnl: formatBigInt(item.fundingPaymentPnl)
             }))
           );
         });

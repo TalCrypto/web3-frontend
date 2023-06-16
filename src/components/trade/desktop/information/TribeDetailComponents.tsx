@@ -27,7 +27,7 @@ import { useFundingRatesHistory, useMarketHistory, useOpenSeaData } from '@/hook
 import { AMM } from '@/const/collectionList';
 import { $currentAmm } from '@/stores/trading';
 import { useAccount } from 'wagmi';
-import { formatBigIntString } from '@/utils/bigInt';
+import { formatBigInt } from '@/utils/bigInt';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -235,7 +235,7 @@ const SpotTable = ({ amm }: { amm: AMM }) => {
             const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
             const priceValue = !total_price
               ? '0.00'
-              : localeConversion(isUSDC ? formatBigIntString(total_price, 6).toFixed(2) : formatBigIntString(total_price).toFixed(2));
+              : localeConversion(isUSDC ? formatBigInt(total_price, 6).toFixed(2) : formatBigInt(total_price).toFixed(2));
             const key_value = assetCreationDate + event_timestamp + assetToken;
 
             return (

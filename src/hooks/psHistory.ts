@@ -1,7 +1,7 @@
 import { getAMMByAddress } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
-import { formatBigIntString } from '@/utils/bigInt';
+import { formatBigInt } from '@/utils/bigInt';
 import { useEffect, useState } from 'react';
 import { Address, getAddress } from 'viem';
 import { useAccount, useNetwork } from 'wagmi';
@@ -65,26 +65,26 @@ export const usePositionHistory = (): Array<PositionHistoryRecord> => {
           }) => ({
             amm: getAMMByAddress(chain, getAddress(item.ammAddress)),
             txHash: String(item.txHash),
-            entryPrice: formatBigIntString(item.entryPrice),
+            entryPrice: formatBigInt(item.entryPrice),
             ammAddress: getAddress(item.ammAddress),
             timestamp: Number(item.timestamp),
-            amount: formatBigIntString(item.amount),
-            collateralChange: formatBigIntString(item.collateralChange),
-            margin: formatBigIntString(item.margin),
-            previousMargin: formatBigIntString(item.previousMargin),
-            fundingPayment: formatBigIntString(item.fundingPayment),
+            amount: formatBigInt(item.amount),
+            collateralChange: formatBigInt(item.collateralChange),
+            margin: formatBigInt(item.margin),
+            previousMargin: formatBigInt(item.previousMargin),
+            fundingPayment: formatBigInt(item.fundingPayment),
             type: String(item.type),
-            exchangedPositionSize: formatBigIntString(item.exchangedPositionSize),
-            positionSizeAfter: formatBigIntString(item.positionSizeAfter),
-            positionNotional: formatBigIntString(item.positionNotional),
-            fee: formatBigIntString(item.fee),
-            realizedPnl: formatBigIntString(item.realizedPnl),
-            totalFundingPayment: formatBigIntString(item.totalFundingPayment),
-            notionalChange: formatBigIntString(item.notionalChange),
-            liquidationPenalty: formatBigIntString(item.liquidationPenalty),
-            badDebt: formatBigIntString(item.badDebt),
-            openNotional: formatBigIntString(item.openNotional),
-            previousOpenNotional: formatBigIntString(item.previousOpenNotional)
+            exchangedPositionSize: formatBigInt(item.exchangedPositionSize),
+            positionSizeAfter: formatBigInt(item.positionSizeAfter),
+            positionNotional: formatBigInt(item.positionNotional),
+            fee: formatBigInt(item.fee),
+            realizedPnl: formatBigInt(item.realizedPnl),
+            totalFundingPayment: formatBigInt(item.totalFundingPayment),
+            notionalChange: formatBigInt(item.notionalChange),
+            liquidationPenalty: formatBigInt(item.liquidationPenalty),
+            badDebt: formatBigInt(item.badDebt),
+            openNotional: formatBigInt(item.openNotional),
+            previousOpenNotional: formatBigInt(item.previousOpenNotional)
           })
         );
         setHistory(data);

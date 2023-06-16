@@ -6,7 +6,7 @@ import { Address, useNetwork } from 'wagmi';
 import { getAMMByAddress, getAddressConfig, getSupportedAMMAddresses } from '@/const/addresses';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
 import { getDailySpotPriceGraphData, getFundingPaymentHistory, getMarketHistory } from '@/utils/trading';
-import { formatBigIntString } from '@/utils/bigInt';
+import { formatBigInt } from '@/utils/bigInt';
 import { getAddress } from 'viem';
 import { getBaycFromMainnet } from '@/utils/opensea';
 
@@ -123,11 +123,11 @@ export const useMarketHistory = (amm: AMM) => {
                 }) => ({
                   ammAddress: record.ammAddress,
                   timestamp: Number(record.timestamp),
-                  exchangedPositionSize: formatBigIntString(record.exchangedPositionSize),
-                  positionNotional: formatBigIntString(record.positionNotional),
-                  positionSizeAfter: formatBigIntString(record.positionSizeAfter),
-                  liquidationPenalty: formatBigIntString(record.liquidationPenalty),
-                  spotPrice: formatBigIntString(record.spotPrice),
+                  exchangedPositionSize: formatBigInt(record.exchangedPositionSize),
+                  positionNotional: formatBigInt(record.positionNotional),
+                  positionSizeAfter: formatBigInt(record.positionSizeAfter),
+                  liquidationPenalty: formatBigInt(record.liquidationPenalty),
+                  spotPrice: formatBigInt(record.spotPrice),
                   userAddress: getAddress(record.userAddress),
                   userId: record.userId,
                   txHash: record.txHash
@@ -206,11 +206,11 @@ export const useFundingRatesHistory = (amm: AMM) => {
                 res.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
                   amm: getAddress(record.amm),
                   timestamp: Number(record.timestamp),
-                  underlyingPrice: formatBigIntString(record.underlyingPrice),
-                  rateLong: formatBigIntString(record.rateLong),
-                  rateShort: formatBigIntString(record.rateShort),
-                  amountLong: formatBigIntString(record.rateLong) * formatBigIntString(record.underlyingPrice),
-                  amountShort: formatBigIntString(record.rateShort) * formatBigIntString(record.underlyingPrice)
+                  underlyingPrice: formatBigInt(record.underlyingPrice),
+                  rateLong: formatBigInt(record.rateLong),
+                  rateShort: formatBigInt(record.rateShort),
+                  amountLong: formatBigInt(record.rateLong) * formatBigInt(record.underlyingPrice),
+                  amountShort: formatBigInt(record.rateShort) * formatBigInt(record.underlyingPrice)
                 }))
               );
             })
