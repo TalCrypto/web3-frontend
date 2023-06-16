@@ -28,6 +28,14 @@ export const getCHContract = (chain: Chain): Contract => {
   };
 };
 
+export const getWEthContract = (chain: Chain): Contract => {
+  const { config: addressConf, chainId } = getAddressConfig(chain);
+  return {
+    address: addressConf.weth,
+    chainId
+  };
+};
+
 export const getCHViewerContract = (chain: Chain): Contract => {
   const { config: addressConf, chainId } = getAddressConfig(chain);
   return {
