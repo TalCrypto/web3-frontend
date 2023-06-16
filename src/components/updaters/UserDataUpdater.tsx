@@ -18,6 +18,7 @@ import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
+import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 
 const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Address; trader: Address }> = ({
   chain,
@@ -99,6 +100,13 @@ const UserDataUpdater: React.FC = () => {
     if (address) {
       apiConnection.getUserInfo(address).then(result => {
         setUserInfo(result.data);
+      });
+      apiConnection.getUserPoint(address).then(res => {
+        if (res?.multiplier) {
+          $userPoint.set(res);
+        } else {
+          $userPoint.set(defaultUserPoint);
+        }
       });
       $userAddress.set(address);
     }

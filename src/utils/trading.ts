@@ -127,6 +127,7 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
   }
 
   const baseData = graphData[0];
+
   let priceChangeRatio = 0n;
   let priceChangeValue = 0n;
   if (baseData && rawGraphDatas.length > 1) {

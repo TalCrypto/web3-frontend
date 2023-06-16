@@ -317,12 +317,12 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
     .then(res => res.json())
     .then(resJson => resJson.data.reserveSnapshottedEvents);
 
-  const result = {
-    timestamp: Number(positions[0] ? positions[0].timestamp : 0),
-    spotPrice: BigInt(positions[0] ? positions[0].spotPrice : 0)
-  };
-
-  return result;
+  return positions.length > 0
+    ? {
+        timestamp: Number(positions[0].timestamp),
+        spotPrice: BigInt(positions[0].spotPrice)
+      }
+    : null;
 };
 
 export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {

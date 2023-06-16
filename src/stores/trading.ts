@@ -51,12 +51,13 @@ export const $isChartDataInitializing = atom(false);
 
 export const $chartData = atom<ChartData | undefined>();
 
-export const $dailyVolume = atom(0);
+export const $dailyVolume = atom<number | undefined>();
 
 export interface CollectionConfig {
   fundingPeriod: number;
   liqSwitchRatio: number;
   initMarginRatio: number;
+  startPrice: number;
 }
 
 export const $collectionConfig = map<CollectionConfig>();

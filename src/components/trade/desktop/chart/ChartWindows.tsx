@@ -26,11 +26,11 @@ import { useChartData, useTradingData } from '@/hooks/collection';
 const flashAnim = 'flash';
 
 function SmallPriceIcon(props: any) {
-  const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
+  const { priceValue, className = '', iconSize = 16, isLoading = false } = props;
   return (
     <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue ?? '-.--'}</span>
     </div>
   );
 }
@@ -39,10 +39,14 @@ const ChartDisplay = dynamic(() => import('./chartDisplay'), {
   ssr: false
 });
 
-function PriceIndicator(props: { isStartLoadingChart: boolean; priceChangeValue: number; priceChangeRatio: number }) {
+function PriceIndicator(props: {
+  isStartLoadingChart: boolean;
+  priceChangeValue: number | undefined;
+  priceChangeRatio: number | undefined;
+}) {
   const { priceChangeValue, priceChangeRatio, isStartLoadingChart } = props;
 
-  return isStartLoadingChart || !priceChangeValue || !priceChangeRatio ? (
+  return isStartLoadingChart || priceChangeValue === undefined || priceChangeRatio === undefined ? (
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
@@ -65,8 +69,7 @@ function PriceIndicator(props: { isStartLoadingChart: boolean; priceChangeValue:
       />
       <div>
         <div className="mr-4">
-          {priceChangeValue.toFixed(2)}
-          {`${priceChangeRatio.toFixed(2)}%`}
+          {Math.abs(priceChangeValue).toFixed(2)} ({`${priceChangeRatio.toFixed(2)}%`})
         </div>
       </div>
     </div>
@@ -202,8 +205,8 @@ const ChartHeaders = () => {
           <div className="flex">
             <PriceWithIcon priceValue={tradingData ? tradingData.vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
             <PriceIndicator
-              priceChangeValue={chartData ? chartData.priceChangeValue : 0}
-              priceChangeRatio={chartData ? chartData.priceChangeRatio : 0}
+              priceChangeValue={chartData?.priceChangeValue}
+              priceChangeRatio={chartData?.priceChangeRatio}
               isStartLoadingChart={isStartLoadingChart}
             />
           </div>
@@ -377,11 +380,11 @@ const ProComponent = () => {
         <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>
-            <SmallPriceIcon priceValue={chartData?.high} isLoading={isChartDataLoading || !chartData} />
+            <SmallPriceIcon priceValue={chartData?.high.toFixed(2)} isLoading={isChartDataLoading || !chartData} />
           </div>
           <div className="flex flex-1 flex-col items-end">
             <p className="mb-[6px]">{displayTimeKey} Low</p>
-            <SmallPriceIcon priceValue={chartData?.low} isLoading={isChartDataLoading || !chartData} />
+            <SmallPriceIcon priceValue={chartData?.low.toFixed(2)} isLoading={isChartDataLoading || !chartData} />
           </div>
         </div>
         <div>
@@ -413,7 +416,10 @@ const ProComponent = () => {
         <div className="text-medium flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">Volume (24Hr)</p>
-            <SmallPriceIcon priceValue={!dailyVolume ? '-.--' : dailyVolume.toFixed(2)} isLoading={!dailyVolume || isChartDataLoading} />
+            <SmallPriceIcon
+              priceValue={dailyVolume === undefined ? '-.--' : dailyVolume.toFixed(2)}
+              isLoading={dailyVolume === undefined || isChartDataLoading}
+            />
           </div>
         </div>
       </div>

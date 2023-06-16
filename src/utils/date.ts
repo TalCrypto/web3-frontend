@@ -31,3 +31,8 @@ export const formatDateTimeFromString = (value: string) => {
   const timestamp = Date.parse(value) / 1000;
   return formatDateTime(timestamp);
 };
+
+export const timeToLocal = (originalTime: number) => {
+  const d = new Date(originalTime * 1000);
+  return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()) / 1000;
+};

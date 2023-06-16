@@ -387,26 +387,12 @@ export const apiConnection = {
   },
   getUserPoint: async function getUserPoint(userAddress: string) {
     const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge`;
-    let defaultData = { ...defaultUserPoint };
-
     try {
-      isUserPointLoading.set(true);
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-
-      // only to check if data have the right object
-      if (data?.multiplier) {
-        defaultData = data;
-      }
-
-      setUserPoint(defaultData);
-      isUserPointLoading.set(false);
-      return Promise.resolve(defaultData);
+      return Promise.resolve(data);
     } catch (err) {
-      // console.log({ err });
-      setUserPoint(defaultData);
-      isUserPointLoading.set(false);
       return Promise.reject(err);
     }
   },

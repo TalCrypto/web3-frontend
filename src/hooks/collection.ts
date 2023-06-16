@@ -4,6 +4,7 @@ import { $currentChain, $userPositionInfos, UserPositionInfo } from '@/stores/us
 import {
   $chartData,
   $dailyVolume,
+  $isChartDataInitializing,
   $isTradingDataInitializing,
   $tradingData,
   $transactionPendings,
@@ -45,7 +46,7 @@ export const useTransactionIsPending = (amm?: AMM): boolean => {
 };
 
 export const useChartData = (): { isLoading: boolean; chartData?: ChartData; dailyVolume?: number } => {
-  const isLoading = useNanostore($isTradingDataInitializing);
+  const isLoading = useNanostore($isChartDataInitializing);
   const chartData = useNanostore($chartData);
   const dailyVolume = useNanostore($dailyVolume);
   return { isLoading, chartData, dailyVolume };

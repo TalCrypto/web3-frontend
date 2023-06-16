@@ -49,8 +49,8 @@ const ChartDataUpdater = () => {
             start,
             end
           })),
-          priceChangeValue: formatBigInt(chartData.priceChangeValue.toString()),
-          priceChangeRatio: formatBigInt(chartData.priceChangeRatio.toString()),
+          priceChangeValue: formatBigInt(chartData.priceChangeValue),
+          priceChangeRatio: formatBigInt(chartData.priceChangeRatio),
           high: formatBigInt(chartData.high.toString()),
           low: formatBigInt(chartData.low.toString()),
           volume: formatBigInt(chartData.volume.toString())
@@ -63,10 +63,12 @@ const ChartDataUpdater = () => {
       }
     }
     $isChartDataInitializing.set(true);
+    $chartData.set(undefined);
+    $dailyVolume.set(undefined);
     updateChart().then(() => {
       $isChartDataInitializing.set(false);
     });
-    const timer = setInterval(updateChart, 5000);
+    const timer = setInterval(updateChart, 10000);
     return () => {
       clearInterval(timer);
     };

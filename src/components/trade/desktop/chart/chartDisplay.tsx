@@ -1,7 +1,8 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, forwardRef } from 'react';
-import { createChart, ColorType, IChartApi } from 'lightweight-charts';
+import React, { useEffect, useRef } from 'react';
+import { createChart, ColorType, WhitespaceData, Time } from 'lightweight-charts';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useChartData } from '@/hooks/collection';
@@ -11,7 +12,6 @@ function ChartDisplay() {
   const { chartData } = useChartData();
   const lineChartData = chartData?.data;
   const chartContainerRef: any = useRef();
-  const chartRef = useRef<IChartApi | null>(null);
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
 
   const colors = {
@@ -23,11 +23,11 @@ function ChartDisplay() {
   };
 
   useEffect(() => {
-    const newChartData: any = [];
-    if (lineChartData) {
-      lineChartData.map((item: any) => newChartData.push({ time: item.time, value: Number(item.value) }));
-    }
-    chartRef.current = createChart(chartContainerRef.current, {
+    const newChartData: WhitespaceData[] = lineChartData
+      ? lineChartData.map(({ avgPrice, start, end }) => ({ time: ((start + end) / 2) as Time, value: avgPrice }))
+      : [];
+
+    const chart = createChart(chartContainerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: colors.backgroundColor },
         textColor: colors.textColor,
@@ -68,74 +68,78 @@ function ChartDisplay() {
       }
     });
     const handleResize = () => {
-      if (chartRef.current) {
-        chartRef.current.remove();
-
-        chartRef.current = createChart(chartContainerRef.current, {
-          layout: {
-            background: { type: ColorType.Solid, color: colors.backgroundColor },
-            textColor: colors.textColor,
-            fontFamily: 'Montserrat'
-          },
-          grid: {
-            vertLines: { visible: false },
-            horzLines: { color: 'rgba(46, 48, 100, 0.5)' }
-          },
-          width: chartContainerRef.current.clientWidth,
-          // height: 450,
-          height: 220,
-          timeScale: {
-            timeVisible: true,
-            secondsVisible: false,
-            lockVisibleTimeRangeOnResize: false,
-            tickMarkFormatter: (time: any /* , tickMarkType, locale */) => {
-              const timeFormat = selectedTimeIndex === 0 ? 'HH:mm' : 'DD/MM HH:mm';
-              return formatDateTime(time, timeFormat);
-            }
-          },
-          localization: {
-            timeFormatter: (time: any) => {
-              const timeFormat = 'DD/MM HH:mm';
-              return formatDateTime(time, timeFormat);
-            }
-          },
-          handleScroll: {
-            mouseWheel: false,
-            pressedMouseMove: false,
-            horzTouchDrag: false,
-            vertTouchDrag: false
-          },
-          handleScale: {
-            axisPressedMouseMove: false,
-            mouseWheel: false,
-            pinch: false
-          }
-        });
-
-        const newSeries = chartRef.current.addAreaSeries({
-          lineColor: colors.lineColor,
-          topColor: colors.areaTopColor,
-          bottomColor: colors.areaBottomColor,
-          lineWidth: 1
-        });
-        newSeries.setData(newChartData);
-        chartRef.current.timeScale().fitContent();
-      }
+      chart.applyOptions({ width: chartContainerRef.current.clientWidth });
     };
-    const newSeries = chartRef.current.addAreaSeries({
+    chart.timeScale().fitContent();
+    // const handleResize = () => {
+    //   if (chartRef.current) {
+    //     chartRef.current.remove();
+
+    //     chartRef.current = createChart(chartContainerRef.current, {
+    //       layout: {
+    //         background: { type: ColorType.Solid, color: colors.backgroundColor },
+    //         textColor: colors.textColor,
+    //         fontFamily: 'Montserrat'
+    //       },
+    //       grid: {
+    //         vertLines: { visible: false },
+    //         horzLines: { color: 'rgba(46, 48, 100, 0.5)' }
+    //       },
+    //       width: chartContainerRef.current.clientWidth,
+    //       // height: 450,
+    //       height: 220,
+    //       timeScale: {
+    //         timeVisible: true,
+    //         secondsVisible: false,
+    //         lockVisibleTimeRangeOnResize: false,
+    //         tickMarkFormatter: (time: any /* , tickMarkType, locale */) => {
+    //           const timeFormat = selectedTimeIndex === 0 ? 'HH:mm' : 'DD/MM HH:mm';
+    //           return formatDateTime(time, timeFormat);
+    //         }
+    //       },
+    //       localization: {
+    //         timeFormatter: (time: any) => {
+    //           const timeFormat = 'DD/MM HH:mm';
+    //           return formatDateTime(time, timeFormat);
+    //         }
+    //       },
+    //       handleScroll: {
+    //         mouseWheel: false,
+    //         pressedMouseMove: false,
+    //         horzTouchDrag: false,
+    //         vertTouchDrag: false
+    //       },
+    //       handleScale: {
+    //         axisPressedMouseMove: false,
+    //         mouseWheel: false,
+    //         pinch: false
+    //       }
+    //     });
+
+    //     const newSeries = chartRef.current.addAreaSeries({
+    //       lineColor: colors.lineColor,
+    //       topColor: colors.areaTopColor,
+    //       bottomColor: colors.areaBottomColor,
+    //       lineWidth: 1
+    //     });
+    //     newSeries.setData(newChartData);
+    //     chartRef.current.timeScale().fitContent();
+    //   }
+    // };
+    const newSeries = chart.addAreaSeries({
       lineColor: colors.lineColor,
       topColor: colors.areaTopColor,
       bottomColor: colors.areaBottomColor,
       lineWidth: 1
     });
+
     newSeries.setData(newChartData);
-    chartRef.current.timeScale().fitContent();
+
     window.addEventListener('resize', handleResize);
+
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (chartRef.current) {
-        chartRef.current.remove();
-      }
+      chart.remove();
     };
   }, [lineChartData]);
 
@@ -146,4 +150,4 @@ function ChartDisplay() {
   );
 }
 
-export default forwardRef(ChartDisplay);
+export default ChartDisplay;

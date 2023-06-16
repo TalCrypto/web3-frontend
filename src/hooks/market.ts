@@ -1,7 +1,7 @@
 import { AMM } from '@/const/collectionList';
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $tradingData } from '@/stores/trading';
+import { $collectionConfig, $tradingData } from '@/stores/trading';
 import { Address, useNetwork } from 'wagmi';
 import { getAMMByAddress, getAddressConfig, getSupportedAMMAddresses } from '@/const/addresses';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
@@ -33,6 +33,7 @@ export interface GetMktOverview {
 
 export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
   const tradingData = useNanostore($tradingData);
+  const config = useNanostore($collectionConfig);
   const chain = useNanostore($currentChain);
   const [data, setData] = useState<Array<CollectionOverview>>();
   const [isLoading, setIsLoading] = useState(false);
@@ -54,9 +55,12 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
           const ammAddr = ammAddrList[i];
           const amm = getAMMByAddress(chain, ammAddr);
           if (!amm) break;
-          const basePrice24h = Number(priceList24hrAgo[i].spotPrice / BigInt(1e18));
-          const basePrice7d = Number(priceList7daysAgo[i].spotPrice / BigInt(1e18));
-          const basePrice30d = Number(priceList30daysAgo[i].spotPrice / BigInt(1e18));
+          const price24hrAgo = priceList24hrAgo[i];
+          const price7daysAgo = priceList7daysAgo[i];
+          const price30daysAgo = priceList30daysAgo[i];
+          const basePrice24h = price24hrAgo ? Number(price24hrAgo.spotPrice / BigInt(1e18)) : config.startPrice;
+          const basePrice7d = price7daysAgo ? Number(price7daysAgo.spotPrice / BigInt(1e18)) : config.startPrice;
+          const basePrice30d = price30daysAgo ? Number(price30daysAgo.spotPrice / BigInt(1e18)) : config.startPrice;
 
           if (!tradingData) break;
 

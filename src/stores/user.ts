@@ -53,7 +53,7 @@ export type UserPositionInfos = {
 };
 
 export const $userWethBalance = atom(0);
-export const $userIsConnecting = atom(false);
+export const $userIsConnecting = atom(true);
 export const $userIsConnected = atom(false);
 export const $userIsWrongNetwork = atom(false);
 export const $userAddress = atom<Address | undefined>();
