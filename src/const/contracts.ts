@@ -35,3 +35,11 @@ export const getCHViewerContract = (chain: Chain): Contract => {
     chainId
   };
 };
+
+export const getAMMViewerContract = (chain: Chain): Contract => {
+  const { config: addressConf, chainId } = getAddressConfig(chain);
+  return {
+    address: addressConf.ammViewer,
+    chainId
+  };
+};

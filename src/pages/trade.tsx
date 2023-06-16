@@ -20,6 +20,7 @@ import { $currentAmm } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { useAccount } from 'wagmi';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
+import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
 
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
@@ -156,6 +157,7 @@ function TradePage(props: WithRouterProps) {
             <TradingMobile />
           </div>
         </div>
+        <CollectionConfigLoader />
         <ChartDataUpdater />
       </main>
     </>

@@ -2,8 +2,9 @@ import { chViewerAbi } from '@/const/abi';
 import { getAddressConfig, getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
 import { getAMMContract, getCHViewerContract } from '@/const/contracts';
-import { setIsConnecting, setUserInfo, setWethBalance } from '@/stores/user';
+import { $userPositionInfos, setIsConnecting, setUserInfo, setWethBalance } from '@/stores/user';
 import { apiConnection } from '@/utils/apiConnection';
+import { formatBigInt } from '@/utils/bigInt';
 import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
 import { Address, useAccount, useContractRead, useBalance, useNetwork, Chain } from 'wagmi';
@@ -14,7 +15,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm 
   const ammContract = getAMMContract(chain, amm);
   if (!ammContract) return null;
   const chViewer = getCHViewerContract(chain);
-  const { data, isError, isLoading } = useContractRead({
+  const { data } = useContractRead({
     ...chViewer,
     abi: chViewerAbi,
     functionName: 'getTraderPositionInfoWithoutPriceImpact',
@@ -22,17 +23,54 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM }> = ({ chain, amm 
     watch: true
   });
 
-  console.log(data, isError, isLoading);
-
-  // const [spotPrice, nextFundingTimeInfo, fundingPeriodInfo, longSize, shortSize, fundingRateInfo] = await multicallProvider.all([
-  //   ammContract.getSpotPrice(),
-  //   ammContract.nextFundingTime(),
-  //   ammContract.fundingPeriod(),
-  //   ammContract.longPositionSize(),
-  //   ammContract.shortPositionSize(),
-  //   clearingHouseViewerContract.getFundingRates(ammAddr)
-  // ]);
-
+  if (!data) return null;
+  const size = formatBigInt(data.positionSize);
+  const collateral = formatBigInt(data.margin);
+  const openNotional = formatBigInt(data.openNotional);
+  const currentNotional = formatBigInt(data.positionNotional);
+  const unrealizedPnl = formatBigInt(data.unrealizedPnl);
+  const marginRatio = formatBigInt(data.marginRatio);
+  const entryPrice = formatBigInt(data.avgEntryPrice);
+  const openLeverage = formatBigInt(data.openLeverage);
+  const liquidationPrice = formatBigInt(data.liquidationPrice);
+  const vammPrice = formatBigInt(data.spotPrice);
+  const leverage = formatBigInt(data.leverage);
+  const fundingPayment = formatBigInt(data.fundingPayment);
+  const { isLiquidatable } = data;
+  useEffect(() => {
+    $userPositionInfos.setKey(amm, {
+      amm: ammContract.address,
+      size,
+      collateral,
+      openNotional,
+      currentNotional,
+      unrealizedPnl,
+      marginRatio,
+      entryPrice,
+      openLeverage,
+      liquidationPrice,
+      vammPrice,
+      leverage,
+      fundingPayment,
+      isLiquidatable
+    });
+  }, [
+    amm,
+    ammContract.address,
+    size,
+    collateral,
+    openNotional,
+    currentNotional,
+    unrealizedPnl,
+    marginRatio,
+    entryPrice,
+    openLeverage,
+    liquidationPrice,
+    vammPrice,
+    leverage,
+    fundingPayment,
+    isLiquidatable
+  ]);
   return null;
 };
 

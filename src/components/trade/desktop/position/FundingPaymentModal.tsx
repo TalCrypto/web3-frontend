@@ -5,9 +5,10 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
-import { CollectionTradingData } from '@/stores/trading';
+import { $collectionConfig, CollectionTradingData } from '@/stores/trading';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { useFundingPaymentHistory } from '@/hooks/fpHistory';
+import { useStore as useNanostore } from '@nanostores/react';
 
 const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: AMM; setShowFundingPaymentModal: any }) => {
   const { setShowFundingPaymentModal, tradingData, amm } = props;
@@ -16,6 +17,7 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
   const [interval, setI] = useState(null);
   const [nextFundingTime, setNextFundingTime] = useState(0);
+  const { fundingPeriod } = useNanostore($collectionConfig);
 
   const hadKey = Object.keys(tradingData).length > 0;
   let hours = '';
@@ -53,7 +55,6 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
       return;
     }
     let endTime = tradingData.nextFundingTime * 1000;
-    const { fundingPeriod } = tradingData;
     if (interval !== null) {
       clearInterval(interval);
     }

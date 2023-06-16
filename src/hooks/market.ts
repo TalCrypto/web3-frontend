@@ -172,7 +172,7 @@ export const useOpenSeaData = (amm: AMM) => {
 
     fetch();
 
-    const timer = setInterval(fetch, 2000);
+    const timer = setInterval(fetch, 10000);
 
     return () => {
       clearInterval(timer);
@@ -218,14 +218,7 @@ export const useFundingRatesHistory = (amm: AMM) => {
         }
       }
     }
-
     fetch();
-
-    const timer = setInterval(fetch, 2000);
-
-    return () => {
-      clearInterval(timer);
-    };
   }, [amm, chain]);
   return data;
 };

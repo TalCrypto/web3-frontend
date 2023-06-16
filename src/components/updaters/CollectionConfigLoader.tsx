@@ -1,0 +1,40 @@
+import React, { useEffect } from 'react';
+import { useContractReads, useNetwork } from 'wagmi';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $collectionConfig, $currentAmm } from '@/stores/trading';
+import { getAMMContract, getCHContract } from '@/const/contracts';
+import { ammAbi, chAbi } from '@/const/abi';
+import { formatBigInt } from '@/utils/bigInt';
+
+const CollectionConfigLoader: React.FC = () => {
+  const { chain } = useNetwork();
+  const currentAmm = useNanostore($currentAmm);
+  if (!currentAmm || !chain) return null;
+  const ammContract = getAMMContract(chain, currentAmm);
+  if (!ammContract) return null;
+  const chContract = getCHContract(chain);
+  const { data } = useContractReads({
+    contracts: [
+      { ...ammContract, abi: ammAbi, functionName: 'initMarginRatio' },
+      { ...ammContract, abi: ammAbi, functionName: 'fundingPeriod' },
+      { ...chContract, abi: chAbi, functionName: 'LIQ_SWITCH_RATIO' }
+    ]
+  });
+  if (!data) return null;
+  const initMarginRatio = data[0].result;
+  const fundingPeriod = data[1].result;
+  const liqSwitchRatio = data[2].result;
+  useEffect(() => {
+    if (initMarginRatio && fundingPeriod && liqSwitchRatio) {
+      $collectionConfig.set({
+        initMarginRatio: formatBigInt(initMarginRatio),
+        fundingPeriod: Number(fundingPeriod),
+        liqSwitchRatio: formatBigInt(liqSwitchRatio)
+      });
+    }
+  }, [initMarginRatio, fundingPeriod, liqSwitchRatio]);
+
+  return null;
+};
+
+export default CollectionConfigLoader;

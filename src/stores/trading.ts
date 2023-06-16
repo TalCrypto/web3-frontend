@@ -12,7 +12,6 @@ export interface CollectionTradingData {
   fundingRateLong: number;
   fundingRateShort: number;
   isOverPriceGap: boolean;
-  fundingPeriod: number;
 }
 
 export type TransactionPendings = {
@@ -53,3 +52,11 @@ export const $isChartDataInitializing = atom(false);
 export const $chartData = atom<ChartData | undefined>();
 
 export const $dailyVolume = atom(0);
+
+export interface CollectionConfig {
+  fundingPeriod: number;
+  liqSwitchRatio: number;
+  initMarginRatio: number;
+}
+
+export const $collectionConfig = map<CollectionConfig>();

@@ -20,7 +20,7 @@ import { apiConnection } from '@/utils/apiConnection';
 
 import Tooltip from '@/components/common/Tooltip';
 import { Address } from 'wagmi';
-import { $currentAmm, $selectedTimeIndex } from '@/stores/trading';
+import { $collectionConfig, $currentAmm, $selectedTimeIndex } from '@/stores/trading';
 import { useChartData, useTradingData } from '@/hooks/collection';
 
 const flashAnim = 'flash';
@@ -230,6 +230,7 @@ const ChartFooter = (props: any, ref: any) => {
   const DEFAULT_TIME = '-- : -- : --';
   const { isLoading, tradingData } = useTradingData();
   const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
+  const { fundingPeriod } = useNanostore($collectionConfig);
 
   const vAMMPrice = !tradingData ? 0 : tradingData.vammPrice;
   const oraclePrice = !tradingData ? 0 : tradingData.oraclePrice;
@@ -270,7 +271,6 @@ const ChartFooter = (props: any, ref: any) => {
       setTimeLabel(DEFAULT_TIME);
     } else {
       let endTime = tradingData.nextFundingTime * 1000;
-      const { fundingPeriod } = tradingData;
       let hours;
       let minutes;
       let seconds;
