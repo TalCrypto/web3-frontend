@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useContractReads, useNetwork } from 'wagmi';
+import { useContractReads } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $collectionConfig, $currentAmm } from '@/stores/trading';
 import { getAMMContract, getCHContract, Contract } from '@/const/contracts';
@@ -13,7 +13,7 @@ const Loader = ({ ammContract, chContract }: { ammContract: Contract; chContract
       { ...ammContract, abi: ammAbi, functionName: 'initMarginRatio' },
       { ...ammContract, abi: ammAbi, functionName: 'fundingPeriod' },
       { ...chContract, abi: chAbi, functionName: 'LIQ_SWITCH_RATIO' },
-      { ...ammContract, abi: ammAbi, functionName: 'reserveSnapshots', args: [0] }
+      { ...ammContract, abi: ammAbi, functionName: 'reserveSnapshots', args: [0n] }
     ]
   });
   const initMarginRatio = data ? data[0].result : 0n;
@@ -30,18 +30,16 @@ const Loader = ({ ammContract, chContract }: { ammContract: Contract; chContract
         startPrice: formatBigInt(startPrice)
       });
     }
-  }, [initMarginRatio, fundingPeriod, liqSwitchRatio]);
+  }, [initMarginRatio, fundingPeriod, liqSwitchRatio, startPrice]);
   return null;
 };
 
 const CollectionConfigLoader: React.FC = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  if (!currentAmm || !chain) return null;
   const ammContract = getAMMContract(chain, currentAmm);
-  if (!ammContract) return null;
   const chContract = getCHContract(chain);
-
+  if (!ammContract || !chContract) return null;
   return <Loader ammContract={ammContract} chContract={chContract} />;
 };
 

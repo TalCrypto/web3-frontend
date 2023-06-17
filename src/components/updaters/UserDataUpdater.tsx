@@ -16,7 +16,6 @@ import { apiConnection } from '@/utils/apiConnection';
 import { formatBigInt } from '@/utils/bigInt';
 import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
-import { useStore as useNanostore } from '@nanostores/react';
 import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
 import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 

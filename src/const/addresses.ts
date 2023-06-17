@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Address } from 'wagmi';
 import { Chain, arbitrum, arbitrumGoerli } from 'wagmi/chains';
-import { AMM } from '@/const/collectionList';
+import { AMM, DEFAULT_AMM } from '@/const/collectionList';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 
 export interface AddressConfig {
@@ -46,15 +46,15 @@ const ADDRESSES: Record<number, AddressConfig> = {
 };
 
 // get addresses, if chain is unsupported, then get the addresses of default chain
-export const getAddressConfig = (chain: Chain): { chainId: number; config: AddressConfig } => {
-  const config = ADDRESSES[chain.id] ?? ADDRESSES[DEFAULT_CHAIN.id];
-  const chainId = ADDRESSES[chain.id] ? chain.id : DEFAULT_CHAIN.id;
+export const getAddressConfig = (chain?: Chain): { chainId: number; config: AddressConfig } => {
+  const config = chain && ADDRESSES[chain.id] ? ADDRESSES[chain.id] : ADDRESSES[DEFAULT_CHAIN.id];
+  const chainId = chain && ADDRESSES[chain.id] ? chain.id : DEFAULT_CHAIN.id;
   return { chainId, config };
 };
 
-export const getAMMAddress = (chain: Chain, amm: AMM): Address | undefined => {
+export const getAMMAddress = (chain?: Chain, amm?: AMM): Address | undefined => {
   const { config: addressConfig } = getAddressConfig(chain);
-  return addressConfig.amms[amm];
+  return addressConfig.amms[amm ?? DEFAULT_AMM];
 };
 
 export const getAMMByAddress = (chain: Chain, address: Address): AMM | undefined => {

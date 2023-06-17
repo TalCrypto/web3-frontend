@@ -1,16 +1,16 @@
 import { getAddressConfig } from '@/const/addresses';
 import { Chain } from 'wagmi/chains';
 import { Address } from 'wagmi';
-import { AMM } from '@/const/collectionList';
+import { AMM, DEFAULT_AMM } from '@/const/collectionList';
 
 export interface Contract {
   address: Address;
   chainId: number;
 }
 
-export const getAMMContract = (chain: Chain, amm: AMM): Contract | undefined => {
+export const getAMMContract = (chain?: Chain, amm?: AMM): Contract | undefined => {
   const { config: addressConf, chainId } = getAddressConfig(chain);
-  const ammAddress = addressConf.amms[amm];
+  const ammAddress = addressConf.amms[amm ?? DEFAULT_AMM];
   if (ammAddress) {
     return {
       address: ammAddress,
@@ -20,7 +20,7 @@ export const getAMMContract = (chain: Chain, amm: AMM): Contract | undefined => 
   return undefined;
 };
 
-export const getCHContract = (chain: Chain): Contract => {
+export const getCHContract = (chain?: Chain): Contract => {
   const { config: addressConf, chainId } = getAddressConfig(chain);
   return {
     address: addressConf.ch,
@@ -28,7 +28,7 @@ export const getCHContract = (chain: Chain): Contract => {
   };
 };
 
-export const getWEthContract = (chain: Chain): Contract => {
+export const getWEthContract = (chain?: Chain): Contract => {
   const { config: addressConf, chainId } = getAddressConfig(chain);
   return {
     address: addressConf.weth,
@@ -36,7 +36,7 @@ export const getWEthContract = (chain: Chain): Contract => {
   };
 };
 
-export const getCHViewerContract = (chain: Chain): Contract => {
+export const getCHViewerContract = (chain?: Chain): Contract => {
   const { config: addressConf, chainId } = getAddressConfig(chain);
   return {
     address: addressConf.chViewer,
