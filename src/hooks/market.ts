@@ -40,7 +40,7 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
   useEffect(() => {
     setIsLoading(true);
     async function getGraphData() {
-      if (chain && tradingData) {
+      if (tradingData) {
         const nowTs = Math.round(new Date().getTime() / 1000);
         const ts24hr = nowTs - 1 * 24 * 3600;
         const ts7Days = nowTs - 7 * 24 * 3600;
@@ -53,14 +53,14 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
         const results = [];
         for (let i = 0; i < ammAddrList.length; i += 1) {
           const ammAddr = ammAddrList[i];
-          const amm = getAMMByAddress(chain, ammAddr);
+          const amm = getAMMByAddress(ammAddr, chain);
           if (!amm) break;
           const price24hrAgo = priceList24hrAgo[i];
           const price7daysAgo = priceList7daysAgo[i];
           const price30daysAgo = priceList30daysAgo[i];
-          const basePrice24h = price24hrAgo ? Number(price24hrAgo.spotPrice / BigInt(1e18)) : config.startPrice;
-          const basePrice7d = price7daysAgo ? Number(price7daysAgo.spotPrice / BigInt(1e18)) : config.startPrice;
-          const basePrice30d = price30daysAgo ? Number(price30daysAgo.spotPrice / BigInt(1e18)) : config.startPrice;
+          const basePrice24h = price24hrAgo ? formatBigInt(price24hrAgo.spotPrice) : config.startPrice;
+          const basePrice7d = price7daysAgo ? formatBigInt(price7daysAgo.spotPrice) : config.startPrice;
+          const basePrice30d = price30daysAgo ? formatBigInt(price30daysAgo.spotPrice) : config.startPrice;
 
           if (!tradingData) break;
 
@@ -68,13 +68,13 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
             amm,
             vammPrice: tradingData.vammPrice,
             oraclePrice: tradingData.oraclePrice,
-            priceChangeRatio24h: Number(graphDataList[i].priceChangeRatio / BigInt(1e18)),
+            priceChangeRatio24h: formatBigInt(graphDataList[i].priceChangeRatio),
             priceChangeRatio7d: basePrice7d !== 0 ? ((tradingData.vammPrice ?? 0 - basePrice7d) / basePrice7d) * 100 : undefined,
             priceChangeRatio30d: basePrice30d !== 0 ? ((tradingData.vammPrice ?? 0 - basePrice30d) / basePrice30d) * 100 : undefined,
             priceChange24h: tradingData.vammPrice - basePrice24h,
             priceChange7d: tradingData.vammPrice - basePrice7d,
             priceChange30d: tradingData.vammPrice - basePrice30d,
-            volume: Number(graphDataList[i].volume / BigInt(1e18)),
+            volume: formatBigInt(graphDataList[i].volume),
             fundingRateShort: tradingData.fundingRateShort,
             fundingRateLong: tradingData.fundingRateLong
           };
@@ -85,7 +85,7 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
       }
     }
     getGraphData();
-  }, [triggerUpdate, tradingData, chain]);
+  }, [triggerUpdate, tradingData, chain, config]);
   return { isLoading, data };
 };
 
@@ -107,40 +107,38 @@ export const useMarketHistory = (amm: AMM) => {
   const [history, setHistory] = useState<Array<MarketHistoryRecord>>();
   useEffect(() => {
     function fetch() {
-      if (chain) {
-        const { config: addrConf } = getAddressConfig(chain);
-        const ammAddr = addrConf.amms[amm];
-        if (ammAddr) {
-          getMarketHistory(ammAddr).then(res => {
-            setHistory(
-              res.map(
-                (record: {
-                  ammAddress: string;
-                  timestamp: string;
-                  exchangedPositionSize: string;
-                  positionNotional: string;
-                  positionSizeAfter: string;
-                  liquidationPenalty: string;
-                  spotPrice: string;
-                  userAddress: string;
-                  userId: string;
-                  txHash: string;
-                }) => ({
-                  ammAddress: record.ammAddress,
-                  timestamp: Number(record.timestamp),
-                  exchangedPositionSize: formatBigInt(record.exchangedPositionSize),
-                  positionNotional: formatBigInt(record.positionNotional),
-                  positionSizeAfter: formatBigInt(record.positionSizeAfter),
-                  liquidationPenalty: formatBigInt(record.liquidationPenalty),
-                  spotPrice: formatBigInt(record.spotPrice),
-                  userAddress: getAddress(record.userAddress),
-                  userId: record.userId,
-                  txHash: record.txHash
-                })
-              )
-            );
-          });
-        }
+      const { config: addrConf } = getAddressConfig(chain);
+      const ammAddr = addrConf.amms[amm];
+      if (ammAddr) {
+        getMarketHistory(ammAddr).then(res => {
+          setHistory(
+            res.map(
+              (record: {
+                ammAddress: string;
+                timestamp: string;
+                exchangedPositionSize: string;
+                positionNotional: string;
+                positionSizeAfter: string;
+                liquidationPenalty: string;
+                spotPrice: string;
+                userAddress: string;
+                userId: string;
+                txHash: string;
+              }) => ({
+                ammAddress: record.ammAddress,
+                timestamp: Number(record.timestamp),
+                exchangedPositionSize: formatBigInt(record.exchangedPositionSize),
+                positionNotional: formatBigInt(record.positionNotional),
+                positionSizeAfter: formatBigInt(record.positionSizeAfter),
+                liquidationPenalty: formatBigInt(record.liquidationPenalty),
+                spotPrice: formatBigInt(record.spotPrice),
+                userAddress: getAddress(record.userAddress),
+                userId: record.userId,
+                txHash: record.txHash
+              })
+            )
+          );
+        });
       }
     }
 
@@ -161,17 +159,15 @@ export const useOpenSeaData = (amm: AMM) => {
   const [data, setData] = useState<any>([]);
   useEffect(() => {
     function fetch() {
-      if (chain) {
-        const { config: addrConf } = getAddressConfig(chain);
-        const ammAddr = addrConf.amms[amm];
-        if (ammAddr) {
-          getBaycFromMainnet(ammAddr)
-            .then(res => {
-              // from tokenRef.current
-              setData(res);
-            })
-            .catch(() => setData([]));
-        }
+      const { config: addrConf } = getAddressConfig(chain);
+      const ammAddr = addrConf.amms[amm];
+      if (ammAddr) {
+        getBaycFromMainnet(ammAddr)
+          .then(res => {
+            // from tokenRef.current
+            setData(res);
+          })
+          .catch(() => setData([]));
       }
     }
 
@@ -201,26 +197,24 @@ export const useFundingRatesHistory = (amm: AMM) => {
   const [data, setData] = useState<Array<FundingRatesRecord>>();
   useEffect(() => {
     function fetch() {
-      if (chain) {
-        const { config: addrConf } = getAddressConfig(chain);
-        const ammAddr = addrConf.amms[amm];
-        if (ammAddr) {
-          getFundingPaymentHistory(ammAddr)
-            .then(res => {
-              setData(
-                res.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
-                  amm: getAddress(record.amm),
-                  timestamp: Number(record.timestamp),
-                  underlyingPrice: formatBigInt(record.underlyingPrice),
-                  rateLong: formatBigInt(record.rateLong),
-                  rateShort: formatBigInt(record.rateShort),
-                  amountLong: formatBigInt(record.rateLong) * formatBigInt(record.underlyingPrice),
-                  amountShort: formatBigInt(record.rateShort) * formatBigInt(record.underlyingPrice)
-                }))
-              );
-            })
-            .catch(() => setData([]));
-        }
+      const { config: addrConf } = getAddressConfig(chain);
+      const ammAddr = addrConf.amms[amm];
+      if (ammAddr) {
+        getFundingPaymentHistory(ammAddr)
+          .then(res => {
+            setData(
+              res.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
+                amm: getAddress(record.amm),
+                timestamp: Number(record.timestamp),
+                underlyingPrice: formatBigInt(record.underlyingPrice),
+                rateLong: formatBigInt(record.rateLong),
+                rateShort: formatBigInt(record.rateShort),
+                amountLong: formatBigInt(record.rateLong) * formatBigInt(record.underlyingPrice),
+                amountShort: formatBigInt(record.rateShort) * formatBigInt(record.underlyingPrice)
+              }))
+            );
+          })
+          .catch(() => setData([]));
       }
     }
     fetch();

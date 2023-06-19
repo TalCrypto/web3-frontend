@@ -17,7 +17,7 @@ export const useFundingPaymentHistory = (amm: AMM) => {
   const [fpRecords, setFpRecords] = useState<Array<FundingPaymentRecord>>();
   const [total, setTotal] = useState<number>(0);
   useEffect(() => {
-    if (address && chain) {
+    if (address) {
       const { config: addressConfig } = getAddressConfig(chain);
       const ammAddress = addressConfig.amms[amm];
       if (ammAddress) {

@@ -12,7 +12,6 @@ import {
   CollectionTradingData
 } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
-import { useNetwork } from 'wagmi';
 import { getSupportedAMMs } from '@/const/addresses';
 
 export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
@@ -29,6 +28,8 @@ export const usePositionInfosIsLoading = (): boolean => {
     if (chain) {
       const amms = getSupportedAMMs(chain);
       setIsLoading(!(positionInfos && Object.keys(positionInfos).length === amms.length));
+    } else {
+      setIsLoading(false);
     }
   }, [positionInfos, chain]);
   return isLoading;

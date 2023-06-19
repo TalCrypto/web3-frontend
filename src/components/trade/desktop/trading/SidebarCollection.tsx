@@ -93,56 +93,55 @@ function SidebarCollection() {
             </div>
           ) : null}
         </div>
-        {chain &&
-          getSupportedAMMs(chain)
-            .map(amm => getCollectionInformation(amm))
-            .sort((a, b) => a.sort - b.sort)
-            .map(item => (
-              <div
-                key={`sidecol-${item.collection}`}
-                className={`${item.amm === currentAmm ? 'active' : ''} ${isLoading ? 'loading' : ''}
+        {getSupportedAMMs(chain)
+          .map(amm => getCollectionInformation(amm))
+          .sort((a, b) => a.sort - b.sort)
+          .map(item => (
+            <div
+              key={`sidecol-${item.collection}`}
+              className={`${item.amm === currentAmm ? 'active' : ''} ${isLoading ? 'loading' : ''}
             relative mt-8 flex h-8 w-8 cursor-pointer items-center`}
-                onClick={() => selectCollection(item.amm)}>
-                {item.amm === currentAmm ? (
-                  <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-primaryBlue" />
-                ) : null}
-                {item.isNew ? (
-                  <Image
-                    className="absolute right-[-12px] top-[-4px] z-[2]"
-                    src="/images/collections/new.svg"
-                    alt=""
-                    width={26}
-                    height={12}
-                  />
-                ) : null}
-                {/* <OverlayTrigger placement="right" overlay={<Tooltip>{item.displayCollectionPair}</Tooltip>}>
+              onClick={() => selectCollection(item.amm)}>
+              {item.amm === currentAmm ? (
+                <div className="absolute right-[-6px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-primaryBlue" />
+              ) : null}
+              {item.isNew ? (
+                <Image
+                  className="absolute right-[-12px] top-[-4px] z-[2]"
+                  src="/images/collections/new.svg"
+                  alt=""
+                  width={26}
+                  height={12}
+                />
+              ) : null}
+              {/* <OverlayTrigger placement="right" overlay={<Tooltip>{item.displayCollectionPair}</Tooltip>}>
               <Image src={item.sidebarLogo} width="24" height="24" alt="" />
             </OverlayTrigger> */}
+              <Image
+                src={item.sidebarLogo}
+                width="32"
+                height="32"
+                alt=""
+                className="z-[1] rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
+              />
+              {isHasPos(item.amm) ? (
                 <Image
-                  src={item.sidebarLogo}
-                  width="32"
-                  height="32"
+                  className="absolute bottom-[3px] right-[-2px] z-10"
+                  src="/images/mobile/pages/trade/shopping-bag-green.svg"
+                  width="14"
+                  height="14"
                   alt=""
-                  className="z-[1] rounded-full border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
                 />
-                {isHasPos(item.amm) ? (
-                  <Image
-                    className="absolute bottom-[3px] right-[-2px] z-10"
-                    src="/images/mobile/pages/trade/shopping-bag-green.svg"
-                    width="14"
-                    height="14"
-                    alt=""
-                  />
-                ) : null}
-                {/* {isLoading ? (
+              ) : null}
+              {/* {isLoading ? (
               <div className="loading-indicator">
                 <div className="spinner-border spinner-border-sm text-light" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </div>
               </div>
             ) : null} */}
-              </div>
-            ))}
+            </div>
+          ))}
       </div>
       <CollectionModal visible={isColModalVisible} setVisible={setIsColModalVisible} selectCollection={selectCollection} />
     </div>

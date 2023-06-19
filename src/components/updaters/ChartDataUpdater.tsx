@@ -27,7 +27,7 @@ const ChartDataUpdater = () => {
         volume: bigint;
       };
       let dailyVolume: number = 0;
-      if (chain && currentAmm) {
+      if (currentAmm) {
         const ammAddr = getAMMAddress(chain, currentAmm);
         if (!ammAddr) return;
         if (selectedTimeIndex === 0) {

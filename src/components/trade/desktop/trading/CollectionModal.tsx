@@ -2,10 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
-import { utils } from 'ethers';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
-import { calculateNumber } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
 import { CollectionOverview, useMarketOverview } from '@/hooks/market';
 import { getCollectionInformation } from '@/const/collectionList';
@@ -126,36 +124,33 @@ const CollectionModal = (props: any) => {
     sortedData &&
     sortedData.map((tradingData: CollectionOverview, index: any) => {
       const targetCollection = getCollectionInformation(tradingData.amm);
-      const { logo, collection, collectionName, displayCollectionPair } = targetCollection;
+      const { logo, amm: collection, collectionName, displayCollectionPair } = targetCollection;
 
-      const vAMMPrice = !tradingData.vammPrice ? 0 : Number(utils.formatEther(tradingData.vammPrice));
-      const oraclePrice = !tradingData.oraclePrice ? 0 : Number(utils.formatEther(tradingData.oraclePrice));
+      const vAMMPrice = !tradingData.vammPrice ? 0 : tradingData.vammPrice;
+      const oraclePrice = !tradingData.oraclePrice ? 0 : tradingData.oraclePrice;
       const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
       const priceGapPercentage = priceGap * 100;
 
-      const changed24h = (
-        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio24h, 2)) > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
-          {Number(calculateNumber(tradingData.priceChangeRatio24h, 2)) > 0 ? '+' : '-'}
-          {Math.abs(Number(calculateNumber(tradingData.priceChange24h, 2)))}(
-          {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio24h, 2)))}%)
+      const changed24h = tradingData.priceChangeRatio24h ? (
+        <p className={`${tradingData.priceChangeRatio24h > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+          {tradingData.priceChangeRatio24h > 0 ? '+' : '-'}
+          {Math.abs(Number(tradingData.priceChange24h?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio24h?.toFixed(2)))}%)
         </p>
-      );
+      ) : null;
 
-      const changed7d = (
-        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio7d, 2)) > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
-          {Number(calculateNumber(tradingData.priceChangeRatio7d, 2)) > 0 ? '+' : '-'}
-          {Math.abs(Number(calculateNumber(tradingData.priceChange7d, 2)))}(
-          {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio7d, 2)))}%)
+      const changed7d = tradingData.priceChangeRatio7d ? (
+        <p className={`${tradingData.priceChangeRatio7d > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+          {tradingData.priceChangeRatio7d > 0 ? '+' : '-'}
+          {Math.abs(Number(tradingData.priceChange7d?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio7d?.toFixed(2)))}%)
         </p>
-      );
+      ) : null;
 
-      const changed30d = (
-        <p className={`${Number(calculateNumber(tradingData.priceChangeRatio30d, 2)) > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
-          {Number(calculateNumber(tradingData.priceChangeRatio30d, 2)) > 0 ? '+' : '-'}
-          {Math.abs(Number(calculateNumber(tradingData.priceChange30d, 2)))}(
-          {Math.abs(Number(calculateNumber(tradingData.priceChangeRatio30d, 2)))}%)
+      const changed30d = tradingData.priceChangeRatio30d ? (
+        <p className={`${tradingData.priceChangeRatio30d > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+          {tradingData.priceChangeRatio30d > 0 ? '+' : '-'}
+          {Math.abs(Number(tradingData.priceChange30d?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio30d?.toFixed(2)))}%)
         </p>
-      );
+      ) : null;
 
       const priceGapElement = (
         <div className="flex items-center">
@@ -198,22 +193,22 @@ const CollectionModal = (props: any) => {
             {periodIndex === 2 ? changed30d : null}
           </div>
           <div className="flex basis-1/6 items-start justify-end px-[18px]">
-            <PriceWithIcon priceValue={calculateNumber(tradingData.volume, 2)} className="justify-content-end" />
+            <PriceWithIcon priceValue={tradingData.volume?.toFixed(2)} className="justify-content-end" />
           </div>
           <div className="font-400 basis-1/5 px-[18px] text-right text-[12px] text-highEmphasis">
             <div>
               Long{' '}
-              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-marketRed' : 'text-marketGreen'}>
-                {Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'Pay' : 'Get'}
+              <span className={tradingData.fundingRateLong && tradingData.fundingRateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}>
+                {tradingData.fundingRateLong && tradingData.fundingRateLong > 0 ? 'Pay' : 'Get'}
               </span>{' '}
-              {`${Math.abs(Number(Number(calculateNumber(tradingData.fundingRateLong, 5)) * 100)).toFixed(3)}%`}
+              {`${Math.abs(Number(Number(tradingData.fundingRateLong?.toFixed(5)) * 100)).toFixed(3)}%`}
             </div>
             <div>
               Short{' '}
-              <span className={Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'text-marketGreen' : 'text-marketRed'}>
-                {Number(calculateNumber(tradingData.fundingRateLong, 5)) > 0 ? 'Get' : 'Pay'}
+              <span className={tradingData.fundingRateLong && tradingData.fundingRateLong > 0 ? 'text-marketGreen' : 'text-marketRed'}>
+                {tradingData.fundingRateLong && tradingData.fundingRateLong > 0 ? 'Get' : 'Pay'}
               </span>{' '}
-              {`${Math.abs(Number(Number(calculateNumber(tradingData.fundingRateShort, 5)) * 100)).toFixed(3)}%`}
+              {`${Math.abs(Number(Number(tradingData.fundingRateShort?.toFixed(5)) * 100)).toFixed(3)}%`}
             </div>
           </div>
         </div>

@@ -66,10 +66,8 @@ export const useOpenPositionEstimation = (args: {
     address: chViewer.address,
     abi: chViewerAbi,
     functionName: 'getOpenPositionEstimation',
-    args:
-      ammAddr && address && side !== undefined && notionalAmount && leverage
-        ? [ammAddr, address, Number(side), notionalAmount, leverage]
-        : undefined
+    args: ammAddr && address && notionalAmount && leverage ? [ammAddr, address, Number(side), notionalAmount, leverage] : undefined,
+    enabled: Boolean(ammAddr && address && notionalAmount && leverage)
   });
 
   const estimation = data
@@ -111,7 +109,8 @@ export const useApprovalCheck = (amount: number) => {
     ...weth,
     abi: wethAbi,
     functionName: 'allowance',
-    args: address && chContract ? [address, chContract.address] : undefined
+    args: address && chContract ? [address, chContract.address] : undefined,
+    enabled: Boolean(address && chContract)
   });
 
   const allowance = formatBigInt(allowanceData ?? 0n);
@@ -135,7 +134,8 @@ export const useApproveTransaction = (approvalAmount: number) => {
     ...weth,
     abi: wethAbi,
     functionName: 'approve',
-    args: chContract && approvalAmount ? [chContract.address, parseBigInt(approvalAmount)] : undefined
+    args: chContract && approvalAmount ? [chContract.address, parseBigInt(approvalAmount)] : undefined,
+    enabled: Boolean(chContract && approvalAmount)
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
@@ -186,10 +186,8 @@ export const useOpenPositionTransaction = (args: {
     ...chContract,
     abi: chAbi,
     functionName: 'openPosition',
-    args:
-      ammAddr && side !== undefined && notionalAmount && leverage && sizeLimit !== undefined
-        ? [ammAddr, Number(side), notionalAmount, leverage, sizeLimit, true]
-        : undefined
+    args: ammAddr && notionalAmount && leverage ? [ammAddr, Number(side), notionalAmount, leverage, sizeLimit, true] : undefined,
+    enabled: Boolean(ammAddr && notionalAmount && leverage)
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
@@ -230,7 +228,8 @@ export const useClosePositionTransaction = (_slippagePercent: number) => {
     ...chContract,
     abi: chAbi,
     functionName: 'closePosition',
-    args: ammAddr ? [ammAddr, notionalLimit] : undefined
+    args: ammAddr ? [ammAddr, notionalLimit] : undefined,
+    enabled: Boolean(ammAddr)
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
@@ -259,7 +258,8 @@ export const useAdjustCollateralEstimation = (deltaMargin: number) => {
     ...chViewer,
     abi: chViewerAbi,
     functionName: 'getMarginAdjustmentEstimation',
-    args: ammAddr && address && dmargin ? [ammAddr, address, dmargin] : undefined
+    args: ammAddr && address && dmargin ? [ammAddr, address, dmargin] : undefined,
+    enabled: Boolean(ammAddr && address && dmargin)
   });
 
   const estimation = data
@@ -289,7 +289,8 @@ export const useAddCollateralTransaction = (deltaMargin: number) => {
     ...chContract,
     abi: chAbi,
     functionName: 'addMargin',
-    args: ammAddr && dmargin ? [ammAddr, dmargin] : undefined
+    args: ammAddr && dmargin ? [ammAddr, dmargin] : undefined,
+    enabled: Boolean(ammAddr && dmargin)
   });
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
 
@@ -320,7 +321,8 @@ export const useRemoveCollateralTransaction = (deltaMargin: number) => {
     ...chContract,
     abi: chAbi,
     functionName: 'removeMargin',
-    args: ammAddr && dmargin ? [ammAddr, dmargin] : undefined
+    args: ammAddr && dmargin ? [ammAddr, dmargin] : undefined,
+    enabled: Boolean(ammAddr && dmargin)
   });
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
 

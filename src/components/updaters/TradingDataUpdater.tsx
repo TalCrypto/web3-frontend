@@ -17,10 +17,7 @@ const Updater = ({ ammContract, chViewer }: { ammContract: Contract; chViewer: C
       { ...ammContract, abi: ammAbi, functionName: 'longPositionSize' },
       { ...ammContract, abi: ammAbi, functionName: 'shortPositionSize' },
       { ...chViewer, abi: chViewerAbi, functionName: 'getFundingRates', args: [ammContract.address] }
-    ],
-    watch: true,
-    // allowFailure: false
-    cacheTime: 2_000
+    ]
   });
 
   const vammPrice = data ? data[0].result : undefined;
