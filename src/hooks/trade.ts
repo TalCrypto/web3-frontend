@@ -2,13 +2,15 @@
 /* eslint-disable indent */
 import { getAMMAddress } from '@/const/addresses';
 import { useEffect, useState } from 'react';
-import { useContractRead, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
-import { absBigInt, formatBigInt, parseBigInt } from '@/utils/bigInt';
+import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/contracts';
 import { chAbi, chViewerAbi, wethAbi } from '@/const/abi';
 import { $userAddress, $currentChain } from '@/stores/user';
+import { useDebounce } from '@/hooks/debounce';
+import { usePositionInfo } from '@/hooks/collection';
 
 // eslint-disable-next-line no-shadow
 export enum Side {
@@ -18,52 +20,64 @@ export enum Side {
   SHORT
 }
 
-export const useOpenPosition = (args: {
+interface OpenPositionEstimation {
+  posInfo: {
+    size: number;
+    openNotional: number;
+    marginRatioPct: number;
+    avgEntryPrice: number;
+    leverage: number;
+    liquidationPrice: number;
+    positionNotional: number;
+    margin: number;
+    isLiquidatable: boolean;
+  };
+  txSummary: {
+    exposure: number;
+    entryPrice: number;
+    priceImpactPct: number;
+    fee: number;
+    cost: number;
+    collateral: number;
+  };
+}
+
+export const getApprovalAmountFromEstimation = (estimation: OpenPositionEstimation) =>
+  // eslint-disable-next-line implicit-arrow-linebreak
+  estimation ? Math.max(estimation.txSummary.cost, estimation.txSummary.fee) : 0;
+
+export const useOpenPositionEstimation = (args: {
   side: Side;
   notionalAmount: number;
   slippagePercent: number;
   leverage: number;
-  isClose: boolean;
-}) => {
+}): { isLoading: boolean; estimation?: OpenPositionEstimation } => {
   const amm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
   const address = useNanostore($userAddress);
-  const [side, setSide] = useState(0);
-  const [notionalAmount, setNotionalAmount] = useState(0n);
-  const [sizeLimit, setSizeLimit] = useState(0n);
-  const [notionalLimit, setNotionalLimit] = useState(0n);
-  const [leverage, setLeverage] = useState(0n);
-  if (!amm || !chain) return;
+  const side = useDebounce(BigInt(args.side));
+  const notionalAmount = useDebounce(parseBigInt(args.notionalAmount));
+  const leverage = useDebounce(parseBigInt(args.leverage));
   const ammAddr = getAMMAddress(chain, amm);
-  if (!ammAddr || !address) return;
   const chViewer = getCHViewerContract(chain);
-  const chContract = getCHContract(chain);
-  const weth = getWEthContract(chain);
 
   // estimate position
-  const { data, isLoading: isEstLoading } = useContractRead({
+  const { data, isLoading } = useContractRead({
     address: chViewer.address,
     abi: chViewerAbi,
     functionName: 'getOpenPositionEstimation',
-    args: [ammAddr, address, side, notionalAmount, leverage]
+    args:
+      ammAddr && address && side !== undefined && notionalAmount && leverage
+        ? [ammAddr, address, Number(side), notionalAmount, leverage]
+        : undefined
   });
-
-  // get allowance
-  const { data: allowanceData, isLoading: isApprovalLoading } = useContractRead({
-    ...weth,
-    abi: wethAbi,
-    functionName: 'allowance',
-    args: [address, chContract.address]
-  });
-
-  const allowance = formatBigInt(allowanceData ?? 0n);
 
   const estimation = data
     ? {
         posInfo: {
           size: formatBigInt(data.positionInfo.positionSize),
           openNotional: formatBigInt(data.positionInfo.openNotional),
-          marginRatio: formatBigInt(data.positionInfo.marginRatio * 100n),
+          marginRatioPct: formatBigInt(data.positionInfo.marginRatio * 100n),
           avgEntryPrice: formatBigInt(data.positionInfo.avgEntryPrice),
           leverage: formatBigInt(data.positionInfo.leverage),
           liquidationPrice: formatBigInt(data.positionInfo.liquidationPrice),
@@ -74,7 +88,7 @@ export const useOpenPosition = (args: {
         txSummary: {
           exposure: formatBigInt(data.txSummary.exchangedPositionSize),
           entryPrice: formatBigInt(data.txSummary.entryPrice),
-          priceImpact: formatBigInt(data.txSummary.priceImpact * 100n),
+          priceImpactPct: formatBigInt(data.txSummary.priceImpact * 100n),
           fee: formatBigInt(data.txSummary.spreadFee + data.txSummary.tollFee),
           cost: formatBigInt(data.txSummary.spreadFee + data.txSummary.tollFee + data.txSummary.marginToVault),
           collateral: formatBigInt(data.txSummary.marginToVault)
@@ -82,259 +96,242 @@ export const useOpenPosition = (args: {
       }
     : undefined;
 
-  // check approval
-  const approvalAmountNeeded = estimation ? Math.max(estimation.txSummary.cost, estimation.txSummary.fee) : 0;
+  return { isLoading, estimation };
+};
 
-  const isNeedApproval = allowance < approvalAmountNeeded;
+export const useApprovalCheck = (amount: number) => {
+  const chain = useNanostore($currentChain);
+  const address = useNanostore($userAddress);
+  const chContract = getCHContract(chain);
+  const weth = getWEthContract(chain);
+  const [isNeedApproval, setIsNeedApproval] = useState(false);
 
-  // debouncing
+  // get allowance
+  const { data: allowanceData } = useContractRead({
+    ...weth,
+    abi: wethAbi,
+    functionName: 'allowance',
+    args: address && chContract ? [address, chContract.address] : undefined
+  });
+
+  const allowance = formatBigInt(allowanceData ?? 0n);
+
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const exposure = estimation?.txSummary.exposure;
-      if (args.isClose && exposure) {
-        const slippage = args.side === Side.SHORT ? 1 - args.slippagePercent / 100 : 1 + args.slippagePercent / 100;
-        const limit = exposure * slippage;
-        setNotionalLimit(parseBigInt(limit));
-      } else if (exposure) {
-        const slippage = args.side === Side.LONG ? 1 - args.slippagePercent / 100 : 1 + args.slippagePercent / 100;
-        const limit = exposure * slippage;
-        setSizeLimit(parseBigInt(limit));
-      }
-      setSide(args.side);
-      setNotionalAmount(parseBigInt(args.notionalAmount));
-      setLeverage(parseBigInt(args.leverage));
-    }, 500);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [args.side, args.notionalAmount, args.leverage, args.slippagePercent, args.isClose, estimation?.txSummary.exposure]);
+    setIsNeedApproval(allowance < amount);
+  }, [amount, allowance]);
 
-  // create approve transaction
-  if (isNeedApproval) {
-    const {
-      config,
-      error: prepareError,
-      isError: isPrepareError,
-      isLoading: isPrepareLoading
-    } = usePrepareContractWrite({
-      ...weth,
-      abi: wethAbi,
-      functionName: 'approve',
-      args: [chContract.address, parseBigInt(approvalAmountNeeded)]
-    });
+  return isNeedApproval;
+};
 
-    const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
-
-    const txHash = writeData?.hash;
-
-    const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
-
-    const isLoading = isEstLoading || isApprovalLoading || isPrepareLoading;
-
-    const isError = isPrepareError || isWriteError;
-
-    const error = prepareError || writeError;
-
-    // eslint-disable-next-line consistent-return
-    return { isNeedApproval, estimation, write, isError, error, isLoading, isPending, isSuccess, txHash };
-  }
-
-  // create close transaction
-  if (args.isClose) {
-    const {
-      config,
-      error: prepareError,
-      isError: isPrepareError,
-      isLoading: isPrepareLoading
-    } = usePrepareContractWrite({
-      ...chContract,
-      abi: chAbi,
-      functionName: 'closePosition',
-      args: [ammAddr, notionalLimit]
-    });
-
-    const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
-
-    const txHash = writeData?.hash;
-
-    const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
-
-    const isLoading = isEstLoading || isApprovalLoading || isPrepareLoading;
-
-    const isError = isPrepareError || isWriteError;
-
-    const error = prepareError || writeError;
-
-    // eslint-disable-next-line consistent-return
-    return { isNeedApproval, estimation, write, isError, error, isLoading, isPending, isSuccess, txHash };
-  }
-
-  // create open position transaction
+export const useApproveTransaction = (approvalAmount: number) => {
+  const chain = useNanostore($currentChain);
+  const chContract = getCHContract(chain);
+  const weth = getWEthContract(chain);
   const {
     config,
     error: prepareError,
-    isError: isPrepareError,
-    isLoading: isPrepareLoading
+    isError: isPrepareError
   } = usePrepareContractWrite({
-    ...chContract,
-    abi: chAbi,
-    functionName: 'openPosition',
-    args: [ammAddr, side, notionalAmount, leverage, sizeLimit, true]
+    ...weth,
+    abi: wethAbi,
+    functionName: 'approve',
+    args: chContract && approvalAmount ? [chContract.address, parseBigInt(approvalAmount)] : undefined
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
 
   const txHash = writeData?.hash;
 
-  const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
-
-  const isLoading = isEstLoading || isApprovalLoading || isPrepareLoading;
+  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
 
   const isError = isPrepareError || isWriteError;
 
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { isNeedApproval, estimation, write, isError, error, isLoading, isPending, isSuccess, txHash };
+  return { write, isError, error, isLoading, isSuccess, txHash };
 };
 
-/**
- *
- * @param deltaMargin positive means adding margin, otherwise means removing margin
- */
-export const useAdjustCollateral = (deltaMargin: number) => {
+export const useOpenPositionTransaction = (args: {
+  side: Side;
+  notionalAmount: number;
+  slippagePercent: number;
+  leverage: number;
+  estimation: OpenPositionEstimation;
+}) => {
+  const amm = useNanostore($currentAmm);
+  const chain = useNanostore($currentChain);
+  const side = useDebounce(BigInt(args.side));
+  const notionalAmount = useDebounce(parseBigInt(args.notionalAmount));
+  const leverage = useDebounce(parseBigInt(args.leverage));
+  const slippagePercent = useDebounce(parseBigInt(args.slippagePercent));
+
+  const { exposure } = args.estimation.txSummary;
+  const slippage = slippagePercent
+    ? side === BigInt(Side.LONG)
+      ? 1 - formatBigInt(slippagePercent) / 100
+      : 1 + formatBigInt(slippagePercent) / 100
+    : 0;
+  const sizeLimit = parseBigInt(exposure * slippage);
+
+  const ammAddr = getAMMAddress(chain, amm);
+
+  const chContract = getCHContract(chain);
+
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError
+  } = usePrepareContractWrite({
+    ...chContract,
+    abi: chAbi,
+    functionName: 'openPosition',
+    args:
+      ammAddr && side !== undefined && notionalAmount && leverage && sizeLimit !== undefined
+        ? [ammAddr, Number(side), notionalAmount, leverage, sizeLimit, true]
+        : undefined
+  });
+
+  const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
+
+  const txHash = writeData?.hash;
+
+  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+
+  const isError = isPrepareError || isWriteError;
+
+  const error = prepareError || writeError;
+
+  // eslint-disable-next-line consistent-return
+  return { write, isError, error, isLoading, isSuccess, txHash };
+};
+
+export const useClosePositionTransaction = (_slippagePercent: number) => {
+  const amm = useNanostore($currentAmm);
+  const chain = useNanostore($currentChain);
+  const positionInfo = usePositionInfo(amm);
+  const slippagePercent = useDebounce(parseBigInt(_slippagePercent));
+  const slippage = slippagePercent
+    ? positionInfo
+      ? positionInfo.size > 0 // long => lower limit
+        ? 1 - formatBigInt(slippagePercent) / 100
+        : 1 + formatBigInt(slippagePercent) / 100
+      : 0
+    : 0;
+  const notionalLimit = positionInfo ? parseBigInt(positionInfo.currentNotional * slippage) : 0n;
+  const ammAddr = getAMMAddress(chain, amm);
+  const chContract = getCHContract(chain);
+
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError
+  } = usePrepareContractWrite({
+    ...chContract,
+    abi: chAbi,
+    functionName: 'closePosition',
+    args: ammAddr ? [ammAddr, notionalLimit] : undefined
+  });
+
+  const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
+
+  const txHash = writeData?.hash;
+
+  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+
+  const isError = isPrepareError || isWriteError;
+
+  const error = prepareError || writeError;
+
+  // eslint-disable-next-line consistent-return
+  return { write, isError, error, isLoading, isSuccess, txHash };
+};
+
+export const useAdjustCollateralEstimation = (deltaMargin: number) => {
   const amm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
   const address = useNanostore($userAddress);
-  const [dmargin, setDmargin] = useState(0n);
-  if (!amm || !chain) return;
+  const dmargin = useDebounce(parseBigInt(deltaMargin));
   const ammAddr = getAMMAddress(chain, amm);
-  if (!ammAddr || !address) return;
   const chViewer = getCHViewerContract(chain);
-  const chContract = getCHContract(chain);
-  const weth = getWEthContract(chain);
 
-  // estimate position
-  const { data, isLoading: isEstLoading } = useContractRead({
+  const { data, isLoading } = useContractRead({
     ...chViewer,
     abi: chViewerAbi,
     functionName: 'getMarginAdjustmentEstimation',
-    args: [ammAddr, address, dmargin]
-  });
-
-  // get allowance
-  const { data: allowance, isLoading: isApprovalLoading } = useContractRead({
-    ...weth,
-    abi: wethAbi,
-    functionName: 'allowance',
-    args: [address, chContract.address]
+    args: ammAddr && address && dmargin ? [ammAddr, address, dmargin] : undefined
   });
 
   const estimation = data
     ? {
-        marginRatio: formatBigInt(data.marginRatio * 100n),
+        marginRatioPct: formatBigInt(data.marginRatio * 100n),
         leverage: formatBigInt(data.leverage),
         liquidationPrice: formatBigInt(data.liquidationPrice),
         isLiquidatable: data.isLiquidatable
       }
     : undefined;
 
-  // debouncing
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setDmargin(parseBigInt(deltaMargin));
-    }, 500);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [deltaMargin]);
+  return { isLoading, estimation };
+};
 
-  let isNeedApproval = false;
+export const useAddCollateralTransaction = (deltaMargin: number) => {
+  const amm = useNanostore($currentAmm);
+  const chain = useNanostore($currentChain);
+  const dmargin = useDebounce(parseBigInt(deltaMargin));
+  const ammAddr = getAMMAddress(chain, amm);
+  const chContract = getCHContract(chain);
 
-  if (dmargin >= 0n) {
-    isNeedApproval = allowance ? allowance < dmargin : false;
-    // create approval transaction
-    if (isNeedApproval) {
-      const {
-        config,
-        error: prepareError,
-        isError: isPrepareError,
-        isLoading: isPrepareLoading
-      } = usePrepareContractWrite({
-        ...weth,
-        abi: wethAbi,
-        functionName: 'approve',
-        args: [chContract.address, dmargin]
-      });
-
-      const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
-
-      const txHash = writeData?.hash;
-
-      const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
-
-      const isLoading = isEstLoading || isApprovalLoading || isPrepareLoading;
-
-      const isError = isPrepareError || isWriteError;
-
-      const error = prepareError || writeError;
-
-      // eslint-disable-next-line consistent-return
-      return { isNeedApproval, estimation, write, isError, error, isLoading, isPending, isSuccess, txHash };
-    }
-    // create add margin transaction
-    const {
-      config,
-      error: prepareError,
-      isError: isPrepareError,
-      isLoading: isPrepareLoading
-    } = usePrepareContractWrite({
-      ...chContract,
-      abi: chAbi,
-      functionName: 'addMargin',
-      args: [ammAddr, dmargin]
-    });
-    const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
-
-    const txHash = writeData?.hash;
-
-    const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
-
-    const isLoading = isEstLoading || isApprovalLoading || isPrepareLoading;
-
-    const isError = isPrepareError || isWriteError;
-
-    const error = prepareError || writeError;
-
-    // eslint-disable-next-line consistent-return
-    return { isNeedApproval, estimation, write, isError, error, isLoading, isPending, isSuccess, txHash };
-  }
-
-  // create remove margin
   const {
     config,
     error: prepareError,
-    isError: isPrepareError,
-    isLoading: isPrepareLoading
+    isError: isPrepareError
   } = usePrepareContractWrite({
     ...chContract,
     abi: chAbi,
-    functionName: 'removeMargin',
-    args: [ammAddr, absBigInt(dmargin)]
+    functionName: 'addMargin',
+    args: ammAddr && dmargin ? [ammAddr, dmargin] : undefined
   });
-
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
 
   const txHash = writeData?.hash;
 
-  const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
-
-  const isLoading = isEstLoading || isApprovalLoading || isPrepareLoading;
+  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
 
   const isError = isPrepareError || isWriteError;
 
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { isNeedApproval, estimation, write, isError, error, isLoading, isPending, isSuccess, txHash };
+  return { write, isError, error, isLoading, isSuccess, txHash };
+};
+
+export const useRemoveCollateralTransaction = (deltaMargin: number) => {
+  const amm = useNanostore($currentAmm);
+  const chain = useNanostore($currentChain);
+  const dmargin = useDebounce(parseBigInt(deltaMargin));
+  const ammAddr = getAMMAddress(chain, amm);
+  const chContract = getCHContract(chain);
+
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError
+  } = usePrepareContractWrite({
+    ...chContract,
+    abi: chAbi,
+    functionName: 'removeMargin',
+    args: ammAddr && dmargin ? [ammAddr, dmargin] : undefined
+  });
+  const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
+
+  const txHash = writeData?.hash;
+
+  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+
+  const isError = isPrepareError || isWriteError;
+
+  const error = prepareError || writeError;
+
+  // eslint-disable-next-line consistent-return
+  return { write, isError, error, isLoading, isSuccess, txHash };
 };
