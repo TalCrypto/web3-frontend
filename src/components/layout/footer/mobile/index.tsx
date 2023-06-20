@@ -6,12 +6,13 @@ import { wsIsShowTradingMobile } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
 import MobileMenu from '@/components/trade/mobile/menu';
 import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import { useConnect, useSwitchNetwork } from 'wagmi';
-import { CHAINS } from '@/const/supportedChains';
+import { useSwitchNetwork } from 'wagmi';
+import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $isShowMobileModal } from '@/stores/common';
+import { useWeb3Modal } from '@web3modal/react';
 
 function MobileFooter() {
-  const { connect } = useConnect();
+  const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
   const isConnected = useNanostore($userIsConnected);
   const isConnecting = useNanostore($userIsConnecting);
@@ -22,12 +23,12 @@ function MobileFooter() {
 
   const onClickBottomButton = async () => {
     if (!isConnected) {
-      connect();
+      open({ route: 'ConnectWallet' });
       return;
     }
 
     if (isWrongNetwork && switchNetwork) {
-      switchNetwork(CHAINS[0].id);
+      switchNetwork(DEFAULT_CHAIN.id);
       return;
     }
 
