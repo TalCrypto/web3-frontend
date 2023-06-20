@@ -239,4 +239,4 @@ export const collectionsInfos: CollectionInfos = {
   // }
 };
 
-export const getCollectionInformation = (amm: AMM): CollectionInfo => collectionsInfos[amm];
+export const getCollectionInformation = (amm?: AMM): CollectionInfo => (amm ? collectionsInfos[amm] : collectionsInfos[DEFAULT_AMM]);

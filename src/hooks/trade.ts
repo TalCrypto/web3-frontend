@@ -20,7 +20,7 @@ export enum Side {
   SHORT
 }
 
-interface OpenPositionEstimation {
+export interface OpenPositionEstimation {
   posInfo: {
     size: number;
     openNotional: number;
@@ -42,7 +42,7 @@ interface OpenPositionEstimation {
   };
 }
 
-export const getApprovalAmountFromEstimation = (estimation: OpenPositionEstimation) =>
+export const getApprovalAmountFromEstimation = (estimation?: OpenPositionEstimation) =>
   // eslint-disable-next-line implicit-arrow-linebreak
   estimation ? Math.max(estimation.txSummary.cost, estimation.txSummary.fee) : 0;
 
@@ -306,7 +306,7 @@ export const useAddCollateralTransaction = (deltaMargin: number) => {
   return { write, isError, error, isLoading, isSuccess, txHash };
 };
 
-export const useRemoveCollateralTransaction = (deltaMargin: number) => {
+export const useReduceCollateralTransaction = (deltaMargin: number) => {
   const amm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
   const dmargin = useDebounce(parseBigInt(deltaMargin));
