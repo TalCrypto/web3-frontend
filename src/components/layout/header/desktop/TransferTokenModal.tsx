@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { wsIsShowTransferTokenModal } from '@/stores/WalletState';
-import { $showTransferTokenModal } from '@/stores/modal';
+import { $showGetWEthModal } from '@/stores/modal';
 
 interface ButtonContentProps {
   icon: string;
@@ -30,7 +30,7 @@ function ButtonContent({ icon, url, name }: ButtonContentProps) {
 }
 
 const TransferTokenModal = () => {
-  const showTransferTokenModal = useNanostore($showTransferTokenModal);
+  const showTransferTokenModal = useNanostore($showGetWEthModal);
 
   if (!showTransferTokenModal) {
     return null;
@@ -40,7 +40,7 @@ const TransferTokenModal = () => {
     <div
       className="fixed inset-0 z-10 flex h-screen items-center
         justify-center overflow-auto bg-black bg-opacity-40"
-      onClick={() => $showTransferTokenModal.set(false)}>
+      onClick={() => $showGetWEthModal.set(false)}>
       <div
         className="w-[500px] rounded-xl bg-lightBlue p-[16px] pb-0 text-[14px]
           font-normal leading-normal"
@@ -52,7 +52,7 @@ const TransferTokenModal = () => {
             width={16}
             height={16}
             className="cursor-pointer"
-            onClick={() => $showTransferTokenModal.set(false)}
+            onClick={() => $showGetWEthModal.set(false)}
           />
         </div>
         <div className="relative flex flex-col items-center justify-center">

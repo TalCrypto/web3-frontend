@@ -15,7 +15,7 @@ import { logEvent } from 'firebase/analytics';
 import { $userAddress, $userInfo, $userPositionInfos, UserInfo } from '@/stores/user';
 import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { AMM } from '@/const/collectionList';
-import { $showSwitchNetworkErrorModal, $showTransferTokenModal } from '@/stores/modal';
+import { $showSwitchNetworkErrorModal, $showGetWEthModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
 import PrimaryButton from '@/components/common/PrimaryButton';
 
@@ -153,7 +153,7 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
       <li className="m-0 list-none p-0">
         <div className="normal-buttons m-6 mt-3">
           {!isWrongNetwork ? (
-            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={() => $showTransferTokenModal.set(true)}>
+            <PrimaryButton className="h-[42px] text-[14px] font-semibold" onClick={() => $showGetWEthModal.set(true)}>
               Get WETH
             </PrimaryButton>
           ) : (
