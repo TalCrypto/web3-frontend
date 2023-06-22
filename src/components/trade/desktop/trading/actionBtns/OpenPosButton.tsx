@@ -8,6 +8,7 @@ import { getCollectionInformation } from '@/const/collectionList';
 import { usePositionInfo } from '@/hooks/collection';
 
 function OpenPosButton({
+  disabled,
   isEstimating,
   side,
   notionalAmount,
@@ -18,6 +19,7 @@ function OpenPosButton({
   onSuccess,
   onError
 }: {
+  disabled: boolean;
   isEstimating: boolean;
   side: Side;
   notionalAmount: number;
@@ -33,6 +35,8 @@ function OpenPosButton({
   const collectionInfo = getCollectionInformation(currentAmm);
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
+  const label =
+    positionInfo?.size === 0 ? 'Open Position' : (-1) ** side * (positionInfo?.size ?? 0) > 0 ? 'Add Position' : 'Reduce Position';
 
   useEffect(() => {
     setIsLoading(false);
@@ -62,11 +66,10 @@ function OpenPosButton({
 
   useEffect(() => {
     if (isPending && txHash) {
-      const type = positionInfo?.size === 0 ? 'Open' : (-1) ** side * (positionInfo?.size ?? 0) > 0 ? 'Add' : 'Partial Close';
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - ${type} Position`,
+          title: `${collectionInfo.shortName} - ${label}`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'
@@ -77,19 +80,18 @@ function OpenPosButton({
         }
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPending]);
+  }, [collectionInfo.shortName, isPending, label, txHash]);
 
   return (
     <BaseButton
-      disabled={!write}
+      disabled={!write || disabled}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();
         setIsLoading(true);
         write?.();
       }}
-      label="Trade"
+      label={label}
     />
   );
 }

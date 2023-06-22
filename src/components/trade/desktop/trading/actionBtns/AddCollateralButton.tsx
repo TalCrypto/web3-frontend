@@ -68,7 +68,7 @@ function AddCollateralButton({
         setIsLoading(true);
         write?.();
       }}
-      label="Trade"
+      label="Add Collateral"
     />
   );
 }

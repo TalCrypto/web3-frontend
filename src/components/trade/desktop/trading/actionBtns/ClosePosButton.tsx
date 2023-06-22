@@ -45,7 +45,7 @@ function ClosePosButton({
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - Full Close Position`,
+          title: `${collectionInfo.shortName} - Close Position`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'
@@ -67,7 +67,7 @@ function ClosePosButton({
         setIsLoading(true);
         write?.();
       }}
-      label="Trade"
+      label="Close Position"
     />
   );
 }

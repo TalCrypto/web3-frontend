@@ -191,7 +191,7 @@ export const useOpenPositionTransaction = (args: {
     abi: chAbi,
     functionName: 'openPosition',
     args: ammAddr && notionalAmount && leverage ? [ammAddr, Number(side), notionalAmount, leverage, sizeLimit, true] : undefined,
-    enabled: Boolean(ammAddr && notionalAmount && leverage && args.estimation && args.estimation.txSummary.collateral >= MINIMUM_COLLATERAL)
+    enabled: Boolean(ammAddr && notionalAmount && leverage && args.estimation)
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);

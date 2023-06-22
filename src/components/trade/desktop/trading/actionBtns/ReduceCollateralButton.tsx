@@ -68,7 +68,7 @@ function ReduceCollateralButton({
         setIsLoading(true);
         write?.();
       }}
-      label="Trade"
+      label="Reduce Collateral"
     />
   );
 }

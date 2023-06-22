@@ -35,7 +35,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
   });
 
   const size = data ? formatBigInt(data.positionSize) : 0;
-  const collateral = data ? formatBigInt(data.margin) : 0;
+  const margin = data ? formatBigInt(data.margin) : 0;
   const openNotional = data ? formatBigInt(data.openNotional) : 0;
   const currentNotional = data ? formatBigInt(data.positionNotional) : 0;
   const unrealizedPnl = data ? formatBigInt(data.unrealizedPnl) : 0;
@@ -52,7 +52,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
       $userPositionInfos.setKey(amm, {
         amm: ammAddress,
         size,
-        collateral,
+        margin,
         openNotional,
         currentNotional,
         unrealizedPnl,
@@ -70,7 +70,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
     chain,
     ammAddress,
     size,
-    collateral,
+    margin,
     openNotional,
     currentNotional,
     unrealizedPnl,

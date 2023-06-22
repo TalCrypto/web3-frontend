@@ -33,7 +33,7 @@ export interface UserInfo {
 export interface UserPositionInfo {
   amm: Address;
   size: number;
-  collateral: number;
+  margin: number;
   openNotional: number;
   currentNotional: number;
   unrealizedPnl: number;

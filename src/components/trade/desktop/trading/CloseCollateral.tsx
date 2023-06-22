@@ -4,30 +4,29 @@
 /* eslint-disable indent */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable operator-linebreak */
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { logEvent } from 'firebase/analytics';
-import { ThreeDots } from 'react-loader-spinner';
-import { BigNumber, utils } from 'ethers';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 // import { debounce } from 'throttle-debounce';
 import { useStore as useNanostore } from '@nanostores/react';
-import collectionsLoading from '@/stores/collectionsLoading';
-
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { walletProvider } from '@/utils/walletProvider';
-import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
+// import { firebaseAnalytics } from '@/const/firebaseConfig';
 // import collectionList from '@/const/collectionList';
 import TitleTips from '@/components/common/TitleTips';
-import tradePanel from '@/stores/tradePanel';
-import { apiConnection } from '@/utils/apiConnection';
-import { pageTitleParser } from '@/utils/eventLog';
-import { hasPartialClose } from '@/stores/UserState';
+// import tradePanel from '@/stores/tradePanel';
+// import { apiConnection } from '@/utils/apiConnection';
+// import { pageTitleParser } from '@/utils/eventLog';
+// import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
-import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition, wsFullWalletAddress } from '@/stores/WalletState';
-import PrimaryButton from '@/components/common/PrimaryButton';
+import { $currentAmm } from '@/stores/trading';
+import { usePositionInfo } from '@/hooks/collection';
+import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
+import { MINIMUM_COLLATERAL } from '@/const';
+import { UserPositionInfo } from '@/stores/user';
+import ApproveButton from '@/components/trade/desktop/trading/actionBtns/ApproveButton';
+import OpenPosButton from '@/components/trade/desktop/trading/actionBtns/OpenPosButton';
+import ClosePosButton from '@/components/trade/desktop/trading/actionBtns/ClosePosButton';
 
 function SectionDividers() {
   return (
@@ -39,38 +38,17 @@ function SectionDividers() {
   );
 }
 
-const fullCloseEstimation = {
-  exposure: BigNumber.from('0'),
-  entryPrice: BigNumber.from('0'),
-  priceImpact: BigNumber.from('0'),
-  fee: BigNumber.from('0'),
-  cost: BigNumber.from('0'),
-  liquidationPrice: BigNumber.from('0'),
-  newPosition: {
-    type: 'close',
-    size: BigNumber.from('0'),
-    sizeAbs: BigNumber.from('0'),
-    margin: BigNumber.from('0'),
-    openNotional: BigNumber.from('0'),
-    marginRatio: BigNumber.from('0'),
-    entryPrice: BigNumber.from('0'),
-    leverage: BigNumber.from('0'),
-    liquidationPrice: BigNumber.from('0'),
-    marketValue: BigNumber.from('0'),
-    sizeValueInWETH: BigNumber.from('0')
-  }
-};
-
-function QuantityEnter(props: any) {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-  const { onChange, isAmountTooSmall, isAmountTooLarge, closeValue, tradingData, setCloseValue, setCurrentMaxValue, disabled } = props;
+function QuantityEnter(props: {
+  closeValue: number;
+  maxCloseValue: number;
+  onChange: (value: any) => void;
+  isAmountTooSmall: boolean;
+  isAmountTooLarge: boolean;
+  disabled: boolean;
+}) {
+  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled } = props;
 
   const [isFocus, setIsFocus] = useState(false);
-  const isApproveRequired = useNanostore(wsIsApproveRequired);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
-  const userPosition: any = useNanostore(wsUserPosition);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -83,45 +61,12 @@ function QuantityEnter(props: any) {
       onChange(inputValue);
     }
   };
-  // const size = 0;
-  // const currentPrice = 0;
-  let sizeInEth = '';
-  let newValue = '0';
-  if (userPosition !== null && tradingData !== null) {
-    sizeInEth = `${calculateNumber(userPosition.currentNotional, 4)} `;
-  }
+
   const showHalfValue = () => {
-    newValue = (Number(sizeInEth) / 2).toFixed(4);
-    setCloseValue(newValue);
-    onChange(newValue);
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_close_half_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-    apiConnection.postUserEvent('trade_close_half_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
+    onChange(maxCloseValue / 2);
   };
   const showMaxValue = () => {
-    const ethNum = Number(sizeInEth);
-    setCloseValue(ethNum);
-    setCurrentMaxValue(ethNum);
-    onChange(ethNum);
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_close_max_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('trade_close_max_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
+    onChange(maxCloseValue);
   };
 
   // determine if input is valid or error state
@@ -176,13 +121,11 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               // pattern="[0-9]*"
-              className={`w-full border-none border-mediumBlue bg-mediumBlue
-                  text-right text-[15px] font-bold text-white outline-none
-                  ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
+              className="w-full border-none border-mediumBlue bg-mediumBlue text-right text-[15px] font-bold text-white outline-none"
               value={closeValue === 0 ? '' : closeValue}
               placeholder="0.00"
               onChange={handleEnter}
-              disabled={isApproveRequired || disabled}
+              disabled={disabled}
               min={0}
               // onClick={e => e.target.setSelectionRange(e.target.value.length, e.target.value.length)}
               onFocus={() => setIsFocus(true)}
@@ -243,411 +186,62 @@ function DisplayValues(props: any) {
   );
 }
 
-function AdjustMarginButton(props: any) {
-  const {
-    closeValue,
-    isClosingPosition,
-    closePosition,
-    maxValueComparison,
-    minValueComparison,
-    isPending,
-    isWaiting,
-    isFluctuationLimit,
-    isBadDebt
-  } = props;
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
-
-  const isChecked1 = closeValue <= 0 || closeValue === '' || isWrongNetwork || closeValue === 0;
-  const isChecked2 = maxValueComparison || minValueComparison || isPending || isWaiting || isFluctuationLimit || isBadDebt;
-
-  if (isChecked1 || isChecked2) {
-    return (
-      <PrimaryButton className="h-[46px] w-full" isDisabled>
-        <div className="text-center font-semibold text-[#373961]">Close Position</div>
-      </PrimaryButton>
-    );
-  }
-  if (isClosingPosition) {
-    return (
-      <PrimaryButton className="h-[46px] w-full">
-        <div className="col mx-auto text-center">
-          <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
-        </div>
-      </PrimaryButton>
-    );
-  }
-  return (
-    <PrimaryButton className="h-[46px] w-full cursor-pointer" onClick={closePosition}>
-      <div className="text-center font-semibold text-white">Close Position</div>
-    </PrimaryButton>
-  );
-}
-
-const ActionButtons = forwardRef((props: any, ref: any) => {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-  const [isClosingPosition, setIsClosingPosition] = useState(false);
-  const [isProcessingClosePos, setIsProcessingClosePos] = useState(false);
-  const {
-    refreshPositions,
-    exposureValue,
-    closeValue,
-    closeLeverage,
-    contractSide,
-    toleranceRate,
-    currentMaxValue,
-    maxValueComparison,
-    minValueComparison,
-    setCloseValue,
-    setEstimatedValue,
-    setEstPriceFluctuation,
-    isFluctuationLimit,
-    setShowOverFluctuationContent,
-    setIsShowPartialCloseModal,
-    setTextErrorMessage,
-    setTextErrorMessageShow,
-    isPending,
-    setToleranceRate,
-    isWaiting,
-    isBadDebt
-  } = props;
-
-  const isHasPartialClose = useNanostore(hasPartialClose);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
-  const userPosition: any = useNanostore(wsUserPosition);
-
-  // sync isProcessing to store/tradePanel
-  useEffect(() => {
-    tradePanel.setIsProcessing(isClosingPosition);
-  }, [isClosingPosition]);
-
-  function startClosePosition() {
-    setIsClosingPosition(false);
-    setCloseValue(0);
-    setEstimatedValue({});
-    setToleranceRate(0.5);
-    // refreshPositions();
-    setEstPriceFluctuation(false);
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_performclose_start', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('callbacks_performclose_start', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-  }
-
-  function completeClosePosition() {
-    // refresh on trx complete
-    // prevent refreshing when page has changed
-    // if (currentToken === processToken) {
-    refreshPositions();
-    // }
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_performclose_success', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('callbacks_performclose_success', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-  }
-
-  function catchFinishPosition() {
-    setIsClosingPosition(false);
-  }
-
-  /**
-   * Check Partial Close Modal if its should be shown
-   */
-  const checkAndShowPartialCloseModal = (callback: any) => {
-    const PARTIAL_CLOSE_MODAL_KEY = 'alreadyShowPartialCloseModal';
-    const alreadyShow = localStorage.getItem(PARTIAL_CLOSE_MODAL_KEY);
-
-    // check localstorage or api
-    if (alreadyShow || isHasPartialClose) {
-      // call close position directly in callback, becouse no modal is shown
-      if (callback) callback();
-      return;
-    }
-    // show modal
-    setIsShowPartialCloseModal(true);
-    // save modal already show state to localStorage
-    localStorage.setItem(PARTIAL_CLOSE_MODAL_KEY, 'true');
-    // dont call callback close position here, user need to click submit button in modal
-  };
-
-  const closePosition = async () => {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_close_button_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('trade_close_button_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-    if (isProcessingClosePos) {
-      return;
-    }
-    setIsClosingPosition(true);
-    if (Number(closeValue) !== Number(currentMaxValue)) {
-      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
-      const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
-      const currentAllowance = await walletProvider.checkAllowance();
-      const expectedFee = Number(utils.formatEther(result.fee));
-      if (expectedFee > currentAllowance) {
-        await walletProvider.performApprove();
-      }
-      walletProvider
-        .createTransaction(
-          contractSide,
-          closeValue,
-          closeLeverage,
-          toleranceRate,
-          exposureValue,
-          'Partial Close Position',
-          startClosePosition
-        )
-        .then(() => {
-          completeClosePosition();
-        })
-        .catch((error: any) => {
-          catchFinishPosition();
-          if ('error' in error) {
-            if (error.error.message === 'execution reverted: price is over fluctuation limit') {
-              setShowOverFluctuationContent(true);
-            }
-          }
-
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
-
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'callbacks_performclose_fail', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken, // from tokenRef.current
-              error_code: error.code.toString()
-            });
-          }
-
-          apiConnection.postUserEvent('callbacks_performclose_fail', {
-            page,
-            collection: currentToken, // from tokenRef.current
-            error_code: error.code.toString()
-          });
-        });
-    } else {
-      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
-      const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
-      const currentAllowance = await walletProvider.checkAllowance();
-      const expectedFee = Number(utils.formatEther(result.fee));
-      if (expectedFee > currentAllowance) {
-        await walletProvider.performApprove();
-      }
-      walletProvider
-        .closePosition(startClosePosition)
-        .then(() => {
-          completeClosePosition();
-        })
-        .catch((error: any) => {
-          catchFinishPosition();
-          if ('error' in error) {
-            if (error.error.message === 'execution reverted: over fluctuation limit') {
-              setShowOverFluctuationContent(true);
-            }
-          }
-
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
-
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'callbacks_performclose_fail', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken, // from tokenRef.current
-              error_code: error.code.toString()
-            });
-          }
-
-          apiConnection.postUserEvent('callbacks_performclose_fail', {
-            page,
-            collection: currentToken, // from tokenRef.current
-            error_code: error.code.toString()
-          });
-        });
-    }
-  };
-
-  useImperativeHandle(ref, () => ({
-    closePosition
-  }));
-
-  const showModalOrClose = () => {
-    if (Number(closeValue) < Number(currentMaxValue)) {
-      // partial close, check modal
-      checkAndShowPartialCloseModal(() => closePosition());
-    } else {
-      // full close
-      closePosition();
-    }
-  };
-
-  return (
-    <div className="flex">
-      <AdjustMarginButton
-        closeValue={closeValue}
-        isClosingPosition={isClosingPosition}
-        closePosition={showModalOrClose}
-        maxValueComparison={maxValueComparison}
-        minValueComparison={minValueComparison}
-        isPending={isPending}
-        isWaiting={isWaiting}
-        isFluctuationLimit={isFluctuationLimit}
-        isBadDebt={isBadDebt}
-      />
-    </div>
-  );
-});
-
 function QuantityTips(props: any) {
-  const { maxValueComparison, minValueComparison, estPriceFluctuation, isFluctuationLimit, isBadDebt, isPending, closeValue } = props;
+  const { isAmountTooSmall, isAmountTooLarge } = props;
 
-  if ((closeValue <= 0 && !isBadDebt) || (!maxValueComparison && !minValueComparison && !estPriceFluctuation && !isPending && !isBadDebt)) {
-    return null;
-  }
+  const label = isAmountTooLarge ? 'Value is too large!' : isAmountTooSmall ? 'Minimum collateral size 0.01' : '';
 
-  const label = isPending
-    ? 'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
-    : isBadDebt
-    ? 'Positions with negative collateral value cannot be closed.'
-    : maxValueComparison
-    ? 'Value is too large!'
-    : minValueComparison
-    ? 'Minimum collateral size 0.01'
-    : isFluctuationLimit
-    ? 'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
-    : estPriceFluctuation
-    ? 'Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
-    : '';
-
-  const isError = (estPriceFluctuation || isPending || isFluctuationLimit) && !(maxValueComparison || minValueComparison);
+  if (!label) return null;
 
   return (
-    <div className={`quantity-tips-container ${estPriceFluctuation || isPending ? 'price-fluc' : ''}`}>
-      <span
-        className={`${isError ? 'text-warn' : 'text-marketRed}'}
-          mb-2 text-[12px] leading-[20px]
-        `}>
-        {label}
-      </span>
+    <div className="quantity-tips-container">
+      <span className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</span>
     </div>
   );
 }
 
-function EstimationComponent(props: any) {
-  const { estimatedValue = {}, sizeInEth, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
-  const isNewPosition = 'newPosition' in estimatedValue;
-  const userPosition: any = useNanostore(wsUserPosition);
-
-  // determine if input is valid or error state
-  let isError = isAmountTooSmall || isAmountTooLarge;
-  if (closeValue <= 0) {
-    isError = false;
-  }
+function EstimationComponent(props: {
+  userPosition: UserPositionInfo | undefined;
+  estimation: OpenPositionEstimation | undefined;
+  isAmountTooSmall: boolean;
+  isAmountTooLarge: boolean;
+  isFullClose: boolean;
+}) {
+  const { userPosition, estimation, isAmountTooSmall, isAmountTooLarge, isFullClose } = props;
 
   return (
     <div>
-      {!userPosition || estimatedValue === null ? (
-        <UpdateValueNoDataDisplay title="Notional Value" unit=" WETH" />
-      ) : (
-        <UpdateValueDisplay
-          title="Notional Value"
-          currentValue={!userPosition ? '-.--' : sizeInEth}
-          newValue={
-            !isNewPosition || isError || closeValue <= 0
-              ? '-.--'
-              : Number(closeValue) === Number(currentMaxValue)
-              ? '-.--'
-              : calculateNumber(estimatedValue.newPosition?.marketValue, 4)
-          }
-          unit=" WETH"
-        />
-      )}
-      {!userPosition || estimatedValue === null ? (
-        <UpdateValueNoDataDisplay title="Collateral" unit="%" />
-      ) : (
-        <UpdateValueDisplay
-          title={
-            <span className="flex">
-              Collateral&nbsp;
-              {Number(closeValue) > 0 && Number(closeValue) < Number(currentMaxValue) ? (
-                <TitleTips
-                  titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                  tipsText="Collateral will not change."
-                  placement="top"
-                />
-              ) : null}
-            </span>
-          }
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMargin, 4)}
-          currentUnit=""
-          newValue={
-            !isNewPosition || isError || closeValue <= 0
-              ? '-.--'
-              : Number(closeValue) === Number(currentMaxValue)
-              ? '-.--'
-              : calculateNumber(estimatedValue.collateral, 4)
-          }
-          unit=" WETH"
-        />
-      )}
-      {!userPosition && estimatedValue === null ? (
-        <UpdateValueNoDataDisplay title="Leverage" unit="x" />
-      ) : (
-        <UpdateValueDisplay
-          title="Leverage"
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.remainMarginLeverage, 2)}
-          currentUnit="x"
-          newValue={
-            !isNewPosition || isError || closeValue <= 0
-              ? '-.--'
-              : Number(closeValue) === Number(currentMaxValue)
-              ? '-.--'
-              : calculateNumber(estimatedValue.newPosition.leverage, 2)
-          }
-          unit="x"
-        />
-      )}
+      <UpdateValueDisplay
+        title="Notional Value"
+        currentValue={!userPosition ? '-.--' : userPosition.currentNotional.toFixed(4)}
+        newValue={!estimation || isFullClose ? '-.--' : estimation.posInfo.positionNotional.toFixed(4)}
+        unit=" WETH"
+      />
+      <UpdateValueDisplay
+        title={
+          <span className="flex">
+            Collateral&nbsp;
+            {!isFullClose ? (
+              <TitleTips
+                titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
+                tipsText="Collateral will not change."
+                placement="top"
+              />
+            ) : null}
+          </span>
+        }
+        currentValue={!userPosition ? '-.--' : userPosition.margin.toFixed(4)}
+        currentUnit=""
+        newValue={!estimation || isFullClose ? '-.--' : estimation.posInfo.margin.toFixed(4)}
+        unit=" WETH"
+      />
+      <UpdateValueDisplay
+        title="Leverage"
+        currentValue={!userPosition ? '-.--' : userPosition.leverage.toFixed(2)}
+        currentUnit="x"
+        newValue={!estimation || isFullClose ? '-.--' : estimation.posInfo.leverage.toFixed(2)}
+        unit="x"
+      />
       {/* {!userPosition || estimatedValue === null ? (
         <UpdateValueNoDataDisplay title="Collateral Ratio" unit="%" />
       ) : (
@@ -673,105 +267,63 @@ function EstimationComponent(props: any) {
   );
 }
 
-function ExtendedEstimateComponent(props: any) {
-  const { displayAdvanceDetail, estimatedValue = {}, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
-  // const targetCollection = collectionList.filter(({ collection }) => collection === currentToken); // from tokenRef.current
-  // const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-  // const exposure = formatterValue(estimatedValue.exposure, 4);
-  const isNewPosition = 'newPosition' in estimatedValue;
-
-  // determine if input is valid or error state
-  let isError = isAmountTooSmall || isAmountTooLarge;
-  if (closeValue <= 0) {
-    isError = false;
-  }
-  if (isError) return null;
+function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; isFullClose: boolean }) {
+  const { estimation, isFullClose } = props;
 
   return (
-    <div>
-      {displayAdvanceDetail !== 0 ? (
+    <>
+      {!isFullClose ? (
         <>
-          {Number(closeValue) < Number(currentMaxValue) ? (
-            <>
-              <div className="row">
-                <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
-              </div>
-              {/* <div className="row detailrow">
-                <div className="col-auto text-[14px] text-mediumEmphasis">Position Type</div>
-                <div className="col contentls">{isNewPosition ? (estimatedValue.newPosition.type === 'long' ? 'Long' : 'Short') : '---'}</div>
-              </div> */}
-              {/* <DisplayValues
-                title="Contract Size"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.size, 4) : '-.--'}
-                unit={currentType}
-              /> */}
-              {/* <DisplayValues
-                title="Notional"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.marketValue, 2) : '-.--'}
-                unit="WETH"
-              /> */}
-              <DisplayValues title="Collateral" value={isNewPosition ? formatterValue(estimatedValue.collateral, 4) : '-.--'} unit="WETH" />
-              <DisplayValues
-                title="Average Entry Price"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.entryPrice, 2) : '-.--'}
-                unit="WETH"
-              />
-              {/* <DisplayValues
-                title="Collateral Ratio"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.marginRatio, 2) : '-.--'}
-                unit="%"
-              /> */}
-              <DisplayValues
-                title="Liquidation Price"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.liquidationPrice, 2) : '-.--'}
-                unit="WETH"
-              />
-            </>
-          ) : null}
-
           <div className="row">
-            <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
+            <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
           </div>
-          <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.--' : formatterValue(estimatedValue.fee, 5)} />
-          {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
-          <DisplayValues title="Entry Price" value={formatterValue(estimatedValue.entryPrice, 2)} unit="WETH" />
-          <div className="flex justify-between">
-            <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
-            <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
-              <span className="value">{formatterValue(estimatedValue.priceImpact, 2)}</span> %
-            </div>
-          </div>
+          <DisplayValues title="Collateral" value={estimation ? estimation.posInfo.margin.toFixed(4) : '-.--'} unit="WETH" />
+          <DisplayValues
+            title="Average Entry Price"
+            value={estimation ? estimation.posInfo.avgEntryPrice.toFixed(2) : '-.--'}
+            unit="WETH"
+          />
+          <DisplayValues
+            title="Liquidation Price"
+            value={estimation ? estimation.posInfo.liquidationPrice.toFixed(2) : '-.--'}
+            unit="WETH"
+          />
         </>
       ) : null}
-    </div>
+
+      <div className="row">
+        <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
+      </div>
+      <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
+      {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
+      <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+      <div className="flex justify-between">
+        <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+        <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
+          <span className="value">{!estimation ? '-.--' : estimation.txSummary.priceImpactPct.toFixed(2)}</span> %
+        </div>
+      </div>
+    </>
   );
 }
 
-function CloseSlider(props: any) {
-  const { closeValue, currentMaxValue, onChange, setCloseValue, disabled } = props;
-  const numMax = Number(currentMaxValue);
-  // const marks = {
-  //   0: {
-  //     style: { fontSize: '12px' },
-  //     label: '0'
-  //   },
-  //   numMax: {
-  //     style: { fontSize: '12px', textAlign: 'end', transform: 'translateX(-95%)' },
-  //     label: 'Total Notional Value'
-  //   }
-  // };
-  // const tooltipStyling = {
-  //   open: true
-  // };
+function CloseSlider(props: {
+  closeValue: number;
+  maxCloseValue: number;
+  onChange: (value: any) => void;
+  onSlide: (value: any) => void;
+  disabled: boolean;
+}) {
+  const { closeValue, maxCloseValue, onChange, onSlide, disabled } = props;
   return (
     <div className={`${disabled ? 'disabled' : ''}`}>
       <InputSlider
         disabled={disabled}
         value={closeValue}
         min={0}
-        max={numMax}
+        max={maxCloseValue}
         defaultValue={0}
-        onChange={(value: any) => setCloseValue(value)}
+        onChange={onSlide}
         onAfterChange={onChange}
         step={0.0001}
       />
@@ -784,200 +336,115 @@ function CloseSlider(props: any) {
 }
 
 export default function CloseCollateral(props: any) {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, tradingData, currentToken, setShowOverFluctuationContent, setTradeWindowIndex } = props;
-
+  const currentAmm = useNanostore($currentAmm);
+  const userPosition = usePositionInfo(currentAmm);
+  const maxCloseValue = userPosition?.currentNotional ?? 0;
+  const closeSide = userPosition?.size && userPosition?.size > 0 ? Side.SHORT : Side.LONG;
+  const [isFullClose, setIsFullClose] = useState(false);
   const [closeValue, setCloseValue] = useState(0);
-  const [estimatedValue, setEstimatedValue] = useState({});
+  const [showCloseVal, setShowCloseVal] = useState(0);
   const [toleranceRate, setToleranceRate] = useState(0.5);
-  const [closeLeverage, setCloseLeverage] = useState(1);
-  const [exposureValue, setExposureValue] = useState(0);
-  const [contractSide, setContractSide] = useState(0);
-  const [currentMaxValue, setCurrentMaxValue] = useState(-1);
-  const [maxValueComparison, setMaxValueComparison] = useState(false);
-  const [displayAdvanceDetail, setDisplayAdvanceDetail] = useState(0);
-  const [minValueComparison, setMinValueComparison] = useState(false);
-  const [estPriceFluctuation, setEstPriceFluctuation] = useState(false);
-  const [isFluctuationLimit, setIsFluctuationLimit] = useState(false);
-  const [isBadDebt, setIsBadDebt] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const [isShowPartialCloseModal, setIsShowPartialCloseModal] = useState(false);
+  const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
+  const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState('');
   const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
-  const isProcessing = useNanostore(tradePanel.processing);
   const [isPending, setIsPending] = useState(false);
-  const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
-  const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const userPosition: any = useNanostore(wsUserPosition);
-
-  const actionButtonRef = useRef();
-
-  let size = 0;
-  let currentPrice = 0;
-  let sizeInEth = '';
-  const newValue = 0;
-  if (userPosition !== null && tradingData !== null) {
-    size = Number(calculateNumber(userPosition.size, 4));
-    currentPrice = Number(calculateNumber(tradingData.spotPrice, 3));
-    sizeInEth = `${calculateNumber(userPosition.currentNotional, 4)} `;
-  }
-
-  const handleEnter = useCallback(
-    async (value: any) => {
-      setTextErrorMessage('');
-      setTextErrorMessageShow(false);
-      setEstPriceFluctuation(false);
-      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
-      setContractSide(saleOrBuyIndex);
-      if (walletProvider.provider === null || Number(value) === 0 || !value) {
-        setEstimatedValue({});
-        setEstPriceFluctuation(false);
-        return;
-      }
-
-      // if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-      //   return;
-      // }
-
-      if (Number(value) > Number(sizeInEth)) {
-        setMaxValueComparison(true);
-        setEstimatedValue({});
-      } else {
-        setMaxValueComparison(false);
-      }
-      if (Number(value) < 0.01 && Number(value) !== Number(sizeInEth)) {
-        setMinValueComparison(true);
-        setEstimatedValue({});
-      } else {
-        setMinValueComparison(false);
-      }
-      if (Number(value) === Number(currentMaxValue)) {
-        setEstimatedValue(fullCloseEstimation);
-      }
-
-      if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-        await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
-        if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-          setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
-          return;
-        }
-      } else setIsPending(false);
-
-      setIsWaiting(true);
-      const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, value, closeLeverage);
-      setEstimatedValue(result);
-      setExposureValue(result.exposure);
-      setCurrentMaxValue(Number(sizeInEth));
-      setIsWaiting(false);
-      if (Number(formatterValue(result.priceImpact, 2)) <= 0.6 && Number(formatterValue(result.priceImpact, 2)) >= -0.6) {
-        setEstPriceFluctuation(false);
-      } else {
-        setEstPriceFluctuation(true);
-      }
-
-      if (Math.abs(Number(formatterValue(result.priceImpact, 2))) > 2.0) {
-        setIsFluctuationLimit(true);
-      } else {
-        setIsFluctuationLimit(false);
-      }
-    },
-    [closeLeverage, collectionIsPending, currentMaxValue, sizeInEth, userPosition]
-  );
-
-  // todo: idk, debounced for handle enter still doesnt work
-  // const debouncedhandleEnter = debounce(200, handleEnter);
+  const { isLoading: isEstLoading, estimation } = useOpenPositionEstimation({
+    side: closeSide,
+    notionalAmount: closeValue,
+    slippagePercent: toleranceRate,
+    leverage: 1
+  });
+  const approvalAmount = getApprovalAmountFromEstimation(estimation);
+  const isNeedApproval = useApprovalCheck(approvalAmount);
 
   useEffect(() => {
-    setCurrentMaxValue(Number(sizeInEth));
-  }, [sizeInEth]);
-
-  useEffect(() => {
-    if (userPosition !== null && tradingData !== null) {
-      size = Number(calculateNumber(userPosition.size, 4));
-      currentPrice = Number(calculateNumber(tradingData.spotPrice, 3));
-      sizeInEth = `${calculateNumber(userPosition.currentNotional, 4)} `;
-      setCurrentMaxValue(Number(sizeInEth));
-    }
-  }, [userPosition.size, tradingData.spotPrice]);
-
-  useEffect(() => {
-    if (userPosition && Number(utils.formatEther(userPosition.remainMarginLeverage)) === 0) {
-      setIsBadDebt(true);
+    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL) {
+      setIsAmountTooSmall(true);
     } else {
-      setIsBadDebt(false);
+      setIsAmountTooSmall(false);
     }
-  }, [userPosition]);
 
-  useEffect(() => {
-    if (isPending) {
-      handleEnter(closeValue);
+    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize > maxCloseValue) {
+      setIsAmountTooLarge(true);
+    } else {
+      setIsAmountTooLarge(false);
     }
-    // console.log('collection pending is changed');
-  }, [collectionIsPending[walletProvider?.currentTokenAmmAddress], closeValue, isPending, handleEnter]);
 
-  useEffect(() => {
+    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize === maxCloseValue) {
+      setIsFullClose(true);
+    } else {
+      setIsFullClose(false);
+    }
+  }, [estimation?.txSummary.notionalSize]);
+
+  const initializeState = useCallback(() => {
     setCloseValue(0);
-    handleEnter(0);
-  }, [fullWalletAddress]);
+    setShowCloseVal(0);
+    setToleranceRate(0.5);
+    setIsPending(false);
+  }, []);
+
+  const handleError = useCallback((error: Error | null) => {
+    setIsPending(false);
+    setTextErrorMessage(error?.message ?? '');
+    setTextErrorMessageShow(true);
+  }, []);
+
+  const handlePending = useCallback(() => {
+    setIsPending(true);
+  }, []);
+
+  useEffect(() => {
+    // set error message under button
+    initializeState();
+  }, [currentAmm]);
+
+  const handleChange = (value: any) => {
+    setCloseValue(value);
+    setShowCloseVal(value);
+    setTextErrorMessage('');
+    setTextErrorMessageShow(false);
+    setIsAmountTooSmall(false);
+    setIsAmountTooLarge(false);
+  };
 
   return (
     <div>
       <QuantityEnter
-        // tokenRef={tokenRef}
-        onChange={(e: any) => {
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'trade_close_input_pressed', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken // from tokenRef.current
-            });
-          }
-
-          apiConnection.postUserEvent('trade_close_input_pressed', {
-            page,
-            collection: currentToken // from tokenRef.current
-          });
-          setCloseValue(e);
-          handleEnter(e);
+        closeValue={showCloseVal}
+        maxCloseValue={maxCloseValue}
+        onChange={(value: any) => {
+          handleChange(value);
         }}
-        closeValue={closeValue}
-        tradingData={tradingData}
-        setCloseValue={setCloseValue}
-        setCurrentMaxValue={setCurrentMaxValue}
-        estPriceFluctuation={estPriceFluctuation}
-        isAmountTooSmall={minValueComparison}
-        isAmountTooLarge={maxValueComparison}
-        disabled={isProcessing || isBadDebt}
+        isAmountTooSmall={isAmountTooSmall}
+        isAmountTooLarge={isAmountTooLarge}
+        disabled={isPending}
       />
-      <QuantityTips
-        maxValueComparison={maxValueComparison}
-        minValueComparison={minValueComparison}
-        estPriceFluctuation={estPriceFluctuation}
-        closeValue={closeValue}
-        isPending={isPending}
-        isFluctuationLimit={isFluctuationLimit}
-        isBadDebt={isBadDebt}
-      />
+      <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       <CloseSlider
-        closeValue={closeValue}
-        currentMaxValue={currentMaxValue}
-        setCloseValue={setCloseValue}
-        onChange={(e: any) => {
-          setCloseValue(e);
-          handleEnter(e);
+        closeValue={showCloseVal}
+        maxCloseValue={maxCloseValue}
+        onChange={(value: any) => {
+          handleChange(value);
         }}
-        disabled={isProcessing || isBadDebt}
+        onSlide={(value: any) => {
+          setShowCloseVal(Number(value));
+        }}
+        disabled={isPending}
       />
       <SectionDividers />
-      <div className={`mb-4 flex items-center ${isProcessing ? 'disabled' : ''}`}>
+      <div className={`mb-4 flex items-center ${isPending ? 'disabled' : ''}`}>
         <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
         <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue
               px-[10px] py-[4px] text-white
-              ${isProcessing ? 'disabled' : ''}`}>
+              ${isPending ? 'disabled' : ''}`}>
             <input
-              disabled={isProcessing}
+              disabled={isPending}
               title=""
               type="text"
               // pattern="[0-9]*"
@@ -993,87 +460,70 @@ export default function CloseCollateral(props: any) {
                   setToleranceRate(Number(e.target.value));
                 }
               }}
-              onClick={e => {
-                // e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-                if (firebaseAnalytics) {
-                  logEvent(firebaseAnalytics, 'trade_close_slippageTolerance_pressed', {
-                    wallet: fullWalletAddress.substring(2),
-                    collection: currentToken // from tokenRef.current
-                  });
-                }
-
-                apiConnection.postUserEvent('trade_close_slippageTolerance_pressed', {
-                  page,
-                  collection: currentToken // from tokenRef.current
-                });
-              }}
             />
             <span className="my-auto">%</span>
           </div>
         </div>
       </div>
       <EstimationComponent
-        estimatedValue={estimatedValue}
-        sizeInEth={sizeInEth}
-        closeValue={closeValue}
-        currentMaxValue={currentMaxValue}
-        isAmountTooSmall={minValueComparison}
-        isAmountTooLarge={maxValueComparison}
+        userPosition={userPosition}
+        estimation={estimation}
+        isAmountTooSmall={isAmountTooSmall}
+        isAmountTooLarge={isAmountTooLarge}
+        isFullClose={isFullClose}
       />
-      <ActionButtons
-        ref={actionButtonRef}
-        refreshPositions={refreshPositions}
-        // tokenRef={tokenRef}
-        exposureValue={exposureValue}
-        closeValue={closeValue}
-        closeLeverage={closeLeverage}
-        contractSide={contractSide}
-        toleranceRate={toleranceRate}
-        currentMaxValue={currentMaxValue}
-        maxValueComparison={maxValueComparison}
-        minValueComparison={minValueComparison}
-        setCloseValue={setCloseValue}
-        setEstimatedValue={setEstimatedValue}
-        setEstPriceFluctuation={setEstPriceFluctuation}
-        isFluctuationLimit={isFluctuationLimit}
-        setShowOverFluctuationContent={setShowOverFluctuationContent}
-        setIsShowPartialCloseModal={setIsShowPartialCloseModal}
-        setTextErrorMessage={setTextErrorMessage}
-        setTextErrorMessageShow={setTextErrorMessageShow}
-        isPending={isPending}
-        setToleranceRate={setToleranceRate}
-        isWaiting={isWaiting}
-        isBadDebt={isBadDebt}
-      />
+      {isNeedApproval ? (
+        <ApproveButton
+          isEstimating={isEstLoading}
+          approvalAmount={approvalAmount}
+          onPending={handlePending}
+          onSuccess={initializeState}
+          onError={handleError}
+        />
+      ) : isFullClose ? (
+        <ClosePosButton
+          isEstimating={isEstLoading}
+          slippagePercent={toleranceRate}
+          onPending={handlePending}
+          onSuccess={initializeState}
+          onError={handleError}
+        />
+      ) : (
+        <OpenPosButton
+          disabled={isAmountTooLarge || isAmountTooSmall}
+          isEstimating={isEstLoading}
+          side={closeSide}
+          notionalAmount={closeValue}
+          leverage={1}
+          slippagePercent={toleranceRate}
+          estimation={estimation}
+          onPending={handlePending}
+          onSuccess={initializeState}
+          onError={handleError}
+        />
+      )}
       {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
       {/* <div className="row">
         <div className="col-auto text-[14px] text-mediumEmphasis">
           * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released
         </div>
       </div> */}
-      {estimatedValue /* && estimatedValue.newPosition */ && !minValueComparison && !maxValueComparison && closeValue > 0 ? (
+      {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
         <div className="mt-6">
           <div
             className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-            onClick={() => setDisplayAdvanceDetail(displayAdvanceDetail ? 0 : 1)}>
-            {displayAdvanceDetail === 0 ? 'Show' : 'Hide'} Advanced Details
-            {displayAdvanceDetail === 0 ? (
+            onClick={() => setShowDetail(val => !val)}>
+            {!showDetail ? 'Show' : 'Hide'} Advanced Details
+            {!showDetail ? (
               <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
             ) : (
               <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
             )}
           </div>
+          {showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}
         </div>
       ) : null}
-      <ExtendedEstimateComponent
-        displayAdvanceDetail={displayAdvanceDetail}
-        // tokenRef={tokenRef}
-        estimatedValue={estimatedValue}
-        closeValue={closeValue}
-        currentMaxValue={currentMaxValue}
-        isAmountTooSmall={minValueComparison}
-        isAmountTooLarge={maxValueComparison}
-      />
+
       <PartialCloseModal
         isShow={isShowPartialCloseModal}
         setIsShow={setIsShowPartialCloseModal}

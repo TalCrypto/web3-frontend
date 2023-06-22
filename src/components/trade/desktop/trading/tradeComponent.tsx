@@ -679,6 +679,7 @@ export default function TradeComponent() {
         />
       ) : (
         <OpenPosButton
+          disabled={isAmountTooSmall}
           isEstimating={isEstLoading}
           side={saleOrBuyIndex}
           notionalAmount={notionalAmount}

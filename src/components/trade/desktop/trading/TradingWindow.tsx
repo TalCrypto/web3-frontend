@@ -4,12 +4,11 @@ import { useStore as useNanostore } from '@nanostores/react';
 import tradePanelModal from '@/stores/tradePanelModal';
 
 import TradeComponent from '@/components/trade/desktop/trading/tradeComponent';
-import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
+// import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
-import TradePanelModal from '@/components/trade/desktop/trading/TradePanelModal';
-
-import { connectWallet } from '@/utils/Wallet';
-import { wsCurrentToken, wsUserPosition } from '@/stores/WalletState';
+import { $currentAmm } from '@/stores/trading';
+import { usePositionInfo } from '@/hooks/collection';
+import { useWeb3Modal } from '@web3modal/react';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -31,33 +30,29 @@ function OverFluctuationError(props: any) {
   );
 }
 
-function TradingWindow(props: any) {
-  const { refreshPositions, tradingData } = props;
+function TradingWindow() {
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
   const isTradePanelModalShow = useNanostore(tradePanelModal.show);
   const tradePanelModalMsg = useNanostore(tradePanelModal.message);
   const tradePanelModalLink = useNanostore(tradePanelModal.link);
-  const currentToken = useNanostore(wsCurrentToken);
-  const userPosition: any = useNanostore(wsUserPosition);
+  const currentAmm = useNanostore($currentAmm);
+  const userPosition = usePositionInfo(currentAmm);
+  const { open } = useWeb3Modal();
 
-  const traderConnectWallet = () => {
-    connectWallet(() => {}, true);
-  };
-  useEffect(() => setTradeWindowIndex(0), [currentToken]);
+  // const traderConnectWallet = () => {
+  //   open({ route: 'ConnectWallet' });
+  // };
+  useEffect(() => setTradeWindowIndex(0), [currentAmm]);
 
-  const tradeComponent = (
-    <TradeComponent refreshPositions={refreshPositions} connectWallet={traderConnectWallet} tradingData={tradingData} />
-  );
+  const tradeComponent = <TradeComponent />;
 
-  const displayComponent = [
-    tradeComponent,
-    <CloseCollateral refreshPositions={refreshPositions} tradingData={tradingData} setTradeWindowIndex={setTradeWindowIndex} />,
-    <AdjustCollateral refreshPositions={refreshPositions} tradingData={tradingData} />
-  ][tradeWindowIndex];
+  // const displayComponent = [tradeComponent, <CloseCollateral />, <AdjustCollateral />][tradeWindowIndex];
+
+  const displayComponent = [tradeComponent, <CloseCollateral />][tradeWindowIndex];
 
   const tabs = ['Add', 'Close', 'Adjust Collateral'];
 
-  const [showOverFluctuationContent, setShowOverFluctuationContent] = useState(false);
+  // const [showOverFluctuationContent, setShowOverFluctuationContent] = useState(false);
 
   const onTabClick = (index: any) => {
     setTradeWindowIndex(index);
@@ -65,8 +60,8 @@ function TradingWindow(props: any) {
 
   return (
     <div className="w-full 2xl:w-[400px]" style={{ height: 'fit-content' }}>
-      {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null}
-      {userPosition ? (
+      {/* {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null} */}
+      {userPosition?.size !== 0 ? (
         <div
           className="border-b-none flex h-[50px] justify-between
             rounded-t-[6px] border-[1px] border-[#71aaff]/[.2]
@@ -90,15 +85,11 @@ function TradingWindow(props: any) {
       ) : null}
       <div
         className={`mb-[60px] flex rounded-b-[6px] border-[1px] border-[#71aaff]/[.2]
-          ${userPosition ? '' : 'rounded-t-[6px]'}
+          ${userPosition?.size !== 0 ? '' : 'rounded-t-[6px]'}
         bg-lightBlue p-4 px-6 py-9 text-white`}>
-        <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition ? displayComponent : tradeComponent}</div>
-        <TradePanelModal
-          isShow={isTradePanelModalShow}
-          setIsShow={tradePanelModal.setIsShow}
-          message={tradePanelModalMsg}
-          link={tradePanelModalLink}
-        />
+        <div className={`w-full ${userPosition?.size !== 0 ? 'showmenu' : 'hidemenu'}`}>
+          {userPosition?.size !== 0 ? displayComponent : tradeComponent}
+        </div>
       </div>
     </div>
   );
