@@ -33,6 +33,7 @@ export interface OpenPositionEstimation {
     isLiquidatable: boolean;
   };
   txSummary: {
+    notionalSize: number;
     exposure: number;
     entryPrice: number;
     priceImpactPct: number;
@@ -60,7 +61,6 @@ export const useOpenPositionEstimation = (args: {
   const leverage = useDebounce(parseBigInt(args.leverage));
   const ammAddr = getAMMAddress(chain, amm);
   const chViewer = getCHViewerContract(chain);
-
   // estimate position
   const { data, isLoading } = useContractRead({
     address: chViewer.address,
@@ -84,6 +84,7 @@ export const useOpenPositionEstimation = (args: {
           isLiquidatable: data.positionInfo.isLiquidatable
         },
         txSummary: {
+          notionalSize: formatBigInt(data.txSummary.exchangedQuoteAssetAmount),
           exposure: formatBigInt(data.txSummary.exchangedPositionSize),
           entryPrice: formatBigInt(data.txSummary.entryPrice),
           priceImpactPct: formatBigInt(data.txSummary.priceImpact * 100n),
@@ -129,7 +130,8 @@ export const useApproveTransaction = (approvalAmount: number) => {
   const {
     config,
     error: prepareError,
-    isError: isPrepareError
+    isError: isPrepareError,
+    isLoading: isPreparing
   } = usePrepareContractWrite({
     ...weth,
     abi: wethAbi,
@@ -142,14 +144,14 @@ export const useApproveTransaction = (approvalAmount: number) => {
 
   const txHash = writeData?.hash;
 
-  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+  const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
 
   const isError = isPrepareError || isWriteError;
 
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isLoading, isSuccess, txHash };
+  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useOpenPositionTransaction = (args: {
@@ -157,7 +159,7 @@ export const useOpenPositionTransaction = (args: {
   notionalAmount: number;
   slippagePercent: number;
   leverage: number;
-  estimation: OpenPositionEstimation;
+  estimation: OpenPositionEstimation | undefined;
 }) => {
   const amm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
@@ -166,13 +168,13 @@ export const useOpenPositionTransaction = (args: {
   const leverage = useDebounce(parseBigInt(args.leverage));
   const slippagePercent = useDebounce(parseBigInt(args.slippagePercent));
 
-  const { exposure } = args.estimation.txSummary;
+  const exposure = args.estimation ? args.estimation.txSummary.exposure : null;
   const slippage = slippagePercent
     ? side === BigInt(Side.LONG)
       ? 1 - formatBigInt(slippagePercent) / 100
       : 1 + formatBigInt(slippagePercent) / 100
     : 0;
-  const sizeLimit = parseBigInt(exposure * slippage);
+  const sizeLimit = exposure ? parseBigInt(exposure * slippage) : 0n;
 
   const ammAddr = getAMMAddress(chain, amm);
 
@@ -181,27 +183,28 @@ export const useOpenPositionTransaction = (args: {
   const {
     config,
     error: prepareError,
-    isError: isPrepareError
+    isError: isPrepareError,
+    isLoading: isPreparing
   } = usePrepareContractWrite({
     ...chContract,
     abi: chAbi,
     functionName: 'openPosition',
     args: ammAddr && notionalAmount && leverage ? [ammAddr, Number(side), notionalAmount, leverage, sizeLimit, true] : undefined,
-    enabled: Boolean(ammAddr && notionalAmount && leverage)
+    enabled: Boolean(ammAddr && notionalAmount && leverage && args.estimation && args.estimation.txSummary.collateral >= 0.01)
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
 
   const txHash = writeData?.hash;
 
-  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+  const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
 
   const isError = isPrepareError || isWriteError;
 
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isLoading, isSuccess, txHash };
+  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useClosePositionTransaction = (_slippagePercent: number) => {
@@ -223,7 +226,8 @@ export const useClosePositionTransaction = (_slippagePercent: number) => {
   const {
     config,
     error: prepareError,
-    isError: isPrepareError
+    isError: isPrepareError,
+    isLoading: isPreparing
   } = usePrepareContractWrite({
     ...chContract,
     abi: chAbi,
@@ -236,14 +240,14 @@ export const useClosePositionTransaction = (_slippagePercent: number) => {
 
   const txHash = writeData?.hash;
 
-  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+  const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
 
   const isError = isPrepareError || isWriteError;
 
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isLoading, isSuccess, txHash };
+  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useAdjustCollateralEstimation = (deltaMargin: number) => {
@@ -284,7 +288,8 @@ export const useAddCollateralTransaction = (deltaMargin: number) => {
   const {
     config,
     error: prepareError,
-    isError: isPrepareError
+    isError: isPrepareError,
+    isLoading: isPreparing
   } = usePrepareContractWrite({
     ...chContract,
     abi: chAbi,
@@ -296,14 +301,14 @@ export const useAddCollateralTransaction = (deltaMargin: number) => {
 
   const txHash = writeData?.hash;
 
-  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+  const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
 
   const isError = isPrepareError || isWriteError;
 
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isLoading, isSuccess, txHash };
+  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useReduceCollateralTransaction = (deltaMargin: number) => {
@@ -316,7 +321,8 @@ export const useReduceCollateralTransaction = (deltaMargin: number) => {
   const {
     config,
     error: prepareError,
-    isError: isPrepareError
+    isError: isPrepareError,
+    isLoading: isPreparing
   } = usePrepareContractWrite({
     ...chContract,
     abi: chAbi,
@@ -328,12 +334,12 @@ export const useReduceCollateralTransaction = (deltaMargin: number) => {
 
   const txHash = writeData?.hash;
 
-  const { isLoading, isSuccess } = useWaitForTransaction({ hash: txHash });
+  const { isLoading: isPending, isSuccess } = useWaitForTransaction({ hash: txHash });
 
   const isError = isPrepareError || isWriteError;
 
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isLoading, isSuccess, txHash };
+  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
 };

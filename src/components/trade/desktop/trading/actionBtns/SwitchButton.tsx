@@ -18,7 +18,7 @@ function SwitchButton() {
     }
   };
 
-  return <BaseButton isPending={isConnecting} onClickButton={handleSwitch} label="Switch to Arbitrum" />;
+  return <BaseButton isLoading={isConnecting} onClick={handleSwitch} label="Switch to Arbitrum" />;
 }
 
 export default SwitchButton;

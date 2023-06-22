@@ -12,7 +12,7 @@ function ConnectButton() {
     open({ route: 'ConnectWallet' });
   };
 
-  return <BaseButton isPending={isConnecting} onClickButton={traderConnectWallet} label="Connect Wallet" />;
+  return <BaseButton isLoading={isConnecting} onClick={traderConnectWallet} label="Connect Wallet" />;
 }
 
 export default ConnectButton;

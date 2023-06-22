@@ -19,14 +19,6 @@ export type TransactionPendings = {
   [value in AMM]?: boolean;
 };
 
-export const $tradingData = atom<CollectionTradingData | undefined>();
-
-export const $isTradingDataInitializing = atom(false);
-
-export const $currentAmm = atom<AMM | undefined>();
-
-export const $transactionPendings = map<TransactionPendings>();
-
 export interface ChartGraphRecord {
   round: number;
   avgPrice: number;
@@ -44,6 +36,14 @@ export interface ChartData {
   low: number;
   volume: number;
 }
+
+export const $tradingData = atom<CollectionTradingData | undefined>();
+
+export const $isTradingDataInitializing = atom(false);
+
+export const $currentAmm = atom<AMM | undefined>();
+
+export const $transactionPendings = map<TransactionPendings>();
 
 export const $selectedTimeIndex = atom(0);
 

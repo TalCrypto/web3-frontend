@@ -132,7 +132,7 @@ function TradePage(props: WithRouterProps) {
               <div className="flex">
                 <SidebarCollection />
 
-                {/* <TradingWindow /> */}
+                <TradingWindow />
               </div>
 
               <div className="block 2xl:ml-[49px] 2xl:flex-1">

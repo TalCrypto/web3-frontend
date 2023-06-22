@@ -2,19 +2,28 @@ import React from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import PrimaryButton from '@/components/common/PrimaryButton';
 
-function BaseButton(props: { isPending: boolean; label: string; onClickButton: (() => void) | undefined }) {
-  const { isPending, label, onClickButton } = props;
-
+function BaseButton({
+  label,
+  isLoading,
+  onClick,
+  disabled = false
+}: {
+  label: string;
+  isLoading: boolean;
+  onClick: () => void;
+  // eslint-disable-next-line react/require-default-props
+  disabled?: boolean;
+}) {
   return (
     <div className="flex">
       <PrimaryButton
-        isDisabled={!onClickButton}
-        className={`${!onClickButton ? 'opacity-30' : ''}
+        isDisabled={disabled}
+        className={`${!isLoading && disabled ? 'opacity-30' : ''}
           h-[46px] w-full px-[10px] py-[14px]
         `}
-        onClick={isPending || !onClickButton ? null : onClickButton}>
+        onClick={!isLoading && !disabled ? onClick : null}>
         <div className="w-full text-center text-[15px] font-semibold">
-          {isPending ? (
+          {isLoading ? (
             <div className="flex justify-center">
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
             </div>
