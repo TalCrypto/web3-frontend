@@ -42,7 +42,6 @@ function ClosePosButton({
 
   useEffect(() => {
     if (isPending) {
-      onPending();
       showToast(
         {
           warning: true,
@@ -64,6 +63,7 @@ function ClosePosButton({
       disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
+        onPending();
         setIsLoading(true);
         write?.();
       }}

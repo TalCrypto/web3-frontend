@@ -41,7 +41,6 @@ function ApproveButton({
 
   useEffect(() => {
     if (isPending) {
-      onPending();
       showToast(
         {
           warning: true,
@@ -63,6 +62,7 @@ function ApproveButton({
       disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
+        onPending();
         setIsLoading(true);
         write?.();
       }}

@@ -43,7 +43,6 @@ function AddCollateralButton({
 
   useEffect(() => {
     if (isPending) {
-      onPending();
       showToast(
         {
           warning: true,
@@ -58,13 +57,14 @@ function AddCollateralButton({
         }
       );
     }
-  }, [isPending, onPending, collectionInfo.shortName, txHash]);
+  }, [isPending, collectionInfo.shortName, txHash]);
 
   return (
     <BaseButton
       disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
+        onPending();
         setIsLoading(true);
         write?.();
       }}

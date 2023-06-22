@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react';
 import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
-import { formatBigInt, parseBigInt } from '@/utils/bigInt';
+import { absBigInt, formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/contracts';
 import { chAbi, chViewerAbi, wethAbi } from '@/const/abi';
 import { $userAddress, $currentChain } from '@/stores/user';
 import { useDebounce } from '@/hooks/debounce';
 import { usePositionInfo } from '@/hooks/collection';
+import { MINIMUM_COLLATERAL } from '@/const';
 
 // eslint-disable-next-line no-shadow
 export enum Side {
@@ -174,7 +175,7 @@ export const useOpenPositionTransaction = (args: {
       ? 1 - formatBigInt(slippagePercent) / 100
       : 1 + formatBigInt(slippagePercent) / 100
     : 0;
-  const sizeLimit = exposure ? parseBigInt(exposure * slippage) : 0n;
+  const sizeLimit = exposure ? absBigInt(parseBigInt(exposure * slippage)) : 0n;
 
   const ammAddr = getAMMAddress(chain, amm);
 
@@ -190,7 +191,7 @@ export const useOpenPositionTransaction = (args: {
     abi: chAbi,
     functionName: 'openPosition',
     args: ammAddr && notionalAmount && leverage ? [ammAddr, Number(side), notionalAmount, leverage, sizeLimit, true] : undefined,
-    enabled: Boolean(ammAddr && notionalAmount && leverage && args.estimation && args.estimation.txSummary.collateral >= 0.01)
+    enabled: Boolean(ammAddr && notionalAmount && leverage && args.estimation && args.estimation.txSummary.collateral >= MINIMUM_COLLATERAL)
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);

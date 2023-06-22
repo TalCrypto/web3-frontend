@@ -43,7 +43,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
   const entryPrice = data ? formatBigInt(data.avgEntryPrice) : 0;
   const openLeverage = data ? formatBigInt(data.openLeverage) : 0;
   const liquidationPrice = data ? formatBigInt(data.liquidationPrice) : 0;
-  const vammPrice = data ? formatBigInt(data.spotPrice) : 0;
+  // const vammPrice = data ? formatBigInt(data.spotPrice) : 0;
   const leverage = data ? formatBigInt(data.leverage) : 0;
   const fundingPayment = data ? formatBigInt(data.fundingPayment) : 0;
   const isLiquidatable = data ? data.isLiquidatable : false;
@@ -60,7 +60,6 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
         entryPrice,
         openLeverage,
         liquidationPrice,
-        vammPrice,
         leverage,
         fundingPayment,
         isLiquidatable
@@ -79,7 +78,6 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
     entryPrice,
     openLeverage,
     liquidationPrice,
-    vammPrice,
     leverage,
     fundingPayment,
     isLiquidatable

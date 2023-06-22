@@ -29,6 +29,7 @@ import SwitchButton from '@/components/trade/desktop/trading/actionBtns/SwitchBu
 import GetWETHButton from '@/components/trade/desktop/trading/actionBtns/GetWETHButton';
 import ApproveButton from '@/components/trade/desktop/trading/actionBtns/ApproveButton';
 import OpenPosButton from '@/components/trade/desktop/trading/actionBtns/OpenPosButton';
+import { MINIMUM_COLLATERAL } from '@/const';
 
 function LongShortRatio(props: any) {
   const router = useRouter();
@@ -75,11 +76,11 @@ function LongShortRatio(props: any) {
       ) : (
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+          ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
           onClick={() => {
-            if (!userPosition) {
-              setSaleOrBuyIndex(0);
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.LONG);
               analyticsLogSide(0, currentAmm, fullWalletAddress ?? zeroAddress);
             }
           }}>
@@ -97,7 +98,7 @@ function LongShortRatio(props: any) {
             </div>
           }
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
+            ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
             text-center text-[14px] font-semibold`}
           key="short">
           <div className="">SHORT</div>
@@ -105,12 +106,12 @@ function LongShortRatio(props: any) {
       ) : (
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-            ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+            ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
             text-center text-[14px] font-semibold hover:text-highEmphasis`}
           key="short"
           onClick={() => {
-            if (!userPosition) {
-              setSaleOrBuyIndex(1);
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.SHORT);
               analyticsLogSide(1, currentAmm, fullWalletAddress ?? zeroAddress);
             }
           }}>
@@ -446,7 +447,7 @@ function Tips({
   ) : null;
 }
 
-function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation | undefined }) {
+function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
   // const router = useRouter();
   // const currentToken = useNanostore(wsCurrentToken);
   // const { page } = pageTitleParser(router.asPath);
@@ -588,14 +589,7 @@ export default function TradeComponent() {
   }, [userPosition]);
 
   useEffect(() => {
-    if (isEstLoading) {
-      setTextErrorMessage('');
-      setTextErrorMessageShow(false);
-    }
-  }, [isEstLoading]);
-
-  useEffect(() => {
-    if (estimation?.txSummary.collateral && estimation?.txSummary.collateral < 0.01) {
+    if (estimation?.txSummary.collateral && estimation?.txSummary.collateral < MINIMUM_COLLATERAL) {
       setIsAmountTooSmall(true);
     } else {
       setIsAmountTooSmall(false);
@@ -603,8 +597,6 @@ export default function TradeComponent() {
   }, [estimation?.txSummary.collateral]);
 
   const initializeState = useCallback(() => {
-    setTextErrorMessage('');
-    setTextErrorMessageShow(false);
     setQuantity('');
     setLeverageValue(1);
     setToleranceRate(0.5);
@@ -627,9 +619,10 @@ export default function TradeComponent() {
   }, [currentAmm, saleOrBuyIndex, isConnected]);
 
   const handleQuantityInput = (value: string) => {
+    setQuantity(value);
     setTextErrorMessage('');
     setTextErrorMessageShow(false);
-    setQuantity(value);
+    setIsAmountTooSmall(false);
   };
 
   const handleLeverageChange = (leverage: number) => {
@@ -704,7 +697,7 @@ export default function TradeComponent() {
         isRequireWeth={wethBalance === 0}
         isApproveRequired={isNeedApproval}
       />
-      <ExtendedEstimateComponent estimation={estimation} />
+      {estimation && <ExtendedEstimateComponent estimation={estimation} />}
     </div>
   );
 }

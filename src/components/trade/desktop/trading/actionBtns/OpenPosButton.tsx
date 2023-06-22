@@ -34,6 +34,10 @@ function OpenPosButton({
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    setIsLoading(false);
+  }, [currentAmm]);
+
   const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useOpenPositionTransaction({
     side,
     notionalAmount,
@@ -57,10 +61,8 @@ function OpenPosButton({
   }, [isSuccess, onSuccess]);
 
   useEffect(() => {
-    if (isPending) {
-      onPending();
-      const type =
-        positionInfo && positionInfo.size === 0 ? 'Open' : positionInfo && (-1) ** side * positionInfo.size > 0 ? 'Add' : 'Partial Close';
+    if (isPending && txHash) {
+      const type = positionInfo?.size === 0 ? 'Open' : (-1) ** side * (positionInfo?.size ?? 0) > 0 ? 'Add' : 'Partial Close';
       showToast(
         {
           warning: true,
@@ -75,13 +77,15 @@ function OpenPosButton({
         }
       );
     }
-  }, [isPending, onPending, collectionInfo.shortName, txHash, positionInfo, side]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPending]);
 
   return (
     <BaseButton
       disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
+        onPending();
         setIsLoading(true);
         write?.();
       }}

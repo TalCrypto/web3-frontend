@@ -41,7 +41,7 @@ export interface UserPositionInfo {
   entryPrice: number;
   openLeverage: number;
   liquidationPrice: number;
-  vammPrice: number;
+  // vammPrice: number;
   leverage: number;
   fundingPayment: number;
   isLiquidatable: boolean;

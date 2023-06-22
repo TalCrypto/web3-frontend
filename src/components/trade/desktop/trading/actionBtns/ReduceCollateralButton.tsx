@@ -43,7 +43,6 @@ function ReduceCollateralButton({
 
   useEffect(() => {
     if (isPending) {
-      onPending();
       showToast(
         {
           warning: true,
@@ -65,6 +64,7 @@ function ReduceCollateralButton({
       disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
+        onPending();
         setIsLoading(true);
         write?.();
       }}
