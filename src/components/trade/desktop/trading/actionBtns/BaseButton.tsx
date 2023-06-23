@@ -17,7 +17,7 @@ function BaseButton({
   return (
     <div className="flex">
       <PrimaryButton
-        isDisabled={disabled}
+        isDisabled={!isLoading && disabled}
         className={`${!isLoading && disabled ? 'opacity-30' : ''}
           h-[46px] w-full px-[10px] py-[14px]
         `}

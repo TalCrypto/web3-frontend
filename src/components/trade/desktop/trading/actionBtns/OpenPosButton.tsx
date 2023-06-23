@@ -8,7 +8,6 @@ import { getCollectionInformation } from '@/const/collectionList';
 import { usePositionInfo } from '@/hooks/collection';
 
 function OpenPosButton({
-  disabled,
   isEstimating,
   side,
   notionalAmount,
@@ -19,7 +18,6 @@ function OpenPosButton({
   onSuccess,
   onError
 }: {
-  disabled: boolean;
   isEstimating: boolean;
   side: Side;
   notionalAmount: number;
@@ -82,7 +80,7 @@ function OpenPosButton({
 
   return (
     <BaseButton
-      disabled={!write || disabled}
+      disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();

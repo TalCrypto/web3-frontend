@@ -11,8 +11,7 @@ function ApproveButton({
   approvalAmount,
   onPending,
   onSuccess,
-  onError,
-  disabled = false
+  onError
 }: {
   isEstimating: boolean;
   approvalAmount: number;
@@ -20,8 +19,6 @@ function ApproveButton({
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
   onError: (error: Error | null) => void;
-  // eslint-disable-next-line react/require-default-props
-  disabled?: boolean;
 }) {
   if (approvalAmount < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
@@ -62,7 +59,7 @@ function ApproveButton({
 
   return (
     <BaseButton
-      disabled={!write || disabled}
+      disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();

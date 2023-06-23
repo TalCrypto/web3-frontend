@@ -288,7 +288,7 @@ function EstimationValueDisplay(props: { isError: boolean; estimation: AdjustMar
 }
 
 function AdjustCollateralSlidingBars(props: any) {
-  const { marginIndex, adjMarginShowValue, setAdjMarginShowValue, freeCollateral, wethBalance, onChange, disabled } = props;
+  const { marginIndex, adjustMarginValue, freeCollateral, wethBalance, onChange, disabled } = props;
 
   const rightText =
     marginIndex === 0 ? (
@@ -310,9 +310,9 @@ function AdjustCollateralSlidingBars(props: any) {
         min={0}
         max={maxValue}
         step={0.0001}
-        value={adjMarginShowValue}
+        value={adjustMarginValue}
         disabled={disabled}
-        onChange={(value: any) => setAdjMarginShowValue(value)}
+        onChange={onChange}
         onAfterChange={onChange}
       />
       <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
@@ -330,7 +330,6 @@ function AdjustCollateralSlidingBars(props: any) {
 export default function AdjustCollateral() {
   const currentAmm = useNanostore($currentAmm);
   const [adjustMarginValue, setAdjustMarginValue] = useState(0);
-  const [adjMarginShowValue, setAdjMarginShowValue] = useState(0);
   const debonceBigIntValue = useDebounce(parseBigInt(adjustMarginValue));
   const [marginIndex, setMarginIndex] = useState(0);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
@@ -346,7 +345,6 @@ export default function AdjustCollateral() {
 
   const initializeState = useCallback(() => {
     setAdjustMarginValue(0);
-    setAdjMarginShowValue(0);
     setIsPending(false);
   }, []);
 
@@ -360,7 +358,6 @@ export default function AdjustCollateral() {
   }, []);
 
   const handleChange = (value: any) => {
-    setAdjMarginShowValue(value);
     setAdjustMarginValue(value);
   };
 
@@ -374,7 +371,7 @@ export default function AdjustCollateral() {
       <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
       <QuantityEnter
         disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
-        adjustMarginValue={adjMarginShowValue}
+        adjustMarginValue={adjustMarginValue}
         onChange={(value: any) => {
           handleChange(value);
         }}
@@ -395,8 +392,7 @@ export default function AdjustCollateral() {
       /> */}
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
-        adjMarginShowValue={adjMarginShowValue}
-        setAdjMarginShowValue={setAdjMarginShowValue}
+        adjustMarginValue={adjustMarginValue}
         freeCollateral={freeCollateral}
         wethBalance={wethBalance}
         onChange={(value: any) => {

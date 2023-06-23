@@ -63,10 +63,10 @@ function QuantityEnter(props: {
   };
 
   const showHalfValue = () => {
-    onChange(maxCloseValue / 2);
+    onChange(Number(maxCloseValue / 2).toFixed(4));
   };
   const showMaxValue = () => {
-    onChange(maxCloseValue);
+    onChange(Number(maxCloseValue).toFixed(4));
   };
 
   // determine if input is valid or error state
@@ -122,7 +122,7 @@ function QuantityEnter(props: {
               type="text"
               // pattern="[0-9]*"
               className="w-full border-none border-mediumBlue bg-mediumBlue text-right text-[15px] font-bold text-white outline-none"
-              value={closeValue === 0 ? '' : closeValue}
+              value={closeValue}
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}
@@ -342,7 +342,6 @@ export default function CloseCollateral(props: any) {
   const closeSide = userPosition?.size && userPosition?.size > 0 ? Side.SHORT : Side.LONG;
   const [isFullClose, setIsFullClose] = useState(false);
   const [closeValue, setCloseValue] = useState(0);
-  const [showCloseVal, setShowCloseVal] = useState(0);
   const [toleranceRate, setToleranceRate] = useState(0.5);
   const [showDetail, setShowDetail] = useState(false);
   const [isShowPartialCloseModal, setIsShowPartialCloseModal] = useState(false);
@@ -366,13 +365,13 @@ export default function CloseCollateral(props: any) {
       setIsAmountTooSmall(false);
     }
 
-    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize > maxCloseValue) {
+    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize > Number(maxCloseValue.toFixed(4))) {
       setIsAmountTooLarge(true);
     } else {
       setIsAmountTooLarge(false);
     }
 
-    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize === maxCloseValue) {
+    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize === Number(maxCloseValue.toFixed(4))) {
       setIsFullClose(true);
     } else {
       setIsFullClose(false);
@@ -381,7 +380,6 @@ export default function CloseCollateral(props: any) {
 
   const initializeState = useCallback(() => {
     setCloseValue(0);
-    setShowCloseVal(0);
     setToleranceRate(0.5);
     setIsPending(false);
   }, []);
@@ -402,13 +400,12 @@ export default function CloseCollateral(props: any) {
 
   const handleChange = (value: any) => {
     setCloseValue(value);
-    setShowCloseVal(value);
   };
 
   return (
     <div>
       <QuantityEnter
-        closeValue={showCloseVal}
+        closeValue={closeValue}
         maxCloseValue={maxCloseValue}
         onChange={(value: any) => {
           handleChange(value);
@@ -419,13 +416,13 @@ export default function CloseCollateral(props: any) {
       />
       <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       <CloseSlider
-        closeValue={showCloseVal}
+        closeValue={closeValue}
         maxCloseValue={maxCloseValue}
         onChange={(value: any) => {
           handleChange(value);
         }}
         onSlide={(value: any) => {
-          setShowCloseVal(Number(value));
+          handleChange(value);
         }}
         disabled={isPending}
       />
@@ -469,7 +466,7 @@ export default function CloseCollateral(props: any) {
       {isNeedApproval ? (
         <ApproveButton
           isEstimating={isEstLoading}
-          approvalAmount={approvalAmount}
+          approvalAmount={isAmountTooLarge || isAmountTooSmall ? 0 : approvalAmount}
           onPending={handlePending}
           onSuccess={() => {}}
           onError={handleError}
@@ -484,13 +481,12 @@ export default function CloseCollateral(props: any) {
         />
       ) : (
         <OpenPosButton
-          disabled={isAmountTooLarge || isAmountTooSmall}
           isEstimating={isEstLoading}
           side={closeSide}
           notionalAmount={closeValue}
           leverage={1}
           slippagePercent={toleranceRate}
-          estimation={estimation}
+          estimation={isAmountTooLarge || isAmountTooSmall ? undefined : estimation}
           onPending={handlePending}
           onSuccess={initializeState}
           onError={handleError}

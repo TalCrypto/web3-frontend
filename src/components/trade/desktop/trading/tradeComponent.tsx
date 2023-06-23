@@ -663,22 +663,20 @@ export default function TradeComponent() {
         <GetWETHButton />
       ) : isNeedApproval ? (
         <ApproveButton
-          disabled={isAmountTooSmall}
           isEstimating={isEstLoading}
-          approvalAmount={approvalAmount}
+          approvalAmount={isAmountTooSmall ? 0 : approvalAmount}
           onPending={handlePending}
           onSuccess={() => {}}
           onError={handleError}
         />
       ) : (
         <OpenPosButton
-          disabled={isAmountTooSmall}
           isEstimating={isEstLoading}
           side={saleOrBuyIndex}
           notionalAmount={notionalAmount}
           leverage={leverageValue}
           slippagePercent={toleranceRate}
-          estimation={estimation}
+          estimation={isAmountTooSmall ? undefined : estimation}
           onPending={handlePending}
           onSuccess={initializeState}
           onError={handleError}

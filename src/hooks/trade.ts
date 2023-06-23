@@ -87,7 +87,7 @@ export const useOpenPositionEstimation = (args: {
           marginRatioPct: formatBigInt(data.positionInfo.marginRatio * 100n),
           avgEntryPrice: formatBigInt(data.positionInfo.avgEntryPrice),
           leverage: formatBigInt(data.positionInfo.leverage),
-          liquidationPrice: formatBigInt(data.positionInfo.liquidationPrice),
+          liquidationPrice: Math.max(formatBigInt(data.positionInfo.liquidationPrice), 0),
           positionNotional: formatBigInt(data.positionInfo.positionNotional),
           margin: formatBigInt(data.positionInfo.margin),
           isLiquidatable: data.positionInfo.isLiquidatable
@@ -287,7 +287,7 @@ export const useAdjustCollateralEstimation = (
         margin: formatBigInt(data.margin),
         marginRatioPct: formatBigInt(data.marginRatio * 100n),
         leverage: formatBigInt(data.leverage),
-        liquidationPrice: formatBigInt(data.liquidationPrice),
+        liquidationPrice: Math.max(formatBigInt(data.liquidationPrice), 0),
         isLiquidatable: data.isLiquidatable,
         marginRequirement: deltaMargin
       }
