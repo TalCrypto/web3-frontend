@@ -570,8 +570,7 @@ export default function TradeComponent() {
   const [toleranceRate, setToleranceRate] = useState(0.5);
   const [leverageValue, setLeverageValue] = useState(1);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
-  const [textErrorMessage, setTextErrorMessage] = useState('');
-  const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
+  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const notionalAmount = Number(quantity) * leverageValue ?? 0;
   const { isLoading: isEstLoading, estimation } = useOpenPositionEstimation({
     side: saleOrBuyIndex,
@@ -605,8 +604,7 @@ export default function TradeComponent() {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error?.message ?? '');
-    setTextErrorMessageShow(true);
+    setTextErrorMessage(error ? error.message : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -620,16 +618,10 @@ export default function TradeComponent() {
 
   const handleQuantityInput = (value: string) => {
     setQuantity(value);
-    setTextErrorMessage('');
-    setTextErrorMessageShow(false);
-    setIsAmountTooSmall(false);
   };
 
   const handleLeverageChange = (leverage: number) => {
     setLeverageValue(leverage);
-    setTextErrorMessage('');
-    setTextErrorMessageShow(false);
-    setIsAmountTooSmall(false);
   };
 
   return (
@@ -671,10 +663,11 @@ export default function TradeComponent() {
         <GetWETHButton />
       ) : isNeedApproval ? (
         <ApproveButton
+          disabled={isAmountTooSmall}
           isEstimating={isEstLoading}
           approvalAmount={approvalAmount}
           onPending={handlePending}
-          onSuccess={initializeState}
+          onSuccess={() => {}}
           onError={handleError}
         />
       ) : (
@@ -691,7 +684,7 @@ export default function TradeComponent() {
           onError={handleError}
         />
       )}
-      {textErrorMessageShow ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null}
+      {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null}
       <Tips
         isConnected={isConnected}
         isWrongNetwork={isWrongNetwork}

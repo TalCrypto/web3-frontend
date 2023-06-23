@@ -27,10 +27,8 @@ function ClosePosButton({
   const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useClosePositionTransaction(slippagePercent);
 
   useEffect(() => {
-    if (isError) {
-      onError(error);
-      setIsLoading(false);
-    }
+    setIsLoading(false);
+    onError(isError ? error : null);
   }, [isError, error, onError]);
 
   useEffect(() => {

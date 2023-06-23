@@ -327,14 +327,13 @@ function AdjustCollateralSlidingBars(props: any) {
   );
 }
 
-export default function AdjustCollateral(props: any) {
+export default function AdjustCollateral() {
   const currentAmm = useNanostore($currentAmm);
   const [adjustMarginValue, setAdjustMarginValue] = useState(0);
   const [adjMarginShowValue, setAdjMarginShowValue] = useState(0);
   const debonceBigIntValue = useDebounce(parseBigInt(adjustMarginValue));
   const [marginIndex, setMarginIndex] = useState(0);
-  const [textErrorMessage, setTextErrorMessage] = useState('');
-  const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
+  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
   const freeCollateral = useFreeCollateral();
@@ -348,15 +347,12 @@ export default function AdjustCollateral(props: any) {
   const initializeState = useCallback(() => {
     setAdjustMarginValue(0);
     setAdjMarginShowValue(0);
-    setTextErrorMessage('');
-    setTextErrorMessageShow(false);
     setIsPending(false);
   }, []);
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error?.message ?? '');
-    setTextErrorMessageShow(true);
+    setTextErrorMessage(error ? error.message : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -366,8 +362,6 @@ export default function AdjustCollateral(props: any) {
   const handleChange = (value: any) => {
     setAdjMarginShowValue(value);
     setAdjustMarginValue(value);
-    setTextErrorMessage('');
-    setTextErrorMessageShow(false);
   };
 
   useEffect(() => {
@@ -387,7 +381,7 @@ export default function AdjustCollateral(props: any) {
         marginIndex={marginIndex}
         freeCollateral={freeCollateral}
         wethBalance={wethBalance}
-        isError={textErrorMessageShow}
+        isError={textErrorMessage !== null}
       />
       {/* <QuantityTips
         balanceChecking={balanceChecking}
@@ -411,7 +405,7 @@ export default function AdjustCollateral(props: any) {
         disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
       />
       <SectionDividers />
-      <EstimationValueDisplay isError={textErrorMessageShow} estimation={estimation} />
+      <EstimationValueDisplay isError={textErrorMessage !== null} estimation={estimation} />
       <SectionDividers />
       <UpdatedCollateralValue marginIndex={marginIndex} value={!estimation ? '-.-' : Math.abs(estimation.marginRequirement).toFixed(4)} />
       {isNeedApproval ? (
@@ -419,7 +413,7 @@ export default function AdjustCollateral(props: any) {
           isEstimating={isEstLoading}
           approvalAmount={approvalAmount}
           onPending={handlePending}
-          onSuccess={initializeState}
+          onSuccess={() => {}}
           onError={handleError}
         />
       ) : marginIndex === 0 ? (
@@ -439,7 +433,7 @@ export default function AdjustCollateral(props: any) {
           onError={handleError}
         />
       )}
-      {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
+      {textErrorMessage !== null ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
     </div>
   );
 }

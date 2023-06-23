@@ -28,16 +28,14 @@ function AddCollateralButton({
   const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useAddCollateralTransaction(deltaMargin);
 
   useEffect(() => {
-    if (isError) {
-      onError(error);
-      setIsLoading(false);
-    }
+    setIsLoading(false);
+    onError(isError ? error : null);
   }, [isError, error, onError]);
 
   useEffect(() => {
     if (isSuccess) {
-      onSuccess();
       setIsLoading(false);
+      onSuccess();
     }
   }, [isSuccess, onSuccess]);
 

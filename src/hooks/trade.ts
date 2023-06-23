@@ -120,7 +120,8 @@ export const useApprovalCheck = (amount: number) => {
     abi: wethAbi,
     functionName: 'allowance',
     args: address && chContract ? [address, chContract.address] : undefined,
-    enabled: Boolean(address && chContract)
+    enabled: Boolean(address && chContract),
+    watch: true
   });
 
   const allowance = formatBigInt(allowanceData ?? 0n);

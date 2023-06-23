@@ -348,8 +348,7 @@ export default function CloseCollateral(props: any) {
   const [isShowPartialCloseModal, setIsShowPartialCloseModal] = useState(false);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
-  const [textErrorMessage, setTextErrorMessage] = useState('');
-  const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
+  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const { isLoading: isEstLoading, estimation } = useOpenPositionEstimation({
     side: closeSide,
@@ -389,8 +388,7 @@ export default function CloseCollateral(props: any) {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error?.message ?? '');
-    setTextErrorMessageShow(true);
+    setTextErrorMessage(error ? error.message : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -405,10 +403,6 @@ export default function CloseCollateral(props: any) {
   const handleChange = (value: any) => {
     setCloseValue(value);
     setShowCloseVal(value);
-    setTextErrorMessage('');
-    setTextErrorMessageShow(false);
-    setIsAmountTooSmall(false);
-    setIsAmountTooLarge(false);
   };
 
   return (
@@ -477,7 +471,7 @@ export default function CloseCollateral(props: any) {
           isEstimating={isEstLoading}
           approvalAmount={approvalAmount}
           onPending={handlePending}
-          onSuccess={initializeState}
+          onSuccess={() => {}}
           onError={handleError}
         />
       ) : isFullClose ? (
@@ -502,7 +496,7 @@ export default function CloseCollateral(props: any) {
           onError={handleError}
         />
       )}
-      {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
+      {textErrorMessage ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
       {/* <div className="row">
         <div className="col-auto text-[14px] text-mediumEmphasis">
           * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released

@@ -6,7 +6,6 @@ import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollatera
 import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import { useWeb3Modal } from '@web3modal/react';
 
 // function OverFluctuationError(props: any) {
 //   const { setShowOverFluctuationContent } = props;
