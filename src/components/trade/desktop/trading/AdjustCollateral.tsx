@@ -3,60 +3,23 @@
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { logEvent } from 'firebase/analytics';
-import { utils } from 'ethers';
-import { ThreeDots } from 'react-loader-spinner';
-import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import { calculateNumber } from '@/utils/calculateNumbers';
-
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { apiConnection } from '@/utils/apiConnection';
-import { pageTitleParser } from '@/utils/eventLog';
-import tradePanel from '@/stores/tradePanel';
-// import tradePanelModal from '@/stores/tradePanelModal';
-import collectionsLoading from '@/stores/collectionsLoading';
-
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
-
-import {
-  wsIsLogin,
-  wsIsWrongNetwork,
-  wsIsApproveRequired,
-  wsCurrentToken,
-  wsUserPosition,
-  wsWethBalance,
-  wsMaxReduceValue,
-  wsFullWalletAddress
-} from '@/stores/WalletState';
-import { getTestToken } from '@/utils/Wallet';
-import PrimaryButton from '@/components/common/PrimaryButton';
+import { AdjustMarginEstimation, useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
+import { $userWethBalance } from '@/stores/user';
+import { usePositionInfo } from '@/hooks/collection';
+import { $currentAmm } from '@/stores/trading';
+import { useDebounce } from '@/hooks/debounce';
+import { formatBigInt, parseBigInt } from '@/utils/bigInt';
+import ApproveButton from '@/components/trade/desktop/trading/actionBtns/ApproveButton';
+import AddCollateralButton from '@/components/trade/desktop/trading/actionBtns/AddCollateralButton';
+import ReduceCollateralButton from '@/components/trade/desktop/trading/actionBtns/ReduceCollateralButton';
 
 function SaleOrBuyRadio(props: any) {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-  const { marginIndex, setMarginIndex, setMarginEstimation, setAdjustMarginValue } = props;
-  // const radioButtonIndex = marginIndex ? 0 : 1;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
-
-  function getAnalyticsLongShort(index: any) {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, ['mytrades_increase_margin_pressed', 'mytrades_decrease_margin_pressed'][index], {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    const eventName = ['mytrades_increase_margin_pressed', 'mytrades_decrease_margin_pressed'][index];
-    apiConnection.postUserEvent(eventName, {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-  }
+  const { marginIndex, setMarginIndex, onChange, disabled } = props;
 
   const radioGroup = ['Add', 'Reduce'].map((item, index) => {
     const className = marginIndex === index ? ['long-selected', 'short-selected'][marginIndex] : 'selectbehaviour';
@@ -67,10 +30,10 @@ function SaleOrBuyRadio(props: any) {
           ${className} ${marginIndex === index ? 'text-highEmphasis' : 'text-direction-unselected-normal'}
         `}
         onClick={() => {
-          setAdjustMarginValue(0);
-          setMarginEstimation(null);
-          getAnalyticsLongShort(index);
-          setMarginIndex(index);
+          if (!disabled) {
+            onChange();
+            setMarginIndex(index);
+          }
         }}
         key={item}>
         <div className="col my-auto">{item}</div>
@@ -81,25 +44,9 @@ function SaleOrBuyRadio(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const {
-    value,
-    setValue,
-    onChange,
-    marginIndex,
-    balanceChecking,
-    marginRatioChecker,
-    minimalMarginChecking,
-    initialMarginChecker,
-    reduceMarginChecking,
-    isProcessing
-  } = props;
+  const { disabled, adjustMarginValue, onChange, marginIndex, freeCollateral, wethBalance, isError } = props;
 
   const [isFocus, setIsFocus] = useState(false);
-  const isLoginState = useNanostore(wsIsLogin);
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
-  const isApproveRequired = useNanostore(wsIsApproveRequired);
-  const wethBalance = useNanostore(wsWethBalance);
-  const maxReduceValue = useNanostore(wsMaxReduceValue);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -113,38 +60,23 @@ function QuantityEnter(props: any) {
     }
   };
 
-  let newValue = '0';
-
-  const increaseMax = Number(wethBalance) - 0.0001;
-  const decreaseMax = Number(maxReduceValue) - 0.0001;
+  const increaseMax = wethBalance;
+  const decreaseMax = freeCollateral;
   const maxValue = marginIndex === 0 ? increaseMax : decreaseMax;
-  const disabled = isProcessing || initialMarginChecker || reduceMarginChecking || (decreaseMax <= 0 && marginIndex === 1);
 
   const showHalfValue = () => {
-    newValue = (maxValue / 2).toFixed(4);
-    setValue(newValue);
-    onChange(newValue);
+    onChange((maxValue / 2).toFixed(4));
   };
 
   const showMaxValue = () => {
-    newValue = maxValue.toFixed(4);
-    setValue(newValue);
-    onChange(newValue);
+    onChange(Number(maxValue).toFixed(4));
   };
-
-  // determine if input is valid or error state
-  const isValid =
-    value > 0 && !balanceChecking && !marginRatioChecker && !minimalMarginChecking && !initialMarginChecker && !reduceMarginChecking;
-  let isError = balanceChecking || marginRatioChecker || minimalMarginChecking || initialMarginChecker || reduceMarginChecking;
-  if (value <= 0) {
-    isError = false;
-  }
 
   return (
     <>
       <div className={`mb-4 flex ${disabled ? 'disabled' : ''}`}>
         <div className="flex-1 text-[14px] text-mediumEmphasis">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
-        {isLoginState && !isWrongNetwork && marginIndex === 0 ? (
+        {marginIndex === 0 ? (
           <div className="flex text-[14px] text-mediumEmphasis" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <div className="flex-1" style={{ display: 'flex', marginRight: '4px' }}>
               <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
@@ -198,12 +130,11 @@ function QuantityEnter(props: any) {
               type="text"
               // pattern="[0-9]*"
               className={`w-full border-none border-mediumBlue bg-mediumBlue
-                  text-right text-[15px] font-bold text-white outline-none
-                  ${isApproveRequired ? 'cursor-not-allowed' : ''}`}
-              value={value}
+                  text-right text-[15px] font-bold text-white outline-none`}
+              value={adjustMarginValue}
               placeholder="0.00"
               onChange={handleEnter}
-              disabled={isApproveRequired || disabled}
+              disabled={disabled}
               min={0}
               // onClick={e => e.target.setSelectionRange(e.target.value.length, e.target.value.length)}
               onFocus={() => setIsFocus(true)}
@@ -273,343 +204,91 @@ function UpdatedCollateralValue(props: any) {
   );
 }
 
-function AdjustMarginButton(props: any) {
-  const {
-    adjustMarginValue,
-    isAdjustingMargin,
-    adjustPositionMargin,
-    balanceChecking,
-    marginRatioChecker,
-    minimalMarginChecking,
-    initialMarginChecker,
-    marginIndex,
-    isPending,
-    isWaiting
-  } = props;
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+// function QuantityTips(props: any) {
+//   const {
+//     balanceChecking,
+//     marginRatioChecker,
+//     minimalMarginChecking,
+//     initialMarginChecker,
+//     reduceMarginChecking,
+//     value,
+//     isPending,
+//     marginIndex
+//   } = props;
+//   const maxReduceValue = useNanostore(wsMaxReduceValue);
+//   const decreaseMax = Number(maxReduceValue) - 0.0001;
 
-  const isChecked1 = adjustMarginValue === '' || isWrongNetwork || adjustMarginValue === 0 || balanceChecking;
-  const isChecked2 = marginRatioChecker || minimalMarginChecking || initialMarginChecker || isPending || isWaiting;
+//   if (
+//     (decreaseMax > 0 || marginIndex === 0) &&
+//     (value === 0 ||
+//       (!balanceChecking && !marginRatioChecker && !minimalMarginChecking && !initialMarginChecker && !reduceMarginChecking && !isPending))
+//   ) {
+//     return null;
+//   }
 
-  if (isChecked1 || isChecked2) {
-    return (
-      <PrimaryButton className="h-[46px] w-full" isDisabled>
-        <div className="text-center font-semibold text-[#373961]">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
-      </PrimaryButton>
-    );
-  }
-  if (isAdjustingMargin) {
-    return (
-      <PrimaryButton className="h-[46px] w-full">
-        <div className="col mx-auto text-center">
-          <ThreeDots ariaLabel="loading-indicator" height={40} width={40} color="white" />
-        </div>
-      </PrimaryButton>
-    );
-  }
-  return (
-    <PrimaryButton className="h-[46px] w-full " onClick={adjustPositionMargin}>
-      <div className="center font-semibold text-white">{marginIndex === 0 ? 'Add Collateral' : 'Reduce Collateral'}</div>
-    </PrimaryButton>
-  );
-}
+//   const label =
+//     initialMarginChecker || reduceMarginChecking || decreaseMax <= 0 ? (
+//       'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.'
+//     ) : isPending ? (
+//       'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
+//     ) : marginRatioChecker ? (
+//       'New Collateral must be above Initial Collateral Requirement.'
+//     ) : balanceChecking ? (
+//       <>
+//         Not enough WETH (including transaction fee).
+//         <button onClick={() => getTestToken()} className="ml-1 text-white underline">
+//           Get WETH
+//         </button>{' '}
+//         first
+//       </>
+//     ) : minimalMarginChecking ? (
+//       'Minimum collateral size 0.01'
+//     ) : (
+//       ''
+//     );
 
-function ActionButtons(props: any) {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-  const {
-    adjustMarginValue,
-    refreshPositions,
-    marginIndex,
-    marginEstimation,
-    exceedBalance,
-    balanceChecking,
-    marginRatioChecker,
-    minimalMarginChecking,
-    initialMarginChecker,
-    setAdjustMarginValue,
-    setTextErrorMessage,
-    setTextErrorMessageShow,
-    isPending,
-    isWaiting
-  } = props;
-  const [isAdjustingMargin, setIsAdjustingMargin] = useState(false);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
+//   return (
+//     <div className={`quantity-tips-container ${isPending ? 'price-fluc' : ''}`}>
+//       <span
+//         className={`${isPending ? 'text-warn' : 'text-marketRed}'}
+//           mb-2 text-[12px] leading-[20px]`}>
+//         {label}
+//       </span>
+//     </div>
+//   );
+// }
 
-  const currentToken = useNanostore(wsCurrentToken);
-
-  // sync isProcessing to store/tradePanel
-  useEffect(() => {
-    tradePanel.setIsProcessing(isAdjustingMargin);
-  }, [isAdjustingMargin]);
-
-  function startAdjustMargin() {
-    setIsAdjustingMargin(false);
-    setAdjustMarginValue(0);
-    // refreshPositions();
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_adjustmargin_start', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-    apiConnection.postUserEvent('callbacks_adjustmargin_start', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-  }
-
-  function completeAdjustMargin() {
-    // refresh on trx complete
-    // prevent refreshing when page has changed
-    // if (currentToken === processToken) {
-    // console.log('refreshPositions from completeAdjustMargin');
-    refreshPositions();
-    // }
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_adjustmargin_success', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('callbacks_adjustmargin_success', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-  }
-
-  const adjustPositionMargin = async () => {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_adjust_collateral_button_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('trade_adjust_collateral_button_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-    setIsAdjustingMargin(true);
-    if (marginIndex === 0) {
-      const currentAllowance = await walletProvider.checkAllowance();
-      if (Number(adjustMarginValue) > currentAllowance) {
-        await walletProvider.performApprove();
-      }
-      walletProvider
-        .adjustPositionMargin(adjustMarginValue, startAdjustMargin)
-        .then(() => {
-          completeAdjustMargin();
-        })
-        .catch((error: any) => {
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
-
-          setIsAdjustingMargin(false);
-
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'callbacks_adjustmargin_fail', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken, // from tokenRef.current
-              error_code: error.error.code.toString()
-            });
-          }
-
-          apiConnection.postUserEvent('callbacks_adjustmargin_fail', {
-            page,
-            collection: currentToken, // from tokenRef.current
-            error_code: error.error.code.toString()
-          });
-        });
-    } else {
-      walletProvider
-        .reduceMargin(adjustMarginValue, startAdjustMargin)
-        .then(() => completeAdjustMargin())
-        .catch((error: any) => {
-          setIsAdjustingMargin(false);
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
-        });
-    }
-  };
+function EstimationValueDisplay(props: { isError: boolean; estimation: AdjustMarginEstimation | undefined }) {
+  const { isError, estimation } = props;
+  const currentAmm = useNanostore($currentAmm);
+  const userPosition = usePositionInfo(currentAmm);
 
   return (
-    <div className="flex">
-      <AdjustMarginButton
-        adjustMarginValue={adjustMarginValue}
-        isAdjustingMargin={isAdjustingMargin}
-        adjustPositionMargin={adjustPositionMargin}
-        marginEstimation={marginEstimation}
-        exceedBalance={exceedBalance}
-        balanceChecking={balanceChecking}
-        marginRatioChecker={marginRatioChecker}
-        minimalMarginChecking={minimalMarginChecking}
-        initialMarginChecker={initialMarginChecker}
-        marginIndex={marginIndex}
-        isPending={isPending}
-        isWaiting={isWaiting}
+    <div>
+      <UpdateValueDisplay
+        title="Collateral Amount"
+        currentValue={!userPosition ? '-.--' : userPosition.margin.toFixed(4)}
+        newValue={!estimation || isError ? '-.--' : estimation.margin.toFixed(4)}
+        unit=" WETH"
+      />
+      <UpdateValueDisplay
+        title="Leverage"
+        currentValue={!userPosition ? '-.--' : userPosition.leverage.toFixed(2)}
+        newValue={!estimation || isError ? '-.--' : estimation.leverage.toFixed(2)}
+        unit="x"
+      />
+      <UpdateValueDisplay
+        title="Liquidation Price"
+        currentValue={!userPosition ? '-.--' : userPosition.liquidationPrice.toFixed(4)}
+        newValue={!estimation || isError ? '-.--' : estimation.liquidationPrice.toFixed(4)}
+        unit=" WETH"
       />
     </div>
   );
 }
 
-function QuantityTips(props: any) {
-  const {
-    balanceChecking,
-    marginRatioChecker,
-    minimalMarginChecking,
-    initialMarginChecker,
-    reduceMarginChecking,
-    value,
-    isPending,
-    marginIndex
-  } = props;
-  const maxReduceValue = useNanostore(wsMaxReduceValue);
-  const decreaseMax = Number(maxReduceValue) - 0.0001;
-
-  if (
-    (decreaseMax > 0 || marginIndex === 0) &&
-    (value === 0 ||
-      (!balanceChecking && !marginRatioChecker && !minimalMarginChecking && !initialMarginChecker && !reduceMarginChecking && !isPending))
-  ) {
-    return null;
-  }
-
-  const label =
-    initialMarginChecker || reduceMarginChecking || decreaseMax <= 0 ? (
-      'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.'
-    ) : isPending ? (
-      'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
-    ) : marginRatioChecker ? (
-      'New Collateral must be above Initial Collateral Requirement.'
-    ) : balanceChecking ? (
-      <>
-        Not enough WETH (including transaction fee).
-        <button onClick={() => getTestToken()} className="ml-1 text-white underline">
-          Get WETH
-        </button>{' '}
-        first
-      </>
-    ) : minimalMarginChecking ? (
-      'Minimum collateral size 0.01'
-    ) : (
-      ''
-    );
-
-  return (
-    <div className={`quantity-tips-container ${isPending ? 'price-fluc' : ''}`}>
-      <span
-        className={`${isPending ? 'text-warn' : 'text-marketRed}'}
-          mb-2 text-[12px] leading-[20px]`}>
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function EstimationValueDisplay(props: any) {
-  const {
-    marginEstimation = {},
-    marginRatioChecker,
-    estMargin,
-    adjustMarginValue,
-    value,
-    balanceChecking,
-    minimalMarginChecking,
-    initialMarginChecker,
-    reduceMarginChecking
-  } = props;
-  const userPosition: any = useNanostore(wsUserPosition);
-
-  let isError = balanceChecking || marginRatioChecker || minimalMarginChecking || initialMarginChecker || reduceMarginChecking;
-  if (value <= 0) {
-    isError = false;
-  }
-
-  return (
-    <div>
-      {!userPosition && !marginEstimation ? (
-        <UpdateValueNoDataDisplay title="Collateral Amount" unit=" WETH" />
-      ) : (
-        <UpdateValueDisplay
-          title="Collateral Amount"
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMargin, 4)}
-          newValue={!marginEstimation || marginRatioChecker || isError || adjustMarginValue <= 0 ? '-.--' : estMargin}
-          unit=" WETH"
-        />
-      )}
-      {/* {!userPosition && !marginEstimation ? (
-        <UpdateValueNoDataDisplay title="Collateral Ratio" unit="" />
-      ) : (
-        <UpdateValueDisplay
-          title="Collateral Ratio"
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.marginRatio, 1)}
-          newValue={!marginEstimation || marginRatioChecker ? '-.--' : calculateNumber(marginEstimation.marginRatio, 1)}
-          unit="%"
-          unitSizing=""
-        />
-      )} */}
-      {!userPosition && !marginEstimation ? (
-        <UpdateValueNoDataDisplay title="Leverage" unit="" />
-      ) : (
-        <UpdateValueDisplay
-          title="Leverage"
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.remainMarginLeverage, 2)}
-          newValue={
-            !marginEstimation || marginRatioChecker || isError
-              ? '-.--'
-              : adjustMarginValue <= 0
-              ? '-.--'
-              : calculateNumber(marginEstimation.leverage, 2)
-          }
-          unit="x"
-        />
-      )}
-      {!userPosition && !marginEstimation ? (
-        <UpdateValueNoDataDisplay title="Liquidation Price" unit="" />
-      ) : (
-        <UpdateValueDisplay
-          title="Liquidation Price"
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.liquidationPrice, 4)}
-          newValue={
-            !marginEstimation || marginRatioChecker || isError
-              ? '-.--'
-              : adjustMarginValue <= 0
-              ? '-.--'
-              : calculateNumber(marginEstimation.liquidationPrice, 4)
-          }
-          unit=" WETH"
-        />
-      )}
-    </div>
-  );
-}
-
 function AdjustCollateralSlidingBars(props: any) {
-  const { marginIndex, onChange, adjustMarginValue, setAdjustMarginValue, reduceMarginChecking, disabled } = props;
-  const wethBalance = useNanostore(wsWethBalance);
-  const maxReduceValue = useNanostore(wsMaxReduceValue);
+  const { marginIndex, adjMarginShowValue, setAdjMarginShowValue, freeCollateral, wethBalance, onChange, disabled } = props;
 
   const rightText =
     marginIndex === 0 ? (
@@ -621,8 +300,8 @@ function AdjustCollateralSlidingBars(props: any) {
         Requirement
       </>
     );
-  const increaseMax = Number(wethBalance) - 0.0001;
-  const decreaseMax = Number(maxReduceValue) - 0.0001;
+  const increaseMax = wethBalance;
+  const decreaseMax = freeCollateral;
   const maxValue = marginIndex === 0 ? increaseMax : decreaseMax;
 
   return (
@@ -631,9 +310,9 @@ function AdjustCollateralSlidingBars(props: any) {
         min={0}
         max={maxValue}
         step={0.0001}
-        value={adjustMarginValue}
-        disabled={reduceMarginChecking || disabled}
-        onChange={(value: any) => setAdjustMarginValue(value)}
+        value={adjMarginShowValue}
+        disabled={disabled}
+        onChange={(value: any) => setAdjMarginShowValue(value)}
         onAfterChange={onChange}
       />
       <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
@@ -649,134 +328,68 @@ function AdjustCollateralSlidingBars(props: any) {
 }
 
 export default function AdjustCollateral(props: any) {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
-  const { refreshPositions, tokenRef, currentToken } = props;
+  const currentAmm = useNanostore($currentAmm);
   const [adjustMarginValue, setAdjustMarginValue] = useState(0);
+  const [adjMarginShowValue, setAdjMarginShowValue] = useState(0);
+  const debonceBigIntValue = useDebounce(parseBigInt(adjustMarginValue));
   const [marginIndex, setMarginIndex] = useState(0);
-  const [marginEstimation, setMarginEstimation] = useState(null);
-  const [exceedBalance, setExceedBalance] = useState(false);
-  const [estMargin, setEstMargin] = useState('-.--');
   const [textErrorMessage, setTextErrorMessage] = useState('');
   const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
-  const isProcessing = useNanostore(tradePanel.processing);
   const [isPending, setIsPending] = useState(false);
-  const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
-  const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
-  const userPosition: any = useNanostore(wsUserPosition);
-  const maxReduceValue = useNanostore(wsMaxReduceValue);
-  const wethBalance = useNanostore(wsWethBalance);
 
-  const balanceChecking = Number(adjustMarginValue) > Number(wethBalance) && marginIndex === 0;
-  const newMarginEstimation: any = marginEstimation;
-  const marginRatioChecker =
-    marginEstimation !== null && marginIndex === 1 && Number(utils.formatEther(newMarginEstimation.marginRatio)) < 20;
-  const minimalMarginChecking = Number(adjustMarginValue) !== 0 && Number(adjustMarginValue) < 0.01 && adjustMarginValue !== 0;
-  const initialMarginChecker = marginEstimation !== null && marginIndex === 1 && Number(utils.formatEther(userPosition.marginRatio)) < 20;
-  const reduceMarginChecking = Number(maxReduceValue) - 0.0001 < 0 && marginIndex === 1;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
+  const freeCollateral = useFreeCollateral();
+  const wethBalance = useNanostore($userWethBalance);
 
-  const handleMarginEnter = async function handleMarginEnter(marginValue: any) {
+  const { isLoading: isEstLoading, estimation } = useAdjustCollateralEstimation(adjustMarginValue * (-1) ** marginIndex);
+
+  const approvalAmount = marginIndex === 1 || !debonceBigIntValue ? 0 : formatBigInt(debonceBigIntValue);
+  const isNeedApproval = useApprovalCheck(approvalAmount);
+
+  const initializeState = useCallback(() => {
+    setAdjustMarginValue(0);
+    setAdjMarginShowValue(0);
     setTextErrorMessage('');
     setTextErrorMessageShow(false);
+    setIsPending(false);
+  }, []);
 
-    // if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-    //   return;
-    // }
+  const handleError = useCallback((error: Error | null) => {
+    setIsPending(false);
+    setTextErrorMessage(error?.message ?? '');
+    setTextErrorMessageShow(true);
+  }, []);
 
-    if (Number(marginValue) > 0 && !!collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-      await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
-      if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-        setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
-        return;
-      }
-      setIsPending(false);
-    } else setIsPending(false);
+  const handlePending = useCallback(() => {
+    setIsPending(true);
+  }, []);
 
-    setIsWaiting(true);
-    const estimation = await walletProvider.getMarginEstimation(marginValue, marginIndex);
-    const realMarginVal = Number(calculateNumber(userPosition.realMargin, 4));
-    const calc = marginIndex === 0 ? (Number(marginValue) + realMarginVal).toFixed(4) : (realMarginVal - Number(marginValue)).toFixed(4);
-    const newEstimation = String(calc);
-    setMarginEstimation(estimation);
-    setIsWaiting(false);
-    if (Number(marginValue) <= 0) {
-      setEstMargin('-.--');
-    } else {
-      setEstMargin(newEstimation);
-    }
+  const handleChange = (value: any) => {
+    setAdjMarginShowValue(value);
+    setAdjustMarginValue(value);
+    setTextErrorMessage('');
+    setTextErrorMessageShow(false);
   };
 
-  let initialCollateral = '0';
-  if (userPosition) {
-    const collaAmountCalc = Number(calculateNumber(userPosition.realMargin, 4));
-    const marginRatioCalc = Number(Number(calculateNumber(userPosition.marginRatio, 1)) / 100).toFixed(2);
-    initialCollateral = Number(collaAmountCalc - (collaAmountCalc / Number(marginRatioCalc)) * 0.2).toFixed(3);
-  }
-
-  const handleSuccess = () => {
-    refreshPositions();
-    setMarginEstimation(null);
-    setEstMargin('-.--');
-  };
-
-  let isInputError = balanceChecking || marginRatioChecker || minimalMarginChecking || initialMarginChecker || reduceMarginChecking;
-  if (Number(adjustMarginValue) <= 0) {
-    isInputError = false;
-  }
-
   useEffect(() => {
-    if (isPending) {
-      handleMarginEnter(adjustMarginValue);
-    }
-    // console.log('collection pending is changed');
-  }, [collectionIsPending[walletProvider?.currentTokenAmmAddress]]);
-
-  useEffect(() => {
-    setAdjustMarginValue(0);
-    handleMarginEnter('');
-  }, [fullWalletAddress]);
+    // set error message under button
+    initializeState();
+  }, [currentAmm]);
 
   return (
     <div>
-      <SaleOrBuyRadio
-        marginIndex={marginIndex}
-        setMarginIndex={setMarginIndex}
-        adjustMarginValue={adjustMarginValue}
-        setMarginEstimation={setMarginEstimation}
-        // tokenRef={tokenRef}
-        setEstMargin={setEstMargin}
-        setAdjustMarginValue={setAdjustMarginValue}
-      />
+      <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
       <QuantityEnter
-        adjustMarginValue={adjustMarginValue}
-        // tokenRef={tokenRef}
-        onChange={(e: any) => {
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'trade_adjust_collateral_input_pressed', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken // from tokenRef.current
-            });
-          }
-
-          apiConnection.postUserEvent('trade_adjust_collateral_input_pressed', {
-            page,
-            collection: currentToken // from tokenRef.current
-          });
-          setAdjustMarginValue(e);
-          handleMarginEnter(e);
+        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
+        adjustMarginValue={adjMarginShowValue}
+        onChange={(value: any) => {
+          handleChange(value);
         }}
         marginIndex={marginIndex}
-        value={adjustMarginValue}
-        setValue={setAdjustMarginValue}
-        balanceChecking={balanceChecking}
-        marginRatioChecker={marginRatioChecker}
-        minimalMarginChecking={minimalMarginChecking}
-        initialMarginChecker={initialMarginChecker}
-        reduceMarginChecking={reduceMarginChecking}
-        isProcessing={isProcessing}
+        freeCollateral={freeCollateral}
+        wethBalance={wethBalance}
+        isError={textErrorMessageShow}
       />
-      <QuantityTips
+      {/* <QuantityTips
         balanceChecking={balanceChecking}
         marginRatioChecker={marginRatioChecker}
         minimalMarginChecking={minimalMarginChecking}
@@ -785,58 +398,47 @@ export default function AdjustCollateral(props: any) {
         value={adjustMarginValue}
         marginIndex={marginIndex}
         isPending={isPending}
-      />
+      /> */}
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
-        adjustMarginValue={adjustMarginValue}
-        initialCollateral={initialCollateral}
-        setAdjustMarginValue={setAdjustMarginValue}
-        reduceMarginChecking={reduceMarginChecking}
-        onChange={(e: any) => {
-          const number = Math.round(e * 10000) / 10000;
-          const stringValue = number.toString();
-          setAdjustMarginValue(number);
-          handleMarginEnter(stringValue);
+        adjMarginShowValue={adjMarginShowValue}
+        setAdjMarginShowValue={setAdjMarginShowValue}
+        freeCollateral={freeCollateral}
+        wethBalance={wethBalance}
+        onChange={(value: any) => {
+          handleChange(value);
         }}
-        disabled={isProcessing}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
       />
       <SectionDividers />
-      <EstimationValueDisplay
-        marginEstimation={marginEstimation}
-        marginRatioChecker={marginRatioChecker}
-        estMargin={estMargin}
-        adjustMarginValue={adjustMarginValue}
-        balanceChecking={balanceChecking}
-        minimalMarginChecking={minimalMarginChecking}
-        initialMarginChecker={initialMarginChecker}
-        reduceMarginChecking={reduceMarginChecking}
-      />
+      <EstimationValueDisplay isError={textErrorMessageShow} estimation={estimation} />
       <SectionDividers />
-      <UpdatedCollateralValue
-        marginIndex={marginIndex}
-        value={
-          !userPosition || marginEstimation === null || marginRatioChecker || isInputError || Number(adjustMarginValue) <= 0
-            ? '-.-'
-            : Number(adjustMarginValue).toFixed(4)
-        }
-      />
-      <ActionButtons
-        adjustMarginValue={adjustMarginValue}
-        refreshPositions={handleSuccess}
-        marginIndex={marginIndex}
-        marginEstimation={marginEstimation}
-        exceedBalance={exceedBalance}
-        balanceChecking={balanceChecking}
-        marginRatioChecker={marginRatioChecker}
-        minimalMarginChecking={minimalMarginChecking}
-        // tokenRef={tokenRef}
-        initialMarginChecker={initialMarginChecker}
-        setAdjustMarginValue={setAdjustMarginValue}
-        setTextErrorMessage={setTextErrorMessage}
-        setTextErrorMessageShow={setTextErrorMessageShow}
-        isPending={isPending}
-        isWaiting={isWaiting}
-      />
+      <UpdatedCollateralValue marginIndex={marginIndex} value={!estimation ? '-.-' : Math.abs(estimation.marginRequirement).toFixed(4)} />
+      {isNeedApproval ? (
+        <ApproveButton
+          isEstimating={isEstLoading}
+          approvalAmount={approvalAmount}
+          onPending={handlePending}
+          onSuccess={initializeState}
+          onError={handleError}
+        />
+      ) : marginIndex === 0 ? (
+        <AddCollateralButton
+          isEstimating={isEstLoading}
+          deltaMargin={estimation ? Math.abs(estimation.marginRequirement) : 0}
+          onPending={handlePending}
+          onSuccess={initializeState}
+          onError={handleError}
+        />
+      ) : (
+        <ReduceCollateralButton
+          isEstimating={isEstLoading}
+          deltaMargin={estimation ? Math.abs(estimation.marginRequirement) : 0}
+          onPending={handlePending}
+          onSuccess={initializeState}
+          onError={handleError}
+        />
+      )}
       {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
     </div>
   );

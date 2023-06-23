@@ -1,43 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import tradePanelModal from '@/stores/tradePanelModal';
-
 import TradeComponent from '@/components/trade/desktop/trading/tradeComponent';
-// import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
+import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 import { useWeb3Modal } from '@web3modal/react';
 
-function OverFluctuationError(props: any) {
-  const { setShowOverFluctuationContent } = props;
-  const closeWindow = () => {
-    setShowOverFluctuationContent(false);
-  };
-  return (
-    <div className="fails">
-      <div className="contents-mod">
-        <div className="col">
-          Your transaction has failed due to high price fluctuation. <br />
-          <br /> Please try again with smaller notional value
-          <div className="cursor-pointer" onClick={closeWindow}>
-            <div className="text">OK</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+// function OverFluctuationError(props: any) {
+//   const { setShowOverFluctuationContent } = props;
+//   const closeWindow = () => {
+//     setShowOverFluctuationContent(false);
+//   };
+//   return (
+//     <div className="fails">
+//       <div className="contents-mod">
+//         <div className="col">
+//           Your transaction has failed due to high price fluctuation. <br />
+//           <br /> Please try again with smaller notional value
+//           <div className="cursor-pointer" onClick={closeWindow}>
+//             <div className="text">OK</div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 function TradingWindow() {
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
-  const isTradePanelModalShow = useNanostore(tradePanelModal.show);
-  const tradePanelModalMsg = useNanostore(tradePanelModal.message);
-  const tradePanelModalLink = useNanostore(tradePanelModal.link);
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
-  const { open } = useWeb3Modal();
 
   // const traderConnectWallet = () => {
   //   open({ route: 'ConnectWallet' });
@@ -46,9 +40,7 @@ function TradingWindow() {
 
   const tradeComponent = <TradeComponent />;
 
-  // const displayComponent = [tradeComponent, <CloseCollateral />, <AdjustCollateral />][tradeWindowIndex];
-
-  const displayComponent = [tradeComponent, <CloseCollateral />][tradeWindowIndex];
+  const displayComponent = [tradeComponent, <CloseCollateral />, <AdjustCollateral />][tradeWindowIndex];
 
   const tabs = ['Add', 'Close', 'Adjust Collateral'];
 

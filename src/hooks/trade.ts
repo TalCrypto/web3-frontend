@@ -11,7 +11,6 @@ import { chAbi, chViewerAbi, wethAbi } from '@/const/abi';
 import { $userAddress, $currentChain } from '@/stores/user';
 import { useDebounce } from '@/hooks/debounce';
 import { usePositionInfo } from '@/hooks/collection';
-import { MINIMUM_COLLATERAL } from '@/const';
 
 // eslint-disable-next-line no-shadow
 export enum Side {
@@ -42,6 +41,15 @@ export interface OpenPositionEstimation {
     cost: number;
     collateral: number;
   };
+}
+
+export interface AdjustMarginEstimation {
+  marginRequirement: number;
+  margin: number;
+  marginRatioPct: number;
+  leverage: number;
+  liquidationPrice: number;
+  isLiquidatable: boolean;
 }
 
 export const getApprovalAmountFromEstimation = (estimation?: OpenPositionEstimation) =>
@@ -250,8 +258,14 @@ export const useClosePositionTransaction = (_slippagePercent: number) => {
   // eslint-disable-next-line consistent-return
   return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
 };
-
-export const useAdjustCollateralEstimation = (deltaMargin: number) => {
+/**
+ *
+ * @param deltaMargin negative means reduce collateral, otherwise increase collateral
+ * @returns
+ */
+export const useAdjustCollateralEstimation = (
+  deltaMargin: number
+): { isLoading: boolean; estimation: AdjustMarginEstimation | undefined } => {
   const amm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
   const address = useNanostore($userAddress);
@@ -269,14 +283,35 @@ export const useAdjustCollateralEstimation = (deltaMargin: number) => {
 
   const estimation = data
     ? {
+        margin: formatBigInt(data.margin),
         marginRatioPct: formatBigInt(data.marginRatio * 100n),
         leverage: formatBigInt(data.leverage),
         liquidationPrice: formatBigInt(data.liquidationPrice),
-        isLiquidatable: data.isLiquidatable
+        isLiquidatable: data.isLiquidatable,
+        marginRequirement: deltaMargin
       }
     : undefined;
 
   return { isLoading, estimation };
+};
+
+export const useFreeCollateral = () => {
+  const amm = useNanostore($currentAmm);
+  const chain = useNanostore($currentChain);
+  const address = useNanostore($userAddress);
+  const ammAddr = getAMMAddress(chain, amm);
+  const chViewer = getCHViewerContract(chain);
+
+  const { data } = useContractRead({
+    ...chViewer,
+    abi: chViewerAbi,
+    functionName: 'getFreeCollateral',
+    args: ammAddr && address ? [ammAddr, address] : undefined,
+    enabled: Boolean(ammAddr && address),
+    watch: true
+  });
+
+  return data ? formatBigInt(data) : undefined;
 };
 
 export const useAddCollateralTransaction = (deltaMargin: number) => {
