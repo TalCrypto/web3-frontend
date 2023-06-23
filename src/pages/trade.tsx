@@ -22,7 +22,8 @@ import { AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
 import { $userIsConnected } from '@/stores/user';
-
+import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
+import MarketHistoryUpdater from '@/components/updaters/MarketHistoryUpdater';
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
 //   return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
@@ -159,7 +160,9 @@ function TradePage(props: WithRouterProps) {
           </div>
         </div> */}
         <CollectionConfigLoader />
+        <TradingDataUpdater />
         <ChartDataUpdater />
+        <MarketHistoryUpdater />
       </main>
     </>
   );

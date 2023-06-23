@@ -3,16 +3,16 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import tradePanelModal from '@/stores/tradePanelModal';
 
-import TradeComponent from '@/components/trade/mobile/trading/tradeComponent';
+import TradeComponent from '@/components/trade/mobile/trading/TradeComponent';
 import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
 import TradePanelModal from '@/components/trade/mobile/trading/TradePanelModal';
 
-import { connectWallet } from '@/utils/Wallet';
 import { wsCurrentToken, wsIsShowTradingMobile, wsUserPosition } from '@/stores/WalletState';
 import Image from 'next/image';
 import collectionList from '@/const/collectionList';
 import { $isShowMobileModal } from '@/stores/common';
+import { connectWallet } from '@/utils/Wallet';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;

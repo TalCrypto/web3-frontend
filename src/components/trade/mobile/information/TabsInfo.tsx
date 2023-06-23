@@ -16,7 +16,7 @@ import { firebaseAnalytics } from '@/const/firebaseConfig';
 
 import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
-import { getTradingActionTypeFromAPI } from '@/utils/actionType';
+import { getTradingActionType } from '@/utils/actionType';
 import { trimString } from '@/utils/string';
 
 import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
@@ -25,8 +25,8 @@ import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWith
 
 import { useStore as useNanostore } from '@nanostores/react';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
-import { walletProvider } from '@/utils/walletProvider';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
+import { walletProvider } from '@/utils/walletProvider';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -144,7 +144,7 @@ const MarketTrade = (props: any) => {
                     {isPositive(exchangedPositionSize) ? 'LONG' : 'SHORT'}
                   </span>
                   <div className="h-[6px] w-full" />
-                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI(marketHistory[index])}</span>
+                  <span className="text-highEmphasis">{getTradingActionType(marketHistory[index])}</span>
                 </div>
                 <div className="col-span-3 pl-2">
                   <SmallPriceIcon priceValue={formatterValue(positionNotional, 2)} />

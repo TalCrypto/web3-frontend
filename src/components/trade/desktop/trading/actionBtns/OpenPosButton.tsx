@@ -6,6 +6,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
 import { usePositionInfo } from '@/hooks/collection';
+import { PositionActions } from '@/const';
 
 function OpenPosButton({
   isEstimating,
@@ -34,7 +35,11 @@ function OpenPosButton({
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
   const label =
-    positionInfo?.size === 0 ? 'Open Position' : (-1) ** side * (positionInfo?.size ?? 0) > 0 ? 'Add Position' : 'Reduce Position';
+    positionInfo?.size === 0 ?
+      `${PositionActions.OPEN} Position` :
+      (-1) ** side * (positionInfo?.size ?? 0) > 0 ?
+        `${PositionActions.ADD  } Position` :
+        `${PositionActions.REDUCE } Position`;
 
   useEffect(() => {
     setIsLoading(false);

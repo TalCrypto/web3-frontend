@@ -15,7 +15,7 @@ import { firebaseAnalytics } from '@/const/firebaseConfig';
 
 import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
-import { getTradingActionTypeFromAPI } from '@/utils/actionType';
+import { getTradingActionType } from '@/utils/actionType';
 import { trimString } from '@/utils/string';
 
 import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
@@ -23,10 +23,8 @@ import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { useFundingRatesHistory, useMarketHistory, useOpenSeaData } from '@/hooks/market';
 import { AMM } from '@/const/collectionList';
-import { $currentAmm } from '@/stores/trading';
-import { useAccount } from 'wagmi';
+import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { formatBigInt } from '@/utils/bigInt';
 import { $userAddress } from '@/stores/user';
 
@@ -97,9 +95,9 @@ function ExplorerButton(props: any) {
   );
 }
 
-const MarketTrade = ({ amm }: { amm: AMM }) => {
+const MarketTrade = () => {
   const router = useRouter();
-  const marketHistory = useMarketHistory(amm);
+  const marketHistory = useNanostore($futureMarketHistory);
   const address = useNanostore($userAddress);
 
   const walletAddressToShow = (addr: any) => {
@@ -143,7 +141,7 @@ const MarketTrade = ({ amm }: { amm: AMM }) => {
                       {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
                     </span>
                   </div>,
-                  <span className="text-highEmphasis">{getTradingActionTypeFromAPI({ type: '', collateralChange: 0, ...record })}</span>,
+                  <span className="text-highEmphasis">{getTradingActionType(record)}</span>,
 
                   <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />,
                   <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />,
@@ -178,7 +176,7 @@ const MarketTrade = ({ amm }: { amm: AMM }) => {
 
 const SpotTable = ({ amm }: { amm: AMM }) => {
   const address = useNanostore($userAddress);
-  const openseaData = useOpenSeaData(amm);
+  const openseaData = useNanostore($spotMarketHistory);
 
   return (
     <div className="h-full">
@@ -281,8 +279,8 @@ const SpotTable = ({ amm }: { amm: AMM }) => {
   );
 };
 
-const FundingPaymentHistory = ({ amm }: { amm: AMM }) => {
-  const fundingPaymentHistory = useFundingRatesHistory(amm);
+const FundingPaymentHistory = () => {
+  const fundingPaymentHistory = useNanostore($fundingRatesHistory);
 
   return fundingPaymentHistory !== null ? (
     <div className="h-full">
@@ -332,13 +330,13 @@ function TribeDetailComponents(props: any) {
   return (
     <>
       <div className={`${activeTab === 0 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
-        <MarketTrade amm={currentAmm} />
+        <MarketTrade />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <SpotTable amm={currentAmm} />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
-        <FundingPaymentHistory amm={currentAmm} />
+        <FundingPaymentHistory />
       </div>
     </>
   );

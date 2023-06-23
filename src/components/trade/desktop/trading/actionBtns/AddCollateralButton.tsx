@@ -5,6 +5,7 @@ import { useAddCollateralTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
+import { CollateralActions } from '@/const';
 
 function AddCollateralButton({
   isEstimating,
@@ -44,7 +45,7 @@ function AddCollateralButton({
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - Add Collateral`,
+          title: `${collectionInfo.shortName} - ${CollateralActions.ADD} Collateral`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'

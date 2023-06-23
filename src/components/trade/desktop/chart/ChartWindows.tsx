@@ -35,7 +35,7 @@ function SmallPriceIcon(props: any) {
   );
 }
 
-const ChartDisplay = dynamic(() => import('./chartDisplay'), {
+const ChartDisplay = dynamic(() => import('./ChartDisplay'), {
   ssr: false
 });
 

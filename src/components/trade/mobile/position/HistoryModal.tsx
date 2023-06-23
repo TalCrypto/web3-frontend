@@ -6,7 +6,7 @@
 
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-import { getTradingActionTypeFromAPI } from '@/utils/actionType';
+import { getTradingActionType } from '@/utils/actionType';
 import collectionList from '@/const/collectionList';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 import { apiConnection } from '@/utils/apiConnection';
@@ -19,6 +19,7 @@ import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsCurrentToken, wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
 import { $isShowMobileModal } from '@/stores/common';
+import { PositionActions } from '@/const';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -99,7 +100,7 @@ const HistoryModal = (props: any) => {
   );
 
   // detail data, selected record
-  const tradeType = getTradingActionTypeFromAPI(selectedRecord);
+  const tradeType = getTradingActionType(selectedRecord);
   const isFundingPaymentRecord = tradeType === 'Full Close' || tradeType === 'Full Liquidation';
   const isLiquidation = tradeType === 'Partial Liquidation' || tradeType === 'Full Liquidation';
   const isAdjustCollateral = tradeType === 'Add Collateral' || tradeType === 'Reduce Collateral';
@@ -188,7 +189,7 @@ const HistoryModal = (props: any) => {
     setSelectedRecord(record);
     setIsShowDetail(true);
 
-    const currentRecordType = getTradingActionTypeFromAPI(record);
+    const currentRecordType = getTradingActionType(record);
     const recordAmount = BigNumber.from(record.amount).abs();
     const recordFee = !record.fee ? BigNumber.from(0) : BigNumber.from(record.fee);
     const recordRealizedPnl = !record.realizedPnl ? BigNumber.from(0) : BigNumber.from(record.realizedPnl);
@@ -238,7 +239,7 @@ const HistoryModal = (props: any) => {
                   return (
                     <div id={`group-${month}`} className="collapsible">
                       {records.map((record: any, idx: any) => {
-                        const currentRecordType = getTradingActionTypeFromAPI(record);
+                        const currentRecordType = getTradingActionType(record);
                         const recordAmount = BigNumber.from(record.amount).abs();
                         const recordFee = !record.fee ? BigNumber.from(0) : BigNumber.from(record.fee);
                         const recordRealizedPnl = !record.realizedPnl ? BigNumber.from(0) : BigNumber.from(record.realizedPnl);
@@ -339,7 +340,7 @@ const HistoryModal = (props: any) => {
                       '-'
                     )
                   )}
-                  {detailRow('Action', getTradingActionTypeFromAPI(selectedRecord)) || '-'}
+                  {detailRow('Action', getTradingActionType(selectedRecord)) || '-'}
                   {detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
                   {detailRow(
                     'Entry Price',
@@ -367,7 +368,7 @@ const HistoryModal = (props: any) => {
                           priceValue={
                             selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
                           }>
-                          {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
+                          {getTradingActionType(selectedRecord) === PositionActions.REDUCE ? (
                             // <OverlayTrigger placement="top" overlay={<Tooltip>Collateral will not change.</Tooltip>}>
                             <Image
                               src="/images/components/trade/history/more_info.svg"

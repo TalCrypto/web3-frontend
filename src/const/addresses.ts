@@ -57,7 +57,7 @@ export const getAMMAddress = (chain?: Chain, amm?: AMM): Address | undefined => 
   return addressConfig.amms[amm ?? DEFAULT_AMM];
 };
 
-export const getAMMByAddress = (address: Address, chain?: Chain): AMM | undefined => {
+export const getAMMByAddress = (address?: Address, chain?: Chain): AMM | undefined => {
   const { config: addressConfig } = getAddressConfig(chain);
   const amms = Object.keys(addressConfig.amms) as AMM[];
   for (let i = 0; i < amms.length; i += 1) {

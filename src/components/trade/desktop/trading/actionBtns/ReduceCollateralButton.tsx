@@ -5,6 +5,7 @@ import { useReduceCollateralTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
+import { CollateralActions } from '@/const';
 
 function ReduceCollateralButton({
   isEstimating,
@@ -44,7 +45,7 @@ function ReduceCollateralButton({
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - Reduce Collateral`,
+          title: `${collectionInfo.shortName} - ${CollateralActions.REDUCE} Collateral`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'

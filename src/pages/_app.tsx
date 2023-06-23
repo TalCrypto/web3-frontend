@@ -9,7 +9,6 @@ import '@/styles/globals.css';
 import '@/styles/all.scss';
 import { CHAINS, DEFAULT_CHAIN } from '@/const/supportedChains';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
-import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
 import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
@@ -47,7 +46,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
         <UserDataUpdater />
-        <TradingDataUpdater />
       </WagmiConfig>
 
       <Web3Modal

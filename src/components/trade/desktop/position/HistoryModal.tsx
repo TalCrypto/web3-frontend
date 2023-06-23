@@ -14,7 +14,7 @@ import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
-import { getTradingActionTypeFromAPI } from '@/utils/actionType';
+import { getTradingActionType } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
 import { $isShowMobileModal } from '@/stores/common';
 import { $userAddress } from '@/stores/user';
@@ -89,7 +89,7 @@ const HistoryModal = (props: any) => {
   );
 
   // detail data, selected record
-  const tradeType = selectedRecord ? getTradingActionTypeFromAPI(selectedRecord) : '';
+  const tradeType = selectedRecord ? getTradingActionType(selectedRecord) : '';
   const isFundingPaymentRecord = tradeType === 'Full Close' || tradeType === 'Full Liquidation';
   const isLiquidation = tradeType === 'Partial Liquidation' || tradeType === 'Full Liquidation';
   const isAdjustCollateral = tradeType === 'Add Collateral' || tradeType === 'Reduce Collateral';
@@ -234,7 +234,7 @@ const HistoryModal = (props: any) => {
                       </div>
                       <div id={`group-${month}`} className="collapsible">
                         {records.map((record: PositionHistoryRecord, idx: any) => {
-                          const currentRecordType = getTradingActionTypeFromAPI(record);
+                          const currentRecordType = getTradingActionType(record);
                           const recordAmount = Math.abs(record.amount);
                           const recordFee = record.fee;
                           const recordRealizedPnl = record.realizedPnl;
@@ -324,7 +324,7 @@ const HistoryModal = (props: any) => {
                     'Collection',
                     selectedRecord.amm ? <TypeWithIconByAmm className="icon-label" amm={selectedRecord.amm} showCollectionName /> : '-'
                   )}
-                {(selectedRecord && detailRow('Action', getTradingActionTypeFromAPI(selectedRecord))) || '-'}
+                {(selectedRecord && detailRow('Action', getTradingActionType(selectedRecord))) || '-'}
                 {selectedRecord &&
                   detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
                 {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
@@ -341,7 +341,7 @@ const HistoryModal = (props: any) => {
                       <PriceWithIcon
                         className="icon-label"
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
-                        {getTradingActionTypeFromAPI(selectedRecord) === 'Partial Close' ? (
+                        {getTradingActionType(selectedRecord) === 'Partial Close' ? (
                           <Tooltip direction="top" content="Collateral will not change.">
                             <Image
                               src="/images/components/trade/history/more_info.svg"

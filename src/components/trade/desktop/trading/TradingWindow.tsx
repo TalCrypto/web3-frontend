@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TradeComponent from '@/components/trade/desktop/trading/tradeComponent';
+import TradeComponent from '@/components/trade/desktop/trading/TradeComponent';
 import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
 import { $currentAmm } from '@/stores/trading';
