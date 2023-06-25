@@ -1,4 +1,5 @@
 import { apiConnection } from '@/utils/apiConnection';
+import { DAY_RESOLUTION, MONTH_RESOLUTION, WEEK_RESOLUTION } from '@/const';
 import {
   // getOpenInterest,
   getPositionHistory,
@@ -90,7 +91,15 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
           volume: 0n
         });
       } else {
-        result.push(rawGraphData[i]);
+        result.push({
+          start: rawGraphData[i].start,
+          end: rawGraphData[i].end,
+          high: rawGraphData[i].high,
+          low: rawGraphData[i].low,
+          open: rawGraphData[i - 1].close,
+          close: rawGraphData[i].close,
+          volume: rawGraphData[i].volume
+        });
         i += 1;
       }
     }
@@ -101,25 +110,25 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
 export async function getDailySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const tsYesterday = nowTs - 1 * 24 * 3600;
-  return getSpotPriceGraphData(ammAddr, tsYesterday, 300); // 5mins
+  return getSpotPriceGraphData(ammAddr, tsYesterday, DAY_RESOLUTION); // 5mins
 }
 
 export async function getWeeklySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts7Days = nowTs - 7 * 24 * 3600;
-  return getSpotPriceGraphData(ammAddr, ts7Days, 1800); // 30mins
+  return getSpotPriceGraphData(ammAddr, ts7Days, WEEK_RESOLUTION); // 30mins
 }
 
 export async function getMonthlySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts30Days = nowTs - 30 * 24 * 3600;
-  return getSpotPriceGraphData(ammAddr, ts30Days, 7200); // 2hr
+  return getSpotPriceGraphData(ammAddr, ts30Days, MONTH_RESOLUTION); // 2hr
 }
 
 export async function getThreeMonthlySpotPriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
   const ts90Days = nowTs - 90 * 24 * 3600;
-  return getSpotPriceGraphData(ammAddr, ts90Days, 7200); // 2hr
+  return getSpotPriceGraphData(ammAddr, ts90Days, MONTH_RESOLUTION); // 2hr
 }
 
 export async function getAccountValueGraphData(ammAddrList: any, walletAddr: string, startFrom: number, interval: number) {

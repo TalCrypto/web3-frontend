@@ -13,12 +13,13 @@ import TransferTokenModal from '@/components/layout/header/desktop/TransferToken
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
-const { publicClient } = configureChains(CHAINS, [w3mProvider({ projectId })]);
+const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId })]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ projectId, version: 1, chains: CHAINS }),
-  publicClient
+  publicClient,
+  webSocketPublicClient
 });
 
 const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);

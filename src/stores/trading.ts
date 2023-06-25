@@ -1,20 +1,8 @@
+import { DAY_RESOLUTION, MONTH_RESOLUTION, WEEK_RESOLUTION } from '@/const';
 import { AMM } from '@/const/collectionList';
-import { OhlcData } from 'lightweight-charts';
+import { OhlcData, Time } from 'lightweight-charts';
 import { atom, computed, map } from 'nanostores';
 import { Address } from 'wagmi';
-
-export interface CollectionTradingData {
-  vammPrice: number;
-  oraclePrice: number;
-  shortSize: number;
-  longSize: number;
-  shortRatio: number;
-  longRatio: number;
-  nextFundingTime: number;
-  fundingRateLong: number;
-  fundingRateShort: number;
-  isOverPriceGap: boolean;
-}
 
 export type TransactionPendings = {
   // eslint-disable-next-line no-unused-vars
@@ -60,9 +48,11 @@ export interface CollectionConfig {
   startPrice: number;
 }
 
-export const $tradingData = atom<CollectionTradingData | undefined>();
-
-export const $isTradingDataInitializing = atom(false);
+export const $vammPrice = atom<number | undefined>();
+export const $oraclePrice = atom<number | undefined>();
+export const $nextFundingTime = atom<number | undefined>();
+export const $openInterests = atom<{ longRatio: number; shortRatio: number } | undefined>();
+export const $fundingRates = atom<{ longRate: number; shortRate: number } | undefined>();
 
 export const $currentAmm = atom<AMM | undefined>();
 
@@ -77,8 +67,6 @@ export const $fundingRatesHistory = atom<FundingRatesRecord[]>([]);
 export const $spotMarketHistory = atom<any[]>([]);
 
 export const $selectedTimeIndex = atom(0);
-
-export const $isChartDataInitializing = atom(false);
 
 export const $graphData = atom<OhlcData[]>([]);
 
@@ -127,3 +115,47 @@ export const $highPrice = computed($graphData, graphData => {
 });
 
 export const $dailyVolume = atom<number | undefined>();
+
+export function addGraphRecord(price?: number /* TODO , notionalValue?: number */) {
+  const selectedTimeIndex = $selectedTimeIndex.get();
+  const interval = selectedTimeIndex === 0 ? DAY_RESOLUTION : selectedTimeIndex === 1 ? WEEK_RESOLUTION : MONTH_RESOLUTION;
+  const graphData = $graphData.get();
+  if (graphData && graphData.length > 0) {
+    const lastGraphRecord = graphData[graphData.length - 1];
+    const nowTs = Math.round(new Date().getTime() / 1000);
+    if (nowTs >= Number(lastGraphRecord.time) + interval) {
+      if (price) {
+        $graphData.set([
+          ...graphData,
+          {
+            time: (Number(lastGraphRecord.time) + interval) as Time,
+            open: price,
+            high: price,
+            low: price,
+            close: price
+          }
+        ]);
+      } else {
+        $graphData.set([
+          ...graphData,
+          {
+            time: (Number(lastGraphRecord.time) + interval) as Time,
+            open: lastGraphRecord.close,
+            high: lastGraphRecord.close,
+            low: lastGraphRecord.close,
+            close: lastGraphRecord.close
+          }
+        ]);
+      }
+    } else if (price) {
+      graphData[graphData.length - 1].close = price;
+      if (price > lastGraphRecord.high) {
+        graphData[graphData.length - 1].high = price;
+      }
+      if (price < lastGraphRecord.low) {
+        graphData[graphData.length - 1].low = price;
+      }
+      $graphData.set(graphData);
+    }
+  }
+}

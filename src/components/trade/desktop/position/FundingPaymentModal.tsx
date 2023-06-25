@@ -1,25 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-array-index-key */
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
-import { $collectionConfig, CollectionTradingData } from '@/stores/trading';
+import { $collectionConfig, $fundingRates, $nextFundingTime } from '@/stores/trading';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 import { useStore as useNanostore } from '@nanostores/react';
 
-const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: AMM; setShowFundingPaymentModal: any }) => {
-  const { setShowFundingPaymentModal, tradingData, amm } = props;
+const FundingPaymentModal = (props: { amm: AMM; setShowFundingPaymentModal: any }) => {
+  const { setShowFundingPaymentModal, amm } = props;
   const { total: fpTotal, fpRecords } = useFundingPaymentHistory(amm);
   const collectionInfo = getCollectionInformation(amm);
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  const [interval, setI] = useState(null);
-  const [nextFundingTime, setNextFundingTime] = useState(0);
   const { fundingPeriod } = useNanostore($collectionConfig);
-
-  const hadKey = Object.keys(tradingData).length > 0;
+  const fundingRates = useNanostore($fundingRates);
+  const nextFundingTime = useNanostore($nextFundingTime);
+  const [endTime, setEndTime] = useState(nextFundingTime ? nextFundingTime * 1000 : 0);
   let hours = '';
   let minutes = '';
   let seconds = '';
@@ -28,60 +27,53 @@ const FundingPaymentModal = (props: { tradingData: CollectionTradingData; amm: A
   let longSide = '';
   let shortSide = '';
 
-  if (tradingData && tradingData.fundingRateLong) {
-    const numberRawData = (tradingData.fundingRateLong * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawData = (fundingRates.longRate * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawData));
     rateLong = ` ${absoluteNumber}%`;
-    if (tradingData.fundingRateLong > 0) {
+    if (fundingRates.longRate > 0) {
       longSide = 'pay';
     } else {
       longSide = 'get';
     }
   }
-  if (tradingData && tradingData.fundingRateShort) {
-    const numberRawData = (tradingData.fundingRateShort * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawData = (fundingRates.shortRate * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawData));
     rateShort = ` ${absoluteNumber}%`;
-    if (tradingData.fundingRateShort > 0) {
+    if (fundingRates.shortRate > 0) {
       shortSide = 'get';
     } else {
       shortSide = 'pay';
     }
   }
 
-  function startCountdown() {
-    if (!hadKey) {
-      setTimeLabel('-- : -- : --');
-      return;
-    }
-    let endTime = tradingData.nextFundingTime * 1000;
-    if (interval !== null) {
-      clearInterval(interval);
-    }
-    const intervalTime: any = setInterval(() => {
-      let difference = endTime - Date.now();
-      if (difference < 0) {
-        endTime = Date.now() + fundingPeriod * 1000;
-        difference = endTime - Date.now();
+  useEffect(() => {
+    function update() {
+      if (nextFundingTime) {
+        const difference = endTime - Date.now();
+        if (difference < 0) {
+          setEndTime(Date.now() + fundingPeriod * 1000);
+        }
+        hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
+          .toString()
+          .padStart(2, '0');
+        minutes = Math.floor((difference / 1000 / 60) % 60)
+          .toString()
+          .padStart(2, '0');
+        seconds = Math.floor((difference / 1000) % 60)
+          .toString()
+          .padStart(2, '0');
+        setTimeLabel(`${hours}:${minutes}:${seconds}`);
       }
-      hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-        .toString()
-        .padStart(2, '0');
-      minutes = Math.floor((difference / 1000 / 60) % 60)
-        .toString()
-        .padStart(2, '0');
-      seconds = Math.floor((difference / 1000) % 60)
-        .toString()
-        .padStart(2, '0');
-      setTimeLabel(`${hours}:${minutes}:${seconds}`);
-    }, 1000);
-    setI(intervalTime);
-  }
+    }
+    update();
+    const timer = setInterval(update, 1000);
 
-  if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-    setNextFundingTime(tradingData.nextFundingTime);
-    startCountdown();
-  }
+    return () => {
+      clearInterval(timer);
+    };
+  }, [endTime]);
 
   return (
     <div

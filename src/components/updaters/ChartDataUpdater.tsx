@@ -1,5 +1,5 @@
 import { getAMMAddress } from '@/const/addresses';
-import { $currentAmm, $dailyVolume, $graphData, $isChartDataInitializing, $selectedTimeIndex } from '@/stores/trading';
+import { $currentAmm, $dailyVolume, $graphData, $selectedTimeIndex, addGraphRecord } from '@/stores/trading';
 import { $currentChain } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 import {
@@ -18,7 +18,7 @@ const ChartDataUpdater = () => {
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
 
   useEffect(() => {
-    async function updateChart() {
+    async function loadData() {
       let chartData;
       let dailyVolume: number = 0;
       if (currentAmm) {
@@ -26,19 +26,19 @@ const ChartDataUpdater = () => {
         if (!ammAddr) return;
         if (selectedTimeIndex === 0) {
           chartData = await getDailySpotPriceGraphData(ammAddr);
-          dailyVolume = formatBigInt(chartData.reduce((vol, item) => vol + item.volume, 0n));
+          dailyVolume = formatBigInt(chartData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else if (selectedTimeIndex === 1) {
           chartData = await getWeeklySpotPriceGraphData(ammAddr);
           const dailyData = await getDailySpotPriceGraphData(ammAddr);
-          dailyVolume = formatBigInt(dailyData.reduce((vol, item) => vol + item.volume, 0n));
+          dailyVolume = formatBigInt(dailyData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else if (selectedTimeIndex === 2) {
           chartData = await getMonthlySpotPriceGraphData(ammAddr);
           const dailyData = await getDailySpotPriceGraphData(ammAddr);
-          dailyVolume = formatBigInt(dailyData.reduce((vol, item) => vol + item.volume, 0n));
+          dailyVolume = formatBigInt(dailyData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else {
           chartData = await getThreeMonthlySpotPriceGraphData(ammAddr);
           const dailyData = await getDailySpotPriceGraphData(ammAddr);
-          dailyVolume = formatBigInt(dailyData.reduce((vol, item) => vol + item.volume, 0n));
+          dailyVolume = formatBigInt(dailyData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         }
         $graphData.set(
           chartData.map(
@@ -47,21 +47,25 @@ const ChartDataUpdater = () => {
               high: formatBigInt(record.high),
               low: formatBigInt(record.low),
               open: formatBigInt(record.open),
-              close: formatBigInt(record.close),
-              volume: formatBigInt(record.volume)
+              close: formatBigInt(record.close)
+              // volume: formatBigInt(record.volume)
             })
           )
         );
         $dailyVolume.set(dailyVolume);
       }
     }
-    $isChartDataInitializing.set(true);
     $graphData.set([]);
     $dailyVolume.set(undefined);
-    updateChart().then(() => {
-      $isChartDataInitializing.set(false);
-    });
+    loadData();
   }, [selectedTimeIndex, currentAmm, chain]);
+
+  useEffect(() => {
+    const timer = setInterval(addGraphRecord, 30000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   return null;
 };

@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef } from 'react';
-import { createChart, ColorType, WhitespaceData, Time } from 'lightweight-charts';
+import { createChart, ColorType } from 'lightweight-charts';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useChartData } from '@/hooks/collection';

@@ -1,68 +1,71 @@
 import { Contract, getAMMContract, getCHViewerContract } from '@/const/contracts';
 import React, { useEffect } from 'react';
-import { useContractReads } from 'wagmi';
+import { useContractRead } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $collectionConfig, $currentAmm, $isTradingDataInitializing, $tradingData } from '@/stores/trading';
+import { $currentAmm, $oraclePrice, $vammPrice, $nextFundingTime, $fundingRates, $openInterests } from '@/stores/trading';
 import { ammAbi, chViewerAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
 import { $currentChain } from '@/stores/user';
 
 const Updater = ({ ammContract, chViewer }: { ammContract: Contract; chViewer: Contract }) => {
-  const collectionConfig = useNanostore($collectionConfig);
-  const { data, isLoading } = useContractReads({
-    contracts: [
-      { ...ammContract, abi: ammAbi, functionName: 'getSpotPrice' },
-      { ...ammContract, abi: ammAbi, functionName: 'getUnderlyingPrice' },
-      { ...ammContract, abi: ammAbi, functionName: 'nextFundingTime' },
-      { ...ammContract, abi: ammAbi, functionName: 'longPositionSize' },
-      { ...ammContract, abi: ammAbi, functionName: 'shortPositionSize' },
-      { ...chViewer, abi: chViewerAbi, functionName: 'getFundingRates', args: [ammContract.address] }
-    ]
+  const { data: vammPrice } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'getSpotPrice', watch: true });
+  const { data: oraclePrice } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'getUnderlyingPrice', watch: true });
+  const { data: nextFundingTime } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'nextFundingTime', watch: true });
+  const { data: longPositionSize } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'longPositionSize', watch: true });
+  const { data: shortPositionSize } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'shortPositionSize', watch: true });
+  const { data: fundingRatesData } = useContractRead({
+    ...chViewer,
+    abi: chViewerAbi,
+    functionName: 'getFundingRates',
+    args: [ammContract.address],
+    watch: true
   });
 
-  const vammPrice = data ? data[0].result : undefined;
-  const oraclePrice = data ? data[1].result : undefined;
-  const nextFundingTime = data ? data[2].result : undefined;
-  const longSize = data ? data[3].result : undefined;
-  const shortSize = data ? data[4].result : undefined;
-  const fundingRates = data ? data[5].result : undefined;
-  const fundingRateLong = fundingRates ? fundingRates[0] : undefined;
-  const fundingRateShort = fundingRates ? fundingRates[1] : undefined;
-
   useEffect(() => {
-    if (
-      vammPrice !== undefined &&
-      oraclePrice !== undefined &&
-      nextFundingTime !== undefined &&
-      longSize !== undefined &&
-      shortSize !== undefined &&
-      fundingRateLong !== undefined &&
-      fundingRateShort !== undefined
-    ) {
-      const openInterest = longSize + shortSize;
-      const shortRatio = openInterest === 0n ? 50 : (formatBigInt(shortSize) / formatBigInt(openInterest)) * 100;
-      const longRatio = 100 - shortRatio;
-      const numVammPrice = formatBigInt(vammPrice);
-      const numOraclePrice = formatBigInt(oraclePrice);
-      const isOverPriceGap = Math.abs((numVammPrice - numOraclePrice) / numOraclePrice) >= collectionConfig.liqSwitchRatio;
-      $tradingData.set({
-        vammPrice: numVammPrice,
-        oraclePrice: numOraclePrice,
-        shortSize: formatBigInt(shortSize),
-        longSize: formatBigInt(longSize),
-        shortRatio,
-        longRatio,
-        nextFundingTime: Number(nextFundingTime),
-        fundingRateLong: formatBigInt(fundingRateLong),
-        fundingRateShort: formatBigInt(fundingRateShort),
-        isOverPriceGap
-      });
+    if (vammPrice !== undefined) {
+      $vammPrice.set(formatBigInt(vammPrice));
+    } else {
+      $vammPrice.set(vammPrice);
     }
-  }, [vammPrice, oraclePrice, nextFundingTime, longSize, shortSize, fundingRateLong, fundingRateShort, collectionConfig]);
+  }, [vammPrice]);
 
   useEffect(() => {
-    $isTradingDataInitializing.set(isLoading);
-  }, [isLoading]);
+    if (oraclePrice !== undefined) {
+      $oraclePrice.set(formatBigInt(oraclePrice));
+    } else {
+      $oraclePrice.set(oraclePrice);
+    }
+  }, [oraclePrice]);
+
+  useEffect(() => {
+    if (nextFundingTime !== undefined) {
+      $nextFundingTime.set(Number(nextFundingTime));
+    } else {
+      $nextFundingTime.set(nextFundingTime);
+    }
+  }, [nextFundingTime]);
+
+  useEffect(() => {
+    if (fundingRatesData) {
+      const fundingRateLong = fundingRatesData[0];
+      const fundingRateShort = fundingRatesData[1];
+      $fundingRates.set({ longRate: formatBigInt(fundingRateLong), shortRate: formatBigInt(fundingRateShort) });
+    } else {
+      $fundingRates.set(undefined);
+    }
+  }, [fundingRatesData]);
+
+  useEffect(() => {
+    if (longPositionSize !== undefined && shortPositionSize !== undefined) {
+      const openInterest = longPositionSize + shortPositionSize;
+      const shortRatio = openInterest === 0n ? 50 : (formatBigInt(shortPositionSize) / formatBigInt(openInterest)) * 100;
+      const longRatio = 100 - shortRatio;
+      $openInterests.set({ longRatio, shortRatio });
+    } else {
+      $openInterests.set(undefined);
+    }
+  }, [longPositionSize, shortPositionSize]);
+
   return null;
 };
 
@@ -72,9 +75,6 @@ const TradingDataUpdater: React.FC = () => {
   const ammContract = getAMMContract(chain, currentAmm);
   const chViewer = getCHViewerContract(chain);
 
-  useEffect(() => {
-    $tradingData.set(undefined);
-  }, [currentAmm, chain]);
   if (!ammContract || !chViewer) return null;
   return <Updater ammContract={ammContract} chViewer={chViewer} />;
 };

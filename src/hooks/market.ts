@@ -1,7 +1,7 @@
 import { AMM } from '@/const/collectionList';
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $collectionConfig, $futureMarketHistory, $tradingData } from '@/stores/trading';
+import { $collectionConfig } from '@/stores/trading';
 import { Address, useNetwork } from 'wagmi';
 import { getAMMByAddress, getAddressConfig, getSupportedAMMAddresses } from '@/const/addresses';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
@@ -32,7 +32,6 @@ export interface GetMktOverview {
 }
 
 export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
-  const tradingData = useNanostore($tradingData);
   const config = useNanostore($collectionConfig);
   const chain = useNanostore($currentChain);
   const [data, setData] = useState<Array<CollectionOverview>>();
@@ -85,6 +84,6 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
     //   }
     // }
     // getGraphData();
-  }, [triggerUpdate, tradingData, chain, config]);
+  }, [triggerUpdate, chain, config]);
   return { isLoading, data };
 };

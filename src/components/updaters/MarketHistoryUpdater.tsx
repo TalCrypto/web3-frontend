@@ -72,9 +72,11 @@ const MarketHistoryUpdater = () => {
           $futureMarketHistory.set([...newTrades, ...$futureMarketHistory.get()]);
         });
       }
+      console.log('logs', logs);
       logs
         .filter(log => log.args.trader === address)
         .forEach(log => {
+          console.log('log', log);
           const type = getTradingActionType({
             exchangedPositionSize: formatBigInt(log.args.exchangedPositionSize ?? 0n),
             positionSizeAfter: formatBigInt(log.args.positionSizeAfter ?? 0n),

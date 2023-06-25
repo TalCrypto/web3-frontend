@@ -2,17 +2,19 @@ import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentChain, $userPositionInfos, UserPositionInfo } from '@/stores/user';
 import {
+  $collectionConfig,
   $dailyVolume,
+  $fundingRates,
   $graphData,
   $highPrice,
-  $isChartDataInitializing,
-  $isTradingDataInitializing,
   $lowPrice,
+  $nextFundingTime,
+  $openInterests,
+  $oraclePrice,
   $priceChange,
   $priceChangePct,
-  $tradingData,
   $transactionPendings,
-  CollectionTradingData
+  $vammPrice
 } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
@@ -39,10 +41,13 @@ export const usePositionInfosIsLoading = (): boolean => {
   return isLoading;
 };
 
-export const useTradingData = (): { isLoading: boolean; tradingData?: CollectionTradingData } => {
-  const tradingData = useNanostore($tradingData);
-  const isLoading = useNanostore($isTradingDataInitializing);
-  return { isLoading, tradingData };
+export const useIsOverPriceGap = () => {
+  const vammPrice = useNanostore($vammPrice);
+  const oraclePrice = useNanostore($oraclePrice);
+  const collectionConfig = useNanostore($collectionConfig);
+  const isOverPriceGap =
+    oraclePrice && vammPrice ? Math.abs((vammPrice - oraclePrice) / oraclePrice) >= collectionConfig.liqSwitchRatio : false;
+  return isOverPriceGap;
 };
 
 export const useTransactionIsPending = (amm?: AMM): boolean => {
@@ -51,7 +56,6 @@ export const useTransactionIsPending = (amm?: AMM): boolean => {
 };
 
 export const useChartData = (): {
-  isLoading: boolean;
   graphData: OhlcData[];
   dailyVolume?: number;
   priceChange?: number;
@@ -59,12 +63,11 @@ export const useChartData = (): {
   highPrice?: number;
   lowPrice?: number;
 } => {
-  const isLoading = useNanostore($isChartDataInitializing);
   const graphData = useNanostore($graphData);
   const dailyVolume = useNanostore($dailyVolume);
   const priceChange = useNanostore($priceChange);
   const priceChangePct = useNanostore($priceChangePct);
   const highPrice = useNanostore($highPrice);
   const lowPrice = useNanostore($lowPrice);
-  return { isLoading, graphData, dailyVolume, priceChange, priceChangePct, highPrice, lowPrice };
+  return { graphData, dailyVolume, priceChange, priceChangePct, highPrice, lowPrice };
 };

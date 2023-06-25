@@ -20,8 +20,17 @@ import { apiConnection } from '@/utils/apiConnection';
 
 import Tooltip from '@/components/common/Tooltip';
 import { Address } from 'wagmi';
-import { $collectionConfig, $currentAmm, $selectedTimeIndex } from '@/stores/trading';
-import { useChartData, useTradingData } from '@/hooks/collection';
+import {
+  $collectionConfig,
+  $currentAmm,
+  $fundingRates,
+  $nextFundingTime,
+  $openInterests,
+  $oraclePrice,
+  $selectedTimeIndex,
+  $vammPrice
+} from '@/stores/trading';
+import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 
 const flashAnim = 'flash';
 
@@ -177,8 +186,9 @@ function ChartTimeTabs(props: any) {
 
 const ChartHeaders = () => {
   const currentAmm = useNanostore($currentAmm);
-  const { tradingData } = useTradingData();
-  const { isLoading: isStartLoadingChart, priceChange, priceChangePct } = useChartData();
+  const oraclePrice = useNanostore($oraclePrice);
+  const vammPrice = useNanostore($vammPrice);
+  const { priceChange, priceChangePct } = useChartData();
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
   return (
@@ -198,13 +208,13 @@ const ChartHeaders = () => {
                 <span>{collectionInfo ? collectionInfo.displayCollectionPair : ''}</span>
               </div>
               <div className="font-400 flex text-[14px] text-highEmphasis">
-                <SmallPriceIcon priceValue={`${tradingData ? tradingData.oraclePrice.toFixed(2) : '-.--'} (Oracle)`} />
+                <SmallPriceIcon priceValue={`${oraclePrice ? oraclePrice.toFixed(2) : '-.--'} (Oracle)`} />
               </div>
             </div>
           </div>
           <div className="flex">
-            <PriceWithIcon priceValue={tradingData ? tradingData.vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-            <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={isStartLoadingChart} />
+            <PriceWithIcon priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
+            <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={!priceChange} />
           </div>
         </div>
       </div>
@@ -218,7 +228,7 @@ const ChartHeaders = () => {
             { label: '1M', ref: useRef() },
             { label: '3M', ref: useRef() }
           ]}
-          isStartLoadingChart={isStartLoadingChart}
+          isStartLoadingChart={!vammPrice}
         />
       </div>
     </div>
@@ -227,13 +237,14 @@ const ChartHeaders = () => {
 
 const ChartFooter = (props: any, ref: any) => {
   const DEFAULT_TIME = '-- : -- : --';
-  const { isLoading, tradingData } = useTradingData();
   const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
   const { fundingPeriod } = useNanostore($collectionConfig);
 
-  const vAMMPrice = !tradingData ? 0 : tradingData.vammPrice;
-  const oraclePrice = !tradingData ? 0 : tradingData.oraclePrice;
-  const isGapAboveLimit = !tradingData ? false : tradingData.isOverPriceGap;
+  const vAMMPrice = useNanostore($vammPrice);
+  const oraclePrice = useNanostore($oraclePrice);
+  const isGapAboveLimit = useIsOverPriceGap();
+  const fundingRates = useNanostore($fundingRates);
+  const nextFundingTime = useNanostore($nextFundingTime);
 
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
@@ -243,8 +254,8 @@ const ChartFooter = (props: any, ref: any) => {
   let longSide = '';
   let shortSide = '';
 
-  if (tradingData && tradingData.fundingRateLong) {
-    const numberRawdata = (tradingData.fundingRateLong * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawdata = (fundingRates.longRate * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
     rateLong = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
@@ -253,8 +264,8 @@ const ChartFooter = (props: any, ref: any) => {
       longSide = 'Get';
     }
   }
-  if (tradingData && tradingData.fundingRateShort) {
-    const numberRawdata = (tradingData.fundingRateShort * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawdata = (fundingRates.shortRate * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawdata));
     rateShort = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
@@ -266,10 +277,10 @@ const ChartFooter = (props: any, ref: any) => {
 
   useEffect(() => {
     let timer: any;
-    if (isLoading || !tradingData) {
+    if (!nextFundingTime) {
       setTimeLabel(DEFAULT_TIME);
     } else {
-      let endTime = tradingData.nextFundingTime * 1000;
+      let endTime = nextFundingTime * 1000;
       let hours;
       let minutes;
       let seconds;
@@ -296,7 +307,7 @@ const ChartFooter = (props: any, ref: any) => {
         clearInterval(timer);
       }
     };
-  }, [tradingData, isLoading]);
+  }, [nextFundingTime]);
 
   return (
     <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
@@ -316,9 +327,9 @@ const ChartFooter = (props: any, ref: any) => {
 
         <div className="flex items-center space-x-[4px]">
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-          <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice - oraclePrice).toFixed(2)} (${Math.abs(
-            priceGapPercentage
-          ).toFixed(2)}%)`}</p>
+          <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice ?? 0 - (oraclePrice ?? 0)).toFixed(
+            2
+          )} (${Math.abs(priceGapPercentage).toFixed(2)}%)`}</p>
 
           {isGapAboveLimit ? (
             <div>
@@ -364,8 +375,8 @@ const ChartFooter = (props: any, ref: any) => {
 };
 
 const ProComponent = () => {
-  const { isLoading: isTradingDataLoading, tradingData } = useTradingData();
-  const { isLoading: isChartDataLoading, highPrice, lowPrice, dailyVolume } = useChartData();
+  const openInterests = useNanostore($openInterests);
+  const { highPrice, lowPrice, dailyVolume } = useChartData();
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
 
   const displayTimeKey = ['24Hr', '1W', '1M', '3M'][selectedTimeIndex];
@@ -376,35 +387,35 @@ const ProComponent = () => {
         <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>
-            <SmallPriceIcon priceValue={highPrice?.toFixed(2)} isLoading={isChartDataLoading || !highPrice} />
+            <SmallPriceIcon priceValue={highPrice?.toFixed(2)} isLoading={!highPrice} />
           </div>
           <div className="flex flex-1 flex-col items-end">
             <p className="mb-[6px]">{displayTimeKey} Low</p>
-            <SmallPriceIcon priceValue={lowPrice?.toFixed(2)} isLoading={isChartDataLoading || !lowPrice} />
+            <SmallPriceIcon priceValue={lowPrice?.toFixed(2)} isLoading={!lowPrice} />
           </div>
         </div>
         <div>
           <div className="flex text-[14px] text-mediumEmphasis">
             <div className="flex flex-1 flex-col">
               <span className="text-marketGreen">Long</span>
-              <span className={`text-highEmphasis ${isTradingDataLoading || !tradingData ? flashAnim : ''}`}>
-                {!tradingData ? '-.--' : `${tradingData.longRatio.toFixed(0)}%`}
+              <span className={`text-highEmphasis ${!openInterests ? flashAnim : ''}`}>
+                {!openInterests ? '-.--' : `${openInterests.longRatio.toFixed(0)}%`}
               </span>
             </div>
             <div className="flex flex-1 flex-col items-end">
               <span className="text-marketRed">Short</span>
-              <span className={`text-highEmphasis ${isTradingDataLoading || !tradingData ? flashAnim : ''}`}>
-                {!tradingData ? '-.--' : `${tradingData.shortRatio.toFixed(0)}%`}
+              <span className={`text-highEmphasis ${!openInterests ? flashAnim : ''}`}>
+                {!openInterests ? '-.--' : `${openInterests.shortRatio.toFixed(0)}%`}
               </span>
             </div>
           </div>
           <div className="flex space-x-[3px]">
             <div
-              style={{ width: `${tradingData ? tradingData.longRatio.toFixed(0) : 0}%` }}
+              style={{ width: `${openInterests ? openInterests.longRatio.toFixed(0) : 0}%` }}
               className="flex h-[6px] rounded-l-[10px] bg-marketGreen"
             />
             <div
-              style={{ width: `${tradingData ? tradingData.shortRatio.toFixed(0) : 0}%` }}
+              style={{ width: `${openInterests ? openInterests.shortRatio.toFixed(0) : 0}%` }}
               className="flex h-[6px] rounded-r-[10px] bg-marketRed"
             />
           </div>
@@ -414,7 +425,7 @@ const ProComponent = () => {
             <p className="mb-[6px]">Volume (24Hr)</p>
             <SmallPriceIcon
               priceValue={dailyVolume === undefined ? '-.--' : dailyVolume.toFixed(2)}
-              isLoading={dailyVolume === undefined || isChartDataLoading}
+              isLoading={dailyVolume === undefined}
             />
           </div>
         </div>

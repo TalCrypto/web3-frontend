@@ -21,9 +21,8 @@ import IndividualShareContainer from '@/components/trade/desktop/position/Indivi
 import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaymentModal';
-import { $currentAmm } from '@/stores/trading';
-import { useAccount } from 'wagmi';
-import { usePositionInfo, useTradingData, useTransactionIsPending } from '@/hooks/collection';
+import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
+import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending } from '@/hooks/collection';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $userAddress } from '@/stores/user';
 
@@ -51,7 +50,10 @@ export default function PositionDetails(props: any) {
   const address = useNanostore($userAddress);
   const currentAmm = useNanostore($currentAmm);
   const positionInfo = usePositionInfo(currentAmm);
-  const { tradingData } = useTradingData();
+  const vammPrice = useNanostore($vammPrice);
+  const oraclePrice = useNanostore($oraclePrice);
+  const isOverPriceGap = useIsOverPriceGap();
+  console.log('vammPrice', vammPrice);
   const isPending = useTransactionIsPending(currentAmm);
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
@@ -74,9 +76,9 @@ export default function PositionDetails(props: any) {
   }, [currentAmm, positionInfo]);
 
   const liquidationChanceWarning = () => {
-    if (!positionInfo || !tradingData || !tradingData.vammPrice || !tradingData.oraclePrice) return false;
+    if (!positionInfo || !vammPrice || !oraclePrice) return false;
 
-    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.vammPrice : tradingData.oraclePrice;
+    const selectedPriceForCalc = !isOverPriceGap ? vammPrice : oraclePrice;
 
     if (
       positionInfo.size > 0 && // long
@@ -94,9 +96,9 @@ export default function PositionDetails(props: any) {
   };
 
   const liquidationRiskWarning = () => {
-    if (!positionInfo || !tradingData || !tradingData.vammPrice || !tradingData.oraclePrice) return false;
+    if (!positionInfo || !vammPrice || !oraclePrice) return false;
 
-    const selectedPriceForCalc = !tradingData.isOverPriceGap ? tradingData.vammPrice : tradingData.oraclePrice;
+    const selectedPriceForCalc = !isOverPriceGap ? vammPrice : oraclePrice;
 
     if (positionInfo.size > 0 && selectedPriceForCalc <= positionInfo.liquidationPrice) return true; // long
     if (positionInfo.size < 0 && selectedPriceForCalc >= positionInfo.liquidationPrice) return true; // short
@@ -171,8 +173,8 @@ export default function PositionDetails(props: any) {
           ) : null}
         </div>
         {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-        {showFundingPaymentModal && tradingData && currentAmm ? (
-          <FundingPaymentModal tradingData={tradingData} setShowFundingPaymentModal={setShowFundingPaymentModal} amm={currentAmm} />
+        {showFundingPaymentModal && currentAmm ? (
+          <FundingPaymentModal setShowFundingPaymentModal={setShowFundingPaymentModal} amm={currentAmm} />
         ) : null}
       </div>
       <div>
@@ -219,7 +221,7 @@ export default function PositionDetails(props: any) {
           <div className="relative flex w-[20%] space-x-[3px] pl-4">
             <MedPriceIcon
               priceValue={!positionInfo ? '---' : positionInfo.liquidationPrice < 0 ? '0.00' : positionInfo.liquidationPrice.toFixed(2)}
-              className={`normalprice ${tradingData?.isOverPriceGap ? 'text-warn' : ''} `}
+              className={`normalprice ${isOverPriceGap ? 'text-warn' : ''} `}
               isLoading={isLoading || isPending}
             />
             {liquidationChanceWarning() && !liquidationRiskWarning() ? (
@@ -236,7 +238,7 @@ export default function PositionDetails(props: any) {
                 tipsText="Your position is at risk of being liquidated. Please manage your risk."
               />
             ) : null}
-            {tradingData?.isOverPriceGap ? (
+            {isOverPriceGap ? (
               <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
             ) : null}
           </div>
@@ -249,7 +251,7 @@ export default function PositionDetails(props: any) {
           </div>
         </div>
       </div>
-      {tradingData?.isOverPriceGap ? (
+      {isOverPriceGap ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
           <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
           <p className="text-b3 text-warn">

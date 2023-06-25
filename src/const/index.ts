@@ -16,3 +16,7 @@ export enum CollateralActions {
   ADD = 'Add',
   REDUCE = 'Reduce'
 }
+
+export const DAY_RESOLUTION = 300;
+export const WEEK_RESOLUTION = 1800;
+export const MONTH_RESOLUTION = 7200;
