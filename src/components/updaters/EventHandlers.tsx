@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { showToast } from '@/components/common/Toast';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
-import { $pendingPositionChangedEvents } from '@/stores/events';
+import { $pendingPositionChangedEvents, $pendingMarginChangedEvents } from '@/stores/events';
 import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, addGraphRecord } from '@/stores/trading';
 import { $currentChain, $userAddress } from '@/stores/user';
 import { getTradingActionType, getCollateralActionType } from '@/utils/actionType';
@@ -16,6 +16,7 @@ import { zeroAddress } from 'viem';
 
 const EventHandlers = () => {
   const pendingPositionChangedEvents = useNanostore($pendingPositionChangedEvents);
+  const pendingMarginChangedEvents = useNanostore($pendingMarginChangedEvents);
   const traderAddress = useNanostore($userAddress);
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
@@ -73,20 +74,35 @@ const EventHandlers = () => {
     }
   }, [pendingPositionChangedEvents, traderAddress, chain, ammAddress]);
 
+  useEffect(() => {
+    if (pendingMarginChangedEvents.length > 0) {
+      pendingMarginChangedEvents
+        .filter(event => event.trader === traderAddress)
+        .forEach(event => {
+          const margin = event.amount;
+          const type = getCollateralActionType(margin);
+          const amm = getAMMByAddress(event.amm, chain);
+          const ammInfo = getCollectionInformation(amm);
+          showToast(
+            {
+              title: `${ammInfo?.shortName} - ${type}`,
+              message: 'Order Completed!',
+              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`,
+              linkLabel: 'Check on Arbiscan'
+            },
+            {
+              autoClose: 5000,
+              hideProgressBar: true
+            }
+          );
+        });
+    }
+  }, [pendingMarginChangedEvents, traderAddress, chain]);
+
   return null;
 };
 
-const EventListeners = ({
-  ammContract,
-  chContract,
-  trader,
-  chain
-}: {
-  ammContract: Contract;
-  chContract: Contract;
-  trader: Address | undefined;
-  chain: Chain | undefined;
-}) => {
+const EventListeners = ({ ammContract, chContract }: { ammContract: Contract; chContract: Contract }) => {
   // funding payment event listener
   useContractEvent({
     ...ammContract,
@@ -134,26 +150,15 @@ const EventListeners = ({
     abi: chAbi,
     eventName: 'MarginChanged',
     listener(logs) {
-      logs
-        .filter(log => log.args.sender === trader)
-        .forEach(log => {
-          const margin = formatBigInt(log.args.amount ?? 0n);
-          const type = getCollateralActionType(margin);
-          const amm = getAMMByAddress(log.args.amm, chain);
-          const ammInfo = getCollectionInformation(amm);
-          showToast(
-            {
-              title: `${ammInfo?.shortName} - ${type}`,
-              message: 'Order Completed!',
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${log.transactionHash ?? ''}`,
-              linkLabel: 'Check on Arbiscan'
-            },
-            {
-              autoClose: 5000,
-              hideProgressBar: true
-            }
-          );
-        });
+      $pendingMarginChangedEvents.set([
+        ...$pendingMarginChangedEvents.get(),
+        ...logs.map(log => ({
+          amm: log.args.amm ?? zeroAddress,
+          trader: log.args.sender ?? zeroAddress,
+          txHash: log.transactionHash ?? '',
+          amount: formatBigInt(log.args.amount ?? 0n)
+        }))
+      ]);
     }
   });
 
@@ -165,11 +170,10 @@ const EventManager = () => {
   const currentAmm = useNanostore($currentAmm);
   const ammContract = getAMMContract(chain, currentAmm);
   const chContract = getCHContract(chain);
-  const traderAddress = useNanostore($userAddress);
   if (!ammContract || !chContract) return null;
   return (
     <>
-      <EventListeners chContract={chContract} ammContract={ammContract} trader={traderAddress} chain={chain} />
+      <EventListeners chContract={chContract} ammContract={ammContract} />
       <EventHandlers />
     </>
   );

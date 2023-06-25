@@ -12,4 +12,13 @@ interface PositionChangedEvent {
   vammPrice: number;
 }
 
+interface MarginChangedEvent {
+  amm: Address;
+  trader: Address;
+  txHash: string;
+  amount: number;
+}
+
 export const $pendingPositionChangedEvents = atom<PositionChangedEvent[]>([]);
+
+export const $pendingMarginChangedEvents = atom<MarginChangedEvent[]>([]);
