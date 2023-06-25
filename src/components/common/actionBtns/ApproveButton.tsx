@@ -28,7 +28,9 @@ function ApproveButton({
   const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useApproveTransaction(approvalAmount);
 
   useEffect(() => {
-    setIsLoading(false);
+    if (isError) {
+      setIsLoading(false);
+    }
     onError(isError ? error : null);
   }, [isError, error, onError]);
 

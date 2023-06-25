@@ -54,7 +54,9 @@ function OpenPosButton({
   });
 
   useEffect(() => {
-    setIsLoading(false);
+    if (isError) {
+      setIsLoading(false);
+    }
     onError(isError ? error : null);
   }, [isError, error, onError]);
 

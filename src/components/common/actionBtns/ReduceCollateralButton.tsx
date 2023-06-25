@@ -29,7 +29,9 @@ function ReduceCollateralButton({
   const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useReduceCollateralTransaction(deltaMargin);
 
   useEffect(() => {
-    setIsLoading(false);
+    if (isError) {
+      setIsLoading(false);
+    }
     onError(isError ? error : null);
   }, [isError, error, onError]);
 
