@@ -24,6 +24,7 @@ const EventHandlers = () => {
 
   useEffect(() => {
     if (pendingPositionChangedEvents.length > 0 && ammAddress) {
+      $pendingPositionChangedEvents.set([]);
       pendingPositionChangedEvents.forEach(event => {
         if (event.trader === traderAddress) {
           const type = getTradingActionType({
@@ -70,7 +71,6 @@ const EventHandlers = () => {
           });
         });
       }
-      $pendingPositionChangedEvents.set([]);
     }
   }, [pendingPositionChangedEvents, traderAddress, chain, ammAddress]);
 
