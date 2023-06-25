@@ -376,7 +376,7 @@ export default function CloseCollateral(props: any) {
     } else {
       setIsFullClose(false);
     }
-  }, [estimation?.txSummary.notionalSize]);
+  }, [estimation?.txSummary.notionalSize, isFullClose]);
 
   const initializeState = useCallback(() => {
     setCloseValue(0);
