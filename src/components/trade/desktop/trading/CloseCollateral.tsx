@@ -342,7 +342,7 @@ export default function CloseCollateral(props: any) {
   const closeSide = userPosition?.size && userPosition?.size > 0 ? Side.SHORT : Side.LONG;
   const [isFullClose, setIsFullClose] = useState(false);
   const [closeValue, setCloseValue] = useState(0);
-  const [toleranceRate, setToleranceRate] = useState(0.5);
+  const [toleranceRate, setToleranceRate] = useState<number | string>(0.5);
   const [showDetail, setShowDetail] = useState(false);
   const [isShowPartialCloseModal, setIsShowPartialCloseModal] = useState(false);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
@@ -352,14 +352,14 @@ export default function CloseCollateral(props: any) {
   const { isLoading: isEstLoading, estimation } = useOpenPositionEstimation({
     side: closeSide,
     notionalAmount: closeValue,
-    slippagePercent: toleranceRate,
+    slippagePercent: Number(toleranceRate),
     leverage: 1
   });
   const approvalAmount = getApprovalAmountFromEstimation(estimation);
   const isNeedApproval = useApprovalCheck(approvalAmount);
 
   useEffect(() => {
-    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL) {
+    if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL && !isFullClose) {
       setIsAmountTooSmall(true);
     } else {
       setIsAmountTooSmall(false);
@@ -448,7 +448,7 @@ export default function CloseCollateral(props: any) {
                 const { value: inputValue } = e.target;
                 const reg = /^\d*(\.\d*)?$/;
                 if (reg.test(inputValue) || inputValue === '') {
-                  setToleranceRate(Number(e.target.value));
+                  setToleranceRate(e.target.value);
                 }
               }}
             />
@@ -474,7 +474,7 @@ export default function CloseCollateral(props: any) {
       ) : isFullClose ? (
         <ClosePosButton
           isEstimating={isEstLoading}
-          slippagePercent={toleranceRate}
+          slippagePercent={Number(toleranceRate)}
           onPending={handlePending}
           onSuccess={initializeState}
           onError={handleError}
@@ -485,7 +485,7 @@ export default function CloseCollateral(props: any) {
           side={closeSide}
           notionalAmount={closeValue}
           leverage={1}
-          slippagePercent={toleranceRate}
+          slippagePercent={Number(toleranceRate)}
           estimation={isAmountTooLarge || isAmountTooSmall ? undefined : estimation}
           onPending={handlePending}
           onSuccess={initializeState}
