@@ -148,14 +148,17 @@ export function addGraphRecord(price?: number /* TODO , notionalValue?: number *
         ]);
       }
     } else if (price) {
-      graphData[graphData.length - 1].close = price;
-      if (price > lastGraphRecord.high) {
-        graphData[graphData.length - 1].high = price;
-      }
-      if (price < lastGraphRecord.low) {
-        graphData[graphData.length - 1].low = price;
-      }
-      $graphData.set(graphData);
+      const high = Math.max(price, lastGraphRecord.high);
+      const low = Math.min(price, lastGraphRecord.low);
+      const newRecord = {
+        time: lastGraphRecord.time,
+        open: lastGraphRecord.open,
+        high,
+        low,
+        close: price
+      };
+      graphData.pop();
+      $graphData.set([...graphData, newRecord]);
     }
   }
 }

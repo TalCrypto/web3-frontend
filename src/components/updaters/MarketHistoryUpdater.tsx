@@ -1,7 +1,7 @@
 /* eslint-disable operator-linebreak */
 import { useEffect } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
+import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory, addGraphRecord } from '@/stores/trading';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getFundingPaymentHistory, getMarketHistory } from '@/utils/trading';
 import { formatBigInt } from '@/utils/bigInt';
@@ -54,49 +54,48 @@ const MarketHistoryUpdater = () => {
       if (filteredLogs.length > 0) {
         const traderAddresses = filteredLogs.map(log => log.args.trader);
         apiConnection.getUsernameFromAddress(traderAddresses).then(usernameList => {
-          const newTrades = filteredLogs.map(log => ({
-            ammAddress: ammContract?.address ?? zeroAddress,
-            timestamp: Math.round(new Date().getTime() / 1000), // log doesn't return timestamp
-            exchangedPositionSize: formatBigInt(log.args.exchangedPositionSize ?? 0n),
-            positionNotional: formatBigInt(log.args.positionNotional ?? 0n),
-            positionSizeAfter: formatBigInt(log.args.positionSizeAfter ?? 0n),
-            liquidationPenalty: formatBigInt(log.args.liquidationPenalty ?? 0n),
-            spotPrice: formatBigInt(log.args.spotPrice ?? 0n),
-            userAddress: log.args.trader ?? zeroAddress,
-            userId:
-              !usernameList?.[log.args.trader ?? zeroAddress] || usernameList?.[log.args.trader ?? zeroAddress] === log.args.trader
-                ? ''
-                : usernameList?.[log.args.trader ?? zeroAddress],
-            txHash: log.transactionHash ?? ''
-          }));
-          $futureMarketHistory.set([...newTrades, ...$futureMarketHistory.get()]);
+          filteredLogs.forEach(log => {
+            const newRecord = {
+              ammAddress: ammContract?.address ?? zeroAddress,
+              timestamp: Math.round(new Date().getTime() / 1000), // log doesn't return timestamp
+              exchangedPositionSize: formatBigInt(log.args.exchangedPositionSize ?? 0n),
+              positionNotional: formatBigInt(log.args.positionNotional ?? 0n),
+              positionSizeAfter: formatBigInt(log.args.positionSizeAfter ?? 0n),
+              liquidationPenalty: formatBigInt(log.args.liquidationPenalty ?? 0n),
+              spotPrice: formatBigInt(log.args.spotPrice ?? 0n),
+              userAddress: log.args.trader ?? zeroAddress,
+              userId:
+                !usernameList?.[log.args.trader ?? zeroAddress] || usernameList?.[log.args.trader ?? zeroAddress] === log.args.trader
+                  ? ''
+                  : usernameList?.[log.args.trader ?? zeroAddress],
+              txHash: log.transactionHash ?? ''
+            };
+            $futureMarketHistory.set([newRecord, ...$futureMarketHistory.get()]);
+            addGraphRecord(formatBigInt(log.args.spotPrice ?? 0n));
+            if (log.args.trader === address) {
+              const type = getTradingActionType({
+                exchangedPositionSize: formatBigInt(log.args.exchangedPositionSize ?? 0n),
+                positionSizeAfter: formatBigInt(log.args.positionSizeAfter ?? 0n),
+                liquidationPenalty: formatBigInt(log.args.liquidationPenalty ?? 0n)
+              });
+              const amm = getAMMByAddress(log.args.amm, chain);
+              const ammInfo = getCollectionInformation(amm);
+              showToast(
+                {
+                  title: `${ammInfo?.shortName} - ${type} Position`,
+                  message: 'Order Completed!',
+                  linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${log.transactionHash ?? ''}`,
+                  linkLabel: 'Check on Arbiscan'
+                },
+                {
+                  autoClose: 5000,
+                  hideProgressBar: true
+                }
+              );
+            }
+          });
         });
       }
-      console.log('logs', logs);
-      logs
-        .filter(log => log.args.trader === address)
-        .forEach(log => {
-          console.log('log', log);
-          const type = getTradingActionType({
-            exchangedPositionSize: formatBigInt(log.args.exchangedPositionSize ?? 0n),
-            positionSizeAfter: formatBigInt(log.args.positionSizeAfter ?? 0n),
-            liquidationPenalty: formatBigInt(log.args.liquidationPenalty ?? 0n)
-          });
-          const amm = getAMMByAddress(log.args.amm, chain);
-          const ammInfo = getCollectionInformation(amm);
-          showToast(
-            {
-              title: `${ammInfo?.shortName} - ${type} Position`,
-              message: 'Order Completed!',
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${log.transactionHash ?? ''}`,
-              linkLabel: 'Check on Arbiscan'
-            },
-            {
-              autoClose: 5000,
-              hideProgressBar: true
-            }
-          );
-        });
     }
   });
 
