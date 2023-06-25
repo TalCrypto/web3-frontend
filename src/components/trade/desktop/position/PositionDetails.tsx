@@ -53,7 +53,6 @@ export default function PositionDetails(props: any) {
   const vammPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isOverPriceGap = useIsOverPriceGap();
-  console.log('vammPrice', vammPrice);
   const isPending = useTransactionIsPending(currentAmm);
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 

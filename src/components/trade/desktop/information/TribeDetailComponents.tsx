@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable react/no-array-index-key */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 // import moment from 'moment';
 import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
@@ -99,6 +99,17 @@ const MarketTrade = () => {
   const router = useRouter();
   const marketHistory = useNanostore($futureMarketHistory);
   const address = useNanostore($userAddress);
+  const [newAdded, setNewAdded] = useState(false);
+
+  useEffect(() => {
+    if (marketHistory.length > 0) {
+      setNewAdded(true);
+    }
+    const timeout = setTimeout(() => setNewAdded(false), 500);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [marketHistory]);
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -161,7 +172,14 @@ const MarketTrade = () => {
                   </div>,
                   <ExplorerButton txHash={record.txHash} />
                 ]}
-                classNames={['col-span-3 pl-3', 'col-span-2', 'col-span-2', 'col-span-2', 'col-span-2 ', 'col-span-1 px-3']}
+                classNames={[
+                  `col-span-3 pl-3 ${newAdded && index === 0 ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
+                  `col-span-1 px-3 ${newAdded && index === 0 ? 'flash' : ''}`
+                ]}
               />
             ))
         ) : (
