@@ -2,17 +2,21 @@ import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentChain, $userPositionInfos, UserPositionInfo } from '@/stores/user';
 import {
-  $chartData,
   $dailyVolume,
+  $graphData,
+  $highPrice,
   $isChartDataInitializing,
   $isTradingDataInitializing,
+  $lowPrice,
+  $priceChange,
+  $priceChangePct,
   $tradingData,
   $transactionPendings,
-  ChartData,
   CollectionTradingData
 } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
+import { OhlcData } from 'lightweight-charts';
 
 export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   const positionInfos = useNanostore($userPositionInfos);
@@ -46,9 +50,21 @@ export const useTransactionIsPending = (amm?: AMM): boolean => {
   return amm ? Boolean(pendings[amm]) : false;
 };
 
-export const useChartData = (): { isLoading: boolean; chartData?: ChartData; dailyVolume?: number } => {
+export const useChartData = (): {
+  isLoading: boolean;
+  graphData: OhlcData[];
+  dailyVolume?: number;
+  priceChange?: number;
+  priceChangePct?: number;
+  highPrice?: number;
+  lowPrice?: number;
+} => {
   const isLoading = useNanostore($isChartDataInitializing);
-  const chartData = useNanostore($chartData);
+  const graphData = useNanostore($graphData);
   const dailyVolume = useNanostore($dailyVolume);
-  return { isLoading, chartData, dailyVolume };
+  const priceChange = useNanostore($priceChange);
+  const priceChangePct = useNanostore($priceChangePct);
+  const highPrice = useNanostore($highPrice);
+  const lowPrice = useNanostore($lowPrice);
+  return { isLoading, graphData, dailyVolume, priceChange, priceChangePct, highPrice, lowPrice };
 };

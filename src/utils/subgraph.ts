@@ -318,12 +318,12 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
     .then(res => res.json())
     .then(resJson => resJson.data.reserveSnapshottedEvents);
 
-  return positions.length > 0
-    ? {
-        timestamp: Number(positions[0].timestamp),
-        spotPrice: BigInt(positions[0].spotPrice)
-      }
-    : null;
+  return positions.length > 0 ?
+    {
+      timestamp: Number(positions[0].timestamp),
+      spotPrice: BigInt(positions[0].spotPrice)
+    } :
+    null;
 };
 
 export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
@@ -348,7 +348,6 @@ export const getGraphDataAfter = async (ammAddr: string, timestamp: number, reso
                 open
                 close
                 volume
-                average
               }
             }`
     })
@@ -363,8 +362,7 @@ export const getGraphDataAfter = async (ammAddr: string, timestamp: number, reso
     close: BigInt(data.close),
     high: BigInt(data.high),
     low: BigInt(data.low),
-    volume: BigInt(data.volume),
-    avgPrice: BigInt(data.average)
+    volume: BigInt(data.volume)
   }));
 
   return graphDatas.length > 0 ? result : [];

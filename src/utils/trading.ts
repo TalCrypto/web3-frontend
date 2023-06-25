@@ -53,91 +53,49 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
   const nowTs = Math.round(now / 1000);
   const startRoundTime = startFrom - (startFrom % interval);
   const totalRound = Math.floor((nowTs - startRoundTime) / interval);
-  const latestPriceBeforeRange = await getLatestSpotPriceBefore(ammAddr, startRoundTime);
 
-  const rawGraphDatas = await getGraphDataAfter(ammAddr, startRoundTime - 1, interval);
-  const graphData: any[] = [];
-
-  let rawGraphDataIndex = 0;
-
-  let high = 0n;
-  let low = 0n;
-  let volume = 0n;
-
-  for (let i = 0; i < totalRound; i += 1) {
-    const currentRoundStartTime = startRoundTime + i * interval;
-    const currentRoundEndTime = currentRoundStartTime + interval;
-
-    const rawGraphData = rawGraphDatas[rawGraphDataIndex];
-
-    if (!rawGraphData || currentRoundStartTime < rawGraphData.start) {
-      // No raw graph data for this round
-      if (graphData.length > 0) {
-        // use previous raw graph data if available
-        const lastRoundClose = BigInt(graphData[graphData.length - 1].close);
-        if (lastRoundClose > high) {
-          high = lastRoundClose;
-        }
-        if (low === 0n || lastRoundClose < low) {
-          low = lastRoundClose;
-        }
-        graphData.push({
-          round: i + 1,
-          avgPrice: graphData[graphData.length - 1].close,
-          open: graphData[graphData.length - 1].close,
-          close: graphData[graphData.length - 1].close,
+  const result = [];
+  const rawGraphData = await getGraphDataAfter(ammAddr, startRoundTime - 1, interval);
+  console.log('rawGraphData', rawGraphData);
+  if (!rawGraphData || rawGraphData.length === 0) {
+    const latestPriceBeforeRange = await getLatestSpotPriceBefore(ammAddr, startRoundTime);
+    if (latestPriceBeforeRange) {
+      for (let i = 0; i < totalRound; i += 1) {
+        const currentRoundStartTime = startRoundTime + i * interval;
+        const currentRoundEndTime = currentRoundStartTime + interval - 1;
+        result.push({
           start: currentRoundStartTime,
-          end: currentRoundEndTime
-        });
-      } else if (latestPriceBeforeRange) {
-        // use latest price before range if available
-        if (latestPriceBeforeRange.spotPrice > high) {
-          high = latestPriceBeforeRange.spotPrice;
-        }
-        if (low === 0n || latestPriceBeforeRange.spotPrice < low) {
-          low = latestPriceBeforeRange.spotPrice;
-        }
-        graphData.push({
-          round: i + 1,
-          avgPrice: latestPriceBeforeRange.spotPrice,
+          end: currentRoundEndTime,
+          high: latestPriceBeforeRange.spotPrice,
+          low: latestPriceBeforeRange.spotPrice,
           open: latestPriceBeforeRange.spotPrice,
           close: latestPriceBeforeRange.spotPrice,
-          start: currentRoundStartTime,
-          end: currentRoundEndTime
+          volume: 0n
         });
       }
-    } else if (currentRoundStartTime === rawGraphData.start) {
-      if (rawGraphData.high > high) {
-        high = rawGraphData.high;
+    }
+  } else {
+    // return rawGraphData;
+    result.push(rawGraphData[0]);
+    let i = 1;
+    while (result[result.length - 1].end < nowTs) {
+      if (rawGraphData.length < i + 1 || rawGraphData[i].start !== result[result.length - 1].end + 1) {
+        result.push({
+          start: result[result.length - 1].end + 1,
+          end: result[result.length - 1].end + interval,
+          high: result[result.length - 1].close,
+          low: result[result.length - 1].close,
+          open: result[result.length - 1].close,
+          close: result[result.length - 1].close,
+          volume: 0n
+        });
+      } else {
+        result.push(rawGraphData[i]);
+        i += 1;
       }
-      if (low === 0n || rawGraphData.low < low) {
-        low = rawGraphData.low;
-      }
-      volume += rawGraphData.volume;
-      graphData.push({
-        round: i + 1,
-        avgPrice: rawGraphData.avgPrice,
-        open: rawGraphData.open,
-        close: rawGraphData.close,
-        start: currentRoundStartTime,
-        end: currentRoundEndTime
-      });
-      rawGraphDataIndex += 1;
     }
   }
-
-  const baseData = graphData[0];
-
-  let priceChangeRatio = 0n;
-  let priceChangeValue = 0n;
-  if (baseData && rawGraphDatas.length > 1) {
-    const basePrice = BigInt(baseData.open);
-    const priceNow = rawGraphDatas[rawGraphDatas.length - 1].close;
-    priceChangeValue = priceNow - basePrice;
-    priceChangeRatio = (((priceNow - basePrice) * BigInt(1e18)) / basePrice) * 100n;
-  }
-
-  return { graphData, priceChangeValue, priceChangeRatio, high, low, volume };
+  return result;
 }
 
 export async function getDailySpotPriceGraphData(ammAddr: string) {

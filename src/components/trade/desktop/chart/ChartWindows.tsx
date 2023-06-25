@@ -69,7 +69,7 @@ function PriceIndicator(props: {
       />
       <div>
         <div className="mr-4">
-          {Math.abs(priceChangeValue).toFixed(2)} ({`${priceChangeRatio.toFixed(2)}%`})
+          {Math.abs(priceChangeValue).toFixed(2)} ({`${Math.abs(priceChangeRatio).toFixed(2)}%`})
         </div>
       </div>
     </div>
@@ -178,7 +178,7 @@ function ChartTimeTabs(props: any) {
 const ChartHeaders = () => {
   const currentAmm = useNanostore($currentAmm);
   const { tradingData } = useTradingData();
-  const { isLoading: isStartLoadingChart, chartData } = useChartData();
+  const { isLoading: isStartLoadingChart, priceChange, priceChangePct } = useChartData();
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
   return (
@@ -204,11 +204,7 @@ const ChartHeaders = () => {
           </div>
           <div className="flex">
             <PriceWithIcon priceValue={tradingData ? tradingData.vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-            <PriceIndicator
-              priceChangeValue={chartData?.priceChangeValue}
-              priceChangeRatio={chartData?.priceChangeRatio}
-              isStartLoadingChart={isStartLoadingChart}
-            />
+            <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={isStartLoadingChart} />
           </div>
         </div>
       </div>
@@ -369,7 +365,7 @@ const ChartFooter = (props: any, ref: any) => {
 
 const ProComponent = () => {
   const { isLoading: isTradingDataLoading, tradingData } = useTradingData();
-  const { isLoading: isChartDataLoading, chartData, dailyVolume } = useChartData();
+  const { isLoading: isChartDataLoading, highPrice, lowPrice, dailyVolume } = useChartData();
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
 
   const displayTimeKey = ['24Hr', '1W', '1M', '3M'][selectedTimeIndex];
@@ -380,11 +376,11 @@ const ProComponent = () => {
         <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>
-            <SmallPriceIcon priceValue={chartData?.high.toFixed(2)} isLoading={isChartDataLoading || !chartData} />
+            <SmallPriceIcon priceValue={highPrice?.toFixed(2)} isLoading={isChartDataLoading || !highPrice} />
           </div>
           <div className="flex flex-1 flex-col items-end">
             <p className="mb-[6px]">{displayTimeKey} Low</p>
-            <SmallPriceIcon priceValue={chartData?.low.toFixed(2)} isLoading={isChartDataLoading || !chartData} />
+            <SmallPriceIcon priceValue={lowPrice?.toFixed(2)} isLoading={isChartDataLoading || !lowPrice} />
           </div>
         </div>
         <div>

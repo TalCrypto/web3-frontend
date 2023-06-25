@@ -1,5 +1,6 @@
 import { AMM } from '@/const/collectionList';
-import { atom, map } from 'nanostores';
+import { OhlcData } from 'lightweight-charts';
+import { atom, computed, map } from 'nanostores';
 import { Address } from 'wagmi';
 
 export interface CollectionTradingData {
@@ -39,15 +40,6 @@ export interface FundingRatesRecord {
   amountShort: number;
 }
 
-export interface ChartData {
-  data: Array<ChartGraphRecord>;
-  priceChangeValue: number;
-  priceChangeRatio: number;
-  high: number;
-  low: number;
-  volume: number;
-}
-
 export interface MarketHistoryRecord {
   ammAddress: string;
   timestamp: number;
@@ -76,14 +68,6 @@ export const $currentAmm = atom<AMM | undefined>();
 
 export const $transactionPendings = map<TransactionPendings>();
 
-export const $selectedTimeIndex = atom(0);
-
-export const $isChartDataInitializing = atom(false);
-
-export const $chartData = atom<ChartData | undefined>();
-
-export const $dailyVolume = atom<number | undefined>();
-
 export const $collectionConfig = map<CollectionConfig>();
 
 export const $futureMarketHistory = atom<MarketHistoryRecord[]>([]);
@@ -91,3 +75,55 @@ export const $futureMarketHistory = atom<MarketHistoryRecord[]>([]);
 export const $fundingRatesHistory = atom<FundingRatesRecord[]>([]);
 
 export const $spotMarketHistory = atom<any[]>([]);
+
+export const $selectedTimeIndex = atom(0);
+
+export const $isChartDataInitializing = atom(false);
+
+export const $graphData = atom<OhlcData[]>([]);
+
+export const $priceChange = computed($graphData, graphData => {
+  if (graphData && graphData.length > 0) {
+    const basePrice = graphData[0].open;
+    const nowPrice = graphData[graphData.length - 1].close;
+    return nowPrice - basePrice;
+  }
+  return undefined;
+});
+
+export const $priceChangePct = computed($graphData, graphData => {
+  if (graphData && graphData.length > 0) {
+    const basePrice = graphData[0].open;
+    const nowPrice = graphData[graphData.length - 1].close;
+    return ((nowPrice - basePrice) / basePrice) * 100;
+  }
+  return undefined;
+});
+
+export const $lowPrice = computed($graphData, graphData => {
+  if (graphData && graphData.length > 0) {
+    let lowPrice = 0;
+    graphData.forEach(({ low }) => {
+      if (lowPrice === 0 || low < lowPrice) {
+        lowPrice = low;
+      }
+    });
+    return lowPrice;
+  }
+  return undefined;
+});
+
+export const $highPrice = computed($graphData, graphData => {
+  if (graphData && graphData.length > 0) {
+    let highPrice = 0;
+    graphData.forEach(({ high }) => {
+      if (high > highPrice) {
+        highPrice = high;
+      }
+    });
+    return highPrice;
+  }
+  return undefined;
+});
+
+export const $dailyVolume = atom<number | undefined>();
