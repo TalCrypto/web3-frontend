@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/trade/desktop/trading/actionBtns/BaseButton';
+import BaseButton from '@/components/common/actionBtns/BaseButton';
 import { useApproveTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';

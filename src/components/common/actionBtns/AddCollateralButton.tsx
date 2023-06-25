@@ -1,57 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/trade/desktop/trading/actionBtns/BaseButton';
-import { OpenPositionEstimation, Side, useOpenPositionTransaction } from '@/hooks/trade';
+import BaseButton from '@/components/common/actionBtns/BaseButton';
+import { useAddCollateralTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { usePositionInfo } from '@/hooks/collection';
-import { PositionActions } from '@/const';
+import { CollateralActions } from '@/const';
 
-function OpenPosButton({
+function AddCollateralButton({
   isEstimating,
-  side,
-  notionalAmount,
-  leverage,
-  slippagePercent,
-  estimation,
+  deltaMargin,
   onPending,
   onSuccess,
   onError
 }: {
   isEstimating: boolean;
-  side: Side;
-  notionalAmount: number;
-  leverage: number;
-  slippagePercent: number;
-  estimation: OpenPositionEstimation | undefined;
+  deltaMargin: number;
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
   onError: (error: Error | null) => void;
 }) {
+  if (deltaMargin < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
-  const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
-  const label =
-    positionInfo?.size === 0 ?
-      `${PositionActions.OPEN} Position` :
-      (-1) ** side * (positionInfo?.size ?? 0) > 0 ?
-        `${PositionActions.ADD  } Position` :
-        `${PositionActions.REDUCE } Position`;
 
-  useEffect(() => {
-    setIsLoading(false);
-  }, [currentAmm]);
-
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useOpenPositionTransaction({
-    side,
-    notionalAmount,
-    leverage,
-    slippagePercent,
-    estimation
-  });
+  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useAddCollateralTransaction(deltaMargin);
 
   useEffect(() => {
     setIsLoading(false);
@@ -60,17 +35,17 @@ function OpenPosButton({
 
   useEffect(() => {
     if (isSuccess) {
-      onSuccess();
       setIsLoading(false);
+      onSuccess();
     }
   }, [isSuccess, onSuccess]);
 
   useEffect(() => {
-    if (isPending && txHash) {
+    if (isPending) {
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - ${label}`,
+          title: `${collectionInfo.shortName} - ${CollateralActions.ADD} Collateral`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'
@@ -81,7 +56,7 @@ function OpenPosButton({
         }
       );
     }
-  }, [collectionInfo.shortName, isPending, label, txHash]);
+  }, [isPending, collectionInfo.shortName, txHash]);
 
   return (
     <BaseButton
@@ -92,9 +67,9 @@ function OpenPosButton({
         setIsLoading(true);
         write?.();
       }}
-      label={label}
+      label="Add Collateral"
     />
   );
 }
 
-export default OpenPosButton;
+export default AddCollateralButton;

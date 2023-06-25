@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import BaseButton from '@/components/trade/desktop/trading/actionBtns/BaseButton';
+import BaseButton from '@/components/common/actionBtns/BaseButton';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';

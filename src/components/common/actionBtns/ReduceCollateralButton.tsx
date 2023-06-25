@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/trade/desktop/trading/actionBtns/BaseButton';
-import { useClosePositionTransaction } from '@/hooks/trade';
+import BaseButton from '@/components/common/actionBtns/BaseButton';
+import { useReduceCollateralTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { PositionActions } from '@/const';
+import { CollateralActions } from '@/const';
 
-function ClosePosButton({
+function ReduceCollateralButton({
   isEstimating,
-  slippagePercent,
+  deltaMargin,
   onPending,
   onSuccess,
   onError
 }: {
   isEstimating: boolean;
-  slippagePercent: number;
+  deltaMargin: number;
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
   onError: (error: Error | null) => void;
 }) {
+  if (deltaMargin < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useClosePositionTransaction(slippagePercent);
+  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useReduceCollateralTransaction(deltaMargin);
 
   useEffect(() => {
     setIsLoading(false);
@@ -44,7 +45,7 @@ function ClosePosButton({
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - ${PositionActions.CLOSE} Position`,
+          title: `${collectionInfo.shortName} - ${CollateralActions.REDUCE} Collateral`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'
@@ -66,9 +67,9 @@ function ClosePosButton({
         setIsLoading(true);
         write?.();
       }}
-      label="Close Position"
+      label="Reduce Collateral"
     />
   );
 }
 
-export default ClosePosButton;
+export default ReduceCollateralButton;

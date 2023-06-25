@@ -1,32 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/trade/desktop/trading/actionBtns/BaseButton';
-import { useAddCollateralTransaction } from '@/hooks/trade';
+import BaseButton from '@/components/common/actionBtns/BaseButton';
+import { useClosePositionTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { CollateralActions } from '@/const';
+import { PositionActions } from '@/const';
 
-function AddCollateralButton({
+function ClosePosButton({
   isEstimating,
-  deltaMargin,
+  slippagePercent,
   onPending,
   onSuccess,
   onError
 }: {
   isEstimating: boolean;
-  deltaMargin: number;
+  slippagePercent: number;
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
   onError: (error: Error | null) => void;
 }) {
-  if (deltaMargin < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useAddCollateralTransaction(deltaMargin);
+  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useClosePositionTransaction(slippagePercent);
 
   useEffect(() => {
     setIsLoading(false);
@@ -35,8 +34,8 @@ function AddCollateralButton({
 
   useEffect(() => {
     if (isSuccess) {
-      setIsLoading(false);
       onSuccess();
+      setIsLoading(false);
     }
   }, [isSuccess, onSuccess]);
 
@@ -45,7 +44,7 @@ function AddCollateralButton({
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - ${CollateralActions.ADD} Collateral`,
+          title: `${collectionInfo.shortName} - ${PositionActions.CLOSE} Position`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'
@@ -56,7 +55,7 @@ function AddCollateralButton({
         }
       );
     }
-  }, [isPending, collectionInfo.shortName, txHash]);
+  }, [isPending, onPending, collectionInfo.shortName, txHash]);
 
   return (
     <BaseButton
@@ -67,9 +66,9 @@ function AddCollateralButton({
         setIsLoading(true);
         write?.();
       }}
-      label="Add Collateral"
+      label="Close Position"
     />
   );
 }
 
-export default AddCollateralButton;
+export default ClosePosButton;

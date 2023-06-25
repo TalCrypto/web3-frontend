@@ -1,32 +1,57 @@
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/trade/desktop/trading/actionBtns/BaseButton';
-import { useReduceCollateralTransaction } from '@/hooks/trade';
+import BaseButton from '@/components/common/actionBtns/BaseButton';
+import { OpenPositionEstimation, Side, useOpenPositionTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { CollateralActions } from '@/const';
+import { usePositionInfo } from '@/hooks/collection';
+import { PositionActions } from '@/const';
 
-function ReduceCollateralButton({
+function OpenPosButton({
   isEstimating,
-  deltaMargin,
+  side,
+  notionalAmount,
+  leverage,
+  slippagePercent,
+  estimation,
   onPending,
   onSuccess,
   onError
 }: {
   isEstimating: boolean;
-  deltaMargin: number;
+  side: Side;
+  notionalAmount: number;
+  leverage: number;
+  slippagePercent: number;
+  estimation: OpenPositionEstimation | undefined;
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
   onError: (error: Error | null) => void;
 }) {
-  if (deltaMargin < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
+  const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
+  const label =
+    positionInfo?.size === 0
+      ? `${PositionActions.OPEN} Position`
+      : (-1) ** side * (positionInfo?.size ?? 0) > 0
+      ? `${PositionActions.ADD} Position`
+      : `${PositionActions.REDUCE} Position`;
 
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useReduceCollateralTransaction(deltaMargin);
+  useEffect(() => {
+    setIsLoading(false);
+  }, [currentAmm]);
+
+  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useOpenPositionTransaction({
+    side,
+    notionalAmount,
+    leverage,
+    slippagePercent,
+    estimation
+  });
 
   useEffect(() => {
     setIsLoading(false);
@@ -41,11 +66,11 @@ function ReduceCollateralButton({
   }, [isSuccess, onSuccess]);
 
   useEffect(() => {
-    if (isPending) {
+    if (isPending && txHash) {
       showToast(
         {
           warning: true,
-          title: `${collectionInfo.shortName} - ${CollateralActions.REDUCE} Collateral`,
+          title: `${collectionInfo.shortName} - ${label}`,
           message: 'Order Received!',
           linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
           linkLabel: 'Check on Arbiscan'
@@ -56,7 +81,7 @@ function ReduceCollateralButton({
         }
       );
     }
-  }, [isPending, onPending, collectionInfo.shortName, txHash]);
+  }, [collectionInfo.shortName, isPending, label, txHash]);
 
   return (
     <BaseButton
@@ -67,9 +92,9 @@ function ReduceCollateralButton({
         setIsLoading(true);
         write?.();
       }}
-      label="Reduce Collateral"
+      label={label}
     />
   );
 }
 
-export default ReduceCollateralButton;
+export default OpenPosButton;

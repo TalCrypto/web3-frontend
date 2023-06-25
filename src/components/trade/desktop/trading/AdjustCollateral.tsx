@@ -14,9 +14,9 @@ import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
 import { useDebounce } from '@/hooks/debounce';
 import { formatBigInt, parseBigInt } from '@/utils/bigInt';
-import ApproveButton from '@/components/trade/desktop/trading/actionBtns/ApproveButton';
-import AddCollateralButton from '@/components/trade/desktop/trading/actionBtns/AddCollateralButton';
-import ReduceCollateralButton from '@/components/trade/desktop/trading/actionBtns/ReduceCollateralButton';
+import ApproveButton from '@/components/common/actionBtns/ApproveButton';
+import AddCollateralButton from '@/components/common/actionBtns/AddCollateralButton';
+import ReduceCollateralButton from '@/components/common/actionBtns/ReduceCollateralButton';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;

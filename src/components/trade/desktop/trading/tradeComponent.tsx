@@ -24,11 +24,11 @@ import { $userAddress, $userIsConnected, $userIsWrongNetwork, $userWethBalance }
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 import { zeroAddress } from 'viem';
-import ConnectButton from '@/components/trade/desktop/trading/actionBtns/ConnectButton';
-import SwitchButton from '@/components/trade/desktop/trading/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/trade/desktop/trading/actionBtns/GetWETHButton';
-import ApproveButton from '@/components/trade/desktop/trading/actionBtns/ApproveButton';
-import OpenPosButton from '@/components/trade/desktop/trading/actionBtns/OpenPosButton';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import ApproveButton from '@/components/common/actionBtns/ApproveButton';
+import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import { MINIMUM_COLLATERAL } from '@/const';
 
 function LongShortRatio(props: any) {

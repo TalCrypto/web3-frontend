@@ -24,9 +24,9 @@ import { usePositionInfo } from '@/hooks/collection';
 import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { UserPositionInfo } from '@/stores/user';
-import ApproveButton from '@/components/trade/desktop/trading/actionBtns/ApproveButton';
-import OpenPosButton from '@/components/trade/desktop/trading/actionBtns/OpenPosButton';
-import ClosePosButton from '@/components/trade/desktop/trading/actionBtns/ClosePosButton';
+import ApproveButton from '@/components/common/actionBtns/ApproveButton';
+import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
+import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
 
 function SectionDividers() {
   return (
