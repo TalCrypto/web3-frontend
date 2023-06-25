@@ -1,8 +1,8 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef } from 'react';
-import { createChart, ColorType } from 'lightweight-charts';
+import React, { useEffect, useRef, useState } from 'react';
+import { createChart, ColorType, ISeriesApi } from 'lightweight-charts';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useChartData } from '@/hooks/collection';
@@ -12,6 +12,7 @@ function ChartDisplay() {
   const { graphData } = useChartData();
   const chartContainerRef: any = useRef();
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
+  const [candleSeries, setCandleSeries] = useState<ISeriesApi<'Candlestick'> | undefined>();
 
   const colors = {
     backgroundColor: 'transparent',
@@ -80,9 +81,9 @@ function ChartDisplay() {
       wickDownColor: '#ef5350'
     });
 
-    newSeries.setData(graphData);
-
     chart.timeScale().fitContent();
+
+    setCandleSeries(newSeries);
 
     window.addEventListener('resize', handleResize);
 
@@ -90,12 +91,16 @@ function ChartDisplay() {
       window.removeEventListener('resize', handleResize);
       chart.remove();
     };
+  }, []);
+
+  useEffect(() => {
+    if (candleSeries) {
+      candleSeries.setData(graphData);
+    }
   }, [graphData]);
 
   return (
-    <div>
       <div ref={chartContainerRef} />
-    </div>
   );
 }
 
