@@ -24,6 +24,7 @@ import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader
 import { $userIsConnected } from '@/stores/user';
 import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
 import MarketHistoryUpdater from '@/components/updaters/MarketHistoryUpdater';
+import EventManager from '@/components/updaters/EventHandlers';
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
 //   return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
@@ -163,6 +164,7 @@ function TradePage(props: WithRouterProps) {
         <TradingDataUpdater />
         <ChartDataUpdater />
         <MarketHistoryUpdater />
+        <EventManager />
       </main>
     </>
   );
