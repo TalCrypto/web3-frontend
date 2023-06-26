@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userInfo, UserPositionInfo } from '@/stores/user';
+import { $vammPrice } from '@/stores/trading';
 
 function LargeEthPrice(props: any) {
   const { pnlValue } = props;
@@ -52,12 +53,13 @@ export default function IndividualShareContainer(props: {
   const { setShowShareComponent, positionInfo, collectionInfo } = props;
   const router = useRouter();
   const userInfo = useNanostore($userInfo);
+  const vammPrice = useNanostore($vammPrice);
   const pnlStatus = positionInfo.unrealizedPnl >= 0;
   const side = positionInfo.size > 0;
   const leverage = positionInfo.leverage.toFixed(2);
   const pnlValue = positionInfo.unrealizedPnl.toFixed(2);
   const entryPrice = positionInfo.entryPrice.toFixed(2);
-  const futurePrice = positionInfo.vammPrice.toFixed(2);
+  const futurePrice = vammPrice?.toFixed(2);
   const currentPositionName = collectionInfo.collectionName;
 
   const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;

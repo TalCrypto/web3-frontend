@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 // import { logEvent } from 'firebase/analytics';
 
-import ComingSoonWindow from '@/components/trade/desktop/information/CommingSoonWindow';
+// import ComingSoonWindow from '@/components/trade/desktop/information/CommingSoonWindow';
 import TribeDetailComponents from '@/components/trade/desktop/information/TribeDetailComponents';
-import ChatComponent from '@/components/trade/desktop/information/ChatComponent';
+// import ChatComponent from '@/components/trade/desktop/information/ChatComponent';
 
 import Image from 'next/image';
 

@@ -10,12 +10,12 @@ import InformationWindow from '@/components/trade/desktop/information/Informatio
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
-import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
-import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
-import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
-import Switcher from '@/components/trade/mobile/collection/Switcher';
+// import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
+// import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
+// import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
+// import Switcher from '@/components/trade/mobile/collection/Switcher';
 
-import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
+// import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 import { WithRouterProps } from 'next/dist/client/with-router';
 import { $currentAmm } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
@@ -33,9 +33,6 @@ import EventManager from '@/components/updaters/EventHandlers';
 function TradePage(props: WithRouterProps) {
   const { router } = props;
   const isConnected = useNanostore($userIsConnected);
-  // const maxReduceValue = useNanostore(wsMaxReduceValue);
-  // const [maxReduceValue, setMaxReduceValue] = useState('');
-  // const [historyRecords, setHistoryRecords] = useState([]);
 
   useEffect(() => {
     const collection = router?.query?.collection;
@@ -43,82 +40,6 @@ function TradePage(props: WithRouterProps) {
       $currentAmm.set(collection as AMM);
     }
   }, [router]);
-
-  // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-
-  // const fetchInformation = async () => {
-  //   const { amm: currentAmm, contract: currentContract } = getCollectionInformation(currentToken); // from tokenRef.current
-  //   setTradingData({});
-  //   // set tradingData
-  //   await getTradingOverview(currentAmm, currentContract).then(data => {
-  //     setTradingData(data);
-  //   });
-  // };
-
-  // const fetchPositions = async () => {
-  //   if (!isConnected || isWrongNetwork) {
-  //     return;
-  //   }
-  //   try {
-  //     const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
-  //     const traderPositionInfo: any = await getTraderPositionInfo(currentAmm, walletProvider.holderAddress);
-  //     wsUserPosition.set(traderPositionInfo);
-  //     const maxReduce = await walletProvider.getMaxReduceCollateralValue(currentAmm, walletProvider.holderAddress);
-  //     wsMaxReduceValue.set(Number(calculateNumber(maxReduce, 4)));
-  //     // const latestHistoryRecords = await getTraderPositionHistory(currentAmm, walletProvider.holderAddress);
-  //     // setHistoryRecords(latestHistoryRecords === null ? [] : latestHistoryRecords);
-  //     const isCollected = await walletProvider.checkIsTethCollected();
-  //     setIsTethCollected(isCollected);
-  //     const newBalance = await walletProvider.getWethBalance(walletProvider.holderAddress);
-  //     wsWethBalance.set(Number(newBalance));
-
-  //     // get price gap from smartcontract
-  //     await walletProvider.getLiquidationRatio();
-  //   } catch (error) {
-  //     // console.log('error from fetchPositions => ', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchPositions();
-  //   fetchInformation();
-  // }, [currentToken, isConnected]); // from tokenRef.current
-
-  // useEffect(() => {
-  //   if (Object.keys(router.query).length === 0) {
-  //     return;
-  //   }
-
-  //   const passCollection = decodeURIComponent(router.query.collection)?.toUpperCase();
-  //   wsCurrentToken.set(passCollection); // from tokenRef.current
-  //   walletProvider.setCurrentToken(passCollection);
-  // }, [router.query]);
-
-  // const fetchUserTradingHistory = async () => {
-  //   const latestHistoryRecords = await apiConnection.getUserTradingHistory();
-  //   const { tradeHistory } = latestHistoryRecords.data;
-
-  //   const historyGroupByMonth = tradeHistory
-  //     .filter((i: any) => i.ammAddress.toLowerCase() === currentCollection.amm.toLowerCase())
-  //     .sort((a: any, b: any) => b.timestamp - a.timestamp)
-  //     .reduce((group: any, record: any) => {
-  //       const month = formatDateTime(record.timestamp, 'MM/YYYY');
-  //       const result = [];
-  //       result[month] = group[month] ?? [];
-  //       result[month].push(record);
-  //       return result;
-  //     }, {});
-
-  //   wsHistoryGroupByMonth.set(historyGroupByMonth || []);
-  // };
-
-  // useEffect(() => {
-  //   if (isConnected && walletProvider.holderAddress && currentCollection) {
-  //     fetchUserTradingHistory();
-  //     // walletProvider.getFluctuationLimitRatio(currentCollection.amm);
-  //     // walletProvider.getInitialMarginRatio(currentCollection.amm);
-  //   }
-  // }, [walletProvider.holderAddress, isConnected, currentCollection, fetchUserTradingHistory]);
 
   return (
     <>
