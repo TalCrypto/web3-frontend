@@ -1,3 +1,5 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/common/actionBtns/BaseButton';
@@ -34,12 +36,19 @@ function OpenPosButton({
   const collectionInfo = getCollectionInformation(currentAmm);
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
-  const label =
-    positionInfo?.size === 0
-      ? `${PositionActions.OPEN} Position`
-      : (-1) ** side * (positionInfo?.size ?? 0) > 0
-      ? `${PositionActions.ADD} Position`
-      : `${PositionActions.REDUCE} Position`;
+  const [label, setLabel] = useState('');
+
+  useEffect(() => {
+    if (positionInfo) {
+      const posType =
+        positionInfo.size === 0
+          ? `${PositionActions.OPEN} Position`
+          : (-1) ** side * positionInfo.size > 0
+          ? `${PositionActions.ADD} Position`
+          : `${PositionActions.REDUCE} Position`;
+      setLabel(posType);
+    }
+  }, [positionInfo, side]);
 
   useEffect(() => {
     setIsLoading(false);
