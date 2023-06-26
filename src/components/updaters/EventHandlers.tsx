@@ -77,6 +77,7 @@ const EventHandlers = () => {
 
   useEffect(() => {
     if (pendingMarginChangedEvents.length > 0) {
+      $pendingMarginChangedEvents.set([]);
       pendingMarginChangedEvents
         .filter(event => event.trader === traderAddress)
         .forEach(event => {
