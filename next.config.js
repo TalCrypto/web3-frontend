@@ -23,6 +23,11 @@ const nextConfig = {
         source: '/',
         destination: '/trade/degods',
         permanent: false
+      },
+      {
+        source: '/trade',
+        destination: '/trade/degods',
+        permanent: false
       }
     ];
   }
