@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-function base(props: any, image: any) {
+function Base(props: any, image: any) {
   const { priceValue = 0, children, colorChange, large, medium, className } = props;
   const [localValue, setLocalValue] = useState('--.--');
   const [color, setColor] = useState('');
@@ -32,7 +32,7 @@ function base(props: any, image: any) {
 }
 
 export function PriceWithIcon(props: any) {
-  return base(
+  return Base(
     props,
     <Image
       src="/images/common/symbols/eth-tribe3.svg"
@@ -45,7 +45,7 @@ export function PriceWithIcon(props: any) {
 }
 
 export function PriceWithUsdc(props: any) {
-  return base(
+  return Base(
     props,
     <Image
       src="/images/common/symbols/usdc.svg"
