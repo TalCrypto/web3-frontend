@@ -39,6 +39,7 @@ export interface MarketHistoryRecord {
   userAddress: Address;
   userId: string;
   txHash: string;
+  isNew: boolean; // used for adding animation
 }
 
 export interface CollectionConfig {

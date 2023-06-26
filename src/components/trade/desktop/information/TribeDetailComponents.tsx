@@ -105,7 +105,7 @@ const MarketTrade = () => {
     if (marketHistory.length > 0) {
       setNewAdded(true);
     }
-    const timeout = setTimeout(() => setNewAdded(false), 500);
+    const timeout = setTimeout(() => setNewAdded(false), 1000);
     return () => {
       clearTimeout(timeout);
     };
@@ -173,12 +173,12 @@ const MarketTrade = () => {
                   <ExplorerButton txHash={record.txHash} />
                 ]}
                 classNames={[
-                  `col-span-3 pl-3 ${newAdded && index === 0 ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && index === 0 ? 'flash' : ''}`,
-                  `col-span-1 px-3 ${newAdded && index === 0 ? 'flash' : ''}`
+                  `col-span-3 pl-3 ${newAdded && record.isNew ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
+                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
+                  `col-span-1 px-3 ${newAdded && record.isNew ? 'flash' : ''}`
                 ]}
               />
             ))

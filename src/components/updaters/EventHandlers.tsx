@@ -8,7 +8,7 @@ import { $currentChain, $userAddress } from '@/stores/user';
 import { getTradingActionType, getCollateralActionType } from '@/utils/actionType';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
-import { Chain, useContractEvent, Address } from 'wagmi';
+import { useContractEvent } from 'wagmi';
 import { Contract, getAMMContract, getCHContract } from '@/const/contracts';
 import { ammAbi, chAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
@@ -64,9 +64,10 @@ const EventHandlers = () => {
               spotPrice: event.vammPrice,
               userAddress: event.trader,
               userId: !usernameList?.[event.trader] || usernameList?.[event.trader] === event.trader ? '' : usernameList?.[event.trader],
-              txHash: event.txHash
+              txHash: event.txHash,
+              isNew: true
             };
-            $futureMarketHistory.set([newRecord, ...$futureMarketHistory.get()]);
+            $futureMarketHistory.set([newRecord, ...$futureMarketHistory.get().map(history => ({ ...history, isNew: false }))]);
             addGraphRecord(event.vammPrice);
           });
         });

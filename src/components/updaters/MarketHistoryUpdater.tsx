@@ -42,7 +42,8 @@ const MarketHistoryUpdater = () => {
                 spotPrice: formatBigInt(record.spotPrice),
                 userAddress: getAddress(record.userAddress),
                 userId: record.userId,
-                txHash: record.txHash
+                txHash: record.txHash,
+                isNew: false
               })
             )
           );
