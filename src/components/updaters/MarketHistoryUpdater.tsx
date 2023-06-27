@@ -8,6 +8,7 @@ import { formatBigInt } from '@/utils/bigInt';
 import { getAddress } from 'viem';
 import { $currentChain } from '@/stores/user';
 import { getBaycFromMainnet } from '@/utils/opensea';
+import { getCollectionInformation } from '@/const/collectionList';
 
 const MarketHistoryUpdater = () => {
   const currentAmm = useNanostore($currentAmm);
@@ -58,7 +59,8 @@ const MarketHistoryUpdater = () => {
   // load opensea spot market history every 10 seconds
   useEffect(() => {
     function fetch() {
-      const ammAddr = getAMMAddress(chain, currentAmm);
+      const amm = getCollectionInformation(currentAmm);
+      const ammAddr = amm.contract;
       if (ammAddr) {
         getBaycFromMainnet(ammAddr)
           .then(res => {
