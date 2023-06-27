@@ -461,7 +461,6 @@ function ChartMobile(props: any, ref: any) {
     graphRef?.setGraphOtherValue(chartData);
     const pRef: any = proRef.current;
     pRef?.setGraphOtherValue(chartData);
-    // console.log('fetchChartData, set chart data and pro component', chartData);
 
     const dynamicDataSet = chartData.graphData.map((params: any) => {
       const { end, avgPrice } = params;

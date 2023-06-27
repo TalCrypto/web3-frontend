@@ -50,7 +50,6 @@ function getTradingData(chain: Chain) {
   //   //   abi: ammAbi,
   //   //   functionName: 'getSpotPrice'
   //   // });
-  //   console.log(2);
 
   //   const oraclePrice = useContractRead({
   //     address: ammContract.address,

@@ -359,7 +359,6 @@ export const apiConnection = {
 
       return Promise.resolve(defaultData);
     } catch (err) {
-      // console.log({ err });
       return Promise.reject(defaultData);
     }
   },
@@ -391,7 +390,6 @@ export const apiConnection = {
       const result = await call.json();
       return Promise.resolve(result.data);
     } catch (err) {
-      console.log({ err });
       return Promise.reject(err);
     }
   },

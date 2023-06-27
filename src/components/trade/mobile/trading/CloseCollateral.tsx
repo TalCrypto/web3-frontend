@@ -775,7 +775,6 @@ export default function CloseCollateral(props: any) {
     if (isPending) {
       handleEnter(closeValue);
     }
-    // console.log('collection pending is changed');
   }, [/* collectionIsPending[walletProvider?.currentTokenAmmAddress], */ closeValue, isPending, handleEnter]);
 
   useEffect(() => {

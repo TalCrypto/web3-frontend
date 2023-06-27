@@ -334,7 +334,6 @@ function ActionButtons(props: any) {
     // refresh on trx complete
     // prevent refreshing when page has changed
     // if (currentToken === processToken) {
-    // console.log('refreshPositions from completeAdjustMargin');
     refreshPositions();
     // }
   }

@@ -665,7 +665,6 @@ export default function TradeComponent(props: any) {
   const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
 
   const calculateEstimation = async (wethBal: any, value: any) => {
-    // console.log(value);
     setIsWaiting(true);
     const calc = Number(value);
     // const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, calc, leverageValue);
@@ -723,7 +722,6 @@ export default function TradeComponent(props: any) {
     }
 
     if (wethBalance < Number(value)) {
-      // console.log('ee');
       setIsInsuffBalance(true);
       setEstimatedValue({});
       setEstPriceFluctuation(false);
@@ -741,7 +739,6 @@ export default function TradeComponent(props: any) {
     await calculateEstimation(wethBalance, value);
   };
 
-  // const loggingg = val => console.log(val);
   // const debouncedHandleEnter = useCallback(debounce(loggingg, 200), []);
 
   useEffect(() => {

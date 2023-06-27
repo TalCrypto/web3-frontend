@@ -25,6 +25,9 @@ import { $userIsConnected } from '@/stores/user';
 import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
 import MarketHistoryUpdater from '@/components/updaters/MarketHistoryUpdater';
 import EventManager from '@/components/updaters/EventManager';
+import Switcher from '@/components/trade/mobile/collection/Switcher';
+import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
+import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
 //   return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
@@ -68,19 +71,19 @@ function TradePage(props: WithRouterProps) {
           </div>
         </div>
 
-        {/* <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
-          <Switcher />
+        <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
+          {/* <Switcher /> */}
 
           <div className="mt-12 bg-darkBlue">
-            <ChartMobile />
+            {/* <ChartMobile /> */}
 
-            {isConnected ? <PositionMobile /> : null}
+            {/* {isConnected ? <PositionMobile /> : null} */}
 
             <InformationMobile />
 
-            <TradingMobile />
+            {/* <TradingMobile /> */}
           </div>
-        </div> */}
+        </div>
 
         <CollectionConfigLoader />
         <TradingDataUpdater />

@@ -11,9 +11,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-
-import { apiConnection } from '@/utils/apiConnection';
 import { localeConversion } from '@/utils/localeConversion';
 import { getTradingActionType } from '@/utils/actionType';
 import { trimString } from '@/utils/string';
@@ -23,7 +20,6 @@ import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PriceWithIcon';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { AMM } from '@/const/collectionList';
 import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { formatBigInt } from '@/utils/bigInt';
 import { $userAddress } from '@/stores/user';
@@ -118,6 +114,7 @@ const MarketTrade = () => {
             .sort((a, b) => b.timestamp - a.timestamp)
             .map((record, index) => (
               <div
+                key={`market_trade_${index}`}
                 className={`relative mb-1 grid grid-cols-12 items-center py-1
                 pl-[46px] pr-[42px] text-[14px] text-mediumEmphasis
                 ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
