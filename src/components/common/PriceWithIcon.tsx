@@ -9,7 +9,7 @@ function Base(props: any, image: any) {
   useEffect(() => {
     if (priceValue !== 0 && priceValue !== '0.00') {
       if (colorChange && localValue !== '-.--') {
-        const textColor = priceValue > localValue ? 'greentext' : priceValue < localValue ? 'redtext' : '';
+        const textColor = priceValue > localValue ? 'text-marketGreen' : priceValue < localValue ? 'text-marketRed' : '';
         setColor(textColor);
         setTimeout(() => {
           setColor('');

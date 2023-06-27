@@ -1,11 +1,17 @@
 import Image from 'next/image';
 import React from 'react';
 import { getCollectionInformation } from '@/const/collectionList';
+import { getAMMByAddress } from '@/const/addresses';
+import { $currentChain } from '@/stores/user';
+import { useStore as useNanostore } from '@nanostores/react';
 
 export function TypeWithIconByAmm(props: any) {
   const { content, showCollectionName, amm, className } = props;
+  const chain = useNanostore($currentChain);
+  const ammValue = getAMMByAddress(amm, chain);
 
-  const targetCollection = getCollectionInformation(amm);
+  const targetAmm = getCollectionInformation(amm);
+  const targetCollection = targetAmm ?? getCollectionInformation(ammValue);
 
   if (targetCollection) {
     return (

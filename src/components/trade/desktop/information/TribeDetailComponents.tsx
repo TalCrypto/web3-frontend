@@ -112,53 +112,52 @@ const MarketTrade = () => {
         />
       </div>
 
-      <div className="scrollable mr-1 h-full overflow-y-scroll pl-[46px] pr-[42px]">
+      <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll">
         {marketHistory && marketHistory.length > 0 ? (
           marketHistory
             .sort((a, b) => b.timestamp - a.timestamp)
             .map((record, index) => (
-              <Cell
-                key={`market_${record.timestamp}_${index}`}
-                rowStyle={address === record.userAddress ? { backgroundColor: 'rgba(32, 34, 73, 0.5)' } : {}}
-                items={[
-                  <div className="time relative">
-                    <div className="absolute left-[-12px] top-0 mt-[6px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
+              <div
+                className={`relative mb-1 grid grid-cols-12 items-center py-1
+                pl-[46px] pr-[42px] text-[14px] text-mediumEmphasis
+                ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
+              `}>
+                <div className="time relative col-span-3 pl-3">
+                  <div className="absolute left-[-12px] top-0 mt-[3px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
-                    <span className="text-[12px]">{formatDateTime(record.timestamp)}</span>
-                    <br />
-                    <span className={`market ${record.exchangedPositionSize > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
-                      {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
+                  <span className="text-[12px]">{formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}</span>
+                  <br />
+                  <span className={`market ${record.exchangedPositionSize > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+                    {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-highEmphasis">{getTradingActionType(record)}</span>
+                </div>
+                <div className="col-span-2">
+                  <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />
+                </div>
+                <div className="col-span-2">
+                  <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />
+                </div>
+                <div
+                  className="relative col-span-2 flex cursor-pointer items-center"
+                  onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
+                  <span className="market_user cursor-pointer overflow-x-hidden text-ellipsis">
+                    {trimString(record.userId, 10) || walletAddressToShow(record.userAddress)}
+                  </span>
+                  {address === record.userAddress ? (
+                    <span
+                      className="absolute right-0 ml-1 rounded-sm bg-[#E06732] p-[2px]
+                    align-middle text-[8px] font-extrabold text-highEmphasis">
+                      YOU
                     </span>
-                  </div>,
-                  <span className="text-highEmphasis">{getTradingActionType(record)}</span>,
-
-                  <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />,
-                  <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />,
-                  <div
-                    className="relative cursor-pointer overflow-x-hidden text-ellipsis"
-                    onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
-                    <span className="market_user cursor-pointer">
-                      {trimString(record.userId, 10) || walletAddressToShow(record.userAddress)}
-                    </span>
-                    {address === record.userAddress ? (
-                      <span
-                        className="absolute right-0 top-[1px] ml-1 rounded-sm
-                    bg-[#E06732] p-[2px] align-middle text-[8px] font-extrabold text-highEmphasis">
-                        YOU
-                      </span>
-                    ) : null}
-                  </div>,
+                  ) : null}
+                </div>
+                <div className="col-span-1 px-3">
                   <ExplorerButton txHash={record.txHash} />
-                ]}
-                classNames={[
-                  `col-span-3 pl-3 ${newAdded && record.isNew ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
-                  `col-span-2 ${newAdded && record.isNew ? 'flash' : ''}`,
-                  `col-span-1 px-3 ${newAdded && record.isNew ? 'flash' : ''}`
-                ]}
-              />
+                </div>
+              </div>
             ))
         ) : (
           <div className="item-center flex justify-center">
@@ -170,8 +169,7 @@ const MarketTrade = () => {
   );
 };
 
-const SpotTable = ({ amm }: { amm: AMM }) => {
-  const address = useNanostore($userAddress);
+const SpotTable = () => {
   const openseaData = useNanostore($spotMarketHistory);
 
   return (
@@ -188,8 +186,8 @@ const SpotTable = ({ amm }: { amm: AMM }) => {
         />
       </div>
 
-      <div className="scrollable mr-1 h-full overflow-y-scroll pl-[46px] pr-[42px]">
-        {openseaData && openseaData && openseaData.length > 0 ? (
+      <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll pl-[46px] pr-[42px]">
+        {openseaData && openseaData.length > 0 ? (
           openseaData?.map((data: IOpenseaData) => {
             const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
             const src = !asset
@@ -208,7 +206,7 @@ const SpotTable = ({ amm }: { amm: AMM }) => {
             const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
             const priceValue = !total_price
               ? '0.00'
-              : localeConversion(isUSDC ? formatBigInt(total_price, 6).toFixed(2) : formatBigInt(total_price).toFixed(2));
+              : localeConversion(isUSDC ? formatBigInt(total_price, 6).toFixed(2) : formatBigInt(total_price).toFixed(2), 2, 2);
             const key_value = assetCreationDate + event_timestamp + assetToken;
 
             return (
@@ -260,7 +258,7 @@ const FundingPaymentHistory = () => {
         />
       </div>
 
-      <div className="scrollable mr-1 h-full overflow-y-scroll pl-[46px] pr-[42px]">
+      <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll pl-[46px] pr-[42px]">
         {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
           fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
             <Cell
@@ -302,7 +300,7 @@ function TribeDetailComponents(props: any) {
         <MarketTrade />
       </div>
       <div className={`${activeTab === 1 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
-        <SpotTable amm={currentAmm} />
+        <SpotTable />
       </div>
       <div className={`${activeTab === 2 ? 'block' : 'hidden'} h-[86%] overflow-hidden`}>
         <FundingPaymentHistory />
