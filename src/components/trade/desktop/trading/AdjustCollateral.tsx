@@ -170,8 +170,8 @@ function UpdateValueNoDataDisplay(props: any) {
 
   return (
     <div className="row adjustcollateralrow items-center">
-      <div className="col text-[14px] text-mediumEmphasis">{title}</div>
-      <div className="col-auto text-[14px] font-semibold text-mediumEmphasis">
+      <div className="text-[14px] text-mediumEmphasis">{title}</div>
+      <div className="text-[14px] font-semibold text-mediumEmphasis">
         <span>{`-.--${unit}`}</span>
       </div>
     </div>
@@ -429,7 +429,7 @@ export default function AdjustCollateral() {
           onError={handleError}
         />
       )}
-      {textErrorMessage !== null ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
+      {/* {textErrorMessage !== null ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
     </div>
   );
 }

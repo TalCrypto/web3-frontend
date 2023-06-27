@@ -10,12 +10,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import { firebaseAnalytics } from '@/const/firebaseConfig';
 import TitleTips from '@/components/common/TitleTips';
-import { apiConnection } from '@/utils/apiConnection';
-import { pageTitleParser } from '@/utils/eventLog';
 
-import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
+import SharePosition from '@/components/trade/desktop/position/SharePosition';
 
 import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
@@ -114,11 +111,7 @@ export default function PositionDetails(props: any) {
   return (
     <div className="relative mb-6 rounded-[6px] border-[1px] border-[#2e4371] px-9 py-6">
       {showSharePosition ? (
-        <IndividualShareContainer
-          positionInfo={positionInfo}
-          collectionInfo={collectionInfo}
-          setShowShareComponent={setShowSharePosition}
-        />
+        <SharePosition positionInfo={positionInfo} collectionInfo={collectionInfo} setShowShareComponent={setShowSharePosition} />
       ) : null}
       <div className=" mb-[36px] flex justify-between">
         <div className="flex items-center space-x-[6px]">

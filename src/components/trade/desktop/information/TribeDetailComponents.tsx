@@ -20,7 +20,7 @@ import { trimString } from '@/utils/string';
 
 import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 
-import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
+import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PriceWithIcon';
 
 import { useStore as useNanostore } from '@nanostores/react';
 import { AMM } from '@/const/collectionList';

@@ -13,10 +13,8 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
 // import collectionList from '@/const/collectionList';
-import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
 import { dataFetch, whitelisted } from '@/stores/UserState';
-import TitleTips from '@/components/common/TitleTips';
 
 import tradePanel from '@/stores/tradePanel';
 import { priceGapLimit } from '@/stores/priceGap';
@@ -31,17 +29,9 @@ import {
   wsUserPosition,
   wsFullWalletAddress
 } from '@/stores/WalletState';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-// import { getTestToken } from '@/utils/Wallet';
-// import collectionsLoading from '@/stores/collectionsLoading';
-// import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
 
 function LongShortRatio(props: any) {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
 
   return (
@@ -408,74 +398,6 @@ function ConfirmButton(props: any) {
     handleLeverageEnter(1);
     setToleranceRate(0.5);
   };
-
-  // const transSuccessCallback = () => {
-  //   setIsProcessingOpenPos(false);
-  //   setQuantity('');
-  //   setEstimatedValue({});
-  //   setEstPriceFluctuation(false);
-  // };
-
-  // const transErrorCallback = () => {
-  //   setIsProcessingOpenPos(false);
-  //   // do not reset state input value
-  // };
-
-  // const doTransaction = async function doTransaction(erc20ContractInstance: any) {
-  //   const amountValue = [utils.parseEther(String(quantity))];
-  //   const allowanceValue = utils.formatEther(await erc20ContractInstance.allowance(walletProvider.holderAddress, clearingHouseAddress));
-  //   if (Number(allowanceValue) > quantity * leverageValue) {
-  //     createTransaction(startOpenPosition);
-  //     return;
-  //   }
-  //   const approval = await erc20ContractInstance.approve(clearingHouseAddress, utils.parseEther(String(Number.MAX_SAFE_INTEGER)));
-  //   if (approval) {
-  //     createTransaction(startOpenPosition);
-  //   }
-  // };
-
-  // const connectContract = async () => {
-  //   if (!isLoginState || isWrongNetwork || !quantity) {
-  //     return;
-  //   }
-
-  //   setIsProcessingOpenPos(true);
-  //   walletProvider
-  //     .connectContract()
-  //     .then(doTransaction)
-  //     .catch(() => {
-  //       setIsProcessingOpenPos(false);
-  //     });
-  // };
-
-  // const performApprove = async () => {
-  //   setIsProcessingOpenPos(true);
-  //   walletProvider
-  //     .performApprove()
-  //     .then(() => {
-  //       wsIsApproveRequired.set(false);
-  //       setIsProcessingOpenPos(false);
-  //     })
-  //     .catch((error: any) => {
-  //       setIsProcessingOpenPos(false);
-  //     });
-  // };
-
-  // const performGetWeth = () => {
-  //   getTestToken(() => setIsProcessingOpenPos(false));
-  // };
-
-  // const performSwitchGeorli = () => {
-  //   const networkId = utils.hexValue(Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN || 421613));
-  //   walletProvider.provider.provider
-  //     .request({ method: 'wallet_switchEthereumChain', params: [{ chainId: `${networkId}` }] })
-  //     .then(() => walletProvider.getWethBalance())
-  //     .catch((error: any) => {
-  //       if (error.code === 4902) {
-  //         walletProvider.addArbitrumGoerli();
-  //       }
-  //     });
-  // };
 
   let disabled = !isNormal;
   if (!isLoginState || isWrongNetwork || /*! isWethCollected || */ isApproveRequired) {

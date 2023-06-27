@@ -3,7 +3,7 @@
 import React from 'react';
 // import { useStore as useNanostore } from '@nanostores/react';
 // import Image from 'next/image';
-// import { PriceWithIcon } from '@/components/common/PricWithIcon';
+// import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 // import { calculateNumber, formatterValue, isPositive } from '@/utils/calculateNumbers';
 // import { wsCurrentToken } from '@/stores/WalletState';
 // import { useRouter } from 'next/router';

@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import { PriceWithIcon } from '@/components/common/PricWithIcon';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
 
 import { AMM, getCollectionInformation } from '@/const/collectionList';

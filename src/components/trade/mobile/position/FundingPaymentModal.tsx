@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-array-index-key */
-// import { PriceWithIcon } from '@/components/common/PricWithIcon';
+// import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 // import { apiConnection } from '@/utils/apiConnection';
 // import { calculateNumber } from '@/utils/calculateNumbers';
 import React /* , { useEffect, useState } */ from 'react';

@@ -4,7 +4,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-no-useless-fragment */
 
-import { PriceWithIcon } from '@/components/common/PricWithIcon';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import { getTradingActionType } from '@/utils/actionType';
 import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';

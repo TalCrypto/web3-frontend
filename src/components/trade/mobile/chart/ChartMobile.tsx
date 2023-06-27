@@ -12,7 +12,7 @@ import { useStore, useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
-import { PriceWithIcon } from '@/components/common/PricWithIcon';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 
 import {
   getDailySpotPriceGraphData,

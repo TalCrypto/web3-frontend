@@ -6,23 +6,17 @@
 
 import Image from 'next/image';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import { apiConnection } from '@/utils/apiConnection';
-import { pageTitleParser } from '@/utils/eventLog';
 import TitleTips from '@/components/common/TitleTips';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
-import { firebaseAnalytics } from '@/const/firebaseConfig';
 import Tooltip from '@/components/common/Tooltip';
-import { Address } from 'wagmi';
 import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
-import { $userAddress, $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import { zeroAddress } from 'viem';
 import ConnectButton from '@/components/common/actionBtns/ConnectButton';
 import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
@@ -31,9 +25,7 @@ import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import { MINIMUM_COLLATERAL } from '@/const';
 
 function LongShortRatio(props: any) {
-  const router = useRouter();
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
-  const fullWalletAddress = useNanostore($userAddress);
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
 
@@ -102,57 +94,9 @@ function LongShortRatio(props: any) {
 }
 
 function QuantityTips(props: any) {
-  const {
-    // isInsuffBalance,
-    isAmountTooSmall,
-    // isAmountNegative,
-    // estPriceFluctuation,
-    // isFluctuationLimit,
-    // isPending,
-    // isLiquidatable,
-    value
-    //
-  } = props;
-  // price gap
-  // const isWrongNetwork = useNanostore(wsIsWrongNetwork);
-
-  // const isChecking = !isInsuffBalance && !isAmountTooSmall && !isPending && !estPriceFluctuation && !isLiquidatable;
-  // const isShow = value <= 0 || isChecking || isWrongNetwork || isAmountNegative;
-
-  // if (isShow) {
-  //   return null;
-  // }
-
-  // const label = isPending ? (
-  //   'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
-  // ) : isAmountTooSmall ? (
-  //   'Minimum collateral size 0.01'
-  // ) : isInsuffBalance ? (
-  //   <>
-  //     Not enough WETH (including transaction fee).
-  //     <a href="#" onClick={() => {}} className="ml-1 text-white underline">
-  //       Get WETH
-  //     </a>{' '}
-  //     first
-  //   </>
-  // ) : isFluctuationLimit ? (
-  //   'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
-  // ) : isLiquidatable ? (
-  //   'Resulting position DOES NOT meet the maintenance leverage requirement of 10x calculated based on Oracle Price.'
-  // ) : estPriceFluctuation ? (
-  //   'Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
-  // ) : (
-  //   ''
-  // );
-
+  const { isAmountTooSmall } = props;
   const label = isAmountTooSmall ? 'Minimum collateral size 0.01' : null;
 
-  // const isRedText = isInsuffBalance || isAmountTooSmall || isFluctuationLimit || isLiquidatable;
-  // return (
-  //   <div className={`quantity-tips-container ${(!isInsuffBalance && estPriceFluctuation) || isPending ? 'price-fluc' : ''}`}>
-  //     <div className={`${isAmountTooSmall ? 'text-marketRed' : 'text-warn'} mb-2 text-[12px] leading-[20px]`}>{label}</div>
-  //   </div>
-  // );
   return label ? (
     <div className="quantity-tips-container">
       <div className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</div>
@@ -161,21 +105,10 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const {
-    value,
-    onChange,
-    // isInsuffBalance,
-    isAmountTooSmall,
-    // estPriceFluctuation,
-    // isFluctuationLimit,
-    // isLiquidatable,
-    // isPending,
-    disabled
-  } = props;
+  const { value, onChange, isAmountTooSmall, disabled } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
-  // const isApproveRequired = useNanostore(wsIsApproveRequired);
   const wethBalance = useNanostore($userWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
@@ -212,7 +145,7 @@ function QuantityEnter(props: any) {
         ) : null}
       </div>
       {/* ${isError ? 'bg-marketRed' : ''} */}
-      <div className="py-3">
+      <div className="pb-3">
         <div
           className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
             ${isFocus ? 'valid' : ''}
@@ -237,24 +170,11 @@ function QuantityEnter(props: any) {
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               min={0}
-
-              // onClick={e => {
-              //   e.target.selectionStart = e.target.value.length;
-              //   e.target.selectionEnd = e.target.value.length;
-              // }}
             />
           </div>
         </div>
       </div>
-      <QuantityTips
-        // isInsuffBalance={isInsuffBalance}
-        isAmountTooSmall={isAmountTooSmall}
-        // estPriceFluctuation={estPriceFluctuation}
-        // isFluctuationLimit={isFluctuationLimit}
-        // isLiquidatable={isLiquidatable}
-        value={value}
-        // isPending={isPending}
-      />
+      <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
     </>
   );
 }
@@ -272,19 +192,17 @@ function LeverageComponent(props: any) {
         <div className="text-[14px] text-[#a3c2ff]">Leverage</div>
         <div className="flex-1 flex-shrink-0 text-right text-[14px] font-semibold">{`${value}x`}</div>
       </div>
-      <div className="row">
-        <div className="col mb-6 mt-3">
-          <InputSlider
-            disabled={disabled}
-            defaultValue={1}
-            value={value}
-            min={1}
-            max={10}
-            step={0.1}
-            onChange={onChange}
-            marks={leverageMarks}
-          />
-        </div>
+      <div className="mb-6 mt-3">
+        <InputSlider
+          disabled={disabled}
+          defaultValue={1}
+          value={value}
+          min={1}
+          max={10}
+          step={0.1}
+          onChange={onChange}
+          marks={leverageMarks}
+        />
       </div>
     </>
   );
@@ -319,8 +237,8 @@ function EstimatedValueDisplay(props: {
 
   return (
     <>
-      <div className="mb-3 flex items-center">
-        <div className="font-14 text-color-secondary col-auto">
+      <div className="mb-4 flex items-center">
+        <div className="font-14 text-color-secondary">
           <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
           {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
         </div>
@@ -354,12 +272,12 @@ function EstimatedValueDisplay(props: {
         title="Size (Notional)"
         value={isAmountTooSmall ? '-.--' : sizeNotional}
         unit="WETH"
-        className="slipagerow"
+        className=""
         valueClassName="text-color-primary font-14-600"
         unitClassName="font-12"
       />
       {/* <DisplayValuesWithTooltips title="Transaction Fee" value={fee} unit="WETH" tipsText="0.5% of the notional amount of the trade" /> */}
-      <div className="my-4 h-[1px] bg-[#2e3064]" />
+      <div className="mb-6 mt-4 h-[0.5px] bg-[#2E4371]" />
       <div className="mb-4 flex items-center">
         <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
@@ -442,9 +360,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
         <div className="">
           {!isNewPosition ? (
             <>
-              <div className="row">
-                <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
-              </div>
+              <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               <DisplayValues title="Notional" value={estimation?.posInfo.positionNotional.toFixed(4)} unit="WETH" />
               <DisplayValues title="Collateral" value={estimation?.posInfo.margin.toFixed(4)} unit="WETH" />
               <DisplayValues title="Average Entry Price" value={estimation?.posInfo.avgEntryPrice.toFixed(2)} unit="WETH" />
@@ -474,7 +390,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
   );
 }
 
-export default function TradeComponent() {
+export default function MainTradeComponent() {
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
   const isConnected = useNanostore($userIsConnected);
@@ -559,11 +475,9 @@ export default function TradeComponent() {
           handleLeverageChange(value);
         }}
       />
-      <div className="row">
-        <div className="col">
-          <div className="mb-6 h-[1px] bg-[#2e3064]" />
-        </div>
-      </div>
+
+      <div className="mb-4 h-[0.5px] bg-[#2E4371]" />
+
       <EstimatedValueDisplay
         disabled={isPending || isWrongNetwork}
         estimation={estimation}

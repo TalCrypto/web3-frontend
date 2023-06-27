@@ -492,7 +492,7 @@ export default function CloseCollateral(props: any) {
           onError={handleError}
         />
       )}
-      {textErrorMessage ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
+      {/* {textErrorMessage ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
       {/* <div className="row">
         <div className="col-auto text-[14px] text-mediumEmphasis">
           * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released

@@ -3,7 +3,7 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { PriceWithIcon } from '@/components/common/PricWithIcon';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';

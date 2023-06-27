@@ -17,7 +17,7 @@ import { trimString } from '@/utils/string';
 
 import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 
-import { PriceWithUsdc } from '@/components/common/PricWithIcon';
+import { PriceWithUsdc } from '@/components/common/PriceWithIcon';
 import { useStore as useNanostore } from '@nanostores/react';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';

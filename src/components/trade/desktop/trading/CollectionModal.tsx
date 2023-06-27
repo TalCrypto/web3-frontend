@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
-import { PriceWithIcon } from '@/components/common/PricWithIcon';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { localeConversion } from '@/utils/localeConversion';
 import { CollectionOverview, useMarketOverview } from '@/hooks/market';
 import { getCollectionInformation } from '@/const/collectionList';
@@ -20,29 +20,14 @@ const SortingIndicator = ({ value }: { value: number }) => (
 
 const CollectionModal = (props: any) => {
   const { visible, setVisible, selectCollection } = props;
-  const [trigerUpdate, setTriggerUpdate] = useState(false);
-  const { isLoading, data: overviewData } = useMarketOverview(trigerUpdate);
+  const [triggerUpdate, setTriggerUpdate] = useState(false);
+  const { isLoading, data: overviewData } = useMarketOverview(triggerUpdate);
   const [periodIndex, setPeriodIndex] = useState(0);
   const initSorting = { collection: 0, vammPrice: 0, priceGap: 0, timeChange: 0, dayVolume: 1, fundingRate: 0, timeValue: 0 };
   const [positionSorting, setPositionSorting] = useState(initSorting);
   const [sortedData, setSortedData] = useState(overviewData);
 
   const updateOverviewData = () => setTriggerUpdate(state => !state);
-
-  useEffect(() => {
-    if (overviewData) {
-      const temp = [...overviewData];
-      const { dayVolume } = positionSorting;
-      setSortedData(temp);
-      if (dayVolume !== 0) {
-        const tempSort = temp.sort((a: any, b: any) => {
-          const dayVol = a.volume - b.volume;
-          return -dayVol;
-        });
-        setSortedData(tempSort);
-      }
-    }
-  }, [overviewData, positionSorting]);
 
   useEffect(() => {
     if (overviewData) {

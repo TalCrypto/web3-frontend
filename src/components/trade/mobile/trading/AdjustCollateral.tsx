@@ -745,7 +745,7 @@ export default function AdjustCollateral(props: any) {
         isPending={isPending}
         isWaiting={isWaiting}
       />
-      {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
+      {/* {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
     </div>
   );
 }

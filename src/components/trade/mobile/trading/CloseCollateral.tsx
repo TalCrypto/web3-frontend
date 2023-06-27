@@ -881,7 +881,7 @@ export default function CloseCollateral(props: any) {
         isWaiting={isWaiting}
         isBadDebt={isBadDebt}
       />
-      {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null}
+      {/* {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
       {estimatedValue /* && estimatedValue.newPosition */ && !minValueComparison && !maxValueComparison && closeValue > 0 ? (
         <div className="pb-4">
           <div

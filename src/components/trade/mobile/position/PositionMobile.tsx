@@ -6,32 +6,21 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-// import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import { utils } from 'ethers';
 
 import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-// import { TypeWithIconByCollection } from '@/components/trade/desktop/information/TypeWithIcon';
-// import { getTradingActionType } from '@/components/trade/desktop/information/ActionType';
-
-// import { PriceWithIcon } from '../../components/priceWithIcon';
 import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
-// import CustomDropdown from '../../components/CustomDropdown';
-// import collectionList from '@/const/collectionList';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
-// import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
 import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
 import { $isShowMobileModal } from '@/stores/common';
-// import { walletProvider } from '@/utils/walletProvider';
-// import collectionsLoading from '@/stores/collectionsLoading';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
