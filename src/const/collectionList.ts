@@ -2,12 +2,12 @@
 /* eslint-disable no-shadow */
 
 export enum AMM {
+  DEGODS = 'degods',
+  CAPTAINZ = 'captainz',
   BAYC = 'bayc',
   MAYC = 'mayc',
   AZUKI = 'azuki',
-  PUNKS = 'punks',
-  DEGODS = 'degods',
-  CAPTAINZ = 'captainz'
+  PUNKS = 'punks'
 }
 export const DEFAULT_AMM: AMM = AMM.DEGODS;
 
