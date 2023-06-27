@@ -105,7 +105,7 @@ const MarketTrade = () => {
     if (marketHistory.length > 0) {
       setNewAdded(true);
     }
-    const timeout = setTimeout(() => setNewAdded(false), 1000);
+    const timeout = setTimeout(() => setNewAdded(false), 2000);
     return () => {
       clearTimeout(timeout);
     };
