@@ -1,47 +1,19 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-// import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { pageTitleParser } from '@/utils/eventLog';
 import { apiConnection } from '@/utils/apiConnection';
-// import { firebaseAnalytics } from '@/const/firebaseConfig';
 
 import { useStore as useNanostore } from '@nanostores/react';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { logEvent } from 'firebase/analytics';
-import { $userAddress, $userInfo, $userPositionInfos, UserInfo } from '@/stores/user';
-import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
-import { AMM } from '@/const/collectionList';
+import { $userAddress, $userInfo } from '@/stores/user';
+import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { $showSwitchNetworkErrorModal, $showGetWEthModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
 import PrimaryButton from '@/components/common/PrimaryButton';
-
-interface PriceContentProps {
-  priceValue: string;
-  title: string;
-  isLargeText: boolean;
-  notLastRow: boolean;
-}
-
-const PriceContent: React.FC<PriceContentProps> = ({ priceValue, title, isLargeText = false, notLastRow = false }) => {
-  const iconImage = '/images/components/layout/header/eth-tribe3.svg';
-  return (
-    <div className={`total-value-row p-6 ${notLastRow ? 'pb-0' : ''}`}>
-      <div className="text-[14px] font-normal text-mediumEmphasis">{title}</div>
-      <div className="price-content">
-        <div
-          className={`icon-row 
-            ${isLargeText ? 'text-[24px] font-semibold' : 'text-[16px] font-medium'}`}>
-          <Image src={iconImage} alt="" className="mr-2 h-[18px] w-[18px]" width={18} height={18} />
-          {priceValue}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 interface TopContentProps {
   username: string;
@@ -55,15 +27,6 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
 
   const clickViewProfile = (e: React.MouseEvent) => {
     e.preventDefault();
-    const eventName = 'wallet_view_profile_pressed';
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, eventName, {
-        wallet: address ? address.toString().substring(2) : ''
-      });
-    }
-    apiConnection.postUserEvent(eventName, { page }, address || '');
-
     router.push(`/userprofile/${address ? address.toString() : ''}`);
   };
 

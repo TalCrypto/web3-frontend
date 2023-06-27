@@ -7,7 +7,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 // import moment from 'moment';
-import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import { utils } from 'ethers';
@@ -22,9 +21,7 @@ import TitleTips from '@/components/common/TitleTips';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
 // import CustomDropdown from '../../components/CustomDropdown';
-import collectionList from '@/const/collectionList';
-import collectionsLoading from '@/stores/collectionsLoading';
-import { walletProvider } from '@/utils/walletProvider';
+// import collectionList from '@/const/collectionList';
 import { priceGapLimit } from '@/stores/priceGap';
 
 import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
@@ -33,6 +30,8 @@ import FundingPaymentModal from '@/components/trade/mobile/position/FundingPayme
 // import IndividualShareContainer from '@/components/trade/desktop/position/IndividualShareContainer';
 import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
 import { $isShowMobileModal } from '@/stores/common';
+// import { walletProvider } from '@/utils/walletProvider';
+// import collectionsLoading from '@/stores/collectionsLoading';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -69,9 +68,9 @@ export default function PositionMobile(props: any) {
 
   // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  const currentCollectionName = currentCollection.shortName || 'DEGODS';
-  const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
+  // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
+  // const currentCollectionName = currentCollection.shortName || 'DEGODS';
+  // const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const userPosition: any = useNanostore(wsUserPosition);
 
   // liquidation warning
@@ -162,7 +161,7 @@ export default function PositionMobile(props: any) {
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">
           <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
-          <div className="text-16 font-600 text-highEmphasis">My {currentCollectionName} Position</div>
+          <div className="text-16 font-600 text-highEmphasis">My {/* currentCollectionName */} Position</div>
         </div>
         <div className="flex space-x-[24px]">
           <div
@@ -199,7 +198,7 @@ export default function PositionMobile(props: any) {
                       ? ''
                       : 'text-marketRed'
                   }
-                  isLoading={isLoading || collectionIsPending[currentCollection.amm]}
+                  // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
                 />
               </div>
             </div>
@@ -232,7 +231,7 @@ export default function PositionMobile(props: any) {
               <MedPriceIcon
                 priceValue={entryPrice}
                 className="normalprice"
-                isLoading={isLoading || collectionIsPending[currentCollection.amm]}
+                // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
               />
             </div>
           </div>
@@ -243,7 +242,7 @@ export default function PositionMobile(props: any) {
               <MedPriceIcon
                 priceValue={sizeInEth}
                 className="normalprice"
-                isLoading={isLoading || collectionIsPending[currentCollection.amm]}
+                // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
               />
             </div>
           </div>
@@ -252,7 +251,7 @@ export default function PositionMobile(props: any) {
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
 
             <div className="text-[14px]">
-              <span className={`normalprice mr-1 ${isLoading || collectionIsPending[currentCollection.amm] ? 'flash' : ''}`}>
+              <span className={`normalprice mr-1 ${isLoading /* || collectionIsPending[currentCollection.amm] */ ? 'flash' : ''}`}>
                 {!userPosition
                   ? '---'
                   : isLeverageNegative
@@ -283,7 +282,7 @@ export default function PositionMobile(props: any) {
                     : calculateNumber(userPosition.liquidationPrice, 2)
                 }
                 className={`normalprice ${isGapAboveLimit ? 'text-warn' : ''} `}
-                isLoading={isLoading || collectionIsPending[currentCollection.amm]}
+                // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
               />
               {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                 <TitleTips

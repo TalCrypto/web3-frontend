@@ -5,21 +5,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { logEvent } from 'firebase/analytics';
 import { utils } from 'ethers';
 import { ThreeDots } from 'react-loader-spinner';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { calculateNumber } from '@/utils/calculateNumbers';
-import { walletProvider } from '@/utils/walletProvider';
 
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
 import tradePanel from '@/stores/tradePanel';
 // import tradePanelModal from '@/stores/tradePanelModal';
-import collectionsLoading from '@/stores/collectionsLoading';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
@@ -33,30 +28,14 @@ import {
   wsMaxReduceValue,
   wsFullWalletAddress
 } from '@/stores/WalletState';
-import { getTestToken } from '@/utils/Wallet';
+// import collectionsLoading from '@/stores/collectionsLoading';
+// import { getTestToken } from '@/utils/Wallet';
 
 function SaleOrBuyRadio(props: any) {
   const router = useRouter();
   const { page } = pageTitleParser(router.asPath);
   const { marginIndex, setMarginIndex, setMarginEstimation, setAdjustMarginValue } = props;
   // const radioButtonIndex = marginIndex ? 0 : 1;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
-
-  function getAnalyticsLongShort(index: any) {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, ['mytrades_increase_margin_pressed', 'mytrades_decrease_margin_pressed'][index], {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    const eventName = ['mytrades_increase_margin_pressed', 'mytrades_decrease_margin_pressed'][index];
-    apiConnection.postUserEvent(eventName, {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
-  }
 
   const radioGroup = ['Add', 'Reduce'].map((item, index) => {
     const className = marginIndex === index ? ['long-selected', 'short-selected'][marginIndex] : 'selectbehaviour';
@@ -69,7 +48,6 @@ function SaleOrBuyRadio(props: any) {
         onClick={() => {
           setAdjustMarginValue(0);
           setMarginEstimation(null);
-          getAnalyticsLongShort(index);
           setMarginIndex(index);
         }}
         key={item}>
@@ -152,7 +130,7 @@ function QuantityEnter(props: any) {
             {/* {marginIndex === 0 ? 'Balance' : 'Free Collateral'} */}
             <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-b2 text-primaryBlue" onClick={() => getTestToken()}>
+            <button type="button" className="ml-[8px] text-b2 text-primaryBlue">
               Get WETH
             </button>
           </div>
@@ -350,17 +328,6 @@ function ActionButtons(props: any) {
     setIsAdjustingMargin(false);
     setAdjustMarginValue(0);
     // refreshPositions();
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_adjustmargin_start', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-    apiConnection.postUserEvent('callbacks_adjustmargin_start', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
   }
 
   function completeAdjustMargin() {
@@ -370,91 +337,54 @@ function ActionButtons(props: any) {
     // console.log('refreshPositions from completeAdjustMargin');
     refreshPositions();
     // }
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_adjustmargin_success', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('callbacks_adjustmargin_success', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
   }
 
   const adjustPositionMargin = async () => {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_adjust_collateral_button_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('trade_adjust_collateral_button_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
     setIsAdjustingMargin(true);
-    if (marginIndex === 0) {
-      const currentAllowance = await walletProvider.checkAllowance();
-      if (Number(adjustMarginValue) > currentAllowance) {
-        await walletProvider.performApprove();
-      }
-      walletProvider
-        .adjustPositionMargin(adjustMarginValue, startAdjustMargin)
-        .then(() => {
-          completeAdjustMargin();
-        })
-        .catch((error: any) => {
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
+    // if (marginIndex === 0) {
+    //   const currentAllowance = await walletProvider.checkAllowance();
+    //   if (Number(adjustMarginValue) > currentAllowance) {
+    //     await walletProvider.performApprove();
+    //   }
+    //   walletProvider
+    //     .adjustPositionMargin(adjustMarginValue, startAdjustMargin)
+    //     .then(() => {
+    //       completeAdjustMargin();
+    //     })
+    //     .catch((error: any) => {
+    //       console.error(error);
+    //       // set trade modal message and show
+    //       if (error.error && error.error.message && error.error.type === 'modal') {
+    //         error.error.showToast();
+    //         // tradePanelModal.setMessage(error.error.message);
+    //         // tradePanelModal.setIsShow(true);
+    //       }
+    //       if (error.error && error.error.message && error.error.type === 'text') {
+    //         setTextErrorMessage(error.error.message);
+    //         setTextErrorMessageShow(true);
+    //       }
 
-          setIsAdjustingMargin(false);
-
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'callbacks_adjustmargin_fail', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken, // from tokenRef.current
-              error_code: error.error.code.toString()
-            });
-          }
-
-          apiConnection.postUserEvent('callbacks_adjustmargin_fail', {
-            page,
-            collection: currentToken, // from tokenRef.current
-            error_code: error.error.code.toString()
-          });
-        });
-    } else {
-      walletProvider
-        .reduceMargin(adjustMarginValue, startAdjustMargin)
-        .then(() => completeAdjustMargin())
-        .catch((error: any) => {
-          setIsAdjustingMargin(false);
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
-        });
-    }
+    //       setIsAdjustingMargin(false);
+    //     });
+    // } else {
+    //   walletProvider
+    //     .reduceMargin(adjustMarginValue, startAdjustMargin)
+    //     .then(() => completeAdjustMargin())
+    //     .catch((error: any) => {
+    //       setIsAdjustingMargin(false);
+    //       console.error(error);
+    //       // set trade modal message and show
+    //       if (error.error && error.error.message && error.error.type === 'modal') {
+    //         error.error.showToast();
+    //         // tradePanelModal.setMessage(error.error.message);
+    //         // tradePanelModal.setIsShow(true);
+    //       }
+    //       if (error.error && error.error.message && error.error.type === 'text') {
+    //         setTextErrorMessage(error.error.message);
+    //         setTextErrorMessageShow(true);
+    //       }
+    //     });
+    // }
   };
 
   return (
@@ -509,10 +439,7 @@ function QuantityTips(props: any) {
     ) : balanceChecking ? (
       <>
         Not enough WETH (including transaction fee).
-        <button onClick={() => getTestToken()} className="ml-1 text-white underline">
-          Get WETH
-        </button>{' '}
-        first
+        <button className="ml-1 text-white underline">Get WETH</button> first
       </>
     ) : minimalMarginChecking ? (
       'Minimum collateral size 0.01'
@@ -664,7 +591,7 @@ export default function AdjustCollateral(props: any) {
   const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
   const isProcessing = useNanostore(tradePanel.processing);
   const [isPending, setIsPending] = useState(false);
-  const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
+  // const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
   const userPosition: any = useNanostore(wsUserPosition);
   const maxReduceValue = useNanostore(wsMaxReduceValue);
@@ -683,25 +610,21 @@ export default function AdjustCollateral(props: any) {
     setTextErrorMessage('');
     setTextErrorMessageShow(false);
 
-    // if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-    //   return;
-    // }
-
-    if (Number(marginValue) > 0 && !!collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-      await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
-      if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-        setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
-        return;
-      }
-      setIsPending(false);
-    } else setIsPending(false);
+    // if (Number(marginValue) > 0 && !!collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+    //   await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
+    //   if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+    //     setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
+    //     return;
+    //   }
+    //   setIsPending(false);
+    // } else setIsPending(false);
 
     setIsWaiting(true);
-    const estimation = await walletProvider.getMarginEstimation(marginValue, marginIndex);
+    // const estimation = await walletProvider.getMarginEstimation(marginValue, marginIndex);
     const realMarginVal = Number(calculateNumber(userPosition.realMargin, 4));
     const calc = marginIndex === 0 ? (Number(marginValue) + realMarginVal).toFixed(4) : (realMarginVal - Number(marginValue)).toFixed(4);
     const newEstimation = String(calc);
-    setMarginEstimation(estimation);
+    // setMarginEstimation(estimation);
     setIsWaiting(false);
     if (Number(marginValue) <= 0) {
       setEstMargin('-.--');
@@ -729,13 +652,6 @@ export default function AdjustCollateral(props: any) {
   }
 
   useEffect(() => {
-    if (isPending) {
-      handleMarginEnter(adjustMarginValue);
-    }
-    // console.log('collection pending is changed');
-  }, [collectionIsPending[walletProvider?.currentTokenAmmAddress]]);
-
-  useEffect(() => {
     setAdjustMarginValue(0);
     handleMarginEnter('');
   }, [fullWalletAddress]);
@@ -755,17 +671,6 @@ export default function AdjustCollateral(props: any) {
         adjustMarginValue={adjustMarginValue}
         // tokenRef={tokenRef}
         onChange={(e: any) => {
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'trade_adjust_collateral_input_pressed', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken // from tokenRef.current
-            });
-          }
-
-          apiConnection.postUserEvent('trade_adjust_collateral_input_pressed', {
-            page,
-            collection: currentToken // from tokenRef.current
-          });
           setAdjustMarginValue(e);
           handleMarginEnter(e);
         }}

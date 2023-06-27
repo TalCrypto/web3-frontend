@@ -7,17 +7,13 @@
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import { getTradingActionType } from '@/utils/actionType';
-import collectionList from '@/const/collectionList';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { apiConnection } from '@/utils/apiConnection';
 import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
 import { BigNumber } from 'ethers';
-import { logEvent } from 'firebase/analytics';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsCurrentToken, wsFullWalletAddress, wsHistoryGroupByMonth } from '@/stores/WalletState';
+import { wsHistoryGroupByMonth } from '@/stores/WalletState';
 import { $isShowMobileModal } from '@/stores/common';
 import { PositionActions } from '@/const';
 
@@ -74,13 +70,12 @@ const defaultSelectedRecord = {
 
 const HistoryModal = (props: any) => {
   const { showHistoryModal, setShowHistoryModal } = props;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const historyRecordsByMonth = useNanostore(wsHistoryGroupByMonth);
-  const currentToken = useNanostore(wsCurrentToken);
+  // const currentToken = useNanostore(wsCurrentToken);
 
-  const [selectedRecord, setSelectedRecord] = useState(defaultSelectedRecord);
-  const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  const currentCollectionName = currentCollection.collectionName || 'DEGODS';
+  const [selectedRecord, setSelectedRecord]: any = useState(defaultSelectedRecord);
+  // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
+  // const currentCollectionName = currentCollection.collectionName || 'DEGODS';
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [selectedBalance, setSelectedBalance] = useState('');
 
@@ -151,29 +146,6 @@ const HistoryModal = (props: any) => {
     ? -Number(calculateNumber(positionNotionalNumber.sub(realizedPnlNumber), 4)).toFixed(4)
     : Number(calculateNumber(notionalChangeNumber.sub(realizedPnlNumber), 4)).toFixed(4);
   const liquidationPenalty = isLiquidation ? -Number(calculateNumber(liquidationPenaltyNumber, 4)) : '-.--';
-
-  const logTradeButton = (e: any, txHash: any, amm: any) => {
-    if (!selectedRecord) {
-      e.preventDefault();
-      return;
-    }
-
-    const filtering = collectionList.filter((item: any) => item.amm.toUpperCase() === amm.toUpperCase());
-    const logCollection = filtering[0].collection;
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'dashboard_position_view_history_etherscan_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        transaction: txHash.substring(2),
-        collection: logCollection
-      });
-    }
-
-    apiConnection.postUserEvent('dashboard_position_view_history_etherscan_pressed', {
-      page: 'Dashboard',
-      transaction: txHash.substring(2),
-      collection: logCollection
-    });
-  };
 
   const handleBackClick = () => {
     if (isShowDetail) {
@@ -323,11 +295,7 @@ const HistoryModal = (props: any) => {
                     }`}
                   />
                 </div>
-                <ExplorerButton
-                  className="mr-[6px]"
-                  txHash={selectedRecord.txHash}
-                  onClick={(e: any) => logTradeButton(e, selectedRecord.txHash, selectedRecord.ammAddress)}
-                />
+                <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />
               </div>
               <div className="text-mediumEmphasis">
                 <div className="mb-[6px]  bg-lightBlue">
@@ -430,7 +398,7 @@ const HistoryModal = (props: any) => {
           alt=""
           onClick={handleBackClick}
         />
-        <div className="flex">{!isShowDetail ? <>{currentCollectionName} Trade History</> : 'Details'}</div>
+        <div className="flex">{!isShowDetail ? <>{/* currentCollectionName */} Trade History</> : 'Details'}</div>
       </div>
     </div>
   );

@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import Link from 'next/link';
 import { withRouter } from 'next/router';
-import { localeConversion } from '@/utils/localeConversion';
-import { calculateNumber } from '@/utils/calculateNumbers';
-import { userPoint } from '@/stores/airdrop';
+// import { localeConversion } from '@/utils/localeConversion';
+// import { calculateNumber } from '@/utils/calculateNumbers';
+// import { userPoint } from '@/stores/airdrop';
 import { $isShowMobileModal } from '@/stores/common';
 
 const MobileMenu = (props: any) => {
@@ -33,14 +33,14 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isLogin) {
-      connectWallet(() => {}, false);
+      // connectWallet(() => {}, false);
     } else if (isWrongNetwork) {
-      updateTargetNetwork();
+      // updateTargetNetwork();
     }
   };
 
   const onBtnDisonnectClick = () => {
-    disconnectWallet(null);
+    // disconnectWallet(null);
   };
 
   const onBtnCopyAddressClick = () => {
@@ -55,12 +55,12 @@ const MobileMenu = (props: any) => {
     setIsShowSocialFooter(!isShowSocialFooter);
   };
 
-  const userPointData = useNanostore(userPoint);
-  const { total, tradeVol, isBan } = userPointData;
-  const tradeVolume = calculateNumber(tradeVol.vol, 4);
-  const eligible = () => Number(tradeVolume) >= 5;
+  // const userPointData = useNanostore(userPoint);
+  // const { total, tradeVol, isBan } = userPointData;
+  // const tradeVolume = calculateNumber(tradeVol.vol, 4);
+  // const eligible = () => Number(tradeVolume) >= 5;
 
-  const points = eligible() && !isBan ? localeConversion(total) : '0.0';
+  // const points = eligible() && !isBan ? localeConversion(total) : '0.0';
 
   return (
     <div
@@ -75,7 +75,7 @@ const MobileMenu = (props: any) => {
             <div className="max-w-[calc(100%-50px)] ">
               <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">EMMMMMMMMMMMA</div>
               <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
-                Points: <span className="font-semibold">{points}</span>
+                {/* Points: <span className="font-semibold">{points}</span> */}
               </span>
             </div>
           </div>

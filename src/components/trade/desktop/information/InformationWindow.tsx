@@ -1,16 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-key */
 import React, { useState } from 'react';
-// import { logEvent } from 'firebase/analytics';
-
-// import ComingSoonWindow from '@/components/trade/desktop/information/CommingSoonWindow';
 import TribeDetailComponents from '@/components/trade/desktop/information/TribeDetailComponents';
-// import ChatComponent from '@/components/trade/desktop/information/ChatComponent';
-
 import Image from 'next/image';
-
-// import { firebaseAnalytics } from '@/const/firebaseConfig';
-// import { apiConnection } from '@/utils/apiConnection';
 
 function InformationWindow() {
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
@@ -48,12 +40,6 @@ function InformationWindow() {
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
           <TribeDetailComponents activeTab={activeTab} />
         </div>
-        {/* <div className={`${detailHeaderIndex === 1 ? 'block' : 'hidden'} h-full`}>
-          <ChatComponent />
-        </div>
-        <div className={`${detailHeaderIndex === 2 ? 'block' : 'hidden'} h-full`}>
-          <ComingSoonWindow />
-        </div> */}
       </div>
     </div>
   );

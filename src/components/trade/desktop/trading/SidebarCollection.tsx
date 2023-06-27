@@ -4,47 +4,23 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { apiConnection } from '@/utils/apiConnection';
 import CollectionModal from '@/components/trade/desktop/trading/CollectionModal';
 import { useStore as useNanostore } from '@nanostores/react';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm } from '@/stores/trading';
 import { $currentChain, $userAddress, $userPositionInfos } from '@/stores/user';
-import { useAccount, useNetwork } from 'wagmi';
 import { usePositionInfosIsLoading } from '@/hooks/collection';
 import { getSupportedAMMs } from '@/const/addresses';
 
 function SidebarCollection() {
   const router = useRouter();
   const chain = useNanostore($currentChain);
-  const address = useNanostore($userAddress);
   const currentAmm = useNanostore($currentAmm);
   const positionInfos = useNanostore($userPositionInfos);
   const [isColModalVisible, setIsColModalVisible] = useState(false);
   const isLoading = usePositionInfosIsLoading();
 
-  const analyticsLogSelections = (newcollections: AMM) => {
-    // console.log(newcollections);
-    // logEvent(firebaseAnalytics:, 'switchCollection_collection_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   current_collection: currentToken,
-    //   new_collection: newcollections
-    // });
-    if (!address) return;
-    apiConnection.postUserEvent(
-      'switchCollection_collection_pressed',
-      {
-        page: 'Trade',
-        current_collection: currentAmm,
-        new_collection: newcollections
-      },
-      address
-    );
-  };
-
   const selectCollection = (amm: AMM) => {
-    analyticsLogSelections(amm);
-
     router.push(`/trade/${amm}`, undefined, { shallow: true });
   };
 

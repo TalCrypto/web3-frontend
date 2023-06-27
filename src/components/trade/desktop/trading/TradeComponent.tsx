@@ -16,7 +16,6 @@ import TitleTips from '@/components/common/TitleTips';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { logEvent } from 'firebase/analytics';
 import Tooltip from '@/components/common/Tooltip';
 import { Address } from 'wagmi';
 import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
@@ -37,24 +36,6 @@ function LongShortRatio(props: any) {
   const fullWalletAddress = useNanostore($userAddress);
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
-
-  function analyticsLogSide(index: any, currentCollection: any, walletAddress: Address) {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
-        wallet: walletAddress.substring(2),
-        collection: currentCollection
-      });
-    }
-    const eventName = ['btnLong_pressed', 'btnShort_pressed'][index];
-    apiConnection.postUserEvent(
-      eventName,
-      {
-        page: pageTitleParser(router.asPath).page,
-        collection: currentCollection
-      },
-      walletAddress
-    );
-  }
 
   return (
     <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
@@ -81,7 +62,6 @@ function LongShortRatio(props: any) {
           onClick={() => {
             if (!userPosition || userPosition.size === 0) {
               setSaleOrBuyIndex(Side.LONG);
-              analyticsLogSide(0, currentAmm, fullWalletAddress ?? zeroAddress);
             }
           }}>
           LONG
@@ -112,7 +92,6 @@ function LongShortRatio(props: any) {
           onClick={() => {
             if (!userPosition || userPosition.size === 0) {
               setSaleOrBuyIndex(Side.SHORT);
-              analyticsLogSide(1, currentAmm, fullWalletAddress ?? zeroAddress);
             }
           }}>
           SHORT
@@ -366,19 +345,6 @@ function EstimatedValueDisplay(props: {
                   setToleranceRate(e.target.value);
                 }
               }}
-              onClick={e => {
-                // e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-                // if (firebaseAnalytics) {
-                //   logEvent(firebaseAnalytics, 'trade_open_add_slippageTolerance_pressed', {
-                //     wallet: fullWalletAddress.substring(2),
-                //     collection: currentToken
-                //   });
-                // }
-                // apiConnection.postUserEvent('trade_open_add_slippageTolerance_pressed', {
-                //   page,
-                //   collection: currentToken
-                // });
-              }}
             />
             <span className="my-auto">%</span>
           </div>
@@ -448,30 +414,11 @@ function Tips({
 }
 
 function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
-  // const router = useRouter();
-  // const currentToken = useNanostore(wsCurrentToken);
-  // const { page } = pageTitleParser(router.asPath);
   const { estimation } = props;
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
   const [showDetail, isShowDetail] = useState(false);
-  // const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
-  // const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-  // const exposure = formatterValue(estimatedValue.exposure, 4);
-  // const isNewPosition = 'newPosition' in estimatedValue;
-  // const fee = formatterValue(estimatedValue.fee, 4);
-  // const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  // const userPosition: any = useNanostore(wsUserPosition);
 
-  // // hide component when there is no estimatedValue
-  // if (!estimatedValue || !estimatedValue.cost) return null;
-
-  // // determine if input is valid or error state
-  // let isError = isAmountTooSmall || isInsuffBalance;
-  // if (value <= 0) {
-  //   isError = false;
-  // }
-  // if (isError || value <= 0) return null;
   const isNewPosition = !userPosition || userPosition.size === 0;
 
   return (
@@ -481,18 +428,6 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
           className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
             isShowDetail(!showDetail);
-            // if (firebaseAnalytics) {
-            //   logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
-            //     wallet: fullWalletAddress.substring(2),
-            //     is_advanced_data_shown: !showDetail,
-            //     collection: currentToken
-            //   });
-            // }
-            // apiConnection.postUserEvent('showAdvancedDetails_pressed', {
-            //   page,
-            //   is_advanced_data_shown: !showDetail,
-            //   collection: currentToken
-            // });
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (
@@ -510,36 +445,17 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
               <div className="row">
                 <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
               </div>
-              {/* <DisplayValues
-                title="Position Type"
-                value={isNewPosition ? (estimatedValue.newPosition.type === 'long' ? 'Long' : 'Short') : '---'}
-                unit=""
-              /> */}
-              {/* <DisplayValues
-                title="Contract Size"
-                value={isNewPosition ? formatterValue(estimatedValue.newPosition.size, 4) : '-.--'}
-                unit={currentType}
-              /> */}
               <DisplayValues title="Notional" value={estimation?.posInfo.positionNotional.toFixed(4)} unit="WETH" />
               <DisplayValues title="Collateral" value={estimation?.posInfo.margin.toFixed(4)} unit="WETH" />
               <DisplayValues title="Average Entry Price" value={estimation?.posInfo.avgEntryPrice.toFixed(2)} unit="WETH" />
-              {/* <DisplayValues
-              title="Collateral Ratio"
-              value={isNewPosition ? formatterValue(estimatedValue.newPosition.marginRatio, 2) : '-.--'}
-              unit="%"
-            /> */}
               <DisplayValues title="Leverage" value={estimation?.posInfo.leverage.toFixed(2)} unit="x" />
               <DisplayValues title="Liquidation Price" value={estimation?.posInfo.liquidationPrice.toFixed(2)} unit="WETH" />
             </>
           ) : null}
 
           <div className="row">
-            <div className="mb-2 mt-4 text-[14px] font-semibold text-white underline">
-              Transaction Details
-              {/* {userPosition != null ? '(Standalone Basis)' : null} */}
-            </div>
+            <div className="mb-2 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
           </div>
-          {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
           <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
           <DisplayValues

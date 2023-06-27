@@ -6,9 +6,8 @@ const PrimaryButton = (props: any) => {
 
   return (
     <div
-      className={`flex items-center justify-center rounded-[6px] text-[16px]
-        ${isDisabled ? 'cursor-default bg-[#272955]' : normalClasses}
-        ${className}`}
+      className={`${className} flex items-center justify-center rounded-[6px] text-[16px]
+        ${isDisabled ? 'cursor-default bg-[#272955]' : normalClasses}`}
       onClick={onClick}>
       {children}
     </div>

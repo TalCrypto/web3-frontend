@@ -1,3 +1,6 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
+/* eslint-disable implicit-arrow-linebreak */
 import { apiConnection } from '@/utils/apiConnection';
 import { DAY_RESOLUTION, MONTH_RESOLUTION, WEEK_RESOLUTION } from '@/const';
 import {
@@ -57,7 +60,6 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
 
   const result = [];
   const rawGraphData = await getGraphDataAfter(ammAddr, startRoundTime - 1, interval);
-  console.log('rawGraphData', rawGraphData);
   if (!rawGraphData || rawGraphData.length === 0) {
     const latestPriceBeforeRange = await getLatestSpotPriceBefore(ammAddr, startRoundTime);
     if (latestPriceBeforeRange) {

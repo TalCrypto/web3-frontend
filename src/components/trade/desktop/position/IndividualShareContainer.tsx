@@ -2,13 +2,8 @@
 import React from 'react';
 import * as htmlToImage from 'html-to-image';
 import download from 'downloadjs';
-import { logEvent } from 'firebase/analytics';
-import { useRouter } from 'next/router';
 
 import { CollectionInfo } from '@/const/collectionList';
-import { apiConnection } from '@/utils/apiConnection';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { pageTitleParser } from '@/utils/eventLog';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -51,7 +46,6 @@ export default function IndividualShareContainer(props: {
   setShowShareComponent: any;
 }) {
   const { setShowShareComponent, positionInfo, collectionInfo } = props;
-  const router = useRouter();
   const userInfo = useNanostore($userInfo);
   const vammPrice = useNanostore($vammPrice);
   const pnlStatus = positionInfo.unrealizedPnl >= 0;
@@ -85,25 +79,6 @@ export default function IndividualShareContainer(props: {
       //   w.document.close();
       // }
     });
-
-    const eventName = 'share_position_performance_download_pressed';
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, eventName, {
-        wallet: userAddress.substring(2),
-        collection: currentPositionName
-      });
-    }
-    if (router && userInfo) {
-      apiConnection.postUserEvent(
-        eventName,
-        {
-          page: pageTitleParser(router.asPath),
-          collection: currentPositionName
-        },
-        userInfo.userAddress
-      );
-    }
   };
   const shareToTwitter = () => {
     const content = `Taking a ${
@@ -111,26 +86,6 @@ export default function IndividualShareContainer(props: {
     } position on ${currentPositionName} on @Tribe3Official \n\non Tribe3 public beta app.tribe3.xyz and earn Tribe3 Points! 🪶🪶\n\n#Tribe3 #DEX #NFTFi #NFTFutures #Tribe3Points #airdrop`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(content)}`;
     window.open(url);
-
-    const eventName = 'share_position_performance_twitter_pressed';
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, eventName, {
-        wallet: userAddress.substring(2),
-        collection: currentPositionName
-      });
-    }
-
-    if (router && userInfo) {
-      apiConnection.postUserEvent(
-        eventName,
-        {
-          page: pageTitleParser(router.asPath),
-          collection: currentPositionName
-        },
-        userInfo.userAddress
-      );
-    }
   };
 
   return (

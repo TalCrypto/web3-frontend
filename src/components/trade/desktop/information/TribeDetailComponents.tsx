@@ -5,9 +5,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable react/no-array-index-key */
+/* eslint-disable operator-linebreak */
 import React, { useEffect, useState } from 'react';
 // import moment from 'moment';
-import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
@@ -63,34 +63,12 @@ interface IOpenseaData {
 }
 
 function ExplorerButton(props: any) {
-  const { txHash, collection } = props;
+  const { txHash } = props;
   const etherscanUrl = `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`;
-  const address = useNanostore($userAddress);
-
-  const getAnalyticsMktEtherscan = () => {
-    if (firebaseAnalytics && address) {
-      logEvent(firebaseAnalytics, 'tribedetail_markettrades_etherscan_pressed', {
-        collection,
-        wallet: address.substring(2),
-        transaction: txHash.substring(2)
-      });
-    }
-    if (address) {
-      apiConnection.postUserEvent(
-        'tribedetail_markettrades_etherscan_pressed',
-        {
-          page: 'Trade',
-          transaction: txHash.substring(2),
-          collection
-        },
-        address
-      );
-    }
-  };
 
   return (
     <a href={etherscanUrl} target="_blank" rel="noreferrer" className="cursor-pointer">
-      <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={16} height={16} />
+      <Image alt="" src="/images/common/out.svg" width={16} height={16} />
     </a>
   );
 }
@@ -227,28 +205,6 @@ const SpotTable = ({ amm }: { amm: AMM }) => {
             }
             const transactionHash = transaction.transaction_hash;
             const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
-            const getAnalyticsSpotEthers = () => {
-              if (firebaseAnalytics && address) {
-                logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
-                  wallet: address.substring(2),
-                  transaction: transactionHash.substring(2),
-                  token: assetToken,
-                  collection: amm // from tokenRef.current
-                });
-              }
-              if (address) {
-                apiConnection.postUserEvent(
-                  'tribedetail_spottransaction_etherscan_pressed',
-                  {
-                    page: 'Trade',
-                    transaction: transactionHash.substring(2),
-                    token: assetToken,
-                    collection: amm // from tokenRef.current
-                  },
-                  address
-                );
-              }
-            };
             const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
             const priceValue = !total_price
               ? '0.00'
@@ -275,12 +231,7 @@ const SpotTable = ({ amm }: { amm: AMM }) => {
                       <SmallPriceIcon priceValue={priceValue} />
                     )}
                   </div>,
-                  <a
-                    href={`https://etherscan.io/tx/${transactionHash}`}
-                    className="cursor-pointer"
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={getAnalyticsSpotEthers}>
+                  <a href={`https://etherscan.io/tx/${transactionHash}`} className="cursor-pointer" target="_blank" rel="noreferrer">
                     <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={20} height={20} />
                   </a>
                 ]}

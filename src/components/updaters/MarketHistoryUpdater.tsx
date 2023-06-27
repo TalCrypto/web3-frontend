@@ -6,8 +6,8 @@ import { getAMMAddress } from '@/const/addresses';
 import { getFundingPaymentHistory, getMarketHistory } from '@/utils/trading';
 import { formatBigInt } from '@/utils/bigInt';
 import { getAddress } from 'viem';
-import { getBaycFromMainnet } from '@/utils/opensea';
 import { $currentChain } from '@/stores/user';
+import { getBaycFromMainnet } from '@/utils/opensea';
 
 const MarketHistoryUpdater = () => {
   const currentAmm = useNanostore($currentAmm);

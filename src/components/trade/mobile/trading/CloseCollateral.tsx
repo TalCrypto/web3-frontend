@@ -6,16 +6,13 @@
 /* eslint-disable operator-linebreak */
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback } from 'react';
 import Image from 'next/image';
-import { logEvent } from 'firebase/analytics';
 import { ThreeDots } from 'react-loader-spinner';
 import { BigNumber, utils } from 'ethers';
 import { useRouter } from 'next/router';
 // import { debounce } from 'throttle-debounce';
 import { useStore as useNanostore } from '@nanostores/react';
-import collectionsLoading from '@/stores/collectionsLoading';
 
 import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { walletProvider } from '@/utils/walletProvider';
 import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
 // import collectionList from '@/const/collectionList';
 import TitleTips from '@/components/common/TitleTips';
@@ -27,6 +24,8 @@ import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/mobile/trading/PartialCloseModal';
 
 import { wsIsWrongNetwork, wsIsApproveRequired, wsCurrentToken, wsUserPosition, wsFullWalletAddress } from '@/stores/WalletState';
+// import { walletProvider } from '@/utils/walletProvider';
+// import collectionsLoading from '@/stores/collectionsLoading';
 
 function SectionDividers() {
   return (
@@ -93,34 +92,12 @@ function QuantityEnter(props: any) {
     newValue = (Number(sizeInEth) / 2).toFixed(4);
     setCloseValue(newValue);
     onChange(newValue);
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_close_half_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-    apiConnection.postUserEvent('trade_close_half_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
   };
   const showMaxValue = () => {
     const ethNum = Number(sizeInEth);
     setCloseValue(ethNum);
     setCurrentMaxValue(ethNum);
     onChange(ethNum);
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_close_max_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('trade_close_max_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
   };
 
   // determine if input is valid or error state
@@ -331,18 +308,6 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
     setToleranceRate(0.5);
     // refreshPositions();
     setEstPriceFluctuation(false);
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_performclose_start', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('callbacks_performclose_start', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
   }
 
   function completeClosePosition() {
@@ -351,18 +316,6 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
     // if (currentToken === processToken) {
     refreshPositions();
     // }
-
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'callbacks_performclose_success', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('callbacks_performclose_success', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
   }
 
   function catchFinishPosition() {
@@ -390,124 +343,85 @@ const ActionButtons = forwardRef((props: any, ref: any) => {
   };
 
   const closePosition = async () => {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_close_button_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken // from tokenRef.current
-      });
-    }
-
-    apiConnection.postUserEvent('trade_close_button_pressed', {
-      page,
-      collection: currentToken // from tokenRef.current
-    });
     if (isProcessingClosePos) {
       return;
     }
     setIsClosingPosition(true);
-    if (Number(closeValue) !== Number(currentMaxValue)) {
-      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
-      const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
-      const currentAllowance = await walletProvider.checkAllowance();
-      const expectedFee = Number(utils.formatEther(result.fee));
-      if (expectedFee > currentAllowance) {
-        await walletProvider.performApprove();
-      }
-      walletProvider
-        .createTransaction(
-          contractSide,
-          closeValue,
-          closeLeverage,
-          toleranceRate,
-          exposureValue,
-          'Partial Close Position',
-          startClosePosition
-        )
-        .then(() => {
-          completeClosePosition();
-        })
-        .catch((error: any) => {
-          catchFinishPosition();
-          if ('error' in error) {
-            if (error.error.message === 'execution reverted: price is over fluctuation limit') {
-              setShowOverFluctuationContent(true);
-            }
-          }
+    // if (Number(closeValue) !== Number(currentMaxValue)) {
+    //   const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
+    //   const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
+    //   const currentAllowance = await walletProvider.checkAllowance();
+    //   const expectedFee = Number(utils.formatEther(result.fee));
+    //   if (expectedFee > currentAllowance) {
+    //     await walletProvider.performApprove();
+    //   }
+    //   walletProvider
+    //     .createTransaction(
+    //       contractSide,
+    //       closeValue,
+    //       closeLeverage,
+    //       toleranceRate,
+    //       exposureValue,
+    //       'Partial Close Position',
+    //       startClosePosition
+    //     )
+    //     .then(() => {
+    //       completeClosePosition();
+    //     })
+    //     .catch((error: any) => {
+    //       catchFinishPosition();
+    //       if ('error' in error) {
+    //         if (error.error.message === 'execution reverted: price is over fluctuation limit') {
+    //           setShowOverFluctuationContent(true);
+    //         }
+    //       }
 
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
+    //       console.error(error);
+    //       // set trade modal message and show
+    //       if (error.error && error.error.message && error.error.type === 'modal') {
+    //         error.error.showToast();
+    //         // tradePanelModal.setMessage(error.error.message);
+    //         // tradePanelModal.setIsShow(true);
+    //       }
+    //       if (error.error && error.error.message && error.error.type === 'text') {
+    //         setTextErrorMessage(error.error.message);
+    //         setTextErrorMessageShow(true);
+    //       }
+    //     });
+    // } else {
+    //   const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
+    //   const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
+    //   const currentAllowance = await walletProvider.checkAllowance();
+    //   const expectedFee = Number(utils.formatEther(result.fee));
+    //   if (expectedFee > currentAllowance) {
+    //     await walletProvider.performApprove();
+    //   }
+    //   walletProvider
+    //     .closePosition(startClosePosition)
+    //     .then(() => {
+    //       completeClosePosition();
+    //     })
+    //     .catch((error: any) => {
+    //       catchFinishPosition();
+    //       if ('error' in error) {
+    //         if (error.error.message === 'execution reverted: over fluctuation limit') {
+    //           setShowOverFluctuationContent(true);
+    //         }
+    //       }
 
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'callbacks_performclose_fail', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken, // from tokenRef.current
-              error_code: error.code.toString()
-            });
-          }
-
-          apiConnection.postUserEvent('callbacks_performclose_fail', {
-            page,
-            collection: currentToken, // from tokenRef.current
-            error_code: error.code.toString()
-          });
-        });
-    } else {
-      const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
-      const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, closeValue, closeLeverage);
-      const currentAllowance = await walletProvider.checkAllowance();
-      const expectedFee = Number(utils.formatEther(result.fee));
-      if (expectedFee > currentAllowance) {
-        await walletProvider.performApprove();
-      }
-      walletProvider
-        .closePosition(startClosePosition)
-        .then(() => {
-          completeClosePosition();
-        })
-        .catch((error: any) => {
-          catchFinishPosition();
-          if ('error' in error) {
-            if (error.error.message === 'execution reverted: over fluctuation limit') {
-              setShowOverFluctuationContent(true);
-            }
-          }
-
-          console.error(error);
-          // set trade modal message and show
-          if (error.error && error.error.message && error.error.type === 'modal') {
-            error.error.showToast();
-            // tradePanelModal.setMessage(error.error.message);
-            // tradePanelModal.setIsShow(true);
-          }
-          if (error.error && error.error.message && error.error.type === 'text') {
-            setTextErrorMessage(error.error.message);
-            setTextErrorMessageShow(true);
-          }
-
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'callbacks_performclose_fail', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken, // from tokenRef.current
-              error_code: error.code.toString()
-            });
-          }
-
-          apiConnection.postUserEvent('callbacks_performclose_fail', {
-            page,
-            collection: currentToken, // from tokenRef.current
-            error_code: error.code.toString()
-          });
-        });
-    }
+    //       console.error(error);
+    //       // set trade modal message and show
+    //       if (error.error && error.error.message && error.error.type === 'modal') {
+    //         error.error.showToast();
+    //         // tradePanelModal.setMessage(error.error.message);
+    //         // tradePanelModal.setIsShow(true);
+    //       }
+    //       if (error.error && error.error.message && error.error.type === 'text') {
+    //         setTextErrorMessage(error.error.message);
+    //         setTextErrorMessageShow(true);
+    //       }
+    //     });
+    // }
   };
 
   useImperativeHandle(ref, () => ({
@@ -576,32 +490,6 @@ function QuantityTips(props: any) {
   );
 }
 
-const CollateralToolTip = (props: any) => {
-  const { isShow, setIsShow } = props;
-  if (!isShow) {
-    return null;
-  }
-
-  const dismissModal = () => {
-    setIsShow(false);
-  };
-
-  return (
-    <div
-      className={`fixed inset-0 z-10 flex h-screen items-center
-        justify-center overflow-auto bg-black bg-opacity-40 px-6`}
-      onClick={dismissModal}>
-      <div
-        className={`relative mx-auto w-full overflow-hidden
-          rounded-[12px] bg-secondaryBlue`}>
-        <div className="relative p-6 text-center leading-[20px]">
-          <div className="text-[12px] text-highEmphasis">Collateral will not change.</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 function EstimationComponent(props: any) {
   const { estimatedValue = {}, sizeInEth, closeValue, currentMaxValue, isAmountTooSmall, isAmountTooLarge } = props;
   const isNewPosition = 'newPosition' in estimatedValue;
@@ -650,7 +538,7 @@ function EstimationComponent(props: any) {
                       setIsShowCollateralToolTip(true);
                     }}
                   />
-                  <CollateralToolTip isShow={isShowCollateralToolTip} setIsShow={setIsShowCollateralToolTip} />
+                  {/* <CollateralToolTip isShow={isShowCollateralToolTip} setIsShow={setIsShowCollateralToolTip} /> */}
                 </>
               ) : null}
             </span>
@@ -780,7 +668,7 @@ export default function CloseCollateral(props: any) {
   const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
   const isProcessing = useNanostore(tradePanel.processing);
   const [isPending, setIsPending] = useState(false);
-  const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
+  // const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const userPosition: any = useNanostore(wsUserPosition);
@@ -804,11 +692,11 @@ export default function CloseCollateral(props: any) {
       setEstPriceFluctuation(false);
       const saleOrBuyIndex = Number(calculateNumber(userPosition.size, 4)) > 0 ? 1 : 0;
       setContractSide(saleOrBuyIndex);
-      if (walletProvider.provider === null || Number(value) === 0 || !value) {
-        setEstimatedValue({});
-        setEstPriceFluctuation(false);
-        return;
-      }
+      // if (walletProvider.provider === null || Number(value) === 0 || !value) {
+      //   setEstimatedValue({});
+      //   setEstPriceFluctuation(false);
+      //   return;
+      // }
 
       // if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
       //   return;
@@ -830,33 +718,33 @@ export default function CloseCollateral(props: any) {
         setEstimatedValue(fullCloseEstimation);
       }
 
-      if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-        await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
-        if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-          setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
-          return;
-        }
-      } else setIsPending(false);
+      // if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+      //   await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
+      //   if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+      //     setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
+      //     return;
+      //   }
+      // } else setIsPending(false);
 
       setIsWaiting(true);
-      const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, value, closeLeverage);
-      setEstimatedValue(result);
-      setExposureValue(result.exposure);
-      setCurrentMaxValue(Number(sizeInEth));
-      setIsWaiting(false);
-      if (Number(formatterValue(result.priceImpact, 2)) <= 0.6 && Number(formatterValue(result.priceImpact, 2)) >= -0.6) {
-        setEstPriceFluctuation(false);
-      } else {
-        setEstPriceFluctuation(true);
-      }
+      // const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, value, closeLeverage);
+      // setEstimatedValue(result);
+      // setExposureValue(result.exposure);
+      // setCurrentMaxValue(Number(sizeInEth));
+      // setIsWaiting(false);
+      // if (Number(formatterValue(result.priceImpact, 2)) <= 0.6 && Number(formatterValue(result.priceImpact, 2)) >= -0.6) {
+      //   setEstPriceFluctuation(false);
+      // } else {
+      //   setEstPriceFluctuation(true);
+      // }
 
-      if (Math.abs(Number(formatterValue(result.priceImpact, 2))) > 2.0) {
-        setIsFluctuationLimit(true);
-      } else {
-        setIsFluctuationLimit(false);
-      }
+      // if (Math.abs(Number(formatterValue(result.priceImpact, 2))) > 2.0) {
+      //   setIsFluctuationLimit(true);
+      // } else {
+      //   setIsFluctuationLimit(false);
+      // }
     },
-    [closeLeverage, collectionIsPending, currentMaxValue, sizeInEth, userPosition]
+    [closeLeverage, /* collectionIsPending, */ currentMaxValue, sizeInEth, userPosition]
   );
 
   // todo: idk, debounced for handle enter still doesnt work
@@ -888,7 +776,7 @@ export default function CloseCollateral(props: any) {
       handleEnter(closeValue);
     }
     // console.log('collection pending is changed');
-  }, [collectionIsPending[walletProvider?.currentTokenAmmAddress], closeValue, isPending, handleEnter]);
+  }, [/* collectionIsPending[walletProvider?.currentTokenAmmAddress], */ closeValue, isPending, handleEnter]);
 
   useEffect(() => {
     setCloseValue(0);
@@ -900,17 +788,6 @@ export default function CloseCollateral(props: any) {
       <QuantityEnter
         // tokenRef={tokenRef}
         onChange={(e: any) => {
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'trade_close_input_pressed', {
-              wallet: fullWalletAddress.substring(2),
-              collection: currentToken // from tokenRef.current
-            });
-          }
-
-          apiConnection.postUserEvent('trade_close_input_pressed', {
-            page,
-            collection: currentToken // from tokenRef.current
-          });
           setCloseValue(e);
           handleEnter(e);
         }}
@@ -965,20 +842,6 @@ export default function CloseCollateral(props: any) {
                 if (reg.test(inputValue) || inputValue === '') {
                   setToleranceRate(Number(e.target.value));
                 }
-              }}
-              onClick={e => {
-                // e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-                if (firebaseAnalytics) {
-                  logEvent(firebaseAnalytics, 'trade_close_slippageTolerance_pressed', {
-                    wallet: fullWalletAddress.substring(2),
-                    collection: currentToken // from tokenRef.current
-                  });
-                }
-
-                apiConnection.postUserEvent('trade_close_slippageTolerance_pressed', {
-                  page,
-                  collection: currentToken // from tokenRef.current
-                });
               }}
             />
             <span className="my-auto">%</span>

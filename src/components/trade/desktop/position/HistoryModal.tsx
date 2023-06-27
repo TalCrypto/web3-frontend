@@ -5,19 +5,13 @@
 
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { apiConnection } from '@/utils/apiConnection';
-import { logEvent } from 'firebase/analytics';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { useStore as useNanostore } from '@nanostores/react';
-import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
 import { getTradingActionType } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
 import { $isShowMobileModal } from '@/stores/common';
-import { $userAddress } from '@/stores/user';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -52,7 +46,6 @@ function DetailRowWithPriceIcon(props: any) {
 
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
-  const address = useNanostore($userAddress);
   const historyRecordsByMonth = usePsHistoryByMonth();
 
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
@@ -142,33 +135,6 @@ const HistoryModal = (props: any) => {
       ? -Number((positionNotionalNumber ?? 0 - (realizedPnlNumber ?? 0)).toFixed(4))
       : (notionalChangeNumber ?? 0 - (realizedPnlNumber ?? 0)).toFixed(4);
   const liquidationPenalty = isLiquidation ? -Number(liquidationPenaltyNumber?.toFixed(4)) : '-.--';
-
-  const logTradeButton = (e: any, txHash: any, amm: AMM) => {
-    if (!selectedRecord) {
-      e.preventDefault();
-      return;
-    }
-    if (!address) return;
-    const filtering = getCollectionInformation(amm);
-    const logCollection = filtering.collection;
-    if (firebaseAnalytics && address) {
-      logEvent(firebaseAnalytics, 'dashboard_position_view_history_etherscan_pressed', {
-        wallet: address.substring(2),
-        transaction: txHash.substring(2),
-        collection: logCollection
-      });
-    }
-
-    apiConnection.postUserEvent(
-      'dashboard_position_view_history_etherscan_pressed',
-      {
-        page: 'Dashboard',
-        transaction: txHash.substring(2),
-        collection: logCollection
-      },
-      address
-    );
-  };
 
   return (
     <div
@@ -309,13 +275,7 @@ const HistoryModal = (props: any) => {
               </div>
               <div className="flex items-center justify-center text-[16px] text-highEmphasis">
                 <span>Details</span>
-                {selectedRecord && (
-                  <ExplorerButton
-                    className="mr-[6px]"
-                    txHash={selectedRecord.txHash}
-                    onClick={(e: any) => logTradeButton(e, selectedRecord.txHash, selectedRecord.amm)}
-                  />
-                )}
+                {selectedRecord && <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />}
               </div>
               {isLiquidation ? <LiquidationWarning /> : null}
               <div className="p-3 text-mediumEmphasis">

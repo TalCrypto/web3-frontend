@@ -1,0 +1,12 @@
+input[type='range'] {
+  &::-webkit-slider-thumb {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+  }
+  &::-moz-range-thumb {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+  }
+}

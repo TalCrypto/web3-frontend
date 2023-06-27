@@ -1,23 +1,18 @@
 /* eslint-disable consistent-return */
-/* eslint-disable max-len */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable operator-linebreak */
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { utils, BigNumber } from 'ethers';
-import { logEvent } from 'firebase/analytics';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useStore, useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
 import { PriceWithIcon } from '@/components/common/PricWithIcon';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-
-import collectionList from '@/const/collectionList';
 
 import {
   getDailySpotPriceGraphData,
@@ -26,19 +21,13 @@ import {
   getThreeMonthlySpotPriceGraphData
 } from '@/utils/trading';
 
-import TitleTips from '@/components/common/TitleTips';
-import { apiConnection } from '@/utils/apiConnection';
-import { showPopup, priceGapLimit } from '@/stores/priceGap';
+import { priceGapLimit } from '@/stores/priceGap';
 
-import { wsCurrentChain, wsCurrentToken, wsFullWalletAddress, wsIsLogin, wsSelectedTimeIndex } from '@/stores/WalletState';
-import { walletProvider } from '@/utils/walletProvider';
+import { wsCurrentToken, wsFullWalletAddress, wsIsLogin, wsSelectedTimeIndex } from '@/stores/WalletState';
+import { getCollectionInformation } from '@/const/collectionList';
+import ChartDisplay from '@/components/common/ChartDisplay';
 
 const flashAnim = 'flash';
-
-const getCollectionInformation = (collectionName: any) => {
-  const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
-  return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-};
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
@@ -49,10 +38,6 @@ function SmallPriceIcon(props: any) {
     </div>
   );
 }
-
-const ChartDisplay = dynamic(() => import('../../../common/ChartDisplay'), {
-  ssr: false
-});
 
 function PriceIndicator(props: any) {
   const { priceChangeRatioAndValue } = props;
@@ -113,21 +98,6 @@ function PriceIndicator(props: any) {
       </div>
     </div>
   );
-}
-
-function chartButtonLogged(index: any, fullWalletAddress: any, currentCollection: any) {
-  const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
-  if (firebaseAnalytics) {
-    logEvent(firebaseAnalytics, eventName, {
-      wallet: fullWalletAddress.substring(2),
-      collection: currentCollection
-    });
-  }
-  apiConnection.postUserEvent(eventName, {
-    wallet: fullWalletAddress,
-    collection: currentCollection,
-    page: 'Trade'
-  });
 }
 
 function ChartTimeTabs(props: any) {
@@ -357,7 +327,7 @@ const ProComponent = forwardRef((props: any, ref: any) => {
 
     const interval = setInterval(() => {
       const { amm: currentAmm } = getCollectionInformation(currentToken);
-      getDailySpotPriceGraphData(currentAmm).then(dayTradingDetails => {
+      getDailySpotPriceGraphData(currentAmm).then((dayTradingDetails: any) => {
         const vol = dayTradingDetails == null ? BigNumber.from(0) : dayTradingDetails.volume;
         setDayVolume(vol);
       });
@@ -476,16 +446,16 @@ function ChartMobile(props: any, ref: any) {
 
   const fetchChartData = async function fetchChartData() {
     setIsStartLoadingChart(true);
-    const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
-    let chartData: any = {};
+    // const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
+    const chartData: any = {};
     if (selectedTimeIndex === 0) {
-      chartData = await getDailySpotPriceGraphData(currentAmm);
+      // chartData = await getDailySpotPriceGraphData(currentAmm);
     } else if (selectedTimeIndex === 1) {
-      chartData = await getWeeklySpotPriceGraphData(currentAmm);
+      // chartData = await getWeeklySpotPriceGraphData(currentAmm);
     } else if (selectedTimeIndex === 2) {
-      chartData = await getMonthlySpotPriceGraphData(currentAmm);
+      // chartData = await getMonthlySpotPriceGraphData(currentAmm);
     } else {
-      chartData = await getThreeMonthlySpotPriceGraphData(currentAmm);
+      // chartData = await getThreeMonthlySpotPriceGraphData(currentAmm);
     }
     const graphRef: any = graphHeaderRef.current;
     graphRef?.setGraphOtherValue(chartData);
@@ -513,7 +483,6 @@ function ChartMobile(props: any, ref: any) {
   }, [currentToken, selectedTimeIndex]); // from tokenRef.current
 
   const handleSelectedTimeIndex = (index: any) => {
-    chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
     wsSelectedTimeIndex.set(index);
   };
 
@@ -535,11 +504,11 @@ function ChartMobile(props: any, ref: any) {
               isStartLoadingChart={isStartLoadingChart}
             />
             <div ref={chartProContainerRef}>
-              <ChartDisplay
+              {/* <ChartDisplay
                 lineChartData={lineChartData}
                 isStartLoadingChart={isStartLoadingChart}
                 chartProContainerRef={chartProContainerRef}
-              />
+              /> */}
             </div>
           </div>
         </div>

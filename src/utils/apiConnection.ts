@@ -1,19 +1,9 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable max-len */
 // import React from 'react';
-import { signInWithCustomToken /* , signOut */ } from 'firebase/auth';
-import { firebaseAuth } from '@/const/firebaseConfig';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
-import {
-  setUserPoint,
-  setLeaderboard,
-  isLeaderboardLoading,
-  isUserPointLoading,
-  defaultUserPoint,
-  isReferralListLoading,
-  setReferralList
-} from '../stores/airdrop';
+import { setLeaderboard, isLeaderboardLoading, isReferralListLoading, setReferralList } from '../stores/airdrop';
 
 const apiUrl = process.env.NEXT_PUBLIC_DASHBOARD_API_URL;
 const authUrl = process.env.NEXT_PUBLIC_AUTHENTICATION_API_URL;
@@ -37,22 +27,20 @@ export const apiConnection = {
   getWalletChartContent: async function getWalletChartContent(address: string, timeIndex: number) {
     let timeRelatedKey = 'dailyAccountValueGraph';
     switch (timeIndex) {
-      case 0:
-        timeRelatedKey = 'dailyAccountValueGraph';
-        break;
       case 1:
-        timeRelatedKey = 'weeklyAccountValueGraph';
+        timeRelatedKey = '1m';
         break;
       case 2:
-        timeRelatedKey = 'monthlyAccountValueGraph';
+        timeRelatedKey = '2m';
         break;
       case 3:
-        timeRelatedKey = 'allTimeAccountValueGraph';
+        timeRelatedKey = 'competition';
         break;
       default:
-        timeRelatedKey = 'dailyAccountValueGraph';
+        timeRelatedKey = '1w';
     }
-    const walletChartUrl = `${apiUrl}/${timeRelatedKey}?trader=${address}`;
+    const walletChartUrl = `${authUrl}/getPnlGraphData?userAddress=${address}&resolution=${timeRelatedKey}`;
+
     let returnData = {};
     try {
       await fetch(walletChartUrl)
@@ -64,46 +52,6 @@ export const apiConnection = {
     } catch (error) {
       return Promise.reject();
     }
-  },
-  postUserContent: async function postUserContent(address: string) {
-    const postUserUrl = `${authUrl}/users`;
-    // const postData = { userAddress: address };
-    // try {
-    //   const callPost = await fetch(postUserUrl, {
-    //     method: 'POST',
-    //     body: JSON.stringify(postData),
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   });
-    //   const returnData = await callPost.json();
-    //   return Promise.resolve(returnData);
-    // } catch (error) {
-    //   walletProvider.disconnectWallet();
-    //   return Promise.reject(error);
-    // }
-  },
-  postAuthUser: async function postAuthUser(nonce: any) {
-    const postAuthUserUrl = `${authUrl}/users/auth`;
-    // if (!walletProvider || !walletProvider.provider) return Promise.reject();
-    // const providerSigner = walletProvider.provider.getSigner(walletProvider.holderAddress);
-    // const messageHex = `\x19Ethereum Signed Message:\nHi there! Welcome to Tribe3!\n\nClick to log in to access your very own profile on Tribe3. Please note that this will not execute any blockchain transaction nor it will cost you any gas fee.\n\nYour Nonce: ${nonce}`;
-    // const signedMessage = await providerSigner.signMessage(messageHex);
-    // const postData = { publicAddress: walletProvider.holderAddress, signature: signedMessage };
-    // try {
-    //   const callPost = await fetch(postAuthUserUrl, {
-    //     method: 'POST',
-    //     body: JSON.stringify(postData),
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   });
-    //   const returnData = await callPost.json();
-    //   return Promise.resolve(returnData);
-    // } catch (error) {
-    //   walletProvider.disconnectWallet();
-    //   return Promise.reject(error);
-    // }
   },
   followUser: async function followUser(followerAddress: any, firebaseToken: any, userAddress: string) {
     const url = `${authUrl}/users/follow`;

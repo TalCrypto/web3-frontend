@@ -6,6 +6,10 @@ export const formatDateTime = (value: number, format = 'DD/MM/YY HH:mm'): any =>
   const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
   const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
 
+  if (format === 'DD MM') {
+    return `${day} ${month}`;
+  }
+
   if (format === 'HH:mm') {
     return `${hours}:${minutes}`;
   }
@@ -21,6 +25,10 @@ export const formatDateTime = (value: number, format = 'DD/MM/YY HH:mm'): any =>
   }
 
   if (format === 'L HH:mm') {
+    return `${month}/${day}/${year} ${hours}:${minutes}`;
+  }
+
+  if (format === 'MM/DD/YYYY HH:mm') {
     return `${month}/${day}/${year} ${hours}:${minutes}`;
   }
 

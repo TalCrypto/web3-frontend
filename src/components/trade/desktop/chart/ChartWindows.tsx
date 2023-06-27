@@ -5,7 +5,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect } from 'react';
 
-import { logEvent } from 'firebase/analytics';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -85,32 +84,11 @@ function PriceIndicator(props: {
   );
 }
 
-function chartButtonLogged(index: any, fullWalletAddress: Address, currentAmm: AMM) {
-  const eventName = ['btnDay_pressed', 'btnWeek_pressed', 'btnMonth_pressed'][index];
-
-  if (firebaseAnalytics) {
-    logEvent(firebaseAnalytics, eventName, {
-      wallet: fullWalletAddress.substring(2),
-      collection: currentAmm
-    });
-  }
-  apiConnection.postUserEvent(
-    eventName,
-    {
-      wallet: fullWalletAddress,
-      collection: currentAmm,
-      page: 'Trade'
-    },
-    fullWalletAddress
-  );
-}
-
 function ChartTimeTabs(props: any) {
   const { contentArray = [], controlRef, isStartLoadingChart } = props;
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
 
   const setSelectedTimeIndex = (index: number) => {
-    // chartButtonLogged(index, fullWalletAddress, currentToken); // from tokenRef.current
     $selectedTimeIndex.set(index);
   };
 
@@ -125,27 +103,6 @@ function ChartTimeTabs(props: any) {
   useEffect(() => {
     updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
-
-  // useLayoutEffect(() => {
-  //   const handleResize = () => {
-  //     const element = document.getElementById('divTradeWindow');
-  //     if (element === null) return;
-  //     const isVisibleNow = window.getComputedStyle(element).display !== 'none';
-  //     if (isVisibleNow && !isVisible) {
-  //       setIsVisible(true);
-  //       updateSelectedTimeIndex();
-  //     } else if (!isVisibleNow && isVisible) {
-  //       setIsVisible(false);
-  //     }
-  //   };
-
-  //   window.addEventListener('resize', handleResize);
-  //   handleResize();
-
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, [isVisible, selectedTimeIndex]);
 
   return (
     <div className="relative flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>

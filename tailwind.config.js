@@ -29,6 +29,9 @@ module.exports = {
         primaryBlue: '#2574fb',
         primaryBlueHover: '#5190fc',
         primaryBluePressed: '#1e5dc9',
+        primaryPink: '#FF42CA',
+        secondaryPink: '#C970D0',
+
         secondaryBlue: '#202249',
         darkBlue: '#0C0D20',
         mediumBlue: '#242652',
@@ -39,6 +42,7 @@ module.exports = {
         marketRed: '#ff5656',
         marketGreen: '#78f363',
         warn: '#ffc24bde',
+        competition: '#FFEFD0',
 
         tooltipArrow: '#213676',
 

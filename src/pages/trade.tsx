@@ -81,6 +81,7 @@ function TradePage(props: WithRouterProps) {
             <TradingMobile />
           </div>
         </div> */}
+
         <CollectionConfigLoader />
         <TradingDataUpdater />
         <ChartDataUpdater />

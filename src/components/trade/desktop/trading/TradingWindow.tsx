@@ -1,40 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TradeComponent from '@/components/trade/desktop/trading/TradeComponent';
 import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-
-// function OverFluctuationError(props: any) {
-//   const { setShowOverFluctuationContent } = props;
-//   const closeWindow = () => {
-//     setShowOverFluctuationContent(false);
-//   };
-//   return (
-//     <div className="fails">
-//       <div className="contents-mod">
-//         <div className="col">
-//           Your transaction has failed due to high price fluctuation. <br />
-//           <br /> Please try again with smaller notional value
-//           <div className="cursor-pointer" onClick={closeWindow}>
-//             <div className="text">OK</div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+import TradeComponent from '@/components/trade/desktop/trading/tradeComponent';
 
 function TradingWindow() {
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
 
-  // const traderConnectWallet = () => {
-  //   open({ route: 'ConnectWallet' });
-  // };
   useEffect(() => setTradeWindowIndex(0), [currentAmm]);
 
   const tradeComponent = <TradeComponent />;
@@ -42,8 +19,6 @@ function TradingWindow() {
   const displayComponent = [tradeComponent, <CloseCollateral />, <AdjustCollateral />][tradeWindowIndex];
 
   const tabs = ['Add', 'Close', 'Adjust Collateral'];
-
-  // const [showOverFluctuationContent, setShowOverFluctuationContent] = useState(false);
 
   const onTabClick = (index: any) => {
     setTradeWindowIndex(index);

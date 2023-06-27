@@ -1,32 +1,26 @@
 /* eslint-disable no-use-before-define */
-/* eslint-disable camelcase */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable react/no-array-index-key */
+/* eslint-disable operator-linebreak */
+
 import React, { useEffect, useState } from 'react';
 // import moment from 'moment';
-import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-
-import { /* calculateNumber, */ formatterValue, isPositive, formatterUSDC } from '@/utils/calculateNumbers';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
-
-import { apiConnection } from '@/utils/apiConnection';
+import { formatterValue, isPositive, formatterUSDC } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
 import { getTradingActionType } from '@/utils/actionType';
 import { trimString } from '@/utils/string';
 
 import { formatDateTime, formatDateTimeFromString } from '@/utils/date';
 
-import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PricWithIcon';
-
+import { PriceWithUsdc } from '@/components/common/PricWithIcon';
 import { useStore as useNanostore } from '@nanostores/react';
 import { tsMarketHistory, tsFundingPaymentHistory, tsSportPriceList } from '@/stores/TradeInformation';
 import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
-import { walletProvider } from '@/utils/walletProvider';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -57,34 +51,17 @@ function Cell(props: any) {
 }
 
 function ExplorerButton(props: any) {
-  const { txHash, collection } = props;
+  const { txHash } = props;
   const etherscanUrl = `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-
-  const getAnalyticsMktEtherscan = () => {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'tribedetail_markettrades_etherscan_pressed', {
-        collection,
-        wallet: fullWalletAddress.substring(2),
-        transaction: txHash.substring(2)
-      });
-    }
-
-    apiConnection.postUserEvent('tribedetail_markettrades_etherscan_pressed', {
-      page: 'Trade',
-      transaction: txHash.substring(2),
-      collection
-    });
-  };
 
   return (
     <a href={etherscanUrl} target="_blank" rel="noreferrer">
-      <Image alt="" src="/images/common/out.svg" onClick={getAnalyticsMktEtherscan} width={16} height={16} />
+      <Image alt="" src="/images/common/out.svg" width={16} height={16} />
     </a>
   );
 }
 
-const MarketTrade = (props: any) => {
+const MarketTrade = () => {
   const router = useRouter();
   const marketHistory = useNanostore(tsMarketHistory);
   const [displayCount, setDisplayCount] = useState(10);
@@ -170,7 +147,6 @@ const MarketTrade = (props: any) => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                // logHelper('overview_show_more_pressed', holderAddress, { collection });
                 setDisplayCount(displayCount + 5);
               }}>
               Show More
@@ -184,18 +160,16 @@ const MarketTrade = (props: any) => {
 
 interface IOpenseaData {
   asset: any;
-  asset_bundle: any;
-  payment_token: any;
-  total_price: any;
-  event_timestamp: any;
+  assetBundle: any;
+  paymentToken: any;
+  totalPrice: any;
+  eventTimestamp: any;
   transaction: any;
 }
 
 const SpotTable = () => {
   const [displayCount, setDisplayCount] = useState(10);
   const openseaData = useNanostore(tsSportPriceList);
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
 
   return (
     <>
@@ -203,48 +177,33 @@ const SpotTable = () => {
         <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-4 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
         {openseaData && openseaData.length > 0 ? (
           openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
-            const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
+            const { asset, assetBundle, paymentToken, totalPrice, eventTimestamp, transaction } = data;
             const src = !asset
-              ? asset_bundle.assets[0].image_preview_url
+              ? assetBundle.assets[0].image_preview_url
               : !asset.image_preview_url
               ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
               : asset.image_preview_url;
             let isEth = false;
             let isUSDC = false;
-            if (payment_token !== null) {
-              isEth = payment_token.symbol === 'ETH' || payment_token.symbol === 'WETH';
-              isUSDC = payment_token.symbol === 'USDC';
+            if (paymentToken !== null) {
+              isEth = paymentToken.symbol === 'ETH' || paymentToken.symbol === 'WETH';
+              isUSDC = paymentToken.symbol === 'USDC';
             }
             const transactionHash = transaction.transaction_hash;
-            const assetToken = !asset ? asset_bundle.asset_bundle_temp[0].token_id : asset.token_id;
-            const getAnalyticsSpotEthers = () => {
-              if (firebaseAnalytics) {
-                logEvent(firebaseAnalytics, 'tribedetail_spottransaction_etherscan_pressed', {
-                  wallet: fullWalletAddress.substring(2),
-                  transaction: transactionHash.substring(2),
-                  token: assetToken,
-                  collection: currentToken
-                });
-              }
-              apiConnection.postUserEvent('tribedetail_spottransaction_etherscan_pressed', {
-                page: 'Trade',
-                transaction: transactionHash.substring(2),
-                token: assetToken,
-                collection: currentToken
-              });
-            };
-            const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
-            const priceValue = !total_price
+            const assetToken = !asset ? assetBundle.assetBundle_temp[0].token_id : asset.token_id;
+
+            const assetCreationDate = !asset ? assetBundle.assets[0].created_date : asset.created_date;
+            const priceValue = !totalPrice
               ? '0.00'
-              : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
-            const key_value = assetCreationDate + event_timestamp + assetToken;
+              : localeConversion(isUSDC ? formatterUSDC(totalPrice, 2) : formatterValue(totalPrice, 2), 2);
+            const keyValue = assetCreationDate + eventTimestamp + assetToken;
 
             return (
               <Cell
                 classNames={['col-span-4', 'col-span-4 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 flex justify-end']}
-                key={`spot_${key_value}`}
+                key={`spot_${keyValue}`}
                 items={[
-                  <div className="relative border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(event_timestamp)}</div>,
+                  <div className="relative border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(eventTimestamp)}</div>,
                   <div className="flex items-center text-[14px] text-[#6286e3]">
                     <Image src={src} className="mr-1 rounded-[5px]" alt="" width={16} height={16} />
                     {`#${assetToken}` || 'No Name'}
@@ -256,7 +215,7 @@ const SpotTable = () => {
                       <SmallPriceIcon priceValue={priceValue} />
                     )}
                   </div>,
-                  <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer" onClick={getAnalyticsSpotEthers}>
+                  <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noreferrer">
                     <Image src="/images/common/out.svg" className="out-link-icon" alt="" width={16} height={16} />
                   </a>
                 ]}
@@ -276,7 +235,6 @@ const SpotTable = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                // logHelper('overview_show_more_pressed', holderAddress, { collection });
                 setDisplayCount(displayCount + 5);
               }}>
               Show More
@@ -330,7 +288,6 @@ const FundingPaymentHistory = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                // logHelper('overview_show_more_pressed', holderAddress, { collection });
                 setDisplayCount(displayCount + 5);
               }}>
               Show More
@@ -344,11 +301,6 @@ const FundingPaymentHistory = () => {
 
 function TabsInfo(props: any) {
   const { activeTab } = props;
-  const currentToken = useNanostore(wsCurrentToken);
-
-  useEffect(() => {
-    updateTradeInformation(currentToken);
-  }, [currentToken]);
 
   return (
     <>

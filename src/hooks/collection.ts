@@ -4,12 +4,9 @@ import { $currentChain, $userPositionInfos, UserPositionInfo } from '@/stores/us
 import {
   $collectionConfig,
   $dailyVolume,
-  $fundingRates,
   $graphData,
   $highPrice,
   $lowPrice,
-  $nextFundingTime,
-  $openInterests,
   $oraclePrice,
   $priceChange,
   $priceChangePct,

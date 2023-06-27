@@ -3,16 +3,16 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import tradePanelModal from '@/stores/tradePanelModal';
 
-import TradeComponent from '@/components/trade/mobile/trading/TradeComponent';
 import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
 import TradePanelModal from '@/components/trade/mobile/trading/TradePanelModal';
 
 import { wsCurrentToken, wsIsShowTradingMobile, wsUserPosition } from '@/stores/WalletState';
 import Image from 'next/image';
-import collectionList from '@/const/collectionList';
+// import collectionList from '@/const/collectionList';
 import { $isShowMobileModal } from '@/stores/common';
-import { connectWallet } from '@/utils/Wallet';
+import TradeComponent from '@/components/trade/mobile/trading/tradeComponent';
+// import { connectWallet } from '@/utils/Wallet';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -42,12 +42,12 @@ function TradingMobile(props: any) {
   const tradePanelModalLink = useNanostore(tradePanelModal.link);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
-  const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  const currentCollectionName = currentCollection.collectionName || 'DEGODS';
+  // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
+  // const currentCollectionName = currentCollection.collectionName || 'DEGODS';
   const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
 
   const traderConnectWallet = () => {
-    connectWallet(() => {}, true);
+    // connectWallet(() => {}, true);
   };
   useEffect(() => setTradeWindowIndex(0), [currentToken]);
 
@@ -126,7 +126,7 @@ function TradingMobile(props: any) {
           alt=""
           onClick={handleBackClick}
         />
-        <div className="flex">Trade {currentCollectionName}</div>
+        {/* <div className="flex">Trade {currentCollectionName}</div> */}
       </div>
     </div>
   );

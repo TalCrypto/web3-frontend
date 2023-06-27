@@ -7,7 +7,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { logEvent } from 'firebase/analytics';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
@@ -106,23 +105,6 @@ export default function PositionDetails(props: any) {
 
   const clickShowSharePosition = (show: boolean) => {
     setShowSharePosition(show);
-    if (firebaseAnalytics && address && currentAmm) {
-      logEvent(firebaseAnalytics, 'share_position_performance_pressed', {
-        wallet: address?.substring(2),
-        collection: currentAmm
-      });
-    }
-
-    if (address && currentAmm) {
-      apiConnection.postUserEvent(
-        'share_position_performance_pressed',
-        {
-          page: pageTitleParser(router.asPath),
-          collection: currentAmm
-        },
-        address
-      );
-    }
   };
 
   if (!positionInfo || positionInfo.size === 0 || !collectionInfo) {

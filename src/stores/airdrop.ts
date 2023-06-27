@@ -61,12 +61,6 @@ export const defaultUserPoint: UserPoint = {
 // user points
 export const $userPoint = atom<UserPoint | undefined>();
 
-export const isUserPointLoading = atom(false);
-
-export const setUserPoint = (data: UserPoint) => {
-  $userPoint.set(data);
-};
-
 // leaderboard
 export const leaderboard = atom<any[]>([]);
 

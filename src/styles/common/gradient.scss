@@ -133,3 +133,14 @@
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #2574fb;
   }
 }
+
+.portfolio-bg {
+  background: linear-gradient(0deg, #f703d9, #795af4, #04aefc), #2574fb;
+}
+
+.loading-text {
+  background: linear-gradient(270deg, #f703d9, #795af4, #04aefc), #2574fb;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

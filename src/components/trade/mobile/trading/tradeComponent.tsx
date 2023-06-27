@@ -12,15 +12,13 @@ import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
-import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
-import collectionList from '@/const/collectionList';
+// import collectionList from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
 import { pageTitleParser } from '@/utils/eventLog';
 import { dataFetch, whitelisted } from '@/stores/UserState';
 import TitleTips from '@/components/common/TitleTips';
 
 import tradePanel from '@/stores/tradePanel';
-import collectionsLoading from '@/stores/collectionsLoading';
 import { priceGapLimit } from '@/stores/priceGap';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
@@ -33,9 +31,10 @@ import {
   wsUserPosition,
   wsFullWalletAddress
 } from '@/stores/WalletState';
-import { getTestToken } from '@/utils/Wallet';
 import { firebaseAnalytics } from '@/const/firebaseConfig';
-import { logEvent } from 'firebase/analytics';
+// import { getTestToken } from '@/utils/Wallet';
+// import collectionsLoading from '@/stores/collectionsLoading';
+// import { walletProvider, clearingHouseAddress } from '@/utils/walletProvider';
 
 function LongShortRatio(props: any) {
   const router = useRouter();
@@ -44,20 +43,6 @@ function LongShortRatio(props: any) {
   const fullWalletAddress = useNanostore(wsFullWalletAddress);
   const currentToken = useNanostore(wsCurrentToken);
   const userPosition: any = useNanostore(wsUserPosition);
-
-  function analyticsLogSide(index: any, currentCollection: any) {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, ['btnLong_pressed', 'btnShort_pressed'][index], {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentCollection
-      });
-    }
-    const eventName = ['btnLong_pressed', 'btnShort_pressed'][index];
-    apiConnection.postUserEvent(eventName, {
-      page,
-      collection: currentCollection
-    });
-  }
 
   return (
     <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
@@ -68,7 +53,6 @@ function LongShortRatio(props: any) {
         onClick={() => {
           if (!userPosition) {
             setSaleOrBuyIndex(0);
-            analyticsLogSide(0, currentToken);
           }
         }}
         key="long">
@@ -81,7 +65,6 @@ function LongShortRatio(props: any) {
         onClick={() => {
           if (!userPosition) {
             setSaleOrBuyIndex(1);
-            analyticsLogSide(1, currentToken);
           }
         }}
         key="short">
@@ -120,7 +103,7 @@ function QuantityTips(props: any) {
   ) : isInsuffBalance ? (
     <>
       Not enough WETH (including transaction fee).
-      <a href="#" onClick={() => getTestToken()} className="ml-1 text-white underline">
+      <a href="#" className="ml-1 text-white underline">
         Get WETH
       </a>{' '}
       first
@@ -195,7 +178,7 @@ function QuantityEnter(props: any) {
             </div>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => getTestToken()}>
+            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue">
               Get WETH
             </button>
           </div>
@@ -347,20 +330,6 @@ function EstimatedValueDisplay(props: any) {
                   setToleranceRate(e.target.value);
                 }
               }}
-              onClick={e => {
-                // e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-                if (firebaseAnalytics) {
-                  logEvent(firebaseAnalytics, 'trade_open_add_slippageTolerance_pressed', {
-                    wallet: fullWalletAddress.substring(2),
-                    collection: currentToken
-                  });
-                }
-
-                apiConnection.postUserEvent('trade_open_add_slippageTolerance_pressed', {
-                  page,
-                  collection: currentToken
-                });
-              }}
             />
             <span className="my-auto">%</span>
           </div>
@@ -419,7 +388,7 @@ function ConfirmButton(props: any) {
   const isDataFetch = useNanostore(dataFetch);
   // const isWhitelisted = useNanostore(whitelisted);
   // const isWethCollected = useNanostore(wethCollected);
-  const isWethCollected = Number(walletProvider.wethBalance) !== 0;
+  // const isWethCollected = Number(walletProvider.wethBalance) !== 0;
 
   const [isProcessingOpenPos, setIsProcessingOpenPos] = useState(false);
   const isNormal = isLoginState && !isWrongNetwork && quantity > 0 && !isInsuffBalance && !isAmountTooSmall;
@@ -452,116 +421,64 @@ function ConfirmButton(props: any) {
   //   // do not reset state input value
   // };
 
-  const doTransaction = async function doTransaction(erc20ContractInstance: any) {
-    const amountValue = [utils.parseEther(String(quantity))];
-    const allowanceValue = utils.formatEther(await erc20ContractInstance.allowance(walletProvider.holderAddress, clearingHouseAddress));
-    if (Number(allowanceValue) > quantity * leverageValue) {
-      createTransaction(startOpenPosition);
-      return;
-    }
-    const approval = await erc20ContractInstance.approve(clearingHouseAddress, utils.parseEther(String(Number.MAX_SAFE_INTEGER)));
-    if (approval) {
-      createTransaction(startOpenPosition);
-    }
-  };
+  // const doTransaction = async function doTransaction(erc20ContractInstance: any) {
+  //   const amountValue = [utils.parseEther(String(quantity))];
+  //   const allowanceValue = utils.formatEther(await erc20ContractInstance.allowance(walletProvider.holderAddress, clearingHouseAddress));
+  //   if (Number(allowanceValue) > quantity * leverageValue) {
+  //     createTransaction(startOpenPosition);
+  //     return;
+  //   }
+  //   const approval = await erc20ContractInstance.approve(clearingHouseAddress, utils.parseEther(String(Number.MAX_SAFE_INTEGER)));
+  //   if (approval) {
+  //     createTransaction(startOpenPosition);
+  //   }
+  // };
 
-  const connectContract = async () => {
-    if (!isLoginState || isWrongNetwork || !quantity) {
-      return;
-    }
+  // const connectContract = async () => {
+  //   if (!isLoginState || isWrongNetwork || !quantity) {
+  //     return;
+  //   }
 
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'confirm_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken
-      });
-    }
-    apiConnection.postUserEvent('confirm_pressed', {
-      page,
-      collection: currentToken
-    });
-    setIsProcessingOpenPos(true);
-    walletProvider
-      .connectContract()
-      .then(doTransaction)
-      .catch(() => {
-        setIsProcessingOpenPos(false);
-      });
-  };
+  //   setIsProcessingOpenPos(true);
+  //   walletProvider
+  //     .connectContract()
+  //     .then(doTransaction)
+  //     .catch(() => {
+  //       setIsProcessingOpenPos(false);
+  //     });
+  // };
 
-  const performApprove = async () => {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'approve_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken
-      });
-    }
-    apiConnection.postUserEvent('approve_pressed', {
-      page,
-      collection: currentToken
-    });
-    setIsProcessingOpenPos(true);
-    walletProvider
-      .performApprove()
-      .then(() => {
-        wsIsApproveRequired.set(false);
-        setIsProcessingOpenPos(false);
-        if (firebaseAnalytics) {
-          logEvent(firebaseAnalytics, 'callbacks_performapprove_success', {
-            wallet: fullWalletAddress.substring(2),
-            collection: currentToken
-          });
-        }
-        apiConnection.postUserEvent('callbacks_performapprove_success', {
-          page,
-          collection: currentToken
-        });
-      })
-      .catch((error: any) => {
-        setIsProcessingOpenPos(false);
-        if (firebaseAnalytics) {
-          logEvent(firebaseAnalytics, 'callbacks_performapprove_fail', {
-            wallet: fullWalletAddress.substring(2),
-            error_code: error?.code.toString(),
-            collection: currentToken
-          });
-        }
-        apiConnection.postUserEvent('callbacks_performapprove_fail', {
-          page,
-          error_code: error?.code.toString(),
-          collection: currentToken
-        });
-      });
-  };
+  // const performApprove = async () => {
+  //   setIsProcessingOpenPos(true);
+  //   walletProvider
+  //     .performApprove()
+  //     .then(() => {
+  //       wsIsApproveRequired.set(false);
+  //       setIsProcessingOpenPos(false);
+  //     })
+  //     .catch((error: any) => {
+  //       setIsProcessingOpenPos(false);
+  //     });
+  // };
 
-  const performGetWeth = () => {
-    getTestToken(() => setIsProcessingOpenPos(false));
-  };
+  // const performGetWeth = () => {
+  //   getTestToken(() => setIsProcessingOpenPos(false));
+  // };
 
-  const performSwitchGeorli = () => {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'switchGoerli_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken
-      });
-    }
-    apiConnection.postUserEvent('switchGoerli_pressed', {
-      page,
-      collection: currentToken
-    });
-    const networkId = utils.hexValue(Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN || 421613));
-    walletProvider.provider.provider
-      .request({ method: 'wallet_switchEthereumChain', params: [{ chainId: `${networkId}` }] })
-      .then(() => walletProvider.getWethBalance())
-      .catch((error: any) => {
-        if (error.code === 4902) {
-          walletProvider.addArbitrumGoerli();
-        }
-      });
-  };
+  // const performSwitchGeorli = () => {
+  //   const networkId = utils.hexValue(Number(process.env.NEXT_PUBLIC_SUPPORT_CHAIN || 421613));
+  //   walletProvider.provider.provider
+  //     .request({ method: 'wallet_switchEthereumChain', params: [{ chainId: `${networkId}` }] })
+  //     .then(() => walletProvider.getWethBalance())
+  //     .catch((error: any) => {
+  //       if (error.code === 4902) {
+  //         walletProvider.addArbitrumGoerli();
+  //       }
+  //     });
+  // };
 
   let disabled = !isNormal;
-  if (!isLoginState || isWrongNetwork || !isWethCollected || isApproveRequired) {
+  if (!isLoginState || isWrongNetwork || /*! isWethCollected || */ isApproveRequired) {
     disabled = false;
   } else if (isWaiting) {
     disabled = true;
@@ -573,13 +490,13 @@ function ConfirmButton(props: any) {
     if (!isLoginState) {
       connectWallet();
     } else if (isWrongNetwork) {
-      performSwitchGeorli();
-    } else if (!isWethCollected) {
-      performGetWeth();
+      // performSwitchGeorli();
+      // } else if (!isWethCollected) {
+      //   performGetWeth();
     } else if (isApproveRequired) {
-      performApprove();
+      // performApprove();
     } else if (isNormal && !isProcessingOpenPos && !isPending && !disabled) {
-      connectContract();
+      // connectContract();
     }
   };
 
@@ -601,9 +518,9 @@ function ConfirmButton(props: any) {
               'Connect Wallet'
             ) : isWrongNetwork ? (
               'Switch to Arbitrum'
-            ) : !isWethCollected ? (
-              'Get WETH'
-            ) : isApproveRequired ? (
+            ) : // ) : !isWethCollected ? (
+            //   'Get WETH'
+            isApproveRequired ? (
               'Approve'
             ) : (
               'Trade'
@@ -617,7 +534,8 @@ function ConfirmButton(props: any) {
 
 function Tips(props: any) {
   const isDataFetch = useNanostore(dataFetch);
-  const isWethCollected = Number(walletProvider.wethBalance) !== 0;
+  // const isWethCollected = Number(walletProvider.wethBalance) !== 0;
+  const isWethCollected = false;
   const isLoginState = useNanostore(wsIsLogin);
   const isWrongNetwork = useNanostore(wsIsWrongNetwork);
   const isApproveRequired = useNanostore(wsIsApproveRequired);
@@ -662,8 +580,8 @@ function ExtendedEstimateComponent(props: any) {
   const { page } = pageTitleParser(router.asPath);
   const { estimatedValue, value, isAmountTooSmall, isInsuffBalance } = props;
   const [showDetail, isShowDetail] = useState(false);
-  const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
-  const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
+  // const targetCollection = collectionList.filter(({ collection }) => collection === currentToken);
+  // const { collectionType: currentType } = targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
   const exposure = formatterValue(estimatedValue.exposure, 4);
   const isNewPosition = 'newPosition' in estimatedValue;
   const fee = formatterValue(estimatedValue.fee, 4);
@@ -687,18 +605,6 @@ function ExtendedEstimateComponent(props: any) {
         className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
         onClick={() => {
           isShowDetail(!showDetail);
-          if (firebaseAnalytics) {
-            logEvent(firebaseAnalytics, 'showAdvancedDetails_pressed', {
-              wallet: fullWalletAddress.substring(2),
-              is_advanced_data_shown: !showDetail,
-              collection: currentToken
-            });
-          }
-          apiConnection.postUserEvent('showAdvancedDetails_pressed', {
-            page,
-            is_advanced_data_shown: !showDetail,
-            collection: currentToken
-          });
 
           if (!showDetail) {
             // if (elementRef.current) {
@@ -818,7 +724,7 @@ export default function TradeComponent(props: any) {
   const [textErrorMessageShow, setTextErrorMessageShow] = useState(false);
   const isProcessing = useNanostore(tradePanel.processing);
   const [isPending, setIsPending] = useState(false);
-  const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
+  // const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
   const [isWaiting, setIsWaiting] = useState(false); // waiting value for getting estimated value
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
@@ -840,45 +746,33 @@ export default function TradeComponent(props: any) {
     // console.log(value);
     setIsWaiting(true);
     const calc = Number(value);
-    const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, calc, leverageValue);
-    setEstimatedValue(result);
-    setExposureValue(result.exposure);
-    setIsWaiting(false);
+    // const result = await walletProvider.calculateEstimationValue(saleOrBuyIndex, calc, leverageValue);
+    // setEstimatedValue(result);
+    // setExposureValue(result.exposure);
+    // setIsWaiting(false);
 
-    const costInNumber = Number(utils.formatEther(result.cost?.toString()));
-    if (wethBal < costInNumber) {
-      setIsInsuffBalance(true);
-    }
+    // const costInNumber = Number(utils.formatEther(result.cost?.toString()));
+    // if (wethBal < costInNumber) {
+    //   setIsInsuffBalance(true);
+    // }
 
-    if (Math.abs(Number(formatterValue(result.priceImpact, 2))) > 2.0) {
-      setIsFluctuationLimit(true);
-    } else {
-      setIsFluctuationLimit(false);
-    }
+    // if (Math.abs(Number(formatterValue(result.priceImpact, 2))) > 2.0) {
+    //   setIsFluctuationLimit(true);
+    // } else {
+    //   setIsFluctuationLimit(false);
+    // }
 
-    if (isGapAboveLimit && result.newPosition?.isLiquidatable) {
-      setIsLiquidatable(true);
-    } else {
-      setIsLiquidatable(false);
-    }
+    // if (isGapAboveLimit && result.newPosition?.isLiquidatable) {
+    //   setIsLiquidatable(true);
+    // } else {
+    //   setIsLiquidatable(false);
+    // }
 
-    if (Number(formatterValue(result.priceImpact, 2)) <= 0.6 && Number(formatterValue(result.priceImpact, 2)) >= -0.6) {
-      setEstPriceFluctuation(false);
-    } else {
-      setEstPriceFluctuation(true);
-    }
-
-    // logging
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'trade_add_input_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        collection: currentToken
-      });
-    }
-    apiConnection.postUserEvent('trade_add_input_pressed', {
-      page,
-      collection: currentToken
-    });
+    // if (Number(formatterValue(result.priceImpact, 2)) <= 0.6 && Number(formatterValue(result.priceImpact, 2)) >= -0.6) {
+    //   setEstPriceFluctuation(false);
+    // } else {
+    //   setEstPriceFluctuation(true);
+    // }
   };
 
   // const debouncedCalculateEstimation = useCallback(debounce(calculateEstimation, 300), []);
@@ -893,11 +787,11 @@ export default function TradeComponent(props: any) {
     setIsInsuffBalance(false);
     setIsLiquidatable(false);
 
-    if (walletProvider.provider === null || Number(value) === 0 || !value) {
-      setEstimatedValue({});
-      setEstPriceFluctuation(false);
-      return;
-    }
+    // if (walletProvider.provider === null || Number(value) === 0 || !value) {
+    //   setEstimatedValue({});
+    //   setEstPriceFluctuation(false);
+    //   return;
+    // }
 
     if (Number(value) < 0.01) {
       setIsAmountTooSmall(true);
@@ -914,13 +808,13 @@ export default function TradeComponent(props: any) {
       return;
     }
 
-    if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-      await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
-      if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-        setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
-        return;
-      }
-    } else setIsPending(false);
+    // if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+    //   await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
+    //   if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+    //     setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
+    //     return;
+    //   }
+    // } else setIsPending(false);
 
     await calculateEstimation(wethBalance, value);
   };
@@ -937,33 +831,33 @@ export default function TradeComponent(props: any) {
   const calculateLeverageEnter = async (qty: any, sbIndex: any, lvrg: any) => {
     setIsWaiting(true);
     const updatedCollateral = Number(qty);
-    const result = await walletProvider.calculateEstimationValue(sbIndex, updatedCollateral, lvrg);
-    setEstimatedValue(result);
-    setExposureValue(result.exposure);
-    setIsWaiting(false);
+    // const result = await walletProvider.calculateEstimationValue(sbIndex, updatedCollateral, lvrg);
+    // setEstimatedValue(result);
+    // setExposureValue(result.exposure);
+    // setIsWaiting(false);
 
-    const costInNumber = Number(utils.formatEther(result.cost?.toString()));
-    if (wethBalance < costInNumber) {
-      setIsInsuffBalance(true);
-    }
+    // const costInNumber = Number(utils.formatEther(result.cost?.toString()));
+    // if (wethBalance < costInNumber) {
+    //   setIsInsuffBalance(true);
+    // }
 
-    if (Math.abs(Number(formatterValue(result.priceImpact, 2))) > 2.0) {
-      setIsFluctuationLimit(true);
-    } else {
-      setIsFluctuationLimit(false);
-    }
+    // if (Math.abs(Number(formatterValue(result.priceImpact, 2))) > 2.0) {
+    //   setIsFluctuationLimit(true);
+    // } else {
+    //   setIsFluctuationLimit(false);
+    // }
 
-    if (isGapAboveLimit && result.newPosition?.isLiquidatable) {
-      setIsLiquidatable(true);
-    } else {
-      setIsLiquidatable(false);
-    }
+    // if (isGapAboveLimit && result.newPosition?.isLiquidatable) {
+    //   setIsLiquidatable(true);
+    // } else {
+    //   setIsLiquidatable(false);
+    // }
 
-    if (Number(formatterValue(result.priceImpact, 2)) <= 0.6 && Number(formatterValue(result.priceImpact, 2)) >= -0.6) {
-      setEstPriceFluctuation(false);
-    } else {
-      setEstPriceFluctuation(true);
-    }
+    // if (Number(formatterValue(result.priceImpact, 2)) <= 0.6 && Number(formatterValue(result.priceImpact, 2)) >= -0.6) {
+    //   setEstPriceFluctuation(false);
+    // } else {
+    //   setEstPriceFluctuation(true);
+    // }
   };
 
   // const debouncedcalculateLeverageEnter = useCallback(debounce(calculateLeverageEnter, 500), []);
@@ -976,11 +870,11 @@ export default function TradeComponent(props: any) {
     setIsLiquidatable(false);
     setIsAmountTooSmall(false);
     setIsInsuffBalance(false);
-    if (walletProvider.provider === null || Number(quantity) === 0 || quantity === '') {
-      setEstimatedValue({});
-      setEstPriceFluctuation(false);
-      return;
-    }
+    // if (walletProvider.provider === null || Number(quantity) === 0 || quantity === '') {
+    //   setEstimatedValue({});
+    //   setEstPriceFluctuation(false);
+    //   return;
+    // }
 
     if (Number(quantity) < 0.01) {
       setIsAmountTooSmall(true);
@@ -996,88 +890,49 @@ export default function TradeComponent(props: any) {
       return;
     }
 
-    if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-      await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
-      if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
-        setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
-        return;
-      }
-    } else setIsPending(false);
+    // if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+    //   await collectionsLoading.getCollectionsLoading(walletProvider?.currentTokenAmmAddress);
+    //   if (collectionIsPending[walletProvider?.currentTokenAmmAddress]) {
+    //     setIsPending(!!collectionIsPending[walletProvider?.currentTokenAmmAddress]);
+    //     return;
+    //   }
+    // } else setIsPending(false);
 
     await calculateLeverageEnter(quantity, saleOrBuyIndex, leverage);
   };
 
   const createTransaction = async function createTransaction(startTransaction = () => {}) {
-    walletProvider
-      .createTransaction(
-        saleOrBuyIndex,
-        Number(quantity) * leverageValue,
-        leverageValue,
-        toleranceRate,
-        exposureValue,
-        userPosition ? 'Add Position' : 'Open Position',
-        startTransaction
-      )
-      .then(() => {
-        // setQuantity('');
-        // prevent refreshing when page has changed
-        // if (currentToken === processToken) {
-        refreshPositions();
-        // }
-        if (firebaseAnalytics) {
-          logEvent(firebaseAnalytics, 'callbacks_performtrades_success', {
-            wallet: fullWalletAddress.substring(2),
-            collection: currentToken
-          });
-        }
-        apiConnection.postUserEvent('callbacks_performtrades_success', {
-          page,
-          collection: currentToken
-        });
-      })
-      .catch((error: any) => {
-        console.error(error);
-        // set trade modal message and show
-        if (error?.error && error.error?.message && error.error?.type === 'modal') {
-          error?.error.showToast();
-          // tradePanelModal.setMessage(error.error.message);
-          // tradePanelModal.setIsShow(true);
-        }
-        if (error?.error && error.error?.message && error.error?.type === 'text') {
-          setTextErrorMessage(error?.error?.message);
-          setTextErrorMessageShow(true);
-        }
-
-        if (firebaseAnalytics) {
-          logEvent(firebaseAnalytics, 'callbacks_performtrades_fail', {
-            wallet: fullWalletAddress.substring(2),
-            collection: currentToken,
-            error_code: error?.code?.toString()
-          });
-        }
-
-        apiConnection.postUserEvent('callbacks_performtrades_fail', {
-          page,
-          collection: currentToken,
-          error_code: error?.code?.toString()
-        });
-      });
+    // walletProvider
+    //   .createTransaction(
+    //     saleOrBuyIndex,
+    //     Number(quantity) * leverageValue,
+    //     leverageValue,
+    //     toleranceRate,
+    //     exposureValue,
+    //     userPosition ? 'Add Position' : 'Open Position',
+    //     startTransaction
+    //   )
+    //   .then(() => {
+    //     // setQuantity('');
+    //     // prevent refreshing when page has changed
+    //     // if (currentToken === processToken) {
+    //     refreshPositions();
+    //     // }
+    //   })
+    //   .catch((error: any) => {
+    //     console.error(error);
+    //     // set trade modal message and show
+    //     if (error?.error && error.error?.message && error.error?.type === 'modal') {
+    //       error?.error.showToast();
+    //       // tradePanelModal.setMessage(error.error.message);
+    //       // tradePanelModal.setIsShow(true);
+    //     }
+    //     if (error?.error && error.error?.message && error.error?.type === 'text') {
+    //       setTextErrorMessage(error?.error?.message);
+    //       setTextErrorMessageShow(true);
+    //     }
+    //   });
   };
-
-  function analyticsLogLeverageValue(index: any, currentCollection: any) {
-    if (firebaseAnalytics) {
-      logEvent(firebaseAnalytics, 'leverage_pressed', {
-        wallet: fullWalletAddress.substring(2),
-        leverage_value: index,
-        collection: currentCollection
-      });
-    }
-    apiConnection.postUserEvent('leverage_pressed', {
-      page,
-      leverage_value: index,
-      collection: currentCollection
-    });
-  }
 
   useEffect(() => {
     if (userPosition) {
@@ -1098,11 +953,11 @@ export default function TradeComponent(props: any) {
     setLeverageValue(1);
   }, [currentToken, saleOrBuyIndex]); // from tokenRef.current
 
-  useEffect(() => {
-    if (isPending) {
-      handleEnter(quantity);
-    }
-  }, [collectionIsPending[walletProvider?.currentTokenAmmAddress]]);
+  // useEffect(() => {
+  //   if (isPending) {
+  //     handleEnter(quantity);
+  //   }
+  // }, [collectionIsPending[walletProvider?.currentTokenAmmAddress]]);
 
   useEffect(() => {
     setTextErrorMessage('');
@@ -1139,7 +994,6 @@ export default function TradeComponent(props: any) {
         value={leverageValue}
         setValue={setLeverageValue}
         onChange={(value: any) => {
-          analyticsLogLeverageValue(value, currentToken);
           handleLeverageEnter(value);
         }}
       />
