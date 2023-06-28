@@ -47,7 +47,6 @@ function DetailRowWithPriceIcon(props: any) {
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
   const historyRecordsByMonth = usePsHistoryByMonth();
-
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 
   const hide = () => {

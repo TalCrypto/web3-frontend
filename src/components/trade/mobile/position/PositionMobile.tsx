@@ -6,26 +6,22 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
-import { utils } from 'ethers';
 
-import { calculateNumber, formatterValue } from '@/utils/calculateNumbers';
 import TitleTips from '@/components/common/TitleTips';
-import { apiConnection } from '@/utils/apiConnection';
-import { pageTitleParser } from '@/utils/eventLog';
-import { priceGapLimit } from '@/stores/priceGap';
 
 import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
-import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
+import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending } from '@/hooks/collection';
+import { getCollectionInformation } from '@/const/collectionList';
+import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
 import { $isShowMobileModal } from '@/stores/modal';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
-    <div className={`font-400 flex text-[14px] text-highEmphasis ${className}`}>
+    <div className={`flex text-[14px] font-normal text-highEmphasis ${className}`}>
       <Image
         src={image || '/images/components/layout/header/eth-tribe3.svg'}
         className="icon"
@@ -39,109 +35,53 @@ function MedPriceIcon(props: any) {
   );
 }
 
-export default function PositionMobile(props: any) {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
+const liquidationChanceLimit = 0.05;
 
-  const { tradingData } = props;
+export default function PositionMobile() {
+  const currentAmm = useNanostore($currentAmm);
+  const positionInfo = usePositionInfo(currentAmm);
+  const vammPrice = useNanostore($vammPrice);
+  const oraclePrice = useNanostore($oraclePrice);
+  const isOverPriceGap = useIsOverPriceGap();
+  const isPending = useTransactionIsPending(currentAmm);
+  const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
-  const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
-  const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
-  const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
-  const priceGapLmt = useNanostore(priceGapLimit);
-  const currentToken = useNanostore(wsCurrentToken);
-
-  // price gap
-  const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
-  // const isBadDebt = userPosition ? Number(utils.formatEther(userPosition.remainMarginLeverage)) === 0 : false;
-
-  // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  // const currentCollectionName = currentCollection.shortName || 'DEGODS';
-  // const collectionIsPending = useNanostore(collectionsLoading.collectionsLoading);
-  const userPosition: any = useNanostore(wsUserPosition);
 
-  // liquidation warning
-  const positionType = userPosition ? (userPosition.size > 0 ? 'LONG' : 'SHORT') : null;
-  const liquidationPrice = userPosition ? Number(utils.formatEther(userPosition.liquidationPrice)) : null;
-  const liquidationChanceLimit = 0.05;
-
-  const [userInfo, setUserInfo] = useState({});
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
 
   const liquidationChanceWarning = () => {
-    if (!userPosition || !tradingData.spotPrice || !tradingData.twapPrice || !priceGapLmt) return false;
+    if (!positionInfo || !vammPrice || !oraclePrice) return false;
 
-    const selectedPriceForCalc = !isGapAboveLimit ? vAMMPrice : oraclePrice;
+    const selectedPriceForCalc = !isOverPriceGap ? vammPrice : oraclePrice;
 
     if (
-      positionType === 'LONG' &&
-      Number(liquidationPrice) < selectedPriceForCalc &&
-      selectedPriceForCalc < Number(liquidationPrice) * (1 + liquidationChanceLimit)
+      positionInfo.size > 0 && // long
+      positionInfo.liquidationPrice < selectedPriceForCalc &&
+      selectedPriceForCalc < positionInfo.liquidationPrice * (1 + liquidationChanceLimit)
     )
       return true;
     if (
-      positionType === 'SHORT' &&
-      Number(liquidationPrice) > selectedPriceForCalc &&
-      selectedPriceForCalc > Number(liquidationPrice) * (1 - liquidationChanceLimit)
+      positionInfo.size < 0 && // short
+      positionInfo.liquidationPrice > selectedPriceForCalc &&
+      selectedPriceForCalc > positionInfo.liquidationPrice * (1 - liquidationChanceLimit)
     )
       return true;
     return false;
   };
 
   const liquidationRiskWarning = () => {
-    if (!userPosition || !tradingData.spotPrice || !tradingData.twapPrice || !priceGapLmt) return false;
+    if (!positionInfo || !vammPrice || !oraclePrice) return false;
 
-    const selectedPriceForCalc = !isGapAboveLimit ? vAMMPrice : oraclePrice;
+    const selectedPriceForCalc = !isOverPriceGap ? vammPrice : oraclePrice;
 
-    if (positionType === 'LONG' && selectedPriceForCalc <= Number(liquidationPrice)) return true;
-    if (positionType === 'SHORT' && selectedPriceForCalc >= Number(liquidationPrice)) return true;
+    if (positionInfo.size > 0 && selectedPriceForCalc <= positionInfo.liquidationPrice) return true; // long
+    if (positionInfo.size < 0 && selectedPriceForCalc >= positionInfo.liquidationPrice) return true; // short
     return false;
   };
 
-  // leverage handling
-  const isLeverageNegative = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) <= 0 : false;
-  const isLeverageOver = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) > 100 : false;
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-
-  // const size = '';
-  // const currentPrice = '';
-  let sizeInEth = '';
-  // const absoluteSize = 0;
-  let entryPrice = '';
-  let totalPnlValue = '';
-  let numberTotalPnl = 0;
-
-  if (userPosition && tradingData) {
-    // size = calculateNumber(userPosition.size, 4);
-    // currentPrice = calculateNumber(tradingData.spotPrice, 2);
-    // absoluteSize = Math.abs(Number(calculateNumber(userPosition.size, 4)));
-    entryPrice = `${calculateNumber(userPosition.entryPrice, 4)} `;
-    sizeInEth = `${calculateNumber(userPosition.currentNotional, 4)} `;
-    const calc = userPosition.unrealizedPnl;
-    totalPnlValue = formatterValue(calc, 4);
-    numberTotalPnl = Number(totalPnlValue);
-  }
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [currentToken, userPosition]);
-
-  useEffect(() => {
-    if (fullWalletAddress) {
-      apiConnection.getUserInfo(fullWalletAddress).then(data => {
-        setUserInfo(data.data);
-      });
-    }
-  }, [fullWalletAddress]);
-
-  if (!userPosition) {
+  if (!positionInfo || positionInfo.size === 0 || !collectionInfo) {
     return null;
   }
 
@@ -174,82 +114,56 @@ export default function PositionMobile(props: any) {
         <div className="px-5 pb-2 pt-6">
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
-            <div className="text-15 font-400">
-              <div>
-                <MedPriceIcon
-                  priceValue={!userPosition ? '---' : Number(totalPnlValue) === 0 ? '0.0000' : totalPnlValue}
-                  className={
-                    !userPosition
-                      ? ''
-                      : Number(numberTotalPnl) > 0
-                      ? 'text-marketGreen'
-                      : Number(numberTotalPnl) === 0
-                      ? ''
-                      : 'text-marketRed'
-                  }
-                  // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
-                />
-              </div>
+            <div className="text-[14px] font-normal">
+              <MedPriceIcon
+                priceValue={positionInfo.unrealizedPnl === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
+                className={positionInfo.unrealizedPnl > 0 ? 'text-marketGreen' : positionInfo.unrealizedPnl === 0 ? '' : 'text-marketRed'}
+                isLoading={isLoading || isPending}
+              />
             </div>
           </div>
 
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
-            <div
-              className={`text-[14px]
-              ${!userPosition ? '' : userPosition.size > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
-              {!userPosition ? '---' : userPosition.size > 0 ? 'LONG' : 'SHORT'}
+            <div className="text-[14px] font-normal">
+              <span className={!positionInfo ? '' : positionInfo.size > 0 ? 'text-marketGreen' : 'text-marketRed'}>
+                {!positionInfo ? '---' : positionInfo.size > 0 ? 'LONG' : 'SHORT'}
+              </span>
             </div>
           </div>
 
-          {/* <div className="flex mb-1">
-            <div className="text-[14px] text-mediumEmphasis w-[120px]">Contract Size</div>
-            <div className="flex w-[25%] space-x-[12px]">
-              <MedPriceIcon
-                priceValue={absoluteSize}
-                type={currentToken === '' ? '' : currentToken}
-                isLoading={isLoading || collectionIsPending[currentCollection.amm]}
-                image={currentCollection?.image}
-              />
-            </div>
-          </div> */}
-
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Entry Price</div>
-            <div className="">
+            <div className="text-[14px] font-normal">
               <MedPriceIcon
-                priceValue={entryPrice}
-                className="normalprice"
-                // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
+                priceValue={!positionInfo ? '---' : positionInfo.entryPrice < 0 ? '0.00' : positionInfo.entryPrice.toFixed(4)}
+                className="text-[15px] font-normal"
+                isLoading={isLoading || isPending}
               />
             </div>
           </div>
 
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Notional</div>
-            <div className="">
-              <MedPriceIcon
-                priceValue={sizeInEth}
-                className="normalprice"
-                // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
-              />
+            <div className="text-[14px] font-normal">
+              <MedPriceIcon priceValue={positionInfo.currentNotional.toFixed(4)} isLoading={isLoading || isPending} />
             </div>
           </div>
 
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
 
-            <div className="text-[14px]">
-              <span className={`normalprice mr-1 ${isLoading /* || collectionIsPending[currentCollection.amm] */ ? 'flash' : ''}`}>
-                {!userPosition
+            <div className="text-[14px] font-normal">
+              <span className={`text-[15px] font-normal ${isLoading || isPending ? 'flash' : ''}`}>
+                {!positionInfo
                   ? '---'
-                  : isLeverageNegative
+                  : positionInfo.leverage <= 0
                   ? 'N/A'
-                  : isLeverageOver
+                  : positionInfo.leverage > 100
                   ? '100.00 x +'
-                  : formatterValue(userPosition.remainMarginLeverage, 2, 'x')}
+                  : `${positionInfo.leverage.toFixed(2)} x`}
               </span>
-              {isLeverageNegative ? (
+              {positionInfo.leverage <= 0 ? (
                 <TitleTips
                   placement="top"
                   titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
@@ -261,17 +175,11 @@ export default function PositionMobile(props: any) {
 
           <div className="mb-3 flex">
             <div className="w-[150px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
-            <div className="">
+            <div className="text-[14px] font-normal">
               <MedPriceIcon
-                priceValue={
-                  !userPosition
-                    ? '---'
-                    : Number(calculateNumber(userPosition.liquidationPrice, 2)) < 0
-                    ? '0.00'
-                    : calculateNumber(userPosition.liquidationPrice, 2)
-                }
-                className={`normalprice ${isGapAboveLimit ? 'text-warn' : ''} `}
-                // isLoading={isLoading || collectionIsPending[currentCollection.amm]}
+                priceValue={!positionInfo ? '---' : positionInfo.liquidationPrice < 0 ? '0.00' : positionInfo.liquidationPrice.toFixed(2)}
+                className={`${isOverPriceGap ? 'text-warn' : ''} `}
+                isLoading={isLoading || isPending}
               />
               {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                 <TitleTips
@@ -287,7 +195,7 @@ export default function PositionMobile(props: any) {
                   tipsText="Your position is at risk of being liquidated. Please manage your risk."
                 />
               ) : null}
-              {isGapAboveLimit ? (
+              {isOverPriceGap ? (
                 <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
             </div>
@@ -296,29 +204,7 @@ export default function PositionMobile(props: any) {
       </div>
 
       <HistoryModal showHistoryModal={showHistoryModal} setShowHistoryModal={setShowHistoryModal} />
-
-      <FundingPaymentModal
-        showFundingPaymentModal={showFundingPaymentModal}
-        tradingData={tradingData}
-        setShowFundingPaymentModal={setShowFundingPaymentModal}
-      />
-
-      {/* {isGapAboveLimit ? (
-        <div className="mt-[18px] flex items-start space-x-[6px]">
-          <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
-          <p className="text-b3 text-warn">
-            Warning: vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
-            based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
-            <a
-              target="_blank"
-              href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"
-              className="underline hover:text-warn/50"
-              rel="noreferrer">
-              Learn More
-            </a>
-          </p>
-        </div>
-      ) : null} */}
+      <FundingPaymentModal showFundingPaymentModal={showFundingPaymentModal} setShowFundingPaymentModal={setShowFundingPaymentModal} />
     </div>
   );
 }

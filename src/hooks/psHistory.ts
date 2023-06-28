@@ -103,7 +103,7 @@ export const usePsHistoryByMonth = (): { [key: string]: Array<PositionHistoryRec
       .sort((a, b) => b.timestamp - a.timestamp)
       .reduce((group: { [key: string]: Array<PositionHistoryRecord> }, record: PositionHistoryRecord) => {
         const date = new Date(record.timestamp * 1000);
-        const month = `${`0${date.getMonth()}`.substring(-2)}/${date.getFullYear()}`;
+        const month = `${`0${date.getMonth() + 1}`.substring(-2)}/${date.getFullYear()}`;
         const res = group;
         res[month] = res[month] ?? [];
         res[month].push(record);

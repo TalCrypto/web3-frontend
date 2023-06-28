@@ -28,6 +28,7 @@ import EventManager from '@/components/updaters/EventManager';
 import Switcher from '@/components/trade/mobile/collection/Switcher';
 import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
+import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 // const getCollectionInformation = (collectionName: any) => {
 //   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
 //   return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
@@ -77,7 +78,7 @@ function TradePage(props: WithRouterProps) {
           <div className="mt-12 bg-darkBlue">
             {/* <ChartMobile /> */}
 
-            {/* {isConnected ? <PositionMobile /> : null} */}
+            {isConnected ? <PositionMobile /> : null}
 
             <InformationMobile />
 
