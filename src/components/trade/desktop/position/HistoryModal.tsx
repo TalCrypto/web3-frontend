@@ -46,7 +46,7 @@ function DetailRowWithPriceIcon(props: any) {
 
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
-  const historyRecordsByMonth = usePsHistoryByMonth();
+  const { psHistoryByMonth, psAmmHistoryByMonth } = usePsHistoryByMonth();
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 
   const hide = () => {
@@ -55,12 +55,12 @@ const HistoryModal = (props: any) => {
   };
 
   useEffect(() => {
-    const recordMonths: Array<string> = Object.keys(historyRecordsByMonth);
+    const recordMonths: Array<string> = Object.keys(psHistoryByMonth);
     if (recordMonths.length > 0) {
-      const record = historyRecordsByMonth[recordMonths[0]]?.[0];
+      const record = psHistoryByMonth[recordMonths[0]]?.[0];
       setSelectedRecord(record);
     }
-  }, [historyRecordsByMonth]);
+  }, [psHistoryByMonth]);
 
   const toggleCollapse = (id: any, imageId: any) => {
     const modal = document.getElementById(id);
@@ -146,7 +146,7 @@ const HistoryModal = (props: any) => {
         onClick={e => {
           e.stopPropagation();
         }}>
-        {Object.keys(historyRecordsByMonth).length === 0 ? (
+        {Object.keys(psAmmHistoryByMonth).length === 0 ? (
           <div className="w-full">
             <div className="flex justify-between rounded-[12px] px-6 py-[27px] text-[12px]">
               <div className="flex text-[16px] font-semibold text-white">
@@ -176,8 +176,8 @@ const HistoryModal = (props: any) => {
                 </div>
               </div>
               <div className="scrollable h-[500px] overflow-auto p-1">
-                {Object.keys(historyRecordsByMonth).map((month: any) => {
-                  const records: Array<PositionHistoryRecord> = historyRecordsByMonth[month];
+                {Object.keys(psAmmHistoryByMonth).map((month: any) => {
+                  const records: Array<PositionHistoryRecord> = psAmmHistoryByMonth[month];
                   return (
                     <div key={`group-${month}`} className="mb-1 bg-lightBlue">
                       <div

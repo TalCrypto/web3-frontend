@@ -113,7 +113,7 @@ export default function PositionMobile() {
       <div>
         <div className="px-5 pb-2 pt-6">
           <div className="mb-3 flex">
-            <div className="w-[150px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
+            <div className="w-[180px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon
                 priceValue={positionInfo.unrealizedPnl === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
@@ -124,7 +124,18 @@ export default function PositionMobile() {
           </div>
 
           <div className="mb-3 flex">
-            <div className="w-[150px] text-[14px] text-mediumEmphasis">Type</div>
+            <div className="w-[180px] text-[14px] text-mediumEmphasis">Accu. Fund. Payment</div>
+            <div className="text-[14px] font-normal">
+              <MedPriceIcon
+                priceValue={positionInfo.fundingPayment === 0 ? '0.0000' : positionInfo.fundingPayment.toFixed(4)}
+                className={positionInfo.fundingPayment > 0 ? 'text-marketGreen' : positionInfo.fundingPayment === 0 ? '' : 'text-marketRed'}
+                isLoading={isLoading || isPending}
+              />
+            </div>
+          </div>
+
+          <div className="mb-3 flex">
+            <div className="w-[180px] text-[14px] text-mediumEmphasis">Type</div>
             <div className="text-[14px] font-normal">
               <span className={!positionInfo ? '' : positionInfo.size > 0 ? 'text-marketGreen' : 'text-marketRed'}>
                 {!positionInfo ? '---' : positionInfo.size > 0 ? 'LONG' : 'SHORT'}
@@ -133,28 +144,28 @@ export default function PositionMobile() {
           </div>
 
           <div className="mb-3 flex">
-            <div className="w-[150px] text-[14px] text-mediumEmphasis">Entry Price</div>
+            <div className="w-[180px] text-[14px] text-mediumEmphasis">Avg. Entry Price</div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon
                 priceValue={!positionInfo ? '---' : positionInfo.entryPrice < 0 ? '0.00' : positionInfo.entryPrice.toFixed(4)}
-                className="text-[15px] font-normal"
+                className="font-normal"
                 isLoading={isLoading || isPending}
               />
             </div>
           </div>
 
           <div className="mb-3 flex">
-            <div className="w-[150px] text-[14px] text-mediumEmphasis">Notional</div>
+            <div className="w-[180px] text-[14px] text-mediumEmphasis">Notional</div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon priceValue={positionInfo.currentNotional.toFixed(4)} isLoading={isLoading || isPending} />
             </div>
           </div>
 
           <div className="mb-3 flex">
-            <div className="w-[150px] text-[14px] text-mediumEmphasis">Leverage</div>
+            <div className="w-[180px] text-[14px] text-mediumEmphasis">Leverage</div>
 
             <div className="text-[14px] font-normal">
-              <span className={`text-[15px] font-normal ${isLoading || isPending ? 'flash' : ''}`}>
+              <span className={`font-normal ${isLoading || isPending ? 'flash' : ''}`}>
                 {!positionInfo
                   ? '---'
                   : positionInfo.leverage <= 0
@@ -174,7 +185,7 @@ export default function PositionMobile() {
           </div>
 
           <div className="mb-3 flex">
-            <div className="w-[150px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
+            <div className="w-[180px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon
                 priceValue={!positionInfo ? '---' : positionInfo.liquidationPrice < 0 ? '0.00' : positionInfo.liquidationPrice.toFixed(2)}

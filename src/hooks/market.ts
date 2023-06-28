@@ -10,8 +10,8 @@ import { getAMMByAddress, getSupportedAMMAddresses, getSupportedAMMs } from '@/c
 import { getDailySpotPriceGraphData } from '@/utils/trading';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
 import { formatBigInt } from '@/utils/bigInt';
-import { Address, Chain, useContractRead, usePublicClient } from 'wagmi';
-import { getAMMContract, getCHViewerContract } from '@/const/contracts';
+import { usePublicClient } from 'wagmi';
+import { getCHViewerContract } from '@/const/contracts';
 import { ammAbi, chViewerAbi } from '@/const/abi';
 
 export interface CollectionOverview {
@@ -66,7 +66,6 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
         })
       );
       const vammStartPriceList = vammStartReserveList.map(reserveSnapshot => (reserveSnapshot[0] * BigInt(10 ** 18)) / reserveSnapshot[1]);
-      console.log(dailyVolumeList);
       const vammPriceList = await Promise.all(
         ammAddrList.map(ammAddr => {
           const vammPrice = publicClient.readContract({

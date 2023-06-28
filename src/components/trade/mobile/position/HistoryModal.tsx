@@ -47,19 +47,19 @@ function DetailRowWithPriceIcon(props: any) {
 
 const HistoryModal = (props: any) => {
   const { showHistoryModal, setShowHistoryModal } = props;
-  const historyRecordsByMonth = usePsHistoryByMonth();
+  const { psHistoryByMonth, psAmmHistoryByMonth } = usePsHistoryByMonth();
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [selectedBalance, setSelectedBalance] = useState('');
 
   useEffect(() => {
-    const recordMonths: any = Object.keys(historyRecordsByMonth);
+    const recordMonths: any = Object.keys(psHistoryByMonth);
     if (recordMonths.length > 0) {
-      const record = historyRecordsByMonth[recordMonths[0]]?.[0];
+      const record = psHistoryByMonth[recordMonths[0]]?.[0];
       setSelectedRecord(record);
     }
-  }, [historyRecordsByMonth]);
+  }, [psHistoryByMonth]);
 
   const detailRow = (label: any, content: any) => (
     <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 text-[14px]">
@@ -166,7 +166,7 @@ const HistoryModal = (props: any) => {
         onClick={e => {
           e.stopPropagation();
         }}>
-        {Object.keys(historyRecordsByMonth).length === 0 ? (
+        {Object.keys(psAmmHistoryByMonth).length === 0 ? (
           <div className="flex h-full w-full items-center justify-center bg-lightBlue">
             <div>
               <div className="mb-2 flex items-center justify-center">
@@ -179,8 +179,9 @@ const HistoryModal = (props: any) => {
           <>
             <div className="relative h-full w-full bg-darkBlue">
               <div className="h-full w-full overflow-auto pb-[10px]">
-                {Object.keys(historyRecordsByMonth).map((month: any) => {
-                  const records: any = historyRecordsByMonth[month];
+                {Object.keys(psAmmHistoryByMonth).map((month: any) => {
+                  const records: any = psAmmHistoryByMonth[month];
+
                   return (
                     <div id={`group-${month}`} className="collapsible">
                       {records.map((record: any, idx: any) => {

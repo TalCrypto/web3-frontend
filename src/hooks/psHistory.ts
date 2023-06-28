@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Address, getAddress } from 'viem';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userAddress, $currentChain } from '@/stores/user';
+import { $currentAmm } from '@/stores/trading';
 
 export interface PositionHistoryRecord {
   amm: AMM;
@@ -95,21 +96,33 @@ export const usePositionHistory = (): Array<PositionHistoryRecord> => {
   return history;
 };
 
-export const usePsHistoryByMonth = (): { [key: string]: Array<PositionHistoryRecord> } => {
+export const usePsHistoryByMonth = () => {
   const history = usePositionHistory();
-  const [psHistoryByMonth, setPsHisotryMyMonth] = useState<{ [key: string]: Array<PositionHistoryRecord> }>({});
+  const currentAmm = useNanostore($currentAmm);
+  const [psHistoryByMonth, setPsHistoryMyMonth] = useState<{ [key: string]: Array<PositionHistoryRecord> }>({});
+  const [psAmmHistoryByMonth, setPsAmmHistoryMyMonth] = useState<{ [key: string]: Array<PositionHistoryRecord> }>({});
+
   useEffect(() => {
+    const currentHistoryByMonth: any = {};
+
     const historyGroupByMonth = history
       .sort((a, b) => b.timestamp - a.timestamp)
       .reduce((group: { [key: string]: Array<PositionHistoryRecord> }, record: PositionHistoryRecord) => {
         const date = new Date(record.timestamp * 1000);
-        const month = `${`0${date.getMonth() + 1}`.substring(-2)}/${date.getFullYear()}`;
+        const month = `${`0${date.getMonth() + 1}`.slice(-2)}/${date.getFullYear()}`;
         const res = group;
         res[month] = res[month] ?? [];
         res[month].push(record);
+
+        if (currentAmm && record.amm.toLowerCase() === currentAmm.toLowerCase()) {
+          currentHistoryByMonth[month] = currentHistoryByMonth[month] ?? [];
+          currentHistoryByMonth[month].push(record);
+        }
+
         return res;
       }, {});
-    setPsHisotryMyMonth(historyGroupByMonth);
-  }, [history]);
-  return psHistoryByMonth;
+    setPsHistoryMyMonth(historyGroupByMonth);
+    setPsAmmHistoryMyMonth(currentHistoryByMonth);
+  }, [history, currentAmm]);
+  return { psHistoryByMonth, psAmmHistoryByMonth };
 };

@@ -512,7 +512,7 @@ export default function MainTradeComponent() {
           onError={handleError}
         />
       )}
-      {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null}
+      {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
       <Tips
         isConnected={isConnected}
         isWrongNetwork={isWrongNetwork}
