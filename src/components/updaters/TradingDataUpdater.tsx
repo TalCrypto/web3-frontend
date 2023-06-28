@@ -1,6 +1,6 @@
 import { Contract, getAMMContract, getCHViewerContract } from '@/const/contracts';
 import React, { useEffect } from 'react';
-import { useContractRead } from 'wagmi';
+import { useContractReads } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $oraclePrice, $vammPrice, $nextFundingTime, $fundingRates, $openInterests } from '@/stores/trading';
 import { ammAbi, chViewerAbi } from '@/const/abi';
@@ -8,18 +8,24 @@ import { formatBigInt } from '@/utils/bigInt';
 import { $currentChain } from '@/stores/user';
 
 const Updater = ({ ammContract, chViewer }: { ammContract: Contract; chViewer: Contract }) => {
-  const { data: vammPrice } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'getSpotPrice', watch: true });
-  const { data: oraclePrice } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'getUnderlyingPrice', watch: true });
-  const { data: nextFundingTime } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'nextFundingTime', watch: true });
-  const { data: longPositionSize } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'longPositionSize', watch: true });
-  const { data: shortPositionSize } = useContractRead({ ...ammContract, abi: ammAbi, functionName: 'shortPositionSize', watch: true });
-  const { data: fundingRatesData } = useContractRead({
-    ...chViewer,
-    abi: chViewerAbi,
-    functionName: 'getFundingRates',
-    args: [ammContract.address],
+  const { data } = useContractReads({
+    contracts: [
+      { ...ammContract, abi: ammAbi, functionName: 'getSpotPrice' },
+      { ...ammContract, abi: ammAbi, functionName: 'getUnderlyingPrice' },
+      { ...ammContract, abi: ammAbi, functionName: 'nextFundingTime' },
+      { ...ammContract, abi: ammAbi, functionName: 'longPositionSize' },
+      { ...ammContract, abi: ammAbi, functionName: 'shortPositionSize' },
+      { ...chViewer, abi: chViewerAbi, functionName: 'getFundingRates', args: [ammContract.address] }
+    ],
     watch: true
   });
+
+  const vammPrice = data ? data[0].result : undefined;
+  const oraclePrice = data ? data[1].result : undefined;
+  const nextFundingTime = data ? data[2].result : undefined;
+  const longPositionSize = data ? data[3].result : undefined;
+  const shortPositionSize = data ? data[4].result : undefined;
+  const fundingRatesData = data ? data[5].result : undefined;
 
   useEffect(() => {
     if (vammPrice !== undefined) {
