@@ -1,43 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-array-index-key */
-// import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-// import { apiConnection } from '@/utils/apiConnection';
-// import { calculateNumber } from '@/utils/calculateNumbers';
-import React /* , { useEffect, useState } */ from 'react';
+import React from 'react';
 import Image from 'next/image';
-// import { formatDateTime } from '@/utils/date';
-// import { ThreeDots } from 'react-loader-spinner';
-// import { useStore as useNanostore } from '@nanostores/react';
-// import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
 import { $isShowMobileModal } from '@/stores/modal';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
+import { useFundingPaymentHistory } from '@/hooks/fpHistory';
+import { $currentAmm } from '@/stores/trading';
+import { useStore as useNanostore } from '@nanostores/react';
+import { getCollectionInformation } from '@/const/collectionList';
+import { formatDateTime } from '@/utils/date';
+import { ThreeDots } from 'react-loader-spinner';
 
 const FundingPaymentModal = (props: any) => {
   const { showFundingPaymentModal, setShowFundingPaymentModal } = props;
-
-  // const currentToken = useNanostore(wsCurrentToken);
-  // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  // const currentCollectionName = currentCollection.shortName || 'DEGODS';
-
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [fpRecords, setFpRecords] = useState([]);
-  // const [fpTotal, setFpTotal] = useState(0);
-
-  // const currentAmm = currentCollection.amm;
-
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   // setFpTotal(0);
-  //   // if (walletProvider.holderAddress) {
-  //   //   apiConnection.getUserFundingPaymentHistoryWithAmm(walletProvider.holderAddress, currentAmm).then(data => {
-  //   //     const total: any = Number(calculateNumber(data.data.total, 6))?.toFixed(6);
-  //   //     setFpTotal(total);
-  //   //     setFpRecords(data.data.fundingPaymentPnlHistory);
-  //   //     setIsLoading(false);
-  //   //   });
-  //   // } else {
-  //   setIsLoading(false);
-  //   // }
-  // }, [wsFullWalletAddress]);
+  const currentAmm: any = useNanostore($currentAmm);
+  const { total: fpTotal, fpRecords } = useFundingPaymentHistory(currentAmm);
+  const collectionInfo = getCollectionInformation(currentAmm);
 
   const handleBackClick = () => {
     setShowFundingPaymentModal(false);
@@ -57,7 +35,7 @@ const FundingPaymentModal = (props: any) => {
         border-[#71aaff38] bg-lightBlue text-[14px] font-normal text-mediumEmphasis"
         onClick={e => e.stopPropagation()}>
         <div className="scrollable h-full overflow-y-scroll pb-[100px]">
-          {/* {isLoading ? (
+          {!fpRecords ? (
             <div className="flex h-full items-center justify-center">
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
             </div>
@@ -66,17 +44,20 @@ const FundingPaymentModal = (props: any) => {
               <div className="py-6 pl-[38px]">P/L</div>
               {fpRecords.map((item: any, idx: any) => {
                 const timeValue = formatDateTime(item.timestamp, 'L HH:mm');
-                const value = Number(calculateNumber(item.fundingPaymentPnl, 6))?.toFixed(6);
+                const value = item.fundingPaymentPnl.toFixed(6);
                 return (
                   <div className="p-3" key={`fp-row-${idx}`}>
                     <div className="flex min-w-[190px] items-center px-[18px]">
                       <div className="mr-2 h-[46px] w-[2px] rounded-[2px] bg-[#4287f5]" />
                       <div>
-                        <p className="text-[16px]">{timeValue}</p>
+                        <p className="text-[12px]">{timeValue}</p>
                         <div className="">
                           <PriceWithIcon
                             priceValue={Number(value) > 0 ? `+${value}` : Number(value) === 0 ? '0.000000' : value}
-                            className={Number(value) > 0 ? 'text-marketGreen' : Number(value) === 0 ? '' : 'text-marketRed'}
+                            className={`
+                              mt-3 text-[15px]
+                              ${Number(value) > 0 ? 'text-marketGreen' : Number(value) === 0 ? '' : 'text-marketRed'}
+                            `}
                           />
                         </div>
                       </div>
@@ -95,7 +76,7 @@ const FundingPaymentModal = (props: any) => {
                 <div className="text-highEmphasis">No funding payment history.</div>
               </div>
             </div>
-          )} */}
+          )}
         </div>
       </div>
 
@@ -105,14 +86,14 @@ const FundingPaymentModal = (props: any) => {
       ">
         <div className="flex h-[50px] w-full justify-between px-[22px] py-4">
           <span className="mr-[36px] text-highEmphasis">Total Received: </span>
-          {/* {fpRecords.length > 0 ? (
+          {fpRecords && fpRecords.length > 0 ? (
             <PriceWithIcon
-              priceValue={fpTotal > 0 ? `+${fpTotal}` : fpTotal === 0 ? '0.000000' : fpTotal}
+              priceValue={fpTotal > 0 ? `+${fpTotal}` : fpTotal === 0 ? '0.000000' : fpTotal.toFixed(6)}
               className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
             />
           ) : (
             <PriceWithIcon priceValue="-:--" />
-          )} */}
+          )}
         </div>
         <div className="flex h-[50px] w-full items-center justify-center px-[22px] py-4">
           <Image
@@ -123,7 +104,7 @@ const FundingPaymentModal = (props: any) => {
             alt=""
             onClick={handleBackClick}
           />
-          {/* <div className="flex">{currentCollectionName} Funding Payment History</div> */}
+          <div className="flex">{collectionInfo.name} Funding Payment History</div>
         </div>
       </div>
     </div>

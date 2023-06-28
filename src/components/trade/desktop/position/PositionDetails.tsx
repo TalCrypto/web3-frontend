@@ -146,9 +146,7 @@ export default function PositionDetails() {
           ) : null}
         </div>
         {showHistoryModal ? <HistoryModal setShowHistoryModal={setShowHistoryModal} /> : null}
-        {showFundingPaymentModal && currentAmm ? (
-          <FundingPaymentModal setShowFundingPaymentModal={setShowFundingPaymentModal} amm={currentAmm} />
-        ) : null}
+        {showFundingPaymentModal && currentAmm ? <FundingPaymentModal setShowFundingPaymentModal={setShowFundingPaymentModal} /> : null}
       </div>
       <div className="px-9">
         <div className="mb-6 flex justify-between font-medium text-mediumEmphasis">

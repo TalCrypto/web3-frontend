@@ -183,7 +183,7 @@ const HistoryModal = (props: any) => {
                   const records: any = psAmmHistoryByMonth[month];
 
                   return (
-                    <div id={`group-${month}`} className="collapsible">
+                    <div id={`group-${month}`} key={`group-${month}`} className="collapsible">
                       {records.map((record: any, idx: any) => {
                         const currentRecordType = getTradingActionType(record);
                         const recordAmount = Math.abs(record.amount);

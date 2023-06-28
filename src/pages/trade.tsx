@@ -76,7 +76,7 @@ function TradePage(props: WithRouterProps) {
           {/* <Switcher /> */}
 
           <div className="mt-12 bg-darkBlue">
-            {/* <ChartMobile /> */}
+            <ChartMobile />
 
             {isConnected ? <PositionMobile /> : null}
 

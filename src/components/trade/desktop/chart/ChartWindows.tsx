@@ -3,22 +3,19 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { firebaseAnalytics } from '@/const/firebaseConfig';
 
-import { AMM, getCollectionInformation } from '@/const/collectionList';
+import { getCollectionInformation } from '@/const/collectionList';
 
 import TitleTips from '@/components/common/TitleTips';
-import { apiConnection } from '@/utils/apiConnection';
 
 import Tooltip from '@/components/common/Tooltip';
-import { Address } from 'wagmi';
 import {
   $collectionConfig,
   $currentAmm,
@@ -30,6 +27,7 @@ import {
   $vammPrice
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
+import ChartDisplay from '@/components/common/ChartDisplay';
 
 const flashAnim = 'flash';
 
@@ -42,10 +40,6 @@ function SmallPriceIcon(props: any) {
     </div>
   );
 }
-
-const ChartDisplay = dynamic(() => import('../../../common/ChartDisplay'), {
-  ssr: false
-});
 
 function PriceIndicator(props: {
   isStartLoadingChart: boolean;
@@ -87,6 +81,7 @@ function PriceIndicator(props: {
 function ChartTimeTabs(props: any) {
   const { contentArray = [], controlRef, isStartLoadingChart } = props;
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
+  const [isVisible, setIsVisible] = useState(false);
 
   const setSelectedTimeIndex = (index: number) => {
     $selectedTimeIndex.set(index);
@@ -94,6 +89,9 @@ function ChartTimeTabs(props: any) {
 
   const updateSelectedTimeIndex = () => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
+    if (activeSegmentRef.current === null) {
+      return;
+    }
     const { offsetLeft, offsetWidth } = activeSegmentRef.current;
     const { style } = controlRef.current;
     style.setProperty('--highlight-width', `${offsetWidth}px`);
@@ -104,8 +102,29 @@ function ChartTimeTabs(props: any) {
     updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
 
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      const element = document.getElementById('divTradeWindow');
+      if (element === null) return;
+      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
+      if (isVisibleNow && !isVisible) {
+        setIsVisible(true);
+        updateSelectedTimeIndex();
+      } else if (!isVisibleNow && isVisible) {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isVisible, selectedTimeIndex]);
+
   return (
-    <div className="relative flex px-0 text-center" ref={controlRef} style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+    <div className="relative flex px-0 text-center" ref={controlRef}>
       <div
         className="absolute bottom-0 left-0 right-0 z-0 h-[3px]
           w-[var(--highlight-width)] translate-x-[var(--highlight-x-pos)]

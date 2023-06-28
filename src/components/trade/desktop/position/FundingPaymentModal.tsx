@@ -5,15 +5,17 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
-import { $collectionConfig, $fundingRates, $nextFundingTime } from '@/stores/trading';
-import { AMM, getCollectionInformation } from '@/const/collectionList';
+import { $collectionConfig, $currentAmm, $fundingRates, $nextFundingTime } from '@/stores/trading';
+import { getCollectionInformation } from '@/const/collectionList';
 import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 import { useStore as useNanostore } from '@nanostores/react';
 
-const FundingPaymentModal = (props: { amm: AMM; setShowFundingPaymentModal: any }) => {
-  const { setShowFundingPaymentModal, amm } = props;
-  const { total: fpTotal, fpRecords } = useFundingPaymentHistory(amm);
-  const collectionInfo = getCollectionInformation(amm);
+const FundingPaymentModal = (props: { setShowFundingPaymentModal: any }) => {
+  const { setShowFundingPaymentModal } = props;
+  const currentAmm: any = useNanostore($currentAmm);
+  const { total: fpTotal, fpRecords } = useFundingPaymentHistory(currentAmm);
+
+  const collectionInfo = getCollectionInformation(currentAmm);
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
   const { fundingPeriod } = useNanostore($collectionConfig);
   const fundingRates = useNanostore($fundingRates);
@@ -140,12 +142,17 @@ const FundingPaymentModal = (props: { amm: AMM; setShowFundingPaymentModal: any 
                       key={`fp-row-${idx}`}>
                       <div className="flex min-w-[190px] items-center px-[18px]">
                         <div className="mr-2 h-[24px] w-[2px] rounded-[2px] bg-[#4287f5]" />
-                        <p className="text-[16px]">{timeValue}</p>
+                        <p className="text-[16px] font-normal">{timeValue}</p>
                       </div>
                       <div className="min-w-[190px] px-[18px]">
                         <PriceWithIcon
+                          width={20}
+                          height={20}
                           priceValue={Number(value) > 0 ? `+${value}` : Number(value) === 0 ? '0.000000' : value}
-                          className={Number(value) > 0 ? 'text-marketGreen' : Number(value) === 0 ? '' : 'text-marketRed'}
+                          className={`
+                            text-[16px] 
+                            ${Number(value) > 0 ? 'text-marketGreen' : Number(value) === 0 ? '' : 'text-marketRed'}
+                          `}
                         />
                       </div>
                       <div className="flex-2" />

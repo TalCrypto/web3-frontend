@@ -1,79 +1,98 @@
 /* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 
-import React from 'react';
-// import { useStore as useNanostore } from '@nanostores/react';
-// import Image from 'next/image';
-// import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-// import { calculateNumber, formatterValue, isPositive } from '@/utils/calculateNumbers';
-// import { wsCurrentToken } from '@/stores/WalletState';
-// import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { $isShowMobileModal } from '@/stores/modal';
+import { useRouter } from 'next/router';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
+import { $currentAmm } from '@/stores/trading';
+import { useStore as useNanostore } from '@nanostores/react';
+import { getSupportedAMMs } from '@/const/addresses';
+import { useMarketOverview } from '@/hooks/market';
 
 export default function CollectionListModal(props: any) {
-  const { marketData, isShowModal, setIsShowModal } = props;
-  // const currentToken = useNanostore(wsCurrentToken);
-  // const router = useRouter();
+  const { isShowModal, setIsShowModal } = props;
+  const router = useRouter();
+  const currentAmm = useNanostore($currentAmm);
+  const ammList = getSupportedAMMs().filter((amm: AMM) => amm !== currentAmm);
+  const { data } = useMarketOverview(false);
 
-  // const handleMap = (item: any, index: any) => {
-  //   const targetCollection = marketData.filter((param: any) => param.amm === item.amm);
-  //   // const collections = collectionList.filter((param: any) => item.amm === param.amm);
-  //   const defaultValues = { futurePrice: 0, priceChangeRatio24h: 0 };
-  //   const { futurePrice, priceChangeRatio24h } = targetCollection.length !== 0 ? targetCollection[0] : defaultValues;
-
-  //   return (
-  //     <div
-  //       key={index}
-  //       className="flex justify-between px-5 py-3"
-  //       onClick={() => {
-  //         // wsCurrentToken.set(collections[0].collection || 'DEGODS');
-  //         router.push(`/trade/${item.collection.toLowerCase()}`, undefined, { shallow: true });
-  //         setIsShowModal(false);
-  //       }}>
-  //       <Image src={item.logo} className="" alt="" width={32} height={32} />
-  //       <div className="ml-[6px] flex-1">
-  //         <div className="text-[14px] font-semibold text-highEmphasis">{item.title}</div>
-  //         <div className="text-[12px] text-mediumEmphasis">{item.name}</div>
-  //       </div>
-  //       <div className="flex w-[140px] items-center justify-between">
-  //         <div className="">
-  //           <PriceWithIcon priceValue={calculateNumber(futurePrice, 2)} className="!text-mediumEmphasis" />
-  //         </div>
-  //         <div
-  //           className={`flex w-[70px] text-[14px]
-  //           ${isPositive(Number(priceChangeRatio24h)) ? 'text-marketGreen' : 'text-marketRed'}`}>
-  //           <Image
-  //             src={
-  //               isPositive(Number(priceChangeRatio24h))
-  //                 ? '/images/components/trade/chart/polygon_pos.svg'
-  //                 : '/images/components/trade/chart/polygon_neg.svg'
-  //             }
-  //             className=""
-  //             alt=""
-  //             width={16}
-  //             height={16}
-  //           />
-  //           <span className="ml-1">{formatterValue(Math.abs(Number(priceChangeRatio24h)), 2, '%')}</span>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // };
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <div
       className={`t-0 fixed bottom-0 left-0 right-0 z-[12] w-full
-        ${isShowModal && marketData.length > 0 ? 'h-full' : 'h-0'}
+        ${isShowModal ? 'h-full' : 'h-0'}
        bg-black/[.3] backdrop-blur-[4px]`}
       onClick={() => {
         setIsShowModal(false);
         $isShowMobileModal.set(false);
       }}>
       <div
-        className={`absolute bottom-0 w-full bg-secondaryBlue
-        ${isShowModal && marketData.length > 0 ? 'bottom-0' : 'bottom-[-400px]'}
-        transition-bottom duration-500
+        className={`transition-bottom absolute bottom-0 w-full
+        ${isShowModal ? 'bottom-0' : 'bottom-[-400px]'}
+        bg-secondaryBlue duration-500
       `}>
-        {/* {isShowModal ? collectionList.filter(collection => collection.collectionName !== currentToken).map(handleMap) : null} */}
+        {ammList.map((item: any, index) => {
+          const key = `switcher_collection_${index}`;
+          const collectionInfo = getCollectionInformation(item);
+          console.log(item);
+          const tradingData: any = data?.filter((dataItem: any) => item === dataItem.amm);
+
+          return (
+            <div
+              key={key}
+              className="flex justify-between px-5 py-3"
+              onClick={() => {
+                router.push(`/trade/${item.collection.toLowerCase()}`, undefined, { shallow: true });
+                setIsShowModal(false);
+              }}>
+              <Image src={collectionInfo.logo} className="" alt="" width={32} height={32} />
+              <div className="ml-[6px] flex-1">
+                <div className="text-[14px] font-semibold text-highEmphasis">{collectionInfo.title}</div>
+                <div className="text-[12px] text-mediumEmphasis">{collectionInfo.name}</div>
+              </div>
+              <div className="flex w-[140px] items-center justify-between">
+                <div className="">
+                  <PriceWithIcon
+                    priceValue={tradingData && tradingData.vammPrice ? tradingData.vammPrice.toFixed(2) : '0.00'}
+                    className="!text-mediumEmphasis"
+                  />
+                </div>
+                <div
+                  className={`flex w-[70px] text-[14px]
+                    ${
+                      !tradingData || !tradingData.priceChangeRatio24h
+                        ? ''
+                        : tradingData.priceChangeRatio24h > 0
+                        ? 'text-marketGreen'
+                        : tradingData.priceChangeRatio24h < 0
+                        ? 'text-marketRed'
+                        : ''
+                    }`}>
+                  <Image
+                    src={
+                      tradingData && tradingData.priceChangeRatio24h > 0
+                        ? '/images/components/trade/chart/polygon_pos.svg'
+                        : '/images/components/trade/chart/polygon_neg.svg'
+                    }
+                    className=""
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
+                  <span className="ml-1">
+                    {tradingData && tradingData.priceChangeRatio24h ? tradingData.priceChangeRatio24h.toFixed(2) : '0.00'} %
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

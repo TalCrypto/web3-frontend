@@ -8,24 +8,19 @@ import { ThreeDots } from 'react-loader-spinner';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { utils, BigNumber } from 'ethers';
 import Image from 'next/image';
-import { useStore, useStore as useNanostore } from '@nanostores/react';
+import { useStore as useNanostore } from '@nanostores/react';
 
 import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
 
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 
-import {
-  getDailySpotPriceGraphData,
-  getMonthlySpotPriceGraphData,
-  getWeeklySpotPriceGraphData,
-  getThreeMonthlySpotPriceGraphData
-} from '@/utils/trading';
+import { getDailySpotPriceGraphData } from '@/utils/trading';
 
-import { priceGapLimit } from '@/stores/priceGap';
-
-import { wsCurrentToken, wsFullWalletAddress, wsIsLogin, wsSelectedTimeIndex } from '@/stores/WalletState';
 import { getCollectionInformation } from '@/const/collectionList';
 import ChartDisplay from '@/components/common/ChartDisplay';
+
+import { $collectionConfig, $fundingRates, $nextFundingTime, $oraclePrice, $selectedTimeIndex, $vammPrice } from '@/stores/trading';
+import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 
 const flashAnim = 'flash';
 
@@ -101,12 +96,19 @@ function PriceIndicator(props: any) {
 }
 
 function ChartTimeTabs(props: any) {
-  const { setSelectedTimeIndex, isStartLoadingChart, contentArray = [], controlRef } = props;
-  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
+  const { isStartLoadingChart, contentArray = [], controlRef } = props;
+  const selectedTimeIndex = useNanostore($selectedTimeIndex);
   const [isVisible, setIsVisible] = useState(false);
+
+  const setSelectedTimeIndex = (index: number) => {
+    $selectedTimeIndex.set(index);
+  };
 
   const updateSelectedTimeIndex = () => {
     const activeSegmentRef = contentArray[selectedTimeIndex].ref;
+    if (activeSegmentRef.current === null) {
+      return;
+    }
     const { offsetLeft, offsetWidth } = activeSegmentRef.current;
     const { style } = controlRef.current;
     style.setProperty('--highlight-width', `${offsetWidth}px`);
@@ -175,51 +177,40 @@ function ChartTimeTabs(props: any) {
   );
 }
 
-const ChartHeaders = forwardRef((props: any, ref: any) => {
-  const { tradingData, setSelectedTimeIndex, isStartLoadingChart, currentToken } = props;
-  const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
-  const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
+const ChartHeaders = () => {
+  const DEFAULT_TIME = '-- : -- : --';
+  const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
+  const { fundingPeriod } = useNanostore($collectionConfig);
+  const { priceChange, priceChangePct } = useChartData();
 
-  useImperativeHandle(ref, () => ({
-    reset() {
-      setCurrentTagMaxAndMinValue({ max: '-.--', min: '-.--' });
-      setPriceChangeRatioAndValue({ priceChangeRatio: '', priceChangeValue: '' });
-    },
-    setGraphOtherValue(params: any) {
-      const { high, low, priceChangeRatio, priceChangeValue } = params;
-      setCurrentTagMaxAndMinValue({ max: formatterValue(high, 2), min: formatterValue(low, 2) });
-      setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
-    }
-  }));
+  const vAMMPrice = useNanostore($vammPrice);
+  const oraclePrice = useNanostore($oraclePrice);
+  const isGapAboveLimit = useIsOverPriceGap();
+  const fundingRates = useNanostore($fundingRates);
+  const nextFundingTime = useNanostore($nextFundingTime);
 
-  const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
-  const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
 
-  const priceGapLmt = useStore(priceGapLimit);
-  const isGapAboveLimit = priceGapLmt ? Math.abs(priceGap) >= priceGapLmt : false;
-
-  const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-
-  const rateLong = '-.--';
-  const rateShort = '-.--';
+  let rateLong = '-.--';
+  let rateShort = '-.--';
   let longSide = '';
   let shortSide = '';
 
-  if (tradingData && tradingData.fundingRateLong) {
-    const rawdata = utils.formatEther(tradingData.fundingRateLong);
-    const numberRawdata = (Number(rawdata) * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawdata = (fundingRates.longRate * 100).toFixed(4);
+    const absoluteNumber = Math.abs(Number(numberRawdata));
+    rateLong = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
       longSide = 'Pay';
     } else {
       longSide = 'Get';
     }
   }
-
-  if (tradingData && tradingData.fundingRateShort) {
-    const rawdata = utils.formatEther(tradingData.fundingRateShort);
-    const numberRawdata = (Number(rawdata) * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawdata = (fundingRates.shortRate * 100).toFixed(4);
+    const absoluteNumber = Math.abs(Number(numberRawdata));
+    rateShort = ` ${absoluteNumber}%`;
     if (Number(numberRawdata) > 0) {
       shortSide = 'Get';
     } else {
@@ -227,27 +218,62 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
     }
   }
 
+  useEffect(() => {
+    let timer: any;
+    if (!nextFundingTime) {
+      setTimeLabel(DEFAULT_TIME);
+    } else {
+      let endTime = nextFundingTime * 1000;
+      let hours;
+      let minutes;
+      let seconds;
+      timer = setInterval(() => {
+        let difference = endTime - Date.now();
+        if (difference < 0) {
+          endTime = Date.now() + fundingPeriod * 1000;
+          difference = endTime - Date.now();
+        }
+        hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
+          .toString()
+          .padStart(2, '0');
+        minutes = Math.floor((difference / 1000 / 60) % 60)
+          .toString()
+          .padStart(2, '0');
+        seconds = Math.floor((difference / 1000) % 60)
+          .toString()
+          .padStart(2, '0');
+        setTimeLabel(`${hours}:${minutes}:${seconds}`);
+      }, 1000);
+    }
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [nextFundingTime]);
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-2 px-[20px] pt-[27px]">
         <div className="col-span-1">
-          <PriceWithIcon priceValue={formatterValue(tradingData.spotPrice, 2, '', '-.--')} width={22} height={22} medium />
-          <PriceIndicator priceChangeRatioAndValue={priceChangeRatioAndValue} />
+          <PriceWithIcon priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'} width={30} height={30} large />
+          {/* <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={!priceChange} /> */}
         </div>
 
         <div className="col-span-1 text-right">
           <div className="font-400 mb-[8px] mt-[6px] text-[14px]">
             <span className="mr-[6px] text-[12px] text-mediumEmphasis">Oracle:</span>
-            <span className="text-[12px] text-highEmphasis">{formatterValue(tradingData.twapPrice, 2, '', '-.--')}</span>
+            <span className="text-[12px] text-highEmphasis">{oraclePrice ? oraclePrice.toFixed(2) : '-.--'}</span>
           </div>
 
           <div>
             <div className="text-[12px] text-mediumEmphasis">VAMM - Oracle Price Gap:</div>
 
             <div className="mt-1 flex w-full items-center justify-end text-[12px] text-highEmphasis">
-              <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice - oraclePrice).toFixed(2)} (${Math.abs(
-                priceGapPercentage
-              ).toFixed(2)}%)`}</p>
+              <p className="text-highEmphasis">
+                {`${priceGapPercentage > 0 ? '+' : ''}${((vAMMPrice ?? 0) - (oraclePrice ?? 0)).toFixed(2)}
+                (${Math.abs(priceGapPercentage).toFixed(2)}%)`}
+              </p>
 
               {isGapAboveLimit ? (
                 <div>
@@ -266,9 +292,9 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
           <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
         </div>
         <div className="col text-highEmphasis">
-          Long <span className={longSide === 'Pay' ? 'pay' : 'receive'}>{longSide}</span>
+          Long <span className={longSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{longSide}</span>
           {rateLong}
-          &nbsp; Short <span className={shortSide === 'Pay' ? 'pay' : 'receive'}>{shortSide}</span>
+          &nbsp; Short <span className={shortSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{shortSide}</span>
           {rateShort}
         </div>
       </div>
@@ -276,7 +302,6 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
       <div className="flex flex-1 items-end justify-end px-[20px]">
         <ChartTimeTabs
           name="group-1"
-          callback={(val: any) => setSelectedTimeIndex(val)}
           controlRef={useRef()}
           contentArray={[
             { label: '1D', ref: useRef() },
@@ -284,236 +309,32 @@ const ChartHeaders = forwardRef((props: any, ref: any) => {
             { label: '1M', ref: useRef() },
             { label: '3M', ref: useRef() }
           ]}
-          setSelectedTimeIndex={setSelectedTimeIndex}
-          isStartLoadingChart={isStartLoadingChart}
+          isStartLoadingChart={!vAMMPrice}
         />
       </div>
     </div>
   );
-});
+};
 
-const ProComponent = forwardRef((props: any, ref: any) => {
-  const { visible, onVisibleChanged, tradingData, currentToken } = props;
-  const [currentTagMaxAndMinValue, setCurrentTagMaxAndMinValue] = useState({ max: '-.--', min: '-.--' });
-  const [priceChangeRatioAndValue, setPriceChangeRatioAndValue] = useState({ priceChangeRatio: '', priceChangeValue: '' });
-  const [dayVolume, setDayVolume] = useState(tradingData.dayVolume);
-  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
-  const displayTimeKey = ['24Hr', '1W', '1M', '3M'][selectedTimeIndex];
-
-  useImperativeHandle(ref, () => ({
-    reset() {
-      setCurrentTagMaxAndMinValue({ max: '-.--', min: '-.--' });
-      setPriceChangeRatioAndValue({ priceChangeRatio: '', priceChangeValue: '' });
-    },
-    setGraphOtherValue(params: any) {
-      const { high, low, priceChangeRatio, priceChangeValue } = params;
-      setCurrentTagMaxAndMinValue({ max: formatterValue(high, 2), min: formatterValue(low, 2) });
-      setPriceChangeRatioAndValue({ priceChangeRatio, priceChangeValue });
-    }
-  }));
-
-  // handle trading data changed, set volume
-  useEffect(() => {
-    if (tradingData.dayVolume) {
-      setDayVolume(tradingData.dayVolume);
-    }
-  }, [tradingData]);
-
-  // handle interval each 10s fetch volume
-  useEffect(() => {
-    if (!currentToken) {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      const { amm: currentAmm } = getCollectionInformation(currentToken);
-      getDailySpotPriceGraphData(currentAmm).then((dayTradingDetails: any) => {
-        const vol = dayTradingDetails == null ? BigNumber.from(0) : dayTradingDetails.volume;
-        setDayVolume(vol);
-      });
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [currentToken]);
-
-  // animation
-  useEffect(() => {
-    const element = document.querySelector('.pro-data-container');
-    // if (!visible) {
-    //   element.classList.add('display-none');
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    //   return;
-    // }
-
-    // using animate.stye
-    // if (visible) {
-    //   element.classList.remove('animate__animated', 'animate__slideOutRight');
-    //   element.classList.add('animate__animated', 'animate__slideInRight');
-    // } else {
-    //   element.classList.remove('animate__animated', 'animate__slideInRight');
-    //   element.classList.add('animate__animated', 'animate__slideOutRight');
-    // }
-
-    const timer1 = setTimeout(() => {
-      if (onVisibleChanged) onVisibleChanged(visible);
-    }, 500);
-
-    return () => {
-      clearTimeout(timer1);
-    };
-
-    // if (visible) {
-    //   // element.classList.remove('display-none');
-    //   element.style.width = '261px';
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    // } else {
-    //   // element.classList.add('display-none');
-    //   element.style.width = '0px';
-    //   if (onVisibleChanged) onVisibleChanged(visible);
-    // }
-  }, [visible, onVisibleChanged]);
-
-  return (
-    <div
-      className={`w-full whitespace-nowrap rounded-none bg-darkBlue
-        px-[21px] py-[24px] ${visible ? 'visible' : ''}`}>
-      <div className="content flex flex-col space-y-[24px]">
-        <div className="flex text-[14px] text-mediumEmphasis">
-          <div className="flex-1">
-            <p className="text-normal mb-[6px] text-[12px]">{displayTimeKey} High</p>
-            <SmallPriceIcon
-              priceValue={!currentTagMaxAndMinValue.max ? '-.--' : currentTagMaxAndMinValue.max}
-              isLoading={currentTagMaxAndMinValue.max === '-.--'}
-              className="text-normal text-[15px]"
-            />
-          </div>
-          <div className="flex flex-1 flex-col">
-            <p className="text-normal mb-[6px] text-[12px]">{displayTimeKey} Low</p>
-            <SmallPriceIcon
-              priceValue={!currentTagMaxAndMinValue.min ? '-.--' : currentTagMaxAndMinValue.min}
-              isLoading={currentTagMaxAndMinValue.min === '-.--'}
-              className="text-normal text-[15px]"
-            />
-          </div>
-        </div>
-        <div>
-          <div className="flex text-[14px] text-mediumEmphasis">
-            <div className="flex flex-1 flex-col">
-              <span className="text-marketGreen">Long</span>
-              <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
-                {!tradingData.longRatio ? '-.--' : formatterValue(tradingData.longRatio, 0, '%')}
-              </span>
-            </div>
-            <div className="flex flex-1 flex-col text-right">
-              <span className="text-marketRed">Short</span>
-              <span className={`text-highEmphasis ${!tradingData.longRatio ? flashAnim : ''}`}>
-                {!tradingData.shortRatio ? '-.--' : formatterValue(tradingData.shortRatio, 0, '%')}
-              </span>
-            </div>
-          </div>
-          <div className="flex space-x-[3px]">
-            <div
-              style={{ width: `${calculateNumber(tradingData.longRatio, 0)}%` }}
-              className="flex h-[6px] rounded-l-[10px] bg-marketGreen"
-            />
-            <div
-              style={{ width: `${calculateNumber(tradingData.shortRatio, 0)}%` }}
-              className="flex h-[6px] rounded-r-[10px] bg-marketRed"
-            />
-          </div>
-        </div>
-        <div className="text-medium flex text-[12px]">
-          <div className="flex-1">
-            <p className="mb-[6px]">Volume (24Hr)</p>
-            <SmallPriceIcon priceValue={!dayVolume ? '-.--' : formatterValue(dayVolume, 2)} isLoading={!dayVolume} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-function ChartMobile(props: any, ref: any) {
-  const { tradingData } = props;
-  const [isStartLoadingChart, setIsStartLoadingChart] = useState(false);
-  const [lineChartData, setLineChartData] = useState([]);
-
-  const chartProContainerRef = useRef(null);
-  const graphHeaderRef = useRef();
-  const proRef = useRef();
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const currentToken = useNanostore(wsCurrentToken);
-  const selectedTimeIndex = useNanostore(wsSelectedTimeIndex);
-
-  const fetchChartData = async function fetchChartData() {
-    setIsStartLoadingChart(true);
-    // const { amm: currentAmm } = getCollectionInformation(currentToken); // from tokenRef.current
-    const chartData: any = {};
-    if (selectedTimeIndex === 0) {
-      // chartData = await getDailySpotPriceGraphData(currentAmm);
-    } else if (selectedTimeIndex === 1) {
-      // chartData = await getWeeklySpotPriceGraphData(currentAmm);
-    } else if (selectedTimeIndex === 2) {
-      // chartData = await getMonthlySpotPriceGraphData(currentAmm);
-    } else {
-      // chartData = await getThreeMonthlySpotPriceGraphData(currentAmm);
-    }
-    const graphRef: any = graphHeaderRef.current;
-    graphRef?.setGraphOtherValue(chartData);
-    const pRef: any = proRef.current;
-    pRef?.setGraphOtherValue(chartData);
-
-    const dynamicDataSet = chartData.graphData.map((params: any) => {
-      const { end, avgPrice } = params;
-      return { time: end, value: utils.formatEther(avgPrice) };
-    });
-    setLineChartData(dynamicDataSet);
-    // graphDataRef.current.setGb raphValue(dynamicDataSet);
-    setIsStartLoadingChart(false);
-  };
-
-  useImperativeHandle(ref, () => ({ fetchChartData }));
-
-  useEffect(() => {
-    const gRef: any = graphHeaderRef.current;
-    gRef.reset();
-    // graphDataRef.current.reset();
-    const pRef: any = proRef.current;
-    fetchChartData();
-  }, [currentToken, selectedTimeIndex]); // from tokenRef.current
-
-  const handleSelectedTimeIndex = (index: any) => {
-    wsSelectedTimeIndex.set(index);
-  };
+function ChartMobile() {
+  // const { tradingData } = props;
 
   return (
     <>
-      {!tradingData && (
+      {/* {!tradingData && (
         <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
           <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
         </div>
-      )}
+      )} */}
 
-      {tradingData && (
-        <div className="bg-lightBlue">
-          <div className="">
-            <ChartHeaders
-              ref={graphHeaderRef}
-              tradingData={tradingData}
-              setSelectedTimeIndex={handleSelectedTimeIndex}
-              isStartLoadingChart={isStartLoadingChart}
-            />
-            <div ref={chartProContainerRef}>
-              {/* <ChartDisplay
-                lineChartData={lineChartData}
-                isStartLoadingChart={isStartLoadingChart}
-                chartProContainerRef={chartProContainerRef}
-              /> */}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* {tradingData && ( */}
+      <div className="bg-lightBlue">
+        <ChartHeaders />
+        <ChartDisplay />
+      </div>
+      {/* )} */}
     </>
   );
 }
 
-export default forwardRef(ChartMobile);
+export default ChartMobile;
