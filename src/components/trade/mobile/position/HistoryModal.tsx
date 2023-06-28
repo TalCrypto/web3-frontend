@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { wsHistoryGroupByMonth } from '@/stores/WalletState';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 import { PositionActions } from '@/const';
 
 function ExplorerButton(props: any) {

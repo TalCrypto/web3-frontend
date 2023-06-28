@@ -163,3 +163,6 @@ export function addGraphRecord(price?: number /* TODO , notionalValue?: number *
     }
   }
 }
+
+// mobile specialized stores
+export const $isShowTradingMobile = atom(false);

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { wsFullWalletAddress, wsIsLogin, wsIsWalletLoading, wsIsWrongNetwork, wsWethBalance } from '@/stores/WalletState';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
@@ -9,16 +8,17 @@ import { withRouter } from 'next/router';
 // import { localeConversion } from '@/utils/localeConversion';
 // import { calculateNumber } from '@/utils/calculateNumbers';
 // import { userPoint } from '@/stores/airdrop';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
+import { $userAddress, $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
-  const isLogin = useNanostore(wsIsLogin);
-  const isWalletLoading = useNanostore(wsIsWalletLoading);
-  const isWrongNetwork = useNanostore(wsIsWrongNetwork);
+  const isLogin = useNanostore($userIsConnected);
+  const isWalletLoading = useNanostore($userIsConnecting);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
-  const fullWalletAddress = useNanostore(wsFullWalletAddress);
-  const wethBalance = useNanostore(wsWethBalance);
+  const fullWalletAddress = useNanostore($userAddress);
+  const wethBalance = useNanostore($userWethBalance);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
   const [isOthersOpen, setIsOthersOpen] = useState(false);
@@ -44,7 +44,7 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnCopyAddressClick = () => {
-    navigator.clipboard.writeText(fullWalletAddress);
+    navigator.clipboard.writeText(fullWalletAddress ?? '');
   };
 
   const onBtnGetWethClick = () => {

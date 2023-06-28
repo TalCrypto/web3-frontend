@@ -20,7 +20,7 @@ import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
 import { wsCurrentToken, wsFullWalletAddress, wsUserPosition } from '@/stores/WalletState';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;

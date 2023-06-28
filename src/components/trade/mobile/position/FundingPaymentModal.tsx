@@ -9,7 +9,7 @@ import Image from 'next/image';
 // import { ThreeDots } from 'react-loader-spinner';
 // import { useStore as useNanostore } from '@nanostores/react';
 // import { wsCurrentToken, wsFullWalletAddress } from '@/stores/WalletState';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 
 const FundingPaymentModal = (props: any) => {
   const { showFundingPaymentModal, setShowFundingPaymentModal } = props;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import Header from './header';
 import Footer from './footer';

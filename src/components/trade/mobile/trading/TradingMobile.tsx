@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import tradePanelModal from '@/stores/tradePanelModal';
-
 import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
 import TradePanelModal from '@/components/trade/mobile/trading/TradePanelModal';
 
-import { wsCurrentToken, wsIsShowTradingMobile, wsUserPosition } from '@/stores/WalletState';
 import Image from 'next/image';
 // import collectionList from '@/const/collectionList';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 import TradeComponent from '@/components/trade/mobile/trading/tradeComponent';
-// import { connectWallet } from '@/utils/Wallet';
+import { $currentAmm, $isShowTradingMobile } from '@/stores/trading';
+import tradePanelModal from '@/stores/tradePanelModal';
+import { usePositionInfo } from '@/hooks/collection';
 
 function OverFluctuationError(props: any) {
   const { setShowOverFluctuationContent } = props;
@@ -40,16 +39,16 @@ function TradingMobile(props: any) {
   const isTradePanelModalShow = useNanostore(tradePanelModal.show);
   const tradePanelModalMsg = useNanostore(tradePanelModal.message);
   const tradePanelModalLink = useNanostore(tradePanelModal.link);
-  const currentToken = useNanostore(wsCurrentToken);
-  const userPosition: any = useNanostore(wsUserPosition);
+  const currentAmm = useNanostore($currentAmm);
+  const userPosition = usePositionInfo(currentAmm);
   // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
   // const currentCollectionName = currentCollection.collectionName || 'DEGODS';
-  const isShowTradingMobile = useNanostore(wsIsShowTradingMobile);
+  const isShowTradingMobile = useNanostore($isShowTradingMobile);
 
   const traderConnectWallet = () => {
     // connectWallet(() => {}, true);
   };
-  useEffect(() => setTradeWindowIndex(0), [currentToken]);
+  useEffect(() => setTradeWindowIndex(0), [currentAmm]);
 
   const tradeComponent = (
     <TradeComponent refreshPositions={refreshPositions} connectWallet={traderConnectWallet} tradingData={tradingData} />
@@ -70,7 +69,7 @@ function TradingMobile(props: any) {
   };
 
   const handleBackClick = () => {
-    wsIsShowTradingMobile.set(false);
+    $isShowTradingMobile.set(false);
     $isShowMobileModal.set(false);
   };
 
@@ -81,7 +80,7 @@ function TradingMobile(props: any) {
       transition-left duration-500
     `}>
       {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null}
-      {userPosition ? (
+      {userPosition && userPosition.size !== 0 ? (
         <div
           className="border-b-none flex h-[50px] justify-between
             rounded-t-[12px] border-[1px] border-[#71aaff]/[.2]
@@ -102,10 +101,10 @@ function TradingMobile(props: any) {
         </div>
       ) : null}
       <div
-        className={`flex ${userPosition ? 'h-[calc(100%-100px)]' : 'h-[calc(100%-50px)]'}
+        className={`flex ${userPosition && userPosition.size !== 0 ? 'h-[calc(100%-100px)]' : 'h-[calc(100%-50px)]'}
           overflow-y-scroll rounded-b-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
           bg-lightBlue p-[22px] text-white`}>
-        <div className="w-full pb-6">{userPosition ? displayComponent : tradeComponent}</div>
+        <div className="w-full pb-6">{userPosition && userPosition.size !== 0 ? displayComponent : tradeComponent}</div>
         <TradePanelModal
           isShow={isTradePanelModalShow}
           setIsShow={tradePanelModal.setIsShow}

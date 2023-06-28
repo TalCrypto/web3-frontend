@@ -11,7 +11,7 @@ import { formatDateTime } from '@/utils/date';
 import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
 import { getTradingActionType } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;

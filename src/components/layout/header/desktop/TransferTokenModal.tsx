@@ -1,8 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-
-import { wsIsShowTransferTokenModal } from '@/stores/WalletState';
 import { $showGetWEthModal } from '@/stores/modal';
 
 interface ButtonContentProps {
@@ -13,7 +11,7 @@ interface ButtonContentProps {
 
 function ButtonContent({ icon, url, name }: ButtonContentProps) {
   const openUrl = () => {
-    wsIsShowTransferTokenModal.set(false);
+    $showGetWEthModal.set(false);
     window.open(url, '_blank');
   };
 

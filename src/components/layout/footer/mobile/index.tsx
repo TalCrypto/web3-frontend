@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 // import Sidebar from '@/components/layout/footer/mobile/Sidebar';
-import { wsIsShowTradingMobile } from '@/stores/WalletState';
 import { useStore as useNanostore } from '@nanostores/react';
 import MobileMenu from '@/components/trade/mobile/menu';
 import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 import { useWeb3Modal } from '@web3modal/react';
+import { $isShowTradingMobile } from '@/stores/trading';
 
 function MobileFooter() {
   const { open } = useWeb3Modal();
@@ -36,7 +36,7 @@ function MobileFooter() {
       return;
     }
 
-    wsIsShowTradingMobile.set(true);
+    $isShowTradingMobile.set(true);
     $isShowMobileModal.set(true);
   };
 

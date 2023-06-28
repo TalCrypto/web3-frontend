@@ -7,7 +7,7 @@ import React from 'react';
 // import { calculateNumber, formatterValue, isPositive } from '@/utils/calculateNumbers';
 // import { wsCurrentToken } from '@/stores/WalletState';
 // import { useRouter } from 'next/router';
-import { $isShowMobileModal } from '@/stores/common';
+import { $isShowMobileModal } from '@/stores/modal';
 
 export default function CollectionListModal(props: any) {
   const { marketData, isShowModal, setIsShowModal } = props;
