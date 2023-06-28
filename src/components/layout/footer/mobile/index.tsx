@@ -76,7 +76,7 @@ function MobileFooter() {
           {isConnected ? (
             <div className="ml-6 flex-1 text-[12px] font-normal leading-[15px] text-mediumEmphasis">
               Wallet Balance
-              <div className="text-[12px] font-semibold leading-[18px] text-highEmphasis">{wethBalance} WETH</div>
+              <div className="text-[12px] font-semibold leading-[18px] text-highEmphasis">{wethBalance.toFixed(2)} WETH</div>
             </div>
           ) : (
             <div className="ml-6 flex-1 text-[12px] font-normal leading-[15px] text-mediumEmphasis">

@@ -4,24 +4,27 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 
+import { utils } from 'ethers';
 import Image from 'next/image';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { ThreeDots } from 'react-loader-spinner';
+import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TitleTips from '@/components/common/TitleTips';
-
+import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
+// import collectionList from '@/const/collectionList';
+import { pageTitleParser } from '@/utils/eventLog';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
-
-import Tooltip from '@/components/common/Tooltip';
-import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
-import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import TitleTips from '@/components/common/TitleTips';
 import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
+import ApproveButton from '@/components/common/actionBtns/ApproveButton';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
 
 function LongShortRatio(props: any) {
@@ -31,64 +34,30 @@ function LongShortRatio(props: any) {
 
   return (
     <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
-      {userPosition && userPosition.size < 0 ? (
-        <Tooltip
-          direction="top"
-          content={
-            <div className="text-center font-normal text-highEmphasis">
-              To open a long position, please
-              <br /> close your short position first
-            </div>
-          }
-          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
-          text-center text-[14px] font-semibold`}
-          key="long">
-          <div>LONG</div>
-        </Tooltip>
-      ) : (
-        <div
-          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+      <div
+        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-          onClick={() => {
-            if (!userPosition || userPosition.size === 0) {
-              setSaleOrBuyIndex(Side.LONG);
-            }
-          }}>
-          LONG
-        </div>
-      )}
-
-      {userPosition && userPosition.size > 0 ? (
-        <Tooltip
-          direction="top"
-          content={
-            <div className="text-center font-normal text-highEmphasis">
-              To open a short position, please
-              <br /> close your long position first
-            </div>
+        onClick={() => {
+          if (!userPosition) {
+            setSaleOrBuyIndex(0);
           }
-          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-            ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
-            text-center text-[14px] font-semibold`}
-          key="short">
-          <div>SHORT</div>
-        </Tooltip>
-      ) : (
-        <div
-          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-            ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
-            text-center text-[14px] font-semibold hover:text-highEmphasis`}
-          key="short"
-          onClick={() => {
-            if (!userPosition || userPosition.size === 0) {
-              setSaleOrBuyIndex(Side.SHORT);
-            }
-          }}>
-          SHORT
-        </div>
-      )}
+        }}
+        key="long">
+        <div>LONG</div>
+      </div>
+      <div
+        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+          text-center text-[14px] font-semibold hover:text-highEmphasis`}
+        onClick={() => {
+          if (!userPosition) {
+            setSaleOrBuyIndex(1);
+          }
+        }}
+        key="short">
+        <div>SHORT</div>
+      </div>
     </div>
   );
 }
@@ -136,16 +105,16 @@ function QuantityEnter(props: any) {
             <div className="mr-1 flex flex-1">
               <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
             </div>
-            <span className="text-[14px] text-[#ffffffde]">{`${wethBalance.toFixed(4)} WETH`}</span>
+            <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => {}}>
+            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue">
               Get WETH
             </button>
           </div>
         ) : null}
       </div>
       {/* ${isError ? 'bg-marketRed' : ''} */}
-      <div className="pb-3">
+      <div className="py-3">
         <div
           className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
             ${isFocus ? 'valid' : ''}
@@ -159,10 +128,8 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               // pattern="[0-9]*"
-              className={`
-                w-full border-none border-mediumBlue bg-mediumBlue text-right
-                text-[15px] font-semibold text-white outline-none
-              `}
+              className={`w-full border-none border-mediumBlue bg-mediumBlue text-right
+                text-[15px] font-semibold text-white outline-none`}
               value={value}
               placeholder="0.00"
               onChange={handleEnter}
@@ -170,6 +137,11 @@ function QuantityEnter(props: any) {
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               min={0}
+
+              // onClick={e => {
+              //   e.target.selectionStart = e.target.value.length;
+              //   e.target.selectionEnd = e.target.value.length;
+              // }}
             />
           </div>
         </div>
@@ -192,17 +164,19 @@ function LeverageComponent(props: any) {
         <div className="text-[14px] text-[#a3c2ff]">Leverage</div>
         <div className="flex-1 flex-shrink-0 text-right text-[14px] font-semibold">{`${value}x`}</div>
       </div>
-      <div className="mb-6 mt-3">
-        <InputSlider
-          disabled={disabled}
-          defaultValue={1}
-          value={value}
-          min={1}
-          max={10}
-          step={0.1}
-          onChange={onChange}
-          marks={leverageMarks}
-        />
+      <div className="row">
+        <div className="col mb-6 mt-3">
+          <InputSlider
+            disabled={disabled}
+            defaultValue={1}
+            value={value}
+            min={1}
+            max={10}
+            step={0.1}
+            onChange={onChange}
+            marks={leverageMarks}
+          />
+        </div>
       </div>
     </>
   );
@@ -218,27 +192,21 @@ function DisplayValues(props: any) {
     `}>
       <div className="text-[14px] text-mediumEmphasis">{title}</div>
       <div className={`flex-1 flex-shrink-0 text-right text-mediumEmphasis ${valueClassName}`}>
-        <span className="text-[14px]">{value ?? '-.--'}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
+        <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
   );
 }
 
-function EstimatedValueDisplay(props: {
-  estimation: OpenPositionEstimation | undefined;
-  toleranceRate: number;
-  setToleranceRate: (value: any) => void;
-  isAmountTooSmall: boolean;
-  disabled: boolean;
-}) {
+function EstimatedValueDisplay(props: any) {
   const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled } = props;
 
   const sizeNotional = estimation ? estimation.txSummary.notionalSize.toFixed(4) : '-.--';
 
   return (
     <>
-      <div className="mb-4 flex items-center">
-        <div className="font-14 text-color-secondary">
+      <div className="mb-3 flex items-center">
+        <div className="font-14 text-color-secondary col-auto">
           <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
           {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
         </div>
@@ -272,11 +240,12 @@ function EstimatedValueDisplay(props: {
         title="Size (Notional)"
         value={isAmountTooSmall ? '-.--' : sizeNotional}
         unit="WETH"
+        className="slipagerow"
         valueClassName="text-color-primary font-14-600"
         unitClassName="font-12"
       />
       {/* <DisplayValuesWithTooltips title="Transaction Fee" value={fee} unit="WETH" tipsText="0.5% of the notional amount of the trade" /> */}
-      <div className="mb-6 mt-4 h-[0.5px] bg-[#2E4371]" />
+      <div className="my-4 h-[1px] bg-[#2e3064]" />
       <div className="mb-4 flex items-center">
         <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
@@ -320,17 +289,17 @@ function Tips({
     </>
   ) : null;
 
-  return label ? (
+  return (
     <div
       className="mt-4 flex h-[16px] items-center text-[12px]
-    font-normal leading-[16px] text-warn">
+      font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span>{label}</span>
     </div>
-  ) : null;
+  );
 }
 
-function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
+function ExtendedEstimateComponent(props: any) {
   const { estimation } = props;
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
@@ -339,20 +308,18 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
   const isNewPosition = !userPosition || userPosition.size === 0;
 
   return (
-    <div>
-      <div className="mt-6">
-        <div
-          className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-          onClick={() => {
-            isShowDetail(!showDetail);
-          }}>
-          {showDetail ? 'Hide' : 'Show'} Advanced Details
-          {showDetail ? (
-            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
-          ) : (
-            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
-          )}
-        </div>
+    <div className="pb-6">
+      <div
+        className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
+        onClick={() => {
+          isShowDetail(!showDetail);
+        }}>
+        {showDetail ? 'Hide' : 'Show'} Advanced Details
+        {showDetail ? (
+          <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+        ) : (
+          <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+        )}
       </div>
 
       {showDetail ? (
@@ -389,7 +356,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
   );
 }
 
-export default function MainTradeComponent() {
+export default function MainTradeComponent(props: any) {
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
   const isConnected = useNanostore($userIsConnected);
@@ -457,7 +424,12 @@ export default function MainTradeComponent() {
 
   return (
     <div>
-      <LongShortRatio saleOrBuyIndex={saleOrBuyIndex} setSaleOrBuyIndex={setSaleOrBuyIndex} />
+      <LongShortRatio
+        saleOrBuyIndex={saleOrBuyIndex}
+        setSaleOrBuyIndex={setSaleOrBuyIndex}
+
+        // tokenRef={tokenRef}
+      />
       <QuantityEnter
         disabled={isWrongNetwork || isPending}
         value={quantity}
@@ -475,7 +447,7 @@ export default function MainTradeComponent() {
         }}
       />
 
-      <div className="mb-4 h-[0.5px] bg-[#2E4371]" />
+      <div className="mb-6 h-[1px] bg-[#2e3064]" />
 
       <EstimatedValueDisplay
         disabled={isPending || isWrongNetwork}
@@ -512,6 +484,7 @@ export default function MainTradeComponent() {
         />
       )}
       {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
+
       <Tips
         isConnected={isConnected}
         isWrongNetwork={isWrongNetwork}

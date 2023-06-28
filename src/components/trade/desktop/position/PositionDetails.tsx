@@ -114,7 +114,7 @@ export default function PositionDetails() {
       ) : null}
       <div className="mb-6 flex justify-between px-9 pt-6">
         <div className="flex items-center space-x-[6px] ">
-          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
+          <Image src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
           <div className="font-600 text-[16px] text-highEmphasis">My {collectionInfo.collection} Position</div>
           {isPending ? (
             <div
@@ -230,14 +230,14 @@ export default function PositionDetails() {
               {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
+                  titleText={<Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
                 />
               ) : null}
               {liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
+                  titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is at risk of being liquidated. Please manage your risk."
                 />
               ) : null}
@@ -282,7 +282,7 @@ export default function PositionDetails() {
               {positionInfo.leverage <= 0 ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
+                  titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
                 />
               ) : null}

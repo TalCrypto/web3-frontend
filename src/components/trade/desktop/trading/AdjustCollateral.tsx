@@ -97,7 +97,7 @@ function QuantityEnter(props: any) {
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
-            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} className="" />
+            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
             <div className="inputweth">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
@@ -248,7 +248,7 @@ function UpdatedCollateralValue(props: any) {
 //     );
 
 //   return (
-//     <div className={`quantity-tips-container ${isPending ? 'price-fluc' : ''}`}>
+//     <div className={` ${isPending ? 'price-fluc' : ''}`}>
 //       <span
 //         className={`${isPending ? 'text-warn' : 'text-marketRed}'}
 //           mb-2 text-[12px] leading-[20px]`}>
@@ -316,12 +316,12 @@ function AdjustCollateralSlidingBars(props: any) {
         onAfterChange={onChange}
       />
       <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
-        <div className="">
+        <div>
           Current
           <br />
           Collateral
         </div>
-        <div className="">{rightText}</div>
+        <div>{rightText}</div>
       </div>
     </div>
   );

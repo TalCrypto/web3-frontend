@@ -4,15 +4,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
-
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-
 import { getCollectionInformation } from '@/const/collectionList';
-
 import TitleTips from '@/components/common/TitleTips';
 
 import Tooltip from '@/components/common/Tooltip';
@@ -180,7 +175,7 @@ const ChartHeaders = () => {
           <div className="col newcontenttext mb-[16px]">
             <div className="font-400 flex space-x-[12px] text-[14px] text-highEmphasis">
               <div className="flex items-center space-x-[6px] text-[14px] font-normal">
-                {/* <Image className="" src={selectedCollection.logo} width={16} height={16} alt="" /> */}
+                {/* <Image  src={selectedCollection.logo} width={16} height={16} alt="" /> */}
                 <span>{collectionInfo ? collectionInfo.displayCollectionPair : ''}</span>
               </div>
               <div className="font-400 flex text-[14px] text-highEmphasis">
@@ -413,7 +408,7 @@ const ProComponent = () => {
 function ChartWindows(props: any, ref: any) {
   return (
     <div className="chartWindow mb-[36px]">
-      <div className="">
+      <div>
         <ChartHeaders />
         <div className="dividerslim" />
         <div className="chart-pro-container mb-[16px] flex">

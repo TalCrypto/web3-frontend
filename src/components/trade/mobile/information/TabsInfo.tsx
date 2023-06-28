@@ -77,7 +77,7 @@ const MarketTrade = () => {
 
   return (
     <>
-      <div className="">
+      <div>
         <Cell
           items={[
             'User ID',

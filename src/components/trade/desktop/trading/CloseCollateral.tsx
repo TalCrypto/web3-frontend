@@ -6,16 +6,8 @@
 /* eslint-disable operator-linebreak */
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-// import { useRouter } from 'next/router';
-// import { debounce } from 'throttle-debounce';
 import { useStore as useNanostore } from '@nanostores/react';
-// import { firebaseAnalytics } from '@/const/firebaseConfig';
-// import collectionList from '@/const/collectionList';
 import TitleTips from '@/components/common/TitleTips';
-// import tradePanel from '@/stores/tradePanel';
-// import { apiConnection } from '@/utils/apiConnection';
-// import { pageTitleParser } from '@/utils/eventLog';
-// import { hasPartialClose } from '@/stores/UserState';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
@@ -30,8 +22,8 @@ import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
 
 function SectionDividers() {
   return (
-    <div className="">
-      <div className="">
+    <div>
+      <div>
         <div className="mb-6 h-[1px] bg-[#2e3064]" />
       </div>
     </div>
@@ -88,7 +80,7 @@ function QuantityEnter(props: {
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
-            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} className="" />
+            <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
             <div className="inputweth">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
@@ -156,20 +148,6 @@ function UpdateValueDisplay(props: any) {
   );
 }
 
-function UpdateValueNoDataDisplay(props: any) {
-  const { title, unit } = props;
-
-  return (
-    <div className="flex items-center">
-      <div className="text-[14px] text-mediumEmphasis">{title}</div>
-      <div className="text-[14px] font-semibold text-highEmphasis">
-        <span>-.--</span>
-        <span className="text-[14px]">{unit}</span>
-      </div>
-    </div>
-  );
-}
-
 function DisplayValues(props: any) {
   const { title, value, unit = '', valueClassName = '', unitClassName = '', className = '' } = props;
 
@@ -194,7 +172,7 @@ function QuantityTips(props: any) {
   if (!label) return null;
 
   return (
-    <div className="quantity-tips-container">
+    <div>
       <span className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</span>
     </div>
   );
@@ -274,7 +252,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; 
     <>
       {!isFullClose ? (
         <>
-          <div className="row">
+          <div>
             <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Estimated Blended Position</div>
           </div>
           <DisplayValues title="Collateral" value={estimation ? estimation.posInfo.margin.toFixed(4) : '-.--'} unit="WETH" />
@@ -291,7 +269,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; 
         </>
       ) : null}
 
-      <div className="row">
+      <div>
         <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
       </div>
       <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
@@ -328,14 +306,14 @@ function CloseSlider(props: {
         step={0.0001}
       />
       <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
-        <div className="">0</div>
-        <div className="">Total Notional Value</div>
+        <div>0</div>
+        <div>Total Notional Value</div>
       </div>
     </div>
   );
 }
 
-export default function CloseCollateral(props: any) {
+export default function CloseCollateral() {
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
   const maxCloseValue = userPosition?.currentNotional ?? 0;
@@ -438,7 +416,6 @@ export default function CloseCollateral(props: any) {
               disabled={isPending}
               title=""
               type="text"
-              // pattern="[0-9]*"
               className="w-[90%] max-w-[100px]  border-[1px] border-mediumBlue
                 bg-mediumBlue px-1 text-right
                 text-[15px] font-semibold outline-none"

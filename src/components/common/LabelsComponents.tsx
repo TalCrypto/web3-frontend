@@ -30,7 +30,7 @@ export function DetailRowWithPriceIcon(props: any) {
   const numberVal = Number(content);
   return (
     <div className="mt-6 flex justify-between text-[14px]">
-      <div className="">{label}</div>
+      <div>{label}</div>
       <div className="text-white">
         <PriceWithIcon className={`${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
       </div>

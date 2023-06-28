@@ -1,68 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
-import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
-import TradePanelModal from '@/components/trade/mobile/trading/TradePanelModal';
-
 import Image from 'next/image';
-// import collectionList from '@/const/collectionList';
 import { $isShowMobileModal } from '@/stores/modal';
-import TradeComponent from '@/components/trade/mobile/trading/tradeComponent';
 import { $currentAmm, $isShowTradingMobile } from '@/stores/trading';
-import tradePanelModal from '@/stores/tradePanelModal';
 import { usePositionInfo } from '@/hooks/collection';
 
-function OverFluctuationError(props: any) {
-  const { setShowOverFluctuationContent } = props;
-  const closeWindow = () => {
-    setShowOverFluctuationContent(false);
-  };
-  return (
-    <div className="fails">
-      <div className="contents-mod">
-        <div className="col">
-          Your transaction has failed due to high price fluctuation. <br />
-          <br /> Please try again with smaller notional value
-          <div className="confirm" onClick={closeWindow}>
-            <div className="text">OK</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import MainTradeComponent from '@/components/trade/mobile/trading/MainTadeComponent';
+import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
+import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
+import { getCollectionInformation } from '@/const/collectionList';
 
-function TradingMobile(props: any) {
-  const { refreshPositions, tradingData } = props;
+function TradingMobile() {
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
-  const isTradePanelModalShow = useNanostore(tradePanelModal.show);
-  const tradePanelModalMsg = useNanostore(tradePanelModal.message);
-  const tradePanelModalLink = useNanostore(tradePanelModal.link);
   const currentAmm = useNanostore($currentAmm);
+  const currentCollection = getCollectionInformation(currentAmm);
   const userPosition = usePositionInfo(currentAmm);
-  // const currentCollection = collectionList.filter((item: any) => item.collection.toUpperCase() === currentToken.toUpperCase())[0];
-  // const currentCollectionName = currentCollection.collectionName || 'DEGODS';
   const isShowTradingMobile = useNanostore($isShowTradingMobile);
 
-  const traderConnectWallet = () => {
-    // connectWallet(() => {}, true);
-  };
   useEffect(() => setTradeWindowIndex(0), [currentAmm]);
 
-  const tradeComponent = (
-    <TradeComponent refreshPositions={refreshPositions} connectWallet={traderConnectWallet} tradingData={tradingData} />
-  );
+  const mainTradeComponent = <MainTradeComponent />;
 
-  const displayComponent = [
-    tradeComponent,
-    <CloseCollateral refreshPositions={refreshPositions} tradingData={tradingData} setTradeWindowIndex={setTradeWindowIndex} />,
-    <AdjustCollateral refreshPositions={refreshPositions} tradingData={tradingData} />
-  ][tradeWindowIndex];
+  const displayComponent = [mainTradeComponent, <CloseCollateral />, <AdjustCollateral />][tradeWindowIndex];
 
   const tabs = ['Add', 'Close', 'Adjust Collateral'];
-
-  const [showOverFluctuationContent, setShowOverFluctuationContent] = useState(false);
 
   const onTabClick = (index: any) => {
     setTradeWindowIndex(index);
@@ -79,8 +41,7 @@ function TradingMobile(props: any) {
       ${isShowTradingMobile ? 'left-[0]' : 'left-[100%]'}
       transition-left duration-500
     `}>
-      {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null}
-      {userPosition && userPosition.size !== 0 ? (
+      {userPosition?.size !== 0 ? (
         <div
           className="border-b-none flex h-[50px] justify-between
             rounded-t-[12px] border-[1px] border-[#71aaff]/[.2]
@@ -104,13 +65,7 @@ function TradingMobile(props: any) {
         className={`flex ${userPosition && userPosition.size !== 0 ? 'h-[calc(100%-100px)]' : 'h-[calc(100%-50px)]'}
           overflow-y-scroll rounded-b-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
           bg-lightBlue p-[22px] text-white`}>
-        <div className="w-full pb-6">{userPosition && userPosition.size !== 0 ? displayComponent : tradeComponent}</div>
-        <TradePanelModal
-          isShow={isTradePanelModalShow}
-          setIsShow={tradePanelModal.setIsShow}
-          message={tradePanelModalMsg}
-          link={tradePanelModalLink}
-        />
+        <div className="w-full pb-6">{userPosition && userPosition.size !== 0 ? displayComponent : mainTradeComponent}</div>
       </div>
 
       <div
@@ -125,7 +80,7 @@ function TradingMobile(props: any) {
           alt=""
           onClick={handleBackClick}
         />
-        {/* <div className="flex">Trade {currentCollectionName}</div> */}
+        <div className="flex">Trade {currentCollection.name}</div>
       </div>
     </div>
   );

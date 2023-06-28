@@ -4,69 +4,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable operator-linebreak */
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
-import { ThreeDots } from 'react-loader-spinner';
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { utils, BigNumber } from 'ethers';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-
-import { formatterValue, isPositive, calculateNumber } from '@/utils/calculateNumbers';
-
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-
-import { getDailySpotPriceGraphData } from '@/utils/trading';
-
-import { getCollectionInformation } from '@/const/collectionList';
 import ChartDisplay from '@/components/common/ChartDisplay';
 
 import { $collectionConfig, $fundingRates, $nextFundingTime, $oraclePrice, $selectedTimeIndex, $vammPrice } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 
-const flashAnim = 'flash';
-
-function SmallPriceIcon(props: any) {
-  const { priceValue = 0, className = '', iconSize = 16, isLoading = false } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
-    </div>
-  );
-}
-
 function PriceIndicator(props: any) {
-  const { priceChangeRatioAndValue } = props;
-  const { priceChangeRatio } = priceChangeRatioAndValue;
-  const [localPriceChangeRatioAndValue, setLocalPriceChangeRatioAndValue] = useState({
-    priceChangeRatio: '',
-    priceChangeValue: ''
-  });
+  const { priceChangeValue, priceChangeRatio, isStartLoadingChart } = props;
 
-  const [isPriceChange, setIsPriceChange] = useState(false);
-
-  useEffect(() => {
-    setIsPriceChange(true);
-    if (priceChangeRatio) {
-      setTimeout(() => {
-        setLocalPriceChangeRatioAndValue(priceChangeRatioAndValue);
-        setIsPriceChange(false);
-      }, 300);
-    }
-  }, [priceChangeRatioAndValue, priceChangeRatio]);
-
-  if (!localPriceChangeRatioAndValue.priceChangeRatio) {
-    return null;
-  }
-
-  const isLike = isPositive(localPriceChangeRatioAndValue.priceChangeRatio) ? 1 : 0;
-
-  return isPriceChange ? (
+  return isStartLoadingChart || priceChangeValue === undefined || priceChangeRatio === undefined ? (
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'text-marketGreen' : 'text-marketRed'}
+        ${priceChangeRatio > 0 ? 'text-marketGreen' : 'text-marketRed'}
         `}>
-      <div className="">
+      <div>
         <div className="col my-auto">-.-- (-.-- %)</div>
       </div>
     </div>
@@ -74,21 +29,16 @@ function PriceIndicator(props: any) {
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
-        ${isLike ? 'text-marketGreen' : 'text-marketRed'}`}>
+        ${priceChangeRatio > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
       <Image
         alt="Polygon_pos"
-        src={
-          isPositive(localPriceChangeRatioAndValue.priceChangeRatio)
-            ? '/images/components/trade/chart/polygon_pos.svg'
-            : '/images/components/trade/chart/polygon_neg.svg'
-        }
+        src={priceChangeRatio > 0 ? '/images/components/trade/chart/polygon_pos.svg' : '/images/components/trade/chart/polygon_neg.svg'}
         width={16}
         height={16}
       />
       <div>
         <div className="mr-4">
-          {`${formatterValue(Math.abs(Number(localPriceChangeRatioAndValue.priceChangeValue)), 2, '')}
-          (${formatterValue(Math.abs(Number(localPriceChangeRatioAndValue.priceChangeRatio)), 2, '%')})`}
+          {Math.abs(priceChangeValue).toFixed(2)} ({`${Math.abs(priceChangeRatio).toFixed(2)}%`})
         </div>
       </div>
     </div>
@@ -257,7 +207,7 @@ const ChartHeaders = () => {
       <div className="grid grid-cols-2 px-[20px] pt-[27px]">
         <div className="col-span-1">
           <PriceWithIcon priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-          {/* <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={!priceChange} /> */}
+          <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={!priceChange} />
         </div>
 
         <div className="col-span-1 text-right">
@@ -317,23 +267,15 @@ const ChartHeaders = () => {
 };
 
 function ChartMobile() {
-  // const { tradingData } = props;
-
   return (
-    <>
-      {/* {!tradingData && (
-        <div className="flex h-[56px] w-full items-center justify-center bg-darkBlue text-highEmphasis">
-          <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+    <div className="bg-lightBlue">
+      <ChartHeaders />
+      <div className="flex justify-center bg-darkBlue py-6">
+        <div className="w-full">
+          <ChartDisplay />
         </div>
-      )} */}
-
-      {/* {tradingData && ( */}
-      <div className="bg-lightBlue">
-        <ChartHeaders />
-        <ChartDisplay />
       </div>
-      {/* )} */}
-    </>
+    </div>
   );
 }
 

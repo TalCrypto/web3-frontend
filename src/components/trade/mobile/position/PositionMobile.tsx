@@ -89,7 +89,7 @@ export default function PositionMobile() {
     <div className="bg-lightBlue pb-3 pt-6">
       <div className="flex justify-between px-5">
         <div className="flex space-x-[6px]">
-          <Image className="" src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
+          <Image src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
           <div className="text-16 font-600 text-highEmphasis">My {/* currentCollectionName */} Position</div>
         </div>
         <div className="flex space-x-[24px]">
@@ -177,7 +177,7 @@ export default function PositionMobile() {
               {positionInfo.leverage <= 0 ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
+                  titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
                 />
               ) : null}
@@ -195,14 +195,14 @@ export default function PositionMobile() {
               {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
+                  titleText={<Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
                 />
               ) : null}
               {liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
-                  titleText={<Image className="" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
+                  titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is at risk of being liquidated. Please manage your risk."
                 />
               ) : null}

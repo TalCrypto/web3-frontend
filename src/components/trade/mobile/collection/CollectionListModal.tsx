@@ -51,13 +51,13 @@ export default function CollectionListModal(props: any) {
                 router.push(`/trade/${item.collection.toLowerCase()}`, undefined, { shallow: true });
                 setIsShowModal(false);
               }}>
-              <Image src={collectionInfo.logo} className="" alt="" width={32} height={32} />
+              <Image src={collectionInfo.logo} alt="" width={32} height={32} />
               <div className="ml-[6px] flex-1">
                 <div className="text-[14px] font-semibold text-highEmphasis">{collectionInfo.title}</div>
                 <div className="text-[12px] text-mediumEmphasis">{collectionInfo.name}</div>
               </div>
               <div className="flex w-[140px] items-center justify-between">
-                <div className="">
+                <div>
                   <PriceWithIcon
                     priceValue={tradingData && tradingData.vammPrice ? tradingData.vammPrice.toFixed(2) : '0.00'}
                     className="!text-mediumEmphasis"
@@ -80,7 +80,6 @@ export default function CollectionListModal(props: any) {
                         ? '/images/components/trade/chart/polygon_pos.svg'
                         : '/images/components/trade/chart/polygon_neg.svg'
                     }
-                    className=""
                     alt=""
                     width={16}
                     height={16}

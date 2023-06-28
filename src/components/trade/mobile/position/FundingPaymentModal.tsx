@@ -51,7 +51,7 @@ const FundingPaymentModal = (props: any) => {
                       <div className="mr-2 h-[46px] w-[2px] rounded-[2px] bg-[#4287f5]" />
                       <div>
                         <p className="text-[12px]">{timeValue}</p>
-                        <div className="">
+                        <div>
                           <PriceWithIcon
                             priceValue={Number(value) > 0 ? `+${value}` : Number(value) === 0 ? '0.000000' : value}
                             className={`
