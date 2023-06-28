@@ -46,7 +46,6 @@ export interface CollectionConfig {
   fundingPeriod: number;
   liqSwitchRatio: number;
   initMarginRatio: number;
-  startPrice: number;
 }
 
 export const $vammPrice = atom<number | undefined>();

@@ -81,7 +81,7 @@ const MarketHistoryUpdater = () => {
     };
   }, [currentAmm, chain]);
 
-  // load funding payment history for month
+  // load funding payment history for once
   useEffect(() => {
     function fetch() {
       const ammAddr = getAMMAddress(chain, currentAmm);

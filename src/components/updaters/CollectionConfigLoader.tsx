@@ -12,25 +12,21 @@ const Loader = ({ ammContract, chContract }: { ammContract: Contract; chContract
     contracts: [
       { ...ammContract, abi: ammAbi, functionName: 'initMarginRatio' },
       { ...ammContract, abi: ammAbi, functionName: 'fundingPeriod' },
-      { ...chContract, abi: chAbi, functionName: 'LIQ_SWITCH_RATIO' },
-      { ...ammContract, abi: ammAbi, functionName: 'reserveSnapshots', args: [0n] }
+      { ...chContract, abi: chAbi, functionName: 'LIQ_SWITCH_RATIO' }
     ]
   });
   const initMarginRatio = data ? data[0].result : 0n;
   const fundingPeriod = data ? data[1].result : 0n;
   const liqSwitchRatio = data ? data[2].result : 0n;
-  const startSnapShort = data ? data[3].result : null;
-  const startPrice = startSnapShort ? (startSnapShort[0] * BigInt(10 ** 18)) / startSnapShort[1] : 0n;
   useEffect(() => {
-    if (initMarginRatio && fundingPeriod && liqSwitchRatio && startPrice) {
+    if (initMarginRatio && fundingPeriod && liqSwitchRatio) {
       $collectionConfig.set({
         initMarginRatio: formatBigInt(initMarginRatio),
         fundingPeriod: Number(fundingPeriod),
-        liqSwitchRatio: formatBigInt(liqSwitchRatio),
-        startPrice: formatBigInt(startPrice)
+        liqSwitchRatio: formatBigInt(liqSwitchRatio)
       });
     }
-  }, [initMarginRatio, fundingPeriod, liqSwitchRatio, startPrice]);
+  }, [initMarginRatio, fundingPeriod, liqSwitchRatio]);
   return null;
 };
 
