@@ -4,25 +4,29 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { withRouter } from 'next/router';
-// import { localeConversion } from '@/utils/localeConversion';
-// import { calculateNumber } from '@/utils/calculateNumbers';
-// import { userPoint } from '@/stores/airdrop';
 import { $isShowMobileModal } from '@/stores/modal';
+import { useRouter } from 'next/router';
 import { $userAddress, $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
-  const isLogin = useNanostore($userIsConnected);
+  const isConnected = useNanostore($userIsConnected);
   const isWalletLoading = useNanostore($userIsConnecting);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
-  const fullWalletAddress = useNanostore($userAddress);
+  const address = useNanostore($userAddress);
   const wethBalance = useNanostore($userWethBalance);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
   const [isOthersOpen, setIsOthersOpen] = useState(false);
-  const { router } = props;
+  const router = useRouter();
+
+  // const userPointData = useNanostore(userPoint);
+  // const { total, tradeVol, isBan } = userPointData;
+  // const tradeVolume = calculateNumber(tradeVol.vol, 4);
+  // const eligible = () => Number(tradeVolume) >= 5;
+  // const points = eligible() && !isBan ? localeConversion(total) : '0.0';
+  const points = 0;
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -32,7 +36,7 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnConnectClick = () => {
-    if (!isLogin) {
+    if (!isConnected) {
       // connectWallet(() => {}, false);
     } else if (isWrongNetwork) {
       // updateTargetNetwork();
@@ -44,7 +48,7 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnCopyAddressClick = () => {
-    navigator.clipboard.writeText(fullWalletAddress ?? '');
+    // navigator.clipboard.writeText(address);
   };
 
   const onBtnGetWethClick = () => {
@@ -55,12 +59,11 @@ const MobileMenu = (props: any) => {
     setIsShowSocialFooter(!isShowSocialFooter);
   };
 
-  // const userPointData = useNanostore(userPoint);
-  // const { total, tradeVol, isBan } = userPointData;
-  // const tradeVolume = calculateNumber(tradeVol.vol, 4);
-  // const eligible = () => Number(tradeVolume) >= 5;
-
-  // const points = eligible() && !isBan ? localeConversion(total) : '0.0';
+  const onGotoPage = (url: string) => {
+    setIsShowMobileMenu(false);
+    $isShowMobileModal.set(false);
+    router.push(url);
+  };
 
   return (
     <div
@@ -75,28 +78,28 @@ const MobileMenu = (props: any) => {
             <div className="max-w-[calc(100%-50px)] ">
               <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">EMMMMMMMMMMMA</div>
               <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
-                {/* Points: <span className="font-semibold">{points}</span> */}
+                Points: <span className="font-semibold">{points}</span>
               </span>
             </div>
           </div>
           <div className="scrollable mt-[36px] h-[calc(100%-361px)] overflow-y-scroll">
             <div className="pb-[35px]">
-              <Link
-                href="/portfolio"
+              <div
+                onClick={() => onGotoPage('/portfolio')}
                 className={`
                 ${router.route.toLowerCase() === '/portfolio' ? 'mobile-menu-active font-semibold' : ''}
               `}>
                 Portfolio
-              </Link>
+              </div>
             </div>
             <div className="pb-[35px]">
-              <Link
-                href="/trade"
+              <div
+                onClick={() => onGotoPage('/trade')}
                 className={`
                 ${router.route.toLowerCase() === '/trade' ? 'mobile-menu-active font-semibold' : ''}
               `}>
                 Trade
-              </Link>
+              </div>
             </div>
             {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
             <div className="flex items-center pb-[35px]" onClick={() => setIsOthersOpen(!isOthersOpen)}>
@@ -113,20 +116,20 @@ const MobileMenu = (props: any) => {
             {isOthersOpen ? (
               <>
                 <div className="ml-5 pb-[35px]">
-                  <Link
-                    href="/airdrop"
+                  <div
+                    onClick={() => onGotoPage('/airdrop')}
                     className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Avatar
                     <span
                       className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
-                    py-[1px] text-[8px] text-comingSoon">
+                        py-[1px] text-[8px] text-comingSoon">
                       SOON
                     </span>
-                  </Link>
+                  </div>
                 </div>
                 <div className="ml-5 pb-[35px]">
-                  <Link
-                    href="/airdrop"
+                  <div
+                    onClick={() => onGotoPage('/airdrop')}
                     className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Battle
                     <span
@@ -134,17 +137,13 @@ const MobileMenu = (props: any) => {
                     py-[1px] text-[8px] text-comingSoon">
                       SOON
                     </span>
-                  </Link>
+                  </div>
                 </div>
               </>
             ) : null}
 
             <div className="pb-[35px]">
-              <Link
-                href="/airdrop"
-                className={`
-            ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
-            `}>
+              <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
                 Airdrop
               </Link>
             </div>
@@ -204,7 +203,7 @@ const MobileMenu = (props: any) => {
 
       <div className="fixed bottom-0 h-[250px] w-full bg-secondaryBlue">
         <div className="fixed bottom-[50px] h-[200px] w-full text-center">
-          {!isLogin ? (
+          {!isConnected ? (
             <div className="mx-5">
               <div
                 className="mb-[36px] mt-[62px] text-[14px] font-normal
@@ -233,7 +232,7 @@ const MobileMenu = (props: any) => {
               <div
                 className="mb-[36px] mt-[11px] text-[14px] font-normal
                 text-mediumEmphasis">
-                {walletAddressToShow(fullWalletAddress)}
+                {walletAddressToShow(address)}
               </div>
               <div
                 className="mb-[24px] flex h-[46px] w-full cursor-pointer
@@ -257,7 +256,7 @@ const MobileMenu = (props: any) => {
               <div
                 className="mb-[24px] mt-[11px] text-[14px] font-normal
                 text-mediumEmphasis">
-                {walletAddressToShow(fullWalletAddress)}
+                {walletAddressToShow(address)}
               </div>
               <div className="mb-[24px] flex items-center justify-between">
                 <div
@@ -287,7 +286,7 @@ const MobileMenu = (props: any) => {
         </div>
 
         <div className="fixed bottom-0 h-[50px] w-full px-[50px]">
-          {isLogin ? (
+          {isConnected ? (
             <div className="flex h-full items-center justify-center">
               <div
                 className={`mr-[6px] h-[6px] w-[6px] rounded-full
@@ -319,4 +318,4 @@ const MobileMenu = (props: any) => {
   );
 };
 
-export default withRouter(MobileMenu);
+export default MobileMenu;

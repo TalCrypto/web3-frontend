@@ -23,11 +23,7 @@ export const $psShowFundingPayment = atom(false);
 
 export const $psShowShareIndicator = atom(false);
 
-export const $psUserInfo = atom({});
-
 export const $psShowHistory = atom(false);
-
-export const $psHistoryRecordsByMonth = atom([]);
 
 export const $psSelectedTimeIndex = atom(0);
 

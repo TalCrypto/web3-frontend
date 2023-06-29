@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
-import { calculateNumber } from '@/utils/calculateNumbers';
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';

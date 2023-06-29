@@ -226,14 +226,14 @@ function EstimationComponent(props: {
         <UpdateValueDisplay
           title="Collateral Ratio"
           
-          currentValue={!userPosition ? '-.--' : calculateNumber(userPosition.realMarginRatio, 2)}
+          currentValue={!userPosition ? '-.--' : userPosition.realMarginRatio.toFixed(2)}
           currentUnit="%"
           newValue={
             !isNewPosition
               ? '-.--'
               : Number(closeValue) === Number(currentMaxValue)
               ? '0.00'
-              : calculateNumber(estimatedValue.newPosition.marginRatio, 2)
+              : estimatedValue.newPosition.marginRatio.toFixed(2)
           }
           unit="%"
         />

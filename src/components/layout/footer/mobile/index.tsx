@@ -1,44 +1,15 @@
 import React, { useState } from 'react';
-import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
-// import Sidebar from '@/components/layout/footer/mobile/Sidebar';
-import { useStore as useNanostore } from '@nanostores/react';
-import MobileMenu from '@/components/trade/mobile/menu';
-import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import { useSwitchNetwork } from 'wagmi';
-import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import MobileMenu from '@/components/layout/footer/mobile/menu';
 import { $isShowMobileModal } from '@/stores/modal';
-import { useWeb3Modal } from '@web3modal/react';
-import { $isShowTradingMobile } from '@/stores/trading';
+
+import { useRouter } from 'next/router';
+import MobileTradeFooterInfo from '@/components/layout/footer/mobile/bar/Trade';
+import MobilePortfolioFooterInfo from '@/components/layout/footer/mobile/bar/Portfolio';
 
 function MobileFooter() {
-  const { open } = useWeb3Modal();
-  const { switchNetwork } = useSwitchNetwork();
-  const isConnected = useNanostore($userIsConnected);
-  const isConnecting = useNanostore($userIsConnecting);
-  const wethBalance = useNanostore($userWethBalance);
-  const isWrongNetwork = useNanostore($userIsWrongNetwork);
+  const router = useRouter();
   const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
-  const isWethCollected = wethBalance !== 0;
-
-  const onClickBottomButton = async () => {
-    if (!isConnected) {
-      open({ route: 'ConnectWallet' });
-      return;
-    }
-
-    if (isWrongNetwork && switchNetwork) {
-      switchNetwork(DEFAULT_CHAIN.id);
-      return;
-    }
-
-    if (!isWethCollected) {
-      return;
-    }
-
-    $isShowTradingMobile.set(true);
-    $isShowMobileModal.set(true);
-  };
 
   return (
     <>
@@ -49,42 +20,7 @@ function MobileFooter() {
         <div
           className="box-border flex h-full w-full
             content-center items-center justify-normal overflow-hidden">
-          <button
-            className="relative box-border flex h-full w-[124px] flex-shrink-0
-              items-center justify-center overflow-ellipsis whitespace-nowrap
-              bg-primaryBlue text-xs font-semibold capitalize leading-[17px]
-              text-highEmphasis transition duration-100"
-            onClick={onClickBottomButton}>
-            {isConnecting ? (
-              <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
-            ) : !isConnected ? (
-              <>
-                Connect
-                <br />
-                Wallet
-              </>
-            ) : isWrongNetwork ? (
-              <>
-                Switch to <br /> Arbitrum
-              </>
-            ) : !isWethCollected ? (
-              'Get WETH'
-            ) : (
-              'Trade'
-            )}
-          </button>
-          {isConnected ? (
-            <div className="ml-6 flex-1 text-[12px] font-normal leading-[15px] text-mediumEmphasis">
-              Wallet Balance
-              <div className="text-[12px] font-semibold leading-[18px] text-highEmphasis">{wethBalance.toFixed(2)} WETH</div>
-            </div>
-          ) : (
-            <div className="ml-6 flex-1 text-[12px] font-normal leading-[15px] text-mediumEmphasis">
-              Please connect
-              <br />
-              wallet to trade
-            </div>
-          )}
+          {router.asPath === '/portfolio' ? <MobilePortfolioFooterInfo /> : <MobileTradeFooterInfo />}
 
           <div className="relative h-full w-[50px]">
             <button

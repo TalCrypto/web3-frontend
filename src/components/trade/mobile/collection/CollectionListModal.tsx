@@ -34,7 +34,7 @@ export default function CollectionListModal(props: any) {
       }}>
       <div
         className={`transition-bottom absolute bottom-0 w-full
-        ${isShowModal && data ? 'bottom-0' : 'bottom-[-500px]'}
+        ${isShowModal && data ? 'bottom-0' : 'bottom-[-550px]'}
         bg-secondaryBlue duration-500
       `}>
         {ammList.map((item: any, index) => {

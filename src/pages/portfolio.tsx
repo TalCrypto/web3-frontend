@@ -3,21 +3,11 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable array-callback-return */
 // @ts-nocheck
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
-import { eventParams } from '@/utils/eventLog';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
-import {
-  $psBalance,
-  $psBalanceOriginData,
-  $psHistogramChartData,
-  $psHistoryRecordsByMonth,
-  $psLineChartData,
-  $psSelectedTimeIndex,
-  $psUserInfo,
-  $psUserPosition
-} from '@/stores/portfolio';
+import { $psBalance, $psHistogramChartData, $psLineChartData, $psSelectedTimeIndex, $psUserPosition } from '@/stores/portfolio';
 import PositionInfo from '@/components/portfolio/desktop/PositionInfo';
 import PortfolioEmpty from '@/components/portfolio/mobile/PortfiolioEmpty';
 import AccountChartMobile from '@/components/portfolio/mobile/AccountChartMobile';
@@ -26,8 +16,7 @@ import PositionInfoMobile from '@/components/portfolio/mobile/PositionInfoMobile
 import AccountChart from '@/components/portfolio/desktop/AccountChart';
 import TrendContent from '@/components/portfolio/desktop/TrendContent';
 import PageLoading from '@/components/common/PageLoading';
-import { formatDateTime } from '@/utils/date';
-import { $userAddress, $userIsConnected, $userIsWrongNetwork, $userPositionInfos } from '@/stores/user';
+import { $userAddress, $userIsConnected, $userIsWrongNetwork, $userPositionInfos, $userWethBalance } from '@/stores/user';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
@@ -40,6 +29,15 @@ export default function Portfolio() {
   const ammList = getSupportedAMMs();
   const address = useNanostore($userAddress);
   const selectedTimeIndex = useNanostore($psSelectedTimeIndex);
+  const psBalance = useNanostore($psBalance);
+  const userPosition = useNanostore($psUserPosition);
+  const wethBalance = useNanostore($userWethBalance);
+
+  const userPortfolio = userPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
+  const newBalance = psBalance;
+  newBalance.portfolio = userPortfolio.toFixed(4);
+  newBalance.available = wethBalance.toFixed(4);
+  $psBalance.set(newBalance);
 
   useEffect(() => {
     if (address !== '') {
