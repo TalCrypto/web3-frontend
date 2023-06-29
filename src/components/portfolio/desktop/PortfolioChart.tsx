@@ -250,9 +250,9 @@ function PortfolioChart(props: any) {
           const content =
             `<div class='text-mediumEmphasis mt-1'>${date}</div><div class='text-white mt-1'>Accumulated: ` +
             `<span class='text-b3e ${accumulatedColor}'>${accumulatedPrefix}${
-              isShowBalance ? accumulated : '****'
+              isShowBalance ? accumulated.toFixed(6) : '****'
             }</span></div><div class='text-white'>Daily: ` +
-            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily : '****'}</span></div>`;
+            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily.toFixed(6) : '****'}</span></div>`;
 
           toolTip.style.display = 'block';
           toolTip.innerHTML = content;

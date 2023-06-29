@@ -27,16 +27,46 @@ import AccountChart from '@/components/portfolio/desktop/AccountChart';
 import TrendContent from '@/components/portfolio/desktop/TrendContent';
 import PageLoading from '@/components/common/PageLoading';
 import { formatDateTime } from '@/utils/date';
-import { $userIsConnected, $userIsWrongNetwork, $userPositionInfos } from '@/stores/user';
+import { $userAddress, $userIsConnected, $userIsWrongNetwork, $userPositionInfos } from '@/stores/user';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
+import { formatBigInt } from '@/utils/bigInt';
 
 export default function Portfolio() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const userPositionInfos = useNanostore($userPositionInfos);
   const ammList = getSupportedAMMs();
+  const address = useNanostore($userAddress);
+  const selectedTimeIndex = useNanostore($psSelectedTimeIndex);
+
+  useEffect(() => {
+    if (address !== '') {
+      apiConnection.getWalletChartContent(address, selectedTimeIndex).then((data: any) => {
+        const accumulatedPnlData: any = [];
+        const dailyPnlData: any = [];
+        let accumulatedDailyPnlData = 0;
+
+        data.map((item: any) => {
+          const { time, accumulatedPnl, dailyPnl } = item;
+          accumulatedPnlData.push({
+            time,
+            value: formatBigInt(accumulatedPnl)
+          });
+          dailyPnlData.push({
+            time,
+            value: formatBigInt(dailyPnl),
+            color: formatBigInt(dailyPnl) === 0.0 ? 'rgba(125, 125, 125, 0.3)' : formatBigInt(dailyPnl) > 0 ? '#78f363' : '#ff5656'
+          });
+          accumulatedDailyPnlData += formatBigInt(dailyPnl);
+        });
+
+        $psLineChartData.set(accumulatedPnlData);
+        $psHistogramChartData.set(dailyPnlData);
+      });
+    }
+  }, [selectedTimeIndex, address]);
 
   useEffect(() => {
     const temp = ammList
