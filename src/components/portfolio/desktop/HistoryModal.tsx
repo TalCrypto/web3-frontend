@@ -3,23 +3,22 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
-import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
-import { getTradingActionType } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
+import { $psShowHistory } from '@/stores/portfolio';
+import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
+import { getTradingActionType } from '@/utils/actionType';
+import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
 
-const HistoryModal = (props: any) => {
-  const { setShowHistoryModal } = props;
-  const { psHistoryByMonth, psAmmHistoryByMonth } = usePsHistoryByMonth();
+const HistoryModal = () => {
+  const { psHistoryByMonth } = usePsHistoryByMonth();
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 
   const hide = () => {
-    setShowHistoryModal(false);
+    $psShowHistory.set(false);
   };
 
   useEffect(() => {
@@ -114,7 +113,7 @@ const HistoryModal = (props: any) => {
         onClick={e => {
           e.stopPropagation();
         }}>
-        {Object.keys(psAmmHistoryByMonth).length === 0 ? (
+        {Object.keys(psHistoryByMonth).length === 0 ? (
           <div className="w-full">
             <div className="flex justify-between rounded-[12px] px-6 py-[27px] text-[12px]">
               <div className="flex text-[16px] font-semibold text-white">
@@ -144,8 +143,8 @@ const HistoryModal = (props: any) => {
                 </div>
               </div>
               <div className="scrollable h-[500px] overflow-auto p-1">
-                {Object.keys(psAmmHistoryByMonth).map((month: any) => {
-                  const records: Array<PositionHistoryRecord> = psAmmHistoryByMonth[month];
+                {Object.keys(psHistoryByMonth).map((month: any) => {
+                  const records: any = psHistoryByMonth[month];
                   return (
                     <div key={`group-${month}`} className="mb-1 bg-lightBlue">
                       <div

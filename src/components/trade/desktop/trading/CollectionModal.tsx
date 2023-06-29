@@ -9,16 +9,7 @@ import { CollectionOverview, useMarketOverview } from '@/hooks/market';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $marketUpdateTrigger } from '@/stores/trading';
 import { useStore as useNanostore } from '@nanostores/react';
-
-const SortingIndicator = ({ value }: { value: number }) => (
-  <Image
-    className="ml-1"
-    alt=""
-    width={10}
-    height={10}
-    src={value === 0 ? '/images/common/no_sort.svg' : value === 1 ? '/images/common/sort_up.svg' : '/images/common/sort_down.svg'}
-  />
-);
+import SortingIndicator from '@/components/common/SortingIndicator';
 
 const CollectionModal = (props: any) => {
   const { visible, setVisible, selectCollection } = props;

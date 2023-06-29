@@ -1,57 +1,54 @@
 /* eslint-disable max-len */
+/* eslint-disable operator-linebreak */
 import React from 'react';
 import * as htmlToImage from 'html-to-image';
 import download from 'downloadjs';
 
-import { CollectionInfo } from '@/const/collectionList';
-
+import { calculateNumber } from '@/utils/calculateNumbers';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $userInfo, UserPositionInfo } from '@/stores/user';
-import { $vammPrice } from '@/stores/trading';
+import { $psSelectedCollectionAmm, $psShowShareIndicator, $psUserInfo, $psUserPosition } from '@/stores/portfolio';
 import { LargeEthPrice, NormalEthPrice } from '@/components/common/LabelsComponents';
+import { getCollectionInformation } from '@/const/collectionList';
 
-export default function SharePosition(props: {
-  positionInfo: UserPositionInfo;
-  collectionInfo: CollectionInfo;
-  setShowShareComponent: any;
-}) {
-  const { setShowShareComponent, positionInfo, collectionInfo } = props;
-  const userInfo = useNanostore($userInfo);
-  const vammPrice = useNanostore($vammPrice);
-  const pnlStatus = positionInfo.unrealizedPnl >= 0;
-  const side = positionInfo.size > 0;
-  const leverage = positionInfo.leverage.toFixed(2);
-  const pnlValue = positionInfo.unrealizedPnl.toFixed(2);
-  const entryPrice = positionInfo.entryPrice.toFixed(2);
-  const futurePrice = vammPrice?.toFixed(2);
-  const currentPositionName = collectionInfo.collectionName;
+export default function SharePosition() {
+  const userInfo: any = useNanostore($psUserInfo);
+  const psUserPositions: any = useNanostore($psUserPosition);
+  const psSelectedCollectionAmm = useNanostore($psSelectedCollectionAmm);
+  const userPosition = psUserPositions[psSelectedCollectionAmm];
 
+  const { amm } = userPosition;
+  const filteredCollection = getCollectionInformation(amm);
+
+  const pnlStatus = userPosition.unrealizedPnl
+    ? Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0
+    : Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0;
+  const side = Number(calculateNumber(userPosition.size, 4)) > 0;
+  const leverage = Number(calculateNumber(userPosition.remainMarginLeverage, 2)).toFixed(2);
+  const pnlValue = userPosition.unrealizedPnl
+    ? calculateNumber(userPosition.unrealizedPnl, 4)
+    : calculateNumber(userPosition.unrealizedPnl, 4);
+  const entryPrice = calculateNumber(userPosition.entryPrice, 2);
+  const futurePrice = userPosition.spotPrice ? calculateNumber(userPosition.spotPrice, 2) : calculateNumber(userPosition.currentPrice, 2);
+  const currentPositionName = filteredCollection.collectionName;
   const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;
   const showUserId = userInfo?.username === '' ? userAddress : userInfo?.username;
 
   const closeShareWindow = () => {
-    setShowShareComponent(false);
+    $psShowShareIndicator.set(false);
   };
+
   const downloadRank = () => {
     const target = document.getElementById('image-bg');
 
     if (!target) return;
 
     htmlToImage.toJpeg(target).then((dataUrl: any) => {
-      // if (window.screen.width > 800) {
-      download(dataUrl, `my-result-${collectionInfo.collectionName}.jpeg`);
-      // } else {
-      //   const image = new Image(null);
-      //   image.src = dataUrl;
-      //   const w = window.open('');
-      //   if (!w) return;
-      //   w.document.write(image.outerHTML);
-      //   w.document.close();
-      // }
+      download(dataUrl, `my-result-${filteredCollection.collectionName}.jpeg`);
     });
   };
+
   const shareToTwitter = () => {
     const content = `Taking a ${
       side ? 'long' : 'short'
@@ -65,7 +62,7 @@ export default function SharePosition(props: {
       className="fixed left-0 top-0 z-[20] flex h-full
       w-full items-center justify-center overflow-auto bg-black/[.3]
       text-white/[.95] backdrop-blur-[8px]"
-      onClick={() => setShowShareComponent(false)}>
+      onClick={() => $psShowShareIndicator.set(false)}>
       <div className="share-container min-w-[600px] rounded-[12px]" onClick={e => e.stopPropagation()}>
         <div className="ml-3 flex py-4">
           <div
@@ -74,10 +71,10 @@ export default function SharePosition(props: {
             id="image-bg">
             <div className="mt-4">
               <div className="ml-6">
-                <Image src={collectionInfo.logo} alt="" width={64} height={64} />
+                <Image src={filteredCollection.logo} alt="" width={64} height={64} />
                 <div className="mt-2 flex items-baseline">
                   <div className="pr-[6px] text-[18px] font-bold text-white/[.95]">
-                    <span>{collectionInfo.displayCollectionPair}</span>
+                    <span className="">{filteredCollection.displayCollectionPair}</span>
                   </div>
                   <div className="p-0 text-[14px] font-semibold text-[#98bbfe]/[.89]">
                     <span>Perpetual Contract</span>
