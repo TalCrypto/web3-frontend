@@ -163,5 +163,8 @@ export function addGraphRecord(price?: number /* TODO , notionalValue?: number *
   }
 }
 
+// Market Overview Data Trigger
+export const $marketUpdateTrigger = atom(false);
+
 // mobile specialized stores
 export const $isShowTradingMobile = atom(false);

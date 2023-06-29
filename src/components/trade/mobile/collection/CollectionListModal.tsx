@@ -1,7 +1,6 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { $isShowMobileModal } from '@/stores/modal';
@@ -17,16 +16,17 @@ export default function CollectionListModal(props: any) {
   const router = useRouter();
   const currentAmm = useNanostore($currentAmm);
   const ammList = getSupportedAMMs().filter((amm: AMM) => amm !== currentAmm);
-  const { data } = useMarketOverview(false);
+  const { data } = useMarketOverview();
+  const [overviewData, setOverviewData]: any = useState();
 
   useEffect(() => {
-    console.log(data);
+    setOverviewData(data);
   }, [data]);
 
   return (
     <div
       className={`t-0 fixed bottom-0 left-0 right-0 z-[12] w-full
-        ${isShowModal ? 'h-full' : 'h-0'}
+        ${isShowModal && data ? 'h-full' : 'h-0'}
        bg-black/[.3] backdrop-blur-[4px]`}
       onClick={() => {
         setIsShowModal(false);
@@ -34,14 +34,14 @@ export default function CollectionListModal(props: any) {
       }}>
       <div
         className={`transition-bottom absolute bottom-0 w-full
-        ${isShowModal ? 'bottom-0' : 'bottom-[-400px]'}
+        ${isShowModal && data ? 'bottom-0' : 'bottom-[-400px]'}
         bg-secondaryBlue duration-500
       `}>
         {ammList.map((item: any, index) => {
           const key = `switcher_collection_${index}`;
           const collectionInfo = getCollectionInformation(item);
-          console.log(item);
-          const tradingData: any = data?.filter((dataItem: any) => item === dataItem.amm);
+          const tradingDataList: any = overviewData?.filter((dataItem: any) => item === dataItem.amm);
+          const tradingData = tradingDataList?.length > 0 ? tradingDataList[0] : null;
 
           return (
             <div
@@ -51,13 +51,13 @@ export default function CollectionListModal(props: any) {
                 router.push(`/trade/${item.collection.toLowerCase()}`, undefined, { shallow: true });
                 setIsShowModal(false);
               }}>
-              <Image src={collectionInfo.logo} alt="" width={32} height={32} />
+              <Image src={collectionInfo.logo} className="" alt="" width={32} height={32} />
               <div className="ml-[6px] flex-1">
                 <div className="text-[14px] font-semibold text-highEmphasis">{collectionInfo.title}</div>
                 <div className="text-[12px] text-mediumEmphasis">{collectionInfo.name}</div>
               </div>
               <div className="flex w-[140px] items-center justify-between">
-                <div>
+                <div className="">
                   <PriceWithIcon
                     priceValue={tradingData && tradingData.vammPrice ? tradingData.vammPrice.toFixed(2) : '0.00'}
                     className="!text-mediumEmphasis"
@@ -80,12 +80,15 @@ export default function CollectionListModal(props: any) {
                         ? '/images/components/trade/chart/polygon_pos.svg'
                         : '/images/components/trade/chart/polygon_neg.svg'
                     }
+                    className=""
                     alt=""
                     width={16}
                     height={16}
                   />
                   <span className="ml-1">
-                    {tradingData && tradingData.priceChangeRatio24h ? tradingData.priceChangeRatio24h.toFixed(2) : '0.00'} %
+                    {tradingData && tradingData.priceChangeRatio24h
+                      ? `${Math.abs(tradingData.priceChangeRatio24h.toFixed(2))} %`
+                      : '0.00  %'}
                   </span>
                 </div>
               </div>

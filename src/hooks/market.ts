@@ -4,9 +4,9 @@
 import { AMM } from '@/const/collectionList';
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $collectionConfig } from '@/stores/trading';
+import { $collectionConfig, $marketUpdateTrigger } from '@/stores/trading';
 import { $currentChain } from '@/stores/user';
-import { getAMMByAddress, getSupportedAMMAddresses, getSupportedAMMs } from '@/const/addresses';
+import { getAMMByAddress, getSupportedAMMAddresses } from '@/const/addresses';
 import { getDailySpotPriceGraphData } from '@/utils/trading';
 import { getLatestSpotPriceBefore } from '@/utils/subgraph';
 import { formatBigInt } from '@/utils/bigInt';
@@ -34,7 +34,8 @@ export interface GetMktOverview {
   data?: Array<CollectionOverview>;
 }
 
-export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
+export const useMarketOverview = (): GetMktOverview => {
+  const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
   const config = useNanostore($collectionConfig);
   const chain = useNanostore($currentChain);
   const [data, setData] = useState<Array<CollectionOverview>>();
@@ -132,7 +133,7 @@ export const useMarketOverview = (triggerUpdate: boolean): GetMktOverview => {
       setIsLoading(false);
     }
     getGraphData();
-  }, [triggerUpdate, chain, config]);
+  }, [marketUpdateTrigger, chain, config]);
 
   return { isLoading, data };
 };

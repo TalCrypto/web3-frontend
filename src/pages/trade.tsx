@@ -74,7 +74,7 @@ function TradePage(props: WithRouterProps) {
         </div>
 
         <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
-          {/* <Switcher /> */}
+          <Switcher />
 
           <div className="mt-12 bg-darkBlue">
             <ChartMobile />

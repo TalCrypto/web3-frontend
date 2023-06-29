@@ -7,6 +7,8 @@ import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { localeConversion } from '@/utils/localeConversion';
 import { CollectionOverview, useMarketOverview } from '@/hooks/market';
 import { getCollectionInformation } from '@/const/collectionList';
+import { $marketUpdateTrigger } from '@/stores/trading';
+import { useStore as useNanostore } from '@nanostores/react';
 
 const SortingIndicator = ({ value }: { value: number }) => (
   <Image
@@ -20,14 +22,14 @@ const SortingIndicator = ({ value }: { value: number }) => (
 
 const CollectionModal = (props: any) => {
   const { visible, setVisible, selectCollection } = props;
-  const [triggerUpdate, setTriggerUpdate] = useState(false);
-  const { isLoading, data: overviewData } = useMarketOverview(triggerUpdate);
+  const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
+  const { isLoading, data: overviewData } = useMarketOverview();
   const [periodIndex, setPeriodIndex] = useState(0);
   const initSorting = { collection: 0, vammPrice: 0, priceGap: 0, timeChange: 0, dayVolume: 1, fundingRate: 0, timeValue: 0 };
   const [positionSorting, setPositionSorting] = useState(initSorting);
   const [sortedData, setSortedData] = useState(overviewData);
 
-  const updateOverviewData = () => setTriggerUpdate(state => !state);
+  const updateOverviewData = () => $marketUpdateTrigger.set(!marketUpdateTrigger);
 
   useEffect(() => {
     if (overviewData) {

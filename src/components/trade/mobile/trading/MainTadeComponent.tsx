@@ -485,12 +485,12 @@ export default function MainTradeComponent(props: any) {
       )}
       {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
 
-      <Tips
+      {/* <Tips
         isConnected={isConnected}
         isWrongNetwork={isWrongNetwork}
         isRequireWeth={wethBalance === 0}
         isApproveRequired={isNeedApproval}
-      />
+      /> */}
       {estimation && <ExtendedEstimateComponent estimation={estimation} />}
     </div>
   );
