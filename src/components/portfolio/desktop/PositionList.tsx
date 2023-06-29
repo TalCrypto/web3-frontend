@@ -43,7 +43,7 @@ function PositionList() {
                 return null;
               }
               itemIndex += 1;
-              return <PositionListItem userPosition={item} key={item?.pair || ''} index={index} itemIndex={itemIndex} />;
+              return <PositionListItem key={`position_item_${itemIndex}`} userPosition={item} index={index} itemIndex={itemIndex} />;
             })}
           </div>
           <div className="flex px-9 pt-4 text-[16px] font-medium">

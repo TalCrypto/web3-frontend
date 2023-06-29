@@ -4,7 +4,6 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
-import { calculateNumber } from '@/utils/calculateNumbers';
 import React, { useState } from 'react';
 import HistoryModal from '@/components/portfolio/mobile/HistoryModal';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -25,15 +24,9 @@ function PositionInfoMobile() {
   const psUserPosition = useNanostore($psUserPosition);
 
   const currentPositionCount = psUserPosition.filter((item: any) => item !== null).length;
-  const totalUnrealized = psUserPosition.reduce(
-    (pre: any, item: any) => (!item ? Number(pre) + 0 : Number(pre) + Number(calculateNumber(item.unrealizedPnl, 4))),
-    0
-  );
 
-  const totalFundingPaymentAccount = psUserPosition.reduce(
-    (pre: any, item: any) => (!item ? Number(pre) + 0 : Number(pre) + Number(calculateNumber(item.fundingPaymentCount, 4))),
-    0
-  );
+  const totalUnrealized = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.unrealizedPnl), 0);
+  const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPayment), 0);
 
   return (
     <div>
@@ -60,7 +53,30 @@ function PositionInfoMobile() {
 
         <div className={`mb-[6px] ${psUserPosition.length > 0 ? 'pb-9' : 'min-h-[486px]'}`}>
           {isConnected ? (
-            <div className="">
+            <div>
+              {psUserPosition.length > 0 ? (
+                <div className="mx-5 mb-9 mt-7 flex justify-between">
+                  <div>
+                    <div className="mb-1 text-[12px] font-normal text-mediumEmphasis">Total Unrealized P/L</div>
+                    <div>
+                      <SingleRowPriceContent
+                        className="text-[20px]"
+                        priceValue={isShowBalance ? Math.abs(totalUnrealized)?.toFixed(4) : '****'}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-[12px] font-normal text-mediumEmphasis">Accu. Fund.Payment</div>
+                    <div>
+                      <SingleRowPriceContent
+                        className="justify-end text-[20px]"
+                        priceValue={isShowBalance ? Math.abs(totalFundingPaymentAccount)?.toFixed(4) : '****'}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="flex px-5 py-3 text-[12px] text-mediumEmphasis">
                 <div className="w-[35%]">
                   Collection <br />
@@ -76,36 +92,7 @@ function PositionInfoMobile() {
                 </div>
               </div>
 
-              {psUserPosition.length > 0 ? (
-                <div className="mx-5 mb-9 mt-7 flex justify-between">
-                  <div className="">
-                    <div className="mb-1 text-[12px] font-normal text-mediumEmphasis">Total Unrealized P/L</div>
-                    <div>
-                      <SingleRowPriceContent
-                        className="text-[20px]"
-                        priceValue={isShowBalance ? Math.abs(totalUnrealized)?.toFixed(4) : '****'}
-                      />
-                    </div>
-                  </div>
-                  <div className="">
-                    <div className="mb-1 text-[12px] font-normal text-mediumEmphasis">Total Unrealized P/L</div>
-                    <div>
-                      <SingleRowPriceContent
-                        className="justify-end text-[20px]"
-                        priceValue={isShowBalance ? Math.abs(Number(totalFundingPaymentAccount))?.toFixed(4) : '****'}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              <PositionList
-                psUserPosition={psUserPosition}
-                isShowBalance={isShowBalance}
-                setSelectedIndex={setSelectedIndex}
-                selectedIndex={selectedIndex}
-                balance={psBalance}
-              />
+              <PositionList />
             </div>
           ) : (
             <div className="mt-[130px] text-center font-medium text-mediumEmphasis">You have no open positions and history record.</div>

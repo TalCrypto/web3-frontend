@@ -14,22 +14,18 @@ import PositionList from '@/components/portfolio/desktop/PositionList';
 import FundingPaymentModal from '@/components/portfolio/desktop/FundingPaymentModal';
 import SharePosition from '@/components/portfolio/desktop/SharePosition';
 import OutlineButton from '@/components/common/OutlineButton';
-import { $userIsConnected, $userPositionInfos } from '@/stores/user';
+import { $userIsConnected } from '@/stores/user';
 import SortingIndicator from '@/components/common/SortingIndicator';
-import { getSupportedAMMs } from '@/const/addresses';
-import { AMM } from '@/const/collectionList';
 
 function PositionInfo() {
   const initSorting = { notionalValue: 0, collateralValue: 0 };
   const [positionSorting, setPositionSort] = useState(initSorting);
 
   const isConnected = useNanostore($userIsConnected);
-  const userPositionInfos = useNanostore($userPositionInfos);
   const psUserPosition = useNanostore($psUserPosition);
   const showFundingPayment = useNanostore($psShowFundingPayment);
   const showSharePosition = useNanostore($psShowShareIndicator);
   const showHistory = useNanostore($psShowHistory);
-  const ammList = getSupportedAMMs();
 
   useEffect(() => {
     const { notionalValue, collateralValue } = positionSorting;
@@ -55,13 +51,6 @@ function PositionInfo() {
       $psUserPosition.set(temp);
     }
   }, [positionSorting]);
-
-  useEffect(() => {
-    const temp = ammList
-      .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))
-      .map((amm: AMM) => userPositionInfos[amm]);
-    $psUserPosition.set(temp);
-  }, [userPositionInfos]);
 
   const currentPositionCount = psUserPosition.filter((item: any) => item !== null).length;
 

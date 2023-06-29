@@ -2,30 +2,32 @@
 /* eslint-disable indent */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import { calculateNumber /* , formatterValue */ } from '@/utils/calculateNumbers';
 import { useStore as useNanostore } from '@nanostores/react';
 import Image from 'next/image';
 import Tooltip from '@/components/common/Tooltip';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
+import { getAMMByAddress } from '@/const/addresses';
 
 function PositionListItem(props: any) {
   const { userPosition } = props;
   const isShowBalance = useNanostore($psShowBalance);
 
-  const size = calculateNumber(userPosition.size, 4);
-  const sizeInEth = calculateNumber(userPosition.currentNotional, 4);
-  const totalPnl = calculateNumber(userPosition.unrealizedPnl, 4);
-  const className = `size-text ${isShowBalance ? (Number(size) > 0 ? 'up' : Number(size) === 0 ? '' : 'down') : ''}`;
+  const { size } = userPosition;
+  const sizeInEth = userPosition.currentNotional;
+  const totalPnl = userPosition.unrealizedPnl;
+  const className = `${isShowBalance ? (size > 0 ? 'up' : size === 0 ? '' : 'down') : ''}`;
 
-  const isLeverageNegative = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) <= 0 : false;
-  const isLeverageOver = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) > 100 : false;
+  const isLeverageNegative = userPosition ? userPosition.leverage <= 0 : false;
+  const isLeverageOver = userPosition ? userPosition.leverage > 100 : false;
+
+  const userPositionAmm = getAMMByAddress(userPosition.amm);
 
   const clickItem = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
-    $psSelectedCollectionAmm.set(userPosition.amm);
+    $psSelectedCollectionAmm.set(userPositionAmm);
     $psShowFundingPayment.set(true);
     $isShowMobileModal.set(true);
   };
@@ -34,13 +36,7 @@ function PositionListItem(props: any) {
     <div className="cursor-pointer border-b-[1px] border-b-secondaryBlue hover:bg-secondaryBlue">
       <div className="flex items-center py-3" onClick={clickItem}>
         <div className="w-[35%]">
-          <SmallTypeIcon
-            content={userPosition.pair}
-            name={userPosition.pair}
-            className={className}
-            size={size}
-            isShowBalance={isShowBalance}
-          />
+          <SmallTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />
         </div>
         <div className="w-[33%] text-right">
           <div className="text-[14px]">
@@ -52,7 +48,7 @@ function PositionListItem(props: any) {
             />
           </div>
           <div className="mt-1 flex justify-end text-right text-[12px] font-medium">
-            <div className="">{`${
+            <div>{`${
               userPosition === null
                 ? '---'
                 : isLeverageNegative
@@ -60,7 +56,7 @@ function PositionListItem(props: any) {
                 : isLeverageOver
                 ? '100.00 x +'
                 : isShowBalance
-                ? `${calculateNumber(userPosition.remainMarginLeverage, 2)}X`
+                ? `${userPosition.leverage.toFixed(2)}X`
                 : '****'
             }`}</div>
             {isLeverageNegative ? (
@@ -77,10 +73,10 @@ function PositionListItem(props: any) {
             className="justify-end text-[14px]"
             priceValue={
               isShowBalance
-                ? Number(totalPnl) > 0
-                  ? `+${totalPnl}`
-                  : Number(totalPnl) === 0
-                  ? Math.abs(Number(totalPnl))?.toFixed(4)
+                ? totalPnl > 0
+                  ? `${totalPnl.toFixed(4)}`
+                  : totalPnl === 0
+                  ? Math.abs(totalPnl)?.toFixed(4)
                   : totalPnl
                 : '****'
             }
@@ -91,11 +87,11 @@ function PositionListItem(props: any) {
             className="mt-[3px] justify-end !text-[12px]"
             priceValue={
               isShowBalance
-                ? Number(totalPnl) > 0
-                  ? `+${totalPnl}`
-                  : Number(totalPnl) === 0
-                  ? Math.abs(Number(totalPnl))?.toFixed(4)
-                  : totalPnl
+                ? userPosition.fundingPayment > 0
+                  ? `${userPosition.fundingPayment.toFixed(4)}`
+                  : userPosition.fundingPayment === 0
+                  ? Math.abs(userPosition.fundingPayment)?.toFixed(4)
+                  : userPosition.fundingPayment
                 : '****'
             }
           />

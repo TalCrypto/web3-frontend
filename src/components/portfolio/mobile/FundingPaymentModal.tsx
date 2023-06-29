@@ -11,15 +11,13 @@ import { $psSelectedCollectionAmm, $psShowFundingPayment } from '@/stores/portfo
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $isShowMobileModal } from '@/stores/modal';
+import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 
 const FundingPaymentModal = () => {
-  const selectedAmm: any = useNanostore($psSelectedCollectionAmm);
-  const collectionInfo = getCollectionInformation(selectedAmm);
+  const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
+  const collectionInfo = getCollectionInformation(psSelectedCollectionAmm);
   const showFundingPaymentModal = useNanostore($psShowFundingPayment);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [fpRecords, setFpRecords] = useState([]);
-  const [fpTotal, setFpTotal] = useState(0);
+  const { total: fpTotal, fpRecords } = useFundingPaymentHistory(psSelectedCollectionAmm);
 
   const handleBackClick = () => {
     $psShowFundingPayment.set(false);
@@ -38,7 +36,7 @@ const FundingPaymentModal = () => {
         border-[#71aaff38] bg-lightBlue text-[14px] font-normal text-mediumEmphasis"
         onClick={e => e.stopPropagation()}>
         <div className="scrollable h-full overflow-y-scroll pb-[100px]">
-          {isLoading ? (
+          {!fpRecords ? (
             <div className="flex h-full items-center justify-center">
               <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
             </div>
@@ -47,17 +45,17 @@ const FundingPaymentModal = () => {
               <div className="py-6 pl-[38px]">P/L</div>
               {fpRecords.map((item: any, idx: any) => {
                 const timeValue = formatDateTime(item.timestamp, 'L HH:mm');
-                const value = Number(calculateNumber(item.fundingPaymentPnl, 6))?.toFixed(6);
+                const value = item.fundingPaymentPnl?.toFixed(6);
                 return (
-                  <div className="p-3" key={`fp-row-${idx}`}>
+                  <div className="p-3" key={`fp-mobile-row-${idx}`}>
                     <div className="flex min-w-[190px] items-center px-[18px]">
                       <div className="mr-2 h-[46px] w-[2px] rounded-[2px] bg-[#4287f5]" />
                       <div>
                         <p className="text-[16px]">{timeValue}</p>
-                        <div className="">
+                        <div>
                           <PriceWithIcon
-                            priceValue={Number(value) > 0 ? `+${value}` : Number(value) === 0 ? '0.000000' : value}
-                            className={Number(value) > 0 ? 'text-marketGreen' : Number(value) === 0 ? '' : 'text-marketRed'}
+                            priceValue={value > 0 ? `+${value}` : value === 0 ? '0.000000' : value}
+                            className={value > 0 ? 'text-marketGreen' : value === 0 ? '' : 'text-marketRed'}
                           />
                         </div>
                       </div>
@@ -86,9 +84,9 @@ const FundingPaymentModal = () => {
       ">
         <div className="flex h-[50px] w-full justify-between px-[22px] py-4">
           <span className="mr-[36px] text-highEmphasis">Total Received: </span>
-          {fpRecords.length > 0 ? (
+          {fpRecords && fpRecords.length > 0 ? (
             <PriceWithIcon
-              priceValue={fpTotal > 0 ? `+${fpTotal}` : fpTotal === 0 ? '0.000000' : fpTotal}
+              priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : fpTotal === 0 ? '0.000000' : fpTotal.toFixed(6)}
               className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
             />
           ) : (

@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
 /* eslint-disable array-callback-return */
+// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { eventParams } from '@/utils/eventLog';
@@ -26,12 +27,23 @@ import AccountChart from '@/components/portfolio/desktop/AccountChart';
 import TrendContent from '@/components/portfolio/desktop/TrendContent';
 import PageLoading from '@/components/common/PageLoading';
 import { formatDateTime } from '@/utils/date';
-import { $userIsConnected, $userIsWrongNetwork } from '@/stores/user';
+import { $userIsConnected, $userIsWrongNetwork, $userPositionInfos } from '@/stores/user';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
+import { AMM } from '@/const/collectionList';
+import { getSupportedAMMs } from '@/const/addresses';
 
 export default function Portfolio() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
+  const userPositionInfos = useNanostore($userPositionInfos);
+  const ammList = getSupportedAMMs();
+
+  useEffect(() => {
+    const temp = ammList
+      .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))
+      .map((amm: AMM) => userPositionInfos[amm]);
+    $psUserPosition.set(temp);
+  }, [userPositionInfos]);
 
   return (
     <>
@@ -59,7 +71,7 @@ export default function Portfolio() {
             <>
               <AccountChartMobile />
               <TrendContentMobile />
-              {/* <PositionInfoMobile /> */}
+              <PositionInfoMobile />
             </>
           )}
         </div>

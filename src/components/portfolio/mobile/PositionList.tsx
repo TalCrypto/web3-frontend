@@ -6,8 +6,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-function PositionList(props: any) {
-  const { setShowShareComponent, setSelectedIndex, selectedIndex, setShowFundingPaymentComponent } = props;
+function PositionList() {
   const router = useRouter();
   const psUserPosition = useNanostore($psUserPosition);
 
@@ -36,18 +35,7 @@ function PositionList(props: any) {
                 return null;
               }
               itemIndex += 1;
-              return (
-                <PositionListItem
-                  userPosition={item}
-                  key={item?.pair || ''}
-                  setShowShareComponent={setShowShareComponent}
-                  setSelectedIndex={setSelectedIndex}
-                  index={index}
-                  itemIndex={itemIndex}
-                  selectedIndex={selectedIndex}
-                  setShowFundingPaymentComponent={setShowFundingPaymentComponent}
-                />
-              );
+              return <PositionListItem key={`position_item_mobile_${itemIndex}`} userPosition={item} index={index} itemIndex={itemIndex} />;
             })}
           </div>
         </div>

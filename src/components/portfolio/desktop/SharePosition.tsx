@@ -71,7 +71,7 @@ export default function SharePosition() {
                 <Image src={collectionInfo.logo} alt="" width={64} height={64} />
                 <div className="mt-2 flex items-baseline">
                   <div className="pr-[6px] text-[18px] font-bold text-white/[.95]">
-                    <span className="">{collectionInfo.displayCollectionPair}</span>
+                    <span>{collectionInfo.displayCollectionPair}</span>
                   </div>
                   <div className="p-0 text-[14px] font-semibold text-[#98bbfe]/[.89]">
                     <span>Perpetual Contract</span>

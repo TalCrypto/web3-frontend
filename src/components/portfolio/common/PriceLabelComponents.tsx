@@ -30,7 +30,7 @@ export function DoubleRowPriceContent(props: any) {
   const iconImage = amm && collectionInfo ? collectionInfo.logo : '/images/common/symbols/eth-tribe3.svg';
 
   return (
-    <div className="">
+    <div>
       <div className="flex items-center text-[14px] font-medium">
         <Image src={iconImage} alt="" width={20} height={20} className="mr-[6px]" />
         {priceContent}
@@ -52,8 +52,8 @@ export function LargeTypeIcon(props: any) {
         <Image src={collectionInfo?.image} alt="" width={32} height={32} />
       </div>
       <div className="text-[14px] font-medium">
-        <div className="">{collectionInfo?.displayCollectionPair}</div>
-        <div className="">
+        <div>{collectionInfo?.displayCollectionPair}</div>
+        <div>
           <div className={`${className} ${size > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
             {isShowBalance ? (size > 0 ? 'LONG' : 'SHORT') : '****'}
           </div>

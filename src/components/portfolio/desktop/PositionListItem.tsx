@@ -19,7 +19,7 @@ function PositionListItem(props: any) {
   const { size } = userPosition;
   const sizeInEth = userPosition.currentNotional;
   const totalPnl = userPosition.unrealizedPnl;
-  const className = `size-text ${isShowBalance ? (Number(size) > 0 ? 'up' : Number(size) === 0 ? '' : 'down') : ''}`;
+  const className = `${isShowBalance ? (size > 0 ? 'up' : size === 0 ? '' : 'down') : ''}`;
   const [tradingData]: any = useState({});
 
   const vAMMPrice = !tradingData.spotPrice ? 0 : tradingData.spotPrice;
@@ -42,14 +42,14 @@ function PositionListItem(props: any) {
 
     if (
       positionType === 'LONG' &&
-      Number(liquidationPrice) < selectedPriceForCalc &&
-      selectedPriceForCalc < Number(liquidationPrice) * (1 + liquidationChanceLimit)
+      liquidationPrice < selectedPriceForCalc &&
+      selectedPriceForCalc < liquidationPrice * (1 + liquidationChanceLimit)
     )
       return true;
     if (
       positionType === 'SHORT' &&
-      Number(liquidationPrice) > selectedPriceForCalc &&
-      selectedPriceForCalc > Number(liquidationPrice) * (1 - liquidationChanceLimit)
+      liquidationPrice > selectedPriceForCalc &&
+      selectedPriceForCalc > liquidationPrice * (1 - liquidationChanceLimit)
     )
       return true;
     return false;
@@ -60,14 +60,14 @@ function PositionListItem(props: any) {
 
     const selectedPriceForCalc = !isGapAboveLimit ? vAMMPrice : oraclePrice;
 
-    if (positionType === 'LONG' && selectedPriceForCalc <= Number(liquidationPrice)) return true;
-    if (positionType === 'SHORT' && selectedPriceForCalc >= Number(liquidationPrice)) return true;
+    if (positionType === 'LONG' && selectedPriceForCalc <= liquidationPrice) return true;
+    if (positionType === 'SHORT' && selectedPriceForCalc >= liquidationPrice) return true;
     return false;
   };
 
   // leverage handling
-  const isLeverageNegative = userPosition ? Number(userPosition.remainMarginLeverage) <= 0 : false;
-  const isLeverageOver = userPosition ? Number(userPosition.remainMarginLeverage) > 100 : false;
+  const isLeverageNegative = userPosition ? userPosition.remainMarginLeverage <= 0 : false;
+  const isLeverageOver = userPosition ? userPosition.remainMarginLeverage > 100 : false;
 
   const userPositionAmm = getAMMByAddress(userPosition.amm);
 
@@ -97,8 +97,7 @@ function PositionListItem(props: any) {
     <div
       className={`px-9 ${itemIndex % 2 === 0 ? 'bg-secondaryBlue/[.58]' : ''}
         cursor-pointer border-b-[1px] border-b-secondaryBlue hover:bg-secondaryBlue
-    `}
-      key={`position_item_${itemIndex}`}>
+      `}>
       <div className="flex py-3" onClick={clickItem}>
         <div className="relative w-[20%] pl-3">
           <div className="absolute left-[-8px] top-[-4px] mt-[3px] h-[50px] w-[3px] rounded-[30px] bg-primaryBlue" />
@@ -181,10 +180,10 @@ function PositionListItem(props: any) {
           <SingleRowPriceContent
             priceValue={
               isShowBalance
-                ? Number(fundingPaymentCount) > 0
+                ? fundingPaymentCount > 0
                   ? `+${fundingPaymentCount}`
-                  : Number(fundingPaymentCount) === 0
-                  ? Math.abs(Number(fundingPaymentCount))?.toFixed(4)
+                  : fundingPaymentCount === 0
+                  ? Math.abs(fundingPaymentCount)?.toFixed(4)
                   : fundingPaymentCount
                 : '****'
             }
