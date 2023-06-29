@@ -150,18 +150,19 @@ const CollectionModal = (props: any) => {
 
       return (
         <div
-          className={`flex flex-row p-3
+          className={`flex flex-row px-9 py-[11px]
             ${index % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}
+            ${index === sortedData.length - 1 ? 'rounded-b-[12px]' : ''}
           `}
           key={collection}
           onClick={() => {
             selectCollection(collection);
             setVisible(false);
           }}>
-          <div className="flex-1 basis-1/4 px-[18px]">
+          <div className="w-[240px]">
             <div className="flex">
-              <div>
-                <Image src={logo} width={24} height={24} alt="" />
+              <div className="w-[36px]">
+                <Image src={logo} width={36} height={36} alt="" />
               </div>
               <div className="ml-[6px]">
                 <p className="mb-1 text-[14px] text-highEmphasis">{collectionName}</p>
@@ -169,21 +170,21 @@ const CollectionModal = (props: any) => {
               </div>
             </div>
           </div>
-          <div className="basis-1/5 px-[18px]">
+          <div className="w-[130px]">
             <PriceWithIcon priceValue={localeConversion(vAMMPrice, 2)} />
             <p className="ml-[22px] mt-1 text-[12px]">{localeConversion(oraclePrice, 2)}</p>
           </div>
-          <div className="basis-1/4 px-[18px] text-highEmphasis">{priceGapElement}</div>
-          <div className="basis-1/6 px-[18px] text-right">
+          <div className="w-[140px] text-highEmphasis">{priceGapElement}</div>
+          <div className="w-[110px] text-right">
             {periodIndex === 0 ? changed24h : null}
             {periodIndex === 1 ? changed7d : null}
             {periodIndex === 2 ? changed30d : null}
           </div>
-          <div className="flex basis-1/6 items-start justify-end px-[18px]">
+          <div className="flex w-[140px] items-start justify-end">
             <PriceWithIcon priceValue={tradingData.volume?.toFixed(2)} className="justify-content-end" />
           </div>
-          <div className="font-400 basis-1/5 px-[18px] text-right text-[12px] text-highEmphasis">
-            <div>
+          <div className="font-400 w-[140px] text-right text-[12px] text-highEmphasis">
+            <div className="mb-1">
               Long{' '}
               <span className={tradingData.fundingRateLong && tradingData.fundingRateLong > 0 ? 'text-marketRed' : 'text-marketGreen'}>
                 {tradingData.fundingRateLong && tradingData.fundingRateLong > 0 ? 'Pay' : 'Get'}
@@ -210,7 +211,7 @@ const CollectionModal = (props: any) => {
         setVisible(false);
       }}>
       <div
-        className="relative mx-auto mt-[80px] h-[600px] max-w-[940px]
+        className="relative mx-auto mt-[80px] max-w-[940px]
           rounded-[12px] border-[1px] border-[#a8cbff]/[.22] bg-darkBlue text-[14px]
           font-normal leading-[17px] text-mediumEmphasis"
         onClick={e => {
@@ -229,13 +230,13 @@ const CollectionModal = (props: any) => {
             <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
         </div>
-        <div className="body">
+        <div className="rounded-b-[12px]">
           <div className="collection-table">
-            <div className="text-normal px-3 pb-6 text-[14px] leading-[17px]">
+            <div className="text-normal px-9 pb-6 text-[14px] leading-[17px]">
               <div className="trow flex flex-row">
-                <div className="flex-1 basis-1/4 px-[18px]">Collection</div>
+                <div className="w-[240px]">Collection</div>
                 <div
-                  className="basis-1/5 cursor-pointer px-[18px]"
+                  className="w-[130px] cursor-pointer"
                   onClick={() => setPositionSorting({ ...initSorting, vammPrice: (positionSorting.vammPrice + 1) % 3 })}>
                   <div className="mb-1 flex">
                     vAMM Price <SortingIndicator value={positionSorting.vammPrice} />
@@ -243,20 +244,20 @@ const CollectionModal = (props: any) => {
                   <p>Oracle Price</p>
                 </div>
                 <div
-                  className="basis-1/4 cursor-pointer px-[18px]"
+                  className="w-[140px] cursor-pointer"
                   onClick={() => setPositionSorting({ ...initSorting, priceGap: (positionSorting.priceGap + 1) % 3 })}>
                   <div className="mb-1 flex">
                     vAMM-Oracle <SortingIndicator value={positionSorting.priceGap} />
                   </div>
                   <p>Price Gap</p>
                 </div>
-                <div className="basis-1/6 cursor-pointer px-[18px]">
+                <div className="w-[110px] cursor-pointer">
                   <div
                     className="mb-1 flex justify-end"
                     onClick={() => setPositionSorting({ ...initSorting, timeValue: (positionSorting.timeValue + 1) % 3 })}>
                     Change <SortingIndicator value={positionSorting.timeValue} />
                   </div>
-                  <div className="change-period">
+                  <div className="text-right">
                     <span
                       onClick={() => {
                         setPositionSorting({ ...initSorting });
@@ -287,16 +288,16 @@ const CollectionModal = (props: any) => {
                   </div>
                 </div>
                 <div
-                  className="basis-1/6 cursor-pointer pl-[12px]"
+                  className="w-[140px] cursor-pointer pl-[12px]"
                   onClick={() => setPositionSorting({ ...initSorting, dayVolume: (positionSorting.dayVolume + 1) % 3 })}>
-                  <div className="mb-1 flex">
+                  <div className="mb-1 flex justify-end">
                     24hr Volume <SortingIndicator value={positionSorting.dayVolume} />
                   </div>
                 </div>
-                <div className="basis-1/5 px-[18px]">Funding Rate</div>
+                <div className="w-[140px] text-right">Funding Rate</div>
               </div>
             </div>
-            <div className="tbody">
+            <div>
               {isLoading ? (
                 <div className="flex items-center justify-center" style={{ minHeight: '400px' }}>
                   <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />

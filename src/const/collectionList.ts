@@ -2,6 +2,8 @@
 /* eslint-disable no-shadow */
 
 export enum AMM {
+  MILADY = 'milady',
+  PUDGYPENGUINS = 'pudgypenguins',
   DEGODS = 'degods',
   CAPTAINZ = 'captainz',
   BAYC = 'bayc',
@@ -38,6 +40,48 @@ export type CollectionInfos = {
 };
 
 export const collectionsInfos: CollectionInfos = {
+  [AMM.MILADY]: {
+    amm: AMM.MILADY,
+    name: 'MILADY/ETH',
+    title: 'Milady',
+    image: '/images/collections/small/milady.svg',
+    collection: 'MILADY',
+    contract: process.env.NEXT_PUBLIC_MILADY_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/milady.svg',
+    sidebarLogo: '/images/collections/normal/milady.svg',
+    collectionName: 'MILADY',
+    collectionType: 'MILADY',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'https://miladymaker.net/',
+    twitterUrl: 'https://www.twitter.com/miladymaker',
+    discordUrl: 'https://discord.gg/milady',
+    etherscanUrl: 'https://etherscan.io/address/0x5af0d9827e0c53e4799bb226655a1de152a425a5',
+    shortName: 'MILADY',
+    displayCollectionPair: 'MILADY/WETH',
+    isNew: true,
+    sort: 1
+  },
+  [AMM.PUDGYPENGUINS]: {
+    amm: AMM.PUDGYPENGUINS,
+    name: 'PUDGYPENGUINS/ETH',
+    title: 'PUDGY',
+    image: '/images/collections/small/pudgypenguins.svg',
+    collection: 'PUDGYPENGUINS',
+    contract: process.env.NEXT_PUBLIC_PUDGYPENGUINS_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/pudgypenguins.svg',
+    sidebarLogo: '/images/collections/normal/pudgypenguins.svg',
+    collectionName: 'PUDGY',
+    collectionType: 'PUDGYPENGUINS',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'https://www.pudgypenguins.com/',
+    twitterUrl: 'https://www.twitter.com/pudgypenguins',
+    discordUrl: 'https://discord.gg/pudgypenguins',
+    etherscanUrl: 'https://etherscan.io/address/0xbd3531da5cf5857e7cfaa92426877b022e612cf8',
+    shortName: 'PUDGY',
+    displayCollectionPair: 'PUDGYPENGUINS/WETH',
+    isNew: true,
+    sort: 2
+  },
   [AMM.DEGODS]: {
     amm: AMM.DEGODS,
     name: 'DEGODS/ETH',
@@ -56,8 +100,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/token/0x1821363abc9E33f1bfbE3f96F7C68ECa7f6Af2BD',
     shortName: 'DEGODS',
     displayCollectionPair: 'DEGODS/WETH',
-    isNew: true,
-    sort: 1
+    isNew: false,
+    sort: 3
   },
   [AMM.CAPTAINZ]: {
     amm: AMM.CAPTAINZ,
@@ -77,8 +121,8 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/address/0x769272677fab02575e84945f03eca517acc544cc',
     shortName: 'CAPTAINZ',
     displayCollectionPair: 'CAPTAINZ/WETH',
-    isNew: true,
-    sort: 2
+    isNew: false,
+    sort: 4
   },
   [AMM.BAYC]: {
     amm: AMM.BAYC,
@@ -99,7 +143,7 @@ export const collectionsInfos: CollectionInfos = {
     shortName: 'BAYC',
     displayCollectionPair: 'BAYC/WETH',
     isNew: false,
-    sort: 3
+    sort: 5
   },
   [AMM.MAYC]: {
     amm: AMM.MAYC,
@@ -120,7 +164,7 @@ export const collectionsInfos: CollectionInfos = {
     shortName: 'MAYC',
     displayCollectionPair: 'MAYC/WETH',
     isNew: false,
-    sort: 4
+    sort: 6
   },
   [AMM.AZUKI]: {
     amm: AMM.AZUKI,
@@ -141,7 +185,7 @@ export const collectionsInfos: CollectionInfos = {
     shortName: 'AZUKI',
     displayCollectionPair: 'AZUKI/WETH',
     isNew: false,
-    sort: 5
+    sort: 7
   },
   [AMM.PUNKS]: {
     amm: AMM.PUNKS,
@@ -162,7 +206,7 @@ export const collectionsInfos: CollectionInfos = {
     shortName: 'PUNKS',
     displayCollectionPair: 'PUNKS/WETH',
     isNew: false,
-    sort: 6
+    sort: 8
   }
   // {
   //   name: 'DOODLES/ETH',

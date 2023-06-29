@@ -31,7 +31,7 @@ function SidebarCollection() {
   };
 
   const activeIndex = currentAmm ? Object.values(AMM).indexOf(currentAmm) : 0;
-  const yPos = (activeIndex < 0 ? 0 : activeIndex) * 68 + (activeIndex > 1 ? 64 : 63);
+  const yPos = (activeIndex < 0 ? 0 : activeIndex) * 56 + (activeIndex > 1 ? 52 : 51);
 
   return (
     <div
@@ -59,8 +59,8 @@ function SidebarCollection() {
             width={32}
             height={32}
             alt=""
-            className="rounded-full border-[4px] border-transparent hover:border-[4px]
-              hover:border-[hsla(0,0%,100%,.2)]"
+            className="ml-[2px] rounded-full border-[4px] border-transparent
+              hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
           />
           {isLoading ? (
             <div
@@ -81,7 +81,7 @@ function SidebarCollection() {
             <div
               key={`side-col-${item.collection}`}
               className={`${isLoading ? 'opacity-30' : ''}
-              relative mt-8 flex cursor-pointer items-center`}
+              relative mt-5 flex cursor-pointer items-center`}
               onClick={() => selectCollection(item.amm)}>
               <Tooltip direction="right" content={item.displayCollectionPair}>
                 {item.isNew ? (

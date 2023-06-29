@@ -51,7 +51,7 @@ function TradingWindow() {
       <div
         className={`flex w-full rounded-b-[6px] border-[1px]
           border-[#71aaff]/[.2] bg-lightBlue p-4 px-6 pb-9 text-white
-          ${userPosition ? 'pt-6' : 'rounded-t-[6px] pt-9'}
+          ${userPosition?.size !== 0 ? 'pt-6' : 'rounded-t-[6px] pt-9'}
         `}>
         <div className="w-full">{userPosition ? displayComponent : mainTradeComponent}</div>
       </div>

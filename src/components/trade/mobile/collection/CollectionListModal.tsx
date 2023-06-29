@@ -34,7 +34,7 @@ export default function CollectionListModal(props: any) {
       }}>
       <div
         className={`transition-bottom absolute bottom-0 w-full
-        ${isShowModal && data ? 'bottom-0' : 'bottom-[-400px]'}
+        ${isShowModal && data ? 'bottom-0' : 'bottom-[-500px]'}
         bg-secondaryBlue duration-500
       `}>
         {ammList.map((item: any, index) => {
@@ -48,7 +48,7 @@ export default function CollectionListModal(props: any) {
               key={key}
               className="flex justify-between px-5 py-3"
               onClick={() => {
-                router.push(`/trade/${item.collection.toLowerCase()}`, undefined, { shallow: true });
+                router.push(`/trade/${collectionInfo.amm.toLowerCase()}`, undefined, { shallow: true });
                 setIsShowModal(false);
               }}>
               <Image src={collectionInfo.logo} className="" alt="" width={32} height={32} />
