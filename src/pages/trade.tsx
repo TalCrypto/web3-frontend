@@ -10,12 +10,6 @@ import InformationWindow from '@/components/trade/desktop/information/Informatio
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
-// import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
-// import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
-// import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
-// import Switcher from '@/components/trade/mobile/collection/Switcher';
-
-// import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 import { WithRouterProps } from 'next/dist/client/with-router';
 import { $currentAmm } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
@@ -30,10 +24,6 @@ import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
 import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
-// const getCollectionInformation = (collectionName: any) => {
-//   const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
-//   return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-// };
 
 function TradePage(props: WithRouterProps) {
   const { router } = props;

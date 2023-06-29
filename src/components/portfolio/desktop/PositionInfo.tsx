@@ -4,7 +4,7 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
-import { calculateNumber } from '@/utils/calculateNumbers';
+// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HistoryModal from '@/components/portfolio/desktop/HistoryModal';
@@ -14,18 +14,22 @@ import PositionList from '@/components/portfolio/desktop/PositionList';
 import FundingPaymentModal from '@/components/portfolio/desktop/FundingPaymentModal';
 import SharePosition from '@/components/portfolio/desktop/SharePosition';
 import OutlineButton from '@/components/common/OutlineButton';
-import { $userIsConnected } from '@/stores/user';
+import { $userIsConnected, $userPositionInfos } from '@/stores/user';
 import SortingIndicator from '@/components/common/SortingIndicator';
+import { getSupportedAMMs } from '@/const/addresses';
+import { AMM } from '@/const/collectionList';
 
 function PositionInfo() {
   const initSorting = { notionalValue: 0, collateralValue: 0 };
   const [positionSorting, setPositionSort] = useState(initSorting);
 
   const isConnected = useNanostore($userIsConnected);
+  const userPositionInfos = useNanostore($userPositionInfos);
   const psUserPosition = useNanostore($psUserPosition);
   const showFundingPayment = useNanostore($psShowFundingPayment);
   const showSharePosition = useNanostore($psShowShareIndicator);
   const showHistory = useNanostore($psShowHistory);
+  const ammList = getSupportedAMMs();
 
   useEffect(() => {
     const { notionalValue, collateralValue } = positionSorting;
@@ -36,9 +40,7 @@ function PositionInfo() {
     if (notionalValue !== 0) {
       temp = psUserPosition.filter((item: any) => item !== null);
       temp.sort((a: any, b: any) => {
-        const result =
-          Math.abs(Number(calculateNumber(Number(b?.currentNotional), 4))) -
-          Math.abs(Number(calculateNumber(Number(a?.currentNotional), 4)));
+        const result = Math.abs(b?.currentNotional) - Math.abs(a?.currentNotional);
         return notionalValue === 2 ? -result : result;
       });
       $psUserPosition.set(temp);
@@ -47,14 +49,19 @@ function PositionInfo() {
     if (collateralValue !== 0) {
       temp = psUserPosition.filter((item: any) => item !== null);
       temp.sort((a: any, b: any) => {
-        const result = Number(calculateNumber(b?.realMargin, 4)) - Number(calculateNumber(a?.realMargin, 4));
+        const result = b.margin - a.margin;
         return collateralValue === 2 ? -result : result;
       });
       $psUserPosition.set(temp);
-      return;
     }
-    $psUserPosition.set(temp);
   }, [positionSorting]);
+
+  useEffect(() => {
+    const temp = ammList
+      .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))
+      .map((amm: AMM) => userPositionInfos[amm]);
+    $psUserPosition.set(temp);
+  }, [userPositionInfos]);
 
   const currentPositionCount = psUserPosition.filter((item: any) => item !== null).length;
 

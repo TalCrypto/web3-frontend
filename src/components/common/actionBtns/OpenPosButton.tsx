@@ -1,5 +1,6 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/common/actionBtns/BaseButton';
@@ -33,6 +34,7 @@ function OpenPosButton({
   onError: (error: Error | null) => void;
 }) {
   const currentAmm = useNanostore($currentAmm);
+  console.log(currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,7 +94,7 @@ function OpenPosButton({
         }
       );
     }
-  }, [collectionInfo.shortName, isPending, label, txHash]);
+  }, [isPending, label, txHash]);
 
   return (
     <BaseButton

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { $psShowBalance, $psUserPosition } from '@/stores/portfolio';
-import { calculateNumber } from '@/utils/calculateNumbers';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -13,20 +12,11 @@ function PositionList() {
   const psUserPosition = useNanostore($psUserPosition);
   const isShowBalance = useNanostore($psShowBalance);
 
-  const totalCollateral = psUserPosition.reduce(
-    (pre: any, item: any) => (!item ? Number(pre) + 0 : Number(pre) + Number(calculateNumber(item.realMargin, 4))),
-    0
-  );
+  const totalCollateral = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
 
-  const totalUnrealized = psUserPosition.reduce(
-    (pre: any, item: any) => (!item ? Number(pre) + 0 : Number(pre) + Number(calculateNumber(item.unrealizedPnl, 4))),
-    0
-  );
+  const totalUnrealized = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.unrealizedPnl), 0);
 
-  const totalFundingPaymentAccount = psUserPosition.reduce(
-    (pre: any, item: any) => (!item ? Number(pre) + 0 : Number(pre) + Number(calculateNumber(item.fundingPaymentCount, 4))),
-    0
-  );
+  // const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPaymentCount), 0);
 
   let itemIndex = 0;
 
@@ -62,9 +52,7 @@ function PositionList() {
               <SingleRowPriceContent priceValue={isShowBalance ? totalCollateral.toFixed(4) : '****'} />
             </div>
             <div className="w-[13%]">
-              <SingleRowPriceContent
-                priceValue={isShowBalance ? `${totalUnrealized > 0 ? '+' : ''}${totalUnrealized.toFixed(4)}` : '****'}
-              />
+              <SingleRowPriceContent priceValue={isShowBalance ? `${totalUnrealized.toFixed(4)}` : '****'} />
             </div>
             {/* <div className="w-[17%]">
               <SingleRowPriceContent

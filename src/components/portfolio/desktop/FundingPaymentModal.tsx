@@ -1,35 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
-import { calculateNumber } from '@/utils/calculateNumbers';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { utils } from 'ethers';
 import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psShowFundingPayment } from '@/stores/portfolio';
+import { $psSelectedCollectionAmm, $psShowFundingPayment } from '@/stores/portfolio';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getCollectionInformation } from '@/const/collectionList';
-import { $currentAmm } from '@/stores/trading';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $collectionConfig, $fundingRates, $nextFundingTime } from '@/stores/trading';
+import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 
 const FundingPaymentModal = () => {
-  const currentAmm: any = useNanostore($currentAmm);
-  const currentCollection: any = getCollectionInformation(currentAmm);
+  const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
+  const { total: fpTotal, fpRecords } = useFundingPaymentHistory(psSelectedCollectionAmm);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [fpRecords, setFpRecords] = useState([]);
-  const [fpTotal, setFpTotal] = useState(0);
+  const collectionInfo = getCollectionInformation(psSelectedCollectionAmm);
   const [timeLabel, setTimeLabel] = useState('-- : -- : --');
-  const [interval, setI] = useState(null);
-  const [nextFundingTime, setNextFundingTime] = useState(0);
-  const [tradingData, setTradingData]: any = useState({});
-
-  const hadKey = Object.keys(tradingData).length > 0;
-  const ammAddr = currentCollection.amm;
-  const { contract } = currentCollection;
-
+  const { fundingPeriod } = useNanostore($collectionConfig);
+  const fundingRates = useNanostore($fundingRates);
+  const nextFundingTime = useNanostore($nextFundingTime);
+  const [endTime, setEndTime] = useState(nextFundingTime ? nextFundingTime * 1000 : 0);
   let hours = '';
   let minutes = '';
   let seconds = '';
@@ -38,63 +30,53 @@ const FundingPaymentModal = () => {
   let longSide = '';
   let shortSide = '';
 
-  if (tradingData && tradingData.fundingRateLong) {
-    const rawData = utils.formatEther(tradingData.fundingRateLong);
-    const numberRawData = (Number(rawData) * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawData = (fundingRates.longRate * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawData));
     rateLong = ` ${absoluteNumber}%`;
-    if (Number(numberRawData) > 0) {
+    if (fundingRates.longRate > 0) {
       longSide = 'pay';
     } else {
       longSide = 'get';
     }
   }
-  if (tradingData && tradingData.fundingRateShort) {
-    const rawData = utils.formatEther(tradingData.fundingRateShort);
-    const numberRawData = (Number(rawData) * 100).toFixed(4);
+  if (fundingRates) {
+    const numberRawData = (fundingRates.shortRate * 100).toFixed(4);
     const absoluteNumber = Math.abs(Number(numberRawData));
     rateShort = ` ${absoluteNumber}%`;
-    if (Number(numberRawData) > 0) {
+    if (fundingRates.shortRate > 0) {
       shortSide = 'get';
     } else {
       shortSide = 'pay';
     }
   }
 
-  function startCountdown() {
-    if (!hadKey) {
-      setTimeLabel('-- : -- : --');
-      return;
-    }
-    let endTime = tradingData.nextFundingTime * 1000;
-    const { fundingPeriod } = tradingData;
-    if (interval !== null) {
-      clearInterval(interval);
-    }
-    const intervalTime: any = setInterval(() => {
-      let difference = endTime - Date.now();
-      if (difference < 0) {
-        endTime = Date.now() + fundingPeriod * 1000;
-        difference = endTime - Date.now();
+  useEffect(() => {
+    function update() {
+      if (nextFundingTime) {
+        const difference = endTime - Date.now();
+        if (difference < 0) {
+          setEndTime(Date.now() + fundingPeriod * 1000);
+        }
+        hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
+          .toString()
+          .padStart(2, '0');
+        minutes = Math.floor((difference / 1000 / 60) % 60)
+          .toString()
+          .padStart(2, '0');
+        seconds = Math.floor((difference / 1000) % 60)
+          .toString()
+          .padStart(2, '0');
+        setTimeLabel(`${hours}:${minutes}:${seconds}`);
       }
-      hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-        .toString()
-        .padStart(2, '0');
-      minutes = Math.floor((difference / 1000 / 60) % 60)
-        .toString()
-        .padStart(2, '0');
-      seconds = Math.floor((difference / 1000) % 60)
-        .toString()
-        .padStart(2, '0');
-      setTimeLabel(`${hours}:${minutes}:${seconds}`);
-    }, 1000);
-    setI(intervalTime);
-  }
+    }
+    update();
+    const timer = setInterval(update, 1000);
 
-  if (hadKey && nextFundingTime !== tradingData.nextFundingTime) {
-    setNextFundingTime(tradingData.nextFundingTime);
-    startCountdown();
-  }
+    return () => {
+      clearInterval(timer);
+    };
+  }, [endTime]);
 
   return (
     <div
@@ -109,8 +91,8 @@ const FundingPaymentModal = () => {
         onClick={e => e.stopPropagation()}>
         <div className="px-6 pt-[26px]">
           <div className="flex items-center space-x-[6px]">
-            <Image src={currentCollection.image} width={24} height={24} alt="" />
-            <p className="font-600 text-[16px] text-highEmphasis">{currentCollection.shortName} Funding Payment History</p>
+            <Image src={collectionInfo.image} width={24} height={24} alt="" />
+            <p className="font-600 text-[16px] text-highEmphasis">{collectionInfo.shortName} Funding Payment History</p>
           </div>
           <div className="flex">
             <div className="flex-1" />
@@ -125,7 +107,6 @@ const FundingPaymentModal = () => {
             className="absolute right-6 top-6 cursor-pointer"
             onClick={() => {
               $psShowFundingPayment.set(false);
-              $isShowMobileModal.set(false);
             }}>
             <Image src="/images/components/common/modal/close.svg" width={16} height={16} alt="" />
           </div>
@@ -144,15 +125,15 @@ const FundingPaymentModal = () => {
                 </div>
               </div>
             </div>
-            <div className={`scrollable max-h-[460px] overflow-y-scroll ${fpRecords.length > 0 ? 'pb-[60px]' : ''}`}>
-              {isLoading ? (
+            <div className={`scrollable max-h-[460px] overflow-y-scroll ${fpRecords && fpRecords.length > 0 ? 'pb-[60px]' : ''}`}>
+              {!fpRecords ? (
                 <div className="flex min-w-[400px] items-center justify-center">
                   <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
                 </div>
               ) : fpRecords.length > 0 ? (
-                fpRecords.map((item: any, idx: any) => {
+                fpRecords.map((item, idx) => {
                   const timeValue = formatDateTime(item.timestamp, 'L HH:mm');
-                  const value = Number(calculateNumber(item.fundingPaymentPnl, 6))?.toFixed(6);
+                  const value = item.fundingPaymentPnl.toFixed(6);
                   return (
                     <div
                       className={`flex p-3
@@ -160,15 +141,15 @@ const FundingPaymentModal = () => {
                       key={`fp-row-${idx}`}>
                       <div className="flex min-w-[190px] items-center px-[18px]">
                         <div className="mr-2 h-[24px] w-[2px] rounded-[2px] bg-[#4287f5]" />
-                        <p className="text-[16px]">{timeValue}</p>
+                        <p className="text-[16px] font-normal">{timeValue}</p>
                       </div>
                       <div className="min-w-[190px] px-[18px]">
                         <PriceWithIcon
-                          priceValue={Number(value) > 0 ? `+${value}` : Number(value) === 0 ? '0.000000' : value}
                           width={20}
                           height={20}
+                          priceValue={Number(value) > 0 ? `+${value}` : Number(value) === 0 ? '0.000000' : value}
                           className={`
-                            !text-[16px]
+                            text-[16px] 
                             ${Number(value) > 0 ? 'text-marketGreen' : Number(value) === 0 ? '' : 'text-marketRed'}
                           `}
                         />
@@ -184,14 +165,14 @@ const FundingPaymentModal = () => {
               )}
             </div>
           </div>
-          {fpRecords.length > 0 ? (
+          {fpRecords && fpRecords.length > 0 ? (
             <div
               className="absolute bottom-0 flex w-[100%] items-center justify-end
                 rounded-b-[12px] border-t-[1px] border-t-[#71aaff38] bg-lightBlue">
               <div className="mx-[36px] my-[30px] flex items-center">
                 <span className="mr-[36px] text-highEmphasis">Total Received: </span>
                 <PriceWithIcon
-                  priceValue={fpTotal > 0 ? `+${fpTotal}` : fpTotal === 0 ? '0.000000' : fpTotal}
+                  priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : fpTotal === 0 ? '0.000000' : fpTotal.toFixed(6)}
                   className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
                 />
               </div>

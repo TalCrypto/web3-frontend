@@ -206,7 +206,7 @@ const ChartHeaders = () => {
   );
 };
 
-const ChartFooter = (props: any, ref: any) => {
+const ChartFooter = () => {
   const DEFAULT_TIME = '-- : -- : --';
   const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
   const { fundingPeriod } = useNanostore($collectionConfig);

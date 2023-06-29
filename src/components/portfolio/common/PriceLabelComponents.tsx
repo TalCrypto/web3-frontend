@@ -5,10 +5,10 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { getCollectionInformation } from '@/const/collectionList';
 
 export function SingleRowPriceContent(props: any) {
+  const { priceValue, width = 20, height = 20, className = '', isElement = false, amm } = props;
   const currentAmm: any = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
-  const { priceValue, width = 20, height = 20, className = '', isElement = false } = props;
-  const iconImage = collectionInfo ? collectionInfo.logo : '/images/common/symbols/eth-tribe3.svg';
+  const iconImage = amm && collectionInfo ? collectionInfo.logo : '/images/common/symbols/eth-tribe3.svg';
 
   return (
     <div className={`${className} flex text-[14px] font-medium`}>
@@ -25,10 +25,9 @@ export function SingleRowPriceContent(props: any) {
 }
 
 export function DoubleRowPriceContent(props: any) {
-  const { priceContent, normalContent } = props;
-  const currentAmm: any = useNanostore($currentAmm);
-  const collectionInfo = getCollectionInformation(currentAmm);
-  const iconImage = collectionInfo ? collectionInfo.logo : '/images/common/symbols/eth-tribe3.svg';
+  const { priceContent, normalContent, amm } = props;
+  const collectionInfo = getCollectionInformation(amm);
+  const iconImage = amm && collectionInfo ? collectionInfo.logo : '/images/common/symbols/eth-tribe3.svg';
 
   return (
     <div className="">

@@ -4,34 +4,31 @@ import React from 'react';
 import * as htmlToImage from 'html-to-image';
 import download from 'downloadjs';
 
-import { calculateNumber } from '@/utils/calculateNumbers';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psSelectedCollectionAmm, $psShowShareIndicator, $psUserInfo, $psUserPosition } from '@/stores/portfolio';
+import { $psSelectedCollectionAmm, $psShowShareIndicator } from '@/stores/portfolio';
 import { LargeEthPrice, NormalEthPrice } from '@/components/common/LabelsComponents';
 import { getCollectionInformation } from '@/const/collectionList';
+import { $vammPrice } from '@/stores/trading';
+import { $userInfo } from '@/stores/user';
+import { usePositionInfo } from '@/hooks/collection';
 
 export default function SharePosition() {
-  const userInfo: any = useNanostore($psUserInfo);
-  const psUserPositions: any = useNanostore($psUserPosition);
-  const psSelectedCollectionAmm = useNanostore($psSelectedCollectionAmm);
-  const userPosition = psUserPositions[psSelectedCollectionAmm];
+  const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
+  const positionInfo = usePositionInfo(psSelectedCollectionAmm);
+  const collectionInfo = getCollectionInformation(psSelectedCollectionAmm);
 
-  const { amm } = userPosition;
-  const filteredCollection = getCollectionInformation(amm);
+  const userInfo = useNanostore($userInfo);
+  const vammPrice = useNanostore($vammPrice);
+  const pnlStatus = positionInfo ? positionInfo.unrealizedPnl >= 0 : false;
+  const side = positionInfo ? positionInfo.size > 0 : false;
+  const leverage = positionInfo?.leverage.toFixed(2);
+  const pnlValue = positionInfo?.unrealizedPnl.toFixed(2);
+  const entryPrice = positionInfo?.entryPrice.toFixed(2);
+  const futurePrice = vammPrice?.toFixed(2);
+  const currentPositionName = collectionInfo.collectionName;
 
-  const pnlStatus = userPosition.unrealizedPnl
-    ? Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0
-    : Number(calculateNumber(userPosition.unrealizedPnl, 4)) >= 0;
-  const side = Number(calculateNumber(userPosition.size, 4)) > 0;
-  const leverage = Number(calculateNumber(userPosition.remainMarginLeverage, 2)).toFixed(2);
-  const pnlValue = userPosition.unrealizedPnl
-    ? calculateNumber(userPosition.unrealizedPnl, 4)
-    : calculateNumber(userPosition.unrealizedPnl, 4);
-  const entryPrice = calculateNumber(userPosition.entryPrice, 2);
-  const futurePrice = userPosition.spotPrice ? calculateNumber(userPosition.spotPrice, 2) : calculateNumber(userPosition.currentPrice, 2);
-  const currentPositionName = filteredCollection.collectionName;
   const userAddress = `${userInfo?.userAddress.substring(0, 7)}...${userInfo?.userAddress.slice(-3)}`;
   const showUserId = userInfo?.username === '' ? userAddress : userInfo?.username;
 
@@ -45,7 +42,7 @@ export default function SharePosition() {
     if (!target) return;
 
     htmlToImage.toJpeg(target).then((dataUrl: any) => {
-      download(dataUrl, `my-result-${filteredCollection.collectionName}.jpeg`);
+      download(dataUrl, `my-result-${collectionInfo.collectionName}.jpeg`);
     });
   };
 
@@ -71,10 +68,10 @@ export default function SharePosition() {
             id="image-bg">
             <div className="mt-4">
               <div className="ml-6">
-                <Image src={filteredCollection.logo} alt="" width={64} height={64} />
+                <Image src={collectionInfo.logo} alt="" width={64} height={64} />
                 <div className="mt-2 flex items-baseline">
                   <div className="pr-[6px] text-[18px] font-bold text-white/[.95]">
-                    <span className="">{filteredCollection.displayCollectionPair}</span>
+                    <span className="">{collectionInfo.displayCollectionPair}</span>
                   </div>
                   <div className="p-0 text-[14px] font-semibold text-[#98bbfe]/[.89]">
                     <span>Perpetual Contract</span>

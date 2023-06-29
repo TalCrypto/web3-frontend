@@ -2,31 +2,28 @@
 /* eslint-disable indent */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react';
-import { calculateNumber } from '@/utils/calculateNumbers';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
-import { utils } from 'ethers';
 import Image from 'next/image';
 import Tooltip from '@/components/common/Tooltip';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment, $psShowShareIndicator } from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import { $priceChangePct } from '@/stores/trading';
-import { getCollectionInformation } from '@/const/collectionList';
+import { getAMMByAddress } from '@/const/addresses';
 
 function PositionListItem(props: any) {
   const router = useRouter();
   const { userPosition, itemIndex } = props;
   const isShowBalance = useNanostore($psShowBalance);
 
-  const size = calculateNumber(userPosition.size, 4);
-  const currentPrice = calculateNumber(userPosition.spotPrice, 2);
-  const sizeInEth = calculateNumber(userPosition.currentNotional, 4);
-  const totalPnl = calculateNumber(userPosition.unrealizedPnl, 4);
+  const { size } = userPosition;
+  const sizeInEth = userPosition.currentNotional;
+  const totalPnl = userPosition.unrealizedPnl;
   const className = `size-text ${isShowBalance ? (Number(size) > 0 ? 'up' : Number(size) === 0 ? '' : 'down') : ''}`;
   const [tradingData]: any = useState({});
 
-  const vAMMPrice = !tradingData.spotPrice ? 0 : Number(utils.formatEther(tradingData.spotPrice));
-  const oraclePrice = !tradingData.twapPrice ? 0 : Number(utils.formatEther(tradingData.twapPrice));
+  const vAMMPrice = !tradingData.spotPrice ? 0 : tradingData.spotPrice;
+  const oraclePrice = !tradingData.twapPrice ? 0 : tradingData.twapPrice;
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapLmt = useNanostore($priceChangePct);
 
@@ -35,7 +32,7 @@ function PositionListItem(props: any) {
 
   // liquidation warning
   const positionType = userPosition ? (userPosition.size > 0 ? 'LONG' : 'SHORT') : null;
-  const liquidationPrice = userPosition ? Number(utils.formatEther(userPosition.liquidationPrice)) : null;
+  const liquidationPrice = userPosition ? userPosition.liquidationPrice : null;
   const liquidationChanceLimit = 0.05;
 
   const liquidationChanceWarning = () => {
@@ -69,15 +66,14 @@ function PositionListItem(props: any) {
   };
 
   // leverage handling
-  const isLeverageNegative = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) <= 0 : false;
-  const isLeverageOver = userPosition ? Number(calculateNumber(userPosition.remainMarginLeverage, 18)) > 100 : false;
+  const isLeverageNegative = userPosition ? Number(userPosition.remainMarginLeverage) <= 0 : false;
+  const isLeverageOver = userPosition ? Number(userPosition.remainMarginLeverage) > 100 : false;
 
-  const targetCollection = getCollectionInformation(userPosition.amm);
-  const targetCollectionType = targetCollection ? targetCollection.collection : 'BAYC';
+  const userPositionAmm = getAMMByAddress(userPosition.amm);
 
   const clickItem = (e: any) => {
     e.preventDefault();
-    const url = `/trade/${encodeURIComponent(targetCollectionType)}`;
+    const url = `/trade/${userPositionAmm}`;
 
     // navigate to url
     router.push(url);
@@ -86,14 +82,14 @@ function PositionListItem(props: any) {
   const showFundingPayment = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
-    $psSelectedCollectionAmm.set(userPosition.amm);
+    $psSelectedCollectionAmm.set(userPositionAmm);
     $psShowFundingPayment.set(true);
   };
 
   const showSharePosition = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
-    $psSelectedCollectionAmm.set(userPosition.amm);
+    $psSelectedCollectionAmm.set(userPositionAmm);
     $psShowShareIndicator.set(true);
   };
 
@@ -101,33 +97,24 @@ function PositionListItem(props: any) {
     <div
       className={`px-9 ${itemIndex % 2 === 0 ? 'bg-secondaryBlue/[.58]' : ''}
         cursor-pointer border-b-[1px] border-b-secondaryBlue hover:bg-secondaryBlue
-    `}>
+    `}
+      key={`position_item_${itemIndex}`}>
       <div className="flex py-3" onClick={clickItem}>
         <div className="relative w-[20%] pl-3">
           <div className="absolute left-[-8px] top-[-4px] mt-[3px] h-[50px] w-[3px] rounded-[30px] bg-primaryBlue" />
-          <LargeTypeIcon
-            content={userPosition.pair}
-            name={userPosition.amm}
-            className={className}
-            size={size}
-            isShowBalance={isShowBalance}
-          />
+          <LargeTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />
         </div>
         <div className="w-[13%]">
           <DoubleRowPriceContent
-            priceContent={isShowBalance ? currentPrice : '****'}
-            normalContent={isShowBalance ? calculateNumber(userPosition.entryPrice, 2) : '****'}
+            priceContent={isShowBalance ? userPosition.vammPrice?.toFixed(2) : '****'}
+            normalContent={isShowBalance ? userPosition.entryPrice?.toFixed(2) : '****'}
           />
         </div>
         <div className="w-[13%]">
           <SingleRowPriceContent
             priceValue={
               <>
-                {isShowBalance
-                  ? Number(calculateNumber(userPosition.liquidationPrice, 2)) < 0
-                    ? '0.00'
-                    : calculateNumber(userPosition.liquidationPrice, 2)
-                  : '****'}
+                {isShowBalance ? (userPosition.liquidationPrice < 0 ? '0.00' : userPosition.liquidationPrice?.toFixed(2)) : '****'}
                 <div className="ml-[4px] flex space-x-[4px]">
                   {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                     <Tooltip
@@ -147,7 +134,7 @@ function PositionListItem(props: any) {
             isElement
             className={isGapAboveLimit ? 'text-warn' : ''}
           />
-          <div className="ml-[26px] mt-2 flex text-[14px] font-medium">
+          <div className="ml-[26px] mt-2 flex text-[14px] font-medium text-mediumEmphasis">
             <div className="mr-1">{`${
               userPosition === null
                 ? '---'
@@ -156,7 +143,7 @@ function PositionListItem(props: any) {
                 : isLeverageOver
                 ? '100.00 x +'
                 : isShowBalance
-                ? `${calculateNumber(userPosition.remainMarginLeverage, 2)}X`
+                ? `${userPosition.leverage?.toFixed(2)}X`
                 : '****'
             }`}</div>
             {isLeverageNegative ? (
@@ -168,22 +155,23 @@ function PositionListItem(props: any) {
         </div>
         <div className="w-[14%]">
           <DoubleRowPriceContent
-            priceContent={isShowBalance ? Math.abs(Number(calculateNumber(userPosition.size, 4)))?.toFixed(4) : '****'}
+            priceContent={isShowBalance ? Math.abs(userPosition.size)?.toFixed(4) : '****'}
             iconType={userPosition.pair}
-            normalContent={isShowBalance ? Math.abs(Number(sizeInEth))?.toFixed(4) : '****'}
+            normalContent={isShowBalance ? Math.abs(sizeInEth)?.toFixed(4) : '****'}
+            amm={userPositionAmm}
           />
         </div>
         <div className="w-[15%]">
-          <SingleRowPriceContent priceValue={isShowBalance ? calculateNumber(userPosition.realMargin, 4) : '****'} />
+          <SingleRowPriceContent priceValue={isShowBalance ? userPosition.margin?.toFixed(4) : '****'} />
         </div>
         <div className="w-[13%]">
           <SingleRowPriceContent
             priceValue={
               isShowBalance
-                ? Number(totalPnl) > 0
-                  ? `+${totalPnl}`
-                  : Number(totalPnl) === 0
-                  ? Math.abs(Number(totalPnl))?.toFixed(4)
+                ? totalPnl > 0
+                  ? `${totalPnl.toFixed(4)}`
+                  : totalPnl === 0
+                  ? Math.abs(totalPnl)?.toFixed(4)
                   : totalPnl
                 : '****'
             }

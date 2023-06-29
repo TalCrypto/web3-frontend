@@ -34,22 +34,14 @@ export default function SharePosition(props: {
   const closeShareWindow = () => {
     setShowShareComponent(false);
   };
+
   const downloadRank = () => {
     const target = document.getElementById('image-bg');
 
     if (!target) return;
 
     htmlToImage.toJpeg(target).then((dataUrl: any) => {
-      // if (window.screen.width > 800) {
       download(dataUrl, `my-result-${collectionInfo.collectionName}.jpeg`);
-      // } else {
-      //   const image = new Image(null);
-      //   image.src = dataUrl;
-      //   const w = window.open('');
-      //   if (!w) return;
-      //   w.document.write(image.outerHTML);
-      //   w.document.close();
-      // }
     });
   };
   const shareToTwitter = () => {

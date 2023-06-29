@@ -27,6 +27,7 @@ import TrendContent from '@/components/portfolio/desktop/TrendContent';
 import PageLoading from '@/components/common/PageLoading';
 import { formatDateTime } from '@/utils/date';
 import { $userIsConnected, $userIsWrongNetwork } from '@/stores/user';
+import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 
 export default function Portfolio() {
   const isConnected = useNanostore($userIsConnected);
@@ -58,10 +59,12 @@ export default function Portfolio() {
             <>
               <AccountChartMobile />
               <TrendContentMobile />
-              <PositionInfoMobile />
+              {/* <PositionInfoMobile /> */}
             </>
           )}
         </div>
+
+        <UserDataUpdater />
       </main>
     </>
   );
