@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
@@ -97,7 +97,7 @@ function ChartTimeTabs(props: any) {
     updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       const element = document.getElementById('divTradeWindow');
       if (element === null) return;

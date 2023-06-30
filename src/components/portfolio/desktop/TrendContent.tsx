@@ -4,7 +4,7 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
 /* eslint-disable array-callback-return */
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
@@ -58,7 +58,7 @@ function TrendContent() {
     style.setProperty('--highlight-x-pos', `${offsetLeft}px`);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       const element = document.getElementById('divPortfolioWindow');
       if (element === null) return;

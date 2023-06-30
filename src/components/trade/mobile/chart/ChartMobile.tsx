@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable operator-linebreak */
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
@@ -69,7 +69,7 @@ function ChartTimeTabs(props: any) {
     updateSelectedTimeIndex();
   }, [selectedTimeIndex, controlRef, contentArray]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       const element = document.getElementById('divTradeMobile');
       if (element === null) return;

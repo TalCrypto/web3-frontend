@@ -4,17 +4,13 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
 /* eslint-disable array-callback-return */
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { useRouter } from 'next/router';
-import { pageTitleParser } from '@/utils/eventLog';
 import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/mobile/PortfolioChart';
 
 function TrendContentMobile() {
-  const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
   const [isVisible, setIsVisible] = useState(false);
 
   const isShowBalance = useNanostore($psShowBalance);
@@ -46,7 +42,7 @@ function TrendContentMobile() {
     style.setProperty('--highlight-x-pos', `${offsetLeft}px`);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       const element = document.getElementById('divPortfolioWindow');
       if (element === null) return;
