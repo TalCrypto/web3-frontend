@@ -67,6 +67,17 @@ const MarketTrade = () => {
   const marketHistory = useNanostore($futureMarketHistory);
   const [displayCount, setDisplayCount] = useState(10);
   const address = useNanostore($userAddress);
+  const [newAdded, setNewAdded] = useState(false);
+
+  useEffect(() => {
+    if (marketHistory.length > 0) {
+      setNewAdded(true);
+    }
+    const timeout = setTimeout(() => setNewAdded(false), 2000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [marketHistory]);
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -101,6 +112,7 @@ const MarketTrade = () => {
               className={`relative mb-1 grid grid-cols-12 items-center whitespace-break-spaces
                   px-5 py-2 text-[12px] text-mediumEmphasis
                   ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
+                   ${newAdded && record.isNew ? 'flash' : ''}
                 `}
               key={`market_${record.timestamp}_${index}`}>
               <div className="time relative col-span-4 border-l-[2px] border-primaryBlue pl-2">

@@ -34,7 +34,6 @@ function OpenPosButton({
   onError: (error: Error | null) => void;
 }) {
   const currentAmm = useNanostore($currentAmm);
-  console.log(currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
