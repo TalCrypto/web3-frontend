@@ -1,14 +1,13 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { AMM } from '@/const/collectionList';
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $collectionConfig, $marketUpdateTrigger } from '@/stores/trading';
+import { $marketUpdateTrigger } from '@/stores/trading';
 import { $currentChain } from '@/stores/user';
 import { getAMMByAddress, getSupportedAMMAddresses } from '@/const/addresses';
 import { getDailySpotPriceGraphData } from '@/utils/trading';
-import { getLatestSpotPriceBefore } from '@/utils/subgraph';
+import { getLatestSpotPriceBefore, getSpotPriceAfter } from '@/utils/subgraph';
 import { formatBigInt } from '@/utils/bigInt';
 import { usePublicClient } from 'wagmi';
 import { getCHViewerContract } from '@/const/contracts';
@@ -36,15 +35,15 @@ export interface GetMktOverview {
 
 export const useMarketOverview = (): GetMktOverview => {
   const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
-  const config = useNanostore($collectionConfig);
   const chain = useNanostore($currentChain);
   const [data, setData] = useState<Array<CollectionOverview>>();
   const [isLoading, setIsLoading] = useState(false);
   const publicClient = usePublicClient();
 
   useEffect(() => {
-    setIsLoading(true);
     async function getGraphData() {
+      if (isLoading) return;
+      setIsLoading(true);
       const nowTs = Math.round(new Date().getTime() / 1000);
       const ts24hr = nowTs - 1 * 24 * 3600;
       const ts7Days = nowTs - 7 * 24 * 3600;
@@ -55,18 +54,12 @@ export const useMarketOverview = (): GetMktOverview => {
       const priceList24hrAgo = await Promise.all(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts24hr)));
       const priceList7daysAgo = await Promise.all(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts7Days)));
       const priceList30daysAgo = await Promise.all(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts30Days)));
-      const vammStartReserveList = await Promise.all(
-        ammAddrList.map(ammAddr => {
-          const vammPrice = publicClient.readContract({
-            address: ammAddr,
-            abi: ammAbi,
-            functionName: 'reserveSnapshots',
-            args: [0n]
-          });
-          return vammPrice;
+      const vammStartPriceList = await Promise.all(
+        ammAddrList.map(async ammAddr => {
+          const res = await getSpotPriceAfter(ammAddr, 0, 1, 0);
+          return res[0].spotPrice;
         })
       );
-      const vammStartPriceList = vammStartReserveList.map(reserveSnapshot => (reserveSnapshot[0] * BigInt(10 ** 18)) / reserveSnapshot[1]);
       const vammPriceList = await Promise.all(
         ammAddrList.map(ammAddr => {
           const vammPrice = publicClient.readContract({
@@ -133,7 +126,7 @@ export const useMarketOverview = (): GetMktOverview => {
       setIsLoading(false);
     }
     getGraphData();
-  }, [marketUpdateTrigger, chain, config]);
+  }, [chain, marketUpdateTrigger, publicClient]);
 
   return { isLoading, data };
 };
