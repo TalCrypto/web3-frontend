@@ -53,6 +53,7 @@ export type UserPositionInfos = {
 };
 
 export const $userWethBalance = atom(0);
+export const $userWethAllowance = atom(0);
 export const $userIsConnecting = atom(true);
 export const $userIsConnected = atom(false);
 export const $userIsWrongNetwork = atom(false);

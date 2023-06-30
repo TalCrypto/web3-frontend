@@ -1,13 +1,14 @@
-import { chViewerAbi } from '@/const/abi';
+import { chViewerAbi, wethAbi } from '@/const/abi';
 import { getAMMAddress, getAddressConfig, getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
-import { getCHViewerContract } from '@/const/contracts';
+import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/contracts';
 import {
   $currentChain,
   $userAddress,
   $userIsConnected,
   $userIsWrongNetwork,
   $userPositionInfos,
+  $userWethAllowance,
   setIsConnecting,
   setUserInfo,
   setWethBalance
@@ -96,6 +97,19 @@ const UserDataUpdater: React.FC = () => {
   const { data } = useBalance({ address, token: wethAddr, watch: true });
   const [amms, setAmms] = useState<Array<AMM>>();
 
+  const chContract = getCHContract(chain);
+  const weth = getWEthContract(chain);
+
+  // get allowance
+  const { data: allowanceData } = useContractRead({
+    ...weth,
+    abi: wethAbi,
+    functionName: 'allowance',
+    args: address && chContract ? [address, chContract.address] : undefined,
+    enabled: Boolean(address && chContract),
+    watch: true
+  });
+
   useEffect(() => {
     if (address) {
       apiConnection.getUserInfo(address).then(result => {
@@ -121,6 +135,10 @@ const UserDataUpdater: React.FC = () => {
       setWethBalance(parseFloat(data.formatted));
     }
   }, [data]);
+
+  useEffect(() => {
+    $userWethAllowance.set(formatBigInt(allowanceData ?? 0n));
+  }, [allowanceData]);
 
   useEffect(() => {
     if (chain && isConnected && !chain.unsupported) {

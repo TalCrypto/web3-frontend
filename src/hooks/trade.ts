@@ -8,7 +8,7 @@ import { $currentAmm } from '@/stores/trading';
 import { absBigInt, formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/contracts';
 import { chAbi, chViewerAbi, wethAbi } from '@/const/abi';
-import { $userAddress, $currentChain } from '@/stores/user';
+import { $userAddress, $currentChain, $userWethAllowance } from '@/stores/user';
 import { useDebounce } from '@/hooks/debounce';
 import { usePositionInfo } from '@/hooks/collection';
 
@@ -108,23 +108,8 @@ export const useOpenPositionEstimation = (args: {
 };
 
 export const useApprovalCheck = (amount: number) => {
-  const chain = useNanostore($currentChain);
-  const address = useNanostore($userAddress);
-  const chContract = getCHContract(chain);
-  const weth = getWEthContract(chain);
   const [isNeedApproval, setIsNeedApproval] = useState(false);
-
-  // get allowance
-  const { data: allowanceData } = useContractRead({
-    ...weth,
-    abi: wethAbi,
-    functionName: 'allowance',
-    args: address && chContract ? [address, chContract.address] : undefined,
-    enabled: Boolean(address && chContract),
-    watch: true
-  });
-
-  const allowance = formatBigInt(allowanceData ?? 0n);
+  const allowance = useNanostore($userWethAllowance);
 
   useEffect(() => {
     setIsNeedApproval(allowance < amount);
