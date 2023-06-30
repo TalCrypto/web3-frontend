@@ -10,15 +10,17 @@ import '@/styles/all.scss';
 import { CHAINS, DEFAULT_CHAIN } from '@/const/supportedChains';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
+import { publicProvider } from 'wagmi/providers/public';
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
-const { publicClient } = configureChains(CHAINS, [w3mProvider({ projectId })]);
+const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ projectId, version: 2, chains: CHAINS }),
-  publicClient
+  publicClient,
+  webSocketPublicClient
 });
 
 const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
