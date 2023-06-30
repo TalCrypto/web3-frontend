@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
-import { createChart, ColorType, ISeriesApi } from 'lightweight-charts';
+import { createChart, ColorType, ISeriesApi, IChartApi } from 'lightweight-charts';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useChartData } from '@/hooks/collection';
@@ -13,7 +13,7 @@ function ChartDisplay() {
   const chartContainerRef: any = useRef();
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
   const [candleSeries, setCandleSeries] = useState<ISeriesApi<'Candlestick'> | undefined>();
-
+  const [chart, setChart] = useState<IChartApi>();
   const colors = {
     backgroundColor: 'transparent',
     lineColor: 'rgb(165, 92, 171)',
@@ -23,7 +23,7 @@ function ChartDisplay() {
   };
 
   useEffect(() => {
-    const chart = createChart(chartContainerRef.current, {
+    const newChart = createChart(chartContainerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: colors.backgroundColor },
         textColor: colors.textColor,
@@ -63,7 +63,7 @@ function ChartDisplay() {
       // }
     });
     const handleResize = () => {
-      chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+      newChart.applyOptions({ width: chartContainerRef.current.clientWidth });
     };
 
     // const newSeries = chart.addAreaSeries({
@@ -73,7 +73,7 @@ function ChartDisplay() {
     //   lineWidth: 1
     // });
 
-    const newSeries = chart.addCandlestickSeries({
+    const newSeries = newChart.addCandlestickSeries({
       upColor: '#26a69a',
       downColor: '#ef5350',
       borderVisible: false,
@@ -81,27 +81,27 @@ function ChartDisplay() {
       wickDownColor: '#ef5350'
     });
 
-    chart.timeScale().fitContent();
+    newChart.timeScale().fitContent();
 
     setCandleSeries(newSeries);
+    setChart(newChart);
 
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      chart.remove();
+      newChart.remove();
     };
   }, []);
 
   useEffect(() => {
-    if (candleSeries) {
+    if (candleSeries && chart) {
       candleSeries.setData(graphData);
+      chart.timeScale().fitContent();
     }
   }, [graphData]);
 
-  return (
-      <div ref={chartContainerRef} />
-  );
+  return <div ref={chartContainerRef} />;
 }
 
 export default ChartDisplay;
