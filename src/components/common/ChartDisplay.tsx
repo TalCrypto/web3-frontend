@@ -99,7 +99,7 @@ function ChartDisplay() {
       candleSeries.setData(graphData);
       chart.timeScale().fitContent();
     }
-  }, [graphData]);
+  }, [graphData, chart, candleSeries]);
 
   return <div ref={chartContainerRef} />;
 }
