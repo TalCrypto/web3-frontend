@@ -24,10 +24,12 @@ export const useFundingPaymentHistory = (amm: AMM) => {
         apiConnection.getUserFundingPaymentHistoryWithAmm(address, ammAddress).then(res => {
           setTotal(formatBigInt(res.data.total));
           setFpRecords(
-            res.data.fundingPaymentPnlHistory.map((item: { timestamp: number; fundingPaymentPnl: string }) => ({
-              timestamp: Number(item.timestamp),
-              fundingPaymentPnl: formatBigInt(item.fundingPaymentPnl)
-            }))
+            res.data.fundingPaymentPnlHistory
+              ? res.data.fundingPaymentPnlHistory.map((item: { timestamp: number; fundingPaymentPnl: string }) => ({
+                  timestamp: Number(item.timestamp),
+                  fundingPaymentPnl: formatBigInt(item.fundingPaymentPnl)
+                }))
+              : []
           );
         });
       }
