@@ -1,6 +1,6 @@
 import { atom } from 'nanostores';
 
-export const $psBalanceOriginData = {
+export const psBalanceOriginData = {
   total: '0',
   unrealized: '0',
   portfolio: '0',
@@ -13,7 +13,7 @@ export const $psBalanceOriginData = {
 
 export const $psShowBalance = atom(true);
 
-export const $psBalance = atom($psBalanceOriginData);
+export const $psBalance = atom(psBalanceOriginData);
 
 export const $psUserPosition = atom([]);
 
