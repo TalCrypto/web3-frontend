@@ -121,7 +121,7 @@ function SidebarCollection() {
           ))}
       </div>
 
-      <CollectionModal visible={isColModalVisible} setVisible={setIsColModalVisible} selectCollection={selectCollection} />
+      {isColModalVisible && <CollectionModal setVisible={setIsColModalVisible} selectCollection={selectCollection} />}
     </div>
   );
 }

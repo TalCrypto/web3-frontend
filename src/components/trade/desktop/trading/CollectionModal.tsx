@@ -12,7 +12,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import SortingIndicator from '@/components/common/SortingIndicator';
 
 const CollectionModal = (props: any) => {
-  const { visible, setVisible, selectCollection } = props;
+  const { setVisible, selectCollection } = props;
   const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
   const { isLoading, data: overviewData } = useMarketOverview();
   const [periodIndex, setPeriodIndex] = useState(0);
@@ -95,8 +95,6 @@ const CollectionModal = (props: any) => {
       }
     }
   }, [positionSorting, periodIndex, overviewData]);
-
-  if (!visible) return null;
 
   const renderData = () =>
     sortedData &&

@@ -1,3 +1,5 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 import { getAddressConfig } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
 import { apiConnection } from '@/utils/apiConnection';
