@@ -41,23 +41,23 @@ function ApproveButton({
     }
   }, [isSuccess, onSuccess]);
 
-  useEffect(() => {
-    if (isPending) {
-      showToast(
-        {
-          warning: true,
-          title: `${collectionInfo.shortName} - Add Collateral`,
-          message: 'Order Received!',
-          linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
-          linkLabel: 'Check on Arbiscan'
-        },
-        {
-          autoClose: 5000,
-          hideProgressBar: true
-        }
-      );
-    }
-  }, [isPending, onPending, collectionInfo.shortName, txHash]);
+  // useEffect(() => {
+  //   if (isPending) {
+  //     showToast(
+  //       {
+  //         warning: true,
+  //         title: `${collectionInfo.shortName} - Add Collateral`,
+  //         message: 'Order Received!',
+  //         linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
+  //         linkLabel: 'Check on Arbiscan'
+  //       },
+  //       {
+  //         autoClose: 5000,
+  //         hideProgressBar: true
+  //       }
+  //     );
+  //   }
+  // }, [isPending, onPending, collectionInfo.shortName, txHash]);
 
   return (
     <BaseButton
