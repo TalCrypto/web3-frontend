@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { showToast } from '@/components/common/Toast';
+// import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/common/actionBtns/BaseButton';
 import { useApproveTransaction } from '@/hooks/trade';
-import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAmm } from '@/stores/trading';
-import { getCollectionInformation } from '@/const/collectionList';
+// import { useStore as useNanostore } from '@nanostores/react';
+// import { $currentAmm } from '@/stores/trading';
+// import { getCollectionInformation } from '@/const/collectionList';
 
 function ApproveButton({
   isEstimating,
@@ -21,11 +21,11 @@ function ApproveButton({
   onError: (error: Error | null) => void;
 }) {
   if (approvalAmount < 0) throw new Error('invalid prop');
-  const currentAmm = useNanostore($currentAmm);
-  const collectionInfo = getCollectionInformation(currentAmm);
+  // const currentAmm = useNanostore($currentAmm);
+  // const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useApproveTransaction(approvalAmount);
+  const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction(approvalAmount);
 
   useEffect(() => {
     if (isError) {
