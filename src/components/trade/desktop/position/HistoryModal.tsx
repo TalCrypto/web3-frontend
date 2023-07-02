@@ -15,7 +15,7 @@ import Tooltip from '@/components/common/Tooltip';
 
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;
-  const { psHistoryByMonth, psAmmHistoryByMonth } = usePsHistoryByMonth();
+  const { psAmmHistoryByMonth } = usePsHistoryByMonth();
   const [selectedRecord, setSelectedRecord] = useState<PositionHistoryRecord>();
 
   const hide = () => {
@@ -23,12 +23,12 @@ const HistoryModal = (props: any) => {
   };
 
   useEffect(() => {
-    const recordMonths: Array<string> = Object.keys(psHistoryByMonth);
+    const recordMonths: Array<string> = Object.keys(psAmmHistoryByMonth);
     if (recordMonths.length > 0) {
-      const record = psHistoryByMonth[recordMonths[0]]?.[0];
+      const record = psAmmHistoryByMonth[recordMonths[0]]?.[0];
       setSelectedRecord(record);
     }
-  }, [psHistoryByMonth]);
+  }, [psAmmHistoryByMonth]);
 
   const toggleCollapse = (id: any, imageId: any) => {
     const modal = document.getElementById(id);
