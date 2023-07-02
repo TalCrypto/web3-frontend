@@ -1,18 +1,19 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
+// @ts-nocheck
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { pageTitleParser } from '@/utils/eventLog';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { $userAddress, $userInfo, $userIsWrongNetwork } from '@/stores/user';
+import { $currentChain, $userAddress, $userInfo, $userIsWrongNetwork, $userPositionInfos, $userWethBalance } from '@/stores/user';
 import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { $showSwitchNetworkErrorModal, $showGetWEthModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
 import PrimaryButton from '@/components/common/PrimaryButton';
-import networkNameDisplay from '@/utils/networkName';
+import { AMM } from '@/const/collectionList';
+import { getSupportedAMMs } from '@/const/addresses';
 
 interface PriceContentProps {
   priceValue: string;
@@ -38,15 +39,20 @@ const PriceContent: React.FC<PriceContentProps> = ({ priceValue, title, isLargeT
   );
 };
 
-interface TopContentProps {
-  username: string;
-  isNotSetUsername: boolean;
-}
-
-const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) => {
-  const address = useNanostore($userAddress);
+const TopContent = () => {
   const router = useRouter();
-  const { page } = pageTitleParser(router.asPath);
+  const address = useNanostore($userAddress);
+  const userInfo = useNanostore($userInfo);
+  const isNotSetUsername = !userInfo || !userInfo.username;
+  let userName = '';
+
+  if (isNotSetUsername) {
+    userName = 'Unnamed';
+  } else if (userInfo.username.length > 10) {
+    userName = `${userInfo.username.substring(0, 10)}...`;
+  } else {
+    userName = userInfo.username;
+  }
 
   const clickViewProfile = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -57,7 +63,7 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
     <div className="tops gradient-bg-tops rounded-t-[12px]">
       <div className="user-content p-6 pb-0">
         <div className="title text-[20px]">
-          {username}
+          {userName}
           {isNotSetUsername ? (
             <Link href="/userprofile/update">
               <div className="ml-[4px] cursor-pointer">
@@ -89,11 +95,19 @@ const TopContent: React.FC<TopContentProps> = ({ username, isNotSetUsername }) =
   );
 };
 
-const BottomContent = (props: any) => {
-  const { address, balance /* , callBalance */ } = props;
-  // const currentChain = useNanostore(wsCurrentChain);
-  // const currentNetworkName = networkNameDisplay(currentChain);
+const BottomContent = () => {
+  const address = useNanostore($userAddress);
+  const currentChain = useNanostore($currentChain);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
+  const userPositionInfos = useNanostore($userPositionInfos);
+  const ammList = getSupportedAMMs();
+  const wethBalance = useNanostore($userWethBalance);
+  const displayAddress = `${address.substring(0, 7)}...${address.slice(-3)}`;
+
+  const positionBalance = ammList
+    .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))
+    .map((amm: AMM) => userPositionInfos[amm])
+    .reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
 
   return (
     <div className="bottoms">
@@ -113,8 +127,8 @@ const BottomContent = (props: any) => {
               </div>
             )} */}
             <div>
-              <div className="gradient-bg !bg-clip-text text-transparent">{address}</div>
-              {/* <div className="text-[12px] font-medium text-mediumEmphasis">{currentNetworkName}</div> */}
+              <div className="gradient-bg !bg-clip-text text-transparent">{displayAddress}</div>
+              <div className="text-[12px] font-medium text-mediumEmphasis">{currentChain?.name}</div>
             </div>
           </div>
           <div className="flex items-center">
@@ -127,22 +141,22 @@ const BottomContent = (props: any) => {
           </div>
         </div>
       </div>
-      {/* <PriceContent
+      <PriceContent
         title="Total Account Value:"
-        priceValue={isWrongNetwork ? '0.0000' : (Number(balance) + Number(callBalance.portfolio)).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : (wethBalance + positionBalance).toFixed(4)}
         isLargeText
         notLastRow={false}
       />
       <div className="mx-6 my-0 h-[1px] bg-[#414368]" />
       <PriceContent
         title="Portfolio Collateral:"
-        priceValue={isWrongNetwork ? '0.0000' : Number(callBalance.portfolio).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : positionBalance.toFixed(4)}
         isLargeText={false}
         notLastRow
-      /> */}
+      />
       <PriceContent
         title="Wallet Balance:"
-        priceValue={isWrongNetwork ? '0.0000' : Number(balance).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : wethBalance.toFixed(4)}
         isLargeText={false}
         notLastRow={false}
       />
@@ -150,28 +164,10 @@ const BottomContent = (props: any) => {
   );
 };
 
-interface ProfileContentProps {
-  balance: number;
-  isWrongNetwork: boolean;
-}
-
-const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileContentProps> = props => {
-  const { balance, isWrongNetwork } = props;
-  const userInfo = useNanostore($userInfo);
-  const isNotSetUsername = !userInfo || !userInfo.username;
+const ProfileContent = () => {
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const { disconnect } = useDisconnect();
   const { switchNetwork } = useSwitchNetwork();
-  const address = useNanostore($userAddress);
-
-  let userName = '';
-
-  if (isNotSetUsername) {
-    userName = 'Unnamed';
-  } else if (userInfo.username.length > 10) {
-    userName = `${userInfo.username.substring(0, 10)}...`;
-  } else {
-    userName = userInfo.username;
-  }
 
   const disconnectWalletAction = () => {
     disconnect();
@@ -194,8 +190,8 @@ const ProfileContent: React.ForwardRefRenderFunction<HTMLDivElement, ProfileCont
         opacity-0 transition-opacity duration-300"
       id="profile-content">
       <li className="m-0 list-none p-0">
-        <TopContent username={userName} isNotSetUsername={isNotSetUsername} />
-        {/* <BottomContent address={address} balance={balance} /* callBalance={callBalance} /> */}
+        <TopContent />
+        <BottomContent />
       </li>
 
       <li className="m-0 list-none p-0">

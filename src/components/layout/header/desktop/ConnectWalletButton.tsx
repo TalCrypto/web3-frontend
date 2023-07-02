@@ -1,46 +1,22 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
 
 import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
-import { $userIsConnecting, $userInfo, $userWethBalance, $userIsWrongNetwork, $userIsConnected } from '@/stores/user';
+import { $userIsConnecting, $userWethBalance, $userIsWrongNetwork, $userIsConnected, $userDisplayName } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
-import { useAccount, useNetwork } from 'wagmi';
 
 const ConnectWalletButton: React.FC = () => {
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const isConnecting = useNanostore($userIsConnecting);
   const isConnected = useNanostore($userIsConnected);
   const wethBalance = useNanostore($userWethBalance);
-  const userInfo = useNanostore($userInfo);
+  const userDisplayName = useNanostore($userDisplayName);
   const { open } = useWeb3Modal();
-  const [showUserName, setShowUserName] = useState('');
-
-  // if (isNotSetUsername) {
-  //   showUserName = '';
-  // } else if (userInfo.username && userInfo.username.length <= 10) {
-  //   showUserName = userInfo.username;
-  // } else if (userInfo.username && userInfo.username.length > 10) {
-  //   showUserName = `${userInfo.username.substring(0, 10)}...`;
-  // } else {
-  //   showUserName = '';
-  // }
-
-  useEffect(() => {
-    if (userInfo) {
-      if (userInfo.username && userInfo.username.length <= 10) {
-        setShowUserName(userInfo.username);
-      } else if (userInfo.username.length > 10) {
-        setShowUserName(`${userInfo.username.substring(0, 10)}...`);
-      } else if (userInfo.userAddress) {
-        setShowUserName(`${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}`);
-      }
-    }
-  }, [userInfo]);
 
   return (
     <div className={`navbar-outer${isConnected ? ' connected' : ''}`}>
@@ -56,7 +32,7 @@ const ConnectWalletButton: React.FC = () => {
             <>
               {isConnected ? (
                 <>
-                  <span className="text-transparent">{showUserName}</span>
+                  <span className="text-transparent">{userDisplayName}</span>
                   <Image
                     src="/images/components/layout/header/connect_button.svg"
                     width={24}
@@ -92,7 +68,7 @@ const ConnectWalletButton: React.FC = () => {
         </div>
       </button>
 
-      <ProfileContent balance={wethBalance} isWrongNetwork={isWrongNetwork ?? false} />
+      <ProfileContent />
     </div>
   );
 };

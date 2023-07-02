@@ -58,6 +58,7 @@ export const $userIsConnecting = atom(true);
 export const $userIsConnected = atom(false);
 export const $userIsWrongNetwork = atom(false);
 export const $userAddress = atom<Address | undefined>();
+export const $userDisplayName = atom<string | undefined>();
 export const $userInfo = atom<UserInfo | undefined>();
 export const $currentChain = atom<Chain | undefined>();
 export const $userPositionInfos = map<UserPositionInfos>();
@@ -71,5 +72,15 @@ export const setIsConnecting = (val: boolean) => {
 };
 
 export const setUserInfo = (val: UserInfo) => {
+  if (val) {
+    if (val.username && val.username.length <= 10) {
+      $userDisplayName.set(val.username);
+    } else if (val.username.length > 10) {
+      $userDisplayName.set(`${val.username.substring(0, 10)}...`);
+    } else if (val.userAddress) {
+      $userDisplayName.set(`${val.userAddress.substring(0, 7)}...${val.userAddress.slice(-3)}`);
+    }
+  }
+
   $userInfo.set(val);
 };

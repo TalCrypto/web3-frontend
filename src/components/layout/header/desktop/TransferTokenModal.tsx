@@ -19,7 +19,7 @@ function ButtonContent({ icon, url, name }: ButtonContentProps) {
     <div
       className="mr-[24px] flex h-[40px] min-w-[120px] cursor-pointer
       items-center justify-between rounded-[8px] border border-solid
-      border-blue-500 px-3 text-base font-medium"
+      border-blue-500 px-3 font-normal text-highEmphasis"
       onClick={openUrl}>
       <Image src={icon} alt="" className="mr-1 h-6 w-6" width={24} height={24} />
       {name}
@@ -55,13 +55,13 @@ const TransferTokenModal = () => {
         </div>
         <div className="relative flex flex-col items-center justify-center">
           <div className="mb-9">
-            <div className="text-color-87 text-[15px] font-semibold">Bridge ETH / WETH to Arbitrum👇</div>
+            <div className="text-[15px] font-semibold text-highEmphasis">Bridge ETH / WETH to Arbitrum👇</div>
             <div className="items-initial z-2 mt-4 flex content-center justify-start">
               <ButtonContent url="https://bridge.arbitrum.io/" name="Arbitrum" icon="/images/components/layout/header/arbitrum.png" />
             </div>
           </div>
           <div className="mb-[60px]">
-            <div className="text-color-87 text-[15px] font-semibold">Wrap ETH on Arbitrum👇</div>
+            <div className="text-[15px] font-semibold text-highEmphasis">Wrap ETH on Arbitrum👇</div>
             <div className="items-initial z-2 mt-4 flex content-center justify-start">
               <ButtonContent url="https://app.uniswap.org/#/swap/" name="Uniswap" icon="/images/components/layout/header/uniswap.png" />
               <div className="w-[120px]" />
