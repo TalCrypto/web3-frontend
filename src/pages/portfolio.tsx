@@ -16,8 +16,14 @@ import PositionInfoMobile from '@/components/portfolio/mobile/PositionInfoMobile
 import AccountChart from '@/components/portfolio/desktop/AccountChart';
 import TrendContent from '@/components/portfolio/desktop/TrendContent';
 import PageLoading from '@/components/common/PageLoading';
-import { $userAddress, $userIsConnected, $userIsWrongNetwork, $userPositionInfos, $userWethBalance } from '@/stores/user';
-import UserDataUpdater from '@/components/updaters/UserDataUpdater';
+import {
+  $userAddress,
+  $userIsConnected,
+  $userIsConnecting,
+  $userIsWrongNetwork,
+  $userPositionInfos,
+  $userWethBalance
+} from '@/stores/user';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
 import { formatBigInt } from '@/utils/bigInt';
@@ -25,6 +31,7 @@ import { formatBigInt } from '@/utils/bigInt';
 export default function Portfolio() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
+  const isConnecting = useNanostore($userIsConnecting);
   const userPositionInfos = useNanostore($userPositionInfos);
   const ammList = getSupportedAMMs();
   const address = useNanostore($userAddress);
@@ -89,7 +96,7 @@ export default function Portfolio() {
           </div>
           <PositionInfo />
 
-          {/* {isLoading ? <PageLoading /> : null} */}
+          {isConnecting ? <PageLoading /> : null}
         </div>
 
         <div className="block bg-lightBlue md:hidden" id="divPortfolioMobile">
@@ -103,8 +110,6 @@ export default function Portfolio() {
             </>
           )}
         </div>
-
-        <UserDataUpdater />
       </main>
     </>
   );

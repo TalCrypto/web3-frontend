@@ -102,7 +102,7 @@ const BottomContent = () => {
   const userPositionInfos = useNanostore($userPositionInfos);
   const ammList = getSupportedAMMs();
   const wethBalance = useNanostore($userWethBalance);
-  const displayAddress = `${address.substring(0, 7)}...${address.slice(-3)}`;
+  const displayAddress = address ? `${address.substring(0, 7)}...${address.slice(-3)}` : null;
 
   const positionBalance = ammList
     .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))

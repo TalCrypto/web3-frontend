@@ -17,7 +17,7 @@ export function SingleRowPriceContent(props: any) {
         <span>{priceValue}</span>
       ) : (
         <span className={`${priceValue > 0 ? 'text-marketGreen' : priceValue < 0 ? 'text-marketRed' : ''}`}>
-          {priceValue > 0 ? `${`+${priceValue}`}` : priceValue < 0 ? `${`-${priceValue.replace('-', '')}`}` : priceValue}
+          {priceValue > 0 ? `${`+${priceValue}`}` : priceValue}
         </span>
       )}
     </div>

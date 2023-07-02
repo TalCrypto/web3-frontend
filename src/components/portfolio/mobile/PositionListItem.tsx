@@ -77,7 +77,7 @@ function PositionListItem(props: any) {
                   ? `${totalPnl.toFixed(4)}`
                   : totalPnl === 0
                   ? Math.abs(totalPnl)?.toFixed(4)
-                  : totalPnl
+                  : totalPnl.toFixed(4)
                 : '****'
             }
           />
