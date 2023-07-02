@@ -26,7 +26,7 @@ function TradingWindow() {
 
   return (
     <div className="w-full 2xl:w-[400px]" style={{ height: 'fit-content' }}>
-      {userPosition?.size !== 0 ? (
+      {userPosition && userPosition.size !== 0 ? (
         <div
           className="border-b-none flex h-[50px] justify-between
             rounded-t-[6px] border-[1px] border-[#71aaff]/[.2]
@@ -51,9 +51,9 @@ function TradingWindow() {
       <div
         className={`flex w-full rounded-b-[6px] border-[1px]
           border-[#71aaff]/[.2] bg-lightBlue p-4 px-6 pb-9 text-white
-          ${userPosition?.size !== 0 ? 'pt-6' : 'rounded-t-[6px] pt-9'}
+          ${userPosition && userPosition.size !== 0 ? 'pt-6' : 'rounded-t-[6px] pt-9'}
         `}>
-        <div className="w-full">{userPosition ? displayComponent : mainTradeComponent}</div>
+        <div className="w-full">{userPosition && userPosition.size !== 0 ? displayComponent : mainTradeComponent}</div>
       </div>
     </div>
   );
