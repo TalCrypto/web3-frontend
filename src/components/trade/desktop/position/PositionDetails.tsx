@@ -7,7 +7,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import TitleTips from '@/components/common/TitleTips';

@@ -57,6 +57,10 @@ export const useMarketOverview = (): GetMktOverview => {
       const vammStartPriceList = await Promise.all(
         ammAddrList.map(async ammAddr => {
           const res = await getSpotPriceAfter(ammAddr, 0, 1, 0);
+          if (!res) {
+            return Promise.reject();
+          }
+
           return res[0].spotPrice;
         })
       );
