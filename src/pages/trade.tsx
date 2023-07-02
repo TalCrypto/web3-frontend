@@ -31,6 +31,12 @@ function TradePage(props: WithRouterProps) {
 
   useEffect(() => {
     const collection = router?.query?.collection;
+
+    if (router?.asPath === '/trade') {
+      router.push('/trade/degods');
+      return;
+    }
+
     if (collection) {
       $currentAmm.set(collection as AMM);
     }

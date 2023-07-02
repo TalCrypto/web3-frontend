@@ -11,9 +11,11 @@ import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import { useWeb3Modal } from '@web3modal/react';
 
 function TrendContent() {
   const [isVisible, setIsVisible] = useState(false);
+  const { open } = useWeb3Modal();
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -34,11 +36,11 @@ function TrendContent() {
   const totalAccountValueDiff = '0.0';
 
   const onBtnConnectWallet = () => {
-    // connectWallet(() => {}, true);
+    open();
   };
 
   const onBtnUpdateTargetNetwork = () => {
-    // updateTargetNetwork();
+    open({ route: 'SelectNetwork' });
   };
 
   const onBtnGetTeth = () => {};
