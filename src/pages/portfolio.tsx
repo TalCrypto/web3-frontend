@@ -89,7 +89,7 @@ export default function Portfolio() {
       />
 
       <main>
-        <div className="relative hidden md:block" id="divPortfolioWindow">
+        <div className="relative hidden md:block">
           <div className="block 2xl:flex">
             <AccountChart />
             <TrendContent />
@@ -99,7 +99,7 @@ export default function Portfolio() {
           {isConnecting ? <PageLoading /> : null}
         </div>
 
-        <div className="block bg-lightBlue md:hidden" id="divPortfolioMobile">
+        <div className="mobile-view block bg-lightBlue md:hidden">
           {!isConnected || isWrongNetwork ? (
             <PortfolioEmpty />
           ) : (

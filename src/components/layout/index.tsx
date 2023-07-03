@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { $isShowMobileModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
+import LayoutUpdater from '@/components/updaters/LayoutUpdater';
 import Header from './header';
 import Footer from './footer';
 
@@ -20,6 +21,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         `}>
         {children}
       </div>
+
+      <LayoutUpdater />
       <Footer />
     </>
   );

@@ -8,9 +8,10 @@ import React, { useEffect, useRef } from 'react';
 import { createChart, ColorType, IChartApi } from 'lightweight-charts';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $psHistogramChartData, $psLineChartData, $psShowBalance } from '@/stores/portfolio';
+import { $isMobileView } from '@/stores/modal';
 
-function PortfolioChart(props: any) {
-  const { isVisible } = props;
+function PortfolioChart() {
+  const isMobileView = useNanostore($isMobileView);
 
   const isShowBalance = useNanostore($psShowBalance);
   const chartContainerRef: any = useRef();
@@ -285,7 +286,7 @@ function PortfolioChart(props: any) {
         chartRef.current.remove();
       }
     };
-  }, [lineChartData, histogramChartData, isShowBalance, isVisible]);
+  }, [lineChartData, histogramChartData, isShowBalance, isMobileView]);
 
   return <div id="divChartWindows" className="relative" ref={chartContainerRef} />;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/common/actionBtns/BaseButton';
@@ -6,6 +7,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
 import { CollateralActions } from '@/const';
+import { $isMobileView } from '@/stores/modal';
 
 function ReduceCollateralButton({
   isEstimating,
@@ -25,6 +27,7 @@ function ReduceCollateralButton({
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
+  const isMobileView = useNanostore($isMobileView);
 
   const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useReduceCollateralTransaction(deltaMargin);
 
@@ -44,19 +47,21 @@ function ReduceCollateralButton({
 
   useEffect(() => {
     if (isPending) {
-      showToast(
-        {
-          warning: true,
-          title: `${collectionInfo.shortName} - ${CollateralActions.REDUCE} Collateral`,
-          message: 'Order Received!',
-          linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
-          linkLabel: 'Check on Arbiscan'
-        },
-        {
-          autoClose: 5000,
-          hideProgressBar: true
-        }
-      );
+      if (!isMobileView) {
+        showToast(
+          {
+            warning: true,
+            title: `${collectionInfo.shortName} - ${CollateralActions.REDUCE} Collateral`,
+            message: 'Order Received!',
+            linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
+            linkLabel: 'Check on Arbiscan'
+          },
+          {
+            autoClose: 5000,
+            hideProgressBar: true
+          }
+        );
+      }
     }
   }, [isPending, onPending, collectionInfo.shortName, txHash]);
 

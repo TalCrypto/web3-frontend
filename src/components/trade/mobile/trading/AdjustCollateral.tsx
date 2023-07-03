@@ -400,31 +400,34 @@ export default function AdjustCollateral(props: any) {
       <EstimationValueDisplay isError={textErrorMessage !== null} estimation={estimation} />
       <SectionDividers />
       <UpdatedCollateralValue marginIndex={marginIndex} value={!estimation ? '-.-' : Math.abs(estimation.marginRequirement).toFixed(4)} />
-      {isNeedApproval ? (
-        <ApproveButton
-          isEstimating={isEstLoading}
-          approvalAmount={approvalAmount}
-          onPending={handlePending}
-          onSuccess={() => {}}
-          onError={handleError}
-        />
-      ) : marginIndex === 0 ? (
-        <AddCollateralButton
-          isEstimating={isEstLoading}
-          deltaMargin={estimation ? Math.abs(estimation.marginRequirement) : 0}
-          onPending={handlePending}
-          onSuccess={initializeState}
-          onError={handleError}
-        />
-      ) : (
-        <ReduceCollateralButton
-          isEstimating={isEstLoading}
-          deltaMargin={estimation ? Math.abs(estimation.marginRequirement) : 0}
-          onPending={handlePending}
-          onSuccess={initializeState}
-          onError={handleError}
-        />
-      )}
+
+      <div className="pb-4">
+        {isNeedApproval ? (
+          <ApproveButton
+            isEstimating={isEstLoading}
+            approvalAmount={approvalAmount}
+            onPending={handlePending}
+            onSuccess={() => {}}
+            onError={handleError}
+          />
+        ) : marginIndex === 0 ? (
+          <AddCollateralButton
+            isEstimating={isEstLoading}
+            deltaMargin={estimation ? Math.abs(estimation.marginRequirement) : 0}
+            onPending={handlePending}
+            onSuccess={initializeState}
+            onError={handleError}
+          />
+        ) : (
+          <ReduceCollateralButton
+            isEstimating={isEstLoading}
+            deltaMargin={estimation ? Math.abs(estimation.marginRequirement) : 0}
+            onPending={handlePending}
+            onSuccess={initializeState}
+            onError={handleError}
+          />
+        )}
+      </div>
       {/* {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
     </div>
   );

@@ -10,6 +10,7 @@ import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
 import { usePositionInfo } from '@/hooks/collection';
 import { PositionActions } from '@/const';
+import { $isMobileView } from '@/stores/modal';
 
 function OpenPosButton({
   isEstimating,
@@ -38,6 +39,7 @@ function OpenPosButton({
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
   const [label, setLabel] = useState('');
+  const isMobileView = useNanostore($isMobileView);
 
   useEffect(() => {
     if (positionInfo) {
@@ -79,19 +81,21 @@ function OpenPosButton({
 
   useEffect(() => {
     if (isPending && txHash) {
-      showToast(
-        {
-          warning: true,
-          title: `${collectionInfo.shortName} - ${label}`,
-          message: 'Order Received!',
-          linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
-          linkLabel: 'Check on Arbiscan'
-        },
-        {
-          autoClose: 5000,
-          hideProgressBar: true
-        }
-      );
+      if (!isMobileView) {
+        showToast(
+          {
+            warning: true,
+            title: `${collectionInfo.shortName} - ${label}`,
+            message: 'Order Received!',
+            linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
+            linkLabel: 'Check on Arbiscan'
+          },
+          {
+            autoClose: 5000,
+            hideProgressBar: true
+          }
+        );
+      }
     }
   }, [isPending, label, txHash]);
 

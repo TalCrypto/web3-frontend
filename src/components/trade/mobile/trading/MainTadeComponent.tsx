@@ -456,33 +456,37 @@ export default function MainTradeComponent(props: any) {
         setToleranceRate={setToleranceRate}
         isAmountTooSmall={isAmountTooSmall}
       />
-      {!isConnected ? (
-        <ConnectButton />
-      ) : isWrongNetwork ? (
-        <SwitchButton />
-      ) : wethBalance === 0 ? (
-        <GetWETHButton />
-      ) : isNeedApproval ? (
-        <ApproveButton
-          isEstimating={isEstLoading}
-          approvalAmount={isAmountTooSmall ? 0 : approvalAmount}
-          onPending={handlePending}
-          onSuccess={() => {}}
-          onError={handleError}
-        />
-      ) : (
-        <OpenPosButton
-          isEstimating={isEstLoading}
-          side={saleOrBuyIndex}
-          notionalAmount={notionalAmount}
-          leverage={leverageValue}
-          slippagePercent={toleranceRate}
-          estimation={isAmountTooSmall ? undefined : estimation}
-          onPending={handlePending}
-          onSuccess={initializeState}
-          onError={handleError}
-        />
-      )}
+
+      <div className="pb-4">
+        {!isConnected ? (
+          <ConnectButton />
+        ) : isWrongNetwork ? (
+          <SwitchButton />
+        ) : wethBalance === 0 ? (
+          <GetWETHButton />
+        ) : isNeedApproval ? (
+          <ApproveButton
+            isEstimating={isEstLoading}
+            approvalAmount={isAmountTooSmall ? 0 : approvalAmount}
+            onPending={handlePending}
+            onSuccess={() => {}}
+            onError={handleError}
+          />
+        ) : (
+          <OpenPosButton
+            isEstimating={isEstLoading}
+            side={saleOrBuyIndex}
+            notionalAmount={notionalAmount}
+            leverage={leverageValue}
+            slippagePercent={toleranceRate}
+            estimation={isAmountTooSmall ? undefined : estimation}
+            onPending={handlePending}
+            onSuccess={initializeState}
+            onError={handleError}
+          />
+        )}
+      </div>
+
       {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
 
       {/* <Tips

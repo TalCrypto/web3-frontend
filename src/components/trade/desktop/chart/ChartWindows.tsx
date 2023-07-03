@@ -23,6 +23,7 @@ import {
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import ChartDisplay from '@/components/common/ChartDisplay';
+import { $isMobileView } from '@/stores/modal';
 
 const flashAnim = 'flash';
 
@@ -76,7 +77,7 @@ function PriceIndicator(props: {
 function ChartTimeTabs(props: any) {
   const { contentArray = [], controlRef, isStartLoadingChart } = props;
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
-  const [isVisible, setIsVisible] = useState(false);
+  const isMobileView = useNanostore($isMobileView);
 
   const setSelectedTimeIndex = (index: number) => {
     $selectedTimeIndex.set(index);
@@ -99,15 +100,7 @@ function ChartTimeTabs(props: any) {
 
   useEffect(() => {
     const handleResize = () => {
-      const element = document.getElementById('divTradeWindow');
-      if (element === null) return;
-      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
-      if (isVisibleNow && !isVisible) {
-        setIsVisible(true);
-        updateSelectedTimeIndex();
-      } else if (!isVisibleNow && isVisible) {
-        setIsVisible(false);
-      }
+      updateSelectedTimeIndex();
     };
 
     window.addEventListener('resize', handleResize);
@@ -116,7 +109,7 @@ function ChartTimeTabs(props: any) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [isVisible, selectedTimeIndex]);
+  }, [isMobileView, selectedTimeIndex]);
 
   return (
     <div className="relative flex px-0 text-center" ref={controlRef}>
