@@ -18,6 +18,7 @@ export const useFundingPaymentHistory = (amm: AMM) => {
   const chain = useNanostore($currentChain);
   const [fpRecords, setFpRecords] = useState<Array<FundingPaymentRecord>>();
   const [total, setTotal] = useState<number>(0);
+
   useEffect(() => {
     if (address) {
       const { config: addressConfig } = getAddressConfig(chain);

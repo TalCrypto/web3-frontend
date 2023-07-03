@@ -14,9 +14,10 @@ import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
 import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending } from '@/hooks/collection';
-import { getCollectionInformation } from '@/const/collectionList';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
 import { $isShowMobileModal } from '@/stores/modal';
+import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -50,6 +51,9 @@ export default function PositionMobile() {
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
+
+  const selectedAmm = currentAmm ?? AMM.DEGODS;
+  const { total: fpTotal } = useFundingPaymentHistory(selectedAmm);
 
   const liquidationChanceWarning = () => {
     if (!positionInfo || !vammPrice || !oraclePrice) return false;
@@ -127,8 +131,8 @@ export default function PositionMobile() {
             <div className="w-[180px] text-[14px] text-mediumEmphasis">Accu. Fund. Payment</div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon
-                priceValue={positionInfo.fundingPayment === 0 ? '0.0000' : positionInfo.fundingPayment.toFixed(4)}
-                className={positionInfo.fundingPayment > 0 ? 'text-marketGreen' : positionInfo.fundingPayment === 0 ? '' : 'text-marketRed'}
+                priceValue={fpTotal === 0 ? '0.0000' : fpTotal.toFixed(4)}
+                className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
                 isLoading={isLoading || isPending}
               />
             </div>
