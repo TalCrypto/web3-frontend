@@ -91,7 +91,7 @@ function PositionListItem(props: any) {
                   ? `${userPosition.fundingPayment.toFixed(4)}`
                   : userPosition.fundingPayment === 0
                   ? Math.abs(userPosition.fundingPayment)?.toFixed(4)
-                  : userPosition.fundingPayment
+                  : userPosition.fundingPayment.toFixed(4)
                 : '****'
             }
           />
