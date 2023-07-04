@@ -15,7 +15,6 @@ import { $currentAmm } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
-import { $userIsConnected } from '@/stores/user';
 import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
 import MarketHistoryUpdater from '@/components/updaters/MarketHistoryUpdater';
 import EventManager from '@/components/updaters/EventManager';
@@ -27,7 +26,6 @@ import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 
 function TradePage(props: WithRouterProps) {
   const { router } = props;
-  const isConnected = useNanostore($userIsConnected);
 
   useEffect(() => {
     const collection = router?.query?.collection;
@@ -41,6 +39,7 @@ function TradePage(props: WithRouterProps) {
       $currentAmm.set(collection as AMM);
     }
   }, [router]);
+  console.log('init');
 
   return (
     <>
@@ -61,7 +60,7 @@ function TradePage(props: WithRouterProps) {
 
               <div className="block 2xl:ml-[49px] 2xl:flex-1">
                 <ChartWindows />
-                {isConnected ? <PositionDetails /> : null}
+                <PositionDetails />
 
                 <InformationWindow />
               </div>
@@ -75,7 +74,7 @@ function TradePage(props: WithRouterProps) {
           <div className="mt-12 bg-darkBlue">
             <ChartMobile />
 
-            {isConnected ? <PositionMobile /> : null}
+            <PositionMobile />
 
             <InformationMobile />
 

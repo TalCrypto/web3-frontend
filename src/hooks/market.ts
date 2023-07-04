@@ -134,3 +134,65 @@ export const useMarketOverview = (): GetMktOverview => {
 
   return { isLoading, data };
 };
+
+export const useMobileMarketOverview = (): GetMktOverview => {
+  const chain = useNanostore($currentChain);
+  const [data, setData] = useState<Array<CollectionOverview>>();
+  const [isLoading, setIsLoading] = useState(false);
+  const publicClient = usePublicClient();
+
+  useEffect(() => {
+    async function getGraphData() {
+      console.log('isLoading', isLoading);
+      if (isLoading) return;
+      setIsLoading(true);
+      const nowTs = Math.round(new Date().getTime() / 1000);
+      const ts24hr = nowTs - 1 * 24 * 3600;
+      const ammAddrList = getSupportedAMMAddresses(chain);
+      const priceList24hrAgo = await Promise.all(ammAddrList.map(ammAddr => getLatestSpotPriceBefore(ammAddr, ts24hr)));
+      const vammStartPriceList = await Promise.all(
+        ammAddrList.map(async ammAddr => {
+          const res = await getSpotPriceAfter(ammAddr, 0, 1, 0);
+          if (!res) {
+            return Promise.reject();
+          }
+
+          return res[0].spotPrice;
+        })
+      );
+      const vammPriceList = await Promise.all(
+        ammAddrList.map(ammAddr => {
+          const vammPrice = publicClient.readContract({
+            address: ammAddr,
+            abi: ammAbi,
+            functionName: 'getSpotPrice'
+          });
+          return vammPrice;
+        })
+      );
+
+      const results = [];
+
+      for (let i = 0; i < ammAddrList.length; i += 1) {
+        const ammAddr = ammAddrList[i];
+        const amm = getAMMByAddress(ammAddr, chain);
+        if (!amm) break;
+        const price24hrAgo = priceList24hrAgo[i];
+        const basePrice24h = price24hrAgo ? formatBigInt(price24hrAgo.spotPrice) : formatBigInt(vammStartPriceList[i]);
+
+        const result = {
+          amm,
+          vammPrice: formatBigInt(vammPriceList[i]),
+          priceChangeRatio24h: ((formatBigInt(vammPriceList[i]) - basePrice24h) / basePrice24h) * 100,
+          priceChange24h: formatBigInt(vammPriceList[i]) - basePrice24h
+        };
+        results.push(result);
+      }
+      setData(results);
+      setIsLoading(false);
+    }
+    getGraphData();
+  }, [chain, publicClient]);
+
+  return { isLoading, data };
+};
