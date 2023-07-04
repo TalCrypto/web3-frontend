@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
@@ -196,9 +196,18 @@ const EventListeners = ({ ammContract, chContract }: { ammContract: Contract; ch
 const EventManager = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const ammContract = getAMMContract(chain, currentAmm);
-  const chContract = getCHContract(chain);
+  const [ammContract, setAmmContract] = useState<Contract | undefined>();
+  const [chContract, setChContract] = useState<Contract | undefined>();
+
+  useEffect(() => {
+    if (currentAmm) {
+      setAmmContract(getAMMContract(chain, currentAmm));
+      setChContract(getCHContract(chain));
+    }
+  }, [chain, currentAmm]);
+
   if (!ammContract || !chContract) return null;
+
   return (
     <>
       <EventListeners chContract={chContract} ammContract={ammContract} />
