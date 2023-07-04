@@ -178,7 +178,11 @@ const ChartHeaders = () => {
           </div>
           <div className="flex">
             <PriceWithIcon priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-            <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={!priceChange} />
+            <PriceIndicator
+              priceChangeValue={priceChange}
+              priceChangeRatio={priceChangePct}
+              isStartLoadingChart={priceChange === undefined}
+            />
           </div>
         </div>
       </div>
