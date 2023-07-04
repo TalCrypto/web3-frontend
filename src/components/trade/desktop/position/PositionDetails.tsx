@@ -293,7 +293,7 @@ export default function PositionDetails() {
         </div>
       </div>
 
-      {isOverPriceGap ? (
+      {/* {isOverPriceGap ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
           <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
           <p className="text-b3 text-warn">
@@ -308,7 +308,7 @@ export default function PositionDetails() {
             </a>
           </p>
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }
