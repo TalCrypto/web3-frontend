@@ -3,8 +3,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import Image from 'next/image';
-import Tooltip from '@/components/common/Tooltip';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
@@ -59,11 +57,11 @@ function PositionListItem(props: any) {
                 ? `${userPosition.leverage.toFixed(2)}X`
                 : '****'
             }`}</div>
-            {isLeverageNegative ? (
+            {/* {isLeverageNegative ? (
               <Tooltip direction="top" content="Leverage ratio not meaningful when collateral is ≤ 0">
                 <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
               </Tooltip>
-            ) : null}
+            ) : null} */}
           </div>
         </div>
         <div className="w-[32%] ">

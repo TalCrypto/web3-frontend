@@ -186,13 +186,13 @@ function EstimationComponent(props: any) {
         title={
           <span className="flex">
             Collateral&nbsp;
-            {!isFullClose ? (
+            {/* {!isFullClose ? (
               <TitleTips
                 titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
                 tipsText="Collateral will not change."
                 placement="top"
               />
-            ) : null}
+            ) : null} */}
           </span>
         }
         currentValue={!userPosition ? '-.--' : userPosition.margin.toFixed(4)}

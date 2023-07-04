@@ -12,7 +12,6 @@ import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import TitleTips from '@/components/common/TitleTips';
 import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import ApproveButton from '@/components/common/actionBtns/ApproveButton';
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
@@ -334,13 +333,7 @@ function ExtendedEstimateComponent(props: any) {
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
           <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
-          <DisplayValues
-            title={
-              <TitleTips titleText="Price Impact" tipsText="The change in price resulted directly from a particular trade in the VAMM" />
-            }
-            value={estimation?.txSummary.priceImpactPct.toFixed(2)}
-            unit="%"
-          />
+          <DisplayValues title="Price Impact" value={estimation?.txSummary.priceImpactPct.toFixed(2)} unit="%" />
           {!isNewPosition ? null : (
             <DisplayValues title="Liquidation Price" value={estimation?.posInfo.liquidationPrice.toFixed(2)} unit="WETH" />
           )}

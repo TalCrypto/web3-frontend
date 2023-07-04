@@ -178,13 +178,13 @@ export default function PositionMobile() {
                   ? '100.00 x +'
                   : `${positionInfo.leverage.toFixed(2)} x`}
               </span>
-              {positionInfo.leverage <= 0 ? (
+              {/* {positionInfo.leverage <= 0 ? (
                 <TitleTips
                   placement="top"
                   titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </div>
 
@@ -196,20 +196,20 @@ export default function PositionMobile() {
                 className={`${isOverPriceGap ? 'text-warn' : ''} `}
                 isLoading={isLoading || isPending}
               />
-              {liquidationChanceWarning() && !liquidationRiskWarning() ? (
+              {/* {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
                   titleText={<Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
                 />
-              ) : null}
-              {liquidationRiskWarning() ? (
+              ) : null} */}
+              {/* {liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
                   titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is at risk of being liquidated. Please manage your risk."
                 />
-              ) : null}
+              ) : null} */}
               {isOverPriceGap ? (
                 <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
