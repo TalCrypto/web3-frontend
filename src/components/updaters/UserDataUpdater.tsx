@@ -19,8 +19,9 @@ import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
 import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
 import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import { zeroAddress } from 'viem';
 
-const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Address; trader: Address }> = ({
+const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAddress: Address; trader: Address | undefined }> = ({
   chain,
   amm,
   ammAddress,
@@ -31,8 +32,9 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
     ...chViewer,
     abi: chViewerAbi,
     functionName: 'getTraderPositionInfoWithoutPriceImpact',
-    args: [ammAddress, trader],
-    watch: true
+    args: [ammAddress, trader ?? zeroAddress],
+    watch: true,
+    enabled: Boolean(ammAddress && trader)
   });
 
   const size = data ? formatBigInt(data.positionSize) : 0;
@@ -50,7 +52,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
   const isLiquidatable = data ? data.isLiquidatable : false;
 
   useEffect(() => {
-    if (amm) {
+    if (trader) {
       $userPositionInfos.setKey(amm, {
         amm: ammAddress,
         size,
@@ -67,11 +69,14 @@ const PositionInfoUpdater: React.FC<{ chain: Chain; amm: AMM; ammAddress: Addres
         fundingPayment,
         isLiquidatable
       });
+    } else {
+      $userPositionInfos.setKey(amm, undefined);
     }
   }, [
     amm,
     chain,
     ammAddress,
+    trader,
     size,
     margin,
     openNotional,
@@ -122,8 +127,9 @@ const UserDataUpdater: React.FC = () => {
           $userPoint.set(defaultUserPoint);
         }
       });
-      $userAddress.set(address);
     }
+
+    $userAddress.set(address);
   }, [address]);
 
   useEffect(() => {
@@ -157,13 +163,13 @@ const UserDataUpdater: React.FC = () => {
     $userIsConnected.set(isConnected);
   }, [isConnected]);
 
-  if (!amms || !chain) return null;
+  if (!amms) return null;
 
   return (
     <>
       {amms.map(amm => {
         const ammAddr = getAMMAddress(chain, amm);
-        if (ammAddr && address) {
+        if (ammAddr) {
           return <PositionInfoUpdater key={amm} chain={chain} amm={amm} ammAddress={ammAddr} trader={address} />;
         }
         return null;
