@@ -43,7 +43,7 @@ module.exports = {
         marketGreen: '#78f363',
         warn: '#ffc24bde',
         competition: '#FFEFD0',
-
+        seasonGreen: '#D0FF4B',
         tooltipArrow: '#213676',
 
         direction: {

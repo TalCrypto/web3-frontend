@@ -14,6 +14,10 @@ const nextConfig = {
       {
         source: '/trade/:collection',
         destination: '/trade?collection=:collection'
+      },
+      {
+        source: '/airdrop/:target',
+        destination: '/airdrop?target=:target'
       }
     ];
   },

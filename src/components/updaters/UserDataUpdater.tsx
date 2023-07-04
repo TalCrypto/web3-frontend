@@ -18,7 +18,7 @@ import { formatBigInt } from '@/utils/bigInt';
 import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
 import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
-import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import { zeroAddress } from 'viem';
 
 const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAddress: Address; trader: Address | undefined }> = ({
@@ -127,9 +127,15 @@ const UserDataUpdater: React.FC = () => {
           $userPoint.set(defaultUserPoint);
         }
       });
+      apiConnection.getUserPoint(address, 1).then(res => {
+        if (res?.multiplier) {
+          $userPrevPoint.set(res);
+        } else {
+          $userPrevPoint.set(defaultUserPoint);
+        }
+      });
+      $userAddress.set(address);
     }
-
-    $userAddress.set(address);
   }, [address]);
 
   useEffect(() => {

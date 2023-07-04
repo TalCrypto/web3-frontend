@@ -39,7 +39,6 @@ function TradePage(props: WithRouterProps) {
       $currentAmm.set(collection as AMM);
     }
   }, [router]);
-  console.log('init');
 
   return (
     <>
@@ -49,7 +48,7 @@ function TradePage(props: WithRouterProps) {
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>
-        <div className="trading-window hidden md:block">
+        <div className="hidden md:block">
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
