@@ -4,16 +4,10 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 
-import { utils } from 'ethers';
 import Image from 'next/image';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ThreeDots } from 'react-loader-spinner';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-
-import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
 // import collectionList from '@/const/collectionList';
-import { pageTitleParser } from '@/utils/eventLog';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
