@@ -47,7 +47,7 @@ export default function Portfolio() {
   $psBalance.set(newBalance);
 
   useEffect(() => {
-    if (address !== '') {
+    if (address) {
       apiConnection.getWalletChartContent(address, selectedTimeIndex).then((data: any) => {
         const accumulatedPnlData: any = [];
         const dailyPnlData: any = [];
