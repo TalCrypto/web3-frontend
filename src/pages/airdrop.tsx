@@ -74,7 +74,9 @@ export default function Home() {
 
           <TabItems />
 
-          <div>{activeTab === 0 ? <Overview /> : activeTab === 1 ? <Referral /> : activeTab === 2 ? <Leaderboard /> : <Rules />}</div>
+          <div className="pt-9">
+            {activeTab === 0 ? <Overview /> : activeTab === 1 ? <Referral /> : activeTab === 2 ? <Leaderboard /> : <Rules />}
+          </div>
         </div>
 
         <div className="mobile-view" />

@@ -13,6 +13,7 @@ import { $userIsConnected, $userIsConnecting } from '@/stores/user';
 import { toast } from 'react-toastify';
 import ResponseModal from '@/components/airdrop/ResponseModal';
 import ShareModal from '@/components/airdrop/ShareModal';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 function Referral() {
   const router = useRouter();
@@ -187,7 +188,7 @@ function Referral() {
   }
 
   return (
-    <div className="container p-0">
+    <div className="container p-0 pt-7">
       <div className="flex flex-col lg:flex-row lg:space-x-[24px]">
         {/* Left */}
         <div className="mb-[36px] flex h-fit basis-1/2 flex-col lg:flex-col">
@@ -364,12 +365,12 @@ function Referral() {
                     onClick={e => copyCode(e.target)}
                   />
                 </div>
-                <button
-                  type="button"
-                  className="rounded-2 body1e h-[48px] w-[48px] bg-primaryBlue px-[8px] py-[8px] hover:bg-primaryBlueHover"
-                  onClick={() => setIsReferralPopupShow(true)}>
+                <PrimaryButton
+                  className="rounded-2 body1e h-[48px] w-[48px] bg-primaryBlue px-[8px] py-[8px]"
+                  // onClick={() => setIsReferralPopupShow(true)}
+                >
                   <Image className="cursor-pointer" src="/images/components/airdrop/share-white.svg" alt="" width={24} height={24} />
-                </button>
+                </PrimaryButton>
               </div>
 
               {/* <Overlay target={targetTooltip} show={showCopyNotice} placement="top">
