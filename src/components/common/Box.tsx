@@ -3,16 +3,20 @@ import Image from 'next/image';
 
 // vertical gradient gray
 export const BoxGradient = (props: any) => {
-  const { borderWidth = 1, borderRadius = 6, children } = props;
+  const { borderWidth = 1, borderRadius = 6, isBottomRounded = true, isTopRounded = true, children } = props;
 
   return (
     <div
       className={`
-        relative overflow-clip bg-gradient-to-b from-secondaryBlue to-lightBlue
-        rounded-[${borderRadius}px] p-[1px]`}>
+        to-lightBluep-[1px] relative overflow-clip bg-gradient-to-b from-secondaryBlue
+        ${isTopRounded ? `rounded-t-[${borderRadius}px]` : ''}
+        ${isBottomRounded ? `rounded-b-[${borderRadius}px]` : ''}
+      `}>
       <div
-        className={`bg-lightBlue
-          rounded-[${borderRadius}px] m-[${borderWidth}px]`}>
+        className={`bg-lightBlue  m-[${borderWidth}px]
+          ${isTopRounded ? `rounded-t-[${borderRadius}px]` : ''}
+          ${isBottomRounded ? `rounded-b-[${borderRadius}px]` : ''}
+        `}>
         {children}
       </div>
     </div>

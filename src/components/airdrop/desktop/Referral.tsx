@@ -8,12 +8,12 @@ import { ThreeDots } from 'react-loader-spinner';
 import { useRouter } from 'next/router';
 import { $userPoint, defaultUserPoint, referralList } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
-import ReferUserModal from '@/components/airdrop/ReferUserModal';
 import { $userIsConnected, $userIsConnecting } from '@/stores/user';
 import { toast } from 'react-toastify';
-import ResponseModal from '@/components/airdrop/ResponseModal';
-import ShareModal from '@/components/airdrop/ShareModal';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
+import ResponseModal from '@/components/airdrop/desktop/ResponseModal';
+import ShareModal from '@/components/airdrop/desktop/ShareModal';
 
 function Referral() {
   const router = useRouter();

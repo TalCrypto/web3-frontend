@@ -8,9 +8,9 @@ const LayoutUpdater: React.FC = () => {
   useEffect(() => {
     const handleResize = () => {
       const elements = document.getElementsByClassName('mobile-view');
-      if (elements === null) return;
+      if (!elements) return;
       const element = elements[0];
-      if (element === null) return;
+      if (!element) return;
 
       const styles = window.getComputedStyle(element);
       const isVisibleNow = styles.display !== 'none';

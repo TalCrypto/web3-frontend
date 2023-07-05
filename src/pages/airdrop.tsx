@@ -3,12 +3,12 @@ import React, { useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { useRouter } from 'next/router';
 import { $asActiveTab } from '@/stores/airdrop';
-import TabItems from '@/components/airdrop/TabItems';
+import TabItems from '@/components/airdrop/desktop/TabItems';
 import { useStore as useNanostore } from '@nanostores/react';
-import Overview from '@/components/airdrop/Overview';
-import Referral from '@/components/airdrop/Referral';
-import Leaderboard from '@/components/airdrop/Leaderboard';
-import Rules from '@/components/airdrop/Rules';
+import Overview from '@/components/airdrop/desktop/Overview';
+import Referral from '@/components/airdrop/desktop/Referral';
+import Leaderboard from '@/components/airdrop/desktop/Leaderboard';
+import Rules from '@/components/airdrop/desktop/Rules';
 
 export default function Home() {
   const router = useRouter();
