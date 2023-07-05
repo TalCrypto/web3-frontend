@@ -53,6 +53,22 @@
       transform: translateY(0px);
     }
   }
+
+  // text yellow glowing for competition page
+  &.glow-yellow {
+    color: #ffefd0;
+
+    &:hover,
+    &.active {
+      background: none;
+      -webkit-text-fill-color: #ffefd0;
+      text-shadow: 0px 0px 7px rgba(255, 165, 31, 0.8);
+
+      .after {
+        display: none;
+      }
+    }
+  }
 }
 
 .market_user {
@@ -110,6 +126,14 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+
+  // text yellow glowing for competition page
+  &.glow-yellow {
+    color: #ffefd0;
+    background: none;
+    -webkit-text-fill-color: #ffefd0;
+    text-shadow: 0px 0px 7px rgba(255, 165, 31, 0.8);
+  }
 }
 
 .partial-button {
