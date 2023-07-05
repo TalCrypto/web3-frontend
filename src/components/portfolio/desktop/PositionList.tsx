@@ -22,7 +22,7 @@ function PositionList() {
 
   return (
     <div>
-      {psUserPosition.filter((item: any) => item !== null).length === 0 ? (
+      {psUserPosition.length === 0 ? (
         <div className="mt-[100px]">
           <div className="mb-6 text-center text-[16px] text-mediumEmphasis">You have no open position.</div>
           <div className="flex justify-center">

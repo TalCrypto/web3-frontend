@@ -7,7 +7,7 @@ import React, { useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psBalance, $psHistogramChartData, $psLineChartData, $psSelectedTimeIndex, $psUserPosition } from '@/stores/portfolio';
+import { $psHistogramChartData, $psLineChartData, $psSelectedTimeIndex } from '@/stores/portfolio';
 import PositionInfo from '@/components/portfolio/desktop/PositionInfo';
 import PortfolioEmpty from '@/components/portfolio/mobile/PortfiolioEmpty';
 import AccountChartMobile from '@/components/portfolio/mobile/AccountChartMobile';
@@ -16,35 +16,15 @@ import PositionInfoMobile from '@/components/portfolio/mobile/PositionInfoMobile
 import AccountChart from '@/components/portfolio/desktop/AccountChart';
 import TrendContent from '@/components/portfolio/desktop/TrendContent';
 import PageLoading from '@/components/common/PageLoading';
-import {
-  $userAddress,
-  $userIsConnected,
-  $userIsConnecting,
-  $userIsWrongNetwork,
-  $userPositionInfos,
-  $userWethBalance
-} from '@/stores/user';
-import { AMM } from '@/const/collectionList';
-import { getSupportedAMMs } from '@/const/addresses';
+import { $userAddress, $userIsConnected, $userIsConnecting, $userIsWrongNetwork } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 
 export default function Portfolio() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const isConnecting = useNanostore($userIsConnecting);
-  const userPositionInfos = useNanostore($userPositionInfos);
-  const ammList = getSupportedAMMs();
   const address = useNanostore($userAddress);
   const selectedTimeIndex = useNanostore($psSelectedTimeIndex);
-  const psBalance = useNanostore($psBalance);
-  const userPosition = useNanostore($psUserPosition);
-  const wethBalance = useNanostore($userWethBalance);
-
-  const userPortfolio = userPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
-  const newBalance = psBalance;
-  newBalance.portfolio = userPortfolio.toFixed(4);
-  newBalance.available = wethBalance.toFixed(4);
-  $psBalance.set(newBalance);
 
   useEffect(() => {
     if (address) {
@@ -72,13 +52,6 @@ export default function Portfolio() {
       });
     }
   }, [selectedTimeIndex, address]);
-
-  useEffect(() => {
-    const temp = ammList
-      .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size !== 0 : false))
-      .map((amm: AMM) => userPositionInfos[amm]);
-    $psUserPosition.set(temp);
-  }, [userPositionInfos]);
 
   return (
     <>
