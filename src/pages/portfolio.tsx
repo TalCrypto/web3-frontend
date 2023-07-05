@@ -75,7 +75,7 @@ export default function Portfolio() {
 
   useEffect(() => {
     const temp = ammList
-      .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))
+      .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size !== 0 : false))
       .map((amm: AMM) => userPositionInfos[amm]);
     $psUserPosition.set(temp);
   }, [userPositionInfos]);

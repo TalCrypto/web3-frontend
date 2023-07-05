@@ -105,7 +105,7 @@ const BottomContent = () => {
   const displayAddress = address ? `${address.substring(0, 7)}...${address.slice(-3)}` : null;
 
   const positionBalance = ammList
-    .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))
+    .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size !== 0 : false))
     .map((amm: AMM) => userPositionInfos[amm])
     .reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
 
