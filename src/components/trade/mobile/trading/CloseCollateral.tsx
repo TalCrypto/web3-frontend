@@ -186,13 +186,13 @@ function EstimationComponent(props: any) {
         title={
           <span className="flex">
             Collateral&nbsp;
-            {!isFullClose ? (
+            {/* {!isFullClose ? (
               <TitleTips
                 titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
                 tipsText="Collateral will not change."
                 placement="top"
               />
-            ) : null}
+            ) : null} */}
           </span>
         }
         currentValue={!userPosition ? '-.--' : userPosition.margin.toFixed(4)}
@@ -400,35 +400,39 @@ export default function CloseCollateral() {
         isAmountTooLarge={isAmountTooLarge}
         isFullClose={isFullClose}
       />
-      {isNeedApproval ? (
-        <ApproveButton
-          isEstimating={isEstLoading}
-          approvalAmount={isAmountTooLarge || isAmountTooSmall ? 0 : approvalAmount}
-          onPending={handlePending}
-          onSuccess={() => {}}
-          onError={handleError}
-        />
-      ) : isFullClose ? (
-        <ClosePosButton
-          isEstimating={isEstLoading}
-          slippagePercent={Number(toleranceRate)}
-          onPending={handlePending}
-          onSuccess={initializeState}
-          onError={handleError}
-        />
-      ) : (
-        <OpenPosButton
-          isEstimating={isEstLoading}
-          side={closeSide}
-          notionalAmount={closeValue}
-          leverage={1}
-          slippagePercent={Number(toleranceRate)}
-          estimation={isAmountTooLarge || isAmountTooSmall ? undefined : estimation}
-          onPending={handlePending}
-          onSuccess={initializeState}
-          onError={handleError}
-        />
-      )}
+
+      <div className="pb-4">
+        {isNeedApproval ? (
+          <ApproveButton
+            isEstimating={isEstLoading}
+            approvalAmount={isAmountTooLarge || isAmountTooSmall ? 0 : approvalAmount}
+            onPending={handlePending}
+            onSuccess={() => {}}
+            onError={handleError}
+          />
+        ) : isFullClose ? (
+          <ClosePosButton
+            isEstimating={isEstLoading}
+            slippagePercent={Number(toleranceRate)}
+            onPending={handlePending}
+            onSuccess={initializeState}
+            onError={handleError}
+          />
+        ) : (
+          <OpenPosButton
+            isEstimating={isEstLoading}
+            side={closeSide}
+            notionalAmount={closeValue}
+            leverage={1}
+            slippagePercent={Number(toleranceRate)}
+            estimation={isAmountTooLarge || isAmountTooSmall ? undefined : estimation}
+            onPending={handlePending}
+            onSuccess={initializeState}
+            onError={handleError}
+          />
+        )}
+      </div>
+
       {/* {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
         <div className="pb-4">

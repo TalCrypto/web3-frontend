@@ -60,6 +60,7 @@ export const defaultUserPoint: UserPoint = {
 
 // user points
 export const $userPoint = atom<UserPoint | undefined>();
+export const $userPrevPoint = atom<UserPoint | undefined>();
 
 // leaderboard
 export const leaderboard = atom<any[]>([]);
@@ -77,3 +78,5 @@ export const setReferralList = (data: any) => {
   referralList.set(data);
 };
 export const isReferralListLoading = atom(false);
+
+export const $asActiveTab = atom(0);

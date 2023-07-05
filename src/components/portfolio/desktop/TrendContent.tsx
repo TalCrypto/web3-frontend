@@ -11,9 +11,11 @@ import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import { useWeb3Modal } from '@web3modal/react';
+import { $isMobileView } from '@/stores/modal';
 
 function TrendContent() {
-  const [isVisible, setIsVisible] = useState(false);
+  const { open } = useWeb3Modal();
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -23,6 +25,7 @@ function TrendContent() {
   const selectedTimeIndex = useNanostore($psSelectedTimeIndex);
 
   const controlRef: any = useRef();
+  const isMobileView = useNanostore($isMobileView);
 
   const contentArray = [
     { label: '1W', ref: useRef() },
@@ -34,11 +37,11 @@ function TrendContent() {
   const totalAccountValueDiff = '0.0';
 
   const onBtnConnectWallet = () => {
-    // connectWallet(() => {}, true);
+    open();
   };
 
   const onBtnUpdateTargetNetwork = () => {
-    // updateTargetNetwork();
+    open({ route: 'SelectNetwork' });
   };
 
   const onBtnGetTeth = () => {};
@@ -60,15 +63,7 @@ function TrendContent() {
 
   useEffect(() => {
     const handleResize = () => {
-      const element = document.getElementById('divPortfolioWindow');
-      if (element === null) return;
-      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
-      if (isVisibleNow && !isVisible) {
-        setIsVisible(true);
-        updateSelectedTimeIndex();
-      } else if (!isVisibleNow && isVisible) {
-        setIsVisible(false);
-      }
+      updateSelectedTimeIndex();
     };
 
     window.addEventListener('resize', handleResize);
@@ -77,7 +72,7 @@ function TrendContent() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [isVisible, selectedTimeIndex]);
+  }, [isMobileView, selectedTimeIndex]);
 
   useEffect(() => {
     updateSelectedTimeIndex();
@@ -136,7 +131,7 @@ function TrendContent() {
       ) : (
         <div className="mb-6 flex w-full 2xl:h-[calc(100%-42px)]">
           <div className="ml-6 mr-6 mt-2 w-full">
-            <PortfolioChart isVisible={isVisible} />
+            <PortfolioChart />
           </div>
 
           <div className="relative mt-[-40px] flex h-full flex-1 flex-col" ref={controlRef}>

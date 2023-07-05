@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $pendingPositionChangedEvents, $pendingMarginChangedEvents } from '@/stores/events';
-import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, addGraphRecord } from '@/stores/trading';
+import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $tsTransactionStatus, addGraphRecord } from '@/stores/trading';
 import { $currentChain, $userAddress } from '@/stores/user';
 import { getTradingActionType, getCollateralActionType } from '@/utils/actionType';
 import { apiConnection } from '@/utils/apiConnection';
@@ -13,6 +14,7 @@ import { Contract, getAMMContract, getCHContract } from '@/const/contracts';
 import { ammAbi, chAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
 import { zeroAddress } from 'viem';
+import { $isMobileView } from '@/stores/modal';
 
 const EventHandlers = () => {
   const pendingPositionChangedEvents = useNanostore($pendingPositionChangedEvents);
@@ -21,6 +23,7 @@ const EventHandlers = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
   const ammAddress = getAMMAddress(chain, currentAmm);
+  const isMobileView = useNanostore($isMobileView);
 
   useEffect(() => {
     if (pendingPositionChangedEvents.length > 0 && ammAddress) {
@@ -34,18 +37,29 @@ const EventHandlers = () => {
           });
           const amm = getAMMByAddress(event.amm, chain);
           const ammInfo = getCollectionInformation(amm);
-          showToast(
-            {
-              title: `${ammInfo?.shortName} - ${type} Position`,
-              message: 'Order Completed!',
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`,
-              linkLabel: 'Check on Arbiscan'
-            },
-            {
-              autoClose: 5000,
-              hideProgressBar: true
-            }
-          );
+
+          if (!isMobileView) {
+            showToast(
+              {
+                title: `${ammInfo?.shortName} - ${type} Position`,
+                message: 'Order Completed!',
+                linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`,
+                linkLabel: 'Check on Arbiscan'
+              },
+              {
+                autoClose: 5000,
+                hideProgressBar: true
+              }
+            );
+          }
+
+          if (isMobileView) {
+            $tsTransactionStatus.set({
+              isShow: true,
+              isSuccess: true,
+              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`
+            });
+          }
         }
       });
 
@@ -85,18 +99,30 @@ const EventHandlers = () => {
           const type = getCollateralActionType(margin);
           const amm = getAMMByAddress(event.amm, chain);
           const ammInfo = getCollectionInformation(amm);
-          showToast(
-            {
-              title: `${ammInfo?.shortName} - ${type}`,
-              message: 'Order Completed!',
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`,
-              linkLabel: 'Check on Arbiscan'
-            },
-            {
-              autoClose: 5000,
-              hideProgressBar: true
-            }
-          );
+          console.log(isMobileView);
+
+          if (!isMobileView) {
+            showToast(
+              {
+                title: `${ammInfo?.shortName} - ${type}`,
+                message: 'Order Completed!',
+                linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`,
+                linkLabel: 'Check on Arbiscan'
+              },
+              {
+                autoClose: 5000,
+                hideProgressBar: true
+              }
+            );
+          }
+
+          if (isMobileView) {
+            $tsTransactionStatus.set({
+              isShow: true,
+              isSuccess: true,
+              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`
+            });
+          }
         });
     }
   }, [pendingMarginChangedEvents, traderAddress, chain]);
@@ -170,9 +196,18 @@ const EventListeners = ({ ammContract, chContract }: { ammContract: Contract; ch
 const EventManager = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const ammContract = getAMMContract(chain, currentAmm);
-  const chContract = getCHContract(chain);
+  const [ammContract, setAmmContract] = useState<Contract | undefined>();
+  const [chContract, setChContract] = useState<Contract | undefined>();
+
+  useEffect(() => {
+    if (currentAmm) {
+      setAmmContract(getAMMContract(chain, currentAmm));
+      setChContract(getCHContract(chain));
+    }
+  }, [chain, currentAmm]);
+
   if (!ammContract || !chContract) return null;
+
   return (
     <>
       <EventListeners chContract={chContract} ammContract={ammContract} />

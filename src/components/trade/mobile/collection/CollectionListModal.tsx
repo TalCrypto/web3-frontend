@@ -9,32 +9,37 @@ import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm } from '@/stores/trading';
 import { useStore as useNanostore } from '@nanostores/react';
 import { getSupportedAMMs } from '@/const/addresses';
-import { useMarketOverview } from '@/hooks/market';
+import { useMobileMarketOverview } from '@/hooks/market';
 
 export default function CollectionListModal(props: any) {
-  const { isShowModal, setIsShowModal } = props;
+  const { setIsShowModal } = props;
   const router = useRouter();
   const currentAmm = useNanostore($currentAmm);
   const ammList = getSupportedAMMs().filter((amm: AMM) => amm !== currentAmm);
-  const { data } = useMarketOverview();
-  const [overviewData, setOverviewData]: any = useState();
+  const { data: overviewData } = useMobileMarketOverview();
+  const [isExpand, setIsExpand] = useState(false);
+
+  const handleCloseModal = () => {
+    setIsExpand(false);
+    setTimeout(() => {
+      setIsShowModal(false);
+      $isShowMobileModal.set(false);
+    }, 500);
+  };
 
   useEffect(() => {
-    setOverviewData(data);
-  }, [data]);
+    setIsExpand(true);
+  }, []);
 
   return (
     <div
       className={`t-0 fixed bottom-0 left-0 right-0 z-[12] w-full
-        ${isShowModal && data ? 'h-full' : 'h-0'}
+        ${isExpand ? 'h-full' : 'h-0'}
        bg-black/[.3] backdrop-blur-[4px]`}
-      onClick={() => {
-        setIsShowModal(false);
-        $isShowMobileModal.set(false);
-      }}>
+      onClick={handleCloseModal}>
       <div
         className={`transition-bottom absolute bottom-0 w-full
-        ${isShowModal && data ? 'bottom-0' : 'bottom-[-550px]'}
+        ${isExpand ? 'bottom-0' : 'bottom-[-550px]'}
         bg-secondaryBlue duration-500
       `}>
         {ammList.map((item: any, index) => {
@@ -49,7 +54,7 @@ export default function CollectionListModal(props: any) {
               className="flex justify-between px-5 py-3"
               onClick={() => {
                 router.push(`/trade/${collectionInfo.amm.toLowerCase()}`, undefined, { shallow: true });
-                setIsShowModal(false);
+                handleCloseModal();
               }}>
               <Image src={collectionInfo.logo} alt="" width={32} height={32} />
               <div className="ml-[6px] flex-1">
@@ -59,12 +64,12 @@ export default function CollectionListModal(props: any) {
               <div className="flex w-[140px] items-center justify-between">
                 <div>
                   <PriceWithIcon
-                    priceValue={tradingData && tradingData.vammPrice ? tradingData.vammPrice.toFixed(2) : '0.00'}
-                    className="!text-mediumEmphasis"
+                    priceValue={tradingData && tradingData.vammPrice ? tradingData.vammPrice.toFixed(2) : '-.--'}
+                    className={`${tradingData ? '' : 'flash'} !text-mediumEmphasis`}
                   />
                 </div>
                 <div
-                  className={`flex w-[70px] text-[14px]
+                  className={`flex w-[70px] text-[14px] ${tradingData ? '' : 'flash'}
                     ${
                       !tradingData || !tradingData.priceChangeRatio24h
                         ? ''
@@ -74,21 +79,20 @@ export default function CollectionListModal(props: any) {
                         ? 'text-marketRed'
                         : ''
                     }`}>
-                  <Image
-                    src={
-                      tradingData && tradingData.priceChangeRatio24h > 0
-                        ? '/images/components/trade/chart/polygon_pos.svg'
-                        : '/images/components/trade/chart/polygon_neg.svg'
-                    }
-                    alt=""
-                    width={16}
-                    height={16}
-                  />
-                  <span className="ml-1">
-                    {tradingData && tradingData.priceChangeRatio24h
-                      ? `${Math.abs(tradingData.priceChangeRatio24h.toFixed(2))} %`
-                      : '0.00  %'}
-                  </span>
+                  {tradingData && (
+                    <Image
+                      src={
+                        tradingData && tradingData.priceChangeRatio24h > 0
+                          ? '/images/components/trade/chart/polygon_pos.svg'
+                          : '/images/components/trade/chart/polygon_neg.svg'
+                      }
+                      alt=""
+                      width={16}
+                      height={16}
+                    />
+                  )}
+
+                  <span className="ml-1">{tradingData ? `${Math.abs(tradingData.priceChangeRatio24h.toFixed(2))} %` : '-.--  %'}</span>
                 </div>
               </div>
             </div>

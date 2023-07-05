@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContractReads } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $collectionConfig, $currentAmm } from '@/stores/trading';
@@ -33,9 +33,18 @@ const Loader = ({ ammContract, chContract }: { ammContract: Contract; chContract
 const CollectionConfigLoader: React.FC = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const ammContract = getAMMContract(chain, currentAmm);
-  const chContract = getCHContract(chain);
+  const [ammContract, setAmmContract] = useState<Contract | undefined>();
+  const [chContract, setChContract] = useState<Contract | undefined>();
+
+  useEffect(() => {
+    if (currentAmm) {
+      setAmmContract(getAMMContract(chain, currentAmm));
+      setChContract(getCHContract(chain));
+    }
+  }, [chain, currentAmm]);
+
   if (!ammContract || !chContract) return null;
+
   return <Loader ammContract={ammContract} chContract={chContract} />;
 };
 

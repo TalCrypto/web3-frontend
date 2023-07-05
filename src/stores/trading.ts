@@ -70,6 +70,12 @@ export const $selectedTimeIndex = atom(0);
 
 export const $graphData = atom<OhlcData[]>([]);
 
+export const $tsTransactionStatus = atom({
+  isShow: false,
+  isSuccess: true,
+  linkUrl: ''
+});
+
 export const $priceChange = computed($graphData, graphData => {
   if (graphData && graphData.length > 0) {
     const basePrice = graphData[0].open;

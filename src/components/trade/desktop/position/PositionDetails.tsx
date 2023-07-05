@@ -7,7 +7,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import TitleTips from '@/components/common/TitleTips';
@@ -18,8 +17,8 @@ import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaymentModal';
 import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
-import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending } from '@/hooks/collection';
-import { getCollectionInformation } from '@/const/collectionList';
+import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending, useFundingPaymentHistory } from '@/hooks/collection';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
 import Tooltip from '@/components/common/Tooltip';
 
 function MedPriceIcon(props: any) {
@@ -51,13 +50,15 @@ export default function PositionDetails() {
   const isPending = useTransactionIsPending(currentAmm);
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
-  // const [isTradingHistoryShow, setIsTradingHistoryShow] = useState(false);
   const [showSharePosition, setShowSharePosition] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
+
+  const selectedAmm = currentAmm ?? AMM.DEGODS;
+  const { total: fpTotal } = useFundingPaymentHistory(selectedAmm);
 
   useEffect(() => {
     setIsLoading(true);
@@ -198,8 +199,8 @@ export default function PositionDetails() {
             <div className="mb-3 text-[14px] font-normal">Accu. Fund. Payment</div>
             <div>
               <MedPriceIcon
-                priceValue={positionInfo.fundingPayment === 0 ? '0.0000' : positionInfo.fundingPayment.toFixed(4)}
-                className={positionInfo.fundingPayment > 0 ? 'text-marketGreen' : positionInfo.fundingPayment === 0 ? '' : 'text-marketRed'}
+                priceValue={!fpTotal ? '0.0000' : fpTotal.toFixed(4)}
+                className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
                 isLoading={isLoading || isPending}
               />
             </div>
@@ -291,7 +292,7 @@ export default function PositionDetails() {
         </div>
       </div>
 
-      {isOverPriceGap ? (
+      {/* {isOverPriceGap ? (
         <div className="mt-[18px] flex items-start space-x-[6px]">
           <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
           <p className="text-b3 text-warn">
@@ -306,7 +307,7 @@ export default function PositionDetails() {
             </a>
           </p>
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }

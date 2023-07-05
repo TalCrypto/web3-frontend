@@ -15,7 +15,6 @@ import { $currentAmm } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
-import { $userIsConnected } from '@/stores/user';
 import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
 import MarketHistoryUpdater from '@/components/updaters/MarketHistoryUpdater';
 import EventManager from '@/components/updaters/EventManager';
@@ -27,10 +26,15 @@ import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 
 function TradePage(props: WithRouterProps) {
   const { router } = props;
-  const isConnected = useNanostore($userIsConnected);
 
   useEffect(() => {
     const collection = router?.query?.collection;
+
+    if (router?.asPath === '/trade') {
+      router.push('/trade/degods');
+      return;
+    }
+
     if (collection) {
       $currentAmm.set(collection as AMM);
     }
@@ -44,7 +48,7 @@ function TradePage(props: WithRouterProps) {
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>
-        <div className="trading-window hidden md:block" id="divTradeWindow">
+        <div className="hidden md:block">
           <div className="px-0">
             <div className="hidden md:block 2xl:flex">
               <div className="flex">
@@ -55,7 +59,7 @@ function TradePage(props: WithRouterProps) {
 
               <div className="block 2xl:ml-[49px] 2xl:flex-1">
                 <ChartWindows />
-                {isConnected ? <PositionDetails /> : null}
+                <PositionDetails />
 
                 <InformationWindow />
               </div>
@@ -63,13 +67,13 @@ function TradePage(props: WithRouterProps) {
           </div>
         </div>
 
-        <div className="block bg-lightBlue md:hidden" id="divTradeMobile">
+        <div className="mobile-view block bg-lightBlue md:hidden">
           <Switcher />
 
           <div className="mt-12 bg-darkBlue">
             <ChartMobile />
 
-            {isConnected ? <PositionMobile /> : null}
+            <PositionMobile />
 
             <InformationMobile />
 

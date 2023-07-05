@@ -32,7 +32,7 @@ export default function Switcher() {
           </div>
         </div>
       </div>
-      <CollectionListModal isShowModal={isShowModal} setIsShowModal={setIsShowModal} />
+      {isShowModal && <CollectionListModal setIsShowModal={setIsShowModal} />}
     </>
   );
 }

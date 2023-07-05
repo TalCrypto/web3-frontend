@@ -333,8 +333,8 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserPoint: async function getUserPoint(userAddress: string) {
-    const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge`;
+  getUserPoint: async function getUserPoint(userAddress: string, targetSeason = 0) {
+    const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge&season=${targetSeason}`;
     try {
       const call = await fetch(url);
       const result = await call.json();

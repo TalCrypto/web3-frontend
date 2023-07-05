@@ -1,0 +1,352 @@
+/* eslint-disable operator-linebreak */
+import React from 'react';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $userIsConnected } from '@/stores/user';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { BoxGradient, BoxLocked, NewBoxLock } from '@/components/common/Box';
+// import Tooltip from '@/components/common/Tooltip';
+import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
+import PrimaryButton from '@/components/common/PrimaryButton';
+
+function Overview() {
+  const userPoint = useNanostore($userPoint);
+  const userPrevPoint = useNanostore($userPrevPoint);
+
+  const rank = userPoint ? userPoint.rank : defaultUserPoint.rank;
+  const multiplier = userPoint ? userPoint.multiplier : defaultUserPoint.multiplier;
+  const total = userPoint ? userPoint.total : defaultUserPoint.total;
+  const tradeVol = userPoint ? userPoint.tradeVol : defaultUserPoint.tradeVol;
+  const referral = userPoint ? userPoint.referral : defaultUserPoint.referral;
+  const og = userPoint ? userPoint.og : defaultUserPoint.og;
+  const converge = userPoint ? userPoint.converge : defaultUserPoint.converge;
+
+  const prevTotal = userPrevPoint ? userPrevPoint.total : defaultUserPoint.total;
+  const tradeVolTotal = userPoint ? userPoint.tradeVol.vol : defaultUserPoint.tradeVol.vol;
+
+  const isConnected = useNanostore($userIsConnected);
+  // const userPrev = useNanostore(userPrevSeasonPoint);
+  const router = useRouter();
+
+  if (!isConnected) {
+    //   return <WalletNotConnected connectWallet={connectWallet} />;
+  }
+
+  // testing
+  // const tradeVolIsHidden = false;
+  const convergIsHidden = false;
+  const referralIsHidden = false;
+  const ogPointsIsHidden = false;
+
+  const partnershipMultiplier = Number(tradeVol.multiplier);
+  const convergeVolume = convergIsHidden ? 0 : converge.val;
+  const eligible = () => false;
+
+  // const anyHidden = tradeVolIsHidden || convergIsHidden || referralIsHidden || ogPointsIsHidden;
+
+  const maxEligibilityTradeVol = Number(5).toFixed(2);
+
+  return (
+    <div className="flex flex-col-reverse lg:flex-row lg:space-x-[28px]">
+      <div className={`flex flex-1 flex-col ${eligible() ? 'flex-col-reverse' : ''} `}>
+        <div className="mb-[48px] flex-1">
+          <h3 className="mb-[24px] flex text-[24px] font-bold">Eligibility</h3>
+          <BoxGradient>
+            <div
+              className={`flex bg-[right_6rem_bottom] px-[24px] py-[24px] md:px-[36px] ${
+                !eligible() ? '' : "bg-[url('/images/components/airdrop/complete-badge.svg')] bg-no-repeat"
+              } `}>
+              <div>
+                <p className="mb-[36px] text-[14px] font-normal text-highEmphasis">
+                  A minimum of <span className="body2e text-seasonGreen">5 WETH</span> notional value.
+                </p>
+                <p className="body1e mb-[15px]">
+                  {!eligible()
+                    ? `${Number(tradeVolTotal).toFixed(2)} / ${maxEligibilityTradeVol} WETH`
+                    : `${maxEligibilityTradeVol} / ${maxEligibilityTradeVol} WETH ?`}
+                </p>
+                {/* progressbar */}
+                <div className="w-[350px] overflow-clip rounded-[5px] border-[1px] border-mediumEmphasis/50 bg-darkBlue/50">
+                  <div
+                    className="h-[8px] rounded-[5px]"
+                    style={{
+                      width: eligible() ? '100%' : `${((Number(tradeVolTotal) / 5) * 100).toFixed(2)}%`,
+                      background: 'linear-gradient(265.04deg, #F703D9 -10.63%, #795AF4 42.02%, #04AEFC 103.03%)'
+                    }}
+                  />
+                </div>
+              </div>
+              {!eligible() ? (
+                <div className="hidden flex-1 items-center justify-end md:flex">
+                  <PrimaryButton
+                    className="rounded-2 min-w-[72px] px-[20px] py-[12px] text-[14px] font-semibold"
+                    onClick={() => router.push('/trade/milady')}>
+                    Trade Now !
+                  </PrimaryButton>
+                </div>
+              ) : (
+                <div className="hidden flex-1 items-end justify-end md:flex">
+                  <p className="text-[18px] font-semibold text-marketGreen">COMPLETED</p>
+                </div>
+              )}
+            </div>
+          </BoxGradient>
+        </div>
+
+        <div className="mb-[48px] flex-1">
+          <h3 className="mb-[24px] text-[24px] font-bold">Points Details</h3>
+
+          <div>
+            <div className="flex flex-row justify-between">
+              {/* Trading Volume */}
+              <div className="mr-[16px]">
+                <BoxGradient>
+                  <div className="relative flex h-[200px] w-[256px] flex-col pt-[24px]">
+                    {!eligible() ? <NewBoxLock /> : null}
+                    <div className="z-[2] flex flex-row items-center justify-start px-[36px] text-[20px] font-[600]">
+                      <div className="mr-[6px] h-[26px] w-[26px]">
+                        <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                      </div>
+                      Trading Vol.
+                      <span className="ml-[6px] cursor-pointer">
+                        {/* <Tooltip
+                            direction="top"
+                            content={
+                              <p className="mx-2 text-center text-b3">
+                                Trading Volume (Notional ) will be <br />
+                                counted for every action of open <br />
+                                position, add position, partially <br />
+                                close and fully close position. <br />
+                              </p>
+                            }> */}
+                        <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+                        {/* </Tooltip> */}
+                      </span>
+                    </div>
+                    <div className="mt-[18px] h-[50.5px] px-[36px]">
+                      <div className="flex flex-row items-center justify-start text-[15px] font-[400] text-[#A8CBFFBF]">
+                        <div className="mr-[6px] h-[16px] w-[16px]">
+                          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
+                        </div>
+                        {Number(tradeVol.vol).toFixed(4)}
+                      </div>
+                      <div className="ml-[26px] mt-[8px] flex items-center justify-start">
+                        <Image src="/images/components/airdrop/season2-arrow.svg" width={14} height={20} alt="" />
+                      </div>
+                    </div>
+                    <div className="mt-[12px] flex h-[39px] flex-row items-end px-[36px]">
+                      <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">{tradeVol.points.toFixed(4)}</p>
+                      <p>Pts</p>
+                    </div>
+                    {partnershipMultiplier > 1 ? (
+                      <div
+                        className="mb-[6px] mt-[8px] flex flex-row items-center
+                            justify-center px-[10px] text-[12px] font-[600] text-primaryBlue">
+                        {partnershipMultiplier}X partnership multiplier applied
+                        <span className="ml-1">
+                          <Image src="/images/components/airdrop/checklist.svg" width={10} height={10} alt="" />
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="mt-[33px]" />
+                    )}
+                  </div>
+                </BoxGradient>
+              </div>
+
+              {/* Referral */}
+              <div className="mr-[16px]">
+                <BoxGradient>
+                  <div className="relative flex h-[200px] w-[256px] flex-col px-[36px] py-[24px]">
+                    {!eligible() ? <NewBoxLock /> : null}
+                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-[600]">
+                      <div className="mr-[6px] h-[26px] w-[26px]">
+                        <Image src="/images/components/airdrop/referral-blue.svg" width={26} height={26} alt="" />
+                      </div>
+                      Referral
+                      <span className="ml-[6px] cursor-pointer">
+                        {/* <Tooltip
+                            direction="top"
+                            content={
+                              <p>
+                                Both referee and referrer will <br />
+                                get pts through trading.
+                              </p>
+                            }> */}
+                        <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+                        {/* </Tooltip> */}
+                      </span>
+                    </div>
+                    <div className="mt-[18px] h-[50.5px]">
+                      <div className="flex flex-row items-center justify-start text-[15px] font-[400] text-[#A8CBFFBF]">
+                        {referralIsHidden ? '****' : referral.referralSelfRewardPoints.toFixed(1)} Pts +{' '}
+                        {referralIsHidden ? '****' : referral.referringRewardPoints.toFixed(1)} Pts
+                      </div>
+                      <div className="ml-[26px] mt-[8px] flex items-center justify-start">
+                        <Image src="/images/components/airdrop/season2-arrow.svg" width={14} height={20} alt="" />
+                      </div>
+                    </div>
+                    <div className="mt-[12px] flex h-[39px] flex-row items-end">
+                      <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">
+                        {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(4)}
+                      </p>
+                      <p>Pts</p>
+                    </div>
+                  </div>
+                </BoxGradient>
+              </div>
+
+              {/* Others */}
+              <div>
+                <BoxGradient>
+                  <div className="relative flex h-[200px] w-[256px] flex-col px-[36px] py-[24px]">
+                    {!eligible() ? <NewBoxLock /> : null}
+                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-[600]">
+                      <div className="mr-[6px] h-[26px] w-[26px]">
+                        <Image src="/images/components/airdrop/og-points.svg" width={26} height={26} alt="" />
+                      </div>
+                      Others
+                    </div>
+                    <div>
+                      <div
+                        className="mt-[18px] flex h-[50.5px] flex-row items-center
+                          justify-start text-[12px] font-[400] text-[#A8CBFFBF]">
+                        Tribe3 protocol contribution on beta, communities, campaigns, testnet etc.
+                      </div>
+                    </div>
+                    <div className="mt-[12px] flex h-[39px] flex-row items-end">
+                      <div className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">
+                        <p className="text-glow-green text-h4 md:text-h2">{ogPointsIsHidden ? '****' : og.toFixed(4)}</p>
+                      </div>
+                      <p>Pts</p>
+                    </div>
+                  </div>
+                </BoxGradient>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-[36px] text-[16px] font-[700]">
+            <span className="text-gradient-vertical">Bonus Points</span>
+          </div>
+
+          <div className="mt-[24px] hidden rounded-[16px] bg-gradient-to-r from-[#04AEFC] to-[#F703D9] p-[1px] md:block">
+            <div className="rounded-[15px] bg-lightBlue p-[24px] px-[24px] py-[36px] outline-dashed outline-2 outline-lightBlue">
+              <div className="flex flex-row items-center justify-between">
+                <div className="max-w-[70%]">
+                  <div className="flex flex-row items-center justify-start text-[20px] font-[600]">
+                    <div className="mr-[6px] h-[26px] w-[26px]">
+                      <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+                    </div>
+                    <span>Net Converg. Trading Vol.</span>
+                    <span className="ml-[6px] cursor-pointer">
+                      {/* <Tooltip
+                          direction="top"
+                          content={
+                            <p>
+                              Trades that help to close the <br />
+                              price gap between futures and <br />
+                              spot price will be counted as <br />
+                              convergence trade.
+                            </p>
+                          }> */}
+                      <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+                      {/* </Tooltip> */}
+                    </span>
+                  </div>
+                  <div className="mt-[24px] text-[15px] font-[400] text-[#A8CBFFBF]">
+                    At the end of the season, bonus points will be added to your total points after multiplier, which will boost your
+                    ranking even further!
+                  </div>
+                </div>
+                <div>
+                  <div className="relative flex flex-row items-center justify-start text-[15px] font-[400]">
+                    {!eligible() ? <NewBoxLock /> : null}
+                    <div className="mr-[6px] h-[16px] w-[16px]">
+                      <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
+                    </div>
+                    <span className="text-[#A8CBFFBF]">{convergIsHidden ? '****' : Number(convergeVolume).toFixed(4)}</span>
+                    <Image
+                      src="/images/components/airdrop/season2-arrow.svg"
+                      width={14}
+                      height={20}
+                      style={{ rotate: '270deg', marginLeft: '12px', marginRight: '12px' }}
+                      alt=""
+                    />
+                    <div className="flex flex-row items-center">
+                      <span className="text-glow-green text-[16px] font-[600]">
+                        {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
+                      </span>
+                      &nbsp; Pts.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-[36px] xl:min-w-[460px]">
+        <h3 className="mb-[24px] text-[24px] font-bold">Season 2 Summary</h3>
+        <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-[#04AEFC] via-[#795AF4] to-[#F703D9] p-[1px]">
+          <div className="rounded-[6px] bg-lightBlue">
+            <div className="bg-gradient-blue p-[52px] text-center">
+              <p className="text-[20px] font-[600]">Total Pts</p>
+              <p className="mb-[12px] text-[14px] font-[400]">After Multiplier</p>
+              <div className="flex items-end justify-center">
+                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(4)}</p>
+                <p>Pts</p>
+              </div>
+            </div>
+            <div className="h-[1px] bg-gradient-to-r from-white/0 via-white/50 to-white/0" />
+            <div className="flex justify-between p-[36px]">
+              <div>
+                <p className="body2 mb-[12px]">Current Multiplier</p>
+                <h3>{multiplier}X</h3>
+              </div>
+              <div className="text-right">
+                <p className="body2 mb-[12px]">My Rank</p>
+                <h3>{rank > 0 ? rank : 'Unranked'}</h3>
+              </div>
+            </div>
+          </div>
+          {/* lock */}
+          {!eligible() ? <BoxLocked blur={0} iconStyle={{ marginTop: '-120px' }} /> : null}
+        </div>
+
+        {/* Season 1 Points */}
+        <div className="mt-[36px]">
+          <div className="overflow-clip rounded-[6px] bg-gradient-to-r from-[#04AEFC] via-[#795AF4] to-[#F703D9] p-[1px]">
+            <div className="relative rounded-[6px] bg-lightBlue">
+              <Image
+                src="/images/components/airdrop/season1-bg.svg"
+                width={128}
+                height={131}
+                alt=""
+                className="absolute bottom-0 right-[68px]"
+              />
+              <Image src="/images/components/airdrop/season1-tag.svg" width={64} height={64} alt="" className="absolute left-0 top-0 " />
+              <div className="p-[36px]">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="text-[20px] font-[600] leading-[20px]">Season 1 Points</div>
+                    <div className="mt-[12px] text-[15px] font-[400] leading-[20px]">
+                      <span className="text-glow-yellow text-[20px] font-[600]">{prevTotal.toFixed(1)}</span> Pts.
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <div className="text-[15px] font-[400] text-mediumEmphasis">06.June.2023</div>
+                    <div className="mt-[8] text-[16px] font-semibold text-warn">ENDED</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Overview;

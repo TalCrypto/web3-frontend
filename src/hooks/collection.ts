@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentChain, $userPositionInfos, UserPositionInfo } from '@/stores/user';
+import { $currentChain, $userPositionInfos, UserPositionInfo, $userFPHistory, $userTotalFP } from '@/stores/user';
 import {
   $collectionConfig,
   $dailyVolume,
@@ -20,6 +20,13 @@ import { OhlcData } from 'lightweight-charts';
 export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   const positionInfos = useNanostore($userPositionInfos);
   return amm ? positionInfos[amm] : undefined;
+};
+
+export const useFundingPaymentHistory = (amm: AMM) => {
+  const totalFPs = useNanostore($userTotalFP);
+  const fpHistories = useNanostore($userFPHistory);
+
+  return { total: totalFPs[amm], fpRecords: fpHistories[amm] };
 };
 
 export const usePositionInfosIsLoading = (): boolean => {

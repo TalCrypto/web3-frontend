@@ -10,6 +10,7 @@ import MainTradeComponent from '@/components/trade/mobile/trading/MainTadeCompon
 import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
 import { getCollectionInformation } from '@/const/collectionList';
+import TransactionStatusMobile from '@/components/trade/mobile/trading/TransactionStatusMobile';
 
 function TradingMobile() {
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
@@ -82,6 +83,8 @@ function TradingMobile() {
         />
         <div className="flex">Trade {currentCollection.name}</div>
       </div>
+
+      <TransactionStatusMobile />
     </div>
   );
 }

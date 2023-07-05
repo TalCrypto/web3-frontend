@@ -7,7 +7,7 @@ import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
 import { $collectionConfig, $currentAmm, $fundingRates, $nextFundingTime } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { useFundingPaymentHistory } from '@/hooks/fpHistory';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 import { useStore as useNanostore } from '@nanostores/react';
 
 const FundingPaymentModal = (props: { setShowFundingPaymentModal: any }) => {
@@ -173,8 +173,8 @@ const FundingPaymentModal = (props: { setShowFundingPaymentModal: any }) => {
               <div className="mx-[36px] my-[30px] flex items-center">
                 <span className="mr-[36px] text-highEmphasis">Total Received: </span>
                 <PriceWithIcon
-                  priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : fpTotal === 0 ? '0.000000' : fpTotal.toFixed(6)}
-                  className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
+                  priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : !fpTotal ? '0.000000' : fpTotal.toFixed(6)}
+                  className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
                 />
               </div>
             </div>

@@ -9,9 +9,10 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/mobile/PortfolioChart';
+import { $isMobileView } from '@/stores/modal';
 
 function TrendContentMobile() {
-  const [isVisible, setIsVisible] = useState(false);
+  const isMobileView = useNanostore($isMobileView);
 
   const isShowBalance = useNanostore($psShowBalance);
   const selectedTimeIndex = useNanostore($psSelectedTimeIndex);
@@ -44,15 +45,7 @@ function TrendContentMobile() {
 
   useEffect(() => {
     const handleResize = () => {
-      const element = document.getElementById('divPortfolioWindow');
-      if (element === null) return;
-      const isVisibleNow = window.getComputedStyle(element).display !== 'none';
-      if (isVisibleNow && !isVisible) {
-        setIsVisible(true);
-        updateSelectedTimeIndex();
-      } else if (!isVisibleNow && isVisible) {
-        setIsVisible(false);
-      }
+      updateSelectedTimeIndex();
     };
 
     window.addEventListener('resize', handleResize);
@@ -61,7 +54,7 @@ function TrendContentMobile() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [isVisible, selectedTimeIndex]);
+  }, [isMobileView, selectedTimeIndex]);
 
   useEffect(() => {
     updateSelectedTimeIndex();
@@ -134,7 +127,7 @@ function TrendContentMobile() {
         <div className="h-[6px] w-full bg-darkBlue" />
 
         <div className="w-full px-5">
-          <PortfolioChart isVisible={isVisible} />
+          <PortfolioChart />
         </div>
 
         <div className="flex justify-between px-9 pt-9">

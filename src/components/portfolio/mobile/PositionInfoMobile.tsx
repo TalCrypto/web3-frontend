@@ -4,10 +4,10 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
+import React from 'react';
 import HistoryModal from '@/components/portfolio/mobile/HistoryModal';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psBalance, $psShowBalance, $psShowHistory, $psUserPosition } from '@/stores/portfolio';
+import { $psShowBalance, $psShowHistory, $psUserPosition } from '@/stores/portfolio';
 import PositionList from '@/components/portfolio/mobile/PositionList';
 import FundingPaymentModal from '@/components/portfolio/mobile/FundingPaymentModal';
 import OutlineButton from '@/components/common/OutlineButton';
@@ -16,10 +16,7 @@ import { $userIsConnected } from '@/stores/user';
 import { $isShowMobileModal } from '@/stores/modal';
 
 function PositionInfoMobile() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
   const isConnected = useNanostore($userIsConnected);
-  const psBalance = useNanostore($psBalance);
   const isShowBalance = useNanostore($psShowBalance);
   const psUserPosition = useNanostore($psUserPosition);
 

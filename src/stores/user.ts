@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { AMM } from '@/const/collectionList';
 import { atom, map } from 'nanostores';
 import { Address, Chain } from 'wagmi';
@@ -48,9 +49,38 @@ export interface UserPositionInfo {
 }
 
 export type UserPositionInfos = {
-  // eslint-disable-next-line no-unused-vars
   [value in AMM]?: UserPositionInfo;
 };
+
+export interface PositionHistoryRecord {
+  amm: AMM;
+  txHash: string;
+  entryPrice: number;
+  ammAddress: Address;
+  timestamp: number;
+  amount: number;
+  collateralChange: number;
+  margin: number;
+  previousMargin: number;
+  fundingPayment: number;
+  type: string;
+  exchangedPositionSize: number;
+  positionSizeAfter: number;
+  positionNotional: number;
+  fee: number;
+  realizedPnl: number;
+  totalFundingPayment: number;
+  notionalChange: number;
+  liquidationPenalty: number;
+  badDebt: number;
+  openNotional: number;
+  previousOpenNotional: number;
+}
+
+export interface FundingPaymentRecord {
+  timestamp: number;
+  fundingPaymentPnl: number;
+}
 
 export const $userWethBalance = atom(0);
 export const $userWethAllowance = atom(0);
@@ -62,6 +92,9 @@ export const $userDisplayName = atom<string | undefined>();
 export const $userInfo = atom<UserInfo | undefined>();
 export const $currentChain = atom<Chain | undefined>();
 export const $userPositionInfos = map<UserPositionInfos>();
+export const $userPositionHistory = atom<PositionHistoryRecord[]>([]);
+export const $userFPHistory = map<{ [value in AMM]: FundingPaymentRecord[] }>();
+export const $userTotalFP = map<{ [value in AMM]: number }>();
 
 export const setWethBalance = (val: number) => {
   $userWethBalance.set(val);

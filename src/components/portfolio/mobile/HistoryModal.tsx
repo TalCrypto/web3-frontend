@@ -10,10 +10,11 @@ import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
 import { $isShowMobileModal } from '@/stores/modal';
 import { PositionActions } from '@/const';
-import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
+import { usePsHistoryByMonth } from '@/hooks/psHistory';
 import { getTradingActionType } from '@/utils/actionType';
 import { $psShowHistory } from '@/stores/portfolio';
 import { useStore as useNanostore } from '@nanostores/react';
+import { PositionHistoryRecord } from '@/stores/user';
 
 const HistoryModal = () => {
   const { psHistoryByMonth } = usePsHistoryByMonth();

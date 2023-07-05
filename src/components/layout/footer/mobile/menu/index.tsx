@@ -7,6 +7,9 @@ import Link from 'next/link';
 import { $isShowMobileModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import { $userAddress, $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import { useDisconnect, useSwitchNetwork } from 'wagmi';
+import { useWeb3Modal } from '@web3modal/react';
+import { DEFAULT_CHAIN } from '@/const/supportedChains';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -20,6 +23,7 @@ const MobileMenu = (props: any) => {
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
   const [isOthersOpen, setIsOthersOpen] = useState(false);
   const router = useRouter();
+  const { disconnect } = useDisconnect();
 
   // const userPointData = useNanostore(userPoint);
   // const { total, tradeVol, isBan } = userPointData;
@@ -27,6 +31,8 @@ const MobileMenu = (props: any) => {
   // const eligible = () => Number(tradeVolume) >= 5;
   // const points = eligible() && !isBan ? localeConversion(total) : '0.0';
   const points = 0;
+  const { open } = useWeb3Modal();
+  const { switchNetwork } = useSwitchNetwork();
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -37,14 +43,14 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
-      // connectWallet(() => {}, false);
-    } else if (isWrongNetwork) {
-      // updateTargetNetwork();
+      open({ route: 'ConnectWallet' });
+    } else if (isWrongNetwork && switchNetwork) {
+      switchNetwork(DEFAULT_CHAIN.id);
     }
   };
 
   const onBtnDisonnectClick = () => {
-    // disconnectWallet(null);
+    disconnect();
   };
 
   const onBtnCopyAddressClick = () => {
@@ -262,7 +268,7 @@ const MobileMenu = (props: any) => {
           ) : (
             <div className="mx-[26px]">
               <div className="mt-[20px] flex items-center justify-center">
-                <PriceWithIcon priceValue={wethBalance} className="text-[20px]" width={22} height={22} />
+                <PriceWithIcon priceValue={wethBalance.toFixed(4)} className="text-[20px]" width={22} height={22} />
               </div>
               <div
                 className="mb-[24px] mt-[11px] text-[14px] font-normal

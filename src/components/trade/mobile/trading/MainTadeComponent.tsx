@@ -4,21 +4,14 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 
-import { utils } from 'ethers';
 import Image from 'next/image';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ThreeDots } from 'react-loader-spinner';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-
-import { formatterValue, calculateNumber } from '@/utils/calculateNumbers';
 // import collectionList from '@/const/collectionList';
-import { pageTitleParser } from '@/utils/eventLog';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import TitleTips from '@/components/common/TitleTips';
 import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import ApproveButton from '@/components/common/actionBtns/ApproveButton';
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
@@ -340,13 +333,7 @@ function ExtendedEstimateComponent(props: any) {
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
           <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
-          <DisplayValues
-            title={
-              <TitleTips titleText="Price Impact" tipsText="The change in price resulted directly from a particular trade in the VAMM" />
-            }
-            value={estimation?.txSummary.priceImpactPct.toFixed(2)}
-            unit="%"
-          />
+          <DisplayValues title="Price Impact" value={estimation?.txSummary.priceImpactPct.toFixed(2)} unit="%" />
           {!isNewPosition ? null : (
             <DisplayValues title="Liquidation Price" value={estimation?.posInfo.liquidationPrice.toFixed(2)} unit="WETH" />
           )}
@@ -456,33 +443,37 @@ export default function MainTradeComponent(props: any) {
         setToleranceRate={setToleranceRate}
         isAmountTooSmall={isAmountTooSmall}
       />
-      {!isConnected ? (
-        <ConnectButton />
-      ) : isWrongNetwork ? (
-        <SwitchButton />
-      ) : wethBalance === 0 ? (
-        <GetWETHButton />
-      ) : isNeedApproval ? (
-        <ApproveButton
-          isEstimating={isEstLoading}
-          approvalAmount={isAmountTooSmall ? 0 : approvalAmount}
-          onPending={handlePending}
-          onSuccess={() => {}}
-          onError={handleError}
-        />
-      ) : (
-        <OpenPosButton
-          isEstimating={isEstLoading}
-          side={saleOrBuyIndex}
-          notionalAmount={notionalAmount}
-          leverage={leverageValue}
-          slippagePercent={toleranceRate}
-          estimation={isAmountTooSmall ? undefined : estimation}
-          onPending={handlePending}
-          onSuccess={initializeState}
-          onError={handleError}
-        />
-      )}
+
+      <div className="pb-4">
+        {!isConnected ? (
+          <ConnectButton />
+        ) : isWrongNetwork ? (
+          <SwitchButton />
+        ) : wethBalance === 0 ? (
+          <GetWETHButton />
+        ) : isNeedApproval ? (
+          <ApproveButton
+            isEstimating={isEstLoading}
+            approvalAmount={isAmountTooSmall ? 0 : approvalAmount}
+            onPending={handlePending}
+            onSuccess={() => {}}
+            onError={handleError}
+          />
+        ) : (
+          <OpenPosButton
+            isEstimating={isEstLoading}
+            side={saleOrBuyIndex}
+            notionalAmount={notionalAmount}
+            leverage={leverageValue}
+            slippagePercent={toleranceRate}
+            estimation={isAmountTooSmall ? undefined : estimation}
+            onPending={handlePending}
+            onSuccess={initializeState}
+            onError={handleError}
+          />
+        )}
+      </div>
+
       {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
 
       {/* <Tips

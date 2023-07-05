@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { $isShowMobileModal } from '@/stores/modal';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { useFundingPaymentHistory } from '@/hooks/fpHistory';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
 import { useStore as useNanostore } from '@nanostores/react';
 import { getCollectionInformation } from '@/const/collectionList';
@@ -88,8 +88,8 @@ const FundingPaymentModal = (props: any) => {
           <span className="mr-[36px] text-highEmphasis">Total Received: </span>
           {fpRecords && fpRecords.length > 0 ? (
             <PriceWithIcon
-              priceValue={fpTotal > 0 ? `+${fpTotal}` : fpTotal === 0 ? '0.000000' : fpTotal.toFixed(6)}
-              className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
+              priceValue={fpTotal > 0 ? `+${fpTotal}` : !fpTotal ? '0.000000' : fpTotal.toFixed(6)}
+              className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
             />
           ) : (
             <PriceWithIcon priceValue="-:--" />

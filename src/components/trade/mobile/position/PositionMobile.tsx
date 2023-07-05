@@ -13,8 +13,8 @@ import TitleTips from '@/components/common/TitleTips';
 import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
-import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending } from '@/hooks/collection';
-import { getCollectionInformation } from '@/const/collectionList';
+import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending, useFundingPaymentHistory } from '@/hooks/collection';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
 import { $isShowMobileModal } from '@/stores/modal';
 
@@ -50,6 +50,9 @@ export default function PositionMobile() {
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showFundingPaymentModal, setShowFundingPaymentModal] = useState(false);
+
+  const selectedAmm = currentAmm ?? AMM.DEGODS;
+  const { total: fpTotal } = useFundingPaymentHistory(selectedAmm);
 
   const liquidationChanceWarning = () => {
     if (!positionInfo || !vammPrice || !oraclePrice) return false;
@@ -127,8 +130,8 @@ export default function PositionMobile() {
             <div className="w-[180px] text-[14px] text-mediumEmphasis">Accu. Fund. Payment</div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon
-                priceValue={positionInfo.fundingPayment === 0 ? '0.0000' : positionInfo.fundingPayment.toFixed(4)}
-                className={positionInfo.fundingPayment > 0 ? 'text-marketGreen' : positionInfo.fundingPayment === 0 ? '' : 'text-marketRed'}
+                priceValue={!fpTotal ? '0.0000' : fpTotal.toFixed(4)}
+                className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
                 isLoading={isLoading || isPending}
               />
             </div>
@@ -174,13 +177,13 @@ export default function PositionMobile() {
                   ? '100.00 x +'
                   : `${positionInfo.leverage.toFixed(2)} x`}
               </span>
-              {positionInfo.leverage <= 0 ? (
+              {/* {positionInfo.leverage <= 0 ? (
                 <TitleTips
                   placement="top"
                   titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </div>
 
@@ -192,20 +195,20 @@ export default function PositionMobile() {
                 className={`${isOverPriceGap ? 'text-warn' : ''} `}
                 isLoading={isLoading || isPending}
               />
-              {liquidationChanceWarning() && !liquidationRiskWarning() ? (
+              {/* {liquidationChanceWarning() && !liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
                   titleText={<Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
                 />
-              ) : null}
-              {liquidationRiskWarning() ? (
+              ) : null} */}
+              {/* {liquidationRiskWarning() ? (
                 <TitleTips
                   placement="top"
                   titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Your position is at risk of being liquidated. Please manage your risk."
                 />
-              ) : null}
+              ) : null} */}
               {isOverPriceGap ? (
                 <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}

@@ -11,7 +11,6 @@ import React, { useEffect, useState } from 'react';
 // import moment from 'moment';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { formatterValue, isPositive, formatterUSDC } from '@/utils/calculateNumbers';
 import { localeConversion } from '@/utils/localeConversion';
 import { getTradingActionType } from '@/utils/actionType';
 import { trimString } from '@/utils/string';
@@ -22,6 +21,7 @@ import { PriceWithUsdc } from '@/components/common/PriceWithIcon';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { $userAddress } from '@/stores/user';
+import { formatBigInt } from '@/utils/bigInt';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -203,7 +203,7 @@ const SpotTable = () => {
             const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
             const priceValue = !total_price
               ? '0.00'
-              : localeConversion(isUSDC ? formatterUSDC(total_price, 2) : formatterValue(total_price, 2), 2);
+              : localeConversion(isUSDC ? formatBigInt(total_price, 6).toFixed(2) : formatBigInt(total_price).toFixed(2), 2);
             const keyValue = assetCreationDate + event_timestamp + assetToken;
 
             return (
