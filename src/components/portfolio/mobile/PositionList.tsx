@@ -21,7 +21,7 @@ function PositionList() {
             <PrimaryButton
               className="px-[14px] py-[7px] !text-[14px] font-semibold"
               onClick={() => {
-                router.push('/trades');
+                router.push('/trade');
               }}>
               Go to Trade
             </PrimaryButton>
