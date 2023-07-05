@@ -199,8 +199,8 @@ export default function PositionDetails() {
             <div className="mb-3 text-[14px] font-normal">Accu. Fund. Payment</div>
             <div>
               <MedPriceIcon
-                priceValue={fpTotal === 0 ? '0.0000' : fpTotal.toFixed(4)}
-                className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
+                priceValue={!fpTotal ? '0.0000' : fpTotal.toFixed(4)}
+                className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
                 isLoading={isLoading || isPending}
               />
             </div>

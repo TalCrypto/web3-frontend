@@ -130,8 +130,8 @@ export default function PositionMobile() {
             <div className="w-[180px] text-[14px] text-mediumEmphasis">Accu. Fund. Payment</div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon
-                priceValue={fpTotal === 0 ? '0.0000' : fpTotal.toFixed(4)}
-                className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
+                priceValue={!fpTotal ? '0.0000' : fpTotal.toFixed(4)}
+                className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
                 isLoading={isLoading || isPending}
               />
             </div>

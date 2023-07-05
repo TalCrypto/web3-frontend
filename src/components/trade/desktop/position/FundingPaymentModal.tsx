@@ -173,8 +173,8 @@ const FundingPaymentModal = (props: { setShowFundingPaymentModal: any }) => {
               <div className="mx-[36px] my-[30px] flex items-center">
                 <span className="mr-[36px] text-highEmphasis">Total Received: </span>
                 <PriceWithIcon
-                  priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : fpTotal === 0 ? '0.000000' : fpTotal.toFixed(6)}
-                  className={fpTotal > 0 ? 'text-marketGreen' : fpTotal === 0 ? '' : 'text-marketRed'}
+                  priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : !fpTotal ? '0.000000' : fpTotal.toFixed(6)}
+                  className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
                 />
               </div>
             </div>
