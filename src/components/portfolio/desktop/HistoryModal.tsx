@@ -11,7 +11,8 @@ import { $psShowHistory } from '@/stores/portfolio';
 import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getTradingActionType } from '@/utils/actionType';
-import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
+import { usePsHistoryByMonth } from '@/hooks/psHistory';
+import { PositionHistoryRecord } from '@/stores/user';
 
 const HistoryModal = () => {
   const { psHistoryByMonth } = usePsHistoryByMonth();

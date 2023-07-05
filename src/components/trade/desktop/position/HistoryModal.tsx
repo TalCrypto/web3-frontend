@@ -8,10 +8,11 @@ import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
-import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
+import { usePsHistoryByMonth } from '@/hooks/psHistory';
 import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
 import { getTradingActionType } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
+import { PositionHistoryRecord } from '@/stores/user';
 
 const HistoryModal = (props: any) => {
   const { setShowHistoryModal } = props;

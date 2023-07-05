@@ -12,7 +12,8 @@ import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { $isShowMobileModal } from '@/stores/modal';
 import { PositionActions } from '@/const';
-import { PositionHistoryRecord, usePsHistoryByMonth } from '@/hooks/psHistory';
+import { usePsHistoryByMonth } from '@/hooks/psHistory';
+import { PositionHistoryRecord } from '@/stores/user';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
