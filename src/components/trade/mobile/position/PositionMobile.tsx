@@ -13,11 +13,10 @@ import TitleTips from '@/components/common/TitleTips';
 import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';
 
-import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending } from '@/hooks/collection';
+import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending, useFundingPaymentHistory } from '@/hooks/collection';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
 import { $isShowMobileModal } from '@/stores/modal';
-import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;

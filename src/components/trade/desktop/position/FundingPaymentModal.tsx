@@ -7,7 +7,7 @@ import { formatDateTime } from '@/utils/date';
 import { ThreeDots } from 'react-loader-spinner';
 import { $collectionConfig, $currentAmm, $fundingRates, $nextFundingTime } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { useFundingPaymentHistory } from '@/hooks/fpHistory';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 import { useStore as useNanostore } from '@nanostores/react';
 
 const FundingPaymentModal = (props: { setShowFundingPaymentModal: any }) => {

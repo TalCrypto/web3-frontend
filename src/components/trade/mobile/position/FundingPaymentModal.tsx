@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { $isShowMobileModal } from '@/stores/modal';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { useFundingPaymentHistory } from '@/hooks/fpHistory';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
 import { useStore as useNanostore } from '@nanostores/react';
 import { getCollectionInformation } from '@/const/collectionList';

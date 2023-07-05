@@ -1,13 +1,18 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 import { chViewerAbi, wethAbi } from '@/const/abi';
-import { getAMMAddress, getAddressConfig, getSupportedAMMs } from '@/const/addresses';
+import { getAMMAddress, getAMMByAddress, getAddressConfig, getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
 import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/contracts';
 import {
   $currentChain,
   $userAddress,
+  $userFPHistory,
   $userIsConnected,
   $userIsWrongNetwork,
+  $userPositionHistory,
   $userPositionInfos,
+  $userTotalFP,
   $userWethAllowance,
   setIsConnecting,
   setUserInfo,
@@ -19,7 +24,7 @@ import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
 import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
-import { zeroAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 
 const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAddress: Address; trader: Address | undefined }> = ({
   chain,
@@ -91,6 +96,24 @@ const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAdd
     fundingPayment,
     isLiquidatable
   ]);
+
+  useEffect(() => {
+    if (trader && ammAddress && amm) {
+      apiConnection.getUserFundingPaymentHistoryWithAmm(trader, ammAddress).then(res => {
+        $userTotalFP.setKey(amm, formatBigInt(res.data.total));
+        $userFPHistory.setKey(
+          amm,
+          Array.isArray(res.data.fundingPaymentPnlHistory)
+            ? res.data.fundingPaymentPnlHistory.map((item: { timestamp: number; fundingPaymentPnl: string }) => ({
+                timestamp: Number(item.timestamp),
+                fundingPaymentPnl: formatBigInt(item.fundingPaymentPnl)
+              }))
+            : []
+        );
+      });
+    }
+  }, [trader, ammAddress, amm]);
+
   return null;
 };
 
@@ -168,6 +191,62 @@ const UserDataUpdater: React.FC = () => {
   useEffect(() => {
     $userIsConnected.set(isConnected);
   }, [isConnected]);
+
+  useEffect(() => {
+    if (address && chain) {
+      apiConnection.getUserTradingHistory(address).then(res => {
+        const history = res.data.tradeHistory.map(
+          (item: {
+            txHash: string;
+            entryPrice: string;
+            ammAddress: string;
+            timestamp: number;
+            amount: string;
+            collateralChange: string;
+            margin: string;
+            previousMargin: string;
+            fundingPayment: string;
+            type: string;
+            exchangedPositionSize: string;
+            positionSizeAfter: string;
+            positionNotional: string;
+            fee: string;
+            realizedPnl: string;
+            totalFundingPayment: string;
+            notionalChange: string;
+            liquidationPenalty: string;
+            badDebt: string;
+            openNotional: string;
+            previousOpenNotional: string;
+          }) => ({
+            amm: getAMMByAddress(getAddress(item.ammAddress), chain),
+            txHash: String(item.txHash),
+            entryPrice: formatBigInt(item.entryPrice),
+            ammAddress: getAddress(item.ammAddress),
+            timestamp: Number(item.timestamp),
+            amount: formatBigInt(item.amount),
+            collateralChange: formatBigInt(item.collateralChange),
+            margin: formatBigInt(item.margin),
+            previousMargin: formatBigInt(item.previousMargin),
+            fundingPayment: formatBigInt(item.fundingPayment),
+            type: String(item.type),
+            exchangedPositionSize: formatBigInt(item.exchangedPositionSize),
+            positionSizeAfter: formatBigInt(item.positionSizeAfter),
+            positionNotional: formatBigInt(item.positionNotional),
+            fee: formatBigInt(item.fee),
+            realizedPnl: formatBigInt(item.realizedPnl),
+            totalFundingPayment: formatBigInt(item.totalFundingPayment),
+            notionalChange: formatBigInt(item.notionalChange),
+            liquidationPenalty: formatBigInt(item.liquidationPenalty),
+            badDebt: formatBigInt(item.badDebt),
+            openNotional: formatBigInt(item.openNotional),
+            previousOpenNotional: formatBigInt(item.previousOpenNotional)
+          })
+        );
+        $userPositionHistory.set(history);
+      });
+    }
+  }, [address, chain]);
 
   if (!amms) return null;
 

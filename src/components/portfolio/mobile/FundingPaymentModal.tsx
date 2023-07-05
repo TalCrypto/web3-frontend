@@ -10,7 +10,7 @@ import { $psSelectedCollectionAmm, $psShowFundingPayment } from '@/stores/portfo
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $isShowMobileModal } from '@/stores/modal';
-import { useFundingPaymentHistory } from '@/hooks/fpHistory';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 
 const FundingPaymentModal = () => {
   const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);

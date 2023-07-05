@@ -17,10 +17,9 @@ import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaymentModal';
 import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
-import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending } from '@/hooks/collection';
+import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending, useFundingPaymentHistory } from '@/hooks/collection';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import Tooltip from '@/components/common/Tooltip';
-import { useFundingPaymentHistory } from '@/hooks/fpHistory';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
