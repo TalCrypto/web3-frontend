@@ -9,7 +9,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { AdjustMarginEstimation, useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
-import { $userWethBalance } from '@/stores/user';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
 import { useDebounce } from '@/hooks/debounce';
@@ -17,6 +17,9 @@ import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import ApproveButton from '@/components/common/actionBtns/ApproveButton';
 import AddCollateralButton from '@/components/common/actionBtns/AddCollateralButton';
 import ReduceCollateralButton from '@/components/common/actionBtns/ReduceCollateralButton';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;
@@ -334,6 +337,8 @@ export default function AdjustCollateral() {
   const [marginIndex, setMarginIndex] = useState(0);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   const freeCollateral = useFreeCollateral();
   const wethBalance = useNanostore($userWethBalance);
@@ -404,7 +409,13 @@ export default function AdjustCollateral() {
       <EstimationValueDisplay isError={textErrorMessage !== null} estimation={estimation} />
       <SectionDividers />
       <UpdatedCollateralValue marginIndex={marginIndex} value={!estimation ? '-.-' : Math.abs(estimation.marginRequirement).toFixed(4)} />
-      {isNeedApproval ? (
+      {!isConnected ? (
+        <ConnectButton />
+      ) : isWrongNetwork ? (
+        <SwitchButton />
+      ) : wethBalance === 0 ? (
+        <GetWETHButton />
+      ) : isNeedApproval ? (
         <ApproveButton
           isEstimating={isEstLoading}
           approvalAmount={approvalAmount}

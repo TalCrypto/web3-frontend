@@ -16,7 +16,10 @@ import ReduceCollateralButton from '@/components/common/actionBtns/ReduceCollate
 import { useDebounce } from '@/hooks/debounce';
 import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
-import { $userWethBalance } from '@/stores/user';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;
@@ -333,6 +336,8 @@ export default function AdjustCollateral(props: any) {
 
   const freeCollateral = useFreeCollateral();
   const wethBalance = useNanostore($userWethBalance);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   const { isLoading: isEstLoading, estimation } = useAdjustCollateralEstimation(adjustMarginValue * (-1) ** marginIndex);
 
@@ -402,7 +407,13 @@ export default function AdjustCollateral(props: any) {
       <UpdatedCollateralValue marginIndex={marginIndex} value={!estimation ? '-.-' : Math.abs(estimation.marginRequirement).toFixed(4)} />
 
       <div className="pb-4">
-        {isNeedApproval ? (
+        {!isConnected ? (
+          <ConnectButton />
+        ) : isWrongNetwork ? (
+          <SwitchButton />
+        ) : wethBalance === 0 ? (
+          <GetWETHButton />
+        ) : isNeedApproval ? (
           <ApproveButton
             isEstimating={isEstLoading}
             approvalAmount={approvalAmount}

@@ -15,10 +15,13 @@ import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
-import { UserPositionInfo } from '@/stores/user';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance, UserPositionInfo } from '@/stores/user';
 import ApproveButton from '@/components/common/actionBtns/ApproveButton';
 import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 
 function SectionDividers() {
   return (
@@ -335,6 +338,9 @@ export default function CloseCollateral() {
   });
   const approvalAmount = getApprovalAmountFromEstimation(estimation);
   const isNeedApproval = useApprovalCheck(approvalAmount);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
+  const wethBalance = useNanostore($userWethBalance);
 
   useEffect(() => {
     if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL && !isFullClose) {
@@ -440,7 +446,13 @@ export default function CloseCollateral() {
         isAmountTooLarge={isAmountTooLarge}
         isFullClose={isFullClose}
       />
-      {isNeedApproval ? (
+      {!isConnected ? (
+        <ConnectButton />
+      ) : isWrongNetwork ? (
+        <SwitchButton />
+      ) : wethBalance === 0 ? (
+        <GetWETHButton />
+      ) : isNeedApproval ? (
         <ApproveButton
           isEstimating={isEstLoading}
           approvalAmount={isAmountTooLarge || isAmountTooSmall ? 0 : approvalAmount}

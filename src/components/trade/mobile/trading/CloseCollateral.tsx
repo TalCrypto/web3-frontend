@@ -18,6 +18,10 @@ import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositio
 import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
 import { MINIMUM_COLLATERAL } from '@/const';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 
 function SectionDividers() {
   return (
@@ -296,6 +300,9 @@ export default function CloseCollateral() {
   });
   const approvalAmount = getApprovalAmountFromEstimation(estimation);
   const isNeedApproval = useApprovalCheck(approvalAmount);
+  const wethBalance = useNanostore($userWethBalance);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   useEffect(() => {
     if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL && !isFullClose) {
@@ -402,7 +409,13 @@ export default function CloseCollateral() {
       />
 
       <div className="pb-4">
-        {isNeedApproval ? (
+        {!isConnected ? (
+          <ConnectButton />
+        ) : isWrongNetwork ? (
+          <SwitchButton />
+        ) : wethBalance === 0 ? (
+          <GetWETHButton />
+        ) : isNeedApproval ? (
           <ApproveButton
             isEstimating={isEstLoading}
             approvalAmount={isAmountTooLarge || isAmountTooSmall ? 0 : approvalAmount}
