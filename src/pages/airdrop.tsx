@@ -10,6 +10,7 @@ import Referral from '@/components/airdrop/desktop/Referral';
 import Leaderboard from '@/components/airdrop/desktop/Leaderboard';
 import Rules from '@/components/airdrop/desktop/Rules';
 
+import ReferralMobile from '@/components/airdrop/mobile/Referral';
 import RulesMobile from '@/components/airdrop/mobile/Rules';
 
 export default function Home() {
@@ -93,7 +94,9 @@ export default function Home() {
 
           {/* <TabItems /> */}
 
-          <div className="pt-9">{activeTab === 0 ? null : activeTab === 1 ? null : activeTab === 2 ? null : <RulesMobile />}</div>
+          <div className="pt-9">
+            {activeTab === 0 ? null : activeTab === 1 ? <ReferralMobile /> : activeTab === 2 ? null : <RulesMobile />}
+          </div>
         </div>
       </main>
     </>
