@@ -143,7 +143,6 @@ export const useMobileMarketOverview = (): GetMktOverview => {
 
   useEffect(() => {
     async function getGraphData() {
-      console.log('isLoading', isLoading);
       if (isLoading) return;
       setIsLoading(true);
       const nowTs = Math.round(new Date().getTime() / 1000);

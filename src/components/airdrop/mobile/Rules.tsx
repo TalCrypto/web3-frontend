@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 function RulesMobile() {
   return (
-    <div className="bg-darkBlue pt-9">
+    <div className="bg-darkBlue">
       <div className="">
         {/* Tribe3 Airdrop Season 2  - Rules */}
         <div className="mb-9 px-5">

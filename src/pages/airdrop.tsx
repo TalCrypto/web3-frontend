@@ -15,6 +15,7 @@ import RulesMobile from '@/components/airdrop/mobile/Rules';
 import OverviewMobile from '@/components/airdrop/mobile/Overview';
 import TopInfo from '@/components/airdrop/desktop/TopInfo';
 import TopInfoMobile from '@/components/airdrop/mobile/TopInfo';
+import TabSwitcher from '@/components/airdrop/mobile/TabSwitcher';
 
 export default function Home() {
   const router = useRouter();
@@ -87,7 +88,7 @@ export default function Home() {
           ">
           <TopInfoMobile />
 
-          {/* <TabItems /> */}
+          <TabSwitcher />
 
           <div className="pt-9">
             {activeTab === 0 ? <OverviewMobile /> : activeTab === 1 ? <ReferralMobile /> : activeTab === 2 ? null : <RulesMobile />}

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 
 function MobileCommonFooterInfo() {
   const router = useRouter();
-  console.log(router);
   const title = router.pathname === '/portfolio' ? 'Portfolio' : router.pathname === '/airdrop' ? 'Airdrop' : '';
 
   return (

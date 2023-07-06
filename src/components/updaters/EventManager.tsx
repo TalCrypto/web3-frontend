@@ -99,7 +99,6 @@ const EventHandlers = () => {
           const type = getCollateralActionType(margin);
           const amm = getAMMByAddress(event.amm, chain);
           const ammInfo = getCollectionInformation(amm);
-          console.log(isMobileView);
 
           if (!isMobileView) {
             showToast(
