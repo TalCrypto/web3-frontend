@@ -8,7 +8,7 @@ export const BoxGradient = (props: any) => {
   return (
     <div
       className={`
-        to-lightBluep-[1px] relative overflow-clip bg-gradient-to-b from-secondaryBlue
+        to-lightBluep-[1px] relative overflow-clip bg-gradient-to-b from-secondaryBlue p-[${borderWidth}px]
         ${isTopRounded ? `rounded-t-[${borderRadius}px]` : ''}
         ${isBottomRounded ? `rounded-b-[${borderRadius}px]` : ''}
       `}>
@@ -25,13 +25,21 @@ export const BoxGradient = (props: any) => {
 
 // horizontal gradient blue to pink
 export const BoxGradientBluePink = (props: any) => {
-  const { borderWidth = 2, borderRadius = 12, children } = props;
+  const { borderWidth = 2, borderRadius = 12, isBottomRounded = true, isTopRounded = true, children } = props;
 
   return (
     <div
-      className={`border-grad-bluepink relative
-        rounded-[${borderRadius}px] border-[${borderWidth}px]`}>
-      {children}
+      className={`relative bg-gradient-to-r from-gradientBlue to-gradientPink p-[${borderWidth}px]
+      ${isTopRounded ? `rounded-t-[${borderRadius}px]` : ''}
+      ${isBottomRounded ? `rounded-b-[${borderRadius}px]` : ''}
+    `}>
+      <div
+        className={`bg-lightBlue  m-[${borderWidth}px]
+          ${isTopRounded ? `rounded-t-[${borderRadius}px]` : ''}
+          ${isBottomRounded ? `rounded-b-[${borderRadius}px]` : ''}
+        `}>
+        {children}
+      </div>
     </div>
   );
 };

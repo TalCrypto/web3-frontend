@@ -381,7 +381,7 @@ function Referral() {
                 )}
               </Overlay> */}
 
-              <div className="hidden rounded-[16px] bg-gradient-to-r from-[#04AEFC] to-[#F703D9] p-[1px] md:block">
+              <div className="hidden rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px] md:block">
                 <div className="rounded-[15px] bg-lightBlue p-[24px] outline-dashed outline-2 outline-lightBlue">
                   <div className="flex flex-row items-center justify-between">
                     <div className="flex flex-col ">

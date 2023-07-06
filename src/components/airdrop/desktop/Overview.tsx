@@ -230,7 +230,7 @@ function Overview() {
             <span className="text-gradient-vertical">Bonus Points</span>
           </div>
 
-          <div className="mt-[24px] hidden rounded-[16px] bg-gradient-to-r from-[#04AEFC] to-[#F703D9] p-[1px] md:block">
+          <div className="mt-[24px] hidden rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px] md:block">
             <div className="rounded-[15px] bg-lightBlue p-[24px] px-[24px] py-[36px] outline-dashed outline-2 outline-lightBlue">
               <div className="flex flex-row items-center justify-between">
                 <div className="max-w-[70%]">
@@ -289,7 +289,7 @@ function Overview() {
 
       <div className="mb-[36px] xl:min-w-[460px]">
         <h3 className="mb-[24px] text-[24px] font-bold">Season 2 Summary</h3>
-        <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-[#04AEFC] via-[#795AF4] to-[#F703D9] p-[1px]">
+        <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
           <div className="rounded-[6px] bg-lightBlue">
             <div className="bg-gradient-blue p-[52px] text-center">
               <p className="text-[20px] font-[600]">Total Pts</p>
@@ -317,7 +317,7 @@ function Overview() {
 
         {/* Season 1 Points */}
         <div className="mt-[36px]">
-          <div className="overflow-clip rounded-[6px] bg-gradient-to-r from-[#04AEFC] via-[#795AF4] to-[#F703D9] p-[1px]">
+          <div className="overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
             <div className="relative rounded-[6px] bg-lightBlue">
               <Image
                 src="/images/components/airdrop/season1-bg.svg"

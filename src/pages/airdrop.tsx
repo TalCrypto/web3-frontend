@@ -10,6 +10,8 @@ import Referral from '@/components/airdrop/desktop/Referral';
 import Leaderboard from '@/components/airdrop/desktop/Leaderboard';
 import Rules from '@/components/airdrop/desktop/Rules';
 
+import RulesMobile from '@/components/airdrop/mobile/Rules';
+
 export default function Home() {
   const router = useRouter();
   const activeTab = useNanostore($asActiveTab);
@@ -79,7 +81,20 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mobile-view" />
+        <div
+          className="mobile-view block bg-lightBlue bg-[url('/images/components/airdrop/bg-mobile.png')]
+             bg-[center_top] bg-no-repeat md:hidden
+          ">
+          <div className="text-glow-green mb-[12px] pt-9 text-center text-[32px] font-bold">AIRDROP SEASON 2</div>
+          <p className="mb-[48px] text-center">
+            More <span className="text-seasonGreen">Tribe3 points</span>, <br />
+            more <span className="text-seasonGreen">Tribe3 tokens</span> for you
+          </p>
+
+          {/* <TabItems /> */}
+
+          <div className="pt-9">{activeTab === 0 ? null : activeTab === 1 ? null : activeTab === 2 ? null : <RulesMobile />}</div>
+        </div>
       </main>
     </>
   );

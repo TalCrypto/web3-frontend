@@ -19,7 +19,7 @@ export default function ShareModal(props: any) {
           <Image src="/images/mobile/common/close.svg" alt="" className="cursor-pointer" width={16} height={16} onClick={closeModal} />
         </div>
         <div className="content flex flex-row">
-          <div className="z-10 hidden rounded-[16px] bg-gradient-to-r from-[#04AEFC] to-[#F703D9] p-[1px] md:block">
+          <div className="z-10 hidden rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px] md:block">
             <div className="flex rounded-[15px] bg-lightBlue px-[20px] py-[36px] outline-dashed outline-2 outline-lightBlue">
               <div className="flex-1">
                 <h5 className="mb-[24px]">

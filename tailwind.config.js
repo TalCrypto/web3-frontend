@@ -46,6 +46,9 @@ module.exports = {
         seasonGreen: '#D0FF4B',
         tooltipArrow: '#213676',
 
+        gradientBlue: '#04AEFC',
+        gradientPink: '#F703D9',
+
         direction: {
           unselected: {
             normal: '#c3d8ff7a',
