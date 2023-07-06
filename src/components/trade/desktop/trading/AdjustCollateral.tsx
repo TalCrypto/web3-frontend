@@ -72,7 +72,7 @@ function QuantityEnter(props: any) {
   };
 
   const showMaxValue = () => {
-    onChange(Number(maxValue).toFixed(4));
+    onChange(Number(maxValue - 0.00005).toFixed(4));
   };
 
   return (
