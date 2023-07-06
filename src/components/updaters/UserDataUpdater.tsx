@@ -122,7 +122,7 @@ const UserDataUpdater: React.FC = () => {
   const { address, isConnected, isConnecting } = useAccount();
   const { chain } = useNetwork();
   const { isOpen } = useWeb3Modal();
-  const { data } = useBalance({ address, token: wethAddr, watch: true });
+  const { data } = useBalance({ address, token: wethAddr, watch: true, enabled: Boolean(wethAddr) });
   const [amms, setAmms] = useState<Array<AMM>>();
 
   const chContract = getCHContract(chain);
@@ -166,7 +166,7 @@ const UserDataUpdater: React.FC = () => {
   }, [isConnecting, isOpen]);
 
   useEffect(() => {
-    if (data && data.symbol !== 'ETH') {
+    if (data) {
       setWethBalance(parseFloat(data.formatted));
     }
   }, [data]);
@@ -176,7 +176,7 @@ const UserDataUpdater: React.FC = () => {
   }, [allowanceData]);
 
   useEffect(() => {
-    if (chain && isConnected && !chain.unsupported) {
+    if (chain && isConnected) {
       const { config: addressConf } = getAddressConfig(chain);
       setWethAddr(addressConf.weth);
       setAmms(getSupportedAMMs(chain));
