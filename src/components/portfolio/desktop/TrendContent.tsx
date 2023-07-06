@@ -12,10 +12,13 @@ import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
-import { $isMobileView } from '@/stores/modal';
+import { $isMobileView, $showSwitchNetworkErrorModal } from '@/stores/modal';
+import { useSwitchNetwork } from 'wagmi';
+import { DEFAULT_CHAIN } from '@/const/supportedChains';
 
 function TrendContent() {
   const { open } = useWeb3Modal();
+  const { switchNetwork } = useSwitchNetwork();
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -41,7 +44,11 @@ function TrendContent() {
   };
 
   const onBtnUpdateTargetNetwork = () => {
-    open({ route: 'SelectNetwork' });
+    if (switchNetwork) {
+      switchNetwork(DEFAULT_CHAIN.id);
+    } else {
+      $showSwitchNetworkErrorModal.set(true);
+    }
   };
 
   const onBtnGetTeth = () => {};

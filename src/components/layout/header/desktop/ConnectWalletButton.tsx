@@ -9,6 +9,9 @@ import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
 import { $userIsConnecting, $userWethBalance, $userIsWrongNetwork, $userIsConnected, $userDisplayName } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
+import { useSwitchNetwork } from 'wagmi';
+import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { $showSwitchNetworkErrorModal } from '@/stores/modal';
 
 const ConnectWalletButton: React.FC = () => {
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -17,13 +20,22 @@ const ConnectWalletButton: React.FC = () => {
   const wethBalance = useNanostore($userWethBalance);
   const userDisplayName = useNanostore($userDisplayName);
   const { open } = useWeb3Modal();
+  const { switchNetwork } = useSwitchNetwork();
+
+  const updateTargetNetwork = () => {
+    if (switchNetwork) {
+      switchNetwork(DEFAULT_CHAIN.id);
+    } else {
+      $showSwitchNetworkErrorModal.set(true);
+    }
+  };
 
   return (
     <div className={`navbar-outer${isConnected ? ' connected' : ''}`}>
       <button
         type="button"
         className={`navbar-button ${!isConnected ? 'not-connected' : 'connected'}`}
-        onClick={() => (isWrongNetwork ? open({ route: 'SelectNetwork' }) : !isConnected ? open() : null)}>
+        onClick={() => (isWrongNetwork ? updateTargetNetwork() : !isConnected ? open() : null)}>
         <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
         <div className="flex flex-row items-center justify-center px-5" id="login-btn">
           {isConnecting ? (
@@ -40,7 +52,7 @@ const ConnectWalletButton: React.FC = () => {
                     alt=""
                     className="mx-2 my-0 h-[24px] w-[24px]"
                   />
-                  <span>{`${wethBalance.toFixed(2)} WETH`}</span>
+                  <span>{`${isWrongNetwork ? '-.--' : wethBalance.toFixed(2)} WETH`}</span>
                   {isWrongNetwork ? (
                     <Image
                       src="/images/components/layout/header/incorrect-network.png"
