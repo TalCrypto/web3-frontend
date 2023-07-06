@@ -396,7 +396,7 @@ export default function CloseCollateral() {
         }}
         isAmountTooSmall={isAmountTooSmall}
         isAmountTooLarge={isAmountTooLarge}
-        disabled={isPending}
+        disabled={isPending || isWrongNetwork}
       />
       <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       <CloseSlider
@@ -408,18 +408,18 @@ export default function CloseCollateral() {
         onSlide={(value: any) => {
           handleChange(value);
         }}
-        disabled={isPending}
+        disabled={isPending || isWrongNetwork}
       />
       <SectionDividers />
-      <div className={`mb-4 flex items-center ${isPending ? 'disabled' : ''}`}>
+      <div className={`mb-4 flex items-center ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
         <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
         <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue
               px-[10px] py-[4px] text-white
-              ${isPending ? 'disabled' : ''}`}>
+              ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
             <input
-              disabled={isPending}
+              disabled={isPending || isWrongNetwork}
               title=""
               type="text"
               className="w-[90%] max-w-[100px]  border-[1px] border-mediumBlue

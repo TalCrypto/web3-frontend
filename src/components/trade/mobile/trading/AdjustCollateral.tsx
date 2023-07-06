@@ -369,9 +369,14 @@ export default function AdjustCollateral(props: any) {
 
   return (
     <div>
-      <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
+      <SaleOrBuyRadio
+        disabled={isPending || isWrongNetwork}
+        marginIndex={marginIndex}
+        setMarginIndex={setMarginIndex}
+        onChange={initializeState}
+      />
       <QuantityEnter
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
         adjustMarginValue={adjustMarginValue}
         onChange={(value: any) => {
           handleChange(value);
@@ -399,7 +404,7 @@ export default function AdjustCollateral(props: any) {
         onChange={(value: any) => {
           handleChange(value);
         }}
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
       />
       <SectionDividers />
       <EstimationValueDisplay isError={textErrorMessage !== null} estimation={estimation} />
