@@ -32,7 +32,7 @@ function LongShortRatio(props: any) {
           ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
-          if (!userPosition) {
+          if (!userPosition || userPosition.size === 0) {
             setSaleOrBuyIndex(0);
           }
         }}
@@ -44,7 +44,7 @@ function LongShortRatio(props: any) {
           ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
         onClick={() => {
-          if (!userPosition) {
+          if (!userPosition || userPosition.size === 0) {
             setSaleOrBuyIndex(1);
           }
         }}
