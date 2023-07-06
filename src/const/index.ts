@@ -2,7 +2,7 @@
 /* eslint-disable no-shadow */
 export const MINIMUM_COLLATERAL = 0.01;
 
-export enum PositionActions {
+export enum TradeActions {
   OPEN = 'Open',
   CLOSE = 'Close',
   ADD = 'Add',
@@ -13,8 +13,8 @@ export enum PositionActions {
 }
 
 export enum CollateralActions {
-  ADD = 'Add',
-  REDUCE = 'Reduce'
+  ADD = 'Add Collateral',
+  REDUCE = 'Reduce Collateral'
 }
 
 export const DAY_RESOLUTION = 300;

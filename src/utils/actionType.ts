@@ -1,29 +1,29 @@
-import { CollateralActions, PositionActions } from '@/const';
+import { CollateralActions, TradeActions } from '@/const';
 
 export function getTradingActionType(item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number }) {
   let actionType = '';
   if (item.liquidationPenalty !== 0) {
     if (item.positionSizeAfter === 0) {
-      actionType = PositionActions.FULL_LIQ;
+      actionType = TradeActions.FULL_LIQ;
     } else {
-      actionType = PositionActions.PARTIAL_LIQ;
+      actionType = TradeActions.PARTIAL_LIQ;
     }
   } else if (item.exchangedPositionSize === item.positionSizeAfter) {
-    actionType = PositionActions.OPEN;
+    actionType = TradeActions.OPEN;
   } else if (item.positionSizeAfter === 0) {
-    actionType = PositionActions.CLOSE;
+    actionType = TradeActions.CLOSE;
   } else if (
     Math.sign(item.exchangedPositionSize) === Math.sign(item.positionSizeAfter) &&
     Math.abs(item.exchangedPositionSize) < Math.abs(item.positionSizeAfter)
   ) {
-    actionType = PositionActions.ADD;
+    actionType = TradeActions.ADD;
   } else if (
     Math.sign(item.exchangedPositionSize) === Math.sign(item.positionSizeAfter) &&
     Math.abs(item.exchangedPositionSize) > Math.abs(item.positionSizeAfter)
   ) {
-    actionType = PositionActions.REVERSE;
+    actionType = TradeActions.REVERSE;
   } else if (Math.sign(item.exchangedPositionSize) !== Math.sign(item.positionSizeAfter)) {
-    actionType = PositionActions.REDUCE;
+    actionType = TradeActions.REDUCE;
   }
   return actionType;
 }
@@ -31,9 +31,16 @@ export function getTradingActionType(item: { exchangedPositionSize: number; liqu
 export function getCollateralActionType(collateralChange: number) {
   let actionType = '';
   if (collateralChange > 0) {
-    actionType = `${CollateralActions.ADD} Collateral`;
+    actionType = CollateralActions.ADD;
   } else {
-    actionType = `${CollateralActions.REDUCE} Collateral`;
+    actionType = CollateralActions.REDUCE;
   }
   return actionType;
+}
+
+export function getActionTypeFromApi(item: any) {
+  if (item.type === 'adjust') {
+    return getCollateralActionType(Number(item.collateralChange));
+  }
+  return getTradingActionType(item);
 }

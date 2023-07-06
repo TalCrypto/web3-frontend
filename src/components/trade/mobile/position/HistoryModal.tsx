@@ -6,12 +6,12 @@
 
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-import { getTradingActionType } from '@/utils/actionType';
+import { getActionTypeFromApi } from '@/utils/actionType';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { $isShowMobileModal } from '@/stores/modal';
-import { PositionActions } from '@/const';
+import { CollateralActions, TradeActions } from '@/const';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
 import { PositionHistoryRecord } from '@/stores/user';
 
@@ -70,11 +70,11 @@ const HistoryModal = (props: any) => {
   );
 
   // detail data, selected record
-  const tradeType = selectedRecord ? getTradingActionType(selectedRecord) : '';
-  const isFundingPaymentRecord = tradeType === 'Full Close' || tradeType === 'Full Liquidation';
-  const isLiquidation = tradeType === 'Partial Liquidation' || tradeType === 'Full Liquidation';
-  const isAdjustCollateral = tradeType === 'Add Collateral' || tradeType === 'Reduce Collateral';
-  const isFullClose = tradeType === 'Full Close';
+  const tradeType = selectedRecord ? getActionTypeFromApi(selectedRecord) : '';
+  const isFundingPaymentRecord = tradeType === TradeActions.CLOSE || tradeType === TradeActions.FULL_LIQ;
+  const isLiquidation = tradeType === TradeActions.PARTIAL_LIQ || tradeType === TradeActions.FULL_LIQ;
+  const isAdjustCollateral = tradeType === CollateralActions.ADD || tradeType === CollateralActions.REDUCE;
+  const isFullClose = tradeType === TradeActions.CLOSE;
   const typeClassName =
     selectedRecord && selectedRecord.exchangedPositionSize > 0
       ? 'text-marketGreen'
@@ -93,7 +93,7 @@ const HistoryModal = (props: any) => {
   const openNotionalNumber = selectedRecord?.openNotional;
 
   const collateralChange =
-    tradeType === 'Partial Close'
+    tradeType === TradeActions.REDUCE
       ? '-.--'
       : isLiquidation
       ? marginNumber
@@ -137,21 +137,19 @@ const HistoryModal = (props: any) => {
     setSelectedRecord(record);
     setIsShowDetail(true);
 
-    const currentRecordType = getTradingActionType(record);
+    const currentRecordType = getActionTypeFromApi(record);
     const recordAmount = Math.abs(record.amount);
     const recordFee = record.fee;
-    const recordRealizedPnl = record.realizedPnl;
-    const recordRealizedFundingPayment = record.fundingPayment;
     const recordCollateralChange = record.collateralChange;
-    const balance: any =
-      currentRecordType === 'Open' || currentRecordType === 'Add' || currentRecordType === 'Add Collateral'
-        ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment).toFixed(4)
-        : currentRecordType === 'Reduce Collateral'
-        ? Math.abs(recordCollateralChange + recordRealizedFundingPayment).toFixed(4)
-        : currentRecordType === 'Full Close'
-        ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment).toFixed(4)
-        : -Math.abs(recordFee).toFixed(4);
-    setSelectedBalance(balance);
+    const balance =
+      currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD
+        ? -Math.abs(recordAmount + recordFee)
+        : currentRecordType === CollateralActions.ADD || currentRecordType === CollateralActions.REDUCE
+        ? -Math.abs(recordCollateralChange)
+        : currentRecordType === TradeActions.CLOSE
+        ? Math.abs(recordAmount - recordFee)
+        : -Math.abs(recordFee);
+    setSelectedBalance(String(balance));
   };
 
   return (
@@ -186,20 +184,18 @@ const HistoryModal = (props: any) => {
                   return (
                     <div id={`group-${month}`} key={`group-${month}`} className="collapsible">
                       {records.map((record: any, idx: any) => {
-                        const currentRecordType = getTradingActionType(record);
+                        const currentRecordType = getActionTypeFromApi(record);
                         const recordAmount = Math.abs(record.amount);
                         const recordFee = record.fee;
-                        const recordRealizedPnl = record.realizedPnl;
-                        const recordRealizedFundingPayment = record.fundingPayment;
                         const recordCollateralChange = record.collateralChange;
                         const balance =
-                          currentRecordType === 'Open' || currentRecordType === 'Add' || currentRecordType === 'Add Collateral'
-                            ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment).toFixed(4)
-                            : currentRecordType === 'Reduce Collateral'
-                            ? Math.abs(recordCollateralChange + recordRealizedFundingPayment).toFixed(4)
-                            : currentRecordType === 'Full Close'
-                            ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment).toFixed(4)
-                            : -Math.abs(recordFee).toFixed(4);
+                          currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD
+                            ? -Math.abs(recordAmount + recordFee)
+                            : currentRecordType === CollateralActions.ADD || currentRecordType === CollateralActions.REDUCE
+                            ? -Math.abs(recordCollateralChange)
+                            : currentRecordType === TradeActions.CLOSE
+                            ? Math.abs(recordAmount - recordFee)
+                            : -Math.abs(recordFee);
                         return (
                           <div
                             key={`item-${idx}-${record.timestamp}`}
@@ -228,7 +224,9 @@ const HistoryModal = (props: any) => {
                                   text-[14px] text-mediumEmphasis">
                               <span className="title">Wallet Balance</span>
                               <PriceWithIcon
-                                className={`icon-label ${Number(balance) > 0 ? 'plus' : Number(balance) < 0 ? 'text-marketRed' : ''}`}
+                                className={`icon-label ${
+                                  Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''
+                                }`}
                                 priceValue={`${Number(balance) > 0 ? '+' : ''}${
                                   Number(balance) === 0 ? '--.--' : Number(balance).toFixed(4)
                                 }`}
@@ -254,7 +252,9 @@ const HistoryModal = (props: any) => {
                 <div>
                   <span>Wallet Balance</span>
                   <PriceWithIcon
-                    className={`icon-label ${Number(selectedBalance) > 0 ? 'plus' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}`}
+                    className={`icon-label ${
+                      Number(selectedBalance) > 0 ? 'text-marketGreen' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''
+                    }`}
                     priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
                       Number(selectedBalance) === 0 ? '--.--' : Number(selectedBalance).toFixed(4)
                     }`}
@@ -274,7 +274,7 @@ const HistoryModal = (props: any) => {
                         '-'
                       )
                     )}
-                  {(selectedRecord && detailRow('Action', getTradingActionType(selectedRecord))) || '-'}
+                  {(selectedRecord && detailRow('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                   {selectedRecord &&
                     detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
                   {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
@@ -295,7 +295,7 @@ const HistoryModal = (props: any) => {
                           priceValue={
                             selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
                           }>
-                          {getTradingActionType(selectedRecord) === PositionActions.REDUCE ? (
+                          {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                             <Image
                               src="/images/components/trade/history/more_info.svg"
                               alt=""

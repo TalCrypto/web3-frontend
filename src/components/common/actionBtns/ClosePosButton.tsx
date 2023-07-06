@@ -6,7 +6,7 @@ import { useClosePositionTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { PositionActions } from '@/const';
+import { TradeActions } from '@/const';
 import { $isMobileView } from '@/stores/modal';
 
 function ClosePosButton({
@@ -50,7 +50,7 @@ function ClosePosButton({
         showToast(
           {
             warning: true,
-            title: `${collectionInfo.shortName} - ${PositionActions.CLOSE} Position`,
+            title: `${collectionInfo.shortName} - ${TradeActions.CLOSE} Position`,
             message: 'Order Received!',
             linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
             linkLabel: 'Check on Arbiscan'

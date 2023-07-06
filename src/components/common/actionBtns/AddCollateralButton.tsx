@@ -51,7 +51,7 @@ function AddCollateralButton({
         showToast(
           {
             warning: true,
-            title: `${collectionInfo.shortName} - ${CollateralActions.ADD} Collateral`,
+            title: `${collectionInfo.shortName} - ${CollateralActions.ADD}`,
             message: 'Order Received!',
             linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
             linkLabel: 'Check on Arbiscan'

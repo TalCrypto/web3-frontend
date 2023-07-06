@@ -10,9 +10,10 @@ import Tooltip from '@/components/common/Tooltip';
 import { $psShowHistory } from '@/stores/portfolio';
 import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { getTradingActionType } from '@/utils/actionType';
+import { getActionTypeFromApi } from '@/utils/actionType';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
 import { PositionHistoryRecord } from '@/stores/user';
+import { CollateralActions, TradeActions } from '@/const';
 
 const HistoryModal = () => {
   const { psHistoryByMonth } = usePsHistoryByMonth();
@@ -49,11 +50,11 @@ const HistoryModal = () => {
   );
 
   // detail data, selected record
-  const tradeType = selectedRecord ? getTradingActionType(selectedRecord) : '';
-  const isFundingPaymentRecord = tradeType === 'Full Close' || tradeType === 'Full Liquidation';
-  const isLiquidation = tradeType === 'Partial Liquidation' || tradeType === 'Full Liquidation';
-  const isAdjustCollateral = tradeType === 'Add Collateral' || tradeType === 'Reduce Collateral';
-  const isFullClose = tradeType === 'Full Close';
+  const tradeType = selectedRecord ? getActionTypeFromApi(selectedRecord) : '';
+  const isFundingPaymentRecord = tradeType === TradeActions.CLOSE || tradeType === TradeActions.FULL_LIQ;
+  const isLiquidation = tradeType === TradeActions.PARTIAL_LIQ || tradeType === TradeActions.FULL_LIQ;
+  const isAdjustCollateral = tradeType === CollateralActions.ADD || tradeType === CollateralActions.REDUCE;
+  const isFullClose = tradeType === TradeActions.CLOSE;
   const typeClassName =
     selectedRecord && selectedRecord.exchangedPositionSize > 0
       ? 'text-marketGreen'
@@ -72,7 +73,7 @@ const HistoryModal = () => {
   const openNotionalNumber = selectedRecord?.openNotional;
 
   const collateralChange =
-    tradeType === 'Partial Close'
+    tradeType === TradeActions.REDUCE
       ? '-.--'
       : isLiquidation
       ? marginNumber
@@ -167,20 +168,21 @@ const HistoryModal = () => {
                       </div>
                       <div id={`group-${month}`} className="collapsible">
                         {records.map((record: PositionHistoryRecord, idx: any) => {
-                          const currentRecordType = getTradingActionType(record);
+                          const currentRecordType = getActionTypeFromApi(record);
                           const recordAmount = Math.abs(record.amount);
                           const recordFee = record.fee;
-                          const recordRealizedPnl = record.realizedPnl;
-                          const recordRealizedFundingPayment = record.fundingPayment;
+
+                          // const recordRealizedPnl = record.realizedPnl;
+                          // const recordRealizedFundingPayment = record.fundingPayment;
                           const recordCollateralChange = record.collateralChange;
                           const balance =
-                            currentRecordType === 'Open' || currentRecordType === 'Add' || currentRecordType === 'Add Collateral'
-                              ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment).toFixed(4)
-                              : currentRecordType === 'Reduce Collateral'
-                              ? Math.abs(recordCollateralChange + recordRealizedFundingPayment).toFixed(4)
-                              : currentRecordType === 'Full Close'
-                              ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment).toFixed(4)
-                              : -Math.abs(recordFee).toFixed(4);
+                            currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD
+                              ? -Math.abs(recordAmount + recordFee)
+                              : currentRecordType === CollateralActions.ADD || currentRecordType === CollateralActions.REDUCE
+                              ? -Math.abs(recordCollateralChange)
+                              : currentRecordType === TradeActions.CLOSE
+                              ? Math.abs(recordAmount - recordFee)
+                              : -Math.abs(recordFee);
                           return (
                             <div
                               key={`item-${idx}-${record.timestamp}`}
@@ -251,7 +253,7 @@ const HistoryModal = () => {
                     'Collection',
                     selectedRecord.amm ? <TypeWithIconByAmm className="icon-label" amm={selectedRecord.amm} showCollectionName /> : '-'
                   )}
-                {(selectedRecord && detailRow('Action', getTradingActionType(selectedRecord))) || '-'}
+                {(selectedRecord && detailRow('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                 {selectedRecord &&
                   detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
                 {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
@@ -267,7 +269,7 @@ const HistoryModal = () => {
                       'Collateral Change',
                       <PriceWithIcon
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
-                        {getTradingActionType(selectedRecord) === 'Partial Close' ? (
+                        {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                           <Tooltip direction="top" content="Collateral will not change.">
                             <Image
                               src="/images/components/trade/history/more_info.svg"

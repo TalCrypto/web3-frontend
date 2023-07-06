@@ -51,7 +51,7 @@ function ReduceCollateralButton({
         showToast(
           {
             warning: true,
-            title: `${collectionInfo.shortName} - ${CollateralActions.REDUCE} Collateral`,
+            title: `${collectionInfo.shortName} - ${CollateralActions.REDUCE}`,
             message: 'Order Received!',
             linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
             linkLabel: 'Check on Arbiscan'
