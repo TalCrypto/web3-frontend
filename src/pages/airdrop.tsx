@@ -12,6 +12,9 @@ import Rules from '@/components/airdrop/desktop/Rules';
 
 import ReferralMobile from '@/components/airdrop/mobile/Referral';
 import RulesMobile from '@/components/airdrop/mobile/Rules';
+import OverviewMobile from '@/components/airdrop/mobile/Overview';
+import TopInfo from '@/components/airdrop/desktop/TopInfo';
+import TopInfoMobile from '@/components/airdrop/mobile/TopInfo';
 
 export default function Home() {
   const router = useRouter();
@@ -69,11 +72,7 @@ export default function Home() {
       />
       <main>
         <div className="hidden md:block">
-          <div className="text-glow-green mb-[12px] mt-9 text-center text-[32px] font-bold">AIRDROP SEASON 2</div>
-          <p className="mb-[48px] text-center">
-            More <span className="text-seasonGreen">Tribe3 points</span>, more <span className="text-seasonGreen">Tribe3 tokens</span>
-            for you 🙌
-          </p>
+          <TopInfo />
 
           <TabItems />
 
@@ -86,16 +85,12 @@ export default function Home() {
           className="mobile-view block bg-lightBlue bg-[url('/images/components/airdrop/bg-mobile.png')]
              bg-[center_top] bg-no-repeat md:hidden
           ">
-          <div className="text-glow-green mb-[12px] pt-9 text-center text-[32px] font-bold">AIRDROP SEASON 2</div>
-          <p className="mb-[48px] text-center">
-            More <span className="text-seasonGreen">Tribe3 points</span>, <br />
-            more <span className="text-seasonGreen">Tribe3 tokens</span> for you
-          </p>
+          <TopInfoMobile />
 
           {/* <TabItems /> */}
 
           <div className="pt-9">
-            {activeTab === 0 ? null : activeTab === 1 ? <ReferralMobile /> : activeTab === 2 ? null : <RulesMobile />}
+            {activeTab === 0 ? <OverviewMobile /> : activeTab === 1 ? <ReferralMobile /> : activeTab === 2 ? null : <RulesMobile />}
           </div>
         </div>
       </main>
