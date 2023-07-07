@@ -14,9 +14,9 @@ import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import { $isMobileView } from '@/stores/modal';
 
 function PriceIndicator(props: any) {
-  const { priceChangeValue, priceChangeRatio, isStartLoadingChart } = props;
+  const { priceChangeValue, priceChangeRatio } = props;
 
-  return isStartLoadingChart || priceChangeValue === undefined || priceChangeRatio === undefined ? (
+  return priceChangeValue === undefined || priceChangeRatio === undefined ? (
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
@@ -200,7 +200,7 @@ const ChartHeaders = () => {
       <div className="grid grid-cols-2 px-[20px] pt-[27px]">
         <div className="col-span-1">
           <PriceWithIcon priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-          <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={!priceChange} />
+          <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
         </div>
 
         <div className="col-span-1 text-right">

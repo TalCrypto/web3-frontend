@@ -37,14 +37,10 @@ function SmallPriceIcon(props: any) {
   );
 }
 
-function PriceIndicator(props: {
-  isStartLoadingChart: boolean;
-  priceChangeValue: number | undefined;
-  priceChangeRatio: number | undefined;
-}) {
-  const { priceChangeValue, priceChangeRatio, isStartLoadingChart } = props;
+function PriceIndicator(props: { priceChangeValue: number | undefined; priceChangeRatio: number | undefined }) {
+  const { priceChangeValue, priceChangeRatio } = props;
 
-  return isStartLoadingChart || priceChangeValue === undefined || priceChangeRatio === undefined ? (
+  return priceChangeValue === undefined || priceChangeRatio === undefined ? (
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
@@ -178,11 +174,7 @@ const ChartHeaders = () => {
           </div>
           <div className="flex">
             <PriceWithIcon priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-            <PriceIndicator
-              priceChangeValue={priceChange}
-              priceChangeRatio={priceChangePct}
-              isStartLoadingChart={priceChange === undefined}
-            />
+            <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
           </div>
         </div>
       </div>
