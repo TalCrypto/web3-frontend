@@ -6,10 +6,19 @@ import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
 import { $isShowMobileModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
-import { $userAddress, $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import {
+  $userAddress,
+  $userIsConnected,
+  $userIsConnecting,
+  $userIsWrongNetwork,
+  $userWethBalance,
+  $userDisplayName,
+  $userTotalCollateral
+} from '@/stores/user';
 import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { $userPoint } from '@/stores/airdrop';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -19,9 +28,13 @@ const MobileMenu = (props: any) => {
 
   const address = useNanostore($userAddress);
   const wethBalance = useNanostore($userWethBalance);
+  const userPoint = useNanostore($userPoint);
+  const username = useNanostore($userDisplayName);
+  const totalCollateral = useNanostore($userTotalCollateral);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
   const [isOthersOpen, setIsOthersOpen] = useState(false);
+  const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { disconnect } = useDisconnect();
 
@@ -54,18 +67,30 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnCopyAddressClick = () => {
-    // navigator.clipboard.writeText(address);
+    navigator.clipboard.writeText(address || '');
+    const x = document.getElementById('snackbar') || null;
+    console.log({ x }, x === null);
+    if (x !== null) {
+      x.className = 'show';
+      setTimeout(() => {
+        x.className = x.className.replace('show', '');
+      }, 3000);
+    }
   };
 
   const onBtnGetWethClick = () => {
     // getTestToken();
+    setIsSwapWidgetOpen(true);
   };
 
   const onBtnClickSocial = () => {
     setIsShowSocialFooter(!isShowSocialFooter);
   };
 
-  const onGotoPage = (url: string) => {
+  const onGotoPage = (url: string, isSwap = false) => {
+    if (isSwap) {
+      setIsSwapWidgetOpen(false);
+    }
     setIsShowMobileMenu(false);
     $isShowMobileModal.set(false);
     router.push(url);
@@ -77,17 +102,19 @@ const MobileMenu = (props: any) => {
         overflow-auto bg-lightBlue">
       <div className="flex h-full pt-[18px]">
         <div className="w-full pl-[20px] text-[14px] text-highEmphasis">
-          <div className="flex w-full items-center">
-            <div className="mr-3 w-[60px]">
-              <Image className="mr-[6px]" src="/images/mobile/common/avatar.svg" alt="" width={60} height={60} />
+          {isConnected ? (
+            <div className="flex w-full items-center">
+              <div className="mr-3 w-[60px]">
+                <Image className="mr-[6px]" src="/images/mobile/common/avatar.svg" alt="" width={60} height={60} />
+              </div>
+              <div className="max-w-[calc(100%-50px)] ">
+                <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">{username}</div>
+                <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
+                  Points: <span className="font-semibold">{userPoint?.total}</span>
+                </span>
+              </div>
             </div>
-            <div className="max-w-[calc(100%-50px)] ">
-              <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">EMMMMMMMMMMMA</div>
-              <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
-                Points: <span className="font-semibold">{points}</span>
-              </span>
-            </div>
-          </div>
+          ) : null}
           <div className="scrollable mt-[36px] h-[calc(100%-361px)] overflow-y-scroll">
             <div className="pb-[35px]">
               <div
@@ -124,7 +151,7 @@ const MobileMenu = (props: any) => {
                 <div className="ml-5 pb-[35px]">
                   <div
                     onClick={() => onGotoPage('/airdrop')}
-                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    className={`${router.route.toLowerCase() === '/avatar' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Avatar
                     <span
                       className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
@@ -136,7 +163,7 @@ const MobileMenu = (props: any) => {
                 <div className="ml-5 pb-[35px]">
                   <div
                     onClick={() => onGotoPage('/airdrop')}
-                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    className={`${router.route.toLowerCase() === '/battle' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Battle
                     <span
                       className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
@@ -257,7 +284,12 @@ const MobileMenu = (props: any) => {
           ) : (
             <div className="mx-[26px]">
               <div className="mt-[20px] flex items-center justify-center">
-                <PriceWithIcon priceValue={wethBalance.toFixed(4)} className="text-[20px]" width={22} height={22} />
+                <PriceWithIcon
+                  priceValue={Number(wethBalance + totalCollateral).toFixed(4)}
+                  className="text-[20px]"
+                  width={22}
+                  height={22}
+                />
               </div>
               <div
                 className="mb-[24px] mt-[11px] text-[14px] font-normal
@@ -320,6 +352,54 @@ const MobileMenu = (props: any) => {
           />
         </div>
       </div>
+
+      {isSwapWidgetOpen ? (
+        <div
+          className={`fixed w-full transition
+        ${isSwapWidgetOpen ? 'bottom-[0px]' : 'bottom-[-250px]'}
+        bg-secondaryBlue duration-500
+      `}>
+          <div className="h-[250px] px-[20px] pb-[6px] pt-[24px] ">
+            <div className="font-[600] text-[#fff] ">Bridge ETH / WETH to Arbitrum👇</div>
+            <div className="mt-[16px]  flex flex-row">
+              <div
+                className="flex w-auto flex-row 
+                items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
+                px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
+                onClick={() => onGotoPage('https://bridge.arbitrum.io/', true)}>
+                <Image className="mr-[6px]" src="/icons/providers/arbitrum.png" alt="" width={24} height={24} />
+                Arbitrum
+              </div>
+              <div />
+            </div>
+            <div className="mt-[24px]  ">
+              <div className="font-[600] text-[#fff] ">Wrap ETH on Arbitrum👇</div>
+            </div>
+            <div className="mt-[16px] flex flex-row">
+              <div
+                className="flex w-auto flex-row 
+                items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
+                px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
+                onClick={() => onGotoPage('https://app.uniswap.org/#/swap/', true)}>
+                <Image className="mr-[6px]" src="/icons/providers/uniswap.png" alt="" width={24} height={24} />
+                Uniswap
+              </div>
+              <div />
+            </div>
+            <div className="flex flex-row justify-end">
+              <Image
+                src="/images/mobile/common/close.svg"
+                alt=""
+                width={40}
+                height={40}
+                onClick={() => {
+                  setIsSwapWidgetOpen(false);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
