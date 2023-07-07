@@ -16,6 +16,7 @@ import Image from 'next/image';
 import UserMedal from '@/components/airdrop/desktop/UserMedal';
 import { trimString } from '@/utils/string';
 import ScrollTopButton from '@/components/common/ScrollToTopButton';
+import { localeConversion } from '@/utils/localeConversion';
 
 function Leaderboard() {
   const router = useRouter();
@@ -127,15 +128,15 @@ function Leaderboard() {
   const isLockedOg = false;
 
   // width handler for season 2
-  const usernameWidth = currentSeason === 0 ? 'lg:w-[17%] max-w-[162px]' : 'lg:w-[13%]  max-w-[132px]';
-  const cellWidth = currentSeason === 0 ? 'lg:w-[16%]' : 'lg:w-[12%]';
+  const usernameWidth = currentSeason === 0 ? 'w-[17%] max-w-[162px]' : 'w-[13%]  max-w-[132px]';
+  const cellWidth = currentSeason === 0 ? 'w-[16%]' : 'w-[12%]';
 
   return (
-    <div>
+    <div className="relative">
       <div id="lb-sticky-header" className="sticky top-[60px] z-[1]">
         <div className="flex justify-between py-[24px]">
           <h3 className="text-[24px] font-bold">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
-          <div className="season-leaderboard flex justify-start text-[16px] font-semibold ">
+          <div className="season-leaderboard flex justify-start text-[16px] font-semibold">
             <div className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(0)}>
               Season 2 Leaderboard
               {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
@@ -169,12 +170,12 @@ function Leaderboard() {
             <p>{refreshCooldown > 0 ? 'Updating...' : 'Update Leaderboard'}</p>
           </div>
         </div>
-        <div className="w-full text-xs lg:px-[50px] lg:text-[14px] lg:font-semibold">
+        <div className="w-full px-[50px] text-[14px] text-xs font-semibold">
           <div className="mb-[12px] flex text-mediumEmphasis">
-            <div className="w-[10%] px-[21.8px] py-[18px] ">
+            <div className="w-[10%] px-[10px] py-[18px]">
               <p>Rank</p>
             </div>
-            <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
+            <div className={`p-[18px] ${usernameWidth}`}>
               <p>User</p>
             </div>
             <div className={`${cellWidth} p-[18px]`}>
@@ -202,9 +203,6 @@ function Leaderboard() {
               <p>{currentSeason === 0 ? 'Season 2' : 'Season 1'} Points</p>
               <p className="text-b2">(After Multiplier)</p>
             </div>
-            <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
-              <p>Seasonal Pts. (Multiplier)</p>
-            </div>
           </div>
         </div>
       </div>
@@ -217,16 +215,19 @@ function Leaderboard() {
               <>
                 {/* current user data */}
                 {isConnected ? (
-                  <div className="relative cursor-pointer" onClick={() => router.push(`/userprofile/${userWalletAddress}`)}>
+                  <div className="relative cursor-pointer text-[15px]" onClick={() => router.push(`/userprofile/${userWalletAddress}`)}>
                     <div
-                      className={`table-border-grad flex h-[54px] items-center font-medium lg:px-[50px] ${
+                      className={`table-border-grad flex h-[54px] items-center px-[50px] font-medium ${
                         userIsBan ? 'disqualified' : 'active'
                       }`}>
                       <div className="flex w-[10%] p-[18px]">
                         <UserMedal rank={userData.rank} isYou isBan={userIsBan} isUnranked={userIsUnranked} />
                       </div>
-                      <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
-                        <p className={`overflow-text-ellipsis ${userIsBan ? 'text-marketRed line-through' : ''}`}>
+                      <div className={`p-[18px] ${usernameWidth}`}>
+                        <p
+                          className={`overflow-hidden text-ellipsis text-[15px] font-normal ${
+                            userIsBan ? 'text-marketRed line-through' : ''
+                          }`}>
                           {userData?.username ? trimString(userData.username, 10) : walletAddressToShow(userData.userAddress)}
                         </p>
                       </div>
@@ -241,7 +242,9 @@ function Leaderboard() {
                             <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
                           </div>
                         ) : null}
-                        <p className={`${userIsBan ? 'text-marketRed line-through' : ''}`}>{userData.tradeVolPoints.toFixed(2)}</p>
+                        <p className={`text-[15px] font-normal ${userIsBan ? 'text-marketRed line-through' : ''}`}>
+                          {localeConversion(userData.tradeVolPoints, 2, 2)}
+                        </p>
                       </div>
                       {currentSeason !== 0 ? (
                         <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} relative`}>
@@ -259,7 +262,7 @@ function Leaderboard() {
                             className={`${userIsBan && !isLockedConverg ? 'text-marketRed line-through' : ''} ${
                               isLockedConverg ? '' : ''
                             }`}>
-                            {isLockedConverg ? '-' : userData.convergePoints.toFixed(2)}
+                            {isLockedConverg ? '-' : localeConversion(userData.convergePoints, 2, 2)}
                           </p>
                         </div>
                       ) : null}
@@ -278,7 +281,7 @@ function Leaderboard() {
                           className={`${userIsBan && !isLockedReferral ? 'text-marketRed line-through' : ''} ${
                             isLockedReferral ? '' : ''
                           }`}>
-                          {isLockedReferral ? '-' : userData.referralPoints.toFixed(2)}
+                          {isLockedReferral ? '-' : localeConversion(userData.referralPoints, 2, 2)}
                         </p>
                       </div>
                       <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} relative`}>
@@ -292,40 +295,29 @@ function Leaderboard() {
                             <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
                           </div>
                         ) : null}
-                        <p className={`${userIsBan && !isLockedOg ? 'text-marketRed line-through' : ''} ${isLockedOg ? '' : ''}`}>
-                          {isLockedOg ? '-' : userData.og.toFixed(2)}
+                        <p
+                          className={`text-[15px] font-normal ${userIsBan && !isLockedOg ? 'text-marketRed line-through' : ''} ${
+                            isLockedOg ? '' : ''
+                          }`}>
+                          {isLockedOg ? '-' : localeConversion(userData.og, 1, 1)}
                         </p>
                       </div>
                       <div className="w-[17%] p-[18px]">
-                        <p className="text-highEmphasis} text-sm lg:text-[15px] lg:font-semibold">
-                          {userIsBan || userIsUnranked ? '-' : `${userData.originalTotal.toFixed(2)}`}
+                        <p className="text-highEmphasis} text-[15px] font-semibold">
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.originalTotal, 2, 2)}`}
                         </p>
                       </div>
                       <div className="w-[10%] p-[18px]">
                         <p
-                          className={`text-sm lg:text-[15px] lg:font-semibold  ${
+                          className={`text-[15px] font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-marketGreen'
                           }`}>
-                          {userIsBan || userIsUnranked ? '-' : `${userData.multiplier.toFixed(2)}x`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.multiplier, 2, 2)}x`}
                         </p>
                       </div>
                       <div className="w-[16%] p-[18px]">
-                        <p
-                          className={`text-sm lg:text-[15px] lg:font-semibold  ${
-                            userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-warn'
-                          }`}>
-                          {userIsBan || userIsUnranked ? '-' : `${userData.total.toFixed(2)}`}
-                        </p>
-                      </div>
-                      <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
-                        <p className="text-sm ">
-                          {userIsBan || userIsUnranked ? (
-                            '-'
-                          ) : (
-                            <>
-                              {userData.total.toFixed(2)} <span className="text-marketGreen">({userData.multiplier.toFixed(1)}X)</span>
-                            </>
-                          )}
+                        <p className={`text-[15px] font-semibold  ${userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-warn'}`}>
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.total, 2, 2)}`}
                         </p>
                       </div>
                     </div>
@@ -354,25 +346,27 @@ function Leaderboard() {
                         key={`rank-${userAddress}`}
                         className="relative cursor-pointer"
                         onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                        <div className="table-border-grad flex h-[54px] items-center lg:px-[50px]">
+                        <div className="table-border-grad flex h-[54px] items-center px-[50px]">
                           <div className="flex w-[10%] p-[18px]">
                             <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
                           </div>
-                          <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
+                          <div className={`p-[18px] ${usernameWidth}`}>
                             <p
-                              className={`overflow-text-ellipsis ${isBan ? 'text-marketRed line-through' : ''} ${
-                                isYou ? 'font-medium' : ''
-                              }`}>
+                              className={`overflow-hidden text-ellipsis text-[15px] font-normal ${
+                                isBan ? 'text-marketRed line-through' : ''
+                              } ${isYou ? 'font-medium' : ''}`}>
                               {username ? trimString(username, 10) : walletAddressToShow(userAddress)}
                             </p>
                           </div>
                           <div className={`${cellWidth} p-[18px]`}>
-                            <p className={`${isBan ? 'text-marketRed line-through' : ''}`}>{tradeVolPoints.toFixed(2)}</p>
+                            <p className={`text-[15px] font-normal ${isBan ? 'text-marketRed line-through' : ''}`}>
+                              {localeConversion(tradeVolPoints, 2, 2)}
+                            </p>
                           </div>
                           {currentSeason !== 0 ? (
                             <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} ${isLockedConverg ? '' : ''}`}>
-                              <p className={`${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
-                                {isLockedConverg ? '-' : convergePoints.toFixed(2)}
+                              <p className={`text-[15px] font-normal ${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
+                                {isLockedConverg ? '-' : localeConversion(convergePoints, 2, 2)}
                               </p>
                             </div>
                           ) : null}
@@ -380,33 +374,28 @@ function Leaderboard() {
                             className={`${cellWidth} w-[12%] p-[18px] ${isLockedReferral ? 'col-locked' : ''} ${
                               isLockedReferral ? '' : ''
                             }`}>
-                            <p className={`${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
-                              {isLockedReferral ? '-' : referralPoints.toFixed(2)}
+                            <p className={`text-[15px] font-normal ${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
+                              {isLockedReferral ? '-' : localeConversion(referralPoints, 2, 2)}
                             </p>
                           </div>
                           <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>
-                            <p className={`${isBan && !isLockedOg ? 'text-marketRed line-through' : ''}`}>
-                              {isLockedOg ? '-' : og.toFixed(2) || 0.0}
+                            <p className={`text-[15px] font-normal ${isBan && !isLockedOg ? 'text-marketRed line-through' : ''}`}>
+                              {isLockedOg ? '-' : localeConversion(og, 1, 1) || 0.0}
                             </p>
                           </div>
                           <div className="w-[17%] p-[18px]">
-                            <p className="text-sm text-highEmphasis lg:text-[15px] lg:font-semibold">
-                              {isBan ? '-' : `${originalTotal.toFixed(2)}`}
+                            <p className="text-[15px] font-semibold text-highEmphasis">
+                              {isBan ? '-' : `${localeConversion(originalTotal, 2, 2)}`}
                             </p>
                           </div>
                           <div className="w-[10%] p-[18px]">
-                            <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-marketGreen'}`}>
-                              {isBan ? '-' : `${multiplier.toFixed(1)}x`}
+                            <p className={`text-[15px] font-semibold  ${isBan ? 'text-highEmphasis' : 'text-marketGreen'}`}>
+                              {isBan ? '-' : `${localeConversion(multiplier, 1, 1)}x`}
                             </p>
                           </div>
                           <div className="w-[16%] p-[18px]">
-                            <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
-                              {isBan ? '-' : `${total.toFixed(2)}`}
-                            </p>
-                          </div>
-                          <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
-                            <p className="text-sm lg:text-[15px] lg:font-semibold ">
-                              {total} <span className="text-marketGreen">({multiplier.toFixed(1)}X)</span>
+                            <p className={`text-[15px] font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
+                              {isBan ? '-' : `${localeConversion(total, 2, 2)}`}
                             </p>
                           </div>
                         </div>
@@ -416,62 +405,66 @@ function Leaderboard() {
               </>
             ) : (
               <>
-                <div className="table-border-grad active flex h-[54px] items-center font-medium lg:px-[86px]">
+                <div className="table-border-grad active flex h-[54px] w-full items-center px-[50px] font-medium">
                   <div className="flex w-[10%] justify-center p-[18px]">-</div>
-                  <div className="w-[18%] p-[18px]">
+                  <div className={`${usernameWidth} p-[18px]`}>
                     <p>-</p>
                   </div>
-                  <div className="w-[14%] p-[18px]">
+                  <div className={`${cellWidth} p-[18px]`}>
                     <p>-</p>
                   </div>
                   {currentSeason !== 0 ? (
-                    <div className="w-[14%] p-[18px]">
+                    <div className="w-[12%] p-[18px]">
                       <p>-</p>
                     </div>
                   ) : null}
-                  <div className="w-[14%] p-[18px]">
+                  <div className={`${cellWidth} p-[18px]`}>
                     <p>-</p>
                   </div>
                   <div className="w-[12%] p-[18px]">
-                    <p className="text-sm text-marketGreen lg:text-[15px] lg:font-semibold ">-</p>
+                    <p className="text-[15px] font-semibold">-</p>
+                  </div>
+                  <div className="w-[17%] p-[18px]">
+                    <p className="text-[15px] font-semibold">-</p>
+                  </div>
+
+                  <div className="w-[10%] p-[18px]">
+                    <p className="text-[15px] font-semibold text-marketGreen">-</p>
                   </div>
                   <div className="w-[16%] p-[18px]">
-                    <p className="text-sm text-warn lg:text-[15px] lg:font-semibold ">-</p>
-                  </div>
-                  <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
-                    <p className="text-sm ">
-                      - <span className="text-marketGreen">(-)</span>
-                    </p>
+                    <p className="text-[15px] font-semibold text-warn">-</p>
                   </div>
                 </div>
                 {dummyLoadingData.map((_item, i) => (
                   <div key={`loading-${i}`} className="relative">
-                    <div className="table-border-grad flex h-[54px] items-center lg:px-[86px]">
+                    <div className="table-border-grad flex h-[54px] w-full items-center px-[50px]">
                       <div className="flex w-[10%] justify-center p-[18px]">-</div>
-                      <div className="w-[18%] p-[18px]">
+                      <div className={`${usernameWidth} p-[18px]`}>
                         <p>-</p>
                       </div>
-                      <div className="w-[14%] p-[18px]">
+                      <div className={`${cellWidth} p-[18px]`}>
                         <p>-</p>
                       </div>
                       {currentSeason !== 0 ? (
-                        <div className="w-[14%] p-[18px]">
+                        <div className="w-[12%] p-[18px]">
                           <p>-</p>
                         </div>
                       ) : null}
-                      <div className="w-[14%] p-[18px]">
+                      <div className={`${cellWidth} p-[18px]`}>
                         <p>-</p>
                       </div>
                       <div className="w-[12%] p-[18px]">
-                        <p className="text-sm text-marketGreen lg:text-[15px] lg:font-semibold ">-</p>
+                        <p className="text-[15px] font-semibold">-</p>
+                      </div>
+                      <div className="w-[17%] p-[18px]">
+                        <p className="text-[15px] font-semibold">-</p>
+                      </div>
+
+                      <div className="w-[10%] p-[18px]">
+                        <p className="text-[15px] font-semibold text-marketGreen">-</p>
                       </div>
                       <div className="w-[16%] p-[18px]">
-                        <p className="text-sm text-warn lg:text-[15px] lg:font-semibold ">-</p>
-                      </div>
-                      <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
-                        <p className="text-sm lg:text-[15px] lg:font-semibold ">
-                          - <span className="text-marketGreen">(-)</span>
-                        </p>
+                        <p className="text-[15px] font-semibold text-warn">-</p>
                       </div>
                     </div>
                   </div>
