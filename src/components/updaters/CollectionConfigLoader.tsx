@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useContractReads } from 'wagmi';
+import React, { useEffect } from 'react';
+import { useContractReads, usePublicClient } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $collectionConfig, $currentAmm } from '@/stores/trading';
 import { getAMMContract, getCHContract, Contract } from '@/const/contracts';
@@ -7,45 +7,49 @@ import { ammAbi, chAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
 import { $currentChain } from '@/stores/user';
 
-const Loader = ({ ammContract, chContract }: { ammContract: Contract; chContract: Contract }) => {
-  const { data } = useContractReads({
-    contracts: [
-      { ...ammContract, abi: ammAbi, functionName: 'initMarginRatio' },
-      { ...ammContract, abi: ammAbi, functionName: 'fundingPeriod' },
-      { ...chContract, abi: chAbi, functionName: 'LIQ_SWITCH_RATIO' }
-    ]
-  });
-  const initMarginRatio = data ? data[0].result : 0n;
-  const fundingPeriod = data ? data[1].result : 0n;
-  const liqSwitchRatio = data ? data[2].result : 0n;
-  useEffect(() => {
-    if (initMarginRatio && fundingPeriod && liqSwitchRatio) {
-      $collectionConfig.set({
-        initMarginRatio: formatBigInt(initMarginRatio),
-        fundingPeriod: Number(fundingPeriod),
-        liqSwitchRatio: formatBigInt(liqSwitchRatio)
-      });
-    }
-  }, [initMarginRatio, fundingPeriod, liqSwitchRatio]);
-  return null;
-};
-
 const CollectionConfigLoader: React.FC = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const [ammContract, setAmmContract] = useState<Contract | undefined>();
-  const [chContract, setChContract] = useState<Contract | undefined>();
+  const publicClient = usePublicClient();
 
   useEffect(() => {
-    if (currentAmm) {
-      setAmmContract(getAMMContract(chain, currentAmm));
-      setChContract(getCHContract(chain));
+    async function loadAmmConfig() {
+      if (currentAmm) {
+        const amm = getAMMContract(chain, currentAmm);
+        const ch = getCHContract(chain);
+        if (amm) {
+          try {
+            const initMarginRatio = await publicClient.readContract({
+              address: amm.address,
+              abi: ammAbi,
+              functionName: 'initMarginRatio'
+            });
+            const fundingPeriod = await publicClient.readContract({
+              address: amm.address,
+              abi: ammAbi,
+              functionName: 'fundingPeriod'
+            });
+            const liqSwitchRatio = await publicClient.readContract({
+              address: ch.address,
+              abi: chAbi,
+              functionName: 'LIQ_SWITCH_RATIO'
+            });
+            $collectionConfig.set({
+              initMarginRatio: formatBigInt(initMarginRatio),
+              fundingPeriod: Number(fundingPeriod),
+              liqSwitchRatio: formatBigInt(liqSwitchRatio)
+            });
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      }
     }
-  }, [chain, currentAmm]);
 
-  if (!ammContract || !chContract) return null;
+    loadAmmConfig();
+  }, [currentAmm, chain, publicClient]);
 
-  return <Loader ammContract={ammContract} chContract={chContract} />;
+  return null;
 };
 
 export default CollectionConfigLoader;

@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { showToast } from '@/components/common/Toast';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
@@ -87,7 +86,7 @@ const EventHandlers = () => {
         });
       }
     }
-  }, [pendingPositionChangedEvents, traderAddress, chain, ammAddress]);
+  }, [pendingPositionChangedEvents, traderAddress, chain, ammAddress, isMobileView]);
 
   useEffect(() => {
     if (pendingMarginChangedEvents.length > 0) {
@@ -124,7 +123,7 @@ const EventHandlers = () => {
           }
         });
     }
-  }, [pendingMarginChangedEvents, traderAddress, chain]);
+  }, [pendingMarginChangedEvents, traderAddress, chain, isMobileView]);
 
   return null;
 };
@@ -195,17 +194,10 @@ const EventListeners = ({ ammContract, chContract }: { ammContract: Contract; ch
 const EventManager = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const [ammContract, setAmmContract] = useState<Contract | undefined>();
-  const [chContract, setChContract] = useState<Contract | undefined>();
+  const ammContract = getAMMContract(chain, currentAmm);
+  const chContract = getCHContract(chain);
 
-  useEffect(() => {
-    if (currentAmm) {
-      setAmmContract(getAMMContract(chain, currentAmm));
-      setChContract(getCHContract(chain));
-    }
-  }, [chain, currentAmm]);
-
-  if (!ammContract || !chContract) return null;
+  if (!currentAmm || !ammContract || !chContract) return null;
 
   return (
     <>
