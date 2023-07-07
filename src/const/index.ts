@@ -4,9 +4,9 @@ export const MINIMUM_COLLATERAL = 0.01;
 
 export enum TradeActions {
   OPEN = 'Open',
-  CLOSE = 'Close',
+  CLOSE = 'Full Close',
   ADD = 'Add',
-  REDUCE = 'Reduce',
+  REDUCE = 'Partial Close',
   REVERSE = 'Reverse',
   FULL_LIQ = 'Full Liquid.',
   PARTIAL_LIQ = 'Partial Liquid.'
