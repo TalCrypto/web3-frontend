@@ -4,7 +4,7 @@ import Tooltip from '@/components/common/Tooltip';
 
 const UserMedal = (props: any) => {
   let medal = null;
-  const { rank, isBan = false, isYou = false, isUnranked = false } = props;
+  const { rank, isBan = false, isYou = false, isUnranked = false, isMobile = false } = props;
 
   if (isBan) {
     medal = (
@@ -13,7 +13,7 @@ const UserMedal = (props: any) => {
       </div>
     );
   } else if (isUnranked) {
-    medal = <div className="flex h-[38px] items-center text-[12px] font-bold">Unranked</div>;
+    medal = <div className="flex h-[38px] items-center justify-center text-[12px] font-bold">{!isMobile ? 'Unranked' : 'Unrank'}</div>;
   } else if (rank <= 3) {
     medal = (
       <div className="w-[50px]">
@@ -34,7 +34,7 @@ const UserMedal = (props: any) => {
             height={22}
             alt=""
           />
-          <div className="z-10">{rank}</div>
+          <div className="z-[1]">{rank}</div>
         </div>
       </div>
     );

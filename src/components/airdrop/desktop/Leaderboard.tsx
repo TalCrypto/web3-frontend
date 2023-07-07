@@ -233,7 +233,7 @@ function Leaderboard() {
                       </div>
                       <div className={`${cellWidth} relative p-[18px]`}>
                         {userIsUnranked ? (
-                          <div className="absolute left-0">
+                          <div className="absolute left-0 top-[21px]">
                             {/* <TitleTips
                               placement="top"
                               tipsText="Trade 5 WETH notional to unlock your reward"
@@ -249,7 +249,7 @@ function Leaderboard() {
                       {currentSeason !== 0 ? (
                         <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} relative`}>
                           {userIsUnranked ? (
-                            <div className="absolute left-0">
+                            <div className="absolute left-0 top-[21px]">
                               {/* <TitleTips
                                 placement="top"
                                 tipsText="Trade 5 WETH notional to unlock your reward"
@@ -268,7 +268,7 @@ function Leaderboard() {
                       ) : null}
                       <div className={`${cellWidth} p-[18px] ${isLockedReferral ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
-                          <div className="absolute left-0">
+                          <div className="absolute left-0 top-[21px]">
                             {/* <TitleTips
                               placement="top"
                               tipsText="Trade 5 WETH notional to unlock your reward"
@@ -286,7 +286,7 @@ function Leaderboard() {
                       </div>
                       <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
-                          <div className="absolute left-0">
+                          <div className="absolute left-0 top-[21px]">
                             {/* <TitleTips
                               placement="top"
                               tipsText="Trade 5 WETH notional to unlock your reward"
