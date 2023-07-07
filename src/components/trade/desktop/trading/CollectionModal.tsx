@@ -139,7 +139,7 @@ const CollectionModal = (props: any) => {
 
       return (
         <div
-          className={`flex flex-row px-9 py-[11px]
+          className={`flex cursor-pointer flex-row px-9 py-[11px]
             ${index % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}
             ${index === sortedData.length - 1 ? 'rounded-b-[12px]' : ''}
           `}
