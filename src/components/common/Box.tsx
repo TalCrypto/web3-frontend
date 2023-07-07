@@ -45,7 +45,7 @@ export const BoxGradientBluePink = (props: any) => {
 };
 
 export const BoxLocked = (props: any) => {
-  const { blur = 10, style = {}, iconStyle = {} } = props;
+  const { blur = 10, style = {}, iconClassName = '', iconWidth = 43, iconHeight = 43 } = props;
 
   return (
     <div
@@ -55,8 +55,8 @@ export const BoxLocked = (props: any) => {
         ...style
       }}
       className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-lightBlue/50 backdrop-blur-[10px]">
-      <div style={iconStyle}>
-        <Image src="/images/components/airdrop/lock.svg" alt="" width={43} height={43} />
+      <div className={iconClassName}>
+        <Image src="/images/components/airdrop/lock.svg" alt="" width={iconWidth} height={iconHeight} />
       </div>
     </div>
   );

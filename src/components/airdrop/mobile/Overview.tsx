@@ -3,7 +3,7 @@ import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userIsConnected } from '@/stores/user';
 import Image from 'next/image';
-import { BoxLocked } from '@/components/common/Box';
+import { BoxGradient, BoxLocked } from '@/components/common/Box';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 
 function OverviewMobile() {
@@ -33,8 +33,42 @@ function OverviewMobile() {
 
   const eligible = () => userPoint?.isEligible;
 
+  const tradeVolTotal = userPoint ? userPoint.tradeVol.vol : defaultUserPoint.tradeVol.vol;
+  const maxEligibilityTradeVol = Number(5).toFixed(2);
+
   return (
     <div>
+      {eligible() ? (
+        <div className="mb-9 flex-1 px-5">
+          <h3 className="mb-[24px] flex text-[24px] font-bold">☑️ Eligibility</h3>
+          <BoxGradient>
+            <div className="flex bg-[right_6rem_bottom] p-6">
+              <div>
+                <p className="mb-9 text-[14px] font-normal text-highEmphasis">
+                  A minimum of <span className="body2e text-seasonGreen">5 WETH</span> notional volume.
+                </p>
+
+                <p className="body1e mb-[15px]">
+                  {!eligible()
+                    ? `${Number(tradeVolTotal).toFixed(2)} / ${maxEligibilityTradeVol} WETH`
+                    : `${maxEligibilityTradeVol} / ${maxEligibilityTradeVol} WETH ✅`}
+                </p>
+                {/* progressbar */}
+                <div className="overflow-clip rounded-[5px] border-[1px] border-mediumEmphasis/50 bg-darkBlue/50">
+                  <div
+                    className="h-[8px] rounded-[5px]"
+                    style={{
+                      width: eligible() ? '100%' : `${((Number(tradeVolTotal) / 5) * 100).toFixed(2)}%`,
+                      background: 'linear-gradient(265.04deg, #F703D9 -10.63%, #795AF4 42.02%, #04AEFC 103.03%)'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </BoxGradient>
+        </div>
+      ) : null}
+
       <div className="bg-darkBlue px-5 pb-9">
         <h3 className="mb-6 text-[24px] font-bold">Season 2 Summary</h3>
         <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
@@ -60,7 +94,7 @@ function OverviewMobile() {
             </div>
           </div>
           {/* lock */}
-          {!eligible() ? <BoxLocked blur={0} iconStyle={{ marginTop: '-120px' }} /> : null}
+          {!eligible() ? <BoxLocked blur={0} iconClassName="mt-[-120px]" /> : null}
         </div>
 
         {/* Season 1 Points */}
@@ -85,26 +119,26 @@ function OverviewMobile() {
         </div>
       </div>
 
-      <div className="bg-darkBlue px-5">
-        <div className="mb-4 text-[20px] font-semibold">Points Details</div>
+      <div className="mb-6 bg-darkBlue">
+        <div className="mb-1 px-5 text-[20px] font-semibold">Points Details</div>
 
         {/* Trading Volume */}
-        <div className="flex items-center justify-between pb-6">
+        <div className="relative mb-1 flex items-center justify-between px-5 py-2">
           <div className="z-[2] flex flex-row items-center text-[14px]">
             <div className="mr-[6px]">
               <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
             </div>
             Trading Vol.
           </div>
-
           <div className="flex items-center">
             <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
             <p className="mt-[3px] text-[15px]">Pts</p>
           </div>
+          {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
         </div>
 
         {/* Referral */}
-        <div className="flex items-center justify-between pb-6">
+        <div className="relative mb-1 flex items-center justify-between px-5 py-2">
           <div className="z-[2] flex flex-row items-center text-[14px]">
             <div className="mr-[6px]">
               <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
@@ -118,10 +152,11 @@ function OverviewMobile() {
             </p>
             <p className="mt-[3px] text-[15px]">Pts</p>
           </div>
+          {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
         </div>
 
         {/* Others */}
-        <div className="flex items-center justify-between pb-6">
+        <div className="relative mb-1 flex items-center justify-between px-5 py-2">
           <div className="z-[2] flex flex-row items-center text-[14px]">
             <div className="mr-[6px]">
               <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
@@ -133,6 +168,7 @@ function OverviewMobile() {
             <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
             <p className="mt-[3px] text-[15px]">Pts</p>
           </div>
+          {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
         </div>
       </div>
 

@@ -310,7 +310,7 @@ function Overview() {
             </div>
           </div>
           {/* lock */}
-          {!eligible() ? <BoxLocked blur={0} iconStyle={{ marginTop: '-120px' }} /> : null}
+          {!eligible() ? <BoxLocked blur={0} iconClassName="mt-[-120px]" /> : null}
         </div>
 
         {/* Season 1 Points */}
