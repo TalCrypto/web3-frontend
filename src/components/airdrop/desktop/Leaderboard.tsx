@@ -2,7 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $asSeason1LeaderboardData, $asSeason2LeaderboardData, $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
+import {
+  $asCurrentSeason,
+  $asSeason1LeaderboardData,
+  $asSeason2LeaderboardData,
+  $userPoint,
+  $userPrevPoint,
+  defaultUserPoint
+} from '@/stores/airdrop';
 import { $userAddress, $userIsConnected } from '@/stores/user';
 import Image from 'next/image';
 import UserMedal from '@/components/airdrop/desktop/UserMedal';
@@ -25,7 +32,7 @@ function Leaderboard() {
   const isConnected = useNanostore($userIsConnected);
 
   const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
-  const [currentSeason, setCurrentSeason] = useState(0);
+  const currentSeason = useNanostore($asCurrentSeason);
   const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
   useEffect(() => {
@@ -130,11 +137,15 @@ function Leaderboard() {
           <div className="flex justify-between py-[24px]">
             <h3 className="">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
             <div className="season-leaderboard flex justify-start text-[16px] font-[600] ">
-              <div className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`} onClick={() => setCurrentSeason(0)}>
+              <div
+                className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`}
+                onClick={() => $asCurrentSeason.set(0)}>
                 Season 2 Leaderboard
+                {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
               </div>
-              <div className={`item cursor-pointer ${currentSeason === 1 ? 'active' : ''}`} onClick={() => setCurrentSeason(1)}>
+              <div className={`item cursor-pointer ${currentSeason === 1 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(1)}>
                 Season 1 Leaderboard
+                {currentSeason === 1 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
               </div>
             </div>
           </div>
@@ -234,7 +245,7 @@ function Leaderboard() {
                             <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
                           </div>
                         ) : null}
-                        <p className={`${userIsBan ? 'text-marketRed line-through' : ''}`}>{userData.tradeVolPoints}</p>
+                        <p className={`${userIsBan ? 'text-marketRed line-through' : ''}`}>{userData.tradeVolPoints.toFixed(2)}</p>
                       </div>
                       {currentSeason !== 0 ? (
                         <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedConverg ? 'col-locked' : ''} relative`}>
@@ -252,7 +263,7 @@ function Leaderboard() {
                             className={`${userIsBan && !isLockedConverg ? 'text-marketRed line-through' : ''} ${
                               isLockedConverg ? '' : ''
                             }`}>
-                            {isLockedConverg ? '-' : userData.convergePoints}
+                            {isLockedConverg ? '-' : userData.convergePoints.toFixed(2)}
                           </p>
                         </div>
                       ) : null}
@@ -271,7 +282,7 @@ function Leaderboard() {
                           className={`${userIsBan && !isLockedReferral ? 'text-marketRed line-through' : ''} ${
                             isLockedReferral ? '' : ''
                           }`}>
-                          {isLockedReferral ? '-' : userData.referralPoints}
+                          {isLockedReferral ? '-' : userData.referralPoints.toFixed(2)}
                         </p>
                       </div>
                       <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedOg ? 'col-locked' : ''} relative`}>
@@ -286,12 +297,12 @@ function Leaderboard() {
                           </div>
                         ) : null}
                         <p className={`${userIsBan && !isLockedOg ? 'text-marketRed line-through' : ''} ${isLockedOg ? '' : ''}`}>
-                          {isLockedOg ? '-' : userData.og}
+                          {isLockedOg ? '-' : userData.og.toFixed(2)}
                         </p>
                       </div>
                       <div className="hidden p-[18px] lg:block lg:w-[17%]">
                         <p className="text-highEmphasis} text-sm lg:text-[15px] lg:font-semibold">
-                          {userIsBan || userIsUnranked ? '-' : `${userData.originalTotal}`}
+                          {userIsBan || userIsUnranked ? '-' : `${userData.originalTotal.toFixed(2)}`}
                         </p>
                       </div>
                       <div className="hidden p-[18px] lg:block lg:w-[10%]">
@@ -299,7 +310,7 @@ function Leaderboard() {
                           className={`text-sm lg:text-[15px] lg:font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-marketGreen'
                           }`}>
-                          {userIsBan || userIsUnranked ? '-' : `${userData.multiplier}x`}
+                          {userIsBan || userIsUnranked ? '-' : `${userData.multiplier.toFixed(2)}x`}
                         </p>
                       </div>
                       <div className="hidden p-[18px] lg:block lg:w-[16%]">
@@ -307,7 +318,7 @@ function Leaderboard() {
                           className={`text-sm lg:text-[15px] lg:font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-warn'
                           }`}>
-                          {userIsBan || userIsUnranked ? '-' : `${userData.total}`}
+                          {userIsBan || userIsUnranked ? '-' : `${userData.total.toFixed(2)}`}
                         </p>
                       </div>
                       <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
@@ -316,7 +327,7 @@ function Leaderboard() {
                             '-'
                           ) : (
                             <>
-                              {userData.total} <span className="text-marketGreen">({userData.multiplier}X)</span>
+                              {userData.total.toFixed(2)} <span className="text-marketGreen">({userData.multiplier.toFixed(1)}X)</span>
                             </>
                           )}
                         </p>
@@ -360,7 +371,7 @@ function Leaderboard() {
                             </p>
                           </div>
                           <div className={`${cellWidth} hidden p-[18px] lg:block`}>
-                            <p className={`${isBan ? 'text-marketRed line-through' : ''}`}>{tradeVolPoints}</p>
+                            <p className={`${isBan ? 'text-marketRed line-through' : ''}`}>{tradeVolPoints.toFixed(2)}</p>
                           </div>
                           {currentSeason !== 0 ? (
                             <div
@@ -368,7 +379,7 @@ function Leaderboard() {
                                 isLockedConverg ? '' : ''
                               }`}>
                               <p className={`${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
-                                {isLockedConverg ? '-' : convergePoints}
+                                {isLockedConverg ? '-' : convergePoints.toFixed(2)}
                               </p>
                             </div>
                           ) : null}
@@ -377,28 +388,32 @@ function Leaderboard() {
                               isLockedReferral ? '' : ''
                             }`}>
                             <p className={`${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
-                              {isLockedReferral ? '-' : referralPoints}
+                              {isLockedReferral ? '-' : referralPoints.toFixed(2)}
                             </p>
                           </div>
                           <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>
-                            <p className={`${isBan && !isLockedOg ? 'text-marketRed line-through' : ''}`}>{isLockedOg ? '-' : og || 0.0}</p>
+                            <p className={`${isBan && !isLockedOg ? 'text-marketRed line-through' : ''}`}>
+                              {isLockedOg ? '-' : og.toFixed(2) || 0.0}
+                            </p>
                           </div>
                           <div className="hidden p-[18px] lg:block lg:w-[17%]">
-                            <p className="text-sm text-highEmphasis lg:text-[15px] lg:font-semibold">{isBan ? '-' : `${originalTotal}`}</p>
+                            <p className="text-sm text-highEmphasis lg:text-[15px] lg:font-semibold">
+                              {isBan ? '-' : `${originalTotal.toFixed(2)}`}
+                            </p>
                           </div>
                           <div className="hidden p-[18px] lg:block lg:w-[10%]">
                             <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-marketGreen'}`}>
-                              {isBan ? '-' : `${multiplier}x`}
+                              {isBan ? '-' : `${multiplier.toFixed(1)}x`}
                             </p>
                           </div>
                           <div className="hidden p-[18px] lg:block lg:w-[16%]">
                             <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
-                              {isBan ? '-' : `${total}`}
+                              {isBan ? '-' : `${total.toFixed(2)}`}
                             </p>
                           </div>
                           <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
                             <p className="text-sm lg:text-[15px] lg:font-semibold ">
-                              {total} <span className="text-marketGreen">({multiplier}X)</span>
+                              {total} <span className="text-marketGreen">({multiplier.toFixed(1)}X)</span>
                             </p>
                           </div>
                         </div>

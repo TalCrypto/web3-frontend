@@ -77,5 +77,6 @@ export const setReferralList = (data: any) => {
 export const isReferralListLoading = atom(false);
 
 export const $asActiveTab = atom(0);
+export const $asCurrentSeason = atom(0);
 
 export const $asLeaderboardUpdateTrigger = atom(false);

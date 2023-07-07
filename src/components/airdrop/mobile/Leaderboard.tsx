@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
+  $asCurrentSeason,
   $asLeaderboardUpdateTrigger,
   $asSeason1LeaderboardData,
   $asSeason2LeaderboardData,
@@ -31,7 +32,7 @@ function LeaderboardMobile() {
   const isConnected = useNanostore($userIsConnected);
 
   const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
-  const [currentSeason, setCurrentSeason] = useState(0);
+  const currentSeason = useNanostore($asCurrentSeason);
   const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
   const walletAddressToShow = (addr: any) => `${addr.substring(0, 7)}...${addr.slice(-3)}`;
@@ -114,14 +115,14 @@ function LeaderboardMobile() {
               <div
                 className={`item mr-[24px] cursor-pointer 
                 ${currentSeason === 0 ? 'active text-seasonGreen' : ''}`}
-                onClick={() => setCurrentSeason(0)}>
+                onClick={() => $asCurrentSeason.set(0)}>
                 Season 2 Leaderboard
                 {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
               </div>
               <div
                 className={`item cursor-pointer 
                 ${currentSeason === 1 ? 'active text-seasonGreen' : ''}`}
-                onClick={() => setCurrentSeason(1)}>
+                onClick={() => $asCurrentSeason.set(1)}>
                 Season 1 Leaderboard
                 {currentSeason === 1 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
               </div>
