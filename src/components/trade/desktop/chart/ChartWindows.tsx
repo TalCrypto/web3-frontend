@@ -343,7 +343,7 @@ const ProComponent = () => {
 
   return (
     <div className="visible w-[261px] whitespace-nowrap rounded-none bg-black px-[34px] py-[26px]">
-      <div className="content ml-[12px] flex flex-col space-y-[24px]">
+      <div className="content ml-3 flex flex-col space-y-[24px]">
         <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>

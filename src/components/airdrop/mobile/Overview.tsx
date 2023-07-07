@@ -1,14 +1,10 @@
 /* eslint-disable operator-linebreak */
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userIsConnected } from '@/stores/user';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { BoxGradient, BoxLocked, NewBoxLock } from '@/components/common/Box';
-// import Tooltip from '@/components/common/Tooltip';
+import { BoxLocked } from '@/components/common/Box';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
-// import PrimaryButton from '@/components/common/PrimaryButton';
 
 function OverviewMobile() {
   const userPoint = useNanostore($userPoint);
@@ -23,11 +19,7 @@ function OverviewMobile() {
   const converge = userPoint ? userPoint.converge : defaultUserPoint.converge;
 
   const prevTotal = userPrevPoint ? userPrevPoint.total : defaultUserPoint.total;
-  const tradeVolTotal = userPoint ? userPoint.tradeVol.vol : defaultUserPoint.tradeVol.vol;
-
   const isConnected = useNanostore($userIsConnected);
-  // const userPrev = useNanostore(userPrevSeasonPoint);
-  // const router = useRouter();
 
   if (!isConnected) {
     //   return <WalletNotConnected connectWallet={connectWallet} />;
@@ -39,13 +31,7 @@ function OverviewMobile() {
   const referralIsHidden = false;
   const ogPointsIsHidden = false;
 
-  const partnershipMultiplier = Number(tradeVol.multiplier);
-  const convergeVolume = convergIsHidden ? 0 : converge.val;
   const eligible = () => userPoint?.isEligible;
-
-  // const anyHidden = tradeVolIsHidden || convergIsHidden || referralIsHidden || ogPointsIsHidden;
-
-  // const maxEligibilityTradeVol = Number(5).toFixed(2);
 
   return (
     <div>

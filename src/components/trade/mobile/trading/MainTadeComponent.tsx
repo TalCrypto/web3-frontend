@@ -244,7 +244,7 @@ function EstimatedValueDisplay(props: any) {
       <div className="mb-4 flex items-center">
         <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
-          <span className=" text-[14px]">{isAmountTooSmall || !estimation ? '-.--' : estimation.txSummary.cost.toFixed(4)}</span>
+          <span className="text-[14px]">{isAmountTooSmall || !estimation ? '-.--' : estimation.txSummary.cost.toFixed(4)}</span>
           <span className="text-[12px]" style={{ marginLeft: 4 }}>
             WETH
           </span>

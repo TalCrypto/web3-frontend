@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
   $asCurrentSeason,
+  $asIsLeaderboardLoading,
   $asSeason1LeaderboardData,
   $asSeason2LeaderboardData,
   $userPoint,
@@ -27,8 +28,7 @@ function Leaderboard() {
   const userPrevPoint = userPrevPointData || defaultUserPoint;
   const userWalletAddress = useNanostore($userAddress);
 
-  // const isLoading = useNanostore(isLeaderboardLoading);
-  const isLoading = false;
+  const isLoading = useNanostore($asIsLeaderboardLoading);
   const isConnected = useNanostore($userIsConnected);
 
   const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
@@ -59,7 +59,7 @@ function Leaderboard() {
     let selectedUserPoint = {};
     if (currentSeason === 1) {
       selectedUserPoint = {
-        // originalTotal: userPrevPoint.originalTotal || 0,
+        originalTotal: userPrevPoint.originalTotal || 0,
         total: userPrevPoint.total || 0,
         multiplier: userPrevPoint.multiplier || 1,
         username: userPrevPoint.username || '',
@@ -71,13 +71,13 @@ function Leaderboard() {
         referralPoints: (userPrevPoint.referral?.referralSelfRewardPoints || 0) + (userPrevPoint.referral?.referringRewardPoints || 0) || 0,
         convergePoints: userPrevPoint.converge?.points || 0,
         og: userPrevPoint.og || 0,
-        rank: userPrevPoint.rank || 0
-        // tradeVolTotal: userPrevPoint.tradeVolTotal || '0',
-        // eligible: userPrevPoint.eligible || false
+        rank: userPrevPoint.rank || 0,
+        tradeVolTotal: userPrevPoint.tradeVolTotal || 0,
+        eligible: userPrevPoint.isEligible || false
       };
     } else {
       selectedUserPoint = {
-        // originalTotal: userPoint.originalTotal || 0,
+        originalTotal: userPoint.originalTotal || 0,
         total: userPoint.total || 0,
         multiplier: userPoint.multiplier || 1,
         username: userPoint.username || '',
@@ -89,9 +89,9 @@ function Leaderboard() {
         referralPoints: (userPoint.referral?.referralSelfRewardPoints || 0) + (userPoint.referral?.referringRewardPoints || 0) || 0,
         convergePoints: userPoint.converge?.points || 0,
         og: userPoint.og || 0,
-        rank: userPoint.rank || 0
-        // tradeVolTotal: userPoint.tradeVolTotal || '0',
-        // eligible: userPoint.eligible || false
+        rank: userPoint.rank || 0,
+        tradeVolTotal: userPoint.tradeVolTotal || 0,
+        eligible: userPoint.isEligible || false
       };
     }
 
@@ -131,92 +131,88 @@ function Leaderboard() {
   const cellWidth = currentSeason === 0 ? 'lg:w-[16%]' : 'lg:w-[12%]';
 
   return (
-    <div className="">
+    <div>
       <div id="lb-sticky-header" className="sticky top-[60px] z-[1]">
-        <div className="container">
-          <div className="flex justify-between py-[24px]">
-            <h3 className="">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
-            <div className="season-leaderboard flex justify-start text-[16px] font-semibold ">
-              <div
-                className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`}
-                onClick={() => $asCurrentSeason.set(0)}>
-                Season 2 Leaderboard
-                {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
-              </div>
-              <div className={`item cursor-pointer ${currentSeason === 1 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(1)}>
-                Season 1 Leaderboard
-                {currentSeason === 1 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
-              </div>
+        <div className="flex justify-between py-[24px]">
+          <h3 className="text-[24px] font-bold">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
+          <div className="season-leaderboard flex justify-start text-[16px] font-semibold ">
+            <div className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(0)}>
+              Season 2 Leaderboard
+              {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
+            </div>
+            <div className={`item cursor-pointer ${currentSeason === 1 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(1)}>
+              Season 1 Leaderboard
+              {currentSeason === 1 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
             </div>
           </div>
-          <div className="flex justify-end">
-            <div
-              className={`flex items-center ${refreshCooldown ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-              onClick={() => {
-                if (refreshCooldown || currentSeason !== 0) return;
-                // apiConnection.getLeaderboard(currentSeason);
-                // apiConnection.getUserPoint();
-                setRefreshCooldown(5);
-              }}>
-              {currentSeason === 0 ? (
-                <Image
-                  className={`${refreshCooldown > 0 ? 'animate-spin' : ''}`}
-                  src="/images/components/airdrop/refresh.svg"
-                  width={32}
-                  height={32}
-                  alt=""
-                />
-              ) : (
-                <div className="h-[32px] w-[1px] " />
-              )}
-              <p>{refreshCooldown > 0 ? 'Updating...' : 'Update Leaderboard'}</p>
-            </div>
+        </div>
+        <div className="flex justify-end">
+          <div
+            className={`flex items-center ${refreshCooldown ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            onClick={() => {
+              if (refreshCooldown || currentSeason !== 0) return;
+              // apiConnection.getLeaderboard(currentSeason);
+              // apiConnection.getUserPoint();
+              setRefreshCooldown(5);
+            }}>
+            {currentSeason === 0 ? (
+              <Image
+                className={`${refreshCooldown > 0 ? 'animate-spin' : ''}`}
+                src="/images/components/airdrop/refresh.svg"
+                width={32}
+                height={32}
+                alt=""
+              />
+            ) : (
+              <div className="h-[32px] w-[1px] " />
+            )}
+            <p>{refreshCooldown > 0 ? 'Updating...' : 'Update Leaderboard'}</p>
           </div>
-          <div className="w-full text-xs lg:px-[50px] lg:text-[14px] lg:font-semibold">
-            <div className="mb-[12px] flex text-mediumEmphasis">
-              <div className="w-[20%] px-[21.8px] py-[18px] lg:w-[10%] ">
-                <p className="">Rank</p>
+        </div>
+        <div className="w-full text-xs lg:px-[50px] lg:text-[14px] lg:font-semibold">
+          <div className="mb-[12px] flex text-mediumEmphasis">
+            <div className="w-[10%] px-[21.8px] py-[18px] ">
+              <p>Rank</p>
+            </div>
+            <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
+              <p>User</p>
+            </div>
+            <div className={`${cellWidth} p-[18px]`}>
+              <p>Trading Pts</p>
+            </div>
+            {currentSeason !== 0 ? (
+              <div className={`w-[12%] p-[18px] ${isLockedConverg ? '' : ''}`}>
+                <p>{isLockedConverg ? '???' : 'Converg. Pts'}</p>
               </div>
-              <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
-                <p className="">User</p>
-              </div>
-              <div className={`${cellWidth} hidden p-[18px] lg:block`}>
-                <p className="">Trading Pts</p>
-              </div>
-              {currentSeason !== 0 ? (
-                <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedConverg ? '' : ''}`}>
-                  <p className="">{isLockedConverg ? '???' : 'Converg. Pts'}</p>
-                </div>
-              ) : null}
-              <div className={`${cellWidth} hidden p-[18px] lg:block ${isLockedReferral ? '' : ''}`}>
-                <p className="">{isLockedReferral ? '???' : 'Referral Pts'}</p>
-              </div>
-              <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedOg ? '' : ''}`}>
-                <p className="">{isLockedOg ? '???' : 'Others'}</p>
-              </div>
-              <div className="hidden p-[18px] lg:block lg:w-[17%]">
-                <p className="">{currentSeason === 0 ? 'Season 2' : 'Season 1'} Points</p>
-                <p className="text-b2">(Before Multiplier)</p>
-              </div>
-              <div className="hidden p-[18px] lg:block lg:w-[10%]">
-                <p className="">Multiplier</p>
-              </div>
-              <div className="hidden p-[18px] lg:block lg:w-[16%]">
-                <p className="">{currentSeason === 0 ? 'Season 2' : 'Season 1'} Points</p>
-                <p className="text-b2">(After Multiplier)</p>
-              </div>
-              <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
-                <p className="">Seasonal Pts. (Multiplier)</p>
-              </div>
+            ) : null}
+            <div className={`${cellWidth} p-[18px] ${isLockedReferral ? '' : ''}`}>
+              <p>{isLockedReferral ? '???' : 'Referral Pts'}</p>
+            </div>
+            <div className={`w-[12%] p-[18px] ${isLockedOg ? '' : ''}`}>
+              <p>{isLockedOg ? '???' : 'Others'}</p>
+            </div>
+            <div className="w-[17%] p-[18px]">
+              <p>{currentSeason === 0 ? 'Season 2' : 'Season 1'} Points</p>
+              <p className="text-b2">(Before Multiplier)</p>
+            </div>
+            <div className="w-[10%] p-[18px]">
+              <p>Multiplier</p>
+            </div>
+            <div className="w-[16%] p-[18px]">
+              <p>{currentSeason === 0 ? 'Season 2' : 'Season 1'} Points</p>
+              <p className="text-b2">(After Multiplier)</p>
+            </div>
+            <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
+              <p>Seasonal Pts. (Multiplier)</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container">
+      <div>
         {/* table */}
-        <div className="body2 lg:body1 w-full">
-          <div className="space-y-[12px]">
+        <div className="mb-9 w-full">
+          <div className="space-y-[12px] px-[1px]">
             {!isLoading ? (
               <>
                 {/* current user data */}
@@ -226,15 +222,15 @@ function Leaderboard() {
                       className={`table-border-grad flex h-[54px] items-center font-medium lg:px-[50px] ${
                         userIsBan ? 'disqualified' : 'active'
                       }`}>
-                      <div className="flex w-[20%] p-[18px] lg:w-[10%]">
+                      <div className="flex w-[10%] p-[18px]">
                         <UserMedal rank={userData.rank} isYou isBan={userIsBan} isUnranked={userIsUnranked} />
                       </div>
                       <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
-                        <p className={`overflow-hidden text-ellipsis ${userIsBan ? 'text-marketRed line-through' : ''}`}>
+                        <p className={`overflow-text-ellipsis ${userIsBan ? 'text-marketRed line-through' : ''}`}>
                           {userData?.username ? trimString(userData.username, 10) : walletAddressToShow(userData.userAddress)}
                         </p>
                       </div>
-                      <div className={`${cellWidth} relative hidden p-[18px] lg:block`}>
+                      <div className={`${cellWidth} relative p-[18px]`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0">
                             {/* <TitleTips
@@ -248,7 +244,7 @@ function Leaderboard() {
                         <p className={`${userIsBan ? 'text-marketRed line-through' : ''}`}>{userData.tradeVolPoints.toFixed(2)}</p>
                       </div>
                       {currentSeason !== 0 ? (
-                        <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedConverg ? 'col-locked' : ''} relative`}>
+                        <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} relative`}>
                           {userIsUnranked ? (
                             <div className="absolute left-0">
                               {/* <TitleTips
@@ -267,7 +263,7 @@ function Leaderboard() {
                           </p>
                         </div>
                       ) : null}
-                      <div className={`${cellWidth} hidden p-[18px] lg:block ${isLockedReferral ? 'col-locked' : ''} relative`}>
+                      <div className={`${cellWidth} p-[18px] ${isLockedReferral ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0">
                             {/* <TitleTips
@@ -285,7 +281,7 @@ function Leaderboard() {
                           {isLockedReferral ? '-' : userData.referralPoints.toFixed(2)}
                         </p>
                       </div>
-                      <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedOg ? 'col-locked' : ''} relative`}>
+                      <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0">
                             {/* <TitleTips
@@ -300,12 +296,12 @@ function Leaderboard() {
                           {isLockedOg ? '-' : userData.og.toFixed(2)}
                         </p>
                       </div>
-                      <div className="hidden p-[18px] lg:block lg:w-[17%]">
+                      <div className="w-[17%] p-[18px]">
                         <p className="text-highEmphasis} text-sm lg:text-[15px] lg:font-semibold">
                           {userIsBan || userIsUnranked ? '-' : `${userData.originalTotal.toFixed(2)}`}
                         </p>
                       </div>
-                      <div className="hidden p-[18px] lg:block lg:w-[10%]">
+                      <div className="w-[10%] p-[18px]">
                         <p
                           className={`text-sm lg:text-[15px] lg:font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-marketGreen'
@@ -313,7 +309,7 @@ function Leaderboard() {
                           {userIsBan || userIsUnranked ? '-' : `${userData.multiplier.toFixed(2)}x`}
                         </p>
                       </div>
-                      <div className="hidden p-[18px] lg:block lg:w-[16%]">
+                      <div className="w-[16%] p-[18px]">
                         <p
                           className={`text-sm lg:text-[15px] lg:font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-warn'
@@ -321,7 +317,7 @@ function Leaderboard() {
                           {userIsBan || userIsUnranked ? '-' : `${userData.total.toFixed(2)}`}
                         </p>
                       </div>
-                      <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
+                      <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
                         <p className="text-sm ">
                           {userIsBan || userIsUnranked ? (
                             '-'
@@ -359,59 +355,56 @@ function Leaderboard() {
                         className="relative cursor-pointer"
                         onClick={() => router.push(`/userprofile/${userAddress}`)}>
                         <div className="table-border-grad flex h-[54px] items-center lg:px-[50px]">
-                          <div className="flex w-[20%] p-[18px] lg:w-[10%]">
+                          <div className="flex w-[10%] p-[18px]">
                             <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
                           </div>
                           <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
                             <p
-                              className={`overflow-hidden text-ellipsis ${isBan ? 'text-marketRed line-through' : ''} ${
+                              className={`overflow-text-ellipsis ${isBan ? 'text-marketRed line-through' : ''} ${
                                 isYou ? 'font-medium' : ''
                               }`}>
                               {username ? trimString(username, 10) : walletAddressToShow(userAddress)}
                             </p>
                           </div>
-                          <div className={`${cellWidth} hidden p-[18px] lg:block`}>
+                          <div className={`${cellWidth} p-[18px]`}>
                             <p className={`${isBan ? 'text-marketRed line-through' : ''}`}>{tradeVolPoints.toFixed(2)}</p>
                           </div>
                           {currentSeason !== 0 ? (
-                            <div
-                              className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedConverg ? 'col-locked' : ''} ${
-                                isLockedConverg ? '' : ''
-                              }`}>
+                            <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} ${isLockedConverg ? '' : ''}`}>
                               <p className={`${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
                                 {isLockedConverg ? '-' : convergePoints.toFixed(2)}
                               </p>
                             </div>
                           ) : null}
                           <div
-                            className={`${cellWidth} hidden p-[18px] lg:block lg:w-[12%] ${isLockedReferral ? 'col-locked' : ''} ${
+                            className={`${cellWidth} w-[12%] p-[18px] ${isLockedReferral ? 'col-locked' : ''} ${
                               isLockedReferral ? '' : ''
                             }`}>
                             <p className={`${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
                               {isLockedReferral ? '-' : referralPoints.toFixed(2)}
                             </p>
                           </div>
-                          <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>
+                          <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>
                             <p className={`${isBan && !isLockedOg ? 'text-marketRed line-through' : ''}`}>
                               {isLockedOg ? '-' : og.toFixed(2) || 0.0}
                             </p>
                           </div>
-                          <div className="hidden p-[18px] lg:block lg:w-[17%]">
+                          <div className="w-[17%] p-[18px]">
                             <p className="text-sm text-highEmphasis lg:text-[15px] lg:font-semibold">
                               {isBan ? '-' : `${originalTotal.toFixed(2)}`}
                             </p>
                           </div>
-                          <div className="hidden p-[18px] lg:block lg:w-[10%]">
+                          <div className="w-[10%] p-[18px]">
                             <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-marketGreen'}`}>
                               {isBan ? '-' : `${multiplier.toFixed(1)}x`}
                             </p>
                           </div>
-                          <div className="hidden p-[18px] lg:block lg:w-[16%]">
+                          <div className="w-[16%] p-[18px]">
                             <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
                               {isBan ? '-' : `${total.toFixed(2)}`}
                             </p>
                           </div>
-                          <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
+                          <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
                             <p className="text-sm lg:text-[15px] lg:font-semibold ">
                               {total} <span className="text-marketGreen">({multiplier.toFixed(1)}X)</span>
                             </p>
@@ -423,61 +416,59 @@ function Leaderboard() {
               </>
             ) : (
               <>
-                <div className="relative">
-                  <div className="table-border-grad active flex h-[54px] items-center font-medium lg:px-[86px]">
-                    <div className="flex w-[20%] justify-center p-[18px] lg:w-[10%]">-</div>
-                    <div className="w-[38%] p-[18px] lg:w-[18%]">
-                      <p className="">-</p>
+                <div className="table-border-grad active flex h-[54px] items-center font-medium lg:px-[86px]">
+                  <div className="flex w-[10%] justify-center p-[18px]">-</div>
+                  <div className="w-[18%] p-[18px]">
+                    <p>-</p>
+                  </div>
+                  <div className="w-[14%] p-[18px]">
+                    <p>-</p>
+                  </div>
+                  {currentSeason !== 0 ? (
+                    <div className="w-[14%] p-[18px]">
+                      <p>-</p>
                     </div>
-                    <div className="hidden p-[18px] lg:block lg:w-[14%]">
-                      <p className="">-</p>
-                    </div>
-                    {currentSeason !== 0 ? (
-                      <div className="hidden p-[18px] lg:block lg:w-[14%]">
-                        <p className="">-</p>
-                      </div>
-                    ) : null}
-                    <div className="hidden p-[18px] lg:block lg:w-[14%]">
-                      <p className="">-</p>
-                    </div>
-                    <div className="hidden p-[18px] lg:block lg:w-[12%]">
-                      <p className="text-sm text-marketGreen lg:text-[15px] lg:font-semibold ">-</p>
-                    </div>
-                    <div className="hidden p-[18px] lg:block lg:w-[16%]">
-                      <p className="text-sm text-warn lg:text-[15px] lg:font-semibold ">-</p>
-                    </div>
-                    <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
-                      <p className="text-sm ">
-                        - <span className="text-marketGreen">(-)</span>
-                      </p>
-                    </div>
+                  ) : null}
+                  <div className="w-[14%] p-[18px]">
+                    <p>-</p>
+                  </div>
+                  <div className="w-[12%] p-[18px]">
+                    <p className="text-sm text-marketGreen lg:text-[15px] lg:font-semibold ">-</p>
+                  </div>
+                  <div className="w-[16%] p-[18px]">
+                    <p className="text-sm text-warn lg:text-[15px] lg:font-semibold ">-</p>
+                  </div>
+                  <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
+                    <p className="text-sm ">
+                      - <span className="text-marketGreen">(-)</span>
+                    </p>
                   </div>
                 </div>
                 {dummyLoadingData.map((_item, i) => (
                   <div key={`loading-${i}`} className="relative">
                     <div className="table-border-grad flex h-[54px] items-center lg:px-[86px]">
-                      <div className="flex w-[20%] justify-center p-[18px] lg:w-[10%]">-</div>
-                      <div className="w-[38%] p-[18px] lg:w-[18%]">
-                        <p className="">-</p>
+                      <div className="flex w-[10%] justify-center p-[18px]">-</div>
+                      <div className="w-[18%] p-[18px]">
+                        <p>-</p>
                       </div>
-                      <div className="hidden p-[18px] lg:block lg:w-[14%]">
-                        <p className="">-</p>
+                      <div className="w-[14%] p-[18px]">
+                        <p>-</p>
                       </div>
                       {currentSeason !== 0 ? (
-                        <div className="hidden p-[18px] lg:block lg:w-[14%]">
-                          <p className="">-</p>
+                        <div className="w-[14%] p-[18px]">
+                          <p>-</p>
                         </div>
                       ) : null}
-                      <div className="hidden p-[18px] lg:block lg:w-[14%]">
-                        <p className="">-</p>
+                      <div className="w-[14%] p-[18px]">
+                        <p>-</p>
                       </div>
-                      <div className="hidden p-[18px] lg:block lg:w-[12%]">
+                      <div className="w-[12%] p-[18px]">
                         <p className="text-sm text-marketGreen lg:text-[15px] lg:font-semibold ">-</p>
                       </div>
-                      <div className="hidden p-[18px] lg:block lg:w-[16%]">
+                      <div className="w-[16%] p-[18px]">
                         <p className="text-sm text-warn lg:text-[15px] lg:font-semibold ">-</p>
                       </div>
-                      <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
+                      <div className="block w-[41%] p-[18px] lg:lg:w-[16%]">
                         <p className="text-sm lg:text-[15px] lg:font-semibold ">
                           - <span className="text-marketGreen">(-)</span>
                         </p>

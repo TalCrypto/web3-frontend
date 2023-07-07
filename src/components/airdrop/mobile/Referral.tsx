@@ -26,7 +26,7 @@ function ReferralMobile() {
   const isReferralListEmpty = referralListData.length === 0;
 
   return (
-    <div className="">
+    <div>
       <div className="flex flex-col">
         <div className="flex h-fit basis-1/2 flex-col bg-darkBlue">
           {/* Share */}
@@ -185,7 +185,7 @@ function ReferralMobile() {
                   </div>
                 </div>
 
-                <div className="">
+                <div>
                   <div className="px-5 py-6">
                     <h5 className="text-[15px] font-semibold">{`Referred Users (${referralListData.length})`}</h5>
                   </div>

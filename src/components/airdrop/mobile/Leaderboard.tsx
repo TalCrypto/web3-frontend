@@ -157,13 +157,13 @@ function LeaderboardMobile() {
           <div className="w-full text-xs">
             <div className="flex pb-4 text-mediumEmphasis">
               <div className="w-[56px]">
-                <p className="">Rank</p>
+                <p>Rank</p>
               </div>
               <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
-                <p className="">User</p>
+                <p>User</p>
               </div>
               <div className="flex-1 text-right">
-                <p className="">Season {currentSeason === 0 ? '2' : '1'} Pts. (Multiplier)</p>
+                <p>Season {currentSeason === 0 ? '2' : '1'} Pts. (Multiplier)</p>
               </div>
             </div>
           </div>
@@ -241,7 +241,7 @@ function LeaderboardMobile() {
               <div className="table-border-grad active flex items-center font-medium">
                 <div className="w-[56px]">-</div>
                 <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
-                  <p className="">-</p>
+                  <p>-</p>
                 </div>
                 <div className="block w-[41%]">
                   <p className="text-[14px] font-normal">
@@ -255,7 +255,7 @@ function LeaderboardMobile() {
                 <div className="table-border-grad flex items-center">
                   <div className="flex w-[20%] justify-center">-</div>
                   <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
-                    <p className="">-</p>
+                    <p>-</p>
                   </div>
 
                   <div className="flex-1 text-right">

@@ -199,3 +199,40 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.table-border-grad {
+  position: relative;
+  background: linear-gradient(180deg, rgb(83, 94, 109, 0.15) 0%, rgba(168, 203, 255, 0) 100%);
+  &::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: -1px;
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: transparent;
+    background: linear-gradient(180deg, #71aaff38, #ffffff00) border-box;
+    mask: linear-gradient(#ffffff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
+  &.active,
+  &:hover {
+    background-color: rgba(45, 104, 255, 0.25);
+    &::before {
+      background: linear-gradient(180deg, #afc6ffbf, #86a8ff33) border-box;
+    }
+  }
+  &.disqualified {
+    background-color: rgba(176, 36, 27, 0.25);
+    &::before {
+      background: linear-gradient(180deg, #afc6ffbf, #86a8ff33) border-box;
+    }
+  }
+  & > * {
+    position: relative;
+  }
+}

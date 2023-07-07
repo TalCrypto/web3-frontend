@@ -28,6 +28,8 @@ export interface UserPoint {
   };
   degenscore: number;
   isEligible: boolean;
+  originalTotal: number;
+  tradeVolTotal: number;
 }
 
 export const defaultUserPoint: UserPoint = {
@@ -57,7 +59,9 @@ export const defaultUserPoint: UserPoint = {
     val: '0'
   },
   degenscore: 0,
-  isEligible: false
+  isEligible: false,
+  originalTotal: 0,
+  tradeVolTotal: 0
 };
 
 // user points

@@ -22,9 +22,19 @@ const UserMedal = (props: any) => {
     );
   } else {
     medal = (
-      <div className={`px-[12px] ${isYou ? 'pb-[10px]' : ''}`}>
-        <div className="basic-medal">
-          <div className="inner">{rank}</div>
+      <div className={`px-3 ${isYou ? 'pb-[10px]' : ''}`}>
+        <div
+          className="relative flex h-[26px] w-[26px] items-center justify-center
+            rounded-full text-center text-[13px] font-semibold text-highEmphasis">
+          <Image className="absolute left-0 top-0" src="/images/components/airdrop/medal/outer-circle.svg" width={26} height={26} alt="" />
+          <Image
+            className="absolute left-[2px] top-[2px]"
+            src="/images/components/airdrop/medal/inner-circle.svg"
+            width={22}
+            height={22}
+            alt=""
+          />
+          <div className="z-10">{rank}</div>
         </div>
       </div>
     );
