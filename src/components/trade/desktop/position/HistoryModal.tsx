@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
 import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
-import { getActionTypeFromApi } from '@/utils/actionType';
+import { getActionTypeFromApi, getWalletBalanceChange } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
 import { PositionHistoryRecord } from '@/stores/user';
 import { CollateralActions, TradeActions } from '@/const';
@@ -170,21 +170,7 @@ const HistoryModal = (props: any) => {
                       <div id={`group-${month}`} className="collapsible">
                         {records.map((record: PositionHistoryRecord, idx: any) => {
                           const currentRecordType = getActionTypeFromApi(record);
-                          const recordAmount = Math.abs(record.amount);
-                          const recordFee = record.fee;
-                          const recordRealizedPnl = record.realizedPnl;
-                          const recordRealizedFundingPayment = record.fundingPayment;
-                          const recordCollateralChange = record.collateralChange;
-                          const balance =
-                            currentRecordType === TradeActions.OPEN ||
-                            currentRecordType === TradeActions.ADD ||
-                            currentRecordType === CollateralActions.ADD
-                              ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-                              : currentRecordType === CollateralActions.REDUCE
-                              ? -Math.abs(recordCollateralChange + recordRealizedFundingPayment)
-                              : currentRecordType === TradeActions.CLOSE
-                              ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
-                              : -Math.abs(recordFee);
+                          const balance = getWalletBalanceChange(record);
                           return (
                             <div
                               key={`item-${idx}-${record.timestamp}`}

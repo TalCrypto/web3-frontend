@@ -6,7 +6,7 @@
 
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-import { getActionTypeFromApi } from '@/utils/actionType';
+import { getActionTypeFromApi, getWalletBalanceChange } from '@/utils/actionType';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
@@ -137,18 +137,7 @@ const HistoryModal = (props: any) => {
     setSelectedRecord(record);
     setIsShowDetail(true);
 
-    const currentRecordType = getActionTypeFromApi(record);
-    const recordAmount = Math.abs(record.amount);
-    const recordFee = record.fee;
-    const recordCollateralChange = record.collateralChange;
-    const balance =
-      currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD
-        ? -Math.abs(recordAmount + recordFee)
-        : currentRecordType === CollateralActions.ADD || currentRecordType === CollateralActions.REDUCE
-        ? -Math.abs(recordCollateralChange)
-        : currentRecordType === TradeActions.CLOSE
-        ? Math.abs(recordAmount - recordFee)
-        : -Math.abs(recordFee);
+    const balance = getWalletBalanceChange(record);
     setSelectedBalance(String(balance));
   };
 
@@ -185,21 +174,7 @@ const HistoryModal = (props: any) => {
                     <div id={`group-${month}`} key={`group-${month}`} className="collapsible">
                       {records.map((record: any, idx: any) => {
                         const currentRecordType = getActionTypeFromApi(record);
-                        const recordAmount = Math.abs(record.amount);
-                        const recordFee = record.fee;
-                        const recordRealizedPnl = record.realizedPnl;
-                        const recordRealizedFundingPayment = record.fundingPayment;
-                        const recordCollateralChange = record.collateralChange;
-                        const balance =
-                          currentRecordType === TradeActions.OPEN ||
-                          currentRecordType === TradeActions.ADD ||
-                          currentRecordType === CollateralActions.ADD
-                            ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-                            : currentRecordType === CollateralActions.REDUCE
-                            ? -Math.abs(recordCollateralChange + recordRealizedFundingPayment)
-                            : currentRecordType === TradeActions.CLOSE
-                            ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
-                            : -Math.abs(recordFee);
+                        const balance = getWalletBalanceChange(record);
                         return (
                           <div
                             key={`item-${idx}-${record.timestamp}`}

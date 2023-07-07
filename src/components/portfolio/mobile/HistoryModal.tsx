@@ -11,7 +11,7 @@ import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/co
 import { $isShowMobileModal } from '@/stores/modal';
 import { CollateralActions, TradeActions } from '@/const';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
-import { getActionTypeFromApi } from '@/utils/actionType';
+import { getActionTypeFromApi, getWalletBalanceChange } from '@/utils/actionType';
 import { $psShowHistory } from '@/stores/portfolio';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PositionHistoryRecord } from '@/stores/user';
@@ -106,21 +106,7 @@ const HistoryModal = () => {
   const onClickRow = (record: any) => {
     setSelectedRecord(record);
     setIsShowDetail(true);
-
-    const currentRecordType = getActionTypeFromApi(record);
-    const recordAmount = Math.abs(record.amount);
-    const recordFee = record.fee;
-    const recordRealizedPnl = record.realizedPnl;
-    const recordRealizedFundingPayment = record.fundingPayment;
-    const recordCollateralChange = record.collateralChange;
-    const balance =
-      currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD || currentRecordType === CollateralActions.ADD
-        ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-        : currentRecordType === CollateralActions.REDUCE
-        ? -Math.abs(recordCollateralChange + recordRealizedFundingPayment)
-        : currentRecordType === TradeActions.CLOSE
-        ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
-        : -Math.abs(recordFee);
+    const balance = getWalletBalanceChange(record);
     setSelectedBalance(String(balance));
   };
 
@@ -157,21 +143,7 @@ const HistoryModal = () => {
                     <div id={`group-${month}`} key={`group-${month}`} className="collapsible">
                       {records.map((record: any, idx: any) => {
                         const currentRecordType = getActionTypeFromApi(record);
-                        const recordAmount = Math.abs(record.amount);
-                        const recordFee = record.fee;
-                        const recordRealizedPnl = record.realizedPnl;
-                        const recordRealizedFundingPayment = record.fundingPayment;
-                        const recordCollateralChange = record.collateralChange;
-                        const balance =
-                          currentRecordType === TradeActions.OPEN ||
-                          currentRecordType === TradeActions.ADD ||
-                          currentRecordType === CollateralActions.ADD
-                            ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-                            : currentRecordType === CollateralActions.REDUCE
-                            ? -Math.abs(recordCollateralChange + recordRealizedFundingPayment)
-                            : currentRecordType === TradeActions.CLOSE
-                            ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
-                            : -Math.abs(recordFee);
+                        const balance = getWalletBalanceChange(record);
                         return (
                           <div
                             key={`item-${idx}-${record.timestamp}`}
