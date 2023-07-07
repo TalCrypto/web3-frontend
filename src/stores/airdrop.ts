@@ -63,13 +63,10 @@ export const $userPoint = atom<UserPoint | undefined>();
 export const $userPrevPoint = atom<UserPoint | undefined>();
 
 // leaderboard
-export const leaderboard = atom<any[]>([]);
+export const $asSeason1LeaderboardData = atom<any[]>([]);
+export const $asSeason2LeaderboardData = atom<any[]>([]);
 
-export const setLeaderboard = (data: any[]) => {
-  leaderboard.set(data);
-};
-
-export const isLeaderboardLoading = atom(false);
+export const $asIsLeaderboardLoading = atom(false);
 
 // referral
 export const referralList = atom([]);
@@ -80,3 +77,5 @@ export const setReferralList = (data: any) => {
 export const isReferralListLoading = atom(false);
 
 export const $asActiveTab = atom(0);
+
+export const $asLeaderboardUpdateTrigger = atom(false);

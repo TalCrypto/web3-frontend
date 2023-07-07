@@ -16,15 +16,12 @@ import OverviewMobile from '@/components/airdrop/mobile/Overview';
 import TopInfo from '@/components/airdrop/desktop/TopInfo';
 import TopInfoMobile from '@/components/airdrop/mobile/TopInfo';
 import TabSwitcher from '@/components/airdrop/mobile/TabSwitcher';
+import LeaderboardMobile from '@/components/airdrop/mobile/Leaderboard';
+import LeaderboardDataUpdater from '@/components/updaters/LeaderboardUpdater';
 
 export default function Home() {
   const router = useRouter();
   const activeTab = useNanostore($asActiveTab);
-
-  // value from nano store
-  // const userPointData = useNanostore(userPoint);
-  // const leaderboardData = useNanostore(leaderboard);
-  // const prevUserPointData = useNanostore(userPrevSeasonPoint);
 
   const routingQuery = () => {
     const { target }: any = router.query;
@@ -36,12 +33,7 @@ export default function Home() {
     }
   };
 
-  const getInitialData = () => {
-    // apiConnection.getLeaderboard();
-  };
-
   useEffect(() => {
-    getInitialData();
     routingQuery();
   }, []);
 
@@ -90,10 +82,20 @@ export default function Home() {
 
           <TabSwitcher />
 
-          <div className="pt-9">
-            {activeTab === 0 ? <OverviewMobile /> : activeTab === 1 ? <ReferralMobile /> : activeTab === 2 ? null : <RulesMobile />}
+          <div className="bg-darkBlue pt-9">
+            {activeTab === 0 ? (
+              <OverviewMobile />
+            ) : activeTab === 1 ? (
+              <ReferralMobile />
+            ) : activeTab === 2 ? (
+              <LeaderboardMobile />
+            ) : (
+              <RulesMobile />
+            )}
           </div>
         </div>
+
+        <LeaderboardDataUpdater />
       </main>
     </>
   );

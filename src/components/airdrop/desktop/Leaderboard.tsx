@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $userPoint, $userPrevPoint, defaultUserPoint, leaderboard } from '@/stores/airdrop';
+import { $asSeason1LeaderboardData, $asSeason2LeaderboardData, $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import { $userAddress, $userIsConnected } from '@/stores/user';
 import Image from 'next/image';
 import UserMedal from '@/components/airdrop/desktop/UserMedal';
@@ -12,7 +12,8 @@ import ScrollTopButton from '@/components/common/ScrollToTopButton';
 function Leaderboard() {
   const router = useRouter();
   const userPointData = useNanostore($userPoint);
-  const leaderboardData = useNanostore(leaderboard);
+  const season2Data = useNanostore($asSeason2LeaderboardData);
+  const season1Data = useNanostore($asSeason1LeaderboardData);
   const userPoint = userPointData || defaultUserPoint;
 
   const userPrevPointData = useNanostore($userPrevPoint);
@@ -25,6 +26,7 @@ function Leaderboard() {
 
   const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
   const [currentSeason, setCurrentSeason] = useState(0);
+  const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
   useEffect(() => {
     const scrollHandler = () => {
@@ -323,85 +325,86 @@ function Leaderboard() {
                   </div>
                 ) : null}
                 {/* other users data */}
-                {leaderboardData.map((item: any) => {
-                  const {
-                    total,
-                    multiplier,
-                    username,
-                    userAddress,
-                    isBan,
-                    tradeVolPoints,
-                    referralPoints,
-                    convergePoints,
-                    rank,
-                    og,
-                    originalTotal
-                  } = item;
+                {leaderboardData &&
+                  leaderboardData.map((item: any) => {
+                    const {
+                      total,
+                      multiplier,
+                      username,
+                      userAddress,
+                      isBan,
+                      tradeVolPoints,
+                      referralPoints,
+                      convergePoints,
+                      rank,
+                      og,
+                      originalTotal
+                    } = item;
 
-                  const isYou = userAddress === userData.userAddress;
-                  return (
-                    <div
-                      key={`rank-${userAddress}`}
-                      className="relative cursor-pointer"
-                      onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                      <div className="table-border-grad flex h-[54px] items-center lg:px-[50px]">
-                        <div className="flex w-[20%] p-[18px] lg:w-[10%]">
-                          <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
-                        </div>
-                        <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
-                          <p
-                            className={`overflow-hidden text-ellipsis ${isBan ? 'text-marketRed line-through' : ''} ${
-                              isYou ? 'font-medium' : ''
-                            }`}>
-                            {username ? trimString(username, 10) : walletAddressToShow(userAddress)}
-                          </p>
-                        </div>
-                        <div className={`${cellWidth} hidden p-[18px] lg:block`}>
-                          <p className={`${isBan ? 'text-marketRed line-through' : ''}`}>{tradeVolPoints}</p>
-                        </div>
-                        {currentSeason !== 0 ? (
-                          <div
-                            className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedConverg ? 'col-locked' : ''} ${
-                              isLockedConverg ? '' : ''
-                            }`}>
-                            <p className={`${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
-                              {isLockedConverg ? '-' : convergePoints}
+                    const isYou = userAddress === userData.userAddress;
+                    return (
+                      <div
+                        key={`rank-${userAddress}`}
+                        className="relative cursor-pointer"
+                        onClick={() => router.push(`/userprofile/${userAddress}`)}>
+                        <div className="table-border-grad flex h-[54px] items-center lg:px-[50px]">
+                          <div className="flex w-[20%] p-[18px] lg:w-[10%]">
+                            <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
+                          </div>
+                          <div className={`w-[38%] p-[18px] ${usernameWidth}`}>
+                            <p
+                              className={`overflow-hidden text-ellipsis ${isBan ? 'text-marketRed line-through' : ''} ${
+                                isYou ? 'font-medium' : ''
+                              }`}>
+                              {username ? trimString(username, 10) : walletAddressToShow(userAddress)}
                             </p>
                           </div>
-                        ) : null}
-                        <div
-                          className={`${cellWidth} hidden p-[18px] lg:block lg:w-[12%] ${isLockedReferral ? 'col-locked' : ''} ${
-                            isLockedReferral ? '' : ''
-                          }`}>
-                          <p className={`${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
-                            {isLockedReferral ? '-' : referralPoints}
-                          </p>
-                        </div>
-                        <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>
-                          <p className={`${isBan && !isLockedOg ? 'text-marketRed line-through' : ''}`}>{isLockedOg ? '-' : og || 0.0}</p>
-                        </div>
-                        <div className="hidden p-[18px] lg:block lg:w-[17%]">
-                          <p className="text-sm text-highEmphasis lg:text-[15px] lg:font-semibold">{isBan ? '-' : `${originalTotal}`}</p>
-                        </div>
-                        <div className="hidden p-[18px] lg:block lg:w-[10%]">
-                          <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-marketGreen'}`}>
-                            {isBan ? '-' : `${multiplier}x`}
-                          </p>
-                        </div>
-                        <div className="hidden p-[18px] lg:block lg:w-[16%]">
-                          <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
-                            {isBan ? '-' : `${total}`}
-                          </p>
-                        </div>
-                        <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
-                          <p className="text-sm lg:text-[15px] lg:font-semibold ">
-                            {total} <span className="text-marketGreen">({multiplier}X)</span>
-                          </p>
+                          <div className={`${cellWidth} hidden p-[18px] lg:block`}>
+                            <p className={`${isBan ? 'text-marketRed line-through' : ''}`}>{tradeVolPoints}</p>
+                          </div>
+                          {currentSeason !== 0 ? (
+                            <div
+                              className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedConverg ? 'col-locked' : ''} ${
+                                isLockedConverg ? '' : ''
+                              }`}>
+                              <p className={`${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
+                                {isLockedConverg ? '-' : convergePoints}
+                              </p>
+                            </div>
+                          ) : null}
+                          <div
+                            className={`${cellWidth} hidden p-[18px] lg:block lg:w-[12%] ${isLockedReferral ? 'col-locked' : ''} ${
+                              isLockedReferral ? '' : ''
+                            }`}>
+                            <p className={`${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
+                              {isLockedReferral ? '-' : referralPoints}
+                            </p>
+                          </div>
+                          <div className={`hidden p-[18px] lg:block lg:w-[12%] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>
+                            <p className={`${isBan && !isLockedOg ? 'text-marketRed line-through' : ''}`}>{isLockedOg ? '-' : og || 0.0}</p>
+                          </div>
+                          <div className="hidden p-[18px] lg:block lg:w-[17%]">
+                            <p className="text-sm text-highEmphasis lg:text-[15px] lg:font-semibold">{isBan ? '-' : `${originalTotal}`}</p>
+                          </div>
+                          <div className="hidden p-[18px] lg:block lg:w-[10%]">
+                            <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-marketGreen'}`}>
+                              {isBan ? '-' : `${multiplier}x`}
+                            </p>
+                          </div>
+                          <div className="hidden p-[18px] lg:block lg:w-[16%]">
+                            <p className={`text-sm lg:text-[15px] lg:font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
+                              {isBan ? '-' : `${total}`}
+                            </p>
+                          </div>
+                          <div className="block w-[41%] p-[18px] lg:hidden lg:w-[16%]">
+                            <p className="text-sm lg:text-[15px] lg:font-semibold ">
+                              {total} <span className="text-marketGreen">({multiplier}X)</span>
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </>
             ) : (
               <>

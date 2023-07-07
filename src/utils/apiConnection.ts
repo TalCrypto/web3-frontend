@@ -3,7 +3,7 @@
 // import React from 'react';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
-import { setLeaderboard, isLeaderboardLoading, isReferralListLoading, setReferralList } from '../stores/airdrop';
+import { isReferralListLoading, setReferralList } from '../stores/airdrop';
 
 const apiUrl = process.env.NEXT_PUBLIC_DASHBOARD_API_URL;
 const authUrl = process.env.NEXT_PUBLIC_AUTHENTICATION_API_URL;
@@ -362,18 +362,14 @@ export const apiConnection = {
       return Promise.reject(defaultData);
     }
   },
-  getLeaderboard: async function getLeaderboard() {
-    const url = `${authUrl}/points/rank?show=tradeVol,referral,og,converge&pageSize=250`;
+  getLeaderboard: async function getLeaderboard(targetSeason = 0) {
+    const url = `${authUrl}/points/rank?show=tradeVol,referral,og,converge&pageSize=250&season=${targetSeason}`;
     try {
-      isLeaderboardLoading.set(true);
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      setLeaderboard(data);
-      isLeaderboardLoading.set(false);
       return Promise.resolve(data);
     } catch (err) {
-      isLeaderboardLoading.set(false);
       return Promise.reject(err);
     }
   },

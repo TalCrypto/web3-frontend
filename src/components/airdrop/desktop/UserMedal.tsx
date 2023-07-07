@@ -17,7 +17,7 @@ const UserMedal = (props: any) => {
   } else if (rank <= 3) {
     medal = (
       <div className="w-[50px]">
-        <Image src={`/images/components/airdrop/medal${rank}.svg`} width={50} height={28} alt="" />
+        <Image src={`/images/components/airdrop/medal/medal${rank}.svg`} width={50} height={28} alt="" />
       </div>
     );
   } else {

@@ -27,16 +27,16 @@ export const airdropTabsInfo: AirdropTabInfos = {
   1: {
     title: 'Referral',
     image: '/images/components/airdrop/tabs/referral.svg',
-    route: '/refer'
+    route: 'refer'
   },
   2: {
     title: 'Leaderboard',
     image: '/images/components/airdrop/tabs/leaderboard.svg',
-    route: '/leaderboard'
+    route: 'leaderboard'
   },
   3: {
     title: 'Rules',
     image: '/images/components/airdrop/tabs/rules.svg',
-    route: '/rules'
+    route: 'rules'
   }
 };
