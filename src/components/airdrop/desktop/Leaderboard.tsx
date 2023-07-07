@@ -136,7 +136,7 @@ function Leaderboard() {
         <div className="container">
           <div className="flex justify-between py-[24px]">
             <h3 className="">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
-            <div className="season-leaderboard flex justify-start text-[16px] font-[600] ">
+            <div className="season-leaderboard flex justify-start text-[16px] font-semibold ">
               <div
                 className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`}
                 onClick={() => $asCurrentSeason.set(0)}>

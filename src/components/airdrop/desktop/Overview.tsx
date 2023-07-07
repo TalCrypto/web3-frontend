@@ -40,7 +40,7 @@ function Overview() {
 
   const partnershipMultiplier = Number(tradeVol.multiplier);
   const convergeVolume = convergIsHidden ? 0 : converge.val;
-  const eligible = () => false;
+  const eligible = () => userPoint?.isEligible;
 
   // const anyHidden = tradeVolIsHidden || convergIsHidden || referralIsHidden || ogPointsIsHidden;
 
@@ -57,9 +57,16 @@ function Overview() {
                 !eligible() ? '' : "bg-[url('/images/components/airdrop/complete-badge.svg')] bg-no-repeat"
               } `}>
               <div>
-                <p className="mb-[36px] text-[14px] font-normal text-highEmphasis">
-                  A minimum of <span className="body2e text-seasonGreen">5 WETH</span> notional value.
-                </p>
+                {!eligible() ? (
+                  <p className="mb-[36px] text-[14px] font-normal text-highEmphasis">
+                    A minimum of <span className="body2e text-seasonGreen">5 WETH</span> notional value.
+                  </p>
+                ) : (
+                  <p className="mb-[36px] text-[14px] font-normal text-highEmphasis">
+                    A minimum of <span className="body2e text-seasonGreen">5 WETH</span> lifetime notional volume.
+                  </p>
+                )}
+
                 <p className="body1e mb-[15px]">
                   {!eligible()
                     ? `${Number(tradeVolTotal).toFixed(2)} / ${maxEligibilityTradeVol} WETH`
@@ -103,7 +110,7 @@ function Overview() {
                 <BoxGradient>
                   <div className="relative flex h-[200px] w-[256px] flex-col pt-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
-                    <div className="z-[2] flex flex-row items-center justify-start px-[36px] text-[20px] font-[600]">
+                    <div className="z-[2] flex flex-row items-center justify-start px-[36px] text-[20px] font-semibold">
                       <div className="mr-[6px] h-[26px] w-[26px]">
                         <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
                       </div>
@@ -124,7 +131,7 @@ function Overview() {
                       </span>
                     </div>
                     <div className="mt-[18px] h-[50.5px] px-[36px]">
-                      <div className="flex flex-row items-center justify-start text-[15px] font-[400] text-[#A8CBFFBF]">
+                      <div className="flex flex-row items-center justify-start text-[15px] font-normal text-[#A8CBFFBF]">
                         <div className="mr-[6px] h-[16px] w-[16px]">
                           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
                         </div>
@@ -135,13 +142,13 @@ function Overview() {
                       </div>
                     </div>
                     <div className="mt-[12px] flex h-[39px] flex-row items-end px-[36px]">
-                      <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">{tradeVol.points.toFixed(4)}</p>
+                      <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
                       <p>Pts</p>
                     </div>
                     {partnershipMultiplier > 1 ? (
                       <div
                         className="mb-[6px] mt-[8px] flex flex-row items-center
-                            justify-center px-[10px] text-[12px] font-[600] text-primaryBlue">
+                            justify-center px-[10px] text-[12px] font-semibold text-primaryBlue">
                         {partnershipMultiplier}X partnership multiplier applied
                         <span className="ml-1">
                           <Image src="/images/components/airdrop/checklist.svg" width={10} height={10} alt="" />
@@ -159,7 +166,7 @@ function Overview() {
                 <BoxGradient>
                   <div className="relative flex h-[200px] w-[256px] flex-col px-[36px] py-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
-                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-[600]">
+                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
                       <div className="mr-[6px] h-[26px] w-[26px]">
                         <Image src="/images/components/airdrop/referral-blue.svg" width={26} height={26} alt="" />
                       </div>
@@ -178,7 +185,7 @@ function Overview() {
                       </span>
                     </div>
                     <div className="mt-[18px] h-[50.5px]">
-                      <div className="flex flex-row items-center justify-start text-[15px] font-[400] text-[#A8CBFFBF]">
+                      <div className="flex flex-row items-center justify-start text-[15px] font-normal text-[#A8CBFFBF]">
                         {referralIsHidden ? '****' : referral.referralSelfRewardPoints.toFixed(1)} Pts +{' '}
                         {referralIsHidden ? '****' : referral.referringRewardPoints.toFixed(1)} Pts
                       </div>
@@ -188,7 +195,7 @@ function Overview() {
                     </div>
                     <div className="mt-[12px] flex h-[39px] flex-row items-end">
                       <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">
-                        {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(4)}
+                        {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
                       </p>
                       <p>Pts</p>
                     </div>
@@ -201,7 +208,7 @@ function Overview() {
                 <BoxGradient>
                   <div className="relative flex h-[200px] w-[256px] flex-col px-[36px] py-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
-                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-[600]">
+                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
                       <div className="mr-[6px] h-[26px] w-[26px]">
                         <Image src="/images/components/airdrop/og-points.svg" width={26} height={26} alt="" />
                       </div>
@@ -210,13 +217,13 @@ function Overview() {
                     <div>
                       <div
                         className="mt-[18px] flex h-[50.5px] flex-row items-center
-                          justify-start text-[12px] font-[400] text-[#A8CBFFBF]">
+                          justify-start text-[12px] font-normal text-[#A8CBFFBF]">
                         Tribe3 protocol contribution on beta, communities, campaigns, testnet etc.
                       </div>
                     </div>
                     <div className="mt-[12px] flex h-[39px] flex-row items-end">
                       <div className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">
-                        <p className="text-glow-green text-h4 md:text-h2">{ogPointsIsHidden ? '****' : og.toFixed(4)}</p>
+                        <p className="text-glow-green text-h4 md:text-h2">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
                       </div>
                       <p>Pts</p>
                     </div>
@@ -234,7 +241,7 @@ function Overview() {
             <div className="rounded-[15px] bg-lightBlue p-[24px] px-[24px] py-[36px] outline-dashed outline-2 outline-lightBlue">
               <div className="flex flex-row items-center justify-between">
                 <div className="max-w-[70%]">
-                  <div className="flex flex-row items-center justify-start text-[20px] font-[600]">
+                  <div className="flex flex-row items-center justify-start text-[20px] font-semibold">
                     <div className="mr-[6px] h-[26px] w-[26px]">
                       <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
                     </div>
@@ -254,13 +261,13 @@ function Overview() {
                       {/* </Tooltip> */}
                     </span>
                   </div>
-                  <div className="mt-[24px] text-[15px] font-[400] text-[#A8CBFFBF]">
+                  <div className="mt-[24px] text-[15px] font-normal text-[#A8CBFFBF]">
                     At the end of the season, bonus points will be added to your total points after multiplier, which will boost your
                     ranking even further!
                   </div>
                 </div>
                 <div>
-                  <div className="relative flex flex-row items-center justify-start text-[15px] font-[400]">
+                  <div className="relative flex flex-row items-center justify-start text-[15px] font-normal">
                     {!eligible() ? <NewBoxLock /> : null}
                     <div className="mr-[6px] h-[16px] w-[16px]">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
@@ -274,7 +281,7 @@ function Overview() {
                       alt=""
                     />
                     <div className="flex flex-row items-center">
-                      <span className="text-glow-green text-[16px] font-[600]">
+                      <span className="text-glow-green text-[16px] font-semibold">
                         {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
                       </span>
                       &nbsp; Pts.
@@ -292,8 +299,8 @@ function Overview() {
         <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
           <div className="rounded-[6px] bg-lightBlue">
             <div className="bg-gradient-blue p-[52px] text-center">
-              <p className="text-[20px] font-[600]">Total Pts</p>
-              <p className="mb-[12px] text-[14px] font-[400]">After Multiplier</p>
+              <p className="text-[20px] font-semibold">Total Pts</p>
+              <p className="mb-[12px] text-[14px] font-normal">After Multiplier</p>
               <div className="flex items-end justify-center">
                 <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(4)}</p>
                 <p>Pts</p>
@@ -330,13 +337,13 @@ function Overview() {
               <div className="p-[36px]">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="text-[20px] font-[600] leading-[20px]">Season 1 Points</div>
-                    <div className="mt-[12px] text-[15px] font-[400] leading-[20px]">
-                      <span className="text-glow-yellow text-[20px] font-[600]">{prevTotal.toFixed(1)}</span> Pts.
+                    <div className="text-[20px] font-semibold leading-[20px]">Season 1 Points</div>
+                    <div className="mt-[12px] text-[15px] font-normal leading-[20px]">
+                      <span className="text-glow-yellow text-[20px] font-semibold">{prevTotal.toFixed(1)}</span> Pts.
                     </div>
                   </div>
                   <div className="flex flex-col items-end">
-                    <div className="text-[15px] font-[400] text-mediumEmphasis">06.June.2023</div>
+                    <div className="text-[15px] font-normal text-mediumEmphasis">06.June.2023</div>
                     <div className="mt-[8] text-[16px] font-semibold text-warn">ENDED</div>
                   </div>
                 </div>

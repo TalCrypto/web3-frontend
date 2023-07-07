@@ -23,7 +23,7 @@ const AirdropPoint: React.FC = () => {
         ) : (
           <>
             <Image src="/images/components/layout/header/user-point.svg" alt="" width={14} height={14} />
-            <span className="text-[16px] font-[500] leading-[20px]">
+            <span className="text-[16px] font-medium leading-[20px]">
               {isEligable(Number(airdropPoints.tradeVol.vol)) && !airdropPoints.isBan ? localeConversion(airdropPoints.total) : '0.0'}
             </span>
           </>

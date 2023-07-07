@@ -41,7 +41,7 @@ function OverviewMobile() {
 
   const partnershipMultiplier = Number(tradeVol.multiplier);
   const convergeVolume = convergIsHidden ? 0 : converge.val;
-  const eligible = () => false;
+  const eligible = () => userPoint?.isEligible;
 
   // const anyHidden = tradeVolIsHidden || convergIsHidden || referralIsHidden || ogPointsIsHidden;
 
@@ -54,8 +54,8 @@ function OverviewMobile() {
         <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
           <div className="rounded-[6px] bg-lightBlue">
             <div className="bg-gradient-blue p-9 text-center">
-              <p className="text-[20px] font-[600]">Total Pts</p>
-              <p className="mb-3 text-[14px] font-[400]">with Multiplier</p>
+              <p className="text-[20px] font-semibold">Total Pts</p>
+              <p className="mb-3 text-[14px] font-normal">with Multiplier</p>
               <div className="flex items-end justify-center">
                 <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(1)}</p>
                 <p>Pts</p>
@@ -84,13 +84,13 @@ function OverviewMobile() {
               <Image src="/images/components/airdrop/season1-tag.svg" width={60} height={60} alt="" className="absolute left-0 top-0 " />
               <div className="p-6">
                 <div className="mb-6 flex items-center justify-between">
-                  <div className="text-[20px] font-[600] leading-[20px]">Season 1 Points</div>
-                  <div className="text-[15px] font-[400] leading-[20px]">
-                    <span className="text-glow-yellow text-[20px] font-[600]">{prevTotal.toFixed(1)}</span> Pts
+                  <div className="text-[20px] font-semibold leading-[20px]">Season 1 Points</div>
+                  <div className="text-[15px] font-normal leading-[20px]">
+                    <span className="text-glow-yellow text-[20px] font-semibold">{prevTotal.toFixed(1)}</span> Pts
                   </div>
                 </div>
                 <div className="flex items-end">
-                  <div className="mr-[6px] text-[15px] font-[400] text-mediumEmphasis">06.June.2023</div>
+                  <div className="mr-[6px] text-[15px] font-normal text-mediumEmphasis">06.June.2023</div>
                   <div className="text-[16px] font-semibold text-warn">ENDED</div>
                 </div>
               </div>
@@ -158,7 +158,7 @@ function OverviewMobile() {
 
           <div className="flex items-center justify-between bg-lightBlue">
             <div className="max-w-[70%]">
-              <div className="flex items-center justify-start text-[20px] font-[600]">
+              <div className="flex items-center justify-start text-[20px] font-semibold">
                 <div className="mr-[6px]">
                   <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
                 </div>
@@ -166,9 +166,9 @@ function OverviewMobile() {
               </div>
             </div>
             <div>
-              <div className="relative flex items-center justify-start text-[15px] font-[400]">
+              <div className="relative flex items-center justify-start text-[15px] font-normal">
                 <div className="flex items-end text-[15px]">
-                  <span className="text-glow-green mr-[6px] text-[20px] font-[600]">
+                  <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
                     {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
                   </span>
                   Pts

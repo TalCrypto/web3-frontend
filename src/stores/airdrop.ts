@@ -27,6 +27,7 @@ export interface UserPoint {
     val: string;
   };
   degenscore: number;
+  isEligible: boolean;
 }
 
 export const defaultUserPoint: UserPoint = {
@@ -55,7 +56,8 @@ export const defaultUserPoint: UserPoint = {
     points: 0,
     val: '0'
   },
-  degenscore: 0
+  degenscore: 0,
+  isEligible: false
 };
 
 // user points
