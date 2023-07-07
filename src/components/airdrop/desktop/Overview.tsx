@@ -32,7 +32,6 @@ function Overview() {
   }
 
   // testing
-  // const tradeVolIsHidden = false;
   const convergIsHidden = false;
   const referralIsHidden = false;
   const ogPointsIsHidden = false;

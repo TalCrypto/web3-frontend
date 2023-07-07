@@ -114,8 +114,6 @@ function Referral() {
   //   }
   // }, [referralOnboardingStatus, isConnected, userPoint]);
 
-  // const eligible = () => isEligible;
-
   // const eligibleTooltipMessage = 'You must have a minimum trading volume of 5 WETH notional to unlock all the points!';
   // const tooltipMessage =
   //   'Total referral points includes 3% of your referees’ trading volume points and 2 % bonus points on your trading volume';
@@ -123,7 +121,7 @@ function Referral() {
   const toastSuccess = (message: any) =>
     toast(
       <div className="flex flex-row items-center justify-center">
-        <Image src="/images/components/airdrop/toast/toast-success.png" alt="" className="mr-[10px]" />
+        <Image src="/images/components/airdrop/toast/toast-success.png" width={20} height={20} alt="" className="mr-[10px]" />
         {message}
       </div>,
       {
@@ -351,8 +349,8 @@ function Referral() {
               </p>
               <div className="mb-[36px] flex items-center space-x-[12px] md:space-x-[24px]">
                 <div
-                  className="rounded-2 border-1 flex h-[48px] flex-1 items-center
-                  justify-between border-[#2E4371]/20 bg-[#0C0D20] px-[16px] py-[8px]">
+                  className="border-1 flex h-[48px] flex-1 items-center justify-between
+                    rounded-[4px] border-[#2E4371]/20 bg-[#0C0D20] px-[16px] py-[8px]">
                   <span className="text-[12px] font-normal text-[#A8CBFFBF]">
                     {`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode}`}
                   </span>
@@ -367,8 +365,7 @@ function Referral() {
                 </div>
                 <PrimaryButton
                   className="rounded-2 body1e h-[48px] w-[48px] bg-primaryBlue px-[8px] py-[8px]"
-                  // onClick={() => setIsReferralPopupShow(true)}
-                >
+                  onClick={() => setIsReferralPopupShow(true)}>
                   <Image className="cursor-pointer" src="/images/components/airdrop/share-white.svg" alt="" width={24} height={24} />
                 </PrimaryButton>
               </div>
@@ -383,7 +380,7 @@ function Referral() {
 
               <div className="hidden rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px] md:block">
                 <div className="rounded-[15px] bg-lightBlue p-[24px] outline-dashed outline-2 outline-lightBlue">
-                  <div className="flex flex-row items-center justify-between">
+                  <div className="flex flex-row items-center">
                     <div className="flex flex-col ">
                       <div className="text-[14px]">🎁 You Will Get</div>
                       <div
@@ -405,7 +402,7 @@ function Referral() {
                         of your referees’ trading volume points
                       </div>
                     </div>
-                    <div className="h-auto w-[1px] self-stretch bg-[#2E4371]" />
+                    <div className="mx-9 h-auto w-[1px] self-stretch bg-[#2E4371]" />
                     <div className="flex flex-col">
                       <div className="text-[14px]">🎁 Referees Will Get</div>
                       <div
