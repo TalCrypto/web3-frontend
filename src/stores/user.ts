@@ -93,8 +93,8 @@ export const $userInfo = atom<UserInfo | undefined>();
 export const $currentChain = atom<Chain | undefined>();
 export const $userPositionInfos = map<UserPositionInfos>();
 export const $userTotalCollateral = computed($userPositionInfos, userPositionInfos => {
-  const amms = Object.keys(userPositionInfos) as AMM[]
-  return amms.map(amm => userPositionInfos[amm]).reduce((val, posInfo)=>(posInfo?val+posInfo.margin:val),0)
+  const amms = Object.keys(userPositionInfos) as AMM[];
+  return amms.map(amm => userPositionInfos[amm]).reduce((val, posInfo) => (posInfo ? val + posInfo.margin : val), 0);
 });
 export const $userPositionHistory = atom<PositionHistoryRecord[]>([]);
 export const $userFPHistory = map<{ [value in AMM]: FundingPaymentRecord[] }>();

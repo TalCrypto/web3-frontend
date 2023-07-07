@@ -26,12 +26,13 @@ import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } f
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import { getAddress, zeroAddress } from 'viem';
 
-const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAddress: Address; trader: Address | undefined }> = ({
-  chain,
-  amm,
-  ammAddress,
-  trader
-}) => {
+const PositionInfoUpdater: React.FC<{
+  chain: Chain | undefined;
+  amm: AMM;
+  ammAddress: Address;
+  trader: Address | undefined;
+  isWrongNetwork: boolean;
+}> = ({ chain, amm, ammAddress, trader, isWrongNetwork }) => {
   const chViewer = getCHViewerContract(chain);
   const { data } = useContractRead({
     ...chViewer,
@@ -57,7 +58,7 @@ const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAdd
   const isLiquidatable = data ? data.isLiquidatable : false;
 
   useEffect(() => {
-    if (trader) {
+    if (trader && !isWrongNetwork) {
       $userPositionInfos.setKey(amm, {
         amm: ammAddress,
         size,
@@ -94,7 +95,8 @@ const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAdd
     vammPrice,
     leverage,
     fundingPayment,
-    isLiquidatable
+    isLiquidatable,
+    isWrongNetwork
   ]);
 
   useEffect(() => {
@@ -255,7 +257,16 @@ const UserDataUpdater: React.FC = () => {
       {amms.map(amm => {
         const ammAddr = getAMMAddress(chain, amm);
         if (ammAddr) {
-          return <PositionInfoUpdater key={amm} chain={chain} amm={amm} ammAddress={ammAddr} trader={address} />;
+          return (
+            <PositionInfoUpdater
+              key={amm}
+              chain={chain}
+              amm={amm}
+              ammAddress={ammAddr}
+              trader={address}
+              isWrongNetwork={Boolean(chain?.unsupported)}
+            />
+          );
         }
         return null;
       })}

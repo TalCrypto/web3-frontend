@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentChain, $userPositionInfos, UserPositionInfo, $userFPHistory, $userTotalFP } from '@/stores/user';
+import { $currentChain, $userPositionInfos, UserPositionInfo, $userFPHistory, $userTotalFP, $userIsWrongNetwork } from '@/stores/user';
 import {
   $collectionConfig,
   $dailyVolume,
@@ -31,17 +31,18 @@ export const useFundingPaymentHistory = (amm: AMM) => {
 
 export const usePositionInfosIsLoading = (): boolean => {
   const chain = useNanostore($currentChain);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const [isLoading, setIsLoading] = useState(true);
   const positionInfos = useNanostore($userPositionInfos);
 
   useEffect(() => {
-    if (chain) {
+    if (chain && !isWrongNetwork) {
       const amms = getSupportedAMMs(chain);
       setIsLoading(!(positionInfos && Object.keys(positionInfos).length === amms.length));
     } else {
       setIsLoading(false);
     }
-  }, [positionInfos, chain]);
+  }, [positionInfos, chain, isWrongNetwork]);
   return isLoading;
 };
 
