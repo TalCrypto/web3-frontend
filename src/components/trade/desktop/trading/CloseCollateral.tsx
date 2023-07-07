@@ -22,6 +22,8 @@ import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
 import ConnectButton from '@/components/common/actionBtns/ConnectButton';
 import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
 
 function SectionDividers() {
   return (
@@ -370,7 +372,7 @@ export default function CloseCollateral() {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -399,6 +401,7 @@ export default function CloseCollateral() {
         disabled={isPending || isWrongNetwork}
       />
       <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
+      <ErrorTip label={textErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
         maxCloseValue={maxCloseValue}

@@ -19,6 +19,8 @@ import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import ConnectButton from '@/components/common/actionBtns/ConnectButton';
 import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -389,7 +391,7 @@ export default function MainTradeComponent(props: any) {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -425,6 +427,7 @@ export default function MainTradeComponent(props: any) {
         }}
         isAmountTooSmall={isAmountTooSmall}
       />
+      <ErrorTip label={textErrorMessage} />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}

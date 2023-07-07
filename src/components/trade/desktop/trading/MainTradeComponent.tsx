@@ -23,6 +23,8 @@ import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 import ApproveButton from '@/components/common/actionBtns/ApproveButton';
 import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import { MINIMUM_COLLATERAL } from '@/const';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -435,7 +437,7 @@ export default function MainTradeComponent() {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -466,6 +468,7 @@ export default function MainTradeComponent() {
         }}
         isAmountTooSmall={isAmountTooSmall}
       />
+      <ErrorTip label={textErrorMessage} />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}
