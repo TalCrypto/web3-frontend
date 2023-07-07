@@ -242,7 +242,9 @@ const HistoryModal = () => {
                         <PriceWithIcon
                           className="icon-label"
                           priceValue={
-                            selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${Number(collateralChange).toFixed(4)}` : '--.--'
+                            selectedRecord.ammAddress
+                              ? `${Number(collateralChange) > 0 ? '+' : ''}${Number(collateralChange).toFixed(4)}`
+                              : '--.--'
                           }>
                           {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                             <Image

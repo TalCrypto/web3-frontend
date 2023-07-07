@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useContractReads, usePublicClient } from 'wagmi';
+import { usePublicClient } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $collectionConfig, $currentAmm } from '@/stores/trading';
-import { getAMMContract, getCHContract, Contract } from '@/const/contracts';
+import { getAMMContract, getCHContract } from '@/const/contracts';
 import { ammAbi, chAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
 import { $currentChain } from '@/stores/user';
