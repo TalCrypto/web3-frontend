@@ -242,7 +242,7 @@ const HistoryModal = () => {
                         <PriceWithIcon
                           className="icon-label"
                           priceValue={
-                            selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
+                            selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${Number(collateralChange).toFixed(4)}` : '--.--'
                           }>
                           {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                             <Image
@@ -258,7 +258,10 @@ const HistoryModal = () => {
                     : selectedRecord
                     ? detailRow(
                         'Resulting Collateral',
-                        <PriceWithIcon className="icon-label" priceValue={selectedRecord.ammAddress ? `${collateralChange}` : '--.--'} />
+                        <PriceWithIcon
+                          className="icon-label"
+                          priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'}
+                        />
                       )
                     : null}
                   {isLiquidation && selectedRecord
