@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { ThreeDots } from 'react-loader-spinner';
 import { useRouter } from 'next/router';
-import { $userPoint, defaultUserPoint, referralList } from '@/stores/airdrop';
+import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userIsConnected, $userIsConnecting } from '@/stores/user';
 import { toast } from 'react-toastify';
@@ -18,7 +18,6 @@ import ShareModal from '@/components/airdrop/desktop/ShareModal';
 function Referral() {
   const router = useRouter();
   const userPointData = useNanostore($userPoint);
-  const [showCopyNotice, setShowCopyNotice] = useState(false);
   const [targetTooltip, setTargetTooltip] = useState(null);
   const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
   const [isReadyInputReferralPopupShow, setIsReadyInputReferralPopupShow] = useState(false);
@@ -30,7 +29,7 @@ function Referral() {
   const [referedUser, setReferedUser] = useState({});
 
   const isConnected = useNanostore($userIsConnected);
-  const referralListData = useNanostore(referralList);
+  const referralListData = useNanostore($referralList);
   const isConnecting = useNanostore($userIsConnecting);
 
   // const refersCode = router.query.ref;
@@ -161,7 +160,7 @@ function Referral() {
 
   if (!isConnected) {
     return (
-      <div className="container flex flex-col items-center">
+      <div className="container flex min-h-[400px] flex-col items-center">
         <div className="flex w-fit flex-col items-center">
           <p className="mb-[24px]">Please connect wallet to get started!</p>
           <button
@@ -274,8 +273,8 @@ function Referral() {
                 </div>
                 <div className="flex px-[24px] pb-[12px] text-[14px] text-mediumEmphasis lg:px-[36px]">
                   <div className="basis-4/12">User ID</div>
-                  <div className="basis-2/12">Status</div>
-                  <div className="basis-3/12">Trading Vol.</div>
+                  <div className="basis-3/12">Status</div>
+                  <div className="basis-2/12">Trading Vol.</div>
                   <div className="basis-3/12 text-right">Pts to Referrer</div>
                 </div>
                 {isReferralListEmpty ? (
@@ -284,7 +283,7 @@ function Referral() {
                   </div>
                 ) : (
                   <div>
-                    <div className="h-[315px] overflow-y-scroll">
+                    <div className="scrollable h-[315px] overflow-y-scroll">
                       {referralListData.map((item: any) => {
                         const displayUsername =
                           item.username === ''
@@ -300,14 +299,15 @@ function Referral() {
                         };
                         return (
                           <div
-                            className="flex cursor-pointer px-[24px] py-[12px] text-[14px] lg:px-[36px] [&:nth-child(odd)]:bg-[#202249]"
+                            className="flex cursor-pointer px-[24px] py-[12px] text-[14px]
+                            font-normal lg:px-[36px] [&:nth-child(odd)]:bg-[#202249]"
                             onClick={redirect}>
                             <div className="flex basis-4/12 flex-row">
                               <div className="mr-[8px] h-auto w-[3px] self-stretch rounded-[30px] bg-[#2574FB]" />
                               {displayUsername}
                             </div>
-                            <div className="basis-2/12">{eligibleStatus}</div>
-                            <div className="flex basis-3/12 flex-row items-center">
+                            <div className="basis-3/12">{eligibleStatus}</div>
+                            <div className="flex basis-2/12 flex-row items-center">
                               <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={14} height={14} className="mr-1" />
                               <div>{volume}</div>
                             </div>

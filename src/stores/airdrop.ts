@@ -75,10 +75,10 @@ export const $asSeason2LeaderboardData = atom<any[]>([]);
 export const $asIsLeaderboardLoading = atom(false);
 
 // referral
-export const referralList = atom([]);
+export const $referralList = atom([]);
 
 export const setReferralList = (data: any) => {
-  referralList.set(data);
+  $referralList.set(data);
 };
 export const isReferralListLoading = atom(false);
 

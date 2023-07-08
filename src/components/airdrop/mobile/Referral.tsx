@@ -4,14 +4,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { $userPoint, defaultUserPoint, referralList } from '@/stores/airdrop';
+import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
 
 function ReferralMobile() {
   const router = useRouter();
   const userPointData = useNanostore($userPoint);
-  const referralListData = useNanostore(referralList);
-
+  const referralListData = useNanostore($referralList);
   // const refersCode = router.query.ref;
 
   const userPoint = userPointData || defaultUserPoint;
@@ -202,7 +201,7 @@ function ReferralMobile() {
                     </div>
                   ) : (
                     <div>
-                      <div className="h-[315px] overflow-y-scroll">
+                      <div className="scrollable max-h-[315px] overflow-y-scroll">
                         {referralListData.map((item: any) => {
                           const displayUsername =
                             item.username === ''
@@ -211,8 +210,6 @@ function ReferralMobile() {
                               ? `${item.username.substring(0, 10)}...`
                               : item.username;
                           const eligibleStatus = item.eligiable ? 'Eligible' : 'Not Eligible';
-                          // const volume = item.tradeVol.toFixed(4);
-                          // const referralPoints = Number(item.referringRewardPoints).toFixed(1);
                           const redirect = () => {
                             window.location.href = `/userprofile/${item.userAddress}`;
                           };
@@ -224,16 +221,11 @@ function ReferralMobile() {
                                 {displayUsername}
                               </div>
                               <div className="basis-4/12 text-right">{eligibleStatus}</div>
-                              {/* <div className="flex basis-3/12 flex-row items-center">
-                                <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={14} height={14} className="mr-1" />
-                                <div>{volume}</div>
-                              </div>
-                              <div className="basis-3/12 text-right font-semibold text-seasonGreen">{`${referralPoints} pts`}</div> */}
                             </div>
                           );
                         })}
                       </div>
-                      <div className="px-9 pb-9 pt-4 text-[12px] text-mediumEmphasis ">
+                      <div className="px-9 pt-4 text-[12px] text-mediumEmphasis ">
                         Referees with at least 5 WETH trading volume will be counted as eligible referees.&nbsp;
                         <span className="cursor-pointer font-semibold text-blue-500" onClick={() => router.push('/airdrop/rules')}>
                           View Rules
