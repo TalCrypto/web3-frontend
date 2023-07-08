@@ -3,7 +3,7 @@
 
 export enum AMM {
   MILADY = 'milady',
-  PUDGYPENGUINS = 'pudgypenguins',
+  PPG = 'ppg',
   DEGODS = 'degods',
   CAPTAINZ = 'captainz',
   BAYC = 'bayc',
@@ -61,8 +61,8 @@ export const collectionsInfos: CollectionInfos = {
     isNew: true,
     sort: 1
   },
-  [AMM.PUDGYPENGUINS]: {
-    amm: AMM.PUDGYPENGUINS,
+  [AMM.PPG]: {
+    amm: AMM.PPG,
     name: 'PUDGYPENGUINS/ETH',
     title: 'PUDGY',
     image: '/images/collections/small/pudgypenguins.svg',
