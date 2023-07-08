@@ -60,11 +60,11 @@ export const $transactionPendings = map<TransactionPendings>();
 
 export const $collectionConfig = map<CollectionConfig>();
 
-export const $futureMarketHistory = atom<MarketHistoryRecord[]>([]);
+export const $futureMarketHistory = atom<MarketHistoryRecord[] | undefined>();
 
-export const $fundingRatesHistory = atom<FundingRatesRecord[]>([]);
+export const $fundingRatesHistory = atom<FundingRatesRecord[] | undefined>();
 
-export const $spotMarketHistory = atom<any[]>([]);
+export const $spotMarketHistory = atom<any[] | undefined>();
 
 export const $selectedTimeIndex = atom(0);
 

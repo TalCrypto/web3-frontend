@@ -22,6 +22,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { $userAddress } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
+import { ThreeDots } from 'react-loader-spinner';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -70,7 +71,7 @@ const MarketTrade = () => {
   const [newAdded, setNewAdded] = useState(false);
 
   useEffect(() => {
-    if (marketHistory.length > 0) {
+    if (marketHistory && marketHistory.length > 0) {
       setNewAdded(true);
     }
     const timeout = setTimeout(() => setNewAdded(false), 2000);
@@ -106,7 +107,11 @@ const MarketTrade = () => {
           isHeader
         />
 
-        {marketHistory && marketHistory.length > 0 ? (
+        {!marketHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : marketHistory.length > 0 ? (
           marketHistory.slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount).map((record, index) => (
             <div
               className={`relative mb-1 grid grid-cols-12 items-center whitespace-break-spaces
@@ -183,7 +188,11 @@ const SpotTable = () => {
     <>
       <div className="mx-[20px]">
         <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-4 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
-        {openseaData && openseaData.length > 0 ? (
+        {!openseaData ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : openseaData.length > 0 ? (
           openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
             const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
             const src = !asset
@@ -262,7 +271,11 @@ const FundingPaymentHistory = () => {
     <>
       <div className="scrollable mx-[20px] h-full overflow-y-scroll">
         <Cell items={['Time', 'Funding Rate Long / Short']} classNames={['col-span-4 px-3', 'col-span-8 text-right']} />
-        {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
+        {!fundingPaymentHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : fundingPaymentHistory.length > 0 ? (
           fundingPaymentHistory
             .slice(0, displayCount > fundingPaymentHistory.length ? fundingPaymentHistory.length : displayCount)
             .map(({ timestamp, rateLong, rateShort } /* index */) => (

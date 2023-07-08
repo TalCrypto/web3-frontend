@@ -23,6 +23,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { formatBigInt } from '@/utils/bigInt';
 import { $userAddress } from '@/stores/user';
+import { ThreeDots } from 'react-loader-spinner';
 
 function SmallPriceIcon(props: any) {
   const { priceValue = 0, className = '' } = props;
@@ -76,7 +77,7 @@ const MarketTrade = () => {
   const [newAdded, setNewAdded] = useState(false);
 
   useEffect(() => {
-    if (marketHistory.length > 0) {
+    if (marketHistory && marketHistory.length > 0) {
       setNewAdded(true);
     }
     const timeout = setTimeout(() => setNewAdded(false), 2000);
@@ -109,7 +110,11 @@ const MarketTrade = () => {
       </div>
 
       <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll">
-        {marketHistory && marketHistory.length > 0 ? (
+        {!marketHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : marketHistory.length > 0 ? (
           marketHistory
             .sort((a, b) => b.timestamp - a.timestamp)
             .map((record, index) => (
@@ -184,7 +189,11 @@ const SpotTable = () => {
       </div>
 
       <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll pl-[46px] pr-[42px]">
-        {openseaData && openseaData.length > 0 ? (
+        {!openseaData ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : openseaData.length > 0 ? (
           openseaData?.map((data: IOpenseaData) => {
             const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
             const src = !asset
@@ -256,7 +265,11 @@ const FundingPaymentHistory = () => {
       </div>
 
       <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll pl-[46px] pr-[42px]">
-        {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
+        {!fundingPaymentHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : fundingPaymentHistory.length > 0 ? (
           fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
             <Cell
               key={`funding_${timestamp}`}
