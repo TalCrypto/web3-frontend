@@ -12,7 +12,8 @@ function ChartDisplay() {
   const { graphData } = useChartData();
   const chartContainerRef: any = useRef();
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
-  const [candleSeries, setCandleSeries] = useState<ISeriesApi<'Candlestick'> | undefined>();
+  // const [candleSeries, setCandleSeries] = useState<ISeriesApi<'Candlestick'> | undefined>();
+  const [areaSeries, setAreaSeries] = useState<ISeriesApi<'Area'> | undefined>();
   const [chart, setChart] = useState<IChartApi>();
   const colors = {
     backgroundColor: 'transparent',
@@ -49,41 +50,42 @@ function ChartDisplay() {
           const timeFormat = 'DD/MM HH:mm';
           return formatDateTime(time, timeFormat);
         }
+      },
+      handleScroll: {
+        mouseWheel: false,
+        pressedMouseMove: false,
+        horzTouchDrag: false,
+        vertTouchDrag: false
+      },
+      handleScale: {
+        axisPressedMouseMove: false,
+        mouseWheel: false,
+        pinch: false
       }
-      // handleScroll: {
-      //   mouseWheel: false,
-      //   pressedMouseMove: false,
-      //   horzTouchDrag: false,
-      //   vertTouchDrag: false
-      // },
-      // handleScale: {
-      //   axisPressedMouseMove: false,
-      //   mouseWheel: false,
-      //   pinch: false
-      // }
     });
     const handleResize = () => {
       newChart.applyOptions({ width: chartContainerRef.current.clientWidth });
+      newChart.timeScale().fitContent();
     };
 
-    // const newSeries = chart.addAreaSeries({
-    //   lineColor: colors.lineColor,
-    //   topColor: colors.areaTopColor,
-    //   bottomColor: colors.areaBottomColor,
-    //   lineWidth: 1
-    // });
-
-    const newSeries = newChart.addCandlestickSeries({
-      upColor: '#26a69a',
-      downColor: '#ef5350',
-      borderVisible: false,
-      wickUpColor: '#26a69a',
-      wickDownColor: '#ef5350'
+    const newSeries = newChart.addAreaSeries({
+      lineColor: colors.lineColor,
+      topColor: colors.areaTopColor,
+      bottomColor: colors.areaBottomColor,
+      lineWidth: 1
     });
+
+    // const newSeries = newChart.addCandlestickSeries({
+    //   upColor: '#26a69a',
+    //   downColor: '#ef5350',
+    //   borderVisible: false,
+    //   wickUpColor: '#26a69a',
+    //   wickDownColor: '#ef5350'
+    // });
 
     newChart.timeScale().fitContent();
 
-    setCandleSeries(newSeries);
+    setAreaSeries(newSeries);
     setChart(newChart);
 
     window.addEventListener('resize', handleResize);
@@ -91,15 +93,16 @@ function ChartDisplay() {
     return () => {
       window.removeEventListener('resize', handleResize);
       newChart.remove();
+      setChart(undefined);
     };
   }, []);
 
   useEffect(() => {
-    if (candleSeries && chart) {
-      candleSeries.setData(graphData);
+    if (areaSeries && chart) {
+      areaSeries.setData(graphData);
       chart.timeScale().fitContent();
     }
-  }, [graphData, chart, candleSeries]);
+  }, [graphData, chart, areaSeries]);
 
   return <div ref={chartContainerRef} />;
 }

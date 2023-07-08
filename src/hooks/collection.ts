@@ -4,7 +4,7 @@ import { $currentChain, $userPositionInfos, UserPositionInfo, $userFPHistory, $u
 import {
   $collectionConfig,
   $dailyVolume,
-  $graphData,
+  $ohlcData,
   $highPrice,
   $lowPrice,
   $oraclePrice,
@@ -15,7 +15,7 @@ import {
 } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
-import { OhlcData } from 'lightweight-charts';
+import { OhlcData, SingleValueData } from 'lightweight-charts';
 
 export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   const positionInfos = useNanostore($userPositionInfos);
@@ -61,18 +61,19 @@ export const useTransactionIsPending = (amm?: AMM): boolean => {
 };
 
 export const useChartData = (): {
-  graphData: OhlcData[];
+  graphData: SingleValueData[];
   dailyVolume?: number;
   priceChange?: number;
   priceChangePct?: number;
   highPrice?: number;
   lowPrice?: number;
 } => {
-  const graphData = useNanostore($graphData);
+  const ohlcData = useNanostore($ohlcData);
   const dailyVolume = useNanostore($dailyVolume);
   const priceChange = useNanostore($priceChange);
   const priceChangePct = useNanostore($priceChangePct);
   const highPrice = useNanostore($highPrice);
   const lowPrice = useNanostore($lowPrice);
+  const graphData = ohlcData.map(record => ({ time: record.time, value: record.close }));
   return { graphData, dailyVolume, priceChange, priceChangePct, highPrice, lowPrice };
 };
