@@ -196,8 +196,8 @@ function PositionListItem(props: any) {
                 alt=""
                 onClick={showFundingPayment}
                 src="/images/components/trade/position/funding_payment.svg"
-                width={16}
-                height={16}
+                width={20}
+                height={20}
               />
             </Tooltip>
 

@@ -8,8 +8,8 @@ export enum TradeActions {
   ADD = 'Add',
   REDUCE = 'Partial Close',
   REVERSE = 'Reverse',
-  FULL_LIQ = 'Full Liquid.',
-  PARTIAL_LIQ = 'Partial Liquid.'
+  FULL_LIQ = 'Full Liquidation',
+  PARTIAL_LIQ = 'Partial Liquidation'
 }
 
 export enum CollateralActions {
