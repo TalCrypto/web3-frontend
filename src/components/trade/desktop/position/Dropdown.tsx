@@ -25,7 +25,7 @@ const Dropdown = (props: any) => {
   };
 
   const onClickViewPortfolio = () => {
-    router.push('/dashboard');
+    router.push('/portfolio');
   };
 
   const onClickFundingPayment = () => {
