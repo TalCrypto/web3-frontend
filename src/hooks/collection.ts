@@ -15,7 +15,7 @@ import {
 } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
-import { OhlcData, SingleValueData } from 'lightweight-charts';
+import { SingleValueData } from 'lightweight-charts';
 
 export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   const positionInfos = useNanostore($userPositionInfos);

@@ -18,8 +18,6 @@ function PositionList() {
 
   // const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPaymentCount), 0);
 
-  let itemIndex = 0;
-
   return (
     <div>
       {psUserPosition.length === 0 ? (
@@ -38,12 +36,11 @@ function PositionList() {
       ) : (
         <div className="scrollable">
           <div>
-            {psUserPosition.map((item: any, index: any) => {
+            {psUserPosition.map((item, index) => {
               if (!item) {
                 return null;
               }
-              itemIndex += 1;
-              return <PositionListItem key={`position_item_${itemIndex}`} userPosition={item} index={index} itemIndex={itemIndex} />;
+              return <PositionListItem key={`position_item_${item.amm}`} userPosition={item} itemIndex={index + 1} />;
             })}
           </div>
           <div className="flex px-9 pt-4 text-[16px] font-medium">

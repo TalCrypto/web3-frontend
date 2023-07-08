@@ -7,8 +7,9 @@ import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from 
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
 import { useFundingPaymentHistory } from '@/hooks/collection';
+import { UserPositionInfo } from '@/stores/user';
 
-function PositionListItem(props: any) {
+function PositionListItem(props: { userPosition: UserPositionInfo }) {
   const { userPosition } = props;
   const isShowBalance = useNanostore($psShowBalance);
 
