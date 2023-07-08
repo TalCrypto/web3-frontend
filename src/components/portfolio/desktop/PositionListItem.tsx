@@ -161,20 +161,10 @@ function PositionListItem(props: any) {
           />
         </div>
         <div className="w-[15%]">
-          <SingleRowPriceContent priceValue={isShowBalance ? userPosition.margin?.toFixed(4) : '****'} />
+          <SingleRowPriceContent priceValue={isShowBalance ? userPosition.margin?.toFixed(4) : '****'} isElement />
         </div>
         <div className="w-[13%]">
-          <SingleRowPriceContent
-            priceValue={
-              isShowBalance
-                ? totalPnl > 0
-                  ? `${totalPnl.toFixed(4)}`
-                  : totalPnl === 0
-                  ? Math.abs(totalPnl)?.toFixed(4)
-                  : totalPnl.toFixed(4)
-                : '****'
-            }
-          />
+          <SingleRowPriceContent priceValue={isShowBalance ? totalPnl.toFixed(4) : '****'} isElement={!isShowBalance} />
         </div>
         {/* <div className="w-[17%]">
           <SingleRowPriceContent

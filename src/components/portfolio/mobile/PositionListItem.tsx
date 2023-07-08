@@ -7,6 +7,8 @@ import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from 
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
 import { getAMMByAddress } from '@/const/addresses';
+import { useFundingPaymentHistory } from '@/hooks/collection';
+import { DEFAULT_AMM } from '@/const/collectionList';
 
 function PositionListItem(props: any) {
   const { userPosition } = props;
@@ -21,6 +23,7 @@ function PositionListItem(props: any) {
   const isLeverageOver = userPosition ? userPosition.leverage > 100 : false;
 
   const userPositionAmm = getAMMByAddress(userPosition.amm);
+  const { total: accFp } = useFundingPaymentHistory(userPositionAmm ?? DEFAULT_AMM);
 
   const clickItem = (e: any) => {
     e.preventDefault();
@@ -42,7 +45,8 @@ function PositionListItem(props: any) {
               width={16}
               height={16}
               className="justify-end text-[14px]"
-              priceValue={isShowBalance ? Math.abs(Number(sizeInEth))?.toFixed(4) : '****'}
+              priceValue={isShowBalance ? sizeInEth.toFixed(4) : '****'}
+              isElement
             />
           </div>
           <div className="mt-1 flex justify-end text-right text-[12px] font-medium">
@@ -69,29 +73,15 @@ function PositionListItem(props: any) {
             width={16}
             height={16}
             className="justify-end text-[14px]"
-            priceValue={
-              isShowBalance
-                ? totalPnl > 0
-                  ? `${totalPnl.toFixed(4)}`
-                  : totalPnl === 0
-                  ? Math.abs(totalPnl)?.toFixed(4)
-                  : totalPnl.toFixed(4)
-                : '****'
-            }
+            priceValue={isShowBalance ? totalPnl.toFixed(4) : '****'}
+            isElement={!isShowBalance}
           />
           <SingleRowPriceContent
             width={16}
             height={16}
             className="mt-[3px] justify-end !text-[12px]"
-            priceValue={
-              isShowBalance
-                ? userPosition.fundingPayment > 0
-                  ? `${userPosition.fundingPayment.toFixed(4)}`
-                  : userPosition.fundingPayment === 0
-                  ? Math.abs(userPosition.fundingPayment)?.toFixed(4)
-                  : userPosition.fundingPayment.toFixed(4)
-                : '****'
-            }
+            priceValue={isShowBalance ? (accFp ? accFp.toFixed(4) : 0) : '****'}
+            isElement={!isShowBalance}
           />
         </div>
       </div>
