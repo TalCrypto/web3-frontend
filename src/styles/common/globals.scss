@@ -65,6 +65,16 @@ body {
     height: 0;
     width: 0;
   }
+
+  &::-webkit-scrollbar-track {
+    width: 0;
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    width: 0;
+    height: 0;
+  }
 }
 
 input[type='range']::-webkit-slider-thumb {
