@@ -141,7 +141,12 @@ function QuantityEnter(props: any) {
             </div>
             <span className="text-[14px] text-[#ffffffde]">{`${wethBalance.toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => {$showGetWEthModal.set(true)}}>
+            <button
+              type="button"
+              className="ml-[8px] text-[14px] text-primaryBlue"
+              onClick={() => {
+                $showGetWEthModal.set(true);
+              }}>
               Get WETH
             </button>
           </div>
@@ -242,8 +247,21 @@ function EstimatedValueDisplay(props: {
     <>
       <div className="mb-4 flex items-center">
         <div className="font-14 text-color-secondary">
-          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
-          {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
+          <Tooltip
+            direction="top"
+            tooltipId="slippage"
+            content={
+              <div className="text-center">
+                The maximum pricing <br />
+                difference between the price at <br />
+                the time of trade confirmation <br />
+                the actual price of the <br />
+                transaction that the users are <br />
+                willing to acceptM
+              </div>
+            }>
+            <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+          </Tooltip>
         </div>
         <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
           <div
@@ -378,7 +396,18 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
           <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
           <DisplayValues
             title={
-              <TitleTips titleText="Price Impact" tipsText="The change in price resulted directly from a particular trade in the VAMM" />
+              <Tooltip
+                direction="right"
+                tooltipId="slippage"
+                content={
+                  <div className="text-center">
+                    The change in price resulted <br />
+                    directly from a particular trade <br />
+                    in the VAMM
+                  </div>
+                }>
+                <div className="cursor-pointer"> Price Impact</div>
+              </Tooltip>
             }
             value={estimation?.txSummary.priceImpactPct.toFixed(2)}
             unit="%"

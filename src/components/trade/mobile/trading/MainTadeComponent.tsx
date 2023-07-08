@@ -22,6 +22,7 @@ import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -208,8 +209,16 @@ function EstimatedValueDisplay(props: any) {
     <>
       <div className="mb-3 flex items-center">
         <div className="font-14 text-color-secondary col-auto">
-          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
-          {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
+          <MobileTooltip
+            direction="top"
+            content={
+              <div className="text-center">
+                The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
+                the users are willing to acceptM
+              </div>
+            }>
+            <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+          </MobileTooltip>
         </div>
         <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
           <div
@@ -341,7 +350,22 @@ function ExtendedEstimateComponent(props: any) {
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
           <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
-          <DisplayValues title="Price Impact" value={estimation?.txSummary.priceImpactPct.toFixed(2)} unit="%" />
+          <DisplayValues
+            title={
+              <MobileTooltip
+                content={
+                  <div className="text-center">
+                    The change in price resulted <br />
+                    directly from a particular trade <br />
+                    in the VAMM
+                  </div>
+                }>
+                Price Impact
+              </MobileTooltip>
+            }
+            value={estimation?.txSummary.priceImpactPct.toFixed(2)}
+            unit="%"
+          />
           {!isNewPosition ? null : (
             <DisplayValues title="Liquidation Price" value={estimation?.posInfo.liquidationPrice.toFixed(2)} unit="WETH" />
           )}

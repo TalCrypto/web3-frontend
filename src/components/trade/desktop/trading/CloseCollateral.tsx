@@ -24,6 +24,7 @@ import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import Tooltip from '@/components/common/Tooltip';
 
 function SectionDividers() {
   return (
@@ -281,7 +282,18 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; 
       {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
       <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
-        <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+        <Tooltip
+          direction="right"
+          tooltipId="slippage"
+          content={
+            <div className="text-center">
+              The change in price resulted <br />
+              directly from a particular trade <br />
+              in the VAMM
+            </div>
+          }>
+          <div className="col-auto cursor-pointer text-[14px] text-mediumEmphasis">Price Impact</div>
+        </Tooltip>
         <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
           <span className="value">{!estimation ? '-.--' : estimation.txSummary.priceImpactPct.toFixed(2)}</span> %
         </div>
@@ -415,7 +427,20 @@ export default function CloseCollateral() {
       />
       <SectionDividers />
       <div className={`mb-4 flex items-center ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
-        <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        <Tooltip
+          direction="top"
+          content={
+            <div className="text-center">
+              The maximum pricing <br />
+              difference between the price at <br />
+              the time of trade confirmation <br />
+              the actual price of the <br />
+              transaction that the users are <br />
+              willing to acceptM
+            </div>
+          }>
+          <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        </Tooltip>
         <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue

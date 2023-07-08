@@ -24,6 +24,7 @@ import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function SectionDividers() {
   return (
@@ -249,7 +250,16 @@ function ExtendedEstimateComponent(props: any) {
       {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
       <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
-        <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+        <MobileTooltip
+          content={
+            <div className="text-center">
+              The change in price resulted <br />
+              directly from a particular trade <br />
+              in the VAMM
+            </div>
+          }>
+          <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+        </MobileTooltip>
         <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
           <span className="value">{!estimation ? '-.--' : estimation.txSummary.priceImpactPct.toFixed(2)}</span> %
         </div>
@@ -377,7 +387,17 @@ export default function CloseCollateral() {
       />
       <SectionDividers />
       <div className={`mb-4 flex items-center ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
-        <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        <MobileTooltip
+          direction="top"
+          content={
+            <div className="text-center">
+              The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
+              the users are willing to acceptM
+            </div>
+          }>
+          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        </MobileTooltip>
+
         <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue
