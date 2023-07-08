@@ -39,6 +39,9 @@ function TradePage(props: WithRouterProps) {
     } else {
       router.push(`/trade/${DEFAULT_AMM}`);
     }
+    return () => {
+      $currentAmm.set(undefined);
+    };
   }, [router]);
 
   return (
