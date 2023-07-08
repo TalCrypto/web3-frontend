@@ -54,7 +54,7 @@ function OverviewMobile() {
                     : `${maxEligibilityTradeVol} / ${maxEligibilityTradeVol} WETH ✅`}
                 </p>
                 {/* progressbar */}
-                <div className="overflow-clip rounded-[5px] border-[1px] border-mediumEmphasis/50 bg-darkBlue/50">
+                <div className="rounded-[5px] border-[1px] border-mediumEmphasis/50 bg-darkBlue/50">
                   <div
                     className="h-[8px] rounded-[5px]"
                     style={{
@@ -71,7 +71,7 @@ function OverviewMobile() {
 
       <div className="bg-darkBlue px-5 pb-9">
         <h3 className="mb-6 text-[24px] font-bold">Season 2 Summary</h3>
-        <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
+        <div className="relative rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
           <div className="rounded-[6px] bg-lightBlue">
             <div className="bg-gradient-blue p-9 text-center">
               <p className="text-[20px] font-semibold">Total Pts</p>
@@ -99,7 +99,7 @@ function OverviewMobile() {
 
         {/* Season 1 Points */}
         <div className="mt-6">
-          <div className="overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
+          <div className="rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
             <div className="relative rounded-[6px] bg-lightBlue">
               <Image src="/images/components/airdrop/season1-tag.svg" width={60} height={60} alt="" className="absolute left-0 top-0 " />
               <div className="p-6">

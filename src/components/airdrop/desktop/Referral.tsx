@@ -14,6 +14,7 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
 import ResponseModal from '@/components/airdrop/desktop/ResponseModal';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
+import Tooltip from '@/components/common/Tooltip';
 
 function Referral() {
   const router = useRouter();
@@ -32,12 +33,9 @@ function Referral() {
   const referralListData = useNanostore($referralList);
   const isConnecting = useNanostore($userIsConnecting);
 
-  // const refersCode = router.query.ref;
-
   const userPoint = userPointData || defaultUserPoint;
 
   const { referralCode } = userPoint;
-  // const hadTradedOnce = userPoint.isInputCode && Object.keys(userPoint.referralUser).length === 0;
   const hadEnterCode = userPoint.isInputCode && userPoint.referralUser?.userAddress;
   const totalReferralPoint = Number(userPoint.referral.referralSelfRewardPoints) + Number(userPoint.referral.referringRewardPoints);
   const totalReferees = userPoint.referredUserCount;
@@ -45,77 +43,19 @@ function Referral() {
   const eligible = () => userPoint?.isEligible;
   const isReferralListEmpty = referralListData.length === 0;
 
-  // async function useReferral() {
-  //   let auth = getAuth();
-  //   let { currentUser } = auth;
-  //   try {
-  //     if (!currentUser || currentUser.uid !== walletProvider.holderAddress) {
-  //       await apiConnection.switchAccount();
-  //     }
-  //     auth = getAuth();
-  //     currentUser = auth.currentUser;
-  //     await walletProvider.getHolderAddress();
-  //     const idToken = await currentUser.getIdToken(true);
-  //     const response = await apiConnection.useReferralCode(refersCode, idToken);
-  //     if (response.code === 0) {
-  //       setIsReferralCompletedPopup(true);
-  //     }
-  //   } catch (e) {
-  //     // console.log({ e });
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (isConnected === true) {
-  //     apiConnection.getReferralList();
-  //   }
-  // }, [isConnected, walletProvider.holderAddress]);
-
-  // useEffect(() => {
-  //   if (refersCode) {
-  //     apiConnection.getUsernameFromReferral(refersCode).then(item => {
-  //       setReferedUser(item);
-  //       setReferralOnboardingStatus(1);
-  //       setIsReadyInputReferralPopupShow(true);
-  //     });
-  //   }
-  // }, []);
-
-  // /**
-  //  * status number if having referral code:
-  //  * 0: initialize (not shown user is using referral code), using referral popup hasn't been shown yet
-  //  * 1: referral popup is show
-  //  * 2: dismissing popup of using referral: in this case, it will check user has been connected wallet or not
-  //  * 3: user is connected with their wallet, call API for using referrals
-  //  */
-
-  // useEffect(() => {
-  //   if (referralOnboardingStatus === 2 && !isConnected) {
-  //     if (!localStorageIsLogin) {
-  //       connectWallet();
-  //     } else {
-  //       autoConnectWallet();
-  //     }
-  //   }
-  //   if (referralOnboardingStatus === 2 && isConnected) {
-  //     setReferralOnboardingStatus(3);
-  //   }
-  //   if (referralOnboardingStatus === 3 && isConnected && userPoint && referedUser) {
-  //     if (referedUser?.userAddress === walletProvider.holderAddress) {
-  //       setIsUsingOwnCodePopup(true);
-  //     } else if (hadTradedOnce) {
-  //       setIsReferralHadTradedPopup(true);
-  //     } else if (hadEnterCode) {
-  //       setIsReferralCodeEnterPopup(true);
-  //     } else {
-  //       useReferral();
-  //     }
-  //   }
-  // }, [referralOnboardingStatus, isConnected, userPoint]);
-
-  // const eligibleTooltipMessage = 'You must have a minimum trading volume of 5 WETH notional to unlock all the points!';
-  // const tooltipMessage =
-  //   'Total referral points includes 3% of your referees’ trading volume points and 2 % bonus points on your trading volume';
+  const eligibleTooltipMessage = (
+    <>
+      You must have a minimum <br /> trading volume of 5 WETH notional <br /> to unlock all the points!
+    </>
+  );
+  const tooltipMessage = (
+    <>
+      Total referral points includes 3% <br />
+      of your referees’ trading volume <br />
+      points and 2 % bonus points <br />
+      on your trading volume
+    </>
+  );
 
   const toastSuccess = (message: any) =>
     toast(
@@ -201,27 +141,33 @@ function Referral() {
               <div className="relative flex flex-col items-center justify-center px-6 pb-6">
                 <div className="flex flex-row">
                   <span className="text-[14px]">Referral Total Pts.</span>
-                  {/* <OverlayTrigger placement="top" overlay={<Tooltip>{tooltipMessage}</Tooltip>}> */}
-                  <Image src="/images/components/airdrop/more-info.svg" alt="" className="ml-[6px] mr-0" width={16} height={16} />
-                  {/* </OverlayTrigger> */}
+                  <Tooltip content={tooltipMessage} direction="top">
+                    <Image
+                      src="/images/components/airdrop/more-info.svg"
+                      alt=""
+                      className="ml-[6px] mr-0 cursor-pointer"
+                      width={16}
+                      height={16}
+                    />
+                  </Tooltip>
                 </div>
                 <div className="mt-3 flex flex-row items-center">
                   {!eligible() ? (
                     <div>
-                      {/* <OverlayTrigger placement="top" overlay={<Tooltip>{eligibleTooltipMessage}</Tooltip>}> */}
-                      <div className="flex flex-row items-center">
-                        <Image
-                          src="/images/components/airdrop/lock.svg"
-                          alt=""
-                          className="mr-[10px] h-[24px] w-[20px] "
-                          width={20}
-                          height={24}
-                        />
-                        <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
-                          <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                      <Tooltip content={eligibleTooltipMessage} direction="top">
+                        <div className="flex flex-row items-center">
+                          <Image
+                            src="/images/components/airdrop/lock.svg"
+                            alt=""
+                            className="mr-[10px] h-[24px] w-[20px] cursor-pointer"
+                            width={20}
+                            height={24}
+                          />
+                          <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
+                            <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                          </div>
                         </div>
-                      </div>
-                      {/* </OverlayTrigger> */}
+                      </Tooltip>
                     </div>
                   ) : (
                     <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>

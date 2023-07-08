@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function ReferralMobile() {
   const router = useRouter();
@@ -16,13 +17,25 @@ function ReferralMobile() {
   const userPoint = userPointData || defaultUserPoint;
 
   const { referralCode } = userPoint;
-  // const hadTradedOnce = userPoint.isInputCode && Object.keys(userPoint.referralUser).length === 0;
-  // const hadEnterCode = userPoint.isInputCode && userPoint.referralUser?.userAddress;
   const totalReferralPoint = Number(userPoint.referral.referralSelfRewardPoints) + Number(userPoint.referral.referringRewardPoints);
   const totalReferees = userPoint.referredUserCount;
   const eligibleReferees = userPoint.eligibleCount;
   const eligible = () => userPoint?.isEligible;
   const isReferralListEmpty = referralListData.length === 0;
+
+  const eligibleTooltipMessage = (
+    <>
+      You must have a minimum <br /> trading volume of 5 WETH notional <br /> to unlock all the points!
+    </>
+  );
+  const tooltipMessage = (
+    <>
+      Total referral points includes 3% <br />
+      of your referees’ trading volume <br />
+      points and 2 % bonus points <br />
+      on your trading volume
+    </>
+  );
 
   return (
     <div>
@@ -30,7 +43,7 @@ function ReferralMobile() {
         <div className="flex h-fit basis-1/2 flex-col bg-darkBlue">
           {/* Share */}
           <div
-            className="border-1 relative flex h-fit flex-1 rounded-[6px]
+            className="relative flex h-fit flex-1 rounded-[6px]
               border-[#71AAFF]/20 bg-lightBlue px-5 py-6">
             <div className="flex-1">
               <h3 className="mb-6 text-[20px] font-semibold">📢 My Referral Link</h3>
@@ -115,27 +128,27 @@ function ReferralMobile() {
                 <div className="mx-5 flex flex-col pb-6 text-[20px]">
                   <div className="flex flex-row">
                     <span className="text-[14px]">Referral Total Pts.</span>
-                    {/* <OverlayTrigger placement="top" overlay={<Tooltip>{tooltipMessage}</Tooltip>}> */}
-                    <Image src="/images/components/airdrop/more-info.svg" alt="" className="ml-[6px] mr-0" width={16} height={16} />
-                    {/* </OverlayTrigger> */}
+                    <MobileTooltip direction="top" content={tooltipMessage}>
+                      <Image src="/images/components/airdrop/more-info.svg" alt="" className="ml-[6px] mr-0" width={16} height={16} />
+                    </MobileTooltip>
                   </div>
                   <div className="mt-3 flex flex-row">
                     {!eligible() ? (
                       <div>
-                        {/* <OverlayTrigger placement="top" overlay={<Tooltip>{eligibleTooltipMessage}</Tooltip>}> */}
-                        <div className="flex flex-row items-center">
-                          <Image
-                            src="/images/components/airdrop/lock.svg"
-                            alt=""
-                            className="mr-[10px] h-[24px] w-[20px] "
-                            width={20}
-                            height={24}
-                          />
-                          <div className={`text-[15px] font-normal ${!eligible() ? 'opacity-50' : ''}`}>
-                            <span className="text-glow-green mr-[6px] text-[20px] font-semibold">{totalReferralPoint.toFixed(1)}</span>Pts
+                        <MobileTooltip direction="top" content={eligibleTooltipMessage}>
+                          <div className="flex flex-row items-center">
+                            <Image
+                              src="/images/components/airdrop/lock.svg"
+                              alt=""
+                              className="mr-[10px] h-[24px] w-[20px] "
+                              width={20}
+                              height={24}
+                            />
+                            <div className={`text-[15px] font-normal ${!eligible() ? 'opacity-50' : ''}`}>
+                              <span className="text-glow-green mr-[6px] text-[20px] font-semibold">{totalReferralPoint.toFixed(1)}</span>Pts
+                            </div>
                           </div>
-                        </div>
-                        {/* </OverlayTrigger> */}
+                        </MobileTooltip>
                       </div>
                     ) : (
                       <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>

@@ -5,9 +5,9 @@ import { $userIsConnected } from '@/stores/user';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { BoxGradient, BoxLocked, NewBoxLock } from '@/components/common/Box';
-// import Tooltip from '@/components/common/Tooltip';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import Tooltip from '@/components/common/Tooltip';
 
 function Overview() {
   const userPoint = useNanostore($userPoint);
@@ -69,7 +69,7 @@ function Overview() {
                     : `${maxEligibilityTradeVol} / ${maxEligibilityTradeVol} WETH ✅`}
                 </p>
                 {/* progressbar */}
-                <div className="w-[350px] overflow-clip rounded-[5px] border-[1px] border-mediumEmphasis/50 bg-darkBlue/50">
+                <div className="w-[350px] rounded-[5px] border-[1px] border-mediumEmphasis/50 bg-darkBlue/50">
                   <div
                     className="h-[8px] rounded-[5px]"
                     style={{
@@ -112,18 +112,18 @@ function Overview() {
                       </div>
                       Trading Vol.
                       <span className="ml-[6px] cursor-pointer">
-                        {/* <Tooltip
-                            direction="top"
-                            content={
-                              <p className="mx-2 text-center text-b3">
-                                Trading Volume (Notional ) will be <br />
-                                counted for every action of open <br />
-                                position, add position, partially <br />
-                                close and fully close position. <br />
-                              </p>
-                            }> */}
-                        <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
-                        {/* </Tooltip> */}
+                        <Tooltip
+                          direction="top"
+                          content={
+                            <p className="mx-2 text-center text-b3">
+                              Trading Volume (Notional ) will be <br />
+                              counted for every action of open <br />
+                              position, add position, partially <br />
+                              close and fully close position. <br />
+                            </p>
+                          }>
+                          <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+                        </Tooltip>
                       </span>
                     </div>
                     <div className="mt-6">
@@ -168,16 +168,16 @@ function Overview() {
                       </div>
                       Referral
                       <span className="ml-[6px] cursor-pointer">
-                        {/* <Tooltip
-                            direction="top"
-                            content={
-                              <p>
-                                Both referee and referrer will <br />
-                                get pts through trading.
-                              </p>
-                            }> */}
-                        <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
-                        {/* </Tooltip> */}
+                        <Tooltip
+                          direction="top"
+                          content={
+                            <p>
+                              Both referee and referrer will <br />
+                              get pts through trading.
+                            </p>
+                          }>
+                          <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+                        </Tooltip>
                       </span>
                     </div>
                     <div className="mt-6">
@@ -243,18 +243,18 @@ function Overview() {
                     </div>
                     <span>Net Converg. Trading Vol.</span>
                     <span className="ml-[6px] cursor-pointer">
-                      {/* <Tooltip
-                          direction="top"
-                          content={
-                            <p>
-                              Trades that help to close the <br />
-                              price gap between futures and <br />
-                              spot price will be counted as <br />
-                              convergence trade.
-                            </p>
-                          }> */}
-                      <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
-                      {/* </Tooltip> */}
+                      <Tooltip
+                        direction="top"
+                        content={
+                          <p>
+                            Trades that help to close the <br />
+                            price gap between futures and <br />
+                            spot price will be counted as <br />
+                            convergence trade.
+                          </p>
+                        }>
+                        <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+                      </Tooltip>
                     </span>
                   </div>
                   <div className="mt-6 text-[15px] font-normal text-[#A8CBFFBF]">
@@ -286,7 +286,7 @@ function Overview() {
 
       <div className="mb-[36px] xl:min-w-[460px]">
         <h3 className="mb-[24px] text-[24px] font-bold">Season 2 Summary</h3>
-        <div className="relative overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
+        <div className="relative rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
           <div className="rounded-[6px] bg-lightBlue">
             <div className="bg-gradient-blue p-[52px] text-center">
               <p className="text-[20px] font-semibold">Total Pts</p>
@@ -314,7 +314,7 @@ function Overview() {
 
         {/* Season 1 Points */}
         <div className="mt-9">
-          <div className="overflow-clip rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
+          <div className="rounded-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink p-[1px]">
             <div className="relative rounded-[6px] bg-lightBlue">
               <Image
                 src="/images/components/airdrop/season1-bg.svg"

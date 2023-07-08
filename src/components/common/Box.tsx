@@ -8,7 +8,7 @@ export const BoxGradient = (props: any) => {
   return (
     <div
       className={`
-        to-lightBluep-[1px] relative overflow-clip bg-gradient-to-b from-secondaryBlue p-[${borderWidth}px]
+        to-lightBluep-[1px] relative bg-gradient-to-b from-secondaryBlue p-[${borderWidth}px]
         ${isTopRounded ? `rounded-t-[${borderRadius}px]` : ''}
         ${isBottomRounded ? `rounded-b-[${borderRadius}px]` : ''}
       `}>
