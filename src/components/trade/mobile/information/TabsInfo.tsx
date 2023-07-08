@@ -119,7 +119,8 @@ const MarketTrade = () => {
                   ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
                    ${newAdded && record.isNew ? 'flash' : ''}
                 `}
-              key={`market_${record.timestamp}_${index}`}>
+              key={`market_${record.timestamp}_${index}`}
+              onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
               <div className="time relative col-span-4 border-l-[2px] border-primaryBlue pl-2">
                 <span>{formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}</span>
                 <div className="h-[6px] w-full" />

@@ -121,9 +121,10 @@ const MarketTrade = () => {
               <div
                 key={`market_trade_${index}`}
                 className={`relative mb-1 grid grid-cols-12 items-center py-1 ${newAdded && record.isNew ? 'flash' : ''}
-                pl-[46px] pr-[42px] text-[14px] text-mediumEmphasis
-                ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
-              `}>
+                  cursor-pointer pl-[46px] pr-[42px] text-[14px] text-mediumEmphasis
+                  ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
+                `}
+                onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
                 <div className="time relative col-span-3 pl-3">
                   <div className="absolute left-[-12px] top-0 mt-[3px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
