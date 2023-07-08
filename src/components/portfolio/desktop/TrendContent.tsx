@@ -7,7 +7,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
+import { $psSelectedTimeIndex, $psShowBalance, $psTimeDescription } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
@@ -15,6 +15,7 @@ import { useWeb3Modal } from '@web3modal/react';
 import { $isMobileView, $showGetWEthModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import Tooltip from '@/components/common/Tooltip';
 
 function TrendContent() {
   const { open } = useWeb3Modal();
@@ -174,15 +175,27 @@ function TrendContent() {
             <div className="w-[217px] flex-1 bg-darkBlue/[.5]">
               <div className="mb-1 mt-9 flex items-center justify-center">
                 <div className="text-[12px] font-normal text-highEmphasis">Accumulated Realized P/L</div>
-                <Image
-                  src="/images/components/trade/history/more_info.svg"
-                  alt=""
-                  width={12}
-                  height={12}
-                  className="ml-[6px] cursor-pointer"
-                />
+                <Tooltip
+                  content={
+                    <div className="text-center text-[12px] font-normal">
+                      Realized P/L is the sum of <br />
+                      funding payment and P/L from <br />
+                      price change. P/L from price <br />
+                      change is included in realized <br />
+                      P/L when a position is <br />
+                      partially/fully closed/liquidated
+                    </div>
+                  }>
+                  <Image
+                    src="/images/components/trade/history/more_info.svg"
+                    alt=""
+                    width={12}
+                    height={12}
+                    className="ml-[6px] cursor-pointer"
+                  />
+                </Tooltip>
               </div>
-              <div className="mb-3 flex justify-center text-[12px] text-highEmphasis">(1 Week)</div>
+              <div className="mb-3 flex justify-center text-[12px] text-highEmphasis">{$psTimeDescription[selectedTimeIndex]}</div>
 
               <div
                 className={`${

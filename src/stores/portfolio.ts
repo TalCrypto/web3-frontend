@@ -22,3 +22,10 @@ export const $psSelectedTimeIndex = atom(3);
 export const $psLineChartData = atom();
 
 export const $psHistogramChartData = atom();
+
+export const $psTimeDescription: any = {
+  0: '(1 Week)',
+  1: '(1 Month)',
+  2: '(2 Month)',
+  3: '(Since Trading Competition)'
+};

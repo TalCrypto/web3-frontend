@@ -6,7 +6,7 @@
 /* eslint-disable array-callback-return */
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
+import { $psSelectedTimeIndex, $psShowBalance, $psTimeDescription } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/mobile/PortfolioChart';
 import { $isMobileView } from '@/stores/modal';
@@ -115,7 +115,7 @@ function TrendContentMobile() {
                 />
               </MobileTooltip>
             </div>
-            <div className="text-[12px] text-highEmphasis">(1 Week)</div>
+            <div className="text-[12px] text-highEmphasis">{$psTimeDescription[selectedTimeIndex]}</div>
           </div>
 
           <div>
