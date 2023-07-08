@@ -23,7 +23,7 @@ export default function SharePosition(props: {
   const pnlStatus = positionInfo.unrealizedPnl >= 0;
   const side = positionInfo.size > 0;
   const leverage = positionInfo.leverage.toFixed(2);
-  const pnlValue = positionInfo.unrealizedPnl.toFixed(2);
+  const pnlValue = positionInfo.unrealizedPnl.toFixed(4);
   const entryPrice = positionInfo.entryPrice.toFixed(2);
   const futurePrice = vammPrice?.toFixed(2);
   const currentPositionName = collectionInfo.collectionName;
@@ -103,7 +103,6 @@ export default function SharePosition(props: {
                   justify-between text-[12px] font-medium">
                   <div>ID: {showUserId}</div>
                   <div>{formatDateTime(Date.now() / 1000, 'YYYY. DD. MMM HH:mm UTCZ').toUpperCase()}</div>
-                  {/* <div>{moment().format('YYYY. DD. MMM HH:mm UTCZ').toUpperCase()}</div> */}
                 </div>
               </div>
             </div>
