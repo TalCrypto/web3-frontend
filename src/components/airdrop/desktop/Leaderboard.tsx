@@ -133,7 +133,7 @@ function Leaderboard() {
 
   return (
     <div className="relative">
-      <div id="lb-sticky-header" className="sticky top-[60px] z-[1]">
+      <div id="lb-sticky-header" className="sticky top-[60px] z-10">
         <div className="flex justify-between py-[24px]">
           <h3 className="text-[24px] font-bold">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
           <div className="season-leaderboard flex justify-start text-[16px] font-semibold">
