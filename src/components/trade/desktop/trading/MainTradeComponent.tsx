@@ -25,6 +25,7 @@ import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import { $showGetWEthModal } from '@/stores/modal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -140,7 +141,7 @@ function QuantityEnter(props: any) {
             </div>
             <span className="text-[14px] text-[#ffffffde]">{`${wethBalance.toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => {}}>
+            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => {$showGetWEthModal.set(true)}}>
               Get WETH
             </button>
           </div>
