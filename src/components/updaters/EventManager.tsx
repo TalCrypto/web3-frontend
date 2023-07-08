@@ -3,7 +3,7 @@ import { showToast } from '@/components/common/Toast';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $pendingPositionChangedEvents, $pendingMarginChangedEvents } from '@/stores/events';
-import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $tsTransactionStatus, addGraphRecord } from '@/stores/trading';
+import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, addGraphRecord } from '@/stores/trading';
 import { $currentChain, $userAddress } from '@/stores/user';
 import { getTradingActionType, getCollateralActionType } from '@/utils/actionType';
 import { apiConnection } from '@/utils/apiConnection';
@@ -50,14 +50,6 @@ const EventHandlers = () => {
                 hideProgressBar: true
               }
             );
-          }
-
-          if (isMobileView) {
-            $tsTransactionStatus.set({
-              isShow: true,
-              isSuccess: true,
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`
-            });
           }
         }
       });
@@ -115,14 +107,6 @@ const EventHandlers = () => {
                 hideProgressBar: true
               }
             );
-          }
-
-          if (isMobileView) {
-            $tsTransactionStatus.set({
-              isShow: true,
-              isSuccess: true,
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`
-            });
           }
         });
     }
