@@ -12,7 +12,7 @@ import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
-import { $isMobileView, $showSwitchNetworkErrorModal } from '@/stores/modal';
+import { $isMobileView, $showGetWEthModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 
@@ -51,7 +51,9 @@ function TrendContent() {
     }
   };
 
-  const onBtnGetTeth = () => {};
+  const onBtnGetTeth = () => {
+    $showGetWEthModal.set(true);
+  };
 
   const clickSelectedTimeIndex = (index: number) => {
     $psSelectedTimeIndex.set(index);
