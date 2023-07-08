@@ -67,7 +67,7 @@ function PositionInfo() {
           {isConnected ? <OutlineButton onClick={() => $psShowHistory.set(true)}>Trade History</OutlineButton> : null}
         </div>
 
-        <div className="mb-[66px] min-h-[444px]">
+        <div className="mb-[66px] min-h-[444px] pb-[140px]">
           {isConnected ? (
             <div className="dashboard-list">
               <div
