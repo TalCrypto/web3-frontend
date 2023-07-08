@@ -516,19 +516,22 @@ export default function CloseCollateral() {
         </div>
       </div> */}
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
-        <div className="mt-6">
-          <div
-            className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-            onClick={() => setShowDetail(val => !val)}>
-            {!showDetail ? 'Show' : 'Hide'} Advanced Details
-            {!showDetail ? (
-              <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
-            ) : (
-              <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
-            )}
+        <>
+          <div className="mt-6 flex">
+            <div
+              className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
+              onClick={() => setShowDetail(val => !val)}>
+              {!showDetail ? 'Show' : 'Hide'} Advanced Details
+              {!showDetail ? (
+                <Image src="/images/common/angle_down.svg" alt="" width={12} height={12} />
+              ) : (
+                <Image src="/images/common/angle_up.svg" alt="" width={12} height={12} />
+              )}
+            </div>
+            <div className="flex-1" />
           </div>
-          {showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}
-        </div>
+          <div>{showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}</div>
+        </>
       ) : null}
 
       <PartialCloseModal
