@@ -29,7 +29,6 @@ function TradePage(props: WithRouterProps) {
 
   useEffect(() => {
     const collection = router?.query?.collection;
-
     if (collection) {
       const amm = collection as AMM;
       if (Object.values(AMM).includes(amm)) {
@@ -37,6 +36,8 @@ function TradePage(props: WithRouterProps) {
       } else {
         router.push(`/trade/${DEFAULT_AMM}`);
       }
+    } else {
+      router.push(`/trade/${DEFAULT_AMM}`);
     }
   }, [router]);
 
