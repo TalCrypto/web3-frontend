@@ -104,7 +104,7 @@ const FundingPaymentModal = (props: any) => {
             alt=""
             onClick={handleBackClick}
           />
-          <div className="flex">{collectionInfo.name} Funding Payment History</div>
+          <div className="flex">{collectionInfo.collection} Funding Payment History</div>
         </div>
       </div>
     </div>
