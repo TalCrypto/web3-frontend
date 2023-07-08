@@ -6,7 +6,7 @@
 /* eslint-disable array-callback-return */
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psSelectedTimeIndex, $psShowBalance, $psTimeDescription } from '@/stores/portfolio';
+import { $accumulatedDailyPnl, $psSelectedTimeIndex, $psShowBalance, $psTimeDescription } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/mobile/PortfolioChart';
 import { $isMobileView } from '@/stores/modal';
@@ -27,7 +27,7 @@ function TrendContentMobile() {
     { label: 'Competition', ref: useRef() }
   ];
 
-  const totalAccountValueDiff = '0.0';
+  const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
 
   const clickSelectedTimeIndex = (index: number) => {
     $psSelectedTimeIndex.set(index);
@@ -121,14 +121,14 @@ function TrendContentMobile() {
           <div>
             <div
               className={`${
-                isShowBalance && Number(totalAccountValueDiff) > 0
+                isShowBalance && totalAccountValueDiff > 0
                   ? 'text-marketGreen'
-                  : isShowBalance && Number(totalAccountValueDiff) < 0
+                  : isShowBalance && totalAccountValueDiff < 0
                   ? 'text-marketRed'
                   : ''
               } flex items-center justify-center text-[20px] font-semibold`}>
               <Image src="/images/common/symbols/eth-tribe3.svg" width={20} height={20} alt="" className="mr-1" />
-              {!isShowBalance ? '****' : Number(totalAccountValueDiff) > 0 ? `+${totalAccountValueDiff}` : totalAccountValueDiff}
+              {!isShowBalance ? '****' : totalAccountValueDiff > 0 ? `+${totalAccountValueDiff}` : totalAccountValueDiff}
               {/* {!isShowBalance ? null : <span>{` (${Math.abs(totalAccountValueDiffInPercent)}%)`}</span>} */}
             </div>
           </div>

@@ -7,7 +7,7 @@ import React, { useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psHistogramChartData, $psLineChartData, $psSelectedTimeIndex } from '@/stores/portfolio';
+import { $accumulatedDailyPnl, $psHistogramChartData, $psLineChartData, $psSelectedTimeIndex } from '@/stores/portfolio';
 import PositionInfo from '@/components/portfolio/desktop/PositionInfo';
 import PortfolioEmpty from '@/components/portfolio/mobile/PortfiolioEmpty';
 import AccountChartMobile from '@/components/portfolio/mobile/AccountChartMobile';
@@ -31,24 +31,25 @@ export default function Portfolio() {
       apiConnection.getWalletChartContent(address, selectedTimeIndex).then((data: any) => {
         const accumulatedPnlData: any = [];
         const dailyPnlData: any = [];
-        let accumulatedDailyPnlData = 0;
+        let accumulatedDailyPnl = 0;
 
         data.map((item: any) => {
           const { time, accumulatedPnl, dailyPnl } = item;
           accumulatedPnlData.push({
             time,
-            value: formatBigInt(accumulatedPnl)
+            value: Number(formatBigInt(accumulatedPnl).toFixed(4))
           });
           dailyPnlData.push({
             time,
-            value: formatBigInt(dailyPnl),
+            value: Number(formatBigInt(dailyPnl).toFixed(4)),
             color: formatBigInt(dailyPnl) === 0.0 ? 'rgba(125, 125, 125, 0.3)' : formatBigInt(dailyPnl) > 0 ? '#78f363' : '#ff5656'
           });
-          accumulatedDailyPnlData += formatBigInt(dailyPnl);
+          accumulatedDailyPnl += formatBigInt(dailyPnl);
         });
 
         $psLineChartData.set(accumulatedPnlData);
         $psHistogramChartData.set(dailyPnlData);
+        $accumulatedDailyPnl.set(Number(accumulatedDailyPnl.toFixed(4)));
       });
     }
   }, [selectedTimeIndex, address]);

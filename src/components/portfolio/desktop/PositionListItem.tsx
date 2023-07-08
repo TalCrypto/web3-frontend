@@ -7,7 +7,6 @@ import Image from 'next/image';
 import Tooltip from '@/components/common/Tooltip';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment, $psShowShareIndicator } from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
-import { $oraclePrice, $vammPrice } from '@/stores/trading';
 import { UserPositionInfo } from '@/stores/user';
 import { useIsOverPriceGap } from '@/hooks/collection';
 import { usePublicClient } from 'wagmi';

@@ -7,7 +7,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psSelectedTimeIndex, $psShowBalance, $psTimeDescription } from '@/stores/portfolio';
+import { $accumulatedDailyPnl, $psSelectedTimeIndex, $psShowBalance, $psTimeDescription } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
@@ -38,7 +38,7 @@ function TrendContent() {
     { label: 'Competition', ref: useRef() }
   ];
 
-  const totalAccountValueDiff = '0.0';
+  const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
 
   const onBtnConnectWallet = () => {
     open();
@@ -199,14 +199,14 @@ function TrendContent() {
 
               <div
                 className={`${
-                  isShowBalance && Number(totalAccountValueDiff) > 0
+                  isShowBalance && totalAccountValueDiff > 0
                     ? 'text-marketGreen'
-                    : isShowBalance && Number(totalAccountValueDiff) < 0
+                    : isShowBalance && totalAccountValueDiff < 0
                     ? 'text-marketRed'
                     : ''
                 } mb-[60px] flex items-center justify-center text-[16px] font-semibold`}>
                 <Image src="/images/common/symbols/eth-tribe3.svg" width={20} height={20} alt="" className="mr-1" />
-                {!isShowBalance ? '****' : Number(totalAccountValueDiff) > 0 ? `+${totalAccountValueDiff}` : totalAccountValueDiff}
+                {!isShowBalance ? '****' : totalAccountValueDiff > 0 ? `+${totalAccountValueDiff}` : totalAccountValueDiff}
               </div>
 
               <div className="m-auto mb-3 h-[2px] w-[30px] bg-secondaryPink" />
