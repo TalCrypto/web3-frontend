@@ -16,6 +16,7 @@ function Tooltip(props: any) {
         place={direction}
         id={tooltipId}
         content={content}
+        classNameArrow="tooltip-content-arrow"
         className="tooltip-content z-10 rounded-[4px] bg-white px-3
         py-2 text-[12px] text-highEmphasis !opacity-100"
       />
