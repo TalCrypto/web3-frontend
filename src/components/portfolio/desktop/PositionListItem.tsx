@@ -9,7 +9,6 @@ import Tooltip from '@/components/common/Tooltip';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment, $psShowShareIndicator } from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import { $priceChangePct } from '@/stores/trading';
-import { getAMMByAddress } from '@/const/addresses';
 
 function PositionListItem(props: any) {
   const router = useRouter();
@@ -69,7 +68,7 @@ function PositionListItem(props: any) {
   const isLeverageNegative = userPosition ? userPosition.remainMarginLeverage <= 0 : false;
   const isLeverageOver = userPosition ? userPosition.remainMarginLeverage > 100 : false;
 
-  const userPositionAmm = getAMMByAddress(userPosition.amm);
+  const userPositionAmm = userPosition.amm;
 
   const clickItem = (e: any) => {
     e.preventDefault();

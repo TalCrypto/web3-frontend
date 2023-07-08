@@ -6,9 +6,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
-import { getAMMByAddress } from '@/const/addresses';
 import { useFundingPaymentHistory } from '@/hooks/collection';
-import { DEFAULT_AMM } from '@/const/collectionList';
 
 function PositionListItem(props: any) {
   const { userPosition } = props;
@@ -22,8 +20,8 @@ function PositionListItem(props: any) {
   const isLeverageNegative = userPosition ? userPosition.leverage <= 0 : false;
   const isLeverageOver = userPosition ? userPosition.leverage > 100 : false;
 
-  const userPositionAmm = getAMMByAddress(userPosition.amm);
-  const { total: accFp } = useFundingPaymentHistory(userPositionAmm ?? DEFAULT_AMM);
+  const userPositionAmm = userPosition.amm;
+  const { total: accFp } = useFundingPaymentHistory(userPositionAmm);
 
   const clickItem = (e: any) => {
     e.preventDefault();

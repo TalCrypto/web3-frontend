@@ -60,7 +60,8 @@ const PositionInfoUpdater: React.FC<{
   useEffect(() => {
     if (trader && !isWrongNetwork) {
       $userPositionInfos.setKey(amm, {
-        amm: ammAddress,
+        amm,
+        ammAddress,
         size,
         margin,
         openNotional,

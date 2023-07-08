@@ -32,7 +32,8 @@ export interface UserInfo {
 }
 
 export interface UserPositionInfo {
-  amm: Address;
+  amm: AMM;
+  ammAddress: Address;
   size: number;
   margin: number;
   openNotional: number;
