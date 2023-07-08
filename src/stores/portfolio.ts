@@ -17,7 +17,7 @@ export const $psShowShareIndicator = atom(false);
 
 export const $psShowHistory = atom(false);
 
-export const $psSelectedTimeIndex = atom(0);
+export const $psSelectedTimeIndex = atom(3);
 
 export const $psLineChartData = atom();
 
