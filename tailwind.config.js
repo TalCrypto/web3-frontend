@@ -8,7 +8,8 @@ module.exports = {
       md: '840px',
       lg: '968px',
       xl: '1100px',
-      '2xl': '1300px'
+      '2xl': '1300px',
+      '3xl': '1400px'
     },
     container: {
       center: true,
@@ -21,7 +22,8 @@ module.exports = {
         md: '840px',
         lg: '968px',
         xl: '1100px',
-        '2xl': '1300px'
+        '2xl': '1300px',
+        '3xl': '1400px'
       }
     },
     extend: {

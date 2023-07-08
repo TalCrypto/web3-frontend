@@ -93,8 +93,8 @@ export default function Home() {
         </div>
 
         <div
-          className="mobile-view block bg-lightBlue bg-[url('/images/components/airdrop/bg-mobile.png')]
-             bg-[center_top] bg-no-repeat md:hidden
+          className="mobile-view block bg-darkBlue bg-[url('/images/components/airdrop/bg-mobile.png')]
+             bg-cover bg-[center_top] bg-no-repeat md:hidden
           ">
           <TopInfoMobile />
 

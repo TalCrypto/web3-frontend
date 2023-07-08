@@ -186,13 +186,13 @@ function Referral() {
 
   return (
     <div className="container p-0 pt-7">
-      <div className="flex flex-col lg:flex-row lg:space-x-[24px]">
+      <div className="flex flex-col xl:flex-row xl:space-x-[24px]">
         {/* Left */}
-        <div className="mb-[36px] flex h-fit basis-1/2 flex-col lg:flex-col">
+        <div className="mb-[36px] flex h-fit basis-1/2 flex-col xl:flex-col">
           {/* Referral Points */}
           <div className="border-1 h-fit flex-1 flex-col-reverse rounded-[6px] border-[#71AAFF]/20 bg-lightBlue/50">
             <div className="flex-1">
-              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] lg:px-[36px]">
+              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] xl:px-[36px]">
                 <h3>My Referral Pts</h3>
                 <span className="cursor-pointer font-semibold text-blue-500" onClick={() => router.push('/airdrop/rules')}>
                   View Rules
@@ -231,7 +231,7 @@ function Referral() {
                 </div>
               </div>
               <div className="border-t-[1px] border-[#2E4371]" />
-              <div className="flex flex-col px-[24px] py-[24px] lg:px-[36px]">
+              <div className="flex flex-col px-[24px] py-[24px] xl:px-[36px]">
                 <div className="flex flex-row">
                   <div className="flex basis-1/2 flex-col text-[14px]">
                     <div>3% referees&#39; points</div>
@@ -255,7 +255,7 @@ function Referral() {
           {/* Eligible Lists */}
           <div className="border-1 mt-8 flex h-fit flex-1 rounded-[6px] border-[#71AAFF]/20 bg-lightBlue/50">
             <div className="flex-1">
-              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] lg:px-[36px] lg:py-[36px]">
+              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] xl:px-[36px] xl:py-[36px]">
                 <div>
                   <h3>My Referees</h3>
                 </div>
@@ -268,10 +268,10 @@ function Referral() {
                 </div>
               </div>
               <div className="bg-[#20224980]">
-                <div className="px-[24px] py-[24px] lg:px-[36px] lg:py-[36px] ">
+                <div className="px-[24px] py-[24px] xl:px-[36px] xl:py-[36px] ">
                   <h5>{`Referred Users (${referralListData.length})`}</h5>
                 </div>
-                <div className="flex px-[24px] pb-[12px] text-[14px] text-mediumEmphasis lg:px-[36px]">
+                <div className="flex px-[24px] pb-[12px] text-[14px] text-mediumEmphasis xl:px-[36px]">
                   <div className="basis-4/12">User ID</div>
                   <div className="basis-3/12">Status</div>
                   <div className="basis-2/12">Trading Vol.</div>
@@ -300,7 +300,7 @@ function Referral() {
                         return (
                           <div
                             className="flex cursor-pointer px-[24px] py-[12px] text-[14px]
-                            font-normal lg:px-[36px] [&:nth-child(odd)]:bg-[#202249]"
+                            font-normal xl:px-[36px] [&:nth-child(odd)]:bg-[#202249]"
                             onClick={redirect}>
                             <div className="flex basis-4/12 flex-row">
                               <div className="mr-[8px] h-auto w-[3px] self-stretch rounded-[30px] bg-[#2574FB]" />
@@ -391,15 +391,23 @@ function Referral() {
                           <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-row items-end text-start">
                               <div className="flex-row items-center">
-                                <span className="text-glow-green text-[32px] font-semibold">3</span>
+                                <span
+                                  className="text-glow-green shadow-referral text-[32px]
+                                  font-semibold">
+                                  3
+                                </span>
                                 &nbsp; &nbsp;
-                                <span className="text-glow-green text-[20px] font-semibold">%</span>
+                                <span
+                                  className="text-glow-green shadow-referral text-[20px]
+                                  font-semibold">
+                                  %
+                                </span>
                               </div>
                             </div>
                             <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={26} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of your referees’ trading volume points
+                        <span className="shadow-referral">of your referees’ trading volume points</span>
                       </div>
                     </div>
                     <div className="mx-9 h-auto w-[1px] self-stretch bg-[#2E4371]" />
@@ -414,15 +422,15 @@ function Referral() {
                           <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-row items-end text-start">
                               <div className="flex-row items-center">
-                                <span className="text-glow-green text-[32px] font-semibold">2</span>
+                                <span className="text-glow-green shadow-referral text-[32px] font-semibold">2</span>
                                 &nbsp; &nbsp;
-                                <span className="text-glow-green text-[20px] font-semibold">%</span>
+                                <span className="text-glow-green shadow-referral text-[20px] font-semibold">%</span>
                               </div>
                             </div>
                             <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={28} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of their own trading volume points
+                        <span className="shadow-referral">of their own trading volume points</span>
                       </div>
                     </div>
                   </div>

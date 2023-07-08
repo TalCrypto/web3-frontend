@@ -43,13 +43,13 @@ function Overview() {
   const maxEligibilityTradeVol = Number(5).toFixed(2);
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row lg:space-x-[28px]">
+    <div className="flex flex-col-reverse 2xl:flex-row 2xl:space-x-[28px]">
       <div className={`flex flex-1 flex-col ${eligible() ? 'flex-col-reverse' : ''} `}>
         <div className="mb-[48px] flex-1">
           <h3 className="mb-[24px] flex text-[24px] font-bold">Eligibility</h3>
           <BoxGradient>
             <div
-              className={`flex bg-[right_6rem_bottom] px-6 py-9 md:px-[36px] ${
+              className={`flex bg-[right_6rem_bottom] px-6 py-9 md:px-9 ${
                 !eligible() ? '' : "bg-[url('/images/components/airdrop/complete-badge.svg')] bg-no-repeat"
               } `}>
               <div>
@@ -102,11 +102,11 @@ function Overview() {
           <div>
             <div className="flex flex-row justify-between">
               {/* Trading Volume */}
-              <div className="mr-[16px]">
+              <div className="mr-[16px] 2xl:w-[240px] 3xl:w-[256px]">
                 <BoxGradient>
-                  <div className="relative flex h-[200px] w-[256px] flex-col pt-[24px]">
+                  <div className="relative flex h-[200px] flex-col px-5 pt-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
-                    <div className="z-[2] flex flex-row items-center justify-start px-[36px] text-[20px] font-semibold">
+                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
                       <div className="mr-[6px] h-[26px] w-[26px]">
                         <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
                       </div>
@@ -126,7 +126,7 @@ function Overview() {
                         {/* </Tooltip> */}
                       </span>
                     </div>
-                    <div className="mt-6 px-[36px]">
+                    <div className="mt-6">
                       <div className="flex flex-row items-center justify-start text-[15px] font-normal text-[#A8CBFFBF]">
                         <div className="mr-[6px] h-[16px] w-[16px]">
                           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
@@ -137,7 +137,7 @@ function Overview() {
                         <Image src="/images/components/airdrop/season2-arrow.svg" width={24} height={24} alt="" />
                       </div>
                     </div>
-                    <div className="mt-3 flex h-[39px] flex-row items-end px-[36px]">
+                    <div className="mt-3 flex h-[39px] flex-row items-end">
                       <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
                       <p>Pts</p>
                     </div>
@@ -158,9 +158,9 @@ function Overview() {
               </div>
 
               {/* Referral */}
-              <div className="mr-[16px]">
+              <div className="mr-[16px] 2xl:w-[200px] 3xl:w-[256px]">
                 <BoxGradient>
-                  <div className="relative flex h-[200px] w-[256px] flex-col px-[36px] py-[24px]">
+                  <div className="relative flex h-[200px] flex-col px-7 py-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
                     <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
                       <div className="mr-[6px] h-[26px] w-[26px]">
@@ -200,9 +200,9 @@ function Overview() {
               </div>
 
               {/* Others */}
-              <div>
+              <div className="2xl:w-[240px] 3xl:w-[256px]">
                 <BoxGradient>
-                  <div className="relative flex h-[200px] w-[256px] flex-col px-[36px] py-[24px]">
+                  <div className="relative flex h-[200px] flex-col px-5 py-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
                     <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
                       <div className="mr-[6px] h-[26px] w-[26px]">

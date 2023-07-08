@@ -128,7 +128,7 @@ function Leaderboard() {
   const isLockedOg = false;
 
   // width handler for season 2
-  const usernameWidth = currentSeason === 0 ? 'w-[17%] max-w-[162px]' : 'w-[13%]  max-w-[132px]';
+  const usernameWidth = currentSeason === 0 ? 'w-[17%] ' : 'w-[13%]';
   const cellWidth = currentSeason === 0 ? 'w-[16%]' : 'w-[12%]';
 
   return (
@@ -165,12 +165,12 @@ function Leaderboard() {
                 alt=""
               />
             ) : (
-              <div className="h-[32px] w-[1px] " />
+              <div className="h-[32px] w-[1px]" />
             )}
             <p>{refreshCooldown > 0 ? 'Updating...' : 'Update Leaderboard'}</p>
           </div>
         </div>
-        <div className="w-full px-[50px] text-[14px] text-xs font-semibold">
+        <div className="w-full text-[14px] text-xs font-semibold xl:px-[50px]">
           <div className="mb-[12px] flex text-mediumEmphasis">
             <div className="w-[10%] px-[10px] py-[18px]">
               <p>Rank</p>
@@ -217,7 +217,7 @@ function Leaderboard() {
                 {isConnected ? (
                   <div className="relative cursor-pointer text-[15px]" onClick={() => router.push(`/userprofile/${userWalletAddress}`)}>
                     <div
-                      className={`table-border-grad flex h-[54px] items-center px-[50px] font-medium ${
+                      className={`table-border-grad flex h-[54px] items-center font-medium xl:px-[50px] ${
                         userIsBan ? 'disqualified' : 'active'
                       }`}>
                       <div className="flex w-[10%] p-[18px]">
@@ -346,7 +346,7 @@ function Leaderboard() {
                         key={`rank-${userAddress}`}
                         className="relative cursor-pointer"
                         onClick={() => router.push(`/userprofile/${userAddress}`)}>
-                        <div className="table-border-grad flex h-[54px] items-center px-[50px]">
+                        <div className="table-border-grad flex h-[54px] items-center xl:px-[50px]">
                           <div className="flex w-[10%] p-[18px]">
                             <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
                           </div>
@@ -405,7 +405,7 @@ function Leaderboard() {
               </>
             ) : (
               <>
-                <div className="table-border-grad active flex h-[54px] w-full items-center px-[50px] font-medium">
+                <div className="table-border-grad active flex h-[54px] w-full items-center font-medium xl:px-[50px]">
                   <div className="flex w-[10%] justify-center p-[18px]">-</div>
                   <div className={`${usernameWidth} p-[18px]`}>
                     <p>-</p>
@@ -437,7 +437,7 @@ function Leaderboard() {
                 </div>
                 {dummyLoadingData.map((_item, i) => (
                   <div key={`loading-${i}`} className="relative">
-                    <div className="table-border-grad flex h-[54px] w-full items-center px-[50px]">
+                    <div className="table-border-grad flex h-[54px] w-full items-center xl:px-[50px]">
                       <div className="flex w-[10%] justify-center p-[18px]">-</div>
                       <div className={`${usernameWidth} p-[18px]`}>
                         <p>-</p>
