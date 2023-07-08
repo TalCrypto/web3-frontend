@@ -11,7 +11,7 @@ export enum AMM {
   AZUKI = 'azuki',
   PUNKS = 'punks'
 }
-export const DEFAULT_AMM: AMM = AMM.DEGODS;
+export const DEFAULT_AMM: AMM = AMM.MILADY;
 
 export interface CollectionInfo {
   amm: AMM;

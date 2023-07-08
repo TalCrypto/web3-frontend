@@ -25,12 +25,12 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/trade/degods',
+        destination: '/trade/milady',
         permanent: false
       },
       {
         source: '/trade',
-        destination: '/trade/degods',
+        destination: '/trade/milady',
         permanent: false
       }
     ];
