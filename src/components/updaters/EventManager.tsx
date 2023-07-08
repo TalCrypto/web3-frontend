@@ -80,7 +80,10 @@ const EventHandlers = () => {
               txHash: event.txHash,
               isNew: true
             };
-            $futureMarketHistory.set([newRecord, ...$futureMarketHistory.get().map(history => ({ ...history, isNew: false }))]);
+            const oldHistory = $futureMarketHistory.get();
+            if (oldHistory) {
+              $futureMarketHistory.set([newRecord, ...oldHistory.map(history => ({ ...history, isNew: false }))]);
+            }
             addGraphRecord(event.vammPrice);
           });
         });
@@ -144,7 +147,10 @@ const EventListeners = ({ ammContract, chContract }: { ammContract: Contract; ch
         amountLong: formatBigInt(log.args.rateLong ?? 0n) * formatBigInt(log.args.underlyingPrice ?? 0n),
         amountShort: formatBigInt(log.args.rateShort ?? 0n) * formatBigInt(log.args.underlyingPrice ?? 0n)
       }));
-      $fundingRatesHistory.set([...newRecords, ...$fundingRatesHistory.get()]);
+      const oldHistory = $fundingRatesHistory.get();
+      if (oldHistory) {
+        $fundingRatesHistory.set([...newRecords, ...oldHistory]);
+      }
     }
   });
 
