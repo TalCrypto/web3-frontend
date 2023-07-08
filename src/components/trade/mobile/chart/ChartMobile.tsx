@@ -204,7 +204,7 @@ const ChartHeaders = () => {
         </div>
 
         <div className="col-span-1 text-right">
-          <div className="font-400 mb-[8px] mt-[6px] text-[14px]">
+          <div className="font-400 mb-[14px] mt-[6px] text-[14px]">
             <span className="mr-[6px] text-[12px] text-mediumEmphasis">Oracle:</span>
             <span className="text-[12px] text-highEmphasis">{oraclePrice ? oraclePrice.toFixed(2) : '-.--'}</span>
           </div>
@@ -220,7 +220,7 @@ const ChartHeaders = () => {
 
               {isGapAboveLimit ? (
                 <div>
-                  <div className="flex items-center">
+                  <div className="ml-1 flex items-center">
                     <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
                   </div>
                 </div>
@@ -242,7 +242,7 @@ const ChartHeaders = () => {
         </div>
       </div>
 
-      <div className="flex flex-1 items-end justify-end px-[20px]">
+      <div className="mt-4 flex flex-1 items-end justify-end px-[20px]">
         <ChartTimeTabs
           name="group-1"
           controlRef={useRef()}
