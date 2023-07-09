@@ -22,6 +22,7 @@ import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import { $showGetWEthModal } from '@/stores/modal';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;
@@ -77,6 +78,10 @@ function QuantityEnter(props: any) {
     onChange(Number(maxValue - 0.00005).toFixed(4));
   };
 
+  const handleGetWethClick = () => {
+    $showGetWEthModal.set(true);
+  };
+
   return (
     <>
       <div className={`mb-4 flex ${disabled ? 'disabled' : ''}`}>
@@ -89,7 +94,7 @@ function QuantityEnter(props: any) {
             {/* {marginIndex === 0 ? 'Balance' : 'Free Collateral'} */}
             <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-b2 text-primaryBlue" onClick={() => {}}>
+            <button type="button" className="ml-[8px] text-b2 text-primaryBlue" onClick={handleGetWethClick}>
               Get WETH
             </button>
           </div>

@@ -4,12 +4,13 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $isShowMobileModal, $showGetWEthModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import { $userAddress, $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { showToast } from '@/components/common/Toast';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -54,11 +55,22 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnCopyAddressClick = () => {
-    // navigator.clipboard.writeText(address);
+    navigator.clipboard.writeText(String(address));
+    showToast(
+      {
+        title: 'Address Copied',
+        warning: false,
+        message: 'Address Copied successfully!'
+      },
+      {
+        autoClose: 5000,
+        hideProgressBar: true
+      }
+    );
   };
 
   const onBtnGetWethClick = () => {
-    // getTestToken();
+    $showGetWEthModal.set(true);
   };
 
   const onBtnClickSocial = () => {
