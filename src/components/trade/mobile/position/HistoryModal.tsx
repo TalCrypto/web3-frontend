@@ -177,15 +177,17 @@ const HistoryModal = (props: any) => {
                             <div className="flex max-w-[75%]">
                               <div className="mr-2 w-[2px] rounded-[2px] bg-primaryBlue" />
                               <div className="flex flex-col">
-                                <span className="text-[12px] text-mediumEmphasis">
+                                <span className="mb-2 text-[12px] text-mediumEmphasis">
                                   {formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}
                                 </span>
                                 <span>
                                   <TypeWithIconByAmm
-                                    className="icon-label"
+                                    className="text-[12px]"
                                     amm={record.ammAddress}
                                     showCollectionName
                                     content={` - ${currentRecordType}`}
+                                    imageWidth={20}
+                                    imageHeight={20}
                                   />
                                 </span>
                               </div>
