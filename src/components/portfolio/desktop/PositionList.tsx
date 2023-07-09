@@ -16,7 +16,7 @@ function PositionList() {
 
   const totalUnrealized = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.unrealizedPnl), 0);
 
-  // const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPaymentCount), 0);
+  const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPayment), 0);
 
   return (
     <div>
@@ -51,11 +51,11 @@ function PositionList() {
             <div className="w-[13%]">
               <SingleRowPriceContent priceValue={isShowBalance ? `${totalUnrealized.toFixed(4)}` : '****'} isElement={!isShowBalance} />
             </div>
-            {/* <div className="w-[17%]">
+            <div className="w-[17%]">
               <SingleRowPriceContent
                 priceValue={isShowBalance ? `${totalFundingPaymentAccount > 0 ? '+' : ''}${totalFundingPaymentAccount.toFixed(4)}` : '****'}
               />
-            </div> */}
+            </div>
             <div className="w-[12%]" />
           </div>
         </div>

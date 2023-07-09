@@ -133,7 +133,7 @@ function PositionInfo() {
                     </Tooltip>
                   </div>
                 </div>
-                {/* <div className="w-[17%]">Accu. Fund. Payment</div> */}
+                <div className="w-[17%]">Accu. Fund. Payment</div>
                 <div className="w-[12%]" />
               </div>
 

@@ -153,19 +153,19 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
         <div className="w-[13%]">
           <SingleRowPriceContent priceValue={isShowBalance ? totalPnl.toFixed(4) : '****'} isElement={!isShowBalance} />
         </div>
-        {/* <div className="w-[17%]">
+        <div className="w-[17%]">
           <SingleRowPriceContent
             priceValue={
               isShowBalance
-                ? fundingPaymentCount > 0
-                  ? `+${fundingPaymentCount}`
-                  : fundingPaymentCount === 0
-                  ? Math.abs(fundingPaymentCount)?.toFixed(4)
-                  : fundingPaymentCount
+                ? userPosition.fundingPayment > 0
+                  ? `+${userPosition.fundingPayment.toFixed(4)}`
+                  : userPosition.fundingPayment === 0
+                  ? Math.abs(userPosition.fundingPayment)?.toFixed(4)
+                  : userPosition.fundingPayment.toFixed(4)
                 : '****'
             }
           />
-        </div> */}
+        </div>
         <div className="w-[12%]">
           <div className="flex h-full items-center">
             <Tooltip direction="top" content="Funding Payment" className="ml-4">
