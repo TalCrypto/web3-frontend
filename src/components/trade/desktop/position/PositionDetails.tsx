@@ -173,9 +173,8 @@ export default function PositionDetails() {
                 content={
                   <div className="text-center">
                     Unrealized P/L is calculated based <br />
-                    on the current vAMMprice change and <br />
+                    on the current vAMM price change and <br />
                     does not include funding payment
-                    <br />
                   </div>
                 }>
                 <Image

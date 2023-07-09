@@ -16,6 +16,7 @@ import SharePosition from '@/components/portfolio/desktop/SharePosition';
 import OutlineButton from '@/components/common/OutlineButton';
 import { $userIsConnected } from '@/stores/user';
 import SortingIndicator from '@/components/common/SortingIndicator';
+import Tooltip from '@/components/common/Tooltip';
 
 function PositionInfo() {
   const initSorting = { notionalValue: 0, collateralValue: 0 };
@@ -109,7 +110,29 @@ function PositionInfo() {
                     <SortingIndicator value={positionSorting.collateralValue} />
                   </div>
                 </div>
-                <div className="w-[13%]">Unrealized P/L</div>
+                <div className="w-[13%]">
+                  <div className="flex items-center">
+                    Unrealized P/L
+                    <Tooltip
+                      direction="top"
+                      content={
+                        <div className="ml-1 text-center">
+                          Unrealized P/L is calculated <br />
+                          based on the current vAMM <br />
+                          price change and does not <br />
+                          include funding payment
+                        </div>
+                      }>
+                      <Image
+                        src="/images/components/trade/history/more_info.svg"
+                        alt=""
+                        width={16}
+                        height={16}
+                        className="ml-[6px] cursor-pointer"
+                      />
+                    </Tooltip>
+                  </div>
+                </div>
                 {/* <div className="w-[17%]">Accu. Fund. Payment</div> */}
                 <div className="w-[12%]" />
               </div>
