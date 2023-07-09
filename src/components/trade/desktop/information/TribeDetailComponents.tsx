@@ -138,7 +138,7 @@ const MarketTrade = () => {
                   <span className="text-highEmphasis">{getTradingActionType(record)}</span>
                 </div>
                 <div className="col-span-2">
-                  <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />
+                  <SmallPriceIcon priceValue={record.positionNotional.toFixed(4)} />
                 </div>
                 <div className="col-span-2">
                   <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />
