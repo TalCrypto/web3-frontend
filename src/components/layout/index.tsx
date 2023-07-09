@@ -14,11 +14,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const isShowMobileMenu = useNanostore($isShowMobileModal);
   const isAirdropPage = router.pathname === '/airdrop';
+  const isCompetitionPage = router.pathname === '/competition';
   const airdropBgClass = "bg-black bg-[url('/images/components/airdrop/bg-s2.png')] bg-cover bg-fixed bg-[center_top] bg-no-repeat";
 
   return (
     <>
       <Header />
+      {isCompetitionPage ? (
+        <video autoPlay loop muted className="absolute -top-[109px] w-full">
+          <source src="/images/components/competition/backgrounds/bg-spot-light.mp4" type="video/mp4" />
+          {/* Your browser does not support the video tag. */}
+        </video>
+      ) : null}
       <div
         className={`h-full w-full
           ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}`}>

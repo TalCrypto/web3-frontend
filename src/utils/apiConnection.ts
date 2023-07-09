@@ -1,6 +1,16 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable max-len */
 // import React from 'react';
+import {
+  firstLeaderboard,
+  flCurrentUser,
+  mainLeaderboard,
+  mlCurrentUser,
+  secondLeaderboard,
+  slCurrentUser,
+  thirdLeaderboard,
+  tlCurrentUser
+} from '@/stores/competition';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
 import { setLeaderboard, isLeaderboardLoading, isReferralListLoading, setReferralList } from '../stores/airdrop';
@@ -414,6 +424,74 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getAbsPnlLeaderboard: async function getAbsPnlLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/absPnl?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      mainLeaderboard.set(data?.leaderboard);
+      if (userAddress) {
+        mlCurrentUser.set(data?.user);
+      } else {
+        mlCurrentUser.set(null);
+      }
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getRealizedPnlPercentageLeaderboard: async function getRealizedPnlPercentageLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/realisedPnl?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      firstLeaderboard.set(data?.leaderboard);
+      if (userAddress) {
+        flCurrentUser.set(data?.user);
+      } else {
+        flCurrentUser.set(null);
+      }
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getNetConvergenceLeaderboard: async function getNetConvergenceLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/netConvergenceVol?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      secondLeaderboard.set(data?.leaderboard);
+      if (userAddress) {
+        slCurrentUser.set(data?.user);
+      } else {
+        slCurrentUser.set(null);
+      }
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getTopLosersLeaderboard: async function getTopLosersLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/topLoser?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      thirdLeaderboard.set(data?.leaderboard);
+      if (userAddress) {
+        tlCurrentUser.set(data?.user);
+      } else {
+        tlCurrentUser.set(null);
+      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
