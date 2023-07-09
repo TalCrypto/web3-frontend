@@ -229,7 +229,7 @@ function Rules() {
             </div>
           </div>
         </div>
-        <div className="">
+        <div>
           <h3 className="mb-[24px]">Multiplier</h3>
           <BoxGradient>
             <div className="px-[36px] py-[26px]">
@@ -307,7 +307,7 @@ function Rules() {
             </div>
           </BoxGradient>
         </div>
-        <div className="">
+        <div>
           <h3 className="mb-[24px]">Note</h3>
           <p className="body1">
             Tribe3 reserves the right to modify or update the rules and regulations above at any time without prior notice. Partnership

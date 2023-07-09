@@ -4,7 +4,7 @@ import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/common/actionBtns/BaseButton';
 import { useAddCollateralTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAmm } from '@/stores/trading';
+import { $currentAmm, $tsTransactionStatus } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
 import { CollateralActions } from '@/const';
 import { $isMobileView } from '@/stores/modal';
@@ -40,10 +40,17 @@ function AddCollateralButton({
 
   useEffect(() => {
     if (isSuccess) {
-      setIsLoading(false);
       onSuccess();
+      if (isMobileView && txHash) {
+        $tsTransactionStatus.set({
+          isShow: true,
+          isSuccess: true,
+          linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`
+        });
+      }
+      setIsLoading(false);
     }
-  }, [isSuccess, onSuccess]);
+  }, [isSuccess, txHash, onSuccess]);
 
   useEffect(() => {
     if (isPending) {
@@ -51,7 +58,7 @@ function AddCollateralButton({
         showToast(
           {
             warning: true,
-            title: `${collectionInfo.shortName} - ${CollateralActions.ADD} Collateral`,
+            title: `${collectionInfo.shortName} - ${CollateralActions.ADD}`,
             message: 'Order Received!',
             linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
             linkLabel: 'Check on Arbiscan'

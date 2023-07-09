@@ -14,9 +14,9 @@ import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import { $isMobileView } from '@/stores/modal';
 
 function PriceIndicator(props: any) {
-  const { priceChangeValue, priceChangeRatio, isStartLoadingChart } = props;
+  const { priceChangeValue, priceChangeRatio } = props;
 
-  return isStartLoadingChart || priceChangeValue === undefined || priceChangeRatio === undefined ? (
+  return priceChangeValue === undefined || priceChangeRatio === undefined ? (
     <div
       className={`my-[11px] flex h-[32px] items-center rounded-full
         text-center text-[15px] font-semibold leading-[18px]
@@ -200,11 +200,11 @@ const ChartHeaders = () => {
       <div className="grid grid-cols-2 px-[20px] pt-[27px]">
         <div className="col-span-1">
           <PriceWithIcon priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-          <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} isStartLoadingChart={!priceChange} />
+          <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
         </div>
 
         <div className="col-span-1 text-right">
-          <div className="font-400 mb-[8px] mt-[6px] text-[14px]">
+          <div className="font-400 mb-[14px] mt-[6px] text-[14px]">
             <span className="mr-[6px] text-[12px] text-mediumEmphasis">Oracle:</span>
             <span className="text-[12px] text-highEmphasis">{oraclePrice ? oraclePrice.toFixed(2) : '-.--'}</span>
           </div>
@@ -220,7 +220,7 @@ const ChartHeaders = () => {
 
               {isGapAboveLimit ? (
                 <div>
-                  <div className="flex items-center">
+                  <div className="ml-1 flex items-center">
                     <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
                   </div>
                 </div>
@@ -242,7 +242,7 @@ const ChartHeaders = () => {
         </div>
       </div>
 
-      <div className="flex flex-1 items-end justify-end px-[20px]">
+      <div className="mt-4 flex flex-1 items-end justify-end px-[20px]">
         <ChartTimeTabs
           name="group-1"
           controlRef={useRef()}

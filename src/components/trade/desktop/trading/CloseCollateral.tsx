@@ -15,10 +15,16 @@ import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
-import { UserPositionInfo } from '@/stores/user';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance, UserPositionInfo } from '@/stores/user';
 import ApproveButton from '@/components/common/actionBtns/ApproveButton';
 import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import Tooltip from '@/components/common/Tooltip';
 
 function SectionDividers() {
   return (
@@ -276,7 +282,18 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; 
       {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
       <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
-        <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+        <Tooltip
+          direction="right"
+          tooltipId="slippage"
+          content={
+            <div className="text-center">
+              The change in price resulted <br />
+              directly from a particular trade <br />
+              in the VAMM
+            </div>
+          }>
+          <div className="col-auto cursor-pointer text-[14px] text-mediumEmphasis">Price Impact</div>
+        </Tooltip>
         <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
           <span className="value">{!estimation ? '-.--' : estimation.txSummary.priceImpactPct.toFixed(2)}</span> %
         </div>
@@ -335,6 +352,9 @@ export default function CloseCollateral() {
   });
   const approvalAmount = getApprovalAmountFromEstimation(estimation);
   const isNeedApproval = useApprovalCheck(approvalAmount);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
+  const wethBalance = useNanostore($userWethBalance);
 
   useEffect(() => {
     if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL && !isFullClose) {
@@ -364,7 +384,7 @@ export default function CloseCollateral() {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -390,9 +410,10 @@ export default function CloseCollateral() {
         }}
         isAmountTooSmall={isAmountTooSmall}
         isAmountTooLarge={isAmountTooLarge}
-        disabled={isPending}
+        disabled={isPending || isWrongNetwork}
       />
       <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
+      <ErrorTip label={textErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
         maxCloseValue={maxCloseValue}
@@ -402,18 +423,31 @@ export default function CloseCollateral() {
         onSlide={(value: any) => {
           handleChange(value);
         }}
-        disabled={isPending}
+        disabled={isPending || isWrongNetwork}
       />
       <SectionDividers />
-      <div className={`mb-4 flex items-center ${isPending ? 'disabled' : ''}`}>
-        <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+      <div className={`mb-4 flex items-center ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
+        <Tooltip
+          direction="top"
+          content={
+            <div className="text-center">
+              The maximum pricing <br />
+              difference between the price at <br />
+              the time of trade confirmation <br />
+              the actual price of the <br />
+              transaction that the users are <br />
+              willing to acceptM
+            </div>
+          }>
+          <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        </Tooltip>
         <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue
               px-[10px] py-[4px] text-white
-              ${isPending ? 'disabled' : ''}`}>
+              ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
             <input
-              disabled={isPending}
+              disabled={isPending || isWrongNetwork}
               title=""
               type="text"
               className="w-[90%] max-w-[100px]  border-[1px] border-mediumBlue
@@ -440,7 +474,13 @@ export default function CloseCollateral() {
         isAmountTooLarge={isAmountTooLarge}
         isFullClose={isFullClose}
       />
-      {isNeedApproval ? (
+      {!isConnected ? (
+        <ConnectButton />
+      ) : isWrongNetwork ? (
+        <SwitchButton />
+      ) : wethBalance === 0 ? (
+        <GetWETHButton />
+      ) : isNeedApproval ? (
         <ApproveButton
           isEstimating={isEstLoading}
           approvalAmount={isAmountTooLarge || isAmountTooSmall ? 0 : approvalAmount}
@@ -476,19 +516,22 @@ export default function CloseCollateral() {
         </div>
       </div> */}
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
-        <div className="mt-6">
-          <div
-            className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-            onClick={() => setShowDetail(val => !val)}>
-            {!showDetail ? 'Show' : 'Hide'} Advanced Details
-            {!showDetail ? (
-              <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
-            ) : (
-              <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
-            )}
+        <>
+          <div className="mt-6 flex">
+            <div
+              className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
+              onClick={() => setShowDetail(val => !val)}>
+              {!showDetail ? 'Show' : 'Hide'} Advanced Details
+              {!showDetail ? (
+                <Image src="/images/common/angle_down.svg" alt="" width={12} height={12} />
+              ) : (
+                <Image src="/images/common/angle_up.svg" alt="" width={12} height={12} />
+              )}
+            </div>
+            <div className="flex-1" />
           </div>
-          {showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}
-        </div>
+          <div>{showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}</div>
+        </>
       ) : null}
 
       <PartialCloseModal

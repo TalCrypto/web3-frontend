@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { ThreeDots } from 'react-loader-spinner';
 import { useRouter } from 'next/router';
-import { $userPoint, defaultUserPoint, referralList } from '@/stores/airdrop';
+import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userIsConnected, $userIsConnecting } from '@/stores/user';
 import { toast } from 'react-toastify';
@@ -14,11 +14,11 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
 import ResponseModal from '@/components/airdrop/desktop/ResponseModal';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
+import Tooltip from '@/components/common/Tooltip';
 
 function Referral() {
   const router = useRouter();
   const userPointData = useNanostore($userPoint);
-  const [showCopyNotice, setShowCopyNotice] = useState(false);
   const [targetTooltip, setTargetTooltip] = useState(null);
   const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
   const [isReadyInputReferralPopupShow, setIsReadyInputReferralPopupShow] = useState(false);
@@ -30,100 +30,37 @@ function Referral() {
   const [referedUser, setReferedUser] = useState({});
 
   const isConnected = useNanostore($userIsConnected);
-  const referralListData = useNanostore(referralList);
+  const referralListData = useNanostore($referralList);
   const isConnecting = useNanostore($userIsConnecting);
-
-  // const refersCode = router.query.ref;
 
   const userPoint = userPointData || defaultUserPoint;
 
   const { referralCode } = userPoint;
-  // const hadTradedOnce = userPoint.isInputCode && Object.keys(userPoint.referralUser).length === 0;
   const hadEnterCode = userPoint.isInputCode && userPoint.referralUser?.userAddress;
   const totalReferralPoint = Number(userPoint.referral.referralSelfRewardPoints) + Number(userPoint.referral.referringRewardPoints);
   const totalReferees = userPoint.referredUserCount;
   const eligibleReferees = userPoint.eligibleCount;
-  const eligible = () => false;
+  const eligible = () => userPoint?.isEligible;
   const isReferralListEmpty = referralListData.length === 0;
 
-  // async function useReferral() {
-  //   let auth = getAuth();
-  //   let { currentUser } = auth;
-  //   try {
-  //     if (!currentUser || currentUser.uid !== walletProvider.holderAddress) {
-  //       await apiConnection.switchAccount();
-  //     }
-  //     auth = getAuth();
-  //     currentUser = auth.currentUser;
-  //     await walletProvider.getHolderAddress();
-  //     const idToken = await currentUser.getIdToken(true);
-  //     const response = await apiConnection.useReferralCode(refersCode, idToken);
-  //     if (response.code === 0) {
-  //       setIsReferralCompletedPopup(true);
-  //     }
-  //   } catch (e) {
-  //     // console.log({ e });
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (isConnected === true) {
-  //     apiConnection.getReferralList();
-  //   }
-  // }, [isConnected, walletProvider.holderAddress]);
-
-  // useEffect(() => {
-  //   if (refersCode) {
-  //     apiConnection.getUsernameFromReferral(refersCode).then(item => {
-  //       setReferedUser(item);
-  //       setReferralOnboardingStatus(1);
-  //       setIsReadyInputReferralPopupShow(true);
-  //     });
-  //   }
-  // }, []);
-
-  // /**
-  //  * status number if having referral code:
-  //  * 0: initialize (not shown user is using referral code), using referral popup hasn't been shown yet
-  //  * 1: referral popup is show
-  //  * 2: dismissing popup of using referral: in this case, it will check user has been connected wallet or not
-  //  * 3: user is connected with their wallet, call API for using referrals
-  //  */
-
-  // useEffect(() => {
-  //   if (referralOnboardingStatus === 2 && !isConnected) {
-  //     if (!localStorageIsLogin) {
-  //       connectWallet();
-  //     } else {
-  //       autoConnectWallet();
-  //     }
-  //   }
-  //   if (referralOnboardingStatus === 2 && isConnected) {
-  //     setReferralOnboardingStatus(3);
-  //   }
-  //   if (referralOnboardingStatus === 3 && isConnected && userPoint && referedUser) {
-  //     if (referedUser?.userAddress === walletProvider.holderAddress) {
-  //       setIsUsingOwnCodePopup(true);
-  //     } else if (hadTradedOnce) {
-  //       setIsReferralHadTradedPopup(true);
-  //     } else if (hadEnterCode) {
-  //       setIsReferralCodeEnterPopup(true);
-  //     } else {
-  //       useReferral();
-  //     }
-  //   }
-  // }, [referralOnboardingStatus, isConnected, userPoint]);
-
-  // const eligible = () => isEligible;
-
-  // const eligibleTooltipMessage = 'You must have a minimum trading volume of 5 WETH notional to unlock all the points!';
-  // const tooltipMessage =
-  //   'Total referral points includes 3% of your referees’ trading volume points and 2 % bonus points on your trading volume';
+  const eligibleTooltipMessage = (
+    <>
+      You must have a minimum <br /> trading volume of 5 WETH notional <br /> to unlock all the points!
+    </>
+  );
+  const tooltipMessage = (
+    <>
+      Total referral points includes 3% <br />
+      of your referees’ trading volume <br />
+      points and 2 % bonus points <br />
+      on your trading volume
+    </>
+  );
 
   const toastSuccess = (message: any) =>
     toast(
       <div className="flex flex-row items-center justify-center">
-        <Image src="/images/components/airdrop/toast/toast-success.png" alt="" className="mr-[10px]" />
+        <Image src="/images/components/airdrop/toast/toast-success.png" width={20} height={20} alt="" className="mr-[10px]" />
         {message}
       </div>,
       {
@@ -163,7 +100,7 @@ function Referral() {
 
   if (!isConnected) {
     return (
-      <div className="container flex flex-col items-center">
+      <div className="container flex min-h-[400px] flex-col items-center">
         <div className="flex w-fit flex-col items-center">
           <p className="mb-[24px]">Please connect wallet to get started!</p>
           <button
@@ -189,13 +126,13 @@ function Referral() {
 
   return (
     <div className="container p-0 pt-7">
-      <div className="flex flex-col lg:flex-row lg:space-x-[24px]">
+      <div className="flex flex-col xl:flex-row xl:space-x-[24px]">
         {/* Left */}
-        <div className="mb-[36px] flex h-fit basis-1/2 flex-col lg:flex-col">
+        <div className="mb-[36px] flex h-fit basis-1/2 flex-col xl:flex-col">
           {/* Referral Points */}
           <div className="border-1 h-fit flex-1 flex-col-reverse rounded-[6px] border-[#71AAFF]/20 bg-lightBlue/50">
             <div className="flex-1">
-              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] lg:px-[36px]">
+              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] xl:px-[36px]">
                 <h3>My Referral Pts</h3>
                 <span className="cursor-pointer font-semibold text-blue-500" onClick={() => router.push('/airdrop/rules')}>
                   View Rules
@@ -204,27 +141,33 @@ function Referral() {
               <div className="relative flex flex-col items-center justify-center px-6 pb-6">
                 <div className="flex flex-row">
                   <span className="text-[14px]">Referral Total Pts.</span>
-                  {/* <OverlayTrigger placement="top" overlay={<Tooltip>{tooltipMessage}</Tooltip>}> */}
-                  <Image src="/images/components/airdrop/more-info.svg" alt="" className="ml-[6px] mr-0" width={16} height={16} />
-                  {/* </OverlayTrigger> */}
+                  <Tooltip content={tooltipMessage} direction="top">
+                    <Image
+                      src="/images/components/airdrop/more-info.svg"
+                      alt=""
+                      className="ml-[6px] mr-0 cursor-pointer"
+                      width={16}
+                      height={16}
+                    />
+                  </Tooltip>
                 </div>
                 <div className="mt-3 flex flex-row items-center">
                   {!eligible() ? (
                     <div>
-                      {/* <OverlayTrigger placement="top" overlay={<Tooltip>{eligibleTooltipMessage}</Tooltip>}> */}
-                      <div className="flex flex-row items-center">
-                        <Image
-                          src="/images/components/airdrop/lock.svg"
-                          alt=""
-                          className="mr-[10px] h-[24px] w-[20px] "
-                          width={20}
-                          height={24}
-                        />
-                        <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
-                          <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                      <Tooltip content={eligibleTooltipMessage} direction="top">
+                        <div className="flex flex-row items-center">
+                          <Image
+                            src="/images/components/airdrop/lock.svg"
+                            alt=""
+                            className="mr-[10px] h-[24px] w-[20px] cursor-pointer"
+                            width={20}
+                            height={24}
+                          />
+                          <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
+                            <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                          </div>
                         </div>
-                      </div>
-                      {/* </OverlayTrigger> */}
+                      </Tooltip>
                     </div>
                   ) : (
                     <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
@@ -234,7 +177,7 @@ function Referral() {
                 </div>
               </div>
               <div className="border-t-[1px] border-[#2E4371]" />
-              <div className="flex flex-col px-[24px] py-[24px] lg:px-[36px]">
+              <div className="flex flex-col px-[24px] py-[24px] xl:px-[36px]">
                 <div className="flex flex-row">
                   <div className="flex basis-1/2 flex-col text-[14px]">
                     <div>3% referees&#39; points</div>
@@ -258,7 +201,7 @@ function Referral() {
           {/* Eligible Lists */}
           <div className="border-1 mt-8 flex h-fit flex-1 rounded-[6px] border-[#71AAFF]/20 bg-lightBlue/50">
             <div className="flex-1">
-              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] lg:px-[36px] lg:py-[36px]">
+              <div className="flex items-center justify-between px-[24px] py-[24px] md:p-[36px] xl:px-[36px] xl:py-[36px]">
                 <div>
                   <h3>My Referees</h3>
                 </div>
@@ -271,13 +214,13 @@ function Referral() {
                 </div>
               </div>
               <div className="bg-[#20224980]">
-                <div className="px-[24px] py-[24px] lg:px-[36px] lg:py-[36px] ">
+                <div className="px-[24px] py-[24px] xl:px-[36px] xl:py-[36px] ">
                   <h5>{`Referred Users (${referralListData.length})`}</h5>
                 </div>
-                <div className="flex px-[24px] pb-[12px] text-[14px] text-mediumEmphasis lg:px-[36px]">
+                <div className="flex px-[24px] pb-[12px] text-[14px] text-mediumEmphasis xl:px-[36px]">
                   <div className="basis-4/12">User ID</div>
-                  <div className="basis-2/12">Status</div>
-                  <div className="basis-3/12">Trading Vol.</div>
+                  <div className="basis-3/12">Status</div>
+                  <div className="basis-2/12">Trading Vol.</div>
                   <div className="basis-3/12 text-right">Pts to Referrer</div>
                 </div>
                 {isReferralListEmpty ? (
@@ -286,7 +229,7 @@ function Referral() {
                   </div>
                 ) : (
                   <div>
-                    <div className="h-[315px] overflow-y-scroll">
+                    <div className="scrollable h-[315px] overflow-y-scroll">
                       {referralListData.map((item: any) => {
                         const displayUsername =
                           item.username === ''
@@ -302,14 +245,15 @@ function Referral() {
                         };
                         return (
                           <div
-                            className="flex cursor-pointer px-[24px] py-[12px] text-[14px] lg:px-[36px] [&:nth-child(odd)]:bg-[#202249]"
+                            className="flex cursor-pointer px-[24px] py-[12px] text-[14px]
+                            font-normal xl:px-[36px] [&:nth-child(odd)]:bg-[#202249]"
                             onClick={redirect}>
                             <div className="flex basis-4/12 flex-row">
                               <div className="mr-[8px] h-auto w-[3px] self-stretch rounded-[30px] bg-[#2574FB]" />
                               {displayUsername}
                             </div>
-                            <div className="basis-2/12">{eligibleStatus}</div>
-                            <div className="flex basis-3/12 flex-row items-center">
+                            <div className="basis-3/12">{eligibleStatus}</div>
+                            <div className="flex basis-2/12 flex-row items-center">
                               <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={14} height={14} className="mr-1" />
                               <div>{volume}</div>
                             </div>
@@ -351,8 +295,8 @@ function Referral() {
               </p>
               <div className="mb-[36px] flex items-center space-x-[12px] md:space-x-[24px]">
                 <div
-                  className="rounded-2 border-1 flex h-[48px] flex-1 items-center
-                  justify-between border-[#2E4371]/20 bg-[#0C0D20] px-[16px] py-[8px]">
+                  className="border-1 flex h-[48px] flex-1 items-center justify-between
+                    rounded-[4px] border-[#2E4371]/20 bg-[#0C0D20] px-[16px] py-[8px]">
                   <span className="text-[12px] font-normal text-[#A8CBFFBF]">
                     {`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode}`}
                   </span>
@@ -367,8 +311,7 @@ function Referral() {
                 </div>
                 <PrimaryButton
                   className="rounded-2 body1e h-[48px] w-[48px] bg-primaryBlue px-[8px] py-[8px]"
-                  // onClick={() => setIsReferralPopupShow(true)}
-                >
+                  onClick={() => setIsReferralPopupShow(true)}>
                   <Image className="cursor-pointer" src="/images/components/airdrop/share-white.svg" alt="" width={24} height={24} />
                 </PrimaryButton>
               </div>
@@ -381,9 +324,9 @@ function Referral() {
                 )}
               </Overlay> */}
 
-              <div className="hidden rounded-[16px] bg-gradient-to-r from-[#04AEFC] to-[#F703D9] p-[1px] md:block">
+              <div className="hidden rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px] md:block">
                 <div className="rounded-[15px] bg-lightBlue p-[24px] outline-dashed outline-2 outline-lightBlue">
-                  <div className="flex flex-row items-center justify-between">
+                  <div className="flex flex-row items-center">
                     <div className="flex flex-col ">
                       <div className="text-[14px]">🎁 You Will Get</div>
                       <div
@@ -394,18 +337,26 @@ function Referral() {
                           <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-row items-end text-start">
                               <div className="flex-row items-center">
-                                <span className="text-glow-green text-[32px] font-semibold">3</span>
+                                <span
+                                  className="text-glow-green shadow-referral text-[32px]
+                                  font-semibold">
+                                  3
+                                </span>
                                 &nbsp; &nbsp;
-                                <span className="text-glow-green text-[20px] font-semibold">%</span>
+                                <span
+                                  className="text-glow-green shadow-referral text-[20px]
+                                  font-semibold">
+                                  %
+                                </span>
                               </div>
                             </div>
                             <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={26} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of your referees’ trading volume points
+                        <span className="shadow-referral">of your referees’ trading volume points</span>
                       </div>
                     </div>
-                    <div className="h-auto w-[1px] self-stretch bg-[#2E4371]" />
+                    <div className="mx-9 h-auto w-[1px] self-stretch bg-[#2E4371]" />
                     <div className="flex flex-col">
                       <div className="text-[14px]">🎁 Referees Will Get</div>
                       <div
@@ -417,15 +368,15 @@ function Referral() {
                           <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-row items-end text-start">
                               <div className="flex-row items-center">
-                                <span className="text-glow-green text-[32px] font-semibold">2</span>
+                                <span className="text-glow-green shadow-referral text-[32px] font-semibold">2</span>
                                 &nbsp; &nbsp;
-                                <span className="text-glow-green text-[20px] font-semibold">%</span>
+                                <span className="text-glow-green shadow-referral text-[20px] font-semibold">%</span>
                               </div>
                             </div>
                             <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={28} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of their own trading volume points
+                        <span className="shadow-referral">of their own trading volume points</span>
                       </div>
                     </div>
                   </div>

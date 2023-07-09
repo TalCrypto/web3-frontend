@@ -16,7 +16,12 @@ import ReduceCollateralButton from '@/components/common/actionBtns/ReduceCollate
 import { useDebounce } from '@/hooks/debounce';
 import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
-import { $userWethBalance } from '@/stores/user';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import SwitchButton from '@/components/common/actionBtns/SwitchButton';
+import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;
@@ -69,7 +74,7 @@ function QuantityEnter(props: any) {
   };
 
   const showMaxValue = () => {
-    onChange(Number(maxValue).toFixed(4));
+    onChange(Number(maxValue - 0.00005).toFixed(4));
   };
 
   return (
@@ -333,6 +338,8 @@ export default function AdjustCollateral(props: any) {
 
   const freeCollateral = useFreeCollateral();
   const wethBalance = useNanostore($userWethBalance);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   const { isLoading: isEstLoading, estimation } = useAdjustCollateralEstimation(adjustMarginValue * (-1) ** marginIndex);
 
@@ -346,7 +353,7 @@ export default function AdjustCollateral(props: any) {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -364,9 +371,14 @@ export default function AdjustCollateral(props: any) {
 
   return (
     <div>
-      <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
+      <SaleOrBuyRadio
+        disabled={isPending || isWrongNetwork}
+        marginIndex={marginIndex}
+        setMarginIndex={setMarginIndex}
+        onChange={initializeState}
+      />
       <QuantityEnter
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
         adjustMarginValue={adjustMarginValue}
         onChange={(value: any) => {
           handleChange(value);
@@ -376,6 +388,7 @@ export default function AdjustCollateral(props: any) {
         wethBalance={wethBalance}
         isError={textErrorMessage !== null}
       />
+      <ErrorTip label={textErrorMessage} />
       {/* <QuantityTips
         balanceChecking={balanceChecking}
         marginRatioChecker={marginRatioChecker}
@@ -394,7 +407,7 @@ export default function AdjustCollateral(props: any) {
         onChange={(value: any) => {
           handleChange(value);
         }}
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0)}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
       />
       <SectionDividers />
       <EstimationValueDisplay isError={textErrorMessage !== null} estimation={estimation} />
@@ -402,7 +415,13 @@ export default function AdjustCollateral(props: any) {
       <UpdatedCollateralValue marginIndex={marginIndex} value={!estimation ? '-.-' : Math.abs(estimation.marginRequirement).toFixed(4)} />
 
       <div className="pb-4">
-        {isNeedApproval ? (
+        {!isConnected ? (
+          <ConnectButton />
+        ) : isWrongNetwork ? (
+          <SwitchButton />
+        ) : wethBalance === 0 ? (
+          <GetWETHButton />
+        ) : isNeedApproval ? (
           <ApproveButton
             isEstimating={isEstLoading}
             approvalAmount={approvalAmount}

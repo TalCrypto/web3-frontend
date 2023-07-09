@@ -4,9 +4,9 @@ import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/common/actionBtns/BaseButton';
 import { useClosePositionTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAmm } from '@/stores/trading';
+import { $currentAmm, $tsTransactionStatus } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { PositionActions } from '@/const';
+import { TradeActions } from '@/const';
 import { $isMobileView } from '@/stores/modal';
 
 function ClosePosButton({
@@ -40,9 +40,16 @@ function ClosePosButton({
   useEffect(() => {
     if (isSuccess) {
       onSuccess();
+      if (isMobileView && txHash) {
+        $tsTransactionStatus.set({
+          isShow: true,
+          isSuccess: true,
+          linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`
+        });
+      }
       setIsLoading(false);
     }
-  }, [isSuccess, onSuccess]);
+  }, [isSuccess, txHash, onSuccess]);
 
   useEffect(() => {
     if (isPending) {
@@ -50,7 +57,7 @@ function ClosePosButton({
         showToast(
           {
             warning: true,
-            title: `${collectionInfo.shortName} - ${PositionActions.CLOSE} Position`,
+            title: `${collectionInfo.shortName} - ${TradeActions.CLOSE} Position`,
             message: 'Order Received!',
             linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
             linkLabel: 'Check on Arbiscan'

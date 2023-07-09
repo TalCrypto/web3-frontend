@@ -3,7 +3,7 @@
 
 export enum AMM {
   MILADY = 'milady',
-  PUDGYPENGUINS = 'pudgypenguins',
+  PPG = 'ppg',
   DEGODS = 'degods',
   CAPTAINZ = 'captainz',
   BAYC = 'bayc',
@@ -11,7 +11,7 @@ export enum AMM {
   AZUKI = 'azuki',
   PUNKS = 'punks'
 }
-export const DEFAULT_AMM: AMM = AMM.DEGODS;
+export const DEFAULT_AMM: AMM = AMM.MILADY;
 
 export interface CollectionInfo {
   amm: AMM;
@@ -61,24 +61,24 @@ export const collectionsInfos: CollectionInfos = {
     isNew: true,
     sort: 1
   },
-  [AMM.PUDGYPENGUINS]: {
-    amm: AMM.PUDGYPENGUINS,
-    name: 'PUDGYPENGUINS/ETH',
+  [AMM.PPG]: {
+    amm: AMM.PPG,
+    name: 'PPG/ETH',
     title: 'PUDGY',
     image: '/images/collections/small/pudgypenguins.svg',
-    collection: 'PUDGYPENGUINS',
+    collection: 'PPG',
     contract: process.env.NEXT_PUBLIC_PUDGYPENGUINS_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/pudgypenguins.svg',
     sidebarLogo: '/images/collections/normal/pudgypenguins.svg',
     collectionName: 'PUDGY',
-    collectionType: 'PUDGYPENGUINS',
+    collectionType: 'PPG',
     contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
     homeUrl: 'https://www.pudgypenguins.com/',
     twitterUrl: 'https://www.twitter.com/pudgypenguins',
     discordUrl: 'https://discord.gg/pudgypenguins',
     etherscanUrl: 'https://etherscan.io/address/0xbd3531da5cf5857e7cfaa92426877b022e612cf8',
     shortName: 'PUDGY',
-    displayCollectionPair: 'PUDGYPENGUINS/WETH',
+    displayCollectionPair: 'PPG/WETH',
     isNew: true,
     sort: 2
   },

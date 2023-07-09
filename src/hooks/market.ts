@@ -114,9 +114,8 @@ export const useMarketOverview = (): GetMktOverview => {
           vammPrice: formatBigInt(vammPriceList[i]),
           oraclePrice: formatBigInt(oraclePriceList[i]),
           priceChangeRatio24h: ((formatBigInt(vammPriceList[i]) - basePrice24h) / basePrice24h) * 100,
-          priceChangeRatio7d: basePrice7d !== 0 ? ((formatBigInt(oraclePriceList[i]) ?? 0 - basePrice7d) / basePrice7d) * 100 : undefined,
-          priceChangeRatio30d:
-            basePrice30d !== 0 ? ((formatBigInt(oraclePriceList[i]) ?? 0 - basePrice30d) / basePrice30d) * 100 : undefined,
+          priceChangeRatio7d: ((formatBigInt(vammPriceList[i]) - basePrice7d) / basePrice7d) * 100,
+          priceChangeRatio30d: ((formatBigInt(vammPriceList[i]) - basePrice30d) / basePrice30d) * 100,
           priceChange24h: formatBigInt(vammPriceList[i]) - basePrice24h,
           priceChange7d: formatBigInt(vammPriceList[i]) - basePrice7d,
           priceChange30d: formatBigInt(vammPriceList[i]) - basePrice30d,
@@ -143,7 +142,6 @@ export const useMobileMarketOverview = (): GetMktOverview => {
 
   useEffect(() => {
     async function getGraphData() {
-      console.log('isLoading', isLoading);
       if (isLoading) return;
       setIsLoading(true);
       const nowTs = Math.round(new Date().getTime() / 1000);

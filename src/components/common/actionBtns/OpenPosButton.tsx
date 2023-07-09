@@ -6,10 +6,10 @@ import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/common/actionBtns/BaseButton';
 import { OpenPositionEstimation, Side, useOpenPositionTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAmm } from '@/stores/trading';
+import { $currentAmm, $tsTransactionStatus } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
 import { usePositionInfo } from '@/hooks/collection';
-import { PositionActions } from '@/const';
+import { TradeActions } from '@/const';
 import { $isMobileView } from '@/stores/modal';
 
 function OpenPosButton({
@@ -45,10 +45,10 @@ function OpenPosButton({
     if (positionInfo) {
       const posType =
         positionInfo.size === 0
-          ? `${PositionActions.OPEN} Position`
+          ? `${TradeActions.OPEN} Position`
           : (-1) ** side * positionInfo.size > 0
-          ? `${PositionActions.ADD} Position`
-          : `${PositionActions.REDUCE} Position`;
+          ? `${TradeActions.ADD} Position`
+          : `${TradeActions.REDUCE} Position`;
       setLabel(posType);
     }
   }, [positionInfo, side]);
@@ -75,9 +75,16 @@ function OpenPosButton({
   useEffect(() => {
     if (isSuccess) {
       onSuccess();
+      if (isMobileView && txHash) {
+        $tsTransactionStatus.set({
+          isShow: true,
+          isSuccess: true,
+          linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`
+        });
+      }
       setIsLoading(false);
     }
-  }, [isSuccess, onSuccess]);
+  }, [isSuccess, txHash, onSuccess]);
 
   useEffect(() => {
     if (isPending && txHash) {

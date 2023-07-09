@@ -10,18 +10,16 @@ function PositionList() {
   const router = useRouter();
   const psUserPosition = useNanostore($psUserPosition);
 
-  let itemIndex = 0;
-
   return (
     <div>
-      {psUserPosition.filter((item: any) => item !== null).length === 0 ? (
+      {psUserPosition.length === 0 ? (
         <div className="mt-[100px]">
           <div className="mb-6 text-center text-[16px] text-mediumEmphasis">You have no open position.</div>
           <div className="flex justify-center">
             <PrimaryButton
               className="px-[14px] py-[7px] !text-[14px] font-semibold"
               onClick={() => {
-                router.push('/trades');
+                router.push('/trade');
               }}>
               Go to Trade
             </PrimaryButton>
@@ -30,12 +28,11 @@ function PositionList() {
       ) : (
         <div className="scrollable">
           <div className="px-5">
-            {psUserPosition.map((item: any, index: any) => {
+            {psUserPosition.map(item => {
               if (!item) {
                 return null;
               }
-              itemIndex += 1;
-              return <PositionListItem key={`position_item_mobile_${itemIndex}`} userPosition={item} index={index} itemIndex={itemIndex} />;
+              return <PositionListItem key={`position_item_mobile_${item.amm}`} userPosition={item} />;
             })}
           </div>
         </div>

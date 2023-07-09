@@ -8,7 +8,8 @@ module.exports = {
       md: '840px',
       lg: '968px',
       xl: '1100px',
-      '2xl': '1300px'
+      '2xl': '1300px',
+      '3xl': '1400px'
     },
     container: {
       center: true,
@@ -21,7 +22,8 @@ module.exports = {
         md: '840px',
         lg: '968px',
         xl: '1100px',
-        '2xl': '1300px'
+        '2xl': '1300px',
+        '3xl': '1400px'
       }
     },
     extend: {
@@ -45,6 +47,9 @@ module.exports = {
         competition: '#FFEFD0',
         seasonGreen: '#D0FF4B',
         tooltipArrow: '#213676',
+
+        gradientBlue: '#04AEFC',
+        gradientPink: '#F703D9',
 
         direction: {
           unselected: {

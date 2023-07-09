@@ -5,7 +5,7 @@ import { $isShowMobileModal } from '@/stores/modal';
 
 import { useRouter } from 'next/router';
 import MobileTradeFooterInfo from '@/components/layout/footer/mobile/bar/Trade';
-import MobilePortfolioFooterInfo from '@/components/layout/footer/mobile/bar/Portfolio';
+import MobileCommonFooterInfo from '@/components/layout/footer/mobile/bar/Common';
 
 function MobileFooter() {
   const router = useRouter();
@@ -20,7 +20,7 @@ function MobileFooter() {
         <div
           className="box-border flex h-full w-full
             content-center items-center justify-normal overflow-hidden">
-          {router.asPath === '/portfolio' ? <MobilePortfolioFooterInfo /> : <MobileTradeFooterInfo />}
+          {router.pathname === '/trade' ? <MobileTradeFooterInfo /> : <MobileCommonFooterInfo />}
 
           <div className="relative h-full w-[50px]">
             <button

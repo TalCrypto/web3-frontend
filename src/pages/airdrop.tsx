@@ -10,14 +10,19 @@ import Referral from '@/components/airdrop/desktop/Referral';
 import Leaderboard from '@/components/airdrop/desktop/Leaderboard';
 import Rules from '@/components/airdrop/desktop/Rules';
 
+import ReferralMobile from '@/components/airdrop/mobile/Referral';
+import RulesMobile from '@/components/airdrop/mobile/Rules';
+import OverviewMobile from '@/components/airdrop/mobile/Overview';
+import TopInfo from '@/components/airdrop/desktop/TopInfo';
+import TopInfoMobile from '@/components/airdrop/mobile/TopInfo';
+import TabSwitcher from '@/components/airdrop/mobile/TabSwitcher';
+import LeaderboardMobile from '@/components/airdrop/mobile/Leaderboard';
+import LeaderboardDataUpdater from '@/components/updaters/LeaderboardUpdater';
+import { ToastContainer } from 'react-toastify';
+
 export default function Home() {
   const router = useRouter();
   const activeTab = useNanostore($asActiveTab);
-
-  // value from nano store
-  // const userPointData = useNanostore(userPoint);
-  // const leaderboardData = useNanostore(leaderboard);
-  // const prevUserPointData = useNanostore(userPrevSeasonPoint);
 
   const routingQuery = () => {
     const { target }: any = router.query;
@@ -29,12 +34,7 @@ export default function Home() {
     }
   };
 
-  const getInitialData = () => {
-    // apiConnection.getLeaderboard();
-  };
-
   useEffect(() => {
-    getInitialData();
     routingQuery();
   }, []);
 
@@ -64,13 +64,26 @@ export default function Home() {
         ogTitle="Start to trade, hedge, leverage with a real-time charts."
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
+
+      <ToastContainer
+        enableMultiContainer
+        containerId="AIRDROP"
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        toastStyle={{ border: '1px solid rgba(120, 243, 99, 1)', fontFamily: 'Montserrat', width: '380px' }}
+      />
+
       <main>
         <div className="hidden md:block">
-          <div className="text-glow-green mb-[12px] mt-9 text-center text-[32px] font-bold">AIRDROP SEASON 2</div>
-          <p className="mb-[48px] text-center">
-            More <span className="text-seasonGreen">Tribe3 points</span>, more <span className="text-seasonGreen">Tribe3 tokens</span>
-            for you 🙌
-          </p>
+          <TopInfo />
 
           <TabItems />
 
@@ -79,7 +92,28 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mobile-view" />
+        <div
+          className="mobile-view block bg-darkBlue bg-[url('/images/components/airdrop/bg-mobile.png')]
+             bg-cover bg-[center_top] bg-no-repeat md:hidden
+          ">
+          <TopInfoMobile />
+
+          <TabSwitcher />
+
+          <div className="bg-darkBlue pt-9">
+            {activeTab === 0 ? (
+              <OverviewMobile />
+            ) : activeTab === 1 ? (
+              <ReferralMobile />
+            ) : activeTab === 2 ? (
+              <LeaderboardMobile />
+            ) : (
+              <RulesMobile />
+            )}
+          </div>
+        </div>
+
+        <LeaderboardDataUpdater />
       </main>
     </>
   );

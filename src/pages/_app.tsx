@@ -18,7 +18,7 @@ const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProv
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ projectId, version: 2, chains: CHAINS }),
+  connectors: w3mConnectors({ projectId, chains: CHAINS }),
   publicClient,
   webSocketPublicClient
 });

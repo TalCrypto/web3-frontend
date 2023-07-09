@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentChain, $userPositionInfos, UserPositionInfo, $userFPHistory, $userTotalFP } from '@/stores/user';
+import { $currentChain, $userPositionInfos, UserPositionInfo, $userFPHistory, $userTotalFP, $userIsWrongNetwork } from '@/stores/user';
 import {
   $collectionConfig,
   $dailyVolume,
-  $graphData,
+  $ohlcData,
   $highPrice,
   $lowPrice,
   $oraclePrice,
@@ -15,7 +15,7 @@ import {
 } from '@/stores/trading';
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
-import { OhlcData } from 'lightweight-charts';
+import { SingleValueData } from 'lightweight-charts';
 
 export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   const positionInfos = useNanostore($userPositionInfos);
@@ -31,17 +31,18 @@ export const useFundingPaymentHistory = (amm: AMM) => {
 
 export const usePositionInfosIsLoading = (): boolean => {
   const chain = useNanostore($currentChain);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const [isLoading, setIsLoading] = useState(true);
   const positionInfos = useNanostore($userPositionInfos);
 
   useEffect(() => {
-    if (chain) {
+    if (chain && !isWrongNetwork) {
       const amms = getSupportedAMMs(chain);
       setIsLoading(!(positionInfos && Object.keys(positionInfos).length === amms.length));
     } else {
       setIsLoading(false);
     }
-  }, [positionInfos, chain]);
+  }, [positionInfos, chain, isWrongNetwork]);
   return isLoading;
 };
 
@@ -60,18 +61,19 @@ export const useTransactionIsPending = (amm?: AMM): boolean => {
 };
 
 export const useChartData = (): {
-  graphData: OhlcData[];
+  graphData: SingleValueData[];
   dailyVolume?: number;
   priceChange?: number;
   priceChangePct?: number;
   highPrice?: number;
   lowPrice?: number;
 } => {
-  const graphData = useNanostore($graphData);
+  const ohlcData = useNanostore($ohlcData);
   const dailyVolume = useNanostore($dailyVolume);
   const priceChange = useNanostore($priceChange);
   const priceChangePct = useNanostore($priceChangePct);
   const highPrice = useNanostore($highPrice);
   const lowPrice = useNanostore($lowPrice);
+  const graphData = ohlcData.map(record => ({ time: record.time, value: record.close }));
   return { graphData, dailyVolume, priceChange, priceChangePct, highPrice, lowPrice };
 };

@@ -7,13 +7,11 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentChain, $userAddress, $userInfo, $userIsWrongNetwork, $userPositionInfos, $userWethBalance } from '@/stores/user';
+import { $currentChain, $userAddress, $userInfo, $userIsWrongNetwork, $userTotalCollateral, $userWethBalance } from '@/stores/user';
 import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { $showSwitchNetworkErrorModal, $showGetWEthModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
 import PrimaryButton from '@/components/common/PrimaryButton';
-import { AMM } from '@/const/collectionList';
-import { getSupportedAMMs } from '@/const/addresses';
 
 interface PriceContentProps {
   priceValue: string;
@@ -99,15 +97,9 @@ const BottomContent = () => {
   const address = useNanostore($userAddress);
   const currentChain = useNanostore($currentChain);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
-  const userPositionInfos = useNanostore($userPositionInfos);
-  const ammList = getSupportedAMMs();
   const wethBalance = useNanostore($userWethBalance);
   const displayAddress = address ? `${address.substring(0, 7)}...${address.slice(-3)}` : null;
-
-  const positionBalance = ammList
-    .filter((amm: AMM) => (userPositionInfos && userPositionInfos[amm] ? userPositionInfos[amm].size > 0 : false))
-    .map((amm: AMM) => userPositionInfos[amm])
-    .reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
+  const totalCollateral = useNanostore($userTotalCollateral);
 
   return (
     <div className="bottoms">
@@ -143,14 +135,14 @@ const BottomContent = () => {
       </div>
       <PriceContent
         title="Total Account Value:"
-        priceValue={isWrongNetwork ? '0.0000' : (wethBalance + positionBalance).toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : (wethBalance + totalCollateral).toFixed(4)}
         isLargeText
         notLastRow={false}
       />
       <div className="mx-6 my-0 h-[1px] bg-[#414368]" />
       <PriceContent
         title="Portfolio Collateral:"
-        priceValue={isWrongNetwork ? '0.0000' : positionBalance.toFixed(4)}
+        priceValue={isWrongNetwork ? '0.0000' : totalCollateral.toFixed(4)}
         isLargeText={false}
         notLastRow
       />

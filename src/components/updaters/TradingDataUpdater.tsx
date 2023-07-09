@@ -1,5 +1,5 @@
 import { Contract, getAMMContract, getCHViewerContract } from '@/const/contracts';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useContractReads } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $oraclePrice, $vammPrice, $nextFundingTime, $fundingRates, $openInterests } from '@/stores/trading';
@@ -78,17 +78,10 @@ const Updater = ({ ammContract, chViewer }: { ammContract: Contract; chViewer: C
 const TradingDataUpdater: React.FC = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const [ammContract, setAmmContract] = useState<Contract | undefined>();
-  const [chViewer, setChViewerContract] = useState<Contract | undefined>();
+  const ammContract = getAMMContract(chain, currentAmm);
+  const chViewer = getCHViewerContract(chain);
 
-  useEffect(() => {
-    if (currentAmm) {
-      setAmmContract(getAMMContract(chain, currentAmm));
-      setChViewerContract(getCHViewerContract(chain));
-    }
-  }, [chain, currentAmm]);
-
-  if (!ammContract || !chViewer) return null;
+  if (!currentAmm || !ammContract || !chViewer) return null;
 
   return <Updater ammContract={ammContract} chViewer={chViewer} />;
 };

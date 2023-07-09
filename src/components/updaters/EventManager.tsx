@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { showToast } from '@/components/common/Toast';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $pendingPositionChangedEvents, $pendingMarginChangedEvents } from '@/stores/events';
-import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $tsTransactionStatus, addGraphRecord } from '@/stores/trading';
+import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, addGraphRecord } from '@/stores/trading';
 import { $currentChain, $userAddress } from '@/stores/user';
 import { getTradingActionType, getCollateralActionType } from '@/utils/actionType';
 import { apiConnection } from '@/utils/apiConnection';
@@ -52,14 +51,6 @@ const EventHandlers = () => {
               }
             );
           }
-
-          if (isMobileView) {
-            $tsTransactionStatus.set({
-              isShow: true,
-              isSuccess: true,
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`
-            });
-          }
         }
       });
 
@@ -81,13 +72,16 @@ const EventHandlers = () => {
               txHash: event.txHash,
               isNew: true
             };
-            $futureMarketHistory.set([newRecord, ...$futureMarketHistory.get().map(history => ({ ...history, isNew: false }))]);
+            const oldHistory = $futureMarketHistory.get();
+            if (oldHistory) {
+              $futureMarketHistory.set([newRecord, ...oldHistory.map(history => ({ ...history, isNew: false }))]);
+            }
             addGraphRecord(event.vammPrice);
           });
         });
       }
     }
-  }, [pendingPositionChangedEvents, traderAddress, chain, ammAddress]);
+  }, [pendingPositionChangedEvents, traderAddress, chain, ammAddress, isMobileView]);
 
   useEffect(() => {
     if (pendingMarginChangedEvents.length > 0) {
@@ -99,7 +93,6 @@ const EventHandlers = () => {
           const type = getCollateralActionType(margin);
           const amm = getAMMByAddress(event.amm, chain);
           const ammInfo = getCollectionInformation(amm);
-          console.log(isMobileView);
 
           if (!isMobileView) {
             showToast(
@@ -115,17 +108,9 @@ const EventHandlers = () => {
               }
             );
           }
-
-          if (isMobileView) {
-            $tsTransactionStatus.set({
-              isShow: true,
-              isSuccess: true,
-              linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`
-            });
-          }
         });
     }
-  }, [pendingMarginChangedEvents, traderAddress, chain]);
+  }, [pendingMarginChangedEvents, traderAddress, chain, isMobileView]);
 
   return null;
 };
@@ -146,7 +131,10 @@ const EventListeners = ({ ammContract, chContract }: { ammContract: Contract; ch
         amountLong: formatBigInt(log.args.rateLong ?? 0n) * formatBigInt(log.args.underlyingPrice ?? 0n),
         amountShort: formatBigInt(log.args.rateShort ?? 0n) * formatBigInt(log.args.underlyingPrice ?? 0n)
       }));
-      $fundingRatesHistory.set([...newRecords, ...$fundingRatesHistory.get()]);
+      const oldHistory = $fundingRatesHistory.get();
+      if (oldHistory) {
+        $fundingRatesHistory.set([...newRecords, ...oldHistory]);
+      }
     }
   });
 
@@ -196,17 +184,10 @@ const EventListeners = ({ ammContract, chContract }: { ammContract: Contract; ch
 const EventManager = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const [ammContract, setAmmContract] = useState<Contract | undefined>();
-  const [chContract, setChContract] = useState<Contract | undefined>();
+  const ammContract = getAMMContract(chain, currentAmm);
+  const chContract = getCHContract(chain);
 
-  useEffect(() => {
-    if (currentAmm) {
-      setAmmContract(getAMMContract(chain, currentAmm));
-      setChContract(getCHContract(chain));
-    }
-  }, [chain, currentAmm]);
-
-  if (!ammContract || !chContract) return null;
+  if (!currentAmm || !ammContract || !chContract) return null;
 
   return (
     <>

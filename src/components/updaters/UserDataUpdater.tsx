@@ -26,12 +26,13 @@ import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } f
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import { getAddress, zeroAddress } from 'viem';
 
-const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAddress: Address; trader: Address | undefined }> = ({
-  chain,
-  amm,
-  ammAddress,
-  trader
-}) => {
+const PositionInfoUpdater: React.FC<{
+  chain: Chain | undefined;
+  amm: AMM;
+  ammAddress: Address;
+  trader: Address | undefined;
+  isWrongNetwork: boolean;
+}> = ({ chain, amm, ammAddress, trader, isWrongNetwork }) => {
   const chViewer = getCHViewerContract(chain);
   const { data } = useContractRead({
     ...chViewer,
@@ -57,9 +58,10 @@ const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAdd
   const isLiquidatable = data ? data.isLiquidatable : false;
 
   useEffect(() => {
-    if (trader) {
+    if (trader && !isWrongNetwork) {
       $userPositionInfos.setKey(amm, {
-        amm: ammAddress,
+        amm,
+        ammAddress,
         size,
         margin,
         openNotional,
@@ -94,7 +96,8 @@ const PositionInfoUpdater: React.FC<{ chain: Chain | undefined; amm: AMM; ammAdd
     vammPrice,
     leverage,
     fundingPayment,
-    isLiquidatable
+    isLiquidatable,
+    isWrongNetwork
   ]);
 
   useEffect(() => {
@@ -122,7 +125,7 @@ const UserDataUpdater: React.FC = () => {
   const { address, isConnected, isConnecting } = useAccount();
   const { chain } = useNetwork();
   const { isOpen } = useWeb3Modal();
-  const { data } = useBalance({ address, token: wethAddr, watch: true });
+  const { data } = useBalance({ address, token: wethAddr, watch: true, enabled: Boolean(wethAddr) });
   const [amms, setAmms] = useState<Array<AMM>>();
 
   const chContract = getCHContract(chain);
@@ -166,7 +169,7 @@ const UserDataUpdater: React.FC = () => {
   }, [isConnecting, isOpen]);
 
   useEffect(() => {
-    if (data && data.symbol !== 'ETH') {
+    if (data) {
       setWethBalance(parseFloat(data.formatted));
     }
   }, [data]);
@@ -176,7 +179,7 @@ const UserDataUpdater: React.FC = () => {
   }, [allowanceData]);
 
   useEffect(() => {
-    if (chain && isConnected && !chain.unsupported) {
+    if (chain && isConnected) {
       const { config: addressConf } = getAddressConfig(chain);
       setWethAddr(addressConf.weth);
       setAmms(getSupportedAMMs(chain));
@@ -255,7 +258,16 @@ const UserDataUpdater: React.FC = () => {
       {amms.map(amm => {
         const ammAddr = getAMMAddress(chain, amm);
         if (ammAddr) {
-          return <PositionInfoUpdater key={amm} chain={chain} amm={amm} ammAddress={ammAddr} trader={address} />;
+          return (
+            <PositionInfoUpdater
+              key={amm}
+              chain={chain}
+              amm={amm}
+              ammAddress={ammAddr}
+              trader={address}
+              isWrongNetwork={Boolean(chain?.unsupported)}
+            />
+          );
         }
         return null;
       })}

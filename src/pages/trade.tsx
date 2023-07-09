@@ -12,7 +12,7 @@ import PositionDetails from '@/components/trade/desktop/position/PositionDetails
 
 import { WithRouterProps } from 'next/dist/client/with-router';
 import { $currentAmm } from '@/stores/trading';
-import { AMM } from '@/const/collectionList';
+import { AMM, DEFAULT_AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
 import TradingDataUpdater from '@/components/updaters/TradingDataUpdater';
@@ -29,15 +29,19 @@ function TradePage(props: WithRouterProps) {
 
   useEffect(() => {
     const collection = router?.query?.collection;
-
-    if (router?.asPath === '/trade') {
-      router.push('/trade/degods');
-      return;
-    }
-
     if (collection) {
-      $currentAmm.set(collection as AMM);
+      const amm = collection as AMM;
+      if (Object.values(AMM).includes(amm)) {
+        $currentAmm.set(amm);
+      } else {
+        router.push(`/trade/${DEFAULT_AMM}`);
+      }
+    } else {
+      router.push(`/trade/${DEFAULT_AMM}`);
     }
+    return () => {
+      $currentAmm.set(undefined);
+    };
   }, [router]);
 
   return (

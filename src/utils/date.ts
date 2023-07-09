@@ -1,7 +1,17 @@
 export const formatDateTime = (value: number, format = 'DD/MM/YY HH:mm'): any => {
-  const date = new Date(value * 1000);
+  const tempDate = new Date(value * 1000);
+  const tzOffsetHour = tempDate.getTimezoneOffset() / 60;
+  const tzOffsetMin = tempDate.getTimezoneOffset() % 60;
+  const strTzOffsetHour = `0${Math.abs(tzOffsetHour)}`.slice(-2);
+  const strTzOffsetMin = `0${Math.abs(tzOffsetMin)}`.slice(-2);
+
+  const strTzOffset =
+    tzOffsetHour > 0 ? `-${strTzOffsetHour}:${strTzOffsetMin}` : tzOffsetHour < 0 ? `+${strTzOffsetHour}:${strTzOffsetMin}` : '';
+
+  const date = new Date(tempDate.getTime());
   const year = date.getFullYear();
   const month = date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  const monthShort = date.toLocaleString('default', { month: 'short' });
   const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
   const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
   const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
@@ -17,7 +27,7 @@ export const formatDateTime = (value: number, format = 'DD/MM/YY HH:mm'): any =>
     return `${day}/${month} ${hours}:${minutes}`;
   }
   if (format === 'YYYY. DD. MMM HH:mm UTCZ') {
-    return `${year}. ${day}. ${month}. ${hours}:${minutes} UTCZ`;
+    return `${year}. ${day}. ${monthShort}. ${hours}:${minutes} UTC${strTzOffset}`;
   }
 
   if (format === 'MM/YYYY') {

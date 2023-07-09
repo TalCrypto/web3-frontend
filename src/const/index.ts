@@ -2,19 +2,19 @@
 /* eslint-disable no-shadow */
 export const MINIMUM_COLLATERAL = 0.01;
 
-export enum PositionActions {
+export enum TradeActions {
   OPEN = 'Open',
-  CLOSE = 'Close',
+  CLOSE = 'Full Close',
   ADD = 'Add',
-  REDUCE = 'Reduce',
+  REDUCE = 'Partial Close',
   REVERSE = 'Reverse',
-  FULL_LIQ = 'Full Liquid.',
-  PARTIAL_LIQ = 'Partial Liquid.'
+  FULL_LIQ = 'Full Liquidation',
+  PARTIAL_LIQ = 'Partial Liquidation'
 }
 
 export enum CollateralActions {
-  ADD = 'Add',
-  REDUCE = 'Reduce'
+  ADD = 'Add Collateral',
+  REDUCE = 'Reduce Collateral'
 }
 
 export const DAY_RESOLUTION = 300;

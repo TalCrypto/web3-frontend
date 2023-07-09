@@ -18,18 +18,16 @@ function PositionList() {
 
   // const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPaymentCount), 0);
 
-  let itemIndex = 0;
-
   return (
     <div>
-      {psUserPosition.filter((item: any) => item !== null).length === 0 ? (
+      {psUserPosition.length === 0 ? (
         <div className="mt-[100px]">
           <div className="mb-6 text-center text-[16px] text-mediumEmphasis">You have no open position.</div>
           <div className="flex justify-center">
             <PrimaryButton
               className="px-[14px] py-[7px] !text-[14px] font-semibold"
               onClick={() => {
-                router.push('/trades');
+                router.push('/trade');
               }}>
               Go to Trade
             </PrimaryButton>
@@ -38,21 +36,20 @@ function PositionList() {
       ) : (
         <div className="scrollable">
           <div>
-            {psUserPosition.map((item: any, index: any) => {
+            {psUserPosition.map((item, index) => {
               if (!item) {
                 return null;
               }
-              itemIndex += 1;
-              return <PositionListItem key={`position_item_${itemIndex}`} userPosition={item} index={index} itemIndex={itemIndex} />;
+              return <PositionListItem key={`position_item_${item.amm}`} userPosition={item} itemIndex={index + 1} />;
             })}
           </div>
           <div className="flex px-9 pt-4 text-[16px] font-medium">
             <div className="w-[60%] pr-6 text-right text-mediumEmphasis">Total</div>
             <div className="w-[15%]">
-              <SingleRowPriceContent priceValue={isShowBalance ? totalCollateral.toFixed(4) : '****'} />
+              <SingleRowPriceContent priceValue={isShowBalance ? totalCollateral.toFixed(4) : '****'} isElement />
             </div>
             <div className="w-[13%]">
-              <SingleRowPriceContent priceValue={isShowBalance ? `${totalUnrealized.toFixed(4)}` : '****'} />
+              <SingleRowPriceContent priceValue={isShowBalance ? `${totalUnrealized.toFixed(4)}` : '****'} isElement={!isShowBalance} />
             </div>
             {/* <div className="w-[17%]">
               <SingleRowPriceContent

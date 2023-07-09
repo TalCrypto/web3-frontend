@@ -27,6 +27,9 @@ export interface UserPoint {
     val: string;
   };
   degenscore: number;
+  isEligible: boolean;
+  originalTotal: number;
+  tradeVolTotal: number;
 }
 
 export const defaultUserPoint: UserPoint = {
@@ -55,7 +58,10 @@ export const defaultUserPoint: UserPoint = {
     points: 0,
     val: '0'
   },
-  degenscore: 0
+  degenscore: 0,
+  isEligible: false,
+  originalTotal: 0,
+  tradeVolTotal: 0
 };
 
 // user points
@@ -63,20 +69,20 @@ export const $userPoint = atom<UserPoint | undefined>();
 export const $userPrevPoint = atom<UserPoint | undefined>();
 
 // leaderboard
-export const leaderboard = atom<any[]>([]);
+export const $asSeason1LeaderboardData = atom<any[]>([]);
+export const $asSeason2LeaderboardData = atom<any[]>([]);
 
-export const setLeaderboard = (data: any[]) => {
-  leaderboard.set(data);
-};
-
-export const isLeaderboardLoading = atom(false);
+export const $asIsLeaderboardLoading = atom(false);
 
 // referral
-export const referralList = atom([]);
+export const $referralList = atom([]);
 
 export const setReferralList = (data: any) => {
-  referralList.set(data);
+  $referralList.set(data);
 };
 export const isReferralListLoading = atom(false);
 
 export const $asActiveTab = atom(0);
+export const $asCurrentSeason = atom(0);
+
+export const $asLeaderboardUpdateTrigger = atom(false);

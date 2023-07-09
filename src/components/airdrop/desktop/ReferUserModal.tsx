@@ -26,11 +26,11 @@ export default function ReferUserModal(props: any) {
             <Image src="/images/components/refer-user/refer-user.svg" alt="" className="mr-[8px] h-[18px] w-[18px]" />
             <span className="text-gradient-vertical text-[16px] font-semibold">{usernameShow}</span>
           </div>
-          <div className="mt-[8px]">
+          <div className="mt-2">
             has referred you to enjoy <span className="font-semibold text-[#FFC24BDE]">extra 2%</span> Tribe3 (trading volume) points when
             trading on Tribe3! 🍻
           </div>
-          <div className="mt-[24px] flex flex-row items-center justify-start rounded-[4px] bg-[#0C0D2080] px-[24px] py-[12px] ">
+          <div className="mt-6 flex flex-row items-center justify-start rounded-[4px] bg-[#0C0D2080] px-[24px] py-[12px] ">
             <div className="mr-[24px]">
               <Image src="/images/components/refer-user/refer-candle.svg" alt="" className="h-[23px] w-[28px]" />
             </div>
@@ -60,7 +60,7 @@ export default function ReferUserModal(props: any) {
             </div>
           </div>
           <div className="flex flex-row items-center justify-center">
-            <div className="navbar-button mt-[24px] " onClick={closeModal}>
+            <div className="navbar-button mt-6 " onClick={closeModal}>
               Trade Now
             </div>
           </div>

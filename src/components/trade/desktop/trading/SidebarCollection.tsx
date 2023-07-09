@@ -92,12 +92,12 @@ function SidebarCollection() {
                   width={36}
                   height={36}
                   alt=""
-                  className="z-[1] rounded-full border-[4px] border-transparent
+                  className="rounded-full border-[4px] border-transparent
                     hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
                 />
                 {isHasPos(item.amm) ? (
                   <Image
-                    className="absolute bottom-[3px] right-0 z-10"
+                    className="absolute bottom-[3px] right-0"
                     src="/images/mobile/pages/trade/shopping-bag-green.svg"
                     width={14}
                     height={14}
