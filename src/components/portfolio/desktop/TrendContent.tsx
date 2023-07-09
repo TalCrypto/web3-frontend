@@ -145,18 +145,12 @@ function TrendContent() {
           </div>
 
           <div className="relative mt-[-40px] flex h-full flex-1 flex-col" ref={controlRef}>
-            <div
-              className="absolute left-0 right-0 top-[34px] z-0 h-[3px]
-                w-[var(--highlight-width)] translate-x-[var(--highlight-x-pos)]
-                transform rounded-[2px] bg-[#5465ff] duration-300 ease-in-out"
-            />
-
             <div className="mb-5 flex items-center justify-center">
               {contentArray.map((item: any, index: any) => (
                 <div
-                  className={`cursor-pointer text-[12px]
-                    hover:font-semibold hover:text-highEmphasis
-                    ${index === 3 ? '' : 'mr-3'}
+                  className={`item-overview cursor-pointer text-[12px] 
+                  ${index === selectedTimeIndex ? 'active' : ''}
+                  ${index === 3 ? 'competition' : 'mr-3'}
                     ${
                       selectedTimeIndex === index
                         ? 'font-semibold text-highEmphasis'
@@ -168,7 +162,13 @@ function TrendContent() {
                   key={`time_${item.label}`}
                   onClick={() => clickSelectedTimeIndex(index)}
                   ref={item.ref}>
-                  {item.label}
+                  {index === 3 ? (
+                    <Tooltip direction="top" content="Since Trading Competition" className="!text-highEmphasis">
+                      <div className={`${index === 3 ? 'glow-yellow' : 'mr-3'} cursor-pointe`}>{item.label}</div>
+                    </Tooltip>
+                  ) : (
+                    item.label
+                  )}
                 </div>
               ))}
             </div>

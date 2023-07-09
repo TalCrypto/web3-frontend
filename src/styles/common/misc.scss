@@ -1,0 +1,35 @@
+.item-overview {
+  position: relative;
+  &::after {
+    position: absolute;
+    top: initial;
+    left: 0;
+    right: initial;
+    bottom: 0;
+    content: ' ';
+    height: 3px;
+    width: 0;
+    border-radius: 2px;
+    background: #2574fb;
+    transition: all 0.2s;
+    transform: translateY(16px);
+  }
+  &:not(.competition).active,
+  &:not(.competition):hover {
+    color: rgba(255, 255, 255, 0.87);
+
+    &::after {
+      width: 100%;
+      margin: 0 auto;
+    }
+  }
+
+  .glow-yellow {
+    color: #ffefd0;
+
+    &.active,
+    &:hover {
+      text-shadow: 0px 0px 7px rgba(255, 165, 31, 0.8);
+    }
+  }
+}
