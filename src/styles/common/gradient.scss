@@ -159,7 +159,8 @@
   text-shadow: 0px 0px 12px rgba(163, 255, 119, 0.5);
 }
 
-.airdrop_items .item {
+.airdrop_items .item,
+.userprofile_tabs .item {
   .active_mask {
     display: none;
   }
