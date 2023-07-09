@@ -23,16 +23,7 @@ import { $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '
 import { $userAddress } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 import { ThreeDots } from 'react-loader-spinner';
-
-function SmallPriceIcon(props: any) {
-  const { priceValue = 0, className = '' } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={16} height={16} />
-      <span>{priceValue}</span>
-    </div>
-  );
-}
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 
 function Cell(props: any) {
   const { items, classNames, isHeader } = props;

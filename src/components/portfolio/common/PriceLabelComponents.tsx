@@ -83,3 +83,13 @@ export function SmallTypeIcon(props: any) {
     </div>
   );
 }
+
+export function SmallPriceIcon(props: any) {
+  const { priceValue, className = '', iconSize = 16, isLoading = false } = props;
+  return (
+    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
+      <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue ?? '-.--'}</span>
+    </div>
+  );
+}

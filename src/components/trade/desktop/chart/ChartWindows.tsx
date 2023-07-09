@@ -24,18 +24,9 @@ import {
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import ChartDisplay from '@/components/common/ChartDisplay';
 import { $isMobileView } from '@/stores/modal';
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 
 const flashAnim = 'flash';
-
-function SmallPriceIcon(props: any) {
-  const { priceValue, className = '', iconSize = 16, isLoading = false } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue ?? '-.--'}</span>
-    </div>
-  );
-}
 
 function PriceIndicator(props: { priceChangeValue: number | undefined; priceChangeRatio: number | undefined }) {
   const { priceChangeValue, priceChangeRatio } = props;
