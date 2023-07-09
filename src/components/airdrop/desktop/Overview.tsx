@@ -22,7 +22,7 @@ function Overview() {
   const converge = userPoint ? userPoint.converge : defaultUserPoint.converge;
 
   const prevTotal = userPrevPoint ? userPrevPoint.total : defaultUserPoint.total;
-  const tradeVolTotal = userPoint ? userPoint.tradeVol.vol : defaultUserPoint.tradeVol.vol;
+  const tradeVolTotal = userPoint ? userPoint.tradeVolTotal : defaultUserPoint.tradeVolTotal;
 
   const isConnected = useNanostore($userIsConnected);
   const router = useRouter();

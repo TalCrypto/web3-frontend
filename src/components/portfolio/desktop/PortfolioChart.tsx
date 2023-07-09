@@ -11,9 +11,9 @@ import { $psHistogramChartData, $psLineChartData, $psShowBalance } from '@/store
 import { $isMobileView } from '@/stores/modal';
 
 function PortfolioChart() {
+  const isShowBalance = useNanostore($psShowBalance);
   const isMobileView = useNanostore($isMobileView);
 
-  const isShowBalance = useNanostore($psShowBalance);
   const chartContainerRef: any = useRef();
   const chartRef = useRef<IChartApi | null>(null);
   const lineChartData: any = useNanostore($psLineChartData);
@@ -251,9 +251,9 @@ function PortfolioChart() {
           const content =
             `<div class='text-mediumEmphasis mt-1'>${date}</div><div class='text-white mt-1'>Accumulated: ` +
             `<span class='text-b3e ${accumulatedColor}'>${accumulatedPrefix}${
-              isShowBalance ? accumulated.toFixed(6) : '****'
+              isShowBalance ? accumulated.toFixed(4) : '****'
             }</span></div><div class='text-white'>Daily: ` +
-            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily.toFixed(6) : '****'}</span></div>`;
+            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily.toFixed(4) : '****'}</span></div>`;
 
           toolTip.style.display = 'block';
           toolTip.innerHTML = content;

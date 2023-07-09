@@ -33,7 +33,7 @@ function OverviewMobile() {
 
   const eligible = () => userPoint?.isEligible;
 
-  const tradeVolTotal = userPoint ? userPoint.tradeVol.vol : defaultUserPoint.tradeVol.vol;
+  const tradeVolTotal = userPoint ? userPoint.tradeVolTotal : defaultUserPoint.tradeVolTotal;
   const maxEligibilityTradeVol = Number(5).toFixed(2);
 
   return (

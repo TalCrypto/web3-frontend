@@ -20,7 +20,6 @@ function PortfolioChart() {
   const histogramChartData: any = useNanostore($psHistogramChartData);
 
   const colors = {
-    // backgroundColor: 'rgb(23, 24, 51)',
     backgroundColor: 'transparent',
     lineColor: '#C970D0',
     textColor: 'rgba(168, 203, 255, 0.75)',
@@ -252,9 +251,9 @@ function PortfolioChart() {
           const content =
             `<div class='text-mediumEmphasis mt-1'>${date}</div><div class='text-white mt-1'>Accumulated: ` +
             `<span class='text-b3e ${accumulatedColor}'>${accumulatedPrefix}${
-              isShowBalance ? accumulated : '****'
+              isShowBalance ? accumulated.toFixed(4) : '****'
             }</span></div><div class='text-white'>Daily: ` +
-            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily : '****'}</span></div>`;
+            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily.toFixed(4) : '****'}</span></div>`;
 
           toolTip.style.display = 'block';
           toolTip.innerHTML = content;
