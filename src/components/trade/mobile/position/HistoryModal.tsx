@@ -185,7 +185,16 @@ const HistoryModal = (props: any) => {
                                     className="text-[12px]"
                                     amm={record.ammAddress}
                                     showCollectionName
-                                    content={` - ${currentRecordType}`}
+                                    content={
+                                      <div className="flex">
+                                        - {currentRecordType}
+                                        {record.liquidationPenalty !== 0 ? (
+                                          <Image className="ml-1" src="/images/common/alert/alert_red.svg" width={16} height={16} alt="" />
+                                        ) : (
+                                          ''
+                                        )}
+                                      </div>
+                                    }
                                     imageWidth={20}
                                     imageHeight={20}
                                   />

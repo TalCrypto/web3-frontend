@@ -17,16 +17,16 @@ export function TypeWithIconByAmm(props: any) {
     return (
       <div className={`flex ${className} items-center`}>
         <Image src={targetCollection.image} alt="" width={imageWidth} height={imageHeight} className="mr-[6px]" />
-        <span>
+        <div className="flex">
           {showCollectionName ? targetCollection.shortName : null} {content}
-        </span>
+        </div>
       </div>
     );
   }
 
   return (
     <div className={`flex ${className}`}>
-      <span>{content}</span>
+      <div>{content}</div>
     </div>
   );
 }

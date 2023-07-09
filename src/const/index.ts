@@ -9,7 +9,9 @@ export enum TradeActions {
   REDUCE = 'Partial Close',
   REVERSE = 'Reverse',
   FULL_LIQ = 'Full Liquidation',
-  PARTIAL_LIQ = 'Partial Liquidation'
+  FULL_LIQ_MOBILE = 'Full Liquid.',
+  PARTIAL_LIQ = 'Partial Liquidation',
+  PARTIAL_LIQ_MOBILE = 'Partial Liquid.'
 }
 
 export enum CollateralActions {
