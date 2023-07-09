@@ -4,11 +4,9 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-
-import TitleTips from '@/components/common/TitleTips';
 
 import HistoryModal from '@/components/trade/mobile/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/mobile/position/FundingPaymentModal';

@@ -94,7 +94,7 @@ const MarketTrade = () => {
             </>,
             ''
           ]}
-          classNames={['col-span-4 ml-8', 'col-span-3 pl-1 pr-3', 'col-span-5 pl-6', '']}
+          classNames={['col-span-4 ml-8', 'col-span-3 pl-3 pr-3', 'col-span-5 pl-6', '']}
           isHeader
         />
 
@@ -121,7 +121,7 @@ const MarketTrade = () => {
                   </span>
                 </div>
               </div>
-              <div className="col-span-5">
+              <div className="col-span-5 pl-2">
                 <span className={`market ${record.exchangedPositionSize > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
                   {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
                 </span>
