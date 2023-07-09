@@ -212,8 +212,12 @@ const HistoryModal = () => {
                 {selectedRecord && <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />}
               </div>
               <div className="text-mediumEmphasis">
-                <div className="mb-[6px]  bg-lightBlue">
-                  {isLiquidation ? <LiquidationWarning /> : null}
+                <div className="mb-[6px] bg-lightBlue">
+                  {isLiquidation ? (
+                    <div className="bg-darkBlue px-5 pb-6 pt-[18px]">
+                      <LiquidationWarning />
+                    </div>
+                  ) : null}
                   {selectedRecord &&
                     detailRow(
                       'Collection',

@@ -14,6 +14,7 @@ import { $isShowMobileModal } from '@/stores/modal';
 import { CollateralActions, TradeActions } from '@/const';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
 import { PositionHistoryRecord } from '@/stores/user';
+import { LiquidationWarning } from '@/components/common/LabelsComponents';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -21,15 +22,6 @@ function ExplorerButton(props: any) {
     <a href={`${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`} onClick={onClick} target="_blank" rel="noreferrer">
       <Image alt="" src="/images/common/out.svg" width={24} height={24} />
     </a>
-  );
-}
-
-function LiquidationWarning() {
-  return (
-    <div className="liquidation-warning">
-      <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
-      Your position has been liquidated because it no longer meet the collateral requirement.
-    </div>
   );
 }
 
@@ -243,7 +235,11 @@ const HistoryModal = (props: any) => {
               </div>
               <div className="text-mediumEmphasis">
                 <div className="mb-[6px]  bg-lightBlue">
-                  {isLiquidation ? <LiquidationWarning /> : null}
+                  {isLiquidation ? (
+                    <div className="bg-darkBlue px-5 pb-6 pt-[18px]">
+                      <LiquidationWarning />
+                    </div>
+                  ) : null}
                   {selectedRecord &&
                     detailRow(
                       'Collection',
