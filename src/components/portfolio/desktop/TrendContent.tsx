@@ -90,9 +90,9 @@ function TrendContent() {
 
   return (
     <div
-      className="ml-0 mt-6 w-full flex-1 justify-center
+      className="relative ml-0 mt-6 w-full flex-1 justify-center
         rounded-[12px] bg-lightBlue 2xl:ml-6 2xl:mt-0
-    ">
+      ">
       <div className="flex items-center px-9 pb-4 pt-9">
         <div className="h-[20px] w-[3px] rounded-[1px] bg-primaryBlue" />
         <div className="ml-2 text-[20px] font-semibold text-highEmphasis">Realized P/L</div>
