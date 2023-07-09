@@ -17,6 +17,8 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
   const { userPosition, itemIndex } = props;
   const isShowBalance = useNanostore($psShowBalance);
   const isOverPriceGap = useIsOverPriceGap();
+  const isBadDebt = userPosition ? userPosition.leverage === 0 : false;
+
   const publicClient = usePublicClient();
 
   const [isLiquidationWarn, setIsLiquidationWarn] = useState(false);
@@ -83,12 +85,15 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
 
   return (
     <div
-      className={`px-9 ${itemIndex % 2 === 0 ? 'bg-secondaryBlue/[.58]' : ''}
-        cursor-pointer border-b-[1px] border-b-secondaryBlue hover:bg-secondaryBlue
+      className={`px-9 ${itemIndex % 2 === 0 ? 'bg-secondaryBlue/[.58]' : ''}  cursor-pointer
+        border-b-[1px] border-b-secondaryBlue py-3 hover:bg-secondaryBlue
       `}>
-      <div className="flex py-3" onClick={clickItem}>
+      <div className="flex" onClick={clickItem}>
         <div className="relative w-[20%] pl-3">
-          <div className="absolute left-[-8px] top-[-4px] mt-[3px] h-[50px] w-[3px] rounded-[30px] bg-primaryBlue" />
+          <div
+            className={`absolute left-[-8px] top-[-4px] mt-[3px]  w-[3px] rounded-[30px]
+            ${isOverPriceGap ? 'h-[70px] bg-warn' : 'h-[50px] bg-primaryBlue'}`}
+          />
           <LargeTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />
         </div>
         <div className="w-[13%]">
@@ -184,6 +189,26 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
           </div>
         </div>
       </div>
+
+      {/* wip price gap */}
+      {isOverPriceGap ? (
+        <div className="mb-3 ml-2 mt-1">
+          <div className="flex items-start space-x-[6px]">
+            <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
+            <p className="text-b3 text-warn">
+              Warning: vAMM - Oracle Price gap &gt; 10%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
+              based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
+              <a
+                target="_blank"
+                href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"
+                className="underline hover:text-warn/50"
+                rel="noreferrer">
+                Learn More
+              </a>
+            </p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

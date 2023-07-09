@@ -6,7 +6,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
-import { useFundingPaymentHistory } from '@/hooks/collection';
+import { useFundingPaymentHistory, useIsOverPriceGap } from '@/hooks/collection';
 import { UserPositionInfo } from '@/stores/user';
 
 function PositionListItem(props: { userPosition: UserPositionInfo }) {
@@ -24,6 +24,8 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
   const userPositionAmm = userPosition.amm;
   const { total: accFp } = useFundingPaymentHistory(userPositionAmm);
 
+  const isOverPriceGap = useIsOverPriceGap();
+
   const clickItem = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
@@ -33,8 +35,8 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
   };
 
   return (
-    <div className="cursor-pointer border-b-[1px] border-b-secondaryBlue hover:bg-secondaryBlue">
-      <div className="flex items-center py-3" onClick={clickItem}>
+    <div className="cursor-pointer border-b-[1px] border-b-secondaryBlue py-3" onClick={clickItem}>
+      <div className="flex items-center ">
         <div className="w-[35%]">
           <SmallTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />
         </div>
@@ -84,6 +86,17 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
           />
         </div>
       </div>
+
+      {/* wip price gap */}
+      {isOverPriceGap ? (
+        <div className="mb-3 ml-2 mt-2">
+          <div className="flex items-start space-x-[6px]">
+            <p className="text-b3 text-warn">
+              Warning: vAMM - Oracle Price gap &gt; 10%, liquidation now occurs at <b>Oracle Price</b>
+            </p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
