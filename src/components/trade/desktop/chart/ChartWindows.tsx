@@ -19,12 +19,14 @@ import {
   $openInterests,
   $oraclePrice,
   $selectedTimeIndex,
+  $tsIsShowPriceGapOverModal,
   $vammPrice
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import ChartDisplay from '@/components/common/ChartDisplay';
 import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
+import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
 
 const flashAnim = 'flash';
 
@@ -194,6 +196,8 @@ const ChartFooter = () => {
   const vAMMPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isGapAboveLimit = useIsOverPriceGap();
+  const isShowPriceGapOverModal = useNanostore($tsIsShowPriceGapOverModal);
+
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
 
@@ -286,10 +290,27 @@ const ChartFooter = () => {
           </p>
 
           {isGapAboveLimit ? (
-            <div>
-              <div className="flex items-center">
-                <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
-              </div>
+            <div className="relative">
+              {isShowPriceGapOverModal ? (
+                <>
+                  <Image className="cursor-pointer" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                  <ShowPriceGapOverModal />{' '}
+                </>
+              ) : (
+                <Tooltip
+                  direction="top"
+                  content={
+                    <p className="!text-left">
+                      vAMM - Oracle Price gap &gt; 10%, <br />
+                      Liquidation now occurs at Oracle <br />
+                      Price (note that P&L is still <br />
+                      calculated based on vAMM <br />
+                      price)
+                    </p>
+                  }>
+                  <Image className="cursor-pointer" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                </Tooltip>
+              )}
             </div>
           ) : null}
         </div>

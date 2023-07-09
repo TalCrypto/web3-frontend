@@ -16,11 +16,13 @@ import {
   $openInterests,
   $oraclePrice,
   $selectedTimeIndex,
+  $tsIsShowPriceGapOverModal,
   $vammPrice
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
+import ShowPriceGapOverModal from '@/components/trade/mobile/chart/ShowPriceGapOverModal';
 
 function PriceIndicator(props: any) {
   const { priceChangeValue, priceChangeRatio } = props;
@@ -138,6 +140,7 @@ const ChartHeaders = () => {
   const vAMMPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isGapAboveLimit = useIsOverPriceGap();
+  const isShowPriceGapOverModal = useNanostore($tsIsShowPriceGapOverModal);
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
 
@@ -230,8 +233,18 @@ const ChartHeaders = () => {
               {isGapAboveLimit ? (
                 <div>
                   <div className="ml-1 flex items-center">
-                    <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                    <Image
+                      src="/images/common/alert/alert_red.svg"
+                      onClick={() => {
+                        $tsIsShowPriceGapOverModal.set(true);
+                      }}
+                      width={20}
+                      height={20}
+                      alt=""
+                    />
                   </div>
+
+                  {isShowPriceGapOverModal ? <ShowPriceGapOverModal /> : null}
                 </div>
               ) : null}
             </div>
