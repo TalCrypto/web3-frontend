@@ -33,3 +33,8 @@
     }
   }
 }
+
+.mobile-view {
+  height: calc(100vh - 49px);
+  overflow-y: scroll;
+}

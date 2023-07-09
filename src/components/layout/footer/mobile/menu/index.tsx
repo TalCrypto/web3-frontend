@@ -123,8 +123,8 @@ const MobileMenu = (props: any) => {
               <>
                 <div className="ml-5 pb-[35px]">
                   <div
-                    onClick={() => onGotoPage('/airdrop')}
-                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    onClick={() => onGotoPage('/avatar')}
+                    className={`${router.route.toLowerCase() === '/avatar' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Avatar
                     <span
                       className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
@@ -135,8 +135,8 @@ const MobileMenu = (props: any) => {
                 </div>
                 <div className="ml-5 pb-[35px]">
                   <div
-                    onClick={() => onGotoPage('/airdrop')}
-                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    onClick={() => onGotoPage('/battle')}
+                    className={`${router.route.toLowerCase() === '/battle' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Battle
                     <span
                       className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
@@ -149,9 +149,13 @@ const MobileMenu = (props: any) => {
             ) : null}
 
             <div className="pb-[35px]">
-              <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+              <div
+                onClick={() => onGotoPage('/airdrop')}
+                className={`
+                ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
+              `}>
                 Airdrop
-              </Link>
+              </div>
             </div>
           </div>
         </div>
