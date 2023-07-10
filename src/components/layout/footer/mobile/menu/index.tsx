@@ -383,7 +383,7 @@ const MobileMenu = (props: any) => {
                 className="flex w-auto flex-row 
                 items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
                 px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
-                onClick={() => redirectExternal('https://bridge.arbitrum.io/', true)}>
+                onClick={() => redirectExternal('https://bridge.arbitrum.io/')}>
                 <Image className="mr-[6px]" src="/icons/providers/arbitrum.png" alt="" width={24} height={24} />
                 Arbitrum
               </div>
@@ -397,7 +397,7 @@ const MobileMenu = (props: any) => {
                 className="flex w-auto flex-row 
                 items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
                 px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
-                onClick={() => redirectExternal('https://app.uniswap.org/#/swap/', true)}>
+                onClick={() => redirectExternal('https://app.uniswap.org/#/swap/')}>
                 <Image className="mr-[6px]" src="/icons/providers/uniswap.png" alt="" width={24} height={24} />
                 Uniswap
               </div>
