@@ -20,7 +20,7 @@ function ReferralMobile() {
   const totalReferralPoint = Number(userPoint.referral.referralSelfRewardPoints) + Number(userPoint.referral.referringRewardPoints);
   const totalReferees = userPoint.referredUserCount;
   const eligibleReferees = userPoint.eligibleCount;
-  const eligible = () => userPoint?.isEligible;
+  const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
 
   const eligibleTooltipMessage = (

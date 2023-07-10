@@ -31,7 +31,7 @@ function OverviewMobile() {
   const referralIsHidden = false;
   const ogPointsIsHidden = false;
 
-  const eligible = () => userPoint?.isEligible;
+  const eligible = () => userPoint?.eligible;
 
   const tradeVolTotal = userPoint ? userPoint.tradeVolTotal : defaultUserPoint.tradeVolTotal;
   const maxEligibilityTradeVol = Number(5).toFixed(2);

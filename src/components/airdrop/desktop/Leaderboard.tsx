@@ -75,7 +75,7 @@ function Leaderboard() {
         og: userPrevPoint.og || 0,
         rank: userPrevPoint.rank || 0,
         tradeVolTotal: userPrevPoint.tradeVolTotal || 0,
-        eligible: userPrevPoint.isEligible || false
+        eligible: userPrevPoint.eligible || false
       };
     } else {
       selectedUserPoint = {
@@ -93,7 +93,7 @@ function Leaderboard() {
         og: userPoint.og || 0,
         rank: userPoint.rank || 0,
         tradeVolTotal: userPoint.tradeVolTotal || 0,
-        eligible: userPoint.isEligible || false
+        eligible: userPoint.eligible || false
       };
     }
 
