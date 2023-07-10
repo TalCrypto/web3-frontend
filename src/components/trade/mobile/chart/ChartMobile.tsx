@@ -207,6 +207,8 @@ const ChartHeaders = () => {
     };
   }, [nextFundingTime]);
 
+  const priceGapPercentageSign = Number(priceGapPercentage.toFixed(2)) > 0 ? '+' : '';
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-2 px-[20px] pt-[27px]">
@@ -226,8 +228,8 @@ const ChartHeaders = () => {
 
             <div className="mt-1 flex w-full items-center justify-end text-[12px] text-highEmphasis">
               <p className="text-highEmphasis">
-                {`${priceGapPercentage > 0 ? '+' : ''}${((vAMMPrice ?? 0) - (oraclePrice ?? 0)).toFixed(2)}
-                (${Math.abs(priceGapPercentage).toFixed(2)}%)`}
+                {`${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
+                (${priceGapPercentageSign}${priceGapPercentage.toFixed(2)}%)`}
               </p>
 
               {isGapAboveLimit ? (
