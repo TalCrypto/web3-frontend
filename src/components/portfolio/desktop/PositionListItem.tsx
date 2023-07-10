@@ -8,21 +8,24 @@ import Tooltip from '@/components/common/Tooltip';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment, $psShowShareIndicator } from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import { UserPositionInfo } from '@/stores/user';
-import { useFundingPaymentHistory, useIsOverPriceGap } from '@/hooks/collection';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 import { usePublicClient } from 'wagmi';
 import { ammAbi } from '@/const/abi';
+import { $collectionConfig } from '@/stores/trading';
+import { formatBigInt } from '@/utils/bigInt';
 
 function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: number }) {
   const router = useRouter();
   const { userPosition, itemIndex } = props;
   const isShowBalance = useNanostore($psShowBalance);
-  const isOverPriceGap = useIsOverPriceGap();
+  const collectionConfig = useNanostore($collectionConfig);
   const { total: accFp } = useFundingPaymentHistory(userPosition.amm);
 
   const isBadDebt = userPosition ? userPosition.leverage === 0 : false;
 
   const publicClient = usePublicClient();
 
+  const [isOverPriceGap, setIsOverPriceGap] = useState(false);
   const [isLiquidationWarn, setIsLiquidationWarn] = useState(false);
   const [isLiquidationRisk, setIsLiquidationRisk] = useState(false);
 
@@ -35,12 +38,18 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
 
   useEffect(() => {
     async function checkLiquidation() {
-      const oraclePrice = await publicClient.readContract({
+      const oraclePriceBn = await publicClient.readContract({
         address: userPosition.ammAddress,
         abi: ammAbi,
         functionName: 'getUnderlyingPrice'
       });
-      const selectedPriceForCalc = !isOverPriceGap ? userPosition.vammPrice : oraclePrice;
+      const oraclePrice = formatBigInt(oraclePriceBn);
+      const isOver =
+        oraclePrice && userPosition.vammPrice
+          ? Math.abs((userPosition.vammPrice - oraclePrice) / oraclePrice) >= collectionConfig.liqSwitchRatio
+          : false;
+      setIsOverPriceGap(isOver);
+      const selectedPriceForCalc = !isOver ? userPosition.vammPrice : oraclePrice;
       setIsLiquidationWarn(
         (userPosition.size > 0 && // long
           userPosition.liquidationPrice < selectedPriceForCalc &&
@@ -55,7 +64,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
       );
     }
     checkLiquidation();
-  }, [isOverPriceGap, publicClient, userPosition]);
+  }, [collectionConfig.liqSwitchRatio, publicClient, userPosition]);
 
   // leverage handling
   const isLeverageNegative = userPosition ? userPosition.leverage <= 0 : false;

@@ -1,17 +1,23 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
-import { useFundingPaymentHistory, useIsOverPriceGap } from '@/hooks/collection';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 import { UserPositionInfo } from '@/stores/user';
+import { usePublicClient } from 'wagmi';
+import { $collectionConfig } from '@/stores/trading';
+import { ammAbi } from '@/const/abi';
+import { formatBigInt } from '@/utils/bigInt';
 
 function PositionListItem(props: { userPosition: UserPositionInfo }) {
   const { userPosition } = props;
   const isShowBalance = useNanostore($psShowBalance);
+  const collectionConfig = useNanostore($collectionConfig);
+  const publicClient = usePublicClient();
 
   const { size } = userPosition;
   const sizeInEth = userPosition.currentNotional;
@@ -24,7 +30,24 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
   const userPositionAmm = userPosition.amm;
   const { total: accFp } = useFundingPaymentHistory(userPositionAmm);
 
-  const isOverPriceGap = useIsOverPriceGap();
+  const [isOverPriceGap, setIsOverPriceGap] = useState(false);
+
+  useEffect(() => {
+    async function checkLiquidation() {
+      const oraclePriceBn = await publicClient.readContract({
+        address: userPosition.ammAddress,
+        abi: ammAbi,
+        functionName: 'getUnderlyingPrice'
+      });
+      const oraclePrice = formatBigInt(oraclePriceBn);
+      const isOver =
+        oraclePrice && userPosition.vammPrice
+          ? Math.abs((userPosition.vammPrice - oraclePrice) / oraclePrice) >= collectionConfig.liqSwitchRatio
+          : false;
+      setIsOverPriceGap(isOver);
+    }
+    checkLiquidation();
+  }, [collectionConfig.liqSwitchRatio, publicClient, userPosition]);
 
   const clickItem = (e: any) => {
     e.preventDefault();
