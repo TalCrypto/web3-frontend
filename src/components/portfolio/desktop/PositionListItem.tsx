@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
 import React, { useEffect, useState } from 'react';
@@ -5,20 +6,25 @@ import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import Image from 'next/image';
 import Tooltip from '@/components/common/Tooltip';
-import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment, $psShowShareIndicator } from '@/stores/portfolio';
+import {
+  $psLiqSwitchRatio,
+  $psSelectedCollectionAmm,
+  $psShowBalance,
+  $psShowFundingPayment,
+  $psShowShareIndicator
+} from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import { UserPositionInfo } from '@/stores/user';
 import { useFundingPaymentHistory } from '@/hooks/collection';
 import { usePublicClient } from 'wagmi';
 import { ammAbi } from '@/const/abi';
-import { $collectionConfig } from '@/stores/trading';
 import { formatBigInt } from '@/utils/bigInt';
 
 function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: number }) {
   const router = useRouter();
   const { userPosition, itemIndex } = props;
   const isShowBalance = useNanostore($psShowBalance);
-  const collectionConfig = useNanostore($collectionConfig);
+
   const { total: accFp } = useFundingPaymentHistory(userPosition.amm);
 
   const isBadDebt = userPosition ? userPosition.leverage === 0 : false;
@@ -28,7 +34,8 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
   const [isOverPriceGap, setIsOverPriceGap] = useState(false);
   const [isLiquidationWarn, setIsLiquidationWarn] = useState(false);
   const [isLiquidationRisk, setIsLiquidationRisk] = useState(false);
-
+  const [oraclePrice, setOraclePrice] = useState(0);
+  const liqSwitchRatio = useNanostore($psLiqSwitchRatio);
   const { size } = userPosition;
   const sizeInEth = userPosition.currentNotional;
   const totalPnl = userPosition.unrealizedPnl;
@@ -37,34 +44,41 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
   const liquidationChanceLimit = 0.05;
 
   useEffect(() => {
-    async function checkLiquidation() {
+    async function getOracle() {
       const oraclePriceBn = await publicClient.readContract({
         address: userPosition.ammAddress,
         abi: ammAbi,
         functionName: 'getUnderlyingPrice'
       });
-      const oraclePrice = formatBigInt(oraclePriceBn);
-      const isOver =
-        oraclePrice && userPosition.vammPrice
-          ? Math.abs((userPosition.vammPrice - oraclePrice) / oraclePrice) >= collectionConfig.liqSwitchRatio
-          : false;
-      setIsOverPriceGap(isOver);
-      const selectedPriceForCalc = !isOver ? userPosition.vammPrice : oraclePrice;
-      setIsLiquidationWarn(
-        (userPosition.size > 0 && // long
-          userPosition.liquidationPrice < selectedPriceForCalc &&
-          selectedPriceForCalc < userPosition.liquidationPrice * (1 + liquidationChanceLimit)) ||
-          (userPosition.size < 0 && // short
-            userPosition.liquidationPrice > selectedPriceForCalc &&
-            selectedPriceForCalc > userPosition.liquidationPrice * (1 - liquidationChanceLimit))
-      );
-      setIsLiquidationRisk(
-        (userPosition.size > 0 && selectedPriceForCalc <= userPosition.liquidationPrice) ||
-          (userPosition.size < 0 && selectedPriceForCalc >= userPosition.liquidationPrice)
-      );
+      console.log('getting oracle', formatBigInt(oraclePriceBn));
+      setOraclePrice(formatBigInt(oraclePriceBn));
     }
-    checkLiquidation();
-  }, [collectionConfig.liqSwitchRatio, publicClient, userPosition]);
+
+    if (userPosition.ammAddress) {
+      getOracle();
+    }
+  }, [publicClient, userPosition.ammAddress]);
+
+  useEffect(() => {
+    const isOver =
+      oraclePrice && userPosition.vammPrice && liqSwitchRatio
+        ? Math.abs((userPosition.vammPrice - oraclePrice) / oraclePrice) >= liqSwitchRatio
+        : false;
+    setIsOverPriceGap(isOver);
+    const selectedPriceForCalc = !isOver ? userPosition.vammPrice : oraclePrice;
+    setIsLiquidationWarn(
+      (userPosition.size > 0 && // long
+        userPosition.liquidationPrice < selectedPriceForCalc &&
+        selectedPriceForCalc < userPosition.liquidationPrice * (1 + liquidationChanceLimit)) ||
+        (userPosition.size < 0 && // short
+          userPosition.liquidationPrice > selectedPriceForCalc &&
+          selectedPriceForCalc > userPosition.liquidationPrice * (1 - liquidationChanceLimit))
+    );
+    setIsLiquidationRisk(
+      (userPosition.size > 0 && selectedPriceForCalc <= userPosition.liquidationPrice) ||
+        (userPosition.size < 0 && selectedPriceForCalc >= userPosition.liquidationPrice)
+    );
+  }, [liqSwitchRatio, oraclePrice, userPosition]);
 
   // leverage handling
   const isLeverageNegative = userPosition ? userPosition.leverage <= 0 : false;
@@ -192,13 +206,13 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
       </div>
 
       {/* wip price gap */}
-      {isOverPriceGap ? (
+      {isOverPriceGap && liqSwitchRatio ? (
         <div className="mb-3 ml-2 mt-1">
           <div className="flex items-start space-x-[6px]">
             <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
             <p className="text-b3 text-warn">
-              Warning: vAMM - Oracle Price gap &gt; 10%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
-              based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
+              Warning: vAMM - Oracle Price gap &gt; {liqSwitchRatio * 100}%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is
+              still calculated based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
               <a
                 target="_blank"
                 href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"

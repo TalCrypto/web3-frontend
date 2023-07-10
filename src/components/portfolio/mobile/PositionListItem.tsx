@@ -3,20 +3,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
+import { $psLiqSwitchRatio, $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
 import { useFundingPaymentHistory } from '@/hooks/collection';
 import { UserPositionInfo } from '@/stores/user';
 import { usePublicClient } from 'wagmi';
-import { $collectionConfig } from '@/stores/trading';
 import { ammAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
 
 function PositionListItem(props: { userPosition: UserPositionInfo }) {
   const { userPosition } = props;
   const isShowBalance = useNanostore($psShowBalance);
-  const collectionConfig = useNanostore($collectionConfig);
+  const liqSwitchRatio = useNanostore($psLiqSwitchRatio);
   const publicClient = usePublicClient();
 
   const { size } = userPosition;
@@ -34,6 +33,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
 
   useEffect(() => {
     async function checkLiquidation() {
+      if (!liqSwitchRatio || !userPosition.ammAddress) return;
       const oraclePriceBn = await publicClient.readContract({
         address: userPosition.ammAddress,
         abi: ammAbi,
@@ -41,13 +41,11 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
       });
       const oraclePrice = formatBigInt(oraclePriceBn);
       const isOver =
-        oraclePrice && userPosition.vammPrice
-          ? Math.abs((userPosition.vammPrice - oraclePrice) / oraclePrice) >= collectionConfig.liqSwitchRatio
-          : false;
+        oraclePrice && userPosition.vammPrice ? Math.abs((userPosition.vammPrice - oraclePrice) / oraclePrice) >= liqSwitchRatio : false;
       setIsOverPriceGap(isOver);
     }
     checkLiquidation();
-  }, [collectionConfig.liqSwitchRatio, publicClient, userPosition]);
+  }, [liqSwitchRatio, publicClient, userPosition]);
 
   const clickItem = (e: any) => {
     e.preventDefault();
@@ -111,11 +109,11 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
       </div>
 
       {/* wip price gap */}
-      {isOverPriceGap ? (
+      {isOverPriceGap && liqSwitchRatio ? (
         <div className="mb-3 ml-2 mt-2">
           <div className="flex items-start space-x-[6px]">
             <p className="text-b3 text-warn">
-              Warning: vAMM - Oracle Price gap &gt; 10%, liquidation now occurs at <b>Oracle Price</b>
+              Warning: vAMM - Oracle Price gap &gt; {liqSwitchRatio * 100}%, liquidation now occurs at <b>Oracle Price</b>
             </p>
           </div>
         </div>
