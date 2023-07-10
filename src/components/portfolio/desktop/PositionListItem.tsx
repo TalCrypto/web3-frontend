@@ -184,7 +184,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
           <SingleRowPriceContent priceValue={isShowBalance ? totalPnl.toFixed(4) : '****'} isElement={!isShowBalance} />
         </div>
         <div className="w-[17%]">
-          <SingleRowPriceContent priceValue={isShowBalance ? (accFp ? accFp.toFixed(4) : 0) : '****'} isElement={!isShowBalance} />
+          <SingleRowPriceContent priceValue={isShowBalance ? (accFp ? accFp.toFixed(4) : '0.0000') : '****'} isElement={!isShowBalance} />
         </div>
         <div className="w-[12%]">
           <div className="flex h-full items-center">
