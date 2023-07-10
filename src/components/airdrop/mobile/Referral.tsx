@@ -86,7 +86,9 @@ function ReferralMobile() {
                             <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={26} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of your referees’ trading volume points
+                        of your referees’ <br />
+                        trading volume <br />
+                        points
                       </div>
                     </div>
                     <div className="flex flex-col">
@@ -108,7 +110,9 @@ function ReferralMobile() {
                             <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={28} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of their own trading volume points
+                        of their own <br />
+                        trading volume <br />
+                        points
                       </div>
                     </div>
                   </div>

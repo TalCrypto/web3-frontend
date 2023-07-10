@@ -164,14 +164,14 @@ function Referral() {
                             height={24}
                           />
                           <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
-                            <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                            <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(1)}</h2>&nbsp; Pts
                           </div>
                         </div>
                       </Tooltip>
                     </div>
                   ) : (
                     <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
-                      <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                      <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(1)}</h2>&nbsp; Pts
                     </div>
                   )}
                 </div>
@@ -182,14 +182,14 @@ function Referral() {
                   <div className="flex basis-1/2 flex-col text-[14px]">
                     <div>3% referees&#39; points</div>
                     <div className="mt-[12px] text-[15px]">
-                      <span className="text-glow-green font-semibold">{userPoint.referral.referringRewardPoints.toFixed(4)}</span>
+                      <span className="text-glow-green font-semibold">{userPoint.referral.referringRewardPoints.toFixed(1)}</span>
                       &nbsp; Pts.
                     </div>
                   </div>
                   <div className="flex basis-1/2 flex-col text-[14px]">
                     <div>2% own trading points</div>
                     <div className="mt-[12px] text-[15px]">
-                      <span className="text-glow-green font-semibold">{userPoint.referral.referralSelfRewardPoints.toFixed(4)}</span>
+                      <span className="text-glow-green font-semibold">{userPoint.referral.referralSelfRewardPoints.toFixed(1)}</span>
                       &nbsp; Pts.
                     </div>
                   </div>
