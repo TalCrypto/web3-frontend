@@ -1,5 +1,5 @@
 import { Contract, getAMMContract, getCHViewerContract } from '@/const/contracts';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useContractReads } from 'wagmi';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $oraclePrice, $vammPrice, $nextFundingTime, $fundingRates, $openInterests } from '@/stores/trading';

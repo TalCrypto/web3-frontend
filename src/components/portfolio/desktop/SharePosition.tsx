@@ -97,7 +97,7 @@ export default function SharePosition() {
                 <div className="ml-10 mt-[52px]">
                   <NormalEthPrice price={entryPrice} />
                 </div>
-                <div className="ml-10 mt-[32px]">
+                <div className="ml-10 mt-8">
                   <NormalEthPrice price={futurePrice} />
                 </div>
                 <div

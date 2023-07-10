@@ -108,21 +108,21 @@ const CollectionModal = (props: any) => {
       const priceGapPercentage = priceGap * 100;
 
       const changed24h = tradingData.priceChange24h ? (
-        <p className={`${tradingData.priceChange24h > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+        <p className={`${tradingData.priceChange24h > 0 ? 'text-marketGreen' : tradingData.priceChange24h < 0 ? 'text-marketRed' : ''}`}>
           {tradingData.priceChange24h > 0 ? '+' : '-'}
           {Math.abs(Number(tradingData.priceChange24h?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio24h?.toFixed(2)))}%)
         </p>
       ) : null;
 
       const changed7d = tradingData.priceChange7d ? (
-        <p className={`${tradingData.priceChange7d > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+        <p className={`${tradingData.priceChange7d > 0 ? 'text-marketGreen' : tradingData.priceChange7d < 0 ? 'text-marketRed' : ''}`}>
           {tradingData.priceChange7d > 0 ? '+' : '-'}
           {Math.abs(Number(tradingData.priceChange7d?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio7d?.toFixed(2)))}%)
         </p>
       ) : null;
 
       const changed30d = tradingData.priceChange30d ? (
-        <p className={`${tradingData.priceChange30d > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
+        <p className={`${tradingData.priceChange30d > 0 ? 'text-marketGreen' : tradingData.priceChange30d < 0 ? 'text-marketRed' : ''}`}>
           {tradingData.priceChange30d > 0 ? '+' : '-'}
           {Math.abs(Number(tradingData.priceChange30d?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio30d?.toFixed(2)))}%)
         </p>
@@ -139,7 +139,7 @@ const CollectionModal = (props: any) => {
 
       return (
         <div
-          className={`flex flex-row px-9 py-[11px]
+          className={`flex cursor-pointer flex-row px-9 py-[11px]
             ${index % 2 === 0 ? 'bg-[#1c1d3f]' : 'bg-lightBlue'}
             ${index === sortedData.length - 1 ? 'rounded-b-[12px]' : ''}
           `}

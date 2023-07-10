@@ -25,7 +25,7 @@ const Dropdown = (props: any) => {
   };
 
   const onClickViewPortfolio = () => {
-    router.push('/dashboard');
+    router.push('/portfolio');
   };
 
   const onClickFundingPayment = () => {
@@ -35,7 +35,7 @@ const Dropdown = (props: any) => {
 
   return (
     <div
-      className=" absolute right-[35px] top-[50px] z-[1]
+      className="absolute right-[35px] top-[50px] z-[1]
           flex flex-col rounded-[6px] bg-secondaryBlue text-[14px]
           text-highEmphasis shadow-[2px_2px_8px_rgba(0,0,0,.25)]
         "

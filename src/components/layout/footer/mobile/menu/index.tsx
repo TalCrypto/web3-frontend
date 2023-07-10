@@ -4,7 +4,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $isShowMobileModal, $showGetWEthModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import {
   $userAddress,
@@ -18,6 +18,7 @@ import {
 import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { showToast } from '@/components/common/Toast';
 import { $userPoint } from '@/stores/airdrop';
 
 const MobileMenu = (props: any) => {
@@ -82,7 +83,7 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnGetWethClick = () => {
-    // getTestToken();
+    $showGetWEthModal.set(true);
     setIsSwapWidgetOpen(true);
   };
 
@@ -179,9 +180,13 @@ const MobileMenu = (props: any) => {
             ) : null}
 
             <div className="pb-[35px]">
-              <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+              <div
+                onClick={() => onGotoPage('/airdrop')}
+                className={`
+                ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
+              `}>
                 Airdrop
-              </Link>
+              </div>
             </div>
           </div>
         </div>

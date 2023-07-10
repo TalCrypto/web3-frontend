@@ -20,7 +20,6 @@ function PortfolioChart() {
   const histogramChartData: any = useNanostore($psHistogramChartData);
 
   const colors = {
-    // backgroundColor: 'rgb(23, 24, 51)',
     backgroundColor: 'transparent',
     lineColor: '#C970D0',
     textColor: 'rgba(168, 203, 255, 0.75)',
@@ -214,7 +213,7 @@ function PortfolioChart() {
       };
 
       // Create and style the tooltip html element
-      const container: any = document.getElementById('divChartWindows');
+      const container: any = document.getElementById('divChartMobile');
       const toolTipWidth = 80;
       // Create and style the tooltip html element
 
@@ -252,9 +251,9 @@ function PortfolioChart() {
           const content =
             `<div class='text-mediumEmphasis mt-1'>${date}</div><div class='text-white mt-1'>Accumulated: ` +
             `<span class='text-b3e ${accumulatedColor}'>${accumulatedPrefix}${
-              isShowBalance ? accumulated : '****'
+              isShowBalance ? accumulated.toFixed(4) : '****'
             }</span></div><div class='text-white'>Daily: ` +
-            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily : '****'}</span></div>`;
+            `<span class='text-b3e ${dailyColor}'>${dailyPrefix}${isShowBalance ? daily.toFixed(4) : '****'}</span></div>`;
 
           toolTip.style.display = 'block';
           toolTip.innerHTML = content;
@@ -270,7 +269,7 @@ function PortfolioChart() {
           //     ? coordinate - toolTipHeight - toolTipMargin
           //     : Math.max(0, Math.min(container.clientHeight - toolTipHeight - toolTipMargin, coordinate + toolTipMargin));
           toolTip.style.left = `${shiftedCoordinate}px`;
-          toolTip.style.top = `${40}px`;
+          toolTip.style.top = `${-60}px`;
         }
       });
 
@@ -289,7 +288,7 @@ function PortfolioChart() {
     };
   }, [lineChartData, histogramChartData, isShowBalance, isMobileView]);
 
-  return <div id="divChartWindows" className="relative" ref={chartContainerRef} />;
+  return <div id="divChartMobile" className="relative" ref={chartContainerRef} />;
 }
 
 export default PortfolioChart;

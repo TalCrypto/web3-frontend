@@ -7,7 +7,7 @@ import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { useSwitchNetwork } from 'wagmi';
 import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $isShowTradingMobile } from '@/stores/trading';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $isShowMobileModal, $showGetWEthModal } from '@/stores/modal';
 
 function MobileTradeFooterInfo() {
   const { open } = useWeb3Modal();
@@ -31,6 +31,7 @@ function MobileTradeFooterInfo() {
     }
 
     if (!isWethCollected) {
+      $showGetWEthModal.set(true);
       return;
     }
 

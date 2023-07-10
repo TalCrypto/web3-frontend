@@ -28,8 +28,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         className={`h-full w-full
           ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}`}>
         <div
-          className={`content-container w-full !px-0
-            pb-12 text-white md:h-full md:overflow-auto md:pb-10 md:pt-20 
+          className={`content-container mmd:pb-10 w-full
+            !px-0 pb-12 text-white md:h-full md:pt-20 
             ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}
         `}>
           {children}

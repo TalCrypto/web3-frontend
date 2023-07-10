@@ -7,14 +7,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psSelectedTimeIndex, $psShowBalance } from '@/stores/portfolio';
+import { $accumulatedDailyPnl, $psSelectedTimeIndex, $psShowBalance, $psTimeDescription } from '@/stores/portfolio';
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
-import { $isMobileView, $showSwitchNetworkErrorModal } from '@/stores/modal';
+import { $isMobileView, $showGetWEthModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import Tooltip from '@/components/common/Tooltip';
 
 function TrendContent() {
   const { open } = useWeb3Modal();
@@ -37,7 +38,7 @@ function TrendContent() {
     { label: 'Competition', ref: useRef() }
   ];
 
-  const totalAccountValueDiff = '0.0';
+  const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
 
   const onBtnConnectWallet = () => {
     open();
@@ -51,7 +52,9 @@ function TrendContent() {
     }
   };
 
-  const onBtnGetTeth = () => {};
+  const onBtnGetTeth = () => {
+    $showGetWEthModal.set(true);
+  };
 
   const clickSelectedTimeIndex = (index: number) => {
     $psSelectedTimeIndex.set(index);
@@ -87,9 +90,9 @@ function TrendContent() {
 
   return (
     <div
-      className="ml-0 mt-6 w-full flex-1 justify-center
+      className="relative ml-0 mt-6 w-full flex-1 justify-center
         rounded-[12px] bg-lightBlue 2xl:ml-6 2xl:mt-0
-    ">
+      ">
       <div className="flex items-center px-9 pb-4 pt-9">
         <div className="h-[20px] w-[3px] rounded-[1px] bg-primaryBlue" />
         <div className="ml-2 text-[20px] font-semibold text-highEmphasis">Realized P/L</div>
@@ -142,18 +145,12 @@ function TrendContent() {
           </div>
 
           <div className="relative mt-[-40px] flex h-full flex-1 flex-col" ref={controlRef}>
-            <div
-              className="absolute left-0 right-0 top-[34px] z-0 h-[3px]
-                w-[var(--highlight-width)] translate-x-[var(--highlight-x-pos)]
-                transform rounded-[2px] bg-[#5465ff] duration-300 ease-in-out"
-            />
-
             <div className="mb-5 flex items-center justify-center">
               {contentArray.map((item: any, index: any) => (
                 <div
-                  className={`cursor-pointer text-[12px]
-                    hover:font-semibold hover:text-highEmphasis
-                    ${index === 3 ? '' : 'mr-3'}
+                  className={`item-overview cursor-pointer text-[12px] 
+                  ${index === selectedTimeIndex ? 'active' : ''}
+                  ${index === 3 ? 'competition' : 'mr-3'}
                     ${
                       selectedTimeIndex === index
                         ? 'font-semibold text-highEmphasis'
@@ -165,33 +162,51 @@ function TrendContent() {
                   key={`time_${item.label}`}
                   onClick={() => clickSelectedTimeIndex(index)}
                   ref={item.ref}>
-                  {item.label}
+                  {index === 3 ? (
+                    <Tooltip direction="top" content="Since Trading Competition" className="!text-highEmphasis">
+                      <div className={`${index === 3 ? 'glow-yellow' : 'mr-3'} cursor-pointe`}>{item.label}</div>
+                    </Tooltip>
+                  ) : (
+                    item.label
+                  )}
                 </div>
               ))}
             </div>
             <div className="w-[217px] flex-1 bg-darkBlue/[.5]">
               <div className="mb-1 mt-9 flex items-center justify-center">
                 <div className="text-[12px] font-normal text-highEmphasis">Accumulated Realized P/L</div>
-                <Image
-                  src="/images/components/trade/history/more_info.svg"
-                  alt=""
-                  width={12}
-                  height={12}
-                  className="ml-[6px] cursor-pointer"
-                />
+                <Tooltip
+                  content={
+                    <div className="text-center text-[12px] font-normal">
+                      Realized P/L is the sum of <br />
+                      funding payment and P/L from <br />
+                      price change. P/L from price <br />
+                      change is included in realized <br />
+                      P/L when a position is <br />
+                      partially/fully closed/liquidated
+                    </div>
+                  }>
+                  <Image
+                    src="/images/components/trade/history/more_info.svg"
+                    alt=""
+                    width={12}
+                    height={12}
+                    className="ml-[6px] cursor-pointer"
+                  />
+                </Tooltip>
               </div>
-              <div className="mb-3 flex justify-center text-[12px] text-highEmphasis">(1 Week)</div>
+              <div className="mb-3 flex justify-center text-[12px] text-highEmphasis">{$psTimeDescription[selectedTimeIndex]}</div>
 
               <div
                 className={`${
-                  isShowBalance && Number(totalAccountValueDiff) > 0
+                  isShowBalance && totalAccountValueDiff > 0
                     ? 'text-marketGreen'
-                    : isShowBalance && Number(totalAccountValueDiff) < 0
+                    : isShowBalance && totalAccountValueDiff < 0
                     ? 'text-marketRed'
                     : ''
                 } mb-[60px] flex items-center justify-center text-[16px] font-semibold`}>
                 <Image src="/images/common/symbols/eth-tribe3.svg" width={20} height={20} alt="" className="mr-1" />
-                {!isShowBalance ? '****' : Number(totalAccountValueDiff) > 0 ? `+${totalAccountValueDiff}` : totalAccountValueDiff}
+                {!isShowBalance ? '****' : totalAccountValueDiff > 0 ? `+${totalAccountValueDiff}` : totalAccountValueDiff}
               </div>
 
               <div className="m-auto mb-3 h-[2px] w-[30px] bg-secondaryPink" />

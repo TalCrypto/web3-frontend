@@ -20,7 +20,7 @@ function MobileFooter() {
         <div
           className="box-border flex h-full w-full
             content-center items-center justify-normal overflow-hidden">
-          {router.asPath === '/trade' ? <MobileTradeFooterInfo /> : <MobileCommonFooterInfo />}
+          {router.pathname === '/trade' ? <MobileTradeFooterInfo /> : <MobileCommonFooterInfo />}
 
           <div className="relative h-full w-[50px]">
             <button

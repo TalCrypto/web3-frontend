@@ -20,6 +20,9 @@ import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/store
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import { $showGetWEthModal } from '@/stores/modal';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;
@@ -87,7 +90,12 @@ function QuantityEnter(props: any) {
             {/* {marginIndex === 0 ? 'Balance' : 'Free Collateral'} */}
             <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-b2 text-primaryBlue">
+            <button
+              type="button"
+              className="ml-[8px] text-b2 text-primaryBlue"
+              onClick={() => {
+                $showGetWEthModal.set(true);
+              }}>
               Get WETH
             </button>
           </div>
@@ -351,7 +359,7 @@ export default function AdjustCollateral(props: any) {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -386,6 +394,7 @@ export default function AdjustCollateral(props: any) {
         wethBalance={wethBalance}
         isError={textErrorMessage !== null}
       />
+      <ErrorTip label={textErrorMessage} />
       {/* <QuantityTips
         balanceChecking={balanceChecking}
         marginRatioChecker={marginRatioChecker}

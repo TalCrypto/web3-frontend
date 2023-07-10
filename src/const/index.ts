@@ -4,12 +4,14 @@ export const MINIMUM_COLLATERAL = 0.01;
 
 export enum TradeActions {
   OPEN = 'Open',
-  CLOSE = 'Close',
+  CLOSE = 'Full Close',
   ADD = 'Add',
-  REDUCE = 'Reduce',
+  REDUCE = 'Partial Close',
   REVERSE = 'Reverse',
-  FULL_LIQ = 'Full Liquid.',
-  PARTIAL_LIQ = 'Partial Liquid.'
+  FULL_LIQ = 'Full Liquidation',
+  FULL_LIQ_MOBILE = 'Full Liquid.',
+  PARTIAL_LIQ = 'Partial Liquidation',
+  PARTIAL_LIQ_MOBILE = 'Partial Liquid.'
 }
 
 export enum CollateralActions {

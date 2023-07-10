@@ -4,34 +4,46 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { $userPoint, defaultUserPoint, referralList } from '@/stores/airdrop';
+import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function ReferralMobile() {
   const router = useRouter();
   const userPointData = useNanostore($userPoint);
-  const referralListData = useNanostore(referralList);
-
+  const referralListData = useNanostore($referralList);
   // const refersCode = router.query.ref;
 
   const userPoint = userPointData || defaultUserPoint;
 
   const { referralCode } = userPoint;
-  // const hadTradedOnce = userPoint.isInputCode && Object.keys(userPoint.referralUser).length === 0;
-  // const hadEnterCode = userPoint.isInputCode && userPoint.referralUser?.userAddress;
   const totalReferralPoint = Number(userPoint.referral.referralSelfRewardPoints) + Number(userPoint.referral.referringRewardPoints);
   const totalReferees = userPoint.referredUserCount;
   const eligibleReferees = userPoint.eligibleCount;
-  const eligible = () => false;
+  const eligible = () => userPoint?.isEligible;
   const isReferralListEmpty = referralListData.length === 0;
 
+  const eligibleTooltipMessage = (
+    <>
+      You must have a minimum <br /> trading volume of 5 WETH notional <br /> to unlock all the points!
+    </>
+  );
+  const tooltipMessage = (
+    <>
+      Total referral points includes 3% <br />
+      of your referees’ trading volume <br />
+      points and 2 % bonus points <br />
+      on your trading volume
+    </>
+  );
+
   return (
-    <div className="">
+    <div>
       <div className="flex flex-col">
         <div className="flex h-fit basis-1/2 flex-col bg-darkBlue">
           {/* Share */}
           <div
-            className="border-1 relative flex h-fit flex-1 rounded-[6px]
+            className="relative flex h-fit flex-1 rounded-[6px]
               border-[#71AAFF]/20 bg-lightBlue px-5 py-6">
             <div className="flex-1">
               <h3 className="mb-6 text-[20px] font-semibold">📢 My Referral Link</h3>
@@ -116,27 +128,27 @@ function ReferralMobile() {
                 <div className="mx-5 flex flex-col pb-6 text-[20px]">
                   <div className="flex flex-row">
                     <span className="text-[14px]">Referral Total Pts.</span>
-                    {/* <OverlayTrigger placement="top" overlay={<Tooltip>{tooltipMessage}</Tooltip>}> */}
-                    <Image src="/images/components/airdrop/more-info.svg" alt="" className="ml-[6px] mr-0" width={16} height={16} />
-                    {/* </OverlayTrigger> */}
+                    <MobileTooltip direction="top" content={tooltipMessage}>
+                      <Image src="/images/components/airdrop/more-info.svg" alt="" className="ml-[6px] mr-0" width={16} height={16} />
+                    </MobileTooltip>
                   </div>
                   <div className="mt-3 flex flex-row">
                     {!eligible() ? (
                       <div>
-                        {/* <OverlayTrigger placement="top" overlay={<Tooltip>{eligibleTooltipMessage}</Tooltip>}> */}
-                        <div className="flex flex-row items-center">
-                          <Image
-                            src="/images/components/airdrop/lock.svg"
-                            alt=""
-                            className="mr-[10px] h-[24px] w-[20px] "
-                            width={20}
-                            height={24}
-                          />
-                          <div className={`text-[15px] font-normal ${!eligible() ? 'opacity-50' : ''}`}>
-                            <span className="text-glow-green mr-[6px] text-[20px] font-semibold">{totalReferralPoint.toFixed(1)}</span>Pts
+                        <MobileTooltip direction="top" content={eligibleTooltipMessage}>
+                          <div className="flex flex-row items-center">
+                            <Image
+                              src="/images/components/airdrop/lock.svg"
+                              alt=""
+                              className="mr-[10px] h-[24px] w-[20px] "
+                              width={20}
+                              height={24}
+                            />
+                            <div className={`text-[15px] font-normal ${!eligible() ? 'opacity-50' : ''}`}>
+                              <span className="text-glow-green mr-[6px] text-[20px] font-semibold">{totalReferralPoint.toFixed(1)}</span>Pts
+                            </div>
                           </div>
-                        </div>
-                        {/* </OverlayTrigger> */}
+                        </MobileTooltip>
                       </div>
                     ) : (
                       <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
@@ -185,7 +197,7 @@ function ReferralMobile() {
                   </div>
                 </div>
 
-                <div className="">
+                <div>
                   <div className="px-5 py-6">
                     <h5 className="text-[15px] font-semibold">{`Referred Users (${referralListData.length})`}</h5>
                   </div>
@@ -202,7 +214,7 @@ function ReferralMobile() {
                     </div>
                   ) : (
                     <div>
-                      <div className="h-[315px] overflow-y-scroll">
+                      <div className="scrollable max-h-[315px] overflow-y-scroll">
                         {referralListData.map((item: any) => {
                           const displayUsername =
                             item.username === ''
@@ -211,8 +223,6 @@ function ReferralMobile() {
                               ? `${item.username.substring(0, 10)}...`
                               : item.username;
                           const eligibleStatus = item.eligiable ? 'Eligible' : 'Not Eligible';
-                          // const volume = item.tradeVol.toFixed(4);
-                          // const referralPoints = Number(item.referringRewardPoints).toFixed(1);
                           const redirect = () => {
                             window.location.href = `/userprofile/${item.userAddress}`;
                           };
@@ -224,16 +234,11 @@ function ReferralMobile() {
                                 {displayUsername}
                               </div>
                               <div className="basis-4/12 text-right">{eligibleStatus}</div>
-                              {/* <div className="flex basis-3/12 flex-row items-center">
-                                <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={14} height={14} className="mr-1" />
-                                <div>{volume}</div>
-                              </div>
-                              <div className="basis-3/12 text-right font-semibold text-seasonGreen">{`${referralPoints} pts`}</div> */}
                             </div>
                           );
                         })}
                       </div>
-                      <div className="px-9 pb-9 pt-4 text-[12px] text-mediumEmphasis ">
+                      <div className="px-9 pt-4 text-[12px] text-mediumEmphasis ">
                         Referees with at least 5 WETH trading volume will be counted as eligible referees.&nbsp;
                         <span className="cursor-pointer font-semibold text-blue-500" onClick={() => router.push('/airdrop/rules')}>
                           View Rules

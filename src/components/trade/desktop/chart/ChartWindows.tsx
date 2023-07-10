@@ -19,32 +19,21 @@ import {
   $openInterests,
   $oraclePrice,
   $selectedTimeIndex,
+  $tsIsShowPriceGapOverModal,
   $vammPrice
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import ChartDisplay from '@/components/common/ChartDisplay';
 import { $isMobileView } from '@/stores/modal';
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
+import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
 
 const flashAnim = 'flash';
 
-function SmallPriceIcon(props: any) {
-  const { priceValue, className = '', iconSize = 16, isLoading = false } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue ?? '-.--'}</span>
-    </div>
-  );
-}
+function PriceIndicator(props: { priceChangeValue: number | undefined; priceChangeRatio: number | undefined }) {
+  const { priceChangeValue, priceChangeRatio } = props;
 
-function PriceIndicator(props: {
-  isStartLoadingChart: boolean;
-  priceChangeValue: number | undefined;
-  priceChangeRatio: number | undefined;
-}) {
-  const { priceChangeValue, priceChangeRatio, isStartLoadingChart } = props;
-
-  return isStartLoadingChart || priceChangeValue === undefined || priceChangeRatio === undefined ? (
+  return priceChangeValue === undefined || priceChangeRatio === undefined ? (
     <div
       className={`my-[11px] ml-3 mr-4 flex h-[32px] items-center rounded-full border-[1px]
         text-center text-[15px] font-semibold leading-[18px]
@@ -178,11 +167,7 @@ const ChartHeaders = () => {
           </div>
           <div className="flex">
             <PriceWithIcon priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
-            <PriceIndicator
-              priceChangeValue={priceChange}
-              priceChangeRatio={priceChangePct}
-              isStartLoadingChart={priceChange === undefined}
-            />
+            <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
           </div>
         </div>
       </div>
@@ -211,6 +196,8 @@ const ChartFooter = () => {
   const vAMMPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isGapAboveLimit = useIsOverPriceGap();
+  const isShowPriceGapOverModal = useNanostore($tsIsShowPriceGapOverModal);
+
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
 
@@ -277,6 +264,8 @@ const ChartFooter = () => {
     };
   }, [nextFundingTime]);
 
+  const priceGapPercentageSign = priceGapPercentage > 0 ? '+' : '';
+
   return (
     <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
       <div className="flex items-center space-x-[12px]">
@@ -295,15 +284,33 @@ const ChartFooter = () => {
 
         <div className="flex items-center space-x-[4px]">
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-          <p className="text-highEmphasis">{`${priceGapPercentage > 0 ? '+' : ''}${(vAMMPrice ?? 0 - (oraclePrice ?? 0)).toFixed(
-            2
-          )} (${Math.abs(priceGapPercentage).toFixed(2)}%)`}</p>
+          <p className="text-highEmphasis">
+            {`${priceGapPercentageSign}${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
+            (${priceGapPercentageSign}${priceGapPercentage.toFixed(2)}%)`}
+          </p>
 
           {isGapAboveLimit ? (
-            <div>
-              <div className="flex items-center">
-                <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
-              </div>
+            <div className="relative">
+              {isShowPriceGapOverModal ? (
+                <>
+                  <Image className="cursor-pointer" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                  <ShowPriceGapOverModal />{' '}
+                </>
+              ) : (
+                <Tooltip
+                  direction="top"
+                  content={
+                    <p className="!text-left">
+                      vAMM - Oracle Price gap &gt; 10%, <br />
+                      Liquidation now occurs at Oracle <br />
+                      Price (note that P&L is still <br />
+                      calculated based on vAMM <br />
+                      price)
+                    </p>
+                  }>
+                  <Image className="cursor-pointer" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                </Tooltip>
+              )}
             </div>
           ) : null}
         </div>
@@ -351,7 +358,7 @@ const ProComponent = () => {
 
   return (
     <div className="visible w-[261px] whitespace-nowrap rounded-none bg-black px-[34px] py-[26px]">
-      <div className="content ml-[12px] flex flex-col space-y-[24px]">
+      <div className="content ml-3 flex flex-col space-y-[24px]">
         <div className="flex text-[12px] text-mediumEmphasis">
           <div className="flex-1">
             <p className="mb-[6px]">{displayTimeKey} High</p>

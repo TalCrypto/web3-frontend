@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
   $asCurrentSeason,
+  $asIsLeaderboardLoading,
   $asLeaderboardUpdateTrigger,
   $asSeason1LeaderboardData,
   $asSeason2LeaderboardData,
@@ -27,8 +28,7 @@ function LeaderboardMobile() {
   const userPrevPoint = userPrevPointData || defaultUserPoint;
   const userWalletAddress = useNanostore($userAddress);
 
-  // const isLoading = useNanostore(isLeaderboardLoading);
-  const isLoading = false;
+  const isLoading = useNanostore($asIsLeaderboardLoading);
   const isConnected = useNanostore($userIsConnected);
 
   const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
@@ -41,7 +41,7 @@ function LeaderboardMobile() {
     let selectedUserPoint = {};
     if (currentSeason === 1) {
       selectedUserPoint = {
-        // originalTotal: userPrevPoint.originalTotal || 0,
+        originalTotal: userPrevPoint.originalTotal || 0,
         total: userPrevPoint.total || 0,
         multiplier: userPrevPoint.multiplier || 1,
         username: userPrevPoint.username || '',
@@ -53,13 +53,13 @@ function LeaderboardMobile() {
         referralPoints: (userPrevPoint.referral?.referralSelfRewardPoints || 0) + (userPrevPoint.referral?.referringRewardPoints || 0) || 0,
         convergePoints: userPrevPoint.converge?.points || 0,
         og: userPrevPoint.og || 0,
-        rank: userPrevPoint.rank || 0
-        // tradeVolTotal: userPrevPoint.tradeVolTotal || '0',
-        // eligible: userPrevPoint.eligible || false
+        rank: userPrevPoint.rank || 0,
+        tradeVolTotal: userPrevPoint.tradeVolTotal || 0,
+        eligible: userPrevPoint.isEligible || false
       };
     } else {
       selectedUserPoint = {
-        // originalTotal: userPoint.originalTotal || 0,
+        originalTotal: userPoint.originalTotal || 0,
         total: userPoint.total || 0,
         multiplier: userPoint.multiplier || 1,
         username: userPoint.username || '',
@@ -71,9 +71,9 @@ function LeaderboardMobile() {
         referralPoints: (userPoint.referral?.referralSelfRewardPoints || 0) + (userPoint.referral?.referringRewardPoints || 0) || 0,
         convergePoints: userPoint.converge?.points || 0,
         og: userPoint.og || 0,
-        rank: userPoint.rank || 0
-        // tradeVolTotal: userPoint.tradeVolTotal || '0',
-        // eligible: userPoint.eligible || false
+        rank: userPoint.rank || 0,
+        tradeVolTotal: userPoint.tradeVolTotal || 0,
+        eligible: userPoint.isEligible || false
       };
     }
 
@@ -108,7 +108,7 @@ function LeaderboardMobile() {
 
   return (
     <div className="mt-[-36px]">
-      <div className="sticky top-0 z-[1] bg-darkBlue pt-9">
+      <div className="sticky top-0 z-10 bg-darkBlue pt-9">
         <div className="mx-5">
           <div className="flex justify-center">
             <div className="season-leaderboard flex justify-start text-[12px] font-semibold">
@@ -157,13 +157,13 @@ function LeaderboardMobile() {
           <div className="w-full text-xs">
             <div className="flex pb-4 text-mediumEmphasis">
               <div className="w-[56px]">
-                <p className="">Rank</p>
+                <p>Rank</p>
               </div>
               <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
-                <p className="">User</p>
+                <p>User</p>
               </div>
               <div className="flex-1 text-right">
-                <p className="">Season {currentSeason === 0 ? '2' : '1'} Pts. (Multiplier)</p>
+                <p>Season {currentSeason === 0 ? '2' : '1'} Pts. (Multiplier)</p>
               </div>
             </div>
           </div>
@@ -179,9 +179,9 @@ function LeaderboardMobile() {
               <div
                 className="relative cursor-pointer border-t-[1px] border-[#2E4371] px-5"
                 onClick={() => router.push(`/userprofile/${userWalletAddress}`)}>
-                <div className={`table-border-grad flex items-center font-medium  ${userIsBan ? 'disqualified' : 'active'}`}>
+                <div className={`flex items-center font-medium  ${userIsBan ? 'disqualified' : 'active'}`}>
                   <div className="w-[56px]">
-                    <UserMedal rank={userData.rank} isYou isBan={userIsBan} isUnranked={userIsUnranked} />
+                    <UserMedal rank={userData.rank} isMobile isYou isBan={userIsBan} isUnranked={userIsUnranked} />
                   </div>
                   <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
                     <p className={`overflow-hidden text-ellipsis ${userIsBan ? 'text-marketRed line-through' : ''}`}>
@@ -238,10 +238,10 @@ function LeaderboardMobile() {
         ) : (
           <>
             <div className="relative">
-              <div className="table-border-grad active flex items-center font-medium">
+              <div className="active flex items-center font-medium">
                 <div className="w-[56px]">-</div>
                 <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
-                  <p className="">-</p>
+                  <p>-</p>
                 </div>
                 <div className="block w-[41%]">
                   <p className="text-[14px] font-normal">
@@ -252,10 +252,10 @@ function LeaderboardMobile() {
             </div>
             {dummyLoadingData.map((_item, i) => (
               <div key={`loading-${i}`} className="relative">
-                <div className="table-border-grad flex items-center">
+                <div className="flex items-center">
                   <div className="flex w-[20%] justify-center">-</div>
                   <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
-                    <p className="">-</p>
+                    <p>-</p>
                   </div>
 
                   <div className="flex-1 text-right">

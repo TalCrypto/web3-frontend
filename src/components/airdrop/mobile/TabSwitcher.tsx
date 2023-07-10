@@ -21,7 +21,7 @@ export default function TabSwitcher() {
 
   return (
     <>
-      <div className="w-full bg-secondaryBlue px-5 py-3" onClick={onSwitcherClick}>
+      <div className="sticky top-0 z-10 w-full bg-secondaryBlue px-5 py-3" onClick={onSwitcherClick}>
         <div className="flex h-full items-center">
           <div className="flex items-center">
             <Image src={activeTabInfo.image} width={24} height={24} alt="" />

@@ -23,6 +23,9 @@ import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 import ApproveButton from '@/components/common/actionBtns/ApproveButton';
 import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
 import { MINIMUM_COLLATERAL } from '@/const';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import { $showGetWEthModal } from '@/stores/modal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -138,7 +141,12 @@ function QuantityEnter(props: any) {
             </div>
             <span className="text-[14px] text-[#ffffffde]">{`${wethBalance.toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue" onClick={() => {}}>
+            <button
+              type="button"
+              className="ml-[8px] text-[14px] text-primaryBlue"
+              onClick={() => {
+                $showGetWEthModal.set(true);
+              }}>
               Get WETH
             </button>
           </div>
@@ -239,8 +247,21 @@ function EstimatedValueDisplay(props: {
     <>
       <div className="mb-4 flex items-center">
         <div className="font-14 text-color-secondary">
-          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
-          {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
+          <Tooltip
+            direction="top"
+            tooltipId="slippage"
+            content={
+              <div className="text-center">
+                The maximum pricing <br />
+                difference between the price at <br />
+                the time of trade confirmation <br />
+                the actual price of the <br />
+                transaction that the users are <br />
+                willing to acceptM
+              </div>
+            }>
+            <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+          </Tooltip>
         </div>
         <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
           <div
@@ -280,7 +301,7 @@ function EstimatedValueDisplay(props: {
       <div className="mb-4 flex items-center">
         <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
-          <span className=" text-[14px]">{isAmountTooSmall || !estimation ? '-.--' : estimation.txSummary.cost.toFixed(4)}</span>
+          <span className="text-[14px]">{isAmountTooSmall || !estimation ? '-.--' : estimation.txSummary.cost.toFixed(4)}</span>
           <span className="text-[12px]" style={{ marginLeft: 4 }}>
             WETH
           </span>
@@ -340,7 +361,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
 
   return (
     <div>
-      <div className="mt-6">
+      <div className="mt-6 flex">
         <div
           className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
@@ -348,11 +369,12 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (
-            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+            <Image src="/images/common/angle_up.svg" alt="" width={12} height={12} />
           ) : (
-            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+            <Image src="/images/common/angle_down.svg" alt="" width={12} height={12} />
           )}
         </div>
+        <div className="flex-1" />
       </div>
 
       {showDetail ? (
@@ -375,7 +397,18 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
           <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
           <DisplayValues
             title={
-              <TitleTips titleText="Price Impact" tipsText="The change in price resulted directly from a particular trade in the VAMM" />
+              <Tooltip
+                direction="right"
+                tooltipId="slippage"
+                content={
+                  <div className="text-center">
+                    The change in price resulted <br />
+                    directly from a particular trade <br />
+                    in the VAMM
+                  </div>
+                }>
+                <div className="cursor-pointer"> Price Impact</div>
+              </Tooltip>
             }
             value={estimation?.txSummary.priceImpactPct.toFixed(2)}
             unit="%"
@@ -435,7 +468,7 @@ export default function MainTradeComponent() {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -466,6 +499,7 @@ export default function MainTradeComponent() {
         }}
         isAmountTooSmall={isAmountTooSmall}
       />
+      <ErrorTip label={textErrorMessage} />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}

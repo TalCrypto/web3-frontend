@@ -23,16 +23,8 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { formatBigInt } from '@/utils/bigInt';
 import { $userAddress } from '@/stores/user';
-
-function SmallPriceIcon(props: any) {
-  const { priceValue = 0, className = '' } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={16} height={16} />
-      <span>{priceValue}</span>
-    </div>
-  );
-}
+import { ThreeDots } from 'react-loader-spinner';
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 
 function Cell(props: any) {
   const { items, classNames } = props;
@@ -76,7 +68,7 @@ const MarketTrade = () => {
   const [newAdded, setNewAdded] = useState(false);
 
   useEffect(() => {
-    if (marketHistory.length > 0) {
+    if (marketHistory && marketHistory.length > 0) {
       setNewAdded(true);
     }
     const timeout = setTimeout(() => setNewAdded(false), 2000);
@@ -109,16 +101,21 @@ const MarketTrade = () => {
       </div>
 
       <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll">
-        {marketHistory && marketHistory.length > 0 ? (
+        {!marketHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : marketHistory.length > 0 ? (
           marketHistory
             .sort((a, b) => b.timestamp - a.timestamp)
             .map((record, index) => (
               <div
                 key={`market_trade_${index}`}
                 className={`relative mb-1 grid grid-cols-12 items-center py-1 ${newAdded && record.isNew ? 'flash' : ''}
-                pl-[46px] pr-[42px] text-[14px] text-mediumEmphasis
-                ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
-              `}>
+                  cursor-pointer pl-[46px] pr-[42px] text-[14px] text-mediumEmphasis
+                  ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
+                `}
+                onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
                 <div className="time relative col-span-3 pl-3">
                   <div className="absolute left-[-12px] top-0 mt-[3px] h-[34px] w-[3px] rounded-[30px] bg-primaryBlue" />
 
@@ -132,7 +129,7 @@ const MarketTrade = () => {
                   <span className="text-highEmphasis">{getTradingActionType(record)}</span>
                 </div>
                 <div className="col-span-2">
-                  <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />
+                  <SmallPriceIcon priceValue={record.positionNotional.toFixed(4)} />
                 </div>
                 <div className="col-span-2">
                   <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />
@@ -184,7 +181,11 @@ const SpotTable = () => {
       </div>
 
       <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll pl-[46px] pr-[42px]">
-        {openseaData && openseaData.length > 0 ? (
+        {!openseaData ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : openseaData.length > 0 ? (
           openseaData?.map((data: IOpenseaData) => {
             const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
             const src = !asset
@@ -256,7 +257,11 @@ const FundingPaymentHistory = () => {
       </div>
 
       <div className="scrollable mr-1 h-[calc(100%-50px)] overflow-y-scroll pl-[46px] pr-[42px]">
-        {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
+        {!fundingPaymentHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : fundingPaymentHistory.length > 0 ? (
           fundingPaymentHistory.map(({ timestamp, rateLong, rateShort } /* index */) => (
             <Cell
               key={`funding_${timestamp}`}

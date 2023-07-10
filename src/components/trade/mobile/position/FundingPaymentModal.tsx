@@ -88,7 +88,7 @@ const FundingPaymentModal = (props: any) => {
           <span className="mr-[36px] text-highEmphasis">Total Received: </span>
           {fpRecords && fpRecords.length > 0 ? (
             <PriceWithIcon
-              priceValue={fpTotal > 0 ? `+${fpTotal}` : !fpTotal ? '0.000000' : fpTotal.toFixed(6)}
+              priceValue={fpTotal > 0 ? `+${fpTotal.toFixed(6)}` : !fpTotal ? '0.000000' : fpTotal.toFixed(6)}
               className={fpTotal > 0 ? 'text-marketGreen' : !fpTotal ? '' : 'text-marketRed'}
             />
           ) : (
@@ -104,7 +104,7 @@ const FundingPaymentModal = (props: any) => {
             alt=""
             onClick={handleBackClick}
           />
-          <div className="flex">{collectionInfo.name} Funding Payment History</div>
+          <div className="flex">{collectionInfo.collection} Funding Payment History</div>
         </div>
       </div>
     </div>

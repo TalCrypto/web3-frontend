@@ -22,6 +22,9 @@ import ConnectButton from '@/components/common/actionBtns/ConnectButton';
 import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function SectionDividers() {
   return (
@@ -247,7 +250,16 @@ function ExtendedEstimateComponent(props: any) {
       {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
       <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
-        <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+        <MobileTooltip
+          content={
+            <div className="text-center">
+              The change in price resulted <br />
+              directly from a particular trade <br />
+              in the VAMM
+            </div>
+          }>
+          <div className="col-auto text-[14px] text-mediumEmphasis">Price Impact</div>
+        </MobileTooltip>
         <div className="col contentsmallitem text-[14px] text-mediumEmphasis">
           <span className="value">{!estimation ? '-.--' : estimation.txSummary.priceImpactPct.toFixed(2)}</span> %
         </div>
@@ -332,7 +344,7 @@ export default function CloseCollateral() {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -361,6 +373,7 @@ export default function CloseCollateral() {
         disabled={isPending || isWrongNetwork}
       />
       <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
+      <ErrorTip label={textErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
         maxCloseValue={maxCloseValue}
@@ -374,7 +387,17 @@ export default function CloseCollateral() {
       />
       <SectionDividers />
       <div className={`mb-4 flex items-center ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
-        <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        <MobileTooltip
+          direction="top"
+          content={
+            <div className="text-center">
+              The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
+              the users are willing to acceptM
+            </div>
+          }>
+          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+        </MobileTooltip>
+
         <div className="flex flex-1 justify-end text-right">
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue
@@ -448,19 +471,22 @@ export default function CloseCollateral() {
 
       {/* {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
-        <div className="pb-4">
-          <div
-            className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-            onClick={() => setShowDetail(val => !val)}>
-            {!showDetail ? 'Show' : 'Hide'} Advanced Details
-            {!showDetail ? (
-              <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
-            ) : (
-              <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
-            )}
+        <>
+          <div className="flex pb-4">
+            <div
+              className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
+              onClick={() => setShowDetail(val => !val)}>
+              {!showDetail ? 'Show' : 'Hide'} Advanced Details
+              {!showDetail ? (
+                <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+              ) : (
+                <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+              )}
+            </div>
+            <div className="flex-1" />
           </div>
-          {showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}
-        </div>
+          <div>{showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}</div>
+        </>
       ) : null}
       <PartialCloseModal
         isShow={isShowPartialCloseModal}

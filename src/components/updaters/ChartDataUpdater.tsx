@@ -1,5 +1,5 @@
 import { getAMMAddress } from '@/const/addresses';
-import { $currentAmm, $dailyVolume, $graphData, $selectedTimeIndex, addGraphRecord } from '@/stores/trading';
+import { $currentAmm, $dailyVolume, $ohlcData, $selectedTimeIndex, addGraphRecord } from '@/stores/trading';
 import { $currentChain } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 import {
@@ -40,7 +40,7 @@ const ChartDataUpdater = () => {
           const dailyData = await getDailySpotPriceGraphData(ammAddr);
           dailyVolume = formatBigInt(dailyData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         }
-        $graphData.set(
+        $ohlcData.set(
           chartData.map(
             (record: { start: number; end: number; high: bigint; low: bigint; open: bigint; close: bigint; volume: bigint }) => ({
               time: record.start as Time,
@@ -55,7 +55,7 @@ const ChartDataUpdater = () => {
         $dailyVolume.set(dailyVolume);
       }
     }
-    $graphData.set([]);
+    $ohlcData.set([]);
     $dailyVolume.set(undefined);
     loadData();
   }, [selectedTimeIndex, currentAmm, chain]);

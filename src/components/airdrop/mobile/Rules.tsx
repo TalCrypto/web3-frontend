@@ -5,7 +5,7 @@ import Image from 'next/image';
 function RulesMobile() {
   return (
     <div className="bg-darkBlue">
-      <div className="">
+      <div>
         {/* Tribe3 Airdrop Season 2  - Rules */}
         <div className="mb-9 px-5">
           <h3 className="mb-6 text-[20px] font-semibold">Tribe3 Airdrop Season 2 - Rules</h3>

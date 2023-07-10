@@ -60,15 +60,15 @@ export const $transactionPendings = map<TransactionPendings>();
 
 export const $collectionConfig = map<CollectionConfig>();
 
-export const $futureMarketHistory = atom<MarketHistoryRecord[]>([]);
+export const $futureMarketHistory = atom<MarketHistoryRecord[] | undefined>();
 
-export const $fundingRatesHistory = atom<FundingRatesRecord[]>([]);
+export const $fundingRatesHistory = atom<FundingRatesRecord[] | undefined>();
 
-export const $spotMarketHistory = atom<any[]>([]);
+export const $spotMarketHistory = atom<any[] | undefined>();
 
 export const $selectedTimeIndex = atom(0);
 
-export const $graphData = atom<OhlcData[]>([]);
+export const $ohlcData = atom<OhlcData[]>([]);
 
 export const $tsTransactionStatus = atom({
   isShow: false,
@@ -76,7 +76,7 @@ export const $tsTransactionStatus = atom({
   linkUrl: ''
 });
 
-export const $priceChange = computed($graphData, graphData => {
+export const $priceChange = computed($ohlcData, graphData => {
   if (graphData && graphData.length > 0) {
     const basePrice = graphData[0].open;
     const nowPrice = graphData[graphData.length - 1].close;
@@ -85,7 +85,7 @@ export const $priceChange = computed($graphData, graphData => {
   return undefined;
 });
 
-export const $priceChangePct = computed($graphData, graphData => {
+export const $priceChangePct = computed($ohlcData, graphData => {
   if (graphData && graphData.length > 0) {
     const basePrice = graphData[0].open;
     const nowPrice = graphData[graphData.length - 1].close;
@@ -94,7 +94,7 @@ export const $priceChangePct = computed($graphData, graphData => {
   return undefined;
 });
 
-export const $lowPrice = computed($graphData, graphData => {
+export const $lowPrice = computed($ohlcData, graphData => {
   if (graphData && graphData.length > 0) {
     let lowPrice = 0;
     graphData.forEach(({ low }) => {
@@ -107,7 +107,7 @@ export const $lowPrice = computed($graphData, graphData => {
   return undefined;
 });
 
-export const $highPrice = computed($graphData, graphData => {
+export const $highPrice = computed($ohlcData, graphData => {
   if (graphData && graphData.length > 0) {
     let highPrice = 0;
     graphData.forEach(({ high }) => {
@@ -125,13 +125,13 @@ export const $dailyVolume = atom<number | undefined>();
 export function addGraphRecord(price?: number /* TODO , notionalValue?: number */) {
   const selectedTimeIndex = $selectedTimeIndex.get();
   const interval = selectedTimeIndex === 0 ? DAY_RESOLUTION : selectedTimeIndex === 1 ? WEEK_RESOLUTION : MONTH_RESOLUTION;
-  const graphData = $graphData.get();
+  const graphData = $ohlcData.get();
   if (graphData && graphData.length > 0) {
     const lastGraphRecord = graphData[graphData.length - 1];
     const nowTs = Math.round(new Date().getTime() / 1000);
     if (nowTs >= Number(lastGraphRecord.time) + interval) {
       if (price) {
-        $graphData.set([
+        $ohlcData.set([
           ...graphData,
           {
             time: (Number(lastGraphRecord.time) + interval) as Time,
@@ -142,7 +142,7 @@ export function addGraphRecord(price?: number /* TODO , notionalValue?: number *
           }
         ]);
       } else {
-        $graphData.set([
+        $ohlcData.set([
           ...graphData,
           {
             time: (Number(lastGraphRecord.time) + interval) as Time,
@@ -164,7 +164,7 @@ export function addGraphRecord(price?: number /* TODO , notionalValue?: number *
         close: price
       };
       graphData.pop();
-      $graphData.set([...graphData, newRecord]);
+      $ohlcData.set([...graphData, newRecord]);
     }
   }
 }
@@ -174,3 +174,5 @@ export const $marketUpdateTrigger = atom(false);
 
 // mobile specialized stores
 export const $isShowTradingMobile = atom(false);
+
+export const $tsIsShowPriceGapOverModal = atom(true);

@@ -1,12 +1,16 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
 import { CollateralActions, TradeActions } from '@/const';
+import { $isMobileView } from '@/stores/modal';
 
 export function getTradingActionType(item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number }) {
+  const isMobileView = $isMobileView.get();
   let actionType = '';
   if (item.liquidationPenalty !== 0) {
     if (item.positionSizeAfter === 0) {
-      actionType = TradeActions.FULL_LIQ;
+      actionType = isMobileView ? TradeActions.FULL_LIQ_MOBILE : TradeActions.FULL_LIQ;
     } else {
-      actionType = TradeActions.PARTIAL_LIQ;
+      actionType = isMobileView ? TradeActions.PARTIAL_LIQ_MOBILE : TradeActions.PARTIAL_LIQ;
     }
   } else if (item.exchangedPositionSize === item.positionSizeAfter) {
     actionType = TradeActions.OPEN;
@@ -43,4 +47,22 @@ export function getActionTypeFromApi(item: any) {
     return getCollateralActionType(Number(item.collateralChange));
   }
   return getTradingActionType(item);
+}
+
+export function getWalletBalanceChange(record: any) {
+  const currentRecordType = getActionTypeFromApi(record);
+  const recordAmount = Math.abs(record.amount);
+  const recordFee = record.fee;
+  const recordRealizedPnl = record.realizedPnl;
+  const recordRealizedFundingPayment = record.fundingPayment;
+  const recordCollateralChange = record.collateralChange;
+  const balance =
+    currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD
+      ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
+      : currentRecordType === CollateralActions.REDUCE || currentRecordType === CollateralActions.ADD
+      ? -(recordCollateralChange + recordRealizedFundingPayment)
+      : currentRecordType === TradeActions.CLOSE
+      ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
+      : -Math.abs(recordFee);
+  return balance;
 }

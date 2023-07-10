@@ -12,18 +12,22 @@ import PositionList from '@/components/portfolio/mobile/PositionList';
 import FundingPaymentModal from '@/components/portfolio/mobile/FundingPaymentModal';
 import OutlineButton from '@/components/common/OutlineButton';
 import { SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
-import { $userIsConnected } from '@/stores/user';
+import { $userIsConnected, $userTotalFP } from '@/stores/user';
 import { $isShowMobileModal } from '@/stores/modal';
+import { AMM } from '@/const/collectionList';
 
 function PositionInfoMobile() {
   const isConnected = useNanostore($userIsConnected);
   const isShowBalance = useNanostore($psShowBalance);
   const psUserPosition = useNanostore($psUserPosition);
+  const totalFP = useNanostore($userTotalFP);
 
   const currentPositionCount = psUserPosition.filter((item: any) => item !== null).length;
 
   const totalUnrealized = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.unrealizedPnl), 0);
-  const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPayment), 0);
+  const totalFundingPaymentAccount = Object.keys(totalFP)
+    .map(amm => totalFP[amm as AMM])
+    .reduce((total, value) => (value ? total + value : total), 0);
 
   return (
     <div>
@@ -58,7 +62,8 @@ function PositionInfoMobile() {
                     <div>
                       <SingleRowPriceContent
                         className="text-[20px]"
-                        priceValue={isShowBalance ? Math.abs(totalUnrealized)?.toFixed(4) : '****'}
+                        priceValue={isShowBalance ? totalUnrealized.toFixed(4) : '****'}
+                        isElement={!isShowBalance}
                       />
                     </div>
                   </div>
@@ -67,7 +72,8 @@ function PositionInfoMobile() {
                     <div>
                       <SingleRowPriceContent
                         className="justify-end text-[20px]"
-                        priceValue={isShowBalance ? Math.abs(totalFundingPaymentAccount)?.toFixed(4) : '****'}
+                        priceValue={isShowBalance ? totalFundingPaymentAccount.toFixed(4) : '****'}
+                        isElement={!isShowBalance}
                       />
                     </div>
                   </div>

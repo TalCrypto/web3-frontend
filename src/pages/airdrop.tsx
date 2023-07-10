@@ -18,6 +18,7 @@ import TopInfoMobile from '@/components/airdrop/mobile/TopInfo';
 import TabSwitcher from '@/components/airdrop/mobile/TabSwitcher';
 import LeaderboardMobile from '@/components/airdrop/mobile/Leaderboard';
 import LeaderboardDataUpdater from '@/components/updaters/LeaderboardUpdater';
+import { ToastContainer } from 'react-toastify';
 
 export default function Home() {
   const router = useRouter();
@@ -63,6 +64,23 @@ export default function Home() {
         ogTitle="Start to trade, hedge, leverage with a real-time charts."
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
+
+      <ToastContainer
+        enableMultiContainer
+        containerId="AIRDROP"
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        toastStyle={{ border: '1px solid rgba(120, 243, 99, 1)', fontFamily: 'Montserrat', width: '380px' }}
+      />
+
       <main>
         <div className="hidden md:block">
           <TopInfo />
@@ -75,8 +93,8 @@ export default function Home() {
         </div>
 
         <div
-          className="mobile-view block bg-lightBlue bg-[url('/images/components/airdrop/bg-mobile.png')]
-             bg-[center_top] bg-no-repeat md:hidden
+          className="mobile-view block bg-darkBlue bg-[url('/images/components/airdrop/bg-mobile.png')]
+             bg-cover bg-[center_top] bg-no-repeat md:hidden
           ">
           <TopInfoMobile />
 

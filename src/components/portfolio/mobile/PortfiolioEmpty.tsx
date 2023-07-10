@@ -3,16 +3,23 @@ import { useStore as useNanostore } from '@nanostores/react';
 import Image from 'next/image';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { $userIsConnected } from '@/stores/user';
+import { useWeb3Modal } from '@web3modal/react';
+import { useSwitchNetwork } from 'wagmi';
+import { DEFAULT_CHAIN } from '@/const/supportedChains';
 
 function PortfolioEmpty() {
   const isConnected = useNanostore($userIsConnected);
+  const { open } = useWeb3Modal();
+  const { switchNetwork } = useSwitchNetwork();
 
   const onClickConnect = () => {
-    // connectWallet(() => {});
+    open();
   };
 
-  const switchNetwork = () => {
-    // updateTargetNetwork();
+  const updateTargetNetwork = () => {
+    if (switchNetwork) {
+      switchNetwork(DEFAULT_CHAIN.id);
+    }
   };
 
   return (
@@ -47,7 +54,7 @@ function PortfolioEmpty() {
             </div>
 
             <div className="absolute bottom-[25px] left-0 w-full px-5">
-              <PrimaryButton className="py-2 text-[15px] font-semibold" onClick={switchNetwork}>
+              <PrimaryButton className="py-2 text-[15px] font-semibold" onClick={updateTargetNetwork}>
                 Switch to Arbitrum
               </PrimaryButton>
             </div>

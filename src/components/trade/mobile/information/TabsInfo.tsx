@@ -22,16 +22,8 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { $userAddress } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
-
-function SmallPriceIcon(props: any) {
-  const { priceValue = 0, className = '' } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={16} height={16} />
-      <span>{priceValue}</span>
-    </div>
-  );
-}
+import { ThreeDots } from 'react-loader-spinner';
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 
 function Cell(props: any) {
   const { items, classNames, isHeader } = props;
@@ -70,7 +62,7 @@ const MarketTrade = () => {
   const [newAdded, setNewAdded] = useState(false);
 
   useEffect(() => {
-    if (marketHistory.length > 0) {
+    if (marketHistory && marketHistory.length > 0) {
       setNewAdded(true);
     }
     const timeout = setTimeout(() => setNewAdded(false), 2000);
@@ -102,11 +94,15 @@ const MarketTrade = () => {
             </>,
             ''
           ]}
-          classNames={['col-span-4 ml-8', 'col-span-3 pl-1 pr-3', 'col-span-5 pl-6', '']}
+          classNames={['col-span-4 ml-8', 'col-span-3 pl-3 pr-3', 'col-span-5 pl-6', '']}
           isHeader
         />
 
-        {marketHistory && marketHistory.length > 0 ? (
+        {!marketHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : marketHistory.length > 0 ? (
           marketHistory.slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount).map((record, index) => (
             <div
               className={`relative mb-1 grid grid-cols-12 items-center whitespace-break-spaces
@@ -114,7 +110,8 @@ const MarketTrade = () => {
                   ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
                    ${newAdded && record.isNew ? 'flash' : ''}
                 `}
-              key={`market_${record.timestamp}_${index}`}>
+              key={`market_${record.timestamp}_${index}`}
+              onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
               <div className="time relative col-span-4 border-l-[2px] border-primaryBlue pl-2">
                 <span>{formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}</span>
                 <div className="h-[6px] w-full" />
@@ -124,7 +121,7 @@ const MarketTrade = () => {
                   </span>
                 </div>
               </div>
-              <div className="col-span-5">
+              <div className="col-span-5 pl-2">
                 <span className={`market ${record.exchangedPositionSize > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
                   {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
                 </span>
@@ -183,7 +180,11 @@ const SpotTable = () => {
     <>
       <div className="mx-[20px]">
         <Cell items={['Time', 'Item', 'Price', '']} classNames={['col-span-4 px-3', 'col-span-4 px-2 ', 'col-span-3 px-1', 'col-span-1']} />
-        {openseaData && openseaData.length > 0 ? (
+        {!openseaData ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : openseaData.length > 0 ? (
           openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
             const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
             const src = !asset
@@ -262,7 +263,11 @@ const FundingPaymentHistory = () => {
     <>
       <div className="scrollable mx-[20px] h-full overflow-y-scroll">
         <Cell items={['Time', 'Funding Rate Long / Short']} classNames={['col-span-4 px-3', 'col-span-8 text-right']} />
-        {fundingPaymentHistory && fundingPaymentHistory.length > 0 ? (
+        {!fundingPaymentHistory ? (
+          <div className="flex items-center justify-center" style={{ minHeight: '350px' }}>
+            <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
+          </div>
+        ) : fundingPaymentHistory.length > 0 ? (
           fundingPaymentHistory
             .slice(0, displayCount > fundingPaymentHistory.length ? fundingPaymentHistory.length : displayCount)
             .map(({ timestamp, rateLong, rateShort } /* index */) => (

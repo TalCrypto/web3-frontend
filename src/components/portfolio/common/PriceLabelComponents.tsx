@@ -17,7 +17,7 @@ export function SingleRowPriceContent(props: any) {
         <span>{priceValue}</span>
       ) : (
         <span className={`${priceValue > 0 ? 'text-marketGreen' : priceValue < 0 ? 'text-marketRed' : ''}`}>
-          {priceValue > 0 ? `${`+${priceValue}`}` : priceValue}
+          {priceValue > 0 ? `+${Math.abs(priceValue)}` : priceValue < 0 ? `-${Math.abs(priceValue)}` : Math.abs(priceValue)}
         </span>
       )}
     </div>
@@ -80,6 +80,16 @@ export function SmallTypeIcon(props: any) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+export function SmallPriceIcon(props: any) {
+  const { priceValue, className = '', iconSize = 16, isLoading = false } = props;
+  return (
+    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
+      <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
+      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue ?? '-.--'}</span>
     </div>
   );
 }

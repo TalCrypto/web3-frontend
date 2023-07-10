@@ -19,6 +19,10 @@ import SwitchButton from '@/components/common/actionBtns/SwitchButton';
 import ConnectButton from '@/components/common/actionBtns/ConnectButton';
 import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
+import { formatError } from '@/const/errorList';
+import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import { $showGetWEthModal } from '@/stores/modal';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -100,7 +104,12 @@ function QuantityEnter(props: any) {
             </div>
             <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-[14px] text-primaryBlue">
+            <button
+              type="button"
+              className="ml-[8px] text-[14px] text-primaryBlue"
+              onClick={() => {
+                $showGetWEthModal.set(true);
+              }}>
               Get WETH
             </button>
           </div>
@@ -200,8 +209,16 @@ function EstimatedValueDisplay(props: any) {
     <>
       <div className="mb-3 flex items-center">
         <div className="font-14 text-color-secondary col-auto">
-          <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
-          {/* tipsText="The maximum pricing difference between the price at the time of trade confirmation and the actual price of the transaction that the users are willing to acceptM" */}
+          <MobileTooltip
+            direction="top"
+            content={
+              <div className="text-center">
+                The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
+                the users are willing to acceptM
+              </div>
+            }>
+            <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
+          </MobileTooltip>
         </div>
         <div className="flex flex-1 flex-shrink-0" style={{ display: 'flex', justifyContent: 'end' }}>
           <div
@@ -242,7 +259,7 @@ function EstimatedValueDisplay(props: any) {
       <div className="mb-4 flex items-center">
         <div className="text-[14px] text-mediumEmphasis">Total Balance Required</div>
         <div className="flex-1 flex-shrink-0 text-right">
-          <span className=" text-[14px]">{isAmountTooSmall || !estimation ? '-.--' : estimation.txSummary.cost.toFixed(4)}</span>
+          <span className="text-[14px]">{isAmountTooSmall || !estimation ? '-.--' : estimation.txSummary.cost.toFixed(4)}</span>
           <span className="text-[12px]" style={{ marginLeft: 4 }}>
             WETH
           </span>
@@ -302,17 +319,20 @@ function ExtendedEstimateComponent(props: any) {
 
   return (
     <div className="pb-6">
-      <div
-        className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-        onClick={() => {
-          isShowDetail(!showDetail);
-        }}>
-        {showDetail ? 'Hide' : 'Show'} Advanced Details
-        {showDetail ? (
-          <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
-        ) : (
-          <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
-        )}
+      <div className="flex">
+        <div
+          className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
+          onClick={() => {
+            isShowDetail(!showDetail);
+          }}>
+          {showDetail ? 'Hide' : 'Show'} Advanced Details
+          {showDetail ? (
+            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+          ) : (
+            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+          )}
+        </div>
+        <div className="flex-1" />
       </div>
 
       {showDetail ? (
@@ -333,7 +353,22 @@ function ExtendedEstimateComponent(props: any) {
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
           <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
-          <DisplayValues title="Price Impact" value={estimation?.txSummary.priceImpactPct.toFixed(2)} unit="%" />
+          <DisplayValues
+            title={
+              <MobileTooltip
+                content={
+                  <div className="text-center">
+                    The change in price resulted <br />
+                    directly from a particular trade <br />
+                    in the VAMM
+                  </div>
+                }>
+                Price Impact
+              </MobileTooltip>
+            }
+            value={estimation?.txSummary.priceImpactPct.toFixed(2)}
+            unit="%"
+          />
           {!isNewPosition ? null : (
             <DisplayValues title="Liquidation Price" value={estimation?.posInfo.liquidationPrice.toFixed(2)} unit="WETH" />
           )}
@@ -389,7 +424,7 @@ export default function MainTradeComponent(props: any) {
 
   const handleError = useCallback((error: Error | null) => {
     setIsPending(false);
-    setTextErrorMessage(error ? error.message : null);
+    setTextErrorMessage(error ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -425,6 +460,7 @@ export default function MainTradeComponent(props: any) {
         }}
         isAmountTooSmall={isAmountTooSmall}
       />
+      <ErrorTip label={textErrorMessage} />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}

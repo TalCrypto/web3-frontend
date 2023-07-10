@@ -11,7 +11,7 @@ import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/co
 import { $isShowMobileModal } from '@/stores/modal';
 import { CollateralActions, TradeActions } from '@/const';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
-import { getActionTypeFromApi } from '@/utils/actionType';
+import { getActionTypeFromApi, getWalletBalanceChange } from '@/utils/actionType';
 import { $psShowHistory } from '@/stores/portfolio';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PositionHistoryRecord } from '@/stores/user';
@@ -106,21 +106,7 @@ const HistoryModal = () => {
   const onClickRow = (record: any) => {
     setSelectedRecord(record);
     setIsShowDetail(true);
-
-    const currentRecordType = getActionTypeFromApi(record);
-    const recordAmount = Math.abs(record.amount);
-    const recordFee = record.fee;
-    const recordRealizedPnl = record.realizedPnl;
-    const recordRealizedFundingPayment = record.fundingPayment;
-    const recordCollateralChange = record.collateralChange;
-    const balance =
-      currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD || currentRecordType === CollateralActions.ADD
-        ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-        : currentRecordType === CollateralActions.REDUCE
-        ? -Math.abs(recordCollateralChange + recordRealizedFundingPayment)
-        : currentRecordType === TradeActions.CLOSE
-        ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
-        : -Math.abs(recordFee);
+    const balance = getWalletBalanceChange(record);
     setSelectedBalance(String(balance));
   };
 
@@ -157,21 +143,7 @@ const HistoryModal = () => {
                     <div id={`group-${month}`} key={`group-${month}`} className="collapsible">
                       {records.map((record: any, idx: any) => {
                         const currentRecordType = getActionTypeFromApi(record);
-                        const recordAmount = Math.abs(record.amount);
-                        const recordFee = record.fee;
-                        const recordRealizedPnl = record.realizedPnl;
-                        const recordRealizedFundingPayment = record.fundingPayment;
-                        const recordCollateralChange = record.collateralChange;
-                        const balance =
-                          currentRecordType === TradeActions.OPEN ||
-                          currentRecordType === TradeActions.ADD ||
-                          currentRecordType === CollateralActions.ADD
-                            ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-                            : currentRecordType === CollateralActions.REDUCE
-                            ? -Math.abs(recordCollateralChange + recordRealizedFundingPayment)
-                            : currentRecordType === TradeActions.CLOSE
-                            ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
-                            : -Math.abs(recordFee);
+                        const balance = getWalletBalanceChange(record);
                         return (
                           <div
                             key={`item-${idx}-${record.timestamp}`}
@@ -190,7 +162,18 @@ const HistoryModal = () => {
                                     className="icon-label"
                                     amm={record.ammAddress}
                                     showCollectionName
-                                    content={` - ${currentRecordType}`}
+                                    content={
+                                      <div className="flex">
+                                        - {currentRecordType}
+                                        {record.liquidationPenalty !== 0 ? (
+                                          <Image className="ml-1" src="/images/common/alert/alert_red.svg" width={16} height={16} alt="" />
+                                        ) : (
+                                          ''
+                                        )}
+                                      </div>
+                                    }
+                                    imageWidth={20}
+                                    imageHeight={20}
                                   />
                                 </span>
                               </div>
@@ -240,8 +223,12 @@ const HistoryModal = () => {
                 {selectedRecord && <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />}
               </div>
               <div className="text-mediumEmphasis">
-                <div className="mb-[6px]  bg-lightBlue">
-                  {isLiquidation ? <LiquidationWarning /> : null}
+                <div className="mb-[6px] bg-lightBlue">
+                  {isLiquidation ? (
+                    <div className="bg-darkBlue px-5 pb-6 pt-[18px]">
+                      <LiquidationWarning />
+                    </div>
+                  ) : null}
                   {selectedRecord &&
                     detailRow(
                       'Collection',
@@ -270,7 +257,9 @@ const HistoryModal = () => {
                         <PriceWithIcon
                           className="icon-label"
                           priceValue={
-                            selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
+                            selectedRecord.ammAddress
+                              ? `${Number(collateralChange) > 0 ? '+' : ''}${Number(collateralChange).toFixed(4)}`
+                              : '--.--'
                           }>
                           {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                             <Image
@@ -286,7 +275,10 @@ const HistoryModal = () => {
                     : selectedRecord
                     ? detailRow(
                         'Resulting Collateral',
-                        <PriceWithIcon className="icon-label" priceValue={selectedRecord.ammAddress ? `${collateralChange}` : '--.--'} />
+                        <PriceWithIcon
+                          className="icon-label"
+                          priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'}
+                        />
                       )
                     : null}
                   {isLiquidation && selectedRecord

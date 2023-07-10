@@ -10,8 +10,6 @@ function PositionList() {
   const router = useRouter();
   const psUserPosition = useNanostore($psUserPosition);
 
-  let itemIndex = 0;
-
   return (
     <div>
       {psUserPosition.length === 0 ? (
@@ -30,12 +28,11 @@ function PositionList() {
       ) : (
         <div className="scrollable">
           <div className="px-5">
-            {psUserPosition.map((item: any, index: any) => {
+            {psUserPosition.map(item => {
               if (!item) {
                 return null;
               }
-              itemIndex += 1;
-              return <PositionListItem key={`position_item_mobile_${itemIndex}`} userPosition={item} index={index} itemIndex={itemIndex} />;
+              return <PositionListItem key={`position_item_mobile_${item.amm}`} userPosition={item} />;
             })}
           </div>
         </div>

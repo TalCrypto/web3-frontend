@@ -92,7 +92,7 @@ export default function CollectionListModal(props: any) {
                     />
                   )}
 
-                  <span className="ml-1">{tradingData ? `${Math.abs(tradingData.priceChangeRatio24h.toFixed(2))} %` : '-.--  %'}</span>
+                  <span className="ml-1">{tradingData ? `${Math.abs(tradingData.priceChangeRatio24h.toFixed(2))}%` : '-.-- %'}</span>
                 </div>
               </div>
             </div>

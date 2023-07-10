@@ -25,6 +25,12 @@ body {
   }
 }
 
+@media (min-width: 400px) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
 .gradient-bg {
   background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
 }
@@ -58,6 +64,16 @@ body {
   &::-webkit-scrollbar {
     height: 0;
     width: 0;
+  }
+
+  &::-webkit-scrollbar-track {
+    width: 0;
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    width: 0;
+    height: 0;
   }
 }
 

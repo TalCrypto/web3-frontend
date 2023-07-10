@@ -4,7 +4,7 @@ import Tooltip from '@/components/common/Tooltip';
 
 const UserMedal = (props: any) => {
   let medal = null;
-  const { rank, isBan = false, isYou = false, isUnranked = false } = props;
+  const { rank, isBan = false, isYou = false, isUnranked = false, isMobile = false } = props;
 
   if (isBan) {
     medal = (
@@ -13,7 +13,7 @@ const UserMedal = (props: any) => {
       </div>
     );
   } else if (isUnranked) {
-    medal = <div className="flex h-[38px] items-center text-[12px] font-bold">Unranked</div>;
+    medal = <div className="flex h-[38px] items-center justify-center text-[12px] font-bold">{!isMobile ? 'Unranked' : 'Unrank'}</div>;
   } else if (rank <= 3) {
     medal = (
       <div className="w-[50px]">
@@ -22,9 +22,19 @@ const UserMedal = (props: any) => {
     );
   } else {
     medal = (
-      <div className={`px-[12px] ${isYou ? 'pb-[10px]' : ''}`}>
-        <div className="basic-medal">
-          <div className="inner">{rank}</div>
+      <div className={`px-3 ${isYou ? 'pb-[10px]' : ''}`}>
+        <div
+          className="relative flex h-[26px] w-[26px] items-center justify-center
+            rounded-full text-center text-[13px] font-semibold text-highEmphasis">
+          <Image className="absolute left-0 top-0" src="/images/components/airdrop/medal/outer-circle.svg" width={26} height={26} alt="" />
+          <Image
+            className="absolute left-[2px] top-[2px]"
+            src="/images/components/airdrop/medal/inner-circle.svg"
+            width={22}
+            height={22}
+            alt=""
+          />
+          <div className="z-[1]">{rank}</div>
         </div>
       </div>
     );
