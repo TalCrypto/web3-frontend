@@ -292,7 +292,7 @@ function Overview() {
               <p className="text-[20px] font-semibold">Total Pts</p>
               <p className="mb-[12px] text-[14px] font-normal">After Multiplier</p>
               <div className="flex items-end justify-center">
-                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(4)}</p>
+                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(1)}</p>
                 <p>Pts</p>
               </div>
             </div>
