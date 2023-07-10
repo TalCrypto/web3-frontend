@@ -68,11 +68,11 @@ const MobileMenu = (props: any) => {
   };
 
   function showSnackBar() {
-    const x = document.getElementById('snackbar');
-    if (x) {
-      x.className = 'snackbar show';
+    const snackbar = document.getElementById('snackbar');
+    if (snackbar) {
+      snackbar.className = 'snackbar show';
       setTimeout(() => {
-        x.className = x.className.replace('show', '');
+        snackbar.className = snackbar.className.replace('show', '');
       }, 3000);
     }
   }
@@ -90,19 +90,14 @@ const MobileMenu = (props: any) => {
     setIsShowSocialFooter(!isShowSocialFooter);
   };
 
-  const onGotoPage = (url: string, isSwap = false) => {
-    if (isSwap) {
-      setIsSwapWidgetOpen(false);
-    }
+  const onGotoPage = (url: string) => {
     setIsShowMobileMenu(false);
     $isShowMobileModal.set(false);
     router.push(url);
   };
 
-  const redirectExternal = (url: string, isSwap = false) => {
-    if (isSwap) {
-      setIsSwapWidgetOpen(false);
-    }
+  const redirectExternal = (url: string) => {
+    setIsSwapWidgetOpen(false);
     window.open(url, '_blank');
   };
 
