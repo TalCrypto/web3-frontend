@@ -20,6 +20,7 @@ import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { showToast } from '@/components/common/Toast';
 import { $userPoint } from '@/stores/airdrop';
+import { localeConversion } from '@/utils/localeConversion';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -115,7 +116,7 @@ const MobileMenu = (props: any) => {
               <div className="max-w-[calc(100%-50px)] ">
                 <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">{username}</div>
                 <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
-                  Points: <span className="font-semibold">{userPoint?.total}</span>
+                  Points: <span className="font-semibold">{localeConversion(userPoint?.total || 0, 2, 2)}</span>
                 </span>
               </div>
             </div>
