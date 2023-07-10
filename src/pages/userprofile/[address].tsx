@@ -26,7 +26,7 @@ const AddressPage: NextPage = () => {
   const { address } = router.query;
   const activeTab = useStore($activeTab);
 
-  const addressTrimmed = trimAddress(address as string);
+  const addressTrimmed = address ? trimAddress(address as string) : '';
 
   return (
     <>
@@ -151,7 +151,7 @@ const AddressPage: NextPage = () => {
         </div>
 
         <div className="bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-[center_bottom] bg-no-repeat">
-          <div className="min-h-screen border-t border-t-[#71AAFF38] bg-[#00000080]">
+          <div className="min-h-[55vh] border-t border-t-[#71AAFF38] bg-[#00000080]">
             <div className="content-container py-[48px]">
               {activeTab === 0 ? <Portfolio /> : activeTab === 1 ? <Activities /> : activeTab === 2 ? <Social /> : <Analysis />}
             </div>
