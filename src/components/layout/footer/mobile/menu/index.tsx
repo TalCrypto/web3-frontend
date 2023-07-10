@@ -66,16 +66,19 @@ const MobileMenu = (props: any) => {
     disconnect();
   };
 
-  const onBtnCopyAddressClick = () => {
-    navigator.clipboard.writeText(address || '');
-    const x = document.getElementById('snackbar') || null;
-    console.log({ x }, x === null);
-    if (x !== null) {
-      x.className = 'show';
+  function showSnackBar() {
+    const x = document.getElementById('snackbar');
+    if (x) {
+      x.className = 'snackbar show';
       setTimeout(() => {
         x.className = x.className.replace('show', '');
       }, 3000);
     }
+  }
+
+  const onBtnCopyAddressClick = () => {
+    navigator.clipboard.writeText(address || '');
+    showSnackBar();
   };
 
   const onBtnGetWethClick = () => {
@@ -351,6 +354,10 @@ const MobileMenu = (props: any) => {
             }}
           />
         </div>
+      </div>
+
+      <div className="snackbar" id="snackbar">
+        Copied to clipboard
       </div>
 
       {isSwapWidgetOpen ? (
