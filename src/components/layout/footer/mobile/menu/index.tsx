@@ -83,7 +83,6 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnGetWethClick = () => {
-    $showGetWEthModal.set(true);
     setIsSwapWidgetOpen(true);
   };
 
@@ -121,21 +120,23 @@ const MobileMenu = (props: any) => {
           ) : null}
           <div className="scrollable mt-[36px] h-[calc(100%-361px)] overflow-y-scroll">
             <div className="pb-[35px]">
-              <div
-                onClick={() => onGotoPage('/portfolio')}
-                className={`
+              <div onClick={() => onGotoPage('/portfolio')}>
+                <span
+                  className={`
                 ${router.route.toLowerCase() === '/portfolio' ? 'mobile-menu-active font-semibold' : ''}
               `}>
-                Portfolio
+                  Portfolio
+                </span>
               </div>
             </div>
             <div className="pb-[35px]">
-              <div
-                onClick={() => onGotoPage('/trade')}
-                className={`
+              <div onClick={() => onGotoPage('/trade')}>
+                <span
+                  className={`
                 ${router.route.toLowerCase() === '/trade' ? 'mobile-menu-active font-semibold' : ''}
               `}>
-                Trade
+                  Trade
+                </span>
               </div>
             </div>
             {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
@@ -180,12 +181,13 @@ const MobileMenu = (props: any) => {
             ) : null}
 
             <div className="pb-[35px]">
-              <div
-                onClick={() => onGotoPage('/airdrop')}
-                className={`
+              <div onClick={() => onGotoPage('/airdrop')}>
+                <span
+                  className={`
                 ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
               `}>
-                Airdrop
+                  Airdrop
+                </span>
               </div>
             </div>
           </div>
