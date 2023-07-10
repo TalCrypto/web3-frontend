@@ -31,7 +31,7 @@ const MobileMenu = (props: any) => {
   const wethBalance = useNanostore($userWethBalance);
   const userPoint = useNanostore($userPoint);
   const username = useNanostore($userDisplayName);
-  const totalCollateral = useNanostore($userTotalCollateral);
+  const userTotalCollateral = useNanostore($userTotalCollateral);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
   const [isOthersOpen, setIsOthersOpen] = useState(false);
@@ -297,7 +297,7 @@ const MobileMenu = (props: any) => {
             <div className="mx-[26px]">
               <div className="mt-[20px] flex items-center justify-center">
                 <PriceWithIcon
-                  priceValue={Number(wethBalance + totalCollateral).toFixed(4)}
+                  priceValue={Number(wethBalance + userTotalCollateral).toFixed(4)}
                   className="text-[20px]"
                   width={22}
                   height={22}
