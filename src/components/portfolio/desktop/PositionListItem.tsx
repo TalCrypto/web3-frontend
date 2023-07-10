@@ -8,7 +8,7 @@ import Tooltip from '@/components/common/Tooltip';
 import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment, $psShowShareIndicator } from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import { UserPositionInfo } from '@/stores/user';
-import { useIsOverPriceGap } from '@/hooks/collection';
+import { useFundingPaymentHistory, useIsOverPriceGap } from '@/hooks/collection';
 import { usePublicClient } from 'wagmi';
 import { ammAbi } from '@/const/abi';
 
@@ -17,6 +17,8 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
   const { userPosition, itemIndex } = props;
   const isShowBalance = useNanostore($psShowBalance);
   const isOverPriceGap = useIsOverPriceGap();
+  const { total: accFp } = useFundingPaymentHistory(userPosition.amm);
+
   const isBadDebt = userPosition ? userPosition.leverage === 0 : false;
 
   const publicClient = usePublicClient();
@@ -160,15 +162,8 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
         </div>
         <div className="w-[17%]">
           <SingleRowPriceContent
-            priceValue={
-              isShowBalance
-                ? userPosition.fundingPayment > 0
-                  ? `+${userPosition.fundingPayment.toFixed(4)}`
-                  : userPosition.fundingPayment === 0
-                  ? Math.abs(userPosition.fundingPayment)?.toFixed(4)
-                  : userPosition.fundingPayment.toFixed(4)
-                : '****'
-            }
+            priceValue={isShowBalance ?  accFp.toFixed(4) : '****'}
+            isElement={!isShowBalance}
           />
         </div>
         <div className="w-[12%]">
