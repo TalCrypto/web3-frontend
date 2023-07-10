@@ -6,12 +6,27 @@ import Image from 'next/image';
 import OutlineButton from '@/components/common/OutlineButton';
 import ProfileBadge from '@/components/userprofile/ProfileBadge';
 import TabItems from '@/components/userprofile/TabItems';
+import { $activeTab } from '@/stores/userprofile';
+import { useStore } from '@nanostores/react';
+import Portfolio from '@/components/userprofile/Portfolio';
+import Activities from '@/components/userprofile/Activities';
+import Social from '@/components/userprofile/Social';
+import Analysis from '@/components/userprofile/Analysis';
+import Link from 'next/link';
+
+function trimAddress(str: string) {
+  if (str.length > 10) {
+    return `${str.substring(0, 7)}...${str.slice(-3)}`;
+  }
+  return str;
+}
 
 const AddressPage: NextPage = () => {
   const router = useRouter();
   const { address } = router.query;
+  const activeTab = useStore($activeTab);
 
-  console.log(address);
+  const addressTrimmed = trimAddress(address as string);
 
   return (
     <>
@@ -50,10 +65,10 @@ const AddressPage: NextPage = () => {
               <div className="mb-4 flex justify-between">
                 <div className="flex space-x-4">
                   <div className="">
-                    <p className="text-h2 text-[#FFC977]">JEFFGPT9999999</p>
+                    <p className="bg-gradient-to-b from-[#FFC977]  to-white bg-clip-text text-h2 text-transparent">JEFFGPT9999999</p>
                   </div>
                   <div className="flex items-center space-x-[6px]">
-                    <p className="text-mediumEmphasis">0xbf44b...980</p>
+                    <p className="text-mediumEmphasis">{addressTrimmed}</p>
                     <Image src="/images/components/userprofile/copy.svg" alt="" width={20} height={20} />
                   </div>
                 </div>
@@ -81,8 +96,14 @@ const AddressPage: NextPage = () => {
                   <ProfileBadge color="green">PUNK LOVER</ProfileBadge>
                 </div>
 
-                <div className="flex items-center">
+                <div className="flex items-center space-x-2">
                   <p className="text-b1 text-mediumEmphasis">NFT Holding</p>
+                  <div className="flex space-x-[-4px]">
+                    <Image src="/images/collections/small/azuki.svg" alt="" width={24} height={24} />
+                    <Image src="/images/collections/small/bayc.svg" alt="" width={24} height={24} />
+                    <Image src="/images/collections/small/doodle.svg" alt="" width={24} height={24} />
+                    <Image src="/images/collections/small/cryptopunks.svg" alt="" width={24} height={24} />
+                  </div>
                 </div>
               </div>
 
@@ -91,13 +112,37 @@ const AddressPage: NextPage = () => {
                 <p className="text-b1 text-highEmphasis">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
               </div>
             </div>
-            {/* cards airdrop / trading competition */}
             <div className="flex space-x-[24px]">
-              <div className="flex rounded-[12px] border border-[#FFD392] p-[24px]">
-                <p>Airdrop Season 2</p>
+              {/* cards airdrop */}
+              <div className="flex flex-col items-center rounded-[12px] border-[0.5px] border-[#FFD392] bg-[#0C0D20CC] px-8 py-6">
+                <p className="mb-[36px] text-b1e text-[#FFD392]">Airdrop Season 2</p>
+                <p className="mb-[6px] text-b3 text-[#FFD392]">Season 2 Pts</p>
+                <div className="mb-[24px] flex items-center space-x-[6px]">
+                  <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 text-transparent">9999.99</span>
+                  <span className="text-b3">Pts</span>
+                </div>
+                <p className="mb-[6px] text-b3 text-[#FFD392]">Leaderboard Rank</p>
+                <p className="mb-[24px] text-h5">5</p>
+                <Link href="/" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  View Leaderboard
+                  <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
+                </Link>
               </div>
-              <div className="flex rounded-[12px] border border-[#FFD392] p-[24px]">
-                <p>Trading Competition</p>
+              {/* trading competition */}
+
+              <div className="flex flex-col items-center rounded-[12px] border-[0.5px] border-[#FFD392] bg-[#0C0D20CC] px-8 py-6">
+                <p className="mb-[36px] text-b1e text-[#FFD392]">Trading Competition</p>
+                <p className="mb-[6px] text-b3 text-[#FFD392]">Realized P/L</p>
+                <div className="mb-6 flex items-center space-x-[6px]">
+                  <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={16} height={16} />
+                  <p className="text-h5 text-marketGreen">+2.22</p>
+                </div>
+                <p className="mb-[6px] text-b3 text-[#FFD392]">Top Gainer Rank</p>
+                <p className="mb-[24px] text-h5">5</p>
+                <Link href="/" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  View Leaderboard
+                  <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
+                </Link>
               </div>
             </div>
           </div>
@@ -105,9 +150,11 @@ const AddressPage: NextPage = () => {
           <TabItems />
         </div>
 
-        <div className="border-t border-t-[#71AAFF38] bg-[#00000080]">
-          <div className="content-container py-[48px]">
-            <p>test</p>
+        <div className="bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-[center_bottom] bg-no-repeat">
+          <div className="min-h-screen border-t border-t-[#71AAFF38] bg-[#00000080]">
+            <div className="content-container py-[48px]">
+              {activeTab === 0 ? <Portfolio /> : activeTab === 1 ? <Activities /> : activeTab === 2 ? <Social /> : <Analysis />}
+            </div>
           </div>
         </div>
       </main>
