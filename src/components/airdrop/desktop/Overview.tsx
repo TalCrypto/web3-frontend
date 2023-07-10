@@ -307,11 +307,11 @@ function Overview() {
             <div className="flex justify-between p-[36px]">
               <div>
                 <p className="body2 mb-[12px]">Current Multiplier</p>
-                <h3>{multiplier}X</h3>
+                <h3 className="text-[20px] font-bold">{multiplier}X</h3>
               </div>
               <div className="text-right">
                 <p className="body2 mb-[12px]">My Rank</p>
-                <h3>{rank > 0 ? rank : 'Unranked'}</h3>
+                <h3 className="text-[20px] font-bold">{rank > 0 ? rank : 'Unranked'}</h3>
               </div>
             </div>
           </div>
