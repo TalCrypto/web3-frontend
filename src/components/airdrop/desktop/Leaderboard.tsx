@@ -321,7 +321,7 @@ function Leaderboard() {
                       </div>
                       <div className="w-[17%] p-[18px]">
                         <p className="text-highEmphasis} text-[15px] font-semibold">
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.originalTotal, 2, 2)}`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.originalTotal, 1, 1)}`}
                         </p>
                       </div>
                       <div className="w-[10%] p-[18px]">
@@ -329,12 +329,12 @@ function Leaderboard() {
                           className={`text-[15px] font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-marketGreen'
                           }`}>
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.multiplier, 2, 2)}x`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.multiplier, 1, 1)}x`}
                         </p>
                       </div>
                       <div className="w-[16%] p-[18px]">
                         <p className={`text-[15px] font-semibold  ${userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-warn'}`}>
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.total, 2, 2)}`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.total, 1, 1)}`}
                         </p>
                       </div>
                     </div>
@@ -399,7 +399,7 @@ function Leaderboard() {
                           </div>
                           <div className="w-[17%] p-[18px]">
                             <p className="text-[15px] font-semibold text-highEmphasis">
-                              {isBan ? '-' : `${localeConversion(originalTotal, 2, 2)}`}
+                              {isBan ? '-' : `${localeConversion(originalTotal, 1, 1)}`}
                             </p>
                           </div>
                           <div className="w-[10%] p-[18px]">
@@ -409,7 +409,7 @@ function Leaderboard() {
                           </div>
                           <div className="w-[16%] p-[18px]">
                             <p className={`text-[15px] font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
-                              {isBan ? '-' : `${localeConversion(total, 2, 2)}`}
+                              {isBan ? '-' : `${localeConversion(total, 1, 1)}`}
                             </p>
                           </div>
                         </div>
