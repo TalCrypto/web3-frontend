@@ -1,5 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 import React, { useState, useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
@@ -108,30 +110,51 @@ const CollectionModal = (props: any) => {
       const priceGapPercentage = priceGap * 100;
 
       const changed24h = tradingData.priceChange24h ? (
-        <p className={`${tradingData.priceChange24h > 0 ? 'text-marketGreen' : tradingData.priceChange24h < 0 ? 'text-marketRed' : ''}`}>
-          {tradingData.priceChange24h > 0 ? '+' : '-'}
-          {Math.abs(Number(tradingData.priceChange24h?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio24h?.toFixed(2)))}%)
+        <p
+          className={`${
+            Number(tradingData.priceChange24h?.toFixed(2)) > 0
+              ? 'text-marketGreen'
+              : Number(tradingData.priceChange24h?.toFixed(2)) < 0
+              ? 'text-marketRed'
+              : 'text-white'
+          }`}>
+          {Number(tradingData.priceChange24h?.toFixed(2)) > 0 ? '+' : Number(tradingData.priceChange24h?.toFixed(2)) < 0 ? '-' : ''}
+          {Math.abs(Number(tradingData.priceChange24h)).toFixed(2)}({Math.abs(Number(tradingData.priceChangeRatio24h)).toFixed(2)}%)
         </p>
       ) : (
-        <p className="text-white">+0.00(0.00%)</p>
+        <p className="text-white">0.00(0.00%)</p>
       );
 
       const changed7d = tradingData.priceChange7d ? (
-        <p className={`${tradingData.priceChange7d > 0 ? 'text-marketGreen' : tradingData.priceChange7d < 0 ? 'text-marketRed' : ''}`}>
-          {tradingData.priceChange7d > 0 ? '+' : '-'}
-          {Math.abs(Number(tradingData.priceChange7d?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio7d?.toFixed(2)))}%)
+        <p
+          className={`${
+            Number(tradingData.priceChange7d?.toFixed(2)) > 0
+              ? 'text-marketGreen'
+              : Number(tradingData.priceChange7d?.toFixed(2)) < 0
+              ? 'text-marketRed'
+              : 'text-white'
+          }`}>
+          {Number(tradingData.priceChange7d?.toFixed(2)) > 0 ? '+' : Number(tradingData.priceChange7d?.toFixed(2)) < 0 ? '-' : ''}
+          {Math.abs(Number(tradingData.priceChange7d)).toFixed(2)}({Math.abs(Number(tradingData.priceChangeRatio7d)).toFixed(2)}%)
         </p>
       ) : (
-        <p className="text-white">+0.00(0.00%)</p>
+        <p className="text-white">0.00(0.00%)</p>
       );
 
       const changed30d = tradingData.priceChange30d ? (
-        <p className={`${tradingData.priceChange30d > 0 ? 'text-marketGreen' : tradingData.priceChange30d < 0 ? 'text-marketRed' : ''}`}>
-          {tradingData.priceChange30d > 0 ? '+' : '-'}
-          {Math.abs(Number(tradingData.priceChange30d?.toFixed(2)))}({Math.abs(Number(tradingData.priceChangeRatio30d?.toFixed(2)))}%)
+        <p
+          className={`${
+            Number(tradingData.priceChange30d?.toFixed(2)) > 0
+              ? 'text-marketGreen'
+              : Number(tradingData.priceChange30d?.toFixed(2)) < 0
+              ? 'text-marketRed'
+              : 'text-white'
+          }`}>
+          {Number(tradingData.priceChange30d?.toFixed(2)) > 0 ? '+' : Number(tradingData.priceChange30d?.toFixed(2)) < 0 ? '-' : ''}
+          {Math.abs(Number(tradingData.priceChange30d)).toFixed(2)}({Math.abs(Number(tradingData.priceChangeRatio30d)).toFixed(2)}%)
         </p>
       ) : (
-        <p className="text-white">+0.00(0.00%)</p>
+        <p className="text-white">0.00(0.00%)</p>
       );
 
       const priceGapElement = (
