@@ -14,7 +14,7 @@ import { $isShowMobileModal } from '@/stores/modal';
 import { CollateralActions, TradeActions } from '@/const';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
 import { PositionHistoryRecord } from '@/stores/user';
-import { LiquidationWarning } from '@/components/common/LabelsComponents';
+import { DetailRowWithPriceIconMobile, LiquidationWarning, detailRowMobile } from '@/components/common/LabelsComponents';
 
 function ExplorerButton(props: any) {
   const { txHash, onClick } = props;
@@ -22,19 +22,6 @@ function ExplorerButton(props: any) {
     <a href={`${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`} onClick={onClick} target="_blank" rel="noreferrer">
       <Image alt="" src="/images/common/out.svg" width={24} height={24} />
     </a>
-  );
-}
-
-function DetailRowWithPriceIcon(props: any) {
-  const { label, content } = props;
-  const numberVal = Number(content);
-  return (
-    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 text-[14px]">
-      <div>{label}</div>
-      <div className="text-white">
-        <PriceWithIcon className={`icon-label ${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
-      </div>
-    </div>
   );
 }
 
@@ -53,13 +40,6 @@ const HistoryModal = (props: any) => {
       setSelectedRecord(record);
     }
   }, [psHistoryByMonth]);
-
-  const detailRow = (label: any, content: any) => (
-    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 text-[14px]">
-      <div>{label}</div>
-      <div className="text-white">{content}</div>
-    </div>
-  );
 
   // detail data, selected record
   const tradeType = selectedRecord ? getActionTypeFromApi(selectedRecord) : '';
@@ -252,7 +232,7 @@ const HistoryModal = (props: any) => {
                     </div>
                   ) : null}
                   {selectedRecord &&
-                    detailRow(
+                    detailRowMobile(
                       'Collection',
                       selectedRecord.ammAddress ? (
                         <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} showCollectionName />
@@ -260,12 +240,13 @@ const HistoryModal = (props: any) => {
                         '-'
                       )
                     )}
-                  {(selectedRecord && detailRow('Action', getActionTypeFromApi(selectedRecord))) || '-'}
+                  {(selectedRecord && detailRowMobile('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                   {selectedRecord &&
-                    detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
-                  {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                    detailRowMobile('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
                   {selectedRecord &&
-                    detailRow(
+                    detailRowMobile('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                  {selectedRecord &&
+                    detailRowMobile(
                       'Type',
                       <span className={typeClassName}>
                         {selectedRecord.exchangedPositionSize > 0 ? 'LONG' : selectedRecord.exchangedPositionSize < 0 ? 'SHORT' : '-.--'}
@@ -274,7 +255,7 @@ const HistoryModal = (props: any) => {
                 </div>
                 <div className="bg-lightBlue">
                   {!isLiquidation && selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Collateral Change',
                         <PriceWithIcon
                           className="icon-label"
@@ -293,7 +274,7 @@ const HistoryModal = (props: any) => {
                         </PriceWithIcon>
                       )
                     : selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Resulting Collateral',
                         <PriceWithIcon
                           className="icon-label"
@@ -302,7 +283,7 @@ const HistoryModal = (props: any) => {
                       )
                     : null}
                   {isLiquidation && selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Resulting Contract Size',
                         selectedRecord.ammAddress ? (
                           <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
@@ -311,7 +292,7 @@ const HistoryModal = (props: any) => {
                         )
                       )
                     : selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Contract Size',
                         selectedRecord.ammAddress ? (
                           <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
@@ -321,14 +302,14 @@ const HistoryModal = (props: any) => {
                       )
                     : null}
                   {isLiquidation
-                    ? detailRow('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
-                    : detailRow(
+                    ? detailRowMobile('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
+                    : detailRowMobile(
                         'Notional Change',
                         <PriceWithIcon className="icon-label" priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
                       )}
-                  {!isLiquidation ? detailRow('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
-                  {isLiquidation ? <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} /> : null}
-                  {isFullClose ? <DetailRowWithPriceIcon label="Funding Payment" content={fundingPayment} /> : null}
+                  {!isLiquidation ? detailRowMobile('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
+                  {isLiquidation ? <DetailRowWithPriceIconMobile label="Liquidation Penalty" content={liquidationPenalty} /> : null}
+                  {isFullClose ? <DetailRowWithPriceIconMobile label="Funding Payment" content={fundingPayment} /> : null}
                 </div>
               </div>
             </div>

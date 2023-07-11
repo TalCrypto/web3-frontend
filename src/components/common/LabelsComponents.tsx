@@ -26,14 +26,53 @@ export function LiquidationWarning() {
 }
 
 export function DetailRowWithPriceIcon(props: any) {
-  const { label, content } = props;
+  const { label, content, isMobile = false } = props;
   const numberVal = Number(content);
   return (
-    <div className="mt-6 flex justify-between text-[14px]">
+    <div
+      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
+        {${isMobile ? 'px-5' : ''} py-3 text-[14px]`}>
       <div>{label}</div>
       <div className="text-white">
         <PriceWithIcon className={`${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
       </div>
+    </div>
+  );
+}
+
+export function DetailRowWithPriceIconMobile(props: any) {
+  const { label, content } = props;
+  const numberVal = Number(content);
+  return (
+    <div
+      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
+        px-5 py-3 text-[14px]`}>
+      <div>{label}</div>
+      <div className="text-white">
+        <PriceWithIcon className={`${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
+      </div>
+    </div>
+  );
+}
+
+export function detailRow(label: any, content: any) {
+  return (
+    <div
+      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
+        py-3 text-[14px]`}>
+      <div>{label}</div>
+      <div className="text-white">{content}</div>
+    </div>
+  );
+}
+
+export function detailRowMobile(label: any, content: any) {
+  return (
+    <div
+      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
+        px-5 py-3 text-[14px]`}>
+      <div>{label}</div>
+      <div className="text-white">{content}</div>
     </div>
   );
 }

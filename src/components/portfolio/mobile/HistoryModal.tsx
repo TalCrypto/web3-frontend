@@ -7,7 +7,7 @@ import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
+import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning, detailRowMobile } from '@/components/common/LabelsComponents';
 import { $isShowMobileModal } from '@/stores/modal';
 import { CollateralActions, TradeActions } from '@/const';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
@@ -31,13 +31,6 @@ const HistoryModal = () => {
       setSelectedRecord(record);
     }
   }, [psHistoryByMonth]);
-
-  const detailRow = (label: any, content: any) => (
-    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 text-[14px]">
-      <div>{label}</div>
-      <div className="text-white">{content}</div>
-    </div>
-  );
 
   // detail data, selected record
   const tradeType = selectedRecord ? getActionTypeFromApi(selectedRecord) : '';
@@ -230,7 +223,7 @@ const HistoryModal = () => {
                     </div>
                   ) : null}
                   {selectedRecord &&
-                    detailRow(
+                    detailRowMobile(
                       'Collection',
                       selectedRecord.ammAddress ? (
                         <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} showCollectionName />
@@ -238,12 +231,13 @@ const HistoryModal = () => {
                         '-'
                       )
                     )}
-                  {(selectedRecord && detailRow('Action', getActionTypeFromApi(selectedRecord))) || '-'}
+                  {(selectedRecord && detailRowMobile('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                   {selectedRecord &&
-                    detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
-                  {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                    detailRowMobile('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
                   {selectedRecord &&
-                    detailRow(
+                    detailRowMobile('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                  {selectedRecord &&
+                    detailRowMobile(
                       'Type',
                       <span className={typeClassName}>
                         {selectedRecord.exchangedPositionSize > 0 ? 'LONG' : selectedRecord.exchangedPositionSize < 0 ? 'SHORT' : '-.--'}
@@ -252,7 +246,7 @@ const HistoryModal = () => {
                 </div>
                 <div className="bg-lightBlue">
                   {!isLiquidation && selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Collateral Change',
                         <PriceWithIcon
                           className="icon-label"
@@ -271,7 +265,7 @@ const HistoryModal = () => {
                         </PriceWithIcon>
                       )
                     : selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Resulting Collateral',
                         <PriceWithIcon
                           className="icon-label"
@@ -280,7 +274,7 @@ const HistoryModal = () => {
                       )
                     : null}
                   {isLiquidation && selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Resulting Contract Size',
                         selectedRecord.ammAddress ? (
                           <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
@@ -289,7 +283,7 @@ const HistoryModal = () => {
                         )
                       )
                     : selectedRecord
-                    ? detailRow(
+                    ? detailRowMobile(
                         'Contract Size',
                         selectedRecord.ammAddress ? (
                           <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
@@ -299,12 +293,12 @@ const HistoryModal = () => {
                       )
                     : null}
                   {isLiquidation
-                    ? detailRow('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
-                    : detailRow(
+                    ? detailRowMobile('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
+                    : detailRowMobile(
                         'Notional Change',
                         <PriceWithIcon className="icon-label" priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
                       )}
-                  {!isLiquidation ? detailRow('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
+                  {!isLiquidation ? detailRowMobile('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
                   {isLiquidation ? <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} /> : null}
                   {isFullClose ? <DetailRowWithPriceIcon label="Funding Payment" content={fundingPayment} /> : null}
                 </div>

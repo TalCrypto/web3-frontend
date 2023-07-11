@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import Tooltip from '@/components/common/Tooltip';
 import { $psShowHistory } from '@/stores/portfolio';
-import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
+import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning, detailRow } from '@/components/common/LabelsComponents';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getActionTypeFromApi, getWalletBalanceChange } from '@/utils/actionType';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
@@ -41,13 +41,6 @@ const HistoryModal = () => {
       image.classList.toggle('not-extended');
     }
   };
-
-  const detailRow = (label: any, content: any) => (
-    <div className="mt-6 flex justify-between text-[14px]">
-      <div>{label}</div>
-      <div className="text-white">{content}</div>
-    </div>
-  );
 
   // detail data, selected record
   const tradeType = selectedRecord ? getActionTypeFromApi(selectedRecord) : '';

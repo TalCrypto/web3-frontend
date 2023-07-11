@@ -9,7 +9,7 @@ import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
-import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning } from '@/components/common/LabelsComponents';
+import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning, detailRow } from '@/components/common/LabelsComponents';
 import { getActionTypeFromApi, getWalletBalanceChange } from '@/utils/actionType';
 import Tooltip from '@/components/common/Tooltip';
 import { PositionHistoryRecord } from '@/stores/user';
@@ -42,13 +42,6 @@ const HistoryModal = (props: any) => {
       image.classList.toggle('not-extended');
     }
   };
-
-  const detailRow = (label: any, content: any) => (
-    <div className="mt-6 flex justify-between text-[14px]">
-      <div>{label}</div>
-      <div className="text-white">{content}</div>
-    </div>
-  );
 
   // detail data, selected record
   const tradeType = selectedRecord ? getActionTypeFromApi(selectedRecord) : '';
