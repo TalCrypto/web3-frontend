@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 
 const Portfolio: React.FC = () => (
-  <div className="grid grid-cols-4">
+  <div className="md:grid md:grid-cols-4">
     {/* card */}
     <div
       className={`rounded-[6px] border border-[rgba(113,170,255,0.25)] 

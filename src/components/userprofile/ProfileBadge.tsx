@@ -52,7 +52,7 @@ const ProfileBadge: React.FC<ProfileBadgeProps> = ({ children, color }) => {
     <div
       className={`
       flex space-x-1 rounded-[14px] border ${variant.bg} ${variant.border} px-2 py-1 
-      ${variant.font} text-[10px] font-medium
+      ${variant.font} whitespace-nowrap text-[10px] font-medium
       `}>
       <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
         <path
