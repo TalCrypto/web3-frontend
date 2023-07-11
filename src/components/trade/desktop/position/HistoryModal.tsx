@@ -266,7 +266,7 @@ const HistoryModal = (props: any) => {
                       <PriceWithIcon
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
-                          <Tooltip direction="top" content="Collateral will not change.">
+                          <Tooltip direction="top" content="Collateral will not change">
                             <Image
                               src="/images/components/trade/history/more_info.svg"
                               alt=""

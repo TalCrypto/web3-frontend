@@ -196,7 +196,7 @@ function EstimationComponent(props: any) {
             {/* {!isFullClose ? (
               <TitleTips
                 titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                tipsText="Collateral will not change."
+                tipsText="Collateral will not change"
                 placement="top"
               />
             ) : null} */}
