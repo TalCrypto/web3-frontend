@@ -192,8 +192,10 @@ function LeaderboardMobile() {
                   </div>
                   <div className="flex-1 text-right">
                     <p className="text-[14px] font-normal">
-                      {userIsBan || userIsUnranked ? (
+                      {userIsBan ? (
                         '-'
+                      ) : userIsUnranked ? (
+                        'Not Eligible'
                       ) : (
                         <>
                           {userData.total} <span className="text-marketGreen">({userData.multiplier}X)</span>
