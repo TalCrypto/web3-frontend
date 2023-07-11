@@ -79,9 +79,9 @@ export default function SharePosition(props: {
               <div className="mt-5">
                 <div className="ml-8 flex">
                   <div
-                    className={`mx-2 my-0 rounded-[2px] bg-marketGreen/[.2] px-1 py-0
+                    className={`mx-2 my-0 rounded-[2px] px-1 py-0
                       text-[16px] font-semibold
-                    ${side ? 'text-marketGreen' : 'text-marketRed'}`}>
+                    ${side ? 'bg-marketGreen/[.2] text-marketGreen' : 'bg-marketRed/[.2] text-marketRed'}`}>
                     {side ? 'LONG' : 'SHORT'}
                   </div>
 
