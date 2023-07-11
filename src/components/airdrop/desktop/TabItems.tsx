@@ -10,35 +10,37 @@ function TabIcon(props: any) {
   return (
     <div
       className={`item ${active ? 'active' : ''} relative
-        flex cursor-pointer items-center space-x-[4px] pb-3
+        flex cursor-pointer items-center pb-3
         ${itemIndex === 0 ? '' : 'ml-9'}
       `}
       onClick={onClick}>
       <div className="after absolute bottom-0 left-0 mt-2 h-[3px] w-full rounded-[3px]" />
 
-      <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="gradient" gradientUnits="userSpaceOnUse" fy="90%">
-            <stop offset="0" stopColor="#04aefc" />
-            <stop offset="0.5" stopColor="#795af4" />
-            <stop offset="1" stopColor="#f703d9" />
-          </linearGradient>
-          <mask id={idName} maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
-            <path d={svgSource} fill="white" fillOpacity="0.87" />
-          </mask>
-        </defs>
+      <div className="mr-[6px]">
+        <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gradient" gradientUnits="userSpaceOnUse" fy="90%">
+              <stop offset="0" stopColor="#04aefc" />
+              <stop offset="0.5" stopColor="#795af4" />
+              <stop offset="1" stopColor="#f703d9" />
+            </linearGradient>
+            <mask id={idName} maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
+              <path d={svgSource} fill="white" fillOpacity="0.87" />
+            </mask>
+          </defs>
 
-        <g mask={`url(#${idName})`} className="active_mask">
-          <rect x="0" y="0" width="16" height="16" fill="white" fillOpacity="0.87" />
-          <rect id="tab-icon-transition" x="0" y="0" width="16" height="16" fill="url(#gradient)" />
-        </g>
+          <g mask={`url(#${idName})`} className="active_mask">
+            <rect x="0" y="0" width="16" height="16" fill="white" fillOpacity="0.87" />
+            <rect id="tab-icon-transition" x="0" y="0" width="16" height="16" fill="url(#gradient)" />
+          </g>
 
-        <g mask={`url(#${idName})`} className="normal_mask">
-          <rect x="0" y="0" width="16" height="16" fill="white" fillOpacity="0.87" />
-          <rect id="tab-icon-transition" x="0" y="0" width="16" height="16" fill="white" />
-        </g>
-      </svg>
-      <span className="pr-[6px]">{label}</span>
+          <g mask={`url(#${idName})`} className="normal_mask">
+            <rect x="0" y="0" width="16" height="16" fill="white" fillOpacity="0.87" />
+            <rect id="tab-icon-transition" x="0" y="0" width="16" height="16" fill="white" />
+          </g>
+        </svg>
+      </div>
+      <div className="text-[14px]">{label}</div>
     </div>
   );
 }
