@@ -7,7 +7,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import ChartDisplay from '@/components/common/ChartDisplay';
+import ChartDisplay from '@/components/trade/common/ChartDisplay';
 
 import {
   $collectionConfig,

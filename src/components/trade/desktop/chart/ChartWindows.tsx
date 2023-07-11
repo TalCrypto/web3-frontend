@@ -23,7 +23,7 @@ import {
   $vammPrice
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
-import ChartDisplay from '@/components/common/ChartDisplay';
+import ChartDisplay from '@/components/trade/common/ChartDisplay';
 import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
