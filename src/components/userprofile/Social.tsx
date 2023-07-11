@@ -53,7 +53,7 @@ const Social: React.FC<PropsWithChildren> = () => {
           <p className="text-b1e text-highEmphasis">Following (10)</p>
         </div>
 
-        <div className="block max-h-[300px] w-full overflow-auto px-[36px]">
+        <div className="scrollable block max-h-[300px] w-full overflow-auto px-[36px]">
           <table className="w-full items-center text-mediumEmphasis">
             <thead className="">
               <tr className="text-left text-b2">
@@ -106,7 +106,7 @@ const Social: React.FC<PropsWithChildren> = () => {
           <p className="text-b1e text-highEmphasis">Follower (10)</p>
         </div>
 
-        <div className="block max-h-[300px] w-full overflow-auto px-[36px]">
+        <div className="scrollable block max-h-[300px] w-full overflow-auto px-[36px]">
           <table className="w-full items-center text-mediumEmphasis">
             <thead>
               <tr className="text-left text-b2">

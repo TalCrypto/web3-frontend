@@ -23,6 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const isUserprofilePage = router.pathname.match('/userprofile');
   const userprofileBgClass = "bg-black bg-[url('/images/components/userprofile/bg1.png')] bg-cover bg-fixed bg-[center_top] bg-no-repeat";
+  const userprofileBg2Class = "bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-center bg-no-repeat";
 
   return (
     <>
@@ -33,9 +34,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           ${isUserprofilePage ? userprofileBgClass : ''}`}>
         <div
           className={`
-            ${isUserprofilePage ? '' : 'content-container'}
+            ${isUserprofilePage ? userprofileBg2Class : 'content-container'}
             mmd:pb-10 w-full
-            !px-0 pb-12 text-white md:h-full md:pt-20 
+            !px-0 pb-[42px] text-white md:h-full md:pt-20 
             ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}
         `}>
           {children}
