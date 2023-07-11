@@ -85,7 +85,7 @@ const HistoryModal = () => {
       : isFundingPaymentRecord
       ? -Number((positionNotionalNumber ?? 0 - (realizedPnlNumber ?? 0)).toFixed(4))
       : (notionalChangeNumber ?? 0 - (realizedPnlNumber ?? 0)).toFixed(4);
-  const liquidationPenalty = isLiquidation ? -Number(liquidationPenaltyNumber?.toFixed(4)) : '-.--';
+  const liquidationPenalty = isLiquidation ? `-${Number(liquidationPenaltyNumber).toFixed(4)}` : '-.--';
 
   const handleBackClick = () => {
     if (isShowDetail) {
