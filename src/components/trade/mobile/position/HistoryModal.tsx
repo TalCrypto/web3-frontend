@@ -190,7 +190,7 @@ const HistoryModal = (props: any) => {
                                   Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''
                                 }`}
                                 priceValue={`${Number(balance) > 0 ? '+' : ''}${
-                                  Number(balance) === 0 ? '--.--' : Number(balance).toFixed(4)
+                                  Number(balance) === 0 ? '-.---' : Number(balance).toFixed(4)
                                 }`}
                               />
                             </div>
