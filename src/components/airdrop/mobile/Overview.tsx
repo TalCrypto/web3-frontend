@@ -48,7 +48,7 @@ function OverviewMobile() {
                   A minimum of <span className="body2e text-seasonGreen">5 WETH</span> notional volume.
                 </p>
 
-                <p className="body1e mb-[15px]">
+                <p className="mb-[15px] text-[15px] font-semibold">
                   {!eligible()
                     ? `${Number(tradeVolTotal).toFixed(2)} / ${maxEligibilityTradeVol} WETH`
                     : `${maxEligibilityTradeVol} / ${maxEligibilityTradeVol} WETH ✅`}
