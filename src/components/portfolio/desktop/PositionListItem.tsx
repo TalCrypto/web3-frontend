@@ -129,23 +129,35 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
         <div className="w-[13%]">
           <SingleRowPriceContent
             priceValue={
-              <>
+              <div className="flex items-center">
                 {isShowBalance ? (userPosition.liquidationPrice < 0 ? '0.00' : userPosition.liquidationPrice?.toFixed(2)) : '****'}
                 <div className="ml-[4px] flex space-x-[4px]">
                   {isLiquidationWarn && !isLiquidationRisk ? (
                     <Tooltip
                       direction="top"
-                      content="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade.">
-                      <Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />
+                      content={
+                        <>
+                          Your position is in high chance to be liquidated, <br />
+                          please adjust your collateral to secure your trade.
+                        </>
+                      }>
+                      <Image className="ml-1" src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />
                     </Tooltip>
                   ) : null}
                   {isLiquidationRisk ? (
-                    <Tooltip direction="top" content="Your position is at risk of being liquidated. Please manage your risk.">
-                      <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                    <Tooltip
+                      direction="top"
+                      content={
+                        <>
+                          Your position is at risk of being liquidated. <br />
+                          Please manage your risk.
+                        </>
+                      }>
+                      <Image className="ml-1" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
                     </Tooltip>
                   ) : null}
                 </div>
-              </>
+              </div>
             }
             isElement
             className={isOverPriceGap ? 'text-warn' : ''}
