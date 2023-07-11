@@ -16,8 +16,9 @@ const AirdropPoint: React.FC = () => {
   return (
     <div className="hidden md:block" onClick={() => router.push('/airdrop')}>
       <div
-        className="flex h-[32px] cursor-pointer items-center space-x-[4px] rounded-full
-        border-[1px] border-warn px-[16px] py-[6px] text-warn hover:bg-warn/20">
+        className="flex h-[32px] cursor-pointer items-center
+          space-x-[4px] rounded-full border-[1px] border-seasonGreen
+          px-[16px] py-[6px] text-seasonGreen hover:bg-seasonGreen/20">
         {!airdropPoints ? (
           <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
         ) : (

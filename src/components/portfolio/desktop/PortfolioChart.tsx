@@ -288,7 +288,7 @@ function PortfolioChart() {
     };
   }, [lineChartData, histogramChartData, isShowBalance, isMobileView]);
 
-  return <div id="divChartWindows" className="relative" ref={chartContainerRef} />;
+  return <div id="divChartWindows" ref={chartContainerRef} />;
 }
 
 export default PortfolioChart;

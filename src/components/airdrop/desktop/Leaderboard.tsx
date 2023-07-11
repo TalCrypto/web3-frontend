@@ -17,6 +17,7 @@ import UserMedal from '@/components/airdrop/desktop/UserMedal';
 import { trimString } from '@/utils/string';
 import ScrollTopButton from '@/components/common/ScrollToTopButton';
 import { localeConversion } from '@/utils/localeConversion';
+import Tooltip from '@/components/common/Tooltip';
 
 function Leaderboard() {
   const router = useRouter();
@@ -74,7 +75,7 @@ function Leaderboard() {
         og: userPrevPoint.og || 0,
         rank: userPrevPoint.rank || 0,
         tradeVolTotal: userPrevPoint.tradeVolTotal || 0,
-        eligible: userPrevPoint.isEligible || false
+        eligible: userPrevPoint.eligible || false
       };
     } else {
       selectedUserPoint = {
@@ -92,7 +93,7 @@ function Leaderboard() {
         og: userPoint.og || 0,
         rank: userPoint.rank || 0,
         tradeVolTotal: userPoint.tradeVolTotal || 0,
-        eligible: userPoint.isEligible || false
+        eligible: userPoint.eligible || false
       };
     }
 
@@ -128,7 +129,7 @@ function Leaderboard() {
   const isLockedOg = false;
 
   // width handler for season 2
-  const usernameWidth = currentSeason === 0 ? 'w-[17%] ' : 'w-[13%]';
+  const usernameWidth = currentSeason === 0 ? 'w-[17%] max-w-[162px]' : 'w-[13%] max-w-[132px]';
   const cellWidth = currentSeason === 0 ? 'w-[16%]' : 'w-[12%]';
 
   return (
@@ -234,65 +235,81 @@ function Leaderboard() {
                       <div className={`${cellWidth} relative p-[18px]`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0 top-[21px]">
-                            {/* <TitleTips
-                              placement="top"
-                              tipsText="Trade 5 WETH notional to unlock your reward"
-                              titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                            /> */}
-                            <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            <Tooltip
+                              direction="top"
+                              content={
+                                <>
+                                  Trade 5 WETH notional to
+                                  <br /> unlock your reward
+                                </>
+                              }>
+                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            </Tooltip>
                           </div>
                         ) : null}
                         <p className={`text-[15px] font-normal ${userIsBan ? 'text-marketRed line-through' : ''}`}>
-                          {localeConversion(userData.tradeVolPoints, 2, 2)}
+                          {localeConversion(userData.tradeVolPoints, 1, 1)}
                         </p>
                       </div>
                       {currentSeason !== 0 ? (
                         <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} relative`}>
                           {userIsUnranked ? (
                             <div className="absolute left-0 top-[21px]">
-                              {/* <TitleTips
-                                placement="top"
-                                tipsText="Trade 5 WETH notional to unlock your reward"
-                                titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                              /> */}
-                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                              <Tooltip
+                                direction="top"
+                                content={
+                                  <>
+                                    Trade 5 WETH notional to
+                                    <br /> unlock your reward
+                                  </>
+                                }>
+                                <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                              </Tooltip>
                             </div>
                           ) : null}
                           <p
                             className={`${userIsBan && !isLockedConverg ? 'text-marketRed line-through' : ''} ${
                               isLockedConverg ? '' : ''
                             }`}>
-                            {isLockedConverg ? '-' : localeConversion(userData.convergePoints, 2, 2)}
+                            {isLockedConverg ? '-' : localeConversion(userData.convergePoints, 1, 1)}
                           </p>
                         </div>
                       ) : null}
                       <div className={`${cellWidth} p-[18px] ${isLockedReferral ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0 top-[21px]">
-                            {/* <TitleTips
-                              placement="top"
-                              tipsText="Trade 5 WETH notional to unlock your reward"
-                              titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                            /> */}
-                            <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            <Tooltip
+                              direction="top"
+                              content={
+                                <>
+                                  Trade 5 WETH notional to
+                                  <br /> unlock your reward
+                                </>
+                              }>
+                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            </Tooltip>
                           </div>
                         ) : null}
                         <p
                           className={`${userIsBan && !isLockedReferral ? 'text-marketRed line-through' : ''} ${
                             isLockedReferral ? '' : ''
                           }`}>
-                          {isLockedReferral ? '-' : localeConversion(userData.referralPoints, 2, 2)}
+                          {isLockedReferral ? '-' : localeConversion(userData.referralPoints, 1, 1)}
                         </p>
                       </div>
                       <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0 top-[21px]">
-                            {/* <TitleTips
-                              placement="top"
-                              tipsText="Trade 5 WETH notional to unlock your reward"
-                              titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                            /> */}
-                            <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            <Tooltip
+                              direction="top"
+                              content={
+                                <>
+                                  Trade 5 WETH notional to
+                                  <br /> unlock your reward
+                                </>
+                              }>
+                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            </Tooltip>
                           </div>
                         ) : null}
                         <p
@@ -360,22 +377,19 @@ function Leaderboard() {
                           </div>
                           <div className={`${cellWidth} p-[18px]`}>
                             <p className={`text-[15px] font-normal ${isBan ? 'text-marketRed line-through' : ''}`}>
-                              {localeConversion(tradeVolPoints, 2, 2)}
+                              {localeConversion(tradeVolPoints, 1, 1)}
                             </p>
                           </div>
                           {currentSeason !== 0 ? (
                             <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} ${isLockedConverg ? '' : ''}`}>
                               <p className={`text-[15px] font-normal ${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
-                                {isLockedConverg ? '-' : localeConversion(convergePoints, 2, 2)}
+                                {isLockedConverg ? '-' : localeConversion(convergePoints, 1, 1)}
                               </p>
                             </div>
                           ) : null}
-                          <div
-                            className={`${cellWidth} w-[12%] p-[18px] ${isLockedReferral ? 'col-locked' : ''} ${
-                              isLockedReferral ? '' : ''
-                            }`}>
+                          <div className={`${cellWidth} p-[18px] ${isLockedReferral ? 'col-locked' : ''} ${isLockedReferral ? '' : ''}`}>
                             <p className={`text-[15px] font-normal ${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
-                              {isLockedReferral ? '-' : localeConversion(referralPoints, 2, 2)}
+                              {isLockedReferral ? '-' : localeConversion(referralPoints, 1, 1)}
                             </p>
                           </div>
                           <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>

@@ -23,16 +23,7 @@ import { $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '
 import { $userAddress } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 import { ThreeDots } from 'react-loader-spinner';
-
-function SmallPriceIcon(props: any) {
-  const { priceValue = 0, className = '' } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={16} height={16} />
-      <span>{priceValue}</span>
-    </div>
-  );
-}
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 
 function Cell(props: any) {
   const { items, classNames, isHeader } = props;
@@ -103,7 +94,7 @@ const MarketTrade = () => {
             </>,
             ''
           ]}
-          classNames={['col-span-4 ml-8', 'col-span-3 pl-1 pr-3', 'col-span-5 pl-6', '']}
+          classNames={['col-span-4 ml-8', 'col-span-3 pl-3 pr-3', 'col-span-5 pl-6', '']}
           isHeader
         />
 
@@ -130,7 +121,7 @@ const MarketTrade = () => {
                   </span>
                 </div>
               </div>
-              <div className="col-span-5">
+              <div className="col-span-5 pl-2">
                 <span className={`market ${record.exchangedPositionSize > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
                   {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
                 </span>

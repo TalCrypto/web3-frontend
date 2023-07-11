@@ -174,3 +174,5 @@ export const $marketUpdateTrigger = atom(false);
 
 // mobile specialized stores
 export const $isShowTradingMobile = atom(false);
+
+export const $tsIsShowPriceGapOverModal = atom(true);

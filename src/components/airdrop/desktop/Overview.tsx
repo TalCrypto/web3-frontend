@@ -8,6 +8,7 @@ import { BoxGradient, BoxLocked, NewBoxLock } from '@/components/common/Box';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import Tooltip from '@/components/common/Tooltip';
+import { formatBigInt } from '@/utils/bigInt';
 
 function Overview() {
   const userPoint = useNanostore($userPoint);
@@ -22,7 +23,7 @@ function Overview() {
   const converge = userPoint ? userPoint.converge : defaultUserPoint.converge;
 
   const prevTotal = userPrevPoint ? userPrevPoint.total : defaultUserPoint.total;
-  const tradeVolTotal = userPoint ? userPoint.tradeVolTotal : defaultUserPoint.tradeVolTotal;
+  const tradeVolTotal = userPoint ? formatBigInt(userPoint.tradeVolTotal) : formatBigInt(defaultUserPoint.tradeVolTotal);
 
   const isConnected = useNanostore($userIsConnected);
   const router = useRouter();
@@ -38,7 +39,7 @@ function Overview() {
 
   const partnershipMultiplier = Number(tradeVol.multiplier);
   const convergeVolume = convergIsHidden ? 0 : converge.val;
-  const eligible = () => userPoint?.isEligible;
+  const eligible = () => userPoint?.eligible;
 
   const maxEligibilityTradeVol = Number(5).toFixed(2);
 
@@ -65,7 +66,7 @@ function Overview() {
 
                 <p className="body1e mb-[15px]">
                   {!eligible()
-                    ? `${Number(tradeVolTotal).toFixed(2)} / ${maxEligibilityTradeVol} WETH`
+                    ? `${tradeVolTotal.toFixed(2)} / ${maxEligibilityTradeVol} WETH`
                     : `${maxEligibilityTradeVol} / ${maxEligibilityTradeVol} WETH ✅`}
                 </p>
                 {/* progressbar */}
@@ -104,47 +105,51 @@ function Overview() {
               {/* Trading Volume */}
               <div className="mr-[16px] 2xl:w-[240px] 3xl:w-[256px]">
                 <BoxGradient>
-                  <div className="relative flex h-[200px] flex-col px-5 pt-[24px]">
+                  <div className="relative h-[200px] flex-col pt-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
-                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
-                      <div className="mr-[6px] h-[26px] w-[26px]">
-                        <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
-                      </div>
-                      Trading Vol.
-                      <span className="ml-[6px] cursor-pointer">
-                        <Tooltip
-                          direction="top"
-                          content={
-                            <p className="mx-2 text-center text-b3">
-                              Trading Volume (Notional ) will be <br />
-                              counted for every action of open <br />
-                              position, add position, partially <br />
-                              close and fully close position. <br />
-                            </p>
-                          }>
-                          <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
-                        </Tooltip>
-                      </span>
-                    </div>
-                    <div className="mt-6">
-                      <div className="flex flex-row items-center justify-start text-[15px] font-normal text-[#A8CBFFBF]">
-                        <div className="mr-[6px] h-[16px] w-[16px]">
-                          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
+                    <div className="px-5">
+                      <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold leading-[24px]">
+                        <div className="mr-[6px] h-[26px] w-[26px]">
+                          <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
                         </div>
-                        {Number(tradeVol.vol).toFixed(4)}
+                        Trading Vol.
+                        <span className="ml-[6px] cursor-pointer">
+                          <Tooltip
+                            direction="top"
+                            content={
+                              <p className="mx-2 text-center text-b3">
+                                Trading Volume (Notional ) will be <br />
+                                counted for every action of open <br />
+                                position, add position, partially <br />
+                                close and fully close position. <br />
+                              </p>
+                            }>
+                            <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+                          </Tooltip>
+                        </span>
                       </div>
-                      <div className="ml-[26px] mt-[10px] flex items-center justify-start">
-                        <Image src="/images/components/airdrop/season2-arrow.svg" width={24} height={24} alt="" />
+                      <div className="mt-6">
+                        <div
+                          className="flex flex-row items-center justify-start
+                          text-[15px] font-normal leading-[18px] text-[#A8CBFFBF]">
+                          <div className="mr-[6px] h-[16px] w-[16px]">
+                            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
+                          </div>
+                          {formatBigInt(tradeVol.vol).toFixed(4)}
+                        </div>
+                        <div className="ml-[26px] mt-[10px] flex items-center justify-start">
+                          <Image src="/images/components/airdrop/season2-arrow.svg" width={24} height={24} alt="" />
+                        </div>
                       </div>
-                    </div>
-                    <div className="mt-3 flex h-[39px] flex-row items-end">
-                      <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
-                      <p>Pts</p>
+                      <div className="mt-[11px] flex h-[39px] flex-row items-end">
+                        <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
+                        <p>Pts</p>
+                      </div>
                     </div>
                     {partnershipMultiplier > 1 ? (
                       <div
-                        className="mb-[6px] mt-2 flex flex-row items-center
-                            justify-center px-[10px] text-[12px] font-semibold text-primaryBlue">
+                        className="mt-[3px] flex flex-row items-center
+                            justify-center text-[12px] font-semibold text-primaryBlue">
                         {partnershipMultiplier}X partnership multiplier applied
                         <span className="ml-1">
                           <Image src="/images/components/airdrop/checklist.svg" width={10} height={10} alt="" />
@@ -162,7 +167,7 @@ function Overview() {
                 <BoxGradient>
                   <div className="relative flex h-[200px] flex-col px-7 py-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
-                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
+                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold leading-[24px]">
                       <div className="mr-[6px] h-[26px] w-[26px]">
                         <Image src="/images/components/airdrop/referral-blue.svg" width={26} height={26} alt="" />
                       </div>
@@ -181,7 +186,9 @@ function Overview() {
                       </span>
                     </div>
                     <div className="mt-6">
-                      <div className="flex flex-row items-center justify-start text-[15px] font-normal text-[#A8CBFFBF]">
+                      <div
+                        className="flex flex-row items-center justify-start
+                        text-[15px] font-normal leading-[18px] text-[#A8CBFFBF]">
                         {referralIsHidden ? '****' : referral.referralSelfRewardPoints.toFixed(1)} Pts +{' '}
                         {referralIsHidden ? '****' : referral.referringRewardPoints.toFixed(1)} Pts
                       </div>
@@ -204,7 +211,7 @@ function Overview() {
                 <BoxGradient>
                   <div className="relative flex h-[200px] flex-col px-5 py-[24px]">
                     {!eligible() ? <NewBoxLock /> : null}
-                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold">
+                    <div className="z-[2] flex flex-row items-center justify-start text-[20px] font-semibold leading-[24px]">
                       <div className="mr-[6px] h-[26px] w-[26px]">
                         <Image src="/images/components/airdrop/og-points.svg" width={26} height={26} alt="" />
                       </div>
@@ -236,7 +243,7 @@ function Overview() {
           <div className="mt-6 hidden rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px] md:block">
             <div className="rounded-[15px] bg-lightBlue px-6 py-9 outline-dashed outline-2 outline-lightBlue">
               <div className="flex flex-row items-center justify-between">
-                <div className="max-w-[70%]">
+                <div className="max-w-[66%]">
                   <div className="flex flex-row items-center justify-start text-[20px] font-semibold">
                     <div className="mr-[6px] h-[26px] w-[26px]">
                       <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
@@ -268,13 +275,13 @@ function Overview() {
                     <div className="mr-[6px] h-[16px] w-[16px]">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
                     </div>
-                    <span className="text-[#A8CBFFBF]">{convergIsHidden ? '****' : Number(convergeVolume).toFixed(4)}</span>
+                    <span className="text-[#A8CBFFBF]">{convergIsHidden ? '****' : formatBigInt(convergeVolume).toFixed(4)}</span>
                     <Image src="/images/components/airdrop/season2-arrow.svg" width={24} height={24} className="mx-3 -rotate-90" alt="" />
                     <div className="flex flex-row items-center">
                       <span className="text-glow-green text-[16px] font-semibold">
                         {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
                       </span>
-                      &nbsp; Pts.
+                      &nbsp;Pts.
                     </div>
                   </div>
                 </div>
@@ -292,7 +299,7 @@ function Overview() {
               <p className="text-[20px] font-semibold">Total Pts</p>
               <p className="mb-[12px] text-[14px] font-normal">After Multiplier</p>
               <div className="flex items-end justify-center">
-                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(4)}</p>
+                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(1)}</p>
                 <p>Pts</p>
               </div>
             </div>
@@ -300,11 +307,11 @@ function Overview() {
             <div className="flex justify-between p-[36px]">
               <div>
                 <p className="body2 mb-[12px]">Current Multiplier</p>
-                <h3>{multiplier}X</h3>
+                <h3 className="text-[20px] font-bold">{multiplier}X</h3>
               </div>
               <div className="text-right">
                 <p className="body2 mb-[12px]">My Rank</p>
-                <h3>{rank > 0 ? rank : 'Unranked'}</h3>
+                <h3 className="text-[20px] font-bold">{rank > 0 ? rank : 'Unranked'}</h3>
               </div>
             </div>
           </div>

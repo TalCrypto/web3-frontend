@@ -18,9 +18,9 @@ export function ExplorerButton(props: any) {
 
 export function LiquidationWarning() {
   return (
-    <div className="liquidation-warning">
-      <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="icon" width={24} height={24} />
-      Your position has been liquidated because it no longer meet the collateral requirement.
+    <div className="flex items-start">
+      <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="mr-[6px]" width={16} height={16} />
+      <div className="text-[12px] text-warn">Your position has been liquidated because it no longer meet the collateral requirement.</div>
     </div>
   );
 }

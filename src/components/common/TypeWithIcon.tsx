@@ -6,7 +6,7 @@ import { $currentChain } from '@/stores/user';
 import { useStore as useNanostore } from '@nanostores/react';
 
 export function TypeWithIconByAmm(props: any) {
-  const { content, showCollectionName, amm, className } = props;
+  const { content, showCollectionName, amm, className, imageWidth = 24, imageHeight = 24 } = props;
   const chain = useNanostore($currentChain);
   const ammValue = getAMMByAddress(amm, chain);
 
@@ -15,19 +15,18 @@ export function TypeWithIconByAmm(props: any) {
 
   if (targetCollection) {
     return (
-      <div className={`type-with-icon flex ${className}`}>
-        <div className="icon">
-          <Image src={targetCollection.image} alt="" width={24} height={24} className="mr-[6px]" />
+      <div className={`flex ${className} items-center`}>
+        <Image src={targetCollection.image} alt="" width={imageWidth} height={imageHeight} className="mr-[6px]" />
+        <div className="flex">
+          {showCollectionName ? targetCollection.shortName : null} {content}
         </div>
-        {showCollectionName ? <span>{targetCollection.shortName}</span> : null}
-        <span>{content}</span>
       </div>
     );
   }
 
   return (
-    <div className={`type-with-icon flex ${className}`}>
-      <span>{content}</span>
+    <div className={`flex ${className}`}>
+      <div>{content}</div>
     </div>
   );
 }

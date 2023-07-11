@@ -162,7 +162,18 @@ const HistoryModal = () => {
                                     className="icon-label"
                                     amm={record.ammAddress}
                                     showCollectionName
-                                    content={` - ${currentRecordType}`}
+                                    content={
+                                      <div className="flex">
+                                        - {currentRecordType}
+                                        {record.liquidationPenalty !== 0 ? (
+                                          <Image className="ml-1" src="/images/common/alert/alert_red.svg" width={16} height={16} alt="" />
+                                        ) : (
+                                          ''
+                                        )}
+                                      </div>
+                                    }
+                                    imageWidth={20}
+                                    imageHeight={20}
                                   />
                                 </span>
                               </div>
@@ -212,8 +223,12 @@ const HistoryModal = () => {
                 {selectedRecord && <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />}
               </div>
               <div className="text-mediumEmphasis">
-                <div className="mb-[6px]  bg-lightBlue">
-                  {isLiquidation ? <LiquidationWarning /> : null}
+                <div className="mb-[6px] bg-lightBlue">
+                  {isLiquidation ? (
+                    <div className="bg-darkBlue px-5 pb-6 pt-[18px]">
+                      <LiquidationWarning />
+                    </div>
+                  ) : null}
                   {selectedRecord &&
                     detailRow(
                       'Collection',

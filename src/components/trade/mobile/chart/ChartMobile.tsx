@@ -9,9 +9,20 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import ChartDisplay from '@/components/common/ChartDisplay';
 
-import { $collectionConfig, $fundingRates, $nextFundingTime, $oraclePrice, $selectedTimeIndex, $vammPrice } from '@/stores/trading';
+import {
+  $collectionConfig,
+  $fundingRates,
+  $nextFundingTime,
+  $openInterests,
+  $oraclePrice,
+  $selectedTimeIndex,
+  $tsIsShowPriceGapOverModal,
+  $vammPrice
+} from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import { $isMobileView } from '@/stores/modal';
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
+import ShowPriceGapOverModal from '@/components/trade/mobile/chart/ShowPriceGapOverModal';
 
 function PriceIndicator(props: any) {
   const { priceChangeValue, priceChangeRatio } = props;
@@ -129,6 +140,7 @@ const ChartHeaders = () => {
   const vAMMPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isGapAboveLimit = useIsOverPriceGap();
+  const isShowPriceGapOverModal = useNanostore($tsIsShowPriceGapOverModal);
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
 
@@ -221,8 +233,18 @@ const ChartHeaders = () => {
               {isGapAboveLimit ? (
                 <div>
                   <div className="ml-1 flex items-center">
-                    <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                    <Image
+                      src="/images/common/alert/alert_red.svg"
+                      onClick={() => {
+                        $tsIsShowPriceGapOverModal.set(true);
+                      }}
+                      width={20}
+                      height={20}
+                      alt=""
+                    />
                   </div>
+
+                  {isShowPriceGapOverModal ? <ShowPriceGapOverModal /> : null}
                 </div>
               ) : null}
             </div>
@@ -259,6 +281,68 @@ const ChartHeaders = () => {
   );
 };
 
+const ProComponent = () => {
+  const openInterests = useNanostore($openInterests);
+  const { highPrice, lowPrice, dailyVolume } = useChartData();
+  const selectedTimeIndex = useNanostore($selectedTimeIndex);
+
+  const displayTimeKey = ['24Hr', '1W', '1M', '3M'][selectedTimeIndex];
+
+  return (
+    <div
+      className="visible w-full whitespace-nowrap
+        bg-darkBlue px-5 py-6">
+      <div className="content ml-3 flex flex-col space-y-4">
+        <div className="flex text-[12px] text-mediumEmphasis">
+          <div className="flex-1">
+            <p className="mb-2">{displayTimeKey} High</p>
+            <SmallPriceIcon priceValue={highPrice?.toFixed(2)} isLoading={!highPrice} />
+          </div>
+          <div className="flex flex-1 flex-col items-end">
+            <p className="mb-2">{displayTimeKey} Low</p>
+            <SmallPriceIcon priceValue={lowPrice?.toFixed(2)} isLoading={!lowPrice} />
+          </div>
+        </div>
+        <div>
+          <div className="mb-1 flex text-[14px] text-mediumEmphasis">
+            <div className="flex flex-1 flex-col">
+              <span className="text-marketGreen">Long</span>
+              <span className={`text-highEmphasis ${!openInterests ? 'flash' : ''}`}>
+                {!openInterests ? '-.--' : `${openInterests.longRatio.toFixed(0)}%`}
+              </span>
+            </div>
+            <div className="flex flex-1 flex-col items-end">
+              <span className="text-marketRed">Short</span>
+              <span className={`text-highEmphasis ${!openInterests ? 'flash' : ''}`}>
+                {!openInterests ? '-.--' : `${openInterests.shortRatio.toFixed(0)}%`}
+              </span>
+            </div>
+          </div>
+          <div className="flex space-x-[3px]">
+            <div
+              style={{ width: `${openInterests ? openInterests.longRatio.toFixed(0) : 0}%` }}
+              className="flex h-[6px] rounded-l-[10px] bg-marketGreen"
+            />
+            <div
+              style={{ width: `${openInterests ? openInterests.shortRatio.toFixed(0) : 0}%` }}
+              className="flex h-[6px] rounded-r-[10px] bg-marketRed"
+            />
+          </div>
+        </div>
+        <div className="text-medium flex text-[12px] text-mediumEmphasis">
+          <div className="flex-1">
+            <p className="mb-2">Volume (24Hr)</p>
+            <SmallPriceIcon
+              priceValue={dailyVolume === undefined ? '-.--' : dailyVolume.toFixed(2)}
+              isLoading={dailyVolume === undefined}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function ChartMobile() {
   return (
     <div className="bg-lightBlue">
@@ -268,6 +352,7 @@ function ChartMobile() {
           <ChartDisplay />
         </div>
       </div>
+      <ProComponent />
     </div>
   );
 }
