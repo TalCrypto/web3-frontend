@@ -50,7 +50,6 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
         abi: ammAbi,
         functionName: 'getUnderlyingPrice'
       });
-      console.log('getting oracle', formatBigInt(oraclePriceBn));
       setOraclePrice(formatBigInt(oraclePriceBn));
     }
 

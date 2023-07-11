@@ -270,11 +270,7 @@ const HistoryModal = () => {
                   ? detailRow(
                       'Collateral Change',
                       <PriceWithIcon
-                        priceValue={
-                          selectedRecord.ammAddress
-                            ? `${Number(collateralChange) > 0 ? '+' : ''}${Number(collateralChange).toFixed(4)}`
-                            : '--.--'
-                        }>
+                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                           <Tooltip direction="top" content="Collateral will not change.">
                             <Image
