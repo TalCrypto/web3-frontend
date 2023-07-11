@@ -257,7 +257,7 @@ function EstimatedValueDisplay(props: {
                 the time of trade confirmation <br />
                 the actual price of the <br />
                 transaction that the users are <br />
-                willing to acceptM
+                willing to accept
               </div>
             }>
             <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>

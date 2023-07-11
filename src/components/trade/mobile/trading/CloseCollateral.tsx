@@ -392,7 +392,7 @@ export default function CloseCollateral() {
           content={
             <div className="text-center">
               The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
-              the users are willing to acceptM
+              the users are willing to accept
             </div>
           }>
           <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
