@@ -34,7 +34,10 @@ export function DetailRowWithPriceIcon(props: any) {
         {${isMobile ? 'px-5' : ''} py-3 text-[14px]`}>
       <div>{label}</div>
       <div className="text-white">
-        <PriceWithIcon className={`${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
+        <PriceWithIcon
+          className={`${numberVal > 0 ? '!text-marketGreen' : numberVal < 0 ? '!text-marketRed' : ''}`}
+          priceValue={`${numberVal > 0 ? '+' : ''}${content}`}
+        />
       </div>
     </div>
   );
@@ -49,7 +52,10 @@ export function DetailRowWithPriceIconMobile(props: any) {
         px-5 py-3 text-[14px]`}>
       <div>{label}</div>
       <div className="text-white">
-        <PriceWithIcon className={`${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
+        <PriceWithIcon
+          className={`${numberVal > 0 ? 'text-marketGreen' : numberVal < 0 ? 'text-marketRed' : ''}`}
+          priceValue={`${numberVal > 0 ? '+' : ''}${content}`}
+        />
       </div>
     </div>
   );

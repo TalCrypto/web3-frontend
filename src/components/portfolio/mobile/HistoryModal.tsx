@@ -7,7 +7,7 @@ import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import Image from 'next/image';
 import { formatDateTime } from '@/utils/date';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { DetailRowWithPriceIcon, ExplorerButton, LiquidationWarning, detailRowMobile } from '@/components/common/LabelsComponents';
+import { DetailRowWithPriceIconMobile, ExplorerButton, LiquidationWarning, detailRowMobile } from '@/components/common/LabelsComponents';
 import { $isShowMobileModal } from '@/stores/modal';
 import { CollateralActions, TradeActions } from '@/const';
 import { usePsHistoryByMonth } from '@/hooks/psHistory';
@@ -70,7 +70,7 @@ const HistoryModal = () => {
     : selectedRecord.totalFundingPayment !== 0
     ? selectedRecord.totalFundingPayment.toFixed(4)
     : '0.0000';
-  const fee = isLiquidation || isAdjustCollateral || !selectedRecord ? '-.--' : selectedRecord.fee.toFixed(6);
+  const fee = isLiquidation || isAdjustCollateral || !selectedRecord ? '-.--' : selectedRecord.fee.toFixed(4);
   const contractSize =
     !selectedRecord || isAdjustCollateral
       ? '-.--'
@@ -299,8 +299,8 @@ const HistoryModal = () => {
                         <PriceWithIcon className="icon-label" priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
                       )}
                   {!isLiquidation ? detailRowMobile('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
-                  {isLiquidation ? <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} /> : null}
-                  {isFullClose ? <DetailRowWithPriceIcon label="Funding Payment" content={fundingPayment} /> : null}
+                  {isLiquidation ? <DetailRowWithPriceIconMobile label="Liquidation Penalty" content={liquidationPenalty} /> : null}
+                  {isFullClose ? <DetailRowWithPriceIconMobile label="Funding Payment" content={fundingPayment} /> : null}
                 </div>
               </div>
             </div>

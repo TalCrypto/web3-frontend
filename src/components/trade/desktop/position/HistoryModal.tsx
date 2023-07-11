@@ -81,7 +81,7 @@ const HistoryModal = (props: any) => {
     : selectedRecord.totalFundingPayment !== 0
     ? selectedRecord.totalFundingPayment.toFixed(4)
     : '0.0000';
-  const fee = isLiquidation || isAdjustCollateral || !selectedRecord ? '-.--' : selectedRecord.fee.toFixed(6);
+  const fee = isLiquidation || isAdjustCollateral || !selectedRecord ? '-.--' : selectedRecord.fee.toFixed(4);
   const contractSize =
     !selectedRecord || isAdjustCollateral
       ? '-.--'
