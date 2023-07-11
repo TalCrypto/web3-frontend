@@ -137,7 +137,7 @@ function Leaderboard() {
       <div id="lb-sticky-header" className="sticky top-[60px] z-10">
         <div className="flex justify-between py-[24px]">
           <h3 className="text-[24px] font-bold">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
-          <div className="season-leaderboard flex justify-start text-[16px] font-semibold">
+          <div className="flex justify-start text-[16px] font-semibold">
             <div className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(0)}>
               Season 2 Leaderboard
               {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
@@ -221,12 +221,12 @@ function Leaderboard() {
                       className={`table-border-grad flex h-[54px] items-center font-medium xl:px-[50px] ${
                         userIsBan ? 'disqualified' : 'active'
                       }`}>
-                      <div className="flex w-[10%] p-[18px]">
+                      <div className="flex w-[10%] px-[10px] py-[18px]">
                         <UserMedal rank={userData.rank} isYou isBan={userIsBan} isUnranked={userIsUnranked} />
                       </div>
                       <div className={`p-[18px] ${usernameWidth}`}>
                         <p
-                          className={`overflow-hidden text-ellipsis text-[15px] font-normal ${
+                          className={`overflow-hidden text-ellipsis text-[15px] font-semibold ${
                             userIsBan ? 'text-marketRed line-through' : ''
                           }`}>
                           {userData?.username ? trimString(userData.username, 10) : walletAddressToShow(userData.userAddress)}
@@ -364,7 +364,7 @@ function Leaderboard() {
                         className="relative cursor-pointer"
                         onClick={() => router.push(`/userprofile/${userAddress}`)}>
                         <div className="table-border-grad flex h-[54px] items-center xl:px-[50px]">
-                          <div className="flex w-[10%] p-[18px]">
+                          <div className="flex w-[10%] px-[10px] py-[18px]">
                             <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
                           </div>
                           <div className={`p-[18px] ${usernameWidth}`}>
