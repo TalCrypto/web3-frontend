@@ -2,14 +2,14 @@
 /* eslint-disable max-len */
 // import React from 'react';
 import {
-  firstLeaderboard,
-  flCurrentUser,
-  mainLeaderboard,
-  mlCurrentUser,
-  secondLeaderboard,
-  slCurrentUser,
-  thirdLeaderboard,
-  tlCurrentUser
+  $firstLeaderboard,
+  $flCurrentUser,
+  $mainLeaderboard,
+  $mlCurrentUser,
+  $secondLeaderboard,
+  $slCurrentUser,
+  $thirdLeaderboard,
+  $tlCurrentUser
 } from '@/stores/competition';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
@@ -431,11 +431,11 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      mainLeaderboard.set(data?.leaderboard);
+      $mainLeaderboard.set(data?.leaderboard);
       if (userAddress) {
-        mlCurrentUser.set(data?.user);
+        $mlCurrentUser.set(data?.user);
       } else {
-        mlCurrentUser.set(null);
+        $mlCurrentUser.set(null);
       }
       return Promise.resolve(data);
     } catch (err) {
@@ -448,11 +448,11 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      firstLeaderboard.set(data?.leaderboard);
+      $firstLeaderboard.set(data?.leaderboard);
       if (userAddress) {
-        flCurrentUser.set(data?.user);
+        $flCurrentUser.set(data?.user);
       } else {
-        flCurrentUser.set(null);
+        $flCurrentUser.set(null);
       }
       return Promise.resolve(data);
     } catch (err) {
@@ -465,11 +465,11 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      secondLeaderboard.set(data?.leaderboard);
+      $secondLeaderboard.set(data?.leaderboard);
       if (userAddress) {
-        slCurrentUser.set(data?.user);
+        $slCurrentUser.set(data?.user);
       } else {
-        slCurrentUser.set(null);
+        $slCurrentUser.set(null);
       }
       return Promise.resolve(data);
     } catch (err) {
@@ -482,11 +482,11 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      thirdLeaderboard.set(data?.leaderboard);
+      $thirdLeaderboard.set(data?.leaderboard);
       if (userAddress) {
-        tlCurrentUser.set(data?.user);
+        $tlCurrentUser.set(data?.user);
       } else {
-        tlCurrentUser.set(null);
+        $tlCurrentUser.set(null);
       }
       return Promise.resolve(data);
     } catch (err) {

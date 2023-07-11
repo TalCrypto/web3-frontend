@@ -2,33 +2,18 @@
 import React from 'react';
 import Image from 'next/image';
 import CustomTable from '@/components/competition/desktop/CustomTable';
-import { isCompetitionLeaderboardLoading, mainLeaderboard, mlCurrentUser } from '@/stores/competition';
-import { convertStringToNumber, localeConversion } from '@/utils/localeConversion';
+import { $isCompetitionLeaderboardLoading, $mainLeaderboard, $mlCurrentUser } from '@/stores/competition';
+import { localeConversion } from '@/utils/localeConversion';
 import { formatBigInt } from '@/utils/bigInt';
 import { useStore as useNanostore } from '@nanostores/react';
-
-const CustomValue = (props: any) => {
-  const { ethIcon, value } = props;
-  return (
-    <div className="flex items-center">
-      {ethIcon ? <Image alt="eth icon" src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} /> : null}
-      <span
-        className={`text-b2e ${ethIcon ? 'pl-1' : ''}`}
-        style={{
-          color: convertStringToNumber(value) > 0 ? '#78F363' : convertStringToNumber(value) < 0 ? '#FF5656' : 'rgba(255, 255, 255, 0.87)'
-        }}>
-        {value}
-      </span>
-    </div>
-  );
-};
+import CustomValue from '@/components/competition/common/CustomValue';
 
 const openRules = () => window.open('https://mirror.xyz/tribe3.eth/Zjg7s1ORT06DtFJXOBDgTbW2O8v4y6bKaCUhKSsxDcI', '_blank');
 
 const PrizeComponent = () => {
-  const mainLeaderboardData = useNanostore(mainLeaderboard);
-  const mlCurrentUserData = useNanostore(mlCurrentUser);
-  const isCompetitionLeaderboardLoadingData = useNanostore(isCompetitionLeaderboardLoading);
+  const mainLeaderboardData = useNanostore($mainLeaderboard);
+  const mlCurrentUserData = useNanostore($mlCurrentUser);
+  const isCompetitionLeaderboardLoadingData = useNanostore($isCompetitionLeaderboardLoading);
 
   return (
     <div className="container  h-auto w-full bg-black bg-opacity-30 px-0">
@@ -48,9 +33,9 @@ const PrizeComponent = () => {
             tableClassName="py-9"
             titleClassName="flex justify-between mb-[18px] px-9"
             tHeadClassName="flex text-b2 text-mediumEmphasis px-9"
-            tBodyClassName="scroll-style mt-6 px-9 overflow-y-scroll h-[320px]"
+            tBodyClassName="mt-6 px-9 overflow-y-scroll h-[320px] scroll-style"
             icon={<Image alt="gainers" src="/images/components/competition/icons/gainers-colorful.svg" width={24} height={24} />}
-            title={<h3 className="pl-[7px]">Top Gainer</h3>}
+            title={<h3 className="pl-[7px] text-h3">Top Gainer</h3>}
             isLoading={isCompetitionLeaderboardLoadingData}
             thirdRowTitle="Realized P/L"
             thirdRowTips="Realized P/L is the sum of funding payment and P/L from price change of a position.
@@ -63,14 +48,13 @@ const PrizeComponent = () => {
                 }`
               })
             }
-            bottomShadowPosition="[34px]"
           />
         </div>
         <div className="bg-linear-gradient  h-full w-full py-12 min-[984px]:w-[477px] min-[984px]:rounded-r-md min-[984px]:py-0">
           <div className="mt-0 min-[984px]:mt-[38px]">
             <div className="flex items-center justify-center">
               <Image alt="animated gift" src="/images/components/competition/icons/animated-gift.gif" width={22} height={22} />
-              <h5 className="text-glow-yellow pl-[7px]">Top3 Reward</h5>
+              <h5 className="text-glow-yellow pl-[7px] text-h5">Top3 Reward</h5>
             </div>
             {/* <div className="text-center">
                       <span className="text-b2 items-center">NFTs: Degods, Potatoz, Beanz</span>
@@ -144,7 +128,7 @@ const PrizeComponent = () => {
           <div className="mt-[53px]">
             <div className="mb-[8px] flex items-center justify-center">
               <Image alt="animated gift" src="/images/components/competition/icons/animated-gift.gif" width={22} height={22} />
-              <h5 className="text-glow-yellow pl-[7px]">Huge Prize Pool for Top 4-50 Winners!</h5>
+              <h5 className="text-glow-yellow pl-[7px] text-h5">Huge Prize Pool for Top 4-50 Winners!</h5>
             </div>
             {/* <div className="text-center">
                       <span className="text-b2 items-center">Total 3500 USDT & 15800 Tribe3 Pts</span>

@@ -1,13 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import UserMedal from '@/components/airdrop/desktop/UserMedal';
 import { ThreeDots } from 'react-loader-spinner';
 import { trimString } from '@/utils/string';
 import TitleTips from '@/components/common/TitleTips';
 import { formatBigInt } from '@/utils/bigInt';
 import { useAccount } from 'wagmi';
 import Tooltip from '@/components/common/Tooltip';
+import UserMedal from '@/components/competition/common/UserMedal';
 
 const CustomTable = (props: any) => {
   const {
@@ -130,10 +130,10 @@ const CustomTable = (props: any) => {
                           <br />
                           <span>notional to get a rank!</span>
                           <br />
-                          <span className="text-b3e text-warning">({tradeVolumeToShow}/5.00)</span>
+                          <span className="text-warning text-b3e">({tradeVolumeToShow}/5.00)</span>
                         </>
                       }
-                      titleText={<Image alt="lock icon" src="/static/icon/pointsystem/lock.svg" width={16} height={16} />}
+                      titleText={<Image alt="lock icon" src="/images/components/airdrop/lock.svg" width={16} height={16} />}
                     />
                   </div>
                 ) : null}

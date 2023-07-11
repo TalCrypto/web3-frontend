@@ -5,15 +5,16 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import TopComponent from '@/components/competition/desktop/TopComponent';
 import { useAccount } from 'wagmi';
-import { isCompetitionLeaderboardLoading } from '@/stores/competition';
+import { $isCompetitionLeaderboardLoading } from '@/stores/competition';
 import { apiConnection } from '@/utils/apiConnection';
 import PrizeComponent from '@/components/competition/desktop/PrizeComponent';
+import Leaderboard from '@/components/competition/desktop/Leaderboard';
 
 export default function Competition() {
   const { address, isConnected, isConnecting } = useAccount();
 
   const getInitialData = async () => {
-    isCompetitionLeaderboardLoading.set(true);
+    $isCompetitionLeaderboardLoading.set(true);
     const leaderboardPromises = [
       apiConnection.getAbsPnlLeaderboard(address),
       apiConnection.getRealizedPnlPercentageLeaderboard(address),
@@ -24,7 +25,7 @@ export default function Competition() {
     await Promise.allSettled(leaderboardPromises);
 
     setTimeout(() => {
-      isCompetitionLeaderboardLoading.set(false);
+      $isCompetitionLeaderboardLoading.set(false);
     }, 500);
   };
 
@@ -43,6 +44,7 @@ export default function Competition() {
         <div className="relative hidden md:block">
           <TopComponent />
           <PrizeComponent />
+          <Leaderboard />
         </div>
 
         <div className="mobile-view" />

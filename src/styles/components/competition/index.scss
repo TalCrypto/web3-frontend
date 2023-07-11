@@ -39,12 +39,17 @@
 }
 
 /* Define the scrollbar styles for WebKit browsers */
+.scroll-style::-webkit-scrollbar {
+  width: 4px;
+}
+
 .scroll-style::-webkit-scrollbar-thumb {
-  background-image: rgba(196, 196, 196, 0.5);
+  background: rgba(196, 196, 196, 0.5);
   border-radius: 5px; /* Adjust the thumb border radius */
 }
 
-.scroll-style::-webkit-scrollbar-track {
+.scroll-style::-webkit-scrollbar-track,
+.scroll-style::-webkit-scrollbar-corner {
   background-color: transparent; /* Adjust the track color */
 }
 
@@ -66,11 +71,6 @@
   .scroll-style::-ms-scrollbar-track {
     background-color: transparent; /* Adjust the track color */
   }
-}
-
-/* Add smooth scrolling behavior */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Smooth scrolling polyfill for Safari */
