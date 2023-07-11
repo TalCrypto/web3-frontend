@@ -285,8 +285,8 @@ const ChartFooter = () => {
         <div className="flex items-center space-x-[4px]">
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
           <p className="text-highEmphasis">
-            {`${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
-            (${priceGapPercentageSign}${priceGapPercentage.toFixed(2)}%)`}
+            {`${priceGapPercentageSign}${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
+            (${priceGapPercentage.toFixed(2)}%)`}
           </p>
 
           {isGapAboveLimit ? (

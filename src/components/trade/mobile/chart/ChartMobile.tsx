@@ -228,8 +228,8 @@ const ChartHeaders = () => {
 
             <div className="mt-1 flex w-full items-center justify-end text-[12px] text-highEmphasis">
               <p className="text-highEmphasis">
-                {`${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
-                (${priceGapPercentageSign}${priceGapPercentage.toFixed(2)}%)`}
+                {`${priceGapPercentageSign}${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
+                (${priceGapPercentage.toFixed(2)}%)`}
               </p>
 
               {isGapAboveLimit ? (
