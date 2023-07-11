@@ -160,31 +160,41 @@
 }
 
 .airdrop_items .item {
-  .active_mask {
-    display: none;
+  &::after {
+    position: absolute;
+    top: initial;
+    left: 0;
+    right: initial;
+    bottom: 0;
+    content: ' ';
+    height: 3px;
+    width: 0;
+    border-radius: 3px;
+    background: linear-gradient(267.54deg, #f703d9 3.52%, #795af4 39.38%, #04aefc 80.93%);
+    transition: all 0.2s;
+    transform: translateY(8px);
   }
 
   &:hover,
   &.active {
-    .active_mask {
-      display: block;
-    }
-
-    .normal_mask {
-      display: none;
-    }
-
     background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     position: relative;
 
-    .after {
-      background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
-      transition: all 0.2s;
-      transform: translateY(0px);
+    &::after {
+      width: 100%;
+      margin: 0 auto;
     }
+
+    #tab-icon-transition {
+      opacity: 1;
+    }
+  }
+
+  #tab-icon-transition {
+    opacity: 0;
   }
 }
 
