@@ -71,11 +71,10 @@ function ReferralMobile() {
                     <div className="mr-2 flex flex-col">
                       <div className="text-[14px] font-semibold">🎁 You Will Get</div>
                       <div
-                        className="mt-4 max-w-[194px] rounded-[6px] border-[1px]
-                        border-mediumEmphasis/50 bg-gradient-to-r from-[#F703D94D]
-                        via-[#795AF44D] to-[#04AEFC4D] px-5 py-5 text-[12px] ">
+                        className="mt-4 max-w-[194px] rounded-[12px] border-[1px] border-mediumEmphasis/50
+                        bg-gradient-to-r from-[#F703D94D] via-[#795AF44D] to-[#04AEFC4D] px-6 py-3">
                         <div className="mb-3">
-                          <div className="flex flex-row items-center justify-between">
+                          <div className="flex flex-row items-center justify-between leading-[32px]">
                             <div className="flex flex-row items-end text-start">
                               <div className="flex-row items-center">
                                 <span className="text-glow-green text-[32px] font-semibold">3</span>
@@ -86,20 +85,20 @@ function ReferralMobile() {
                             <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={26} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of your referees’ <br />
-                        trading volume <br />
-                        points
+                        <div className="text-[12px] leading-[16px]">
+                          of your referees’ <br />
+                          trading volume <br />
+                          points
+                        </div>
                       </div>
                     </div>
                     <div className="flex flex-col">
                       <div className="text-[14px] font-semibold">🎁 Referees Will Get</div>
                       <div
-                        className="mt-4 max-w-[194px] rounded-[12px]
-                        border-[1px] border-mediumEmphasis/50 bg-gradient-to-r
-                        from-[#F703D94D] via-[#795AF44D] to-[#04AEFC4D]
-                        px-5 py-5 text-[12px] ">
+                        className="mt-4 max-w-[194px] rounded-[12px] border-[1px] border-mediumEmphasis/50
+                        bg-gradient-to-r from-[#F703D94D] via-[#795AF44D] to-[#04AEFC4D] px-6 py-3">
                         <div className="mb-3">
-                          <div className="flex flex-row items-center justify-between">
+                          <div className="flex flex-row items-center justify-between leading-[32px]">
                             <div className="flex flex-row items-end text-start">
                               <div className="flex-row items-center">
                                 <span className="text-glow-green text-[32px] font-semibold">2</span>
@@ -107,12 +106,14 @@ function ReferralMobile() {
                                 <span className="text-glow-green text-[20px] font-semibold">%</span>
                               </div>
                             </div>
-                            <Image src="/images/components/airdrop/tribe.svg" alt="" width={26} height={28} className="ml-[6px] mr-0" />
+                            <Image src="/images/components/airdrop/tribe.svg" alt="" width={32} height={32} className="ml-[6px] mr-0" />
                           </div>
                         </div>
-                        of their own <br />
-                        trading volume <br />
-                        points
+                        <div className="text-[12px] leading-[16px]">
+                          of their own <br />
+                          trading volume <br />
+                          points
+                        </div>
                       </div>
                     </div>
                   </div>
