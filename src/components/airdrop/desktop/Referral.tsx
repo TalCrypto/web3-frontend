@@ -279,7 +279,7 @@ function Referral() {
         <div className="mb-[36px] flex h-fit basis-1/2 flex-col">
           {/* Share */}
           <div
-            className="border-1 bg-gradient-blue-referal relative flex h-fit flex-1
+            className="border-1 bg-gradient-blue-referral relative flex h-fit flex-1
               rounded-[6px] border-[#71AAFF]/20 bg-[#202249] p-[24px] md:p-[36px] ">
             <Image
               src="/images/components/airdrop/refer-share-bg.svg"

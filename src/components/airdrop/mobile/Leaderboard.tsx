@@ -177,7 +177,7 @@ function LeaderboardMobile() {
             {/* current user data */}
             {isConnected ? (
               <div
-                className="relative border-t-[1px] border-[#2E4371] bg-[#2d68ff40] px-5"
+                className="relative mt-[10px] border-t-[1px] border-[#2E4371] bg-[#2d68ff40] px-5"
                 onClick={() => router.push(`/userprofile/${userWalletAddress}`)}>
                 <div
                   className={`flex items-center py-[10px] font-medium

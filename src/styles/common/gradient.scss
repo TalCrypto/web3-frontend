@@ -244,3 +244,11 @@
 .shadow-referral {
   text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25) !important;
 }
+
+.bg-gradient-blue {
+  background-image: radial-gradient(circle at top, rgba(23, 137, 220, 1), rgba(107, 9, 205, 0.2) 67%);
+}
+
+.bg-gradient-blue-referral {
+  background-image: radial-gradient(circle at top, rgba(52, 170, 255, 0.5), #202249 75%);
+}
