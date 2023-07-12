@@ -151,13 +151,7 @@ function TrendContent() {
                   className={`item-overview cursor-pointer text-[12px] 
                   ${index === selectedTimeIndex ? 'active' : ''}
                   ${index === 3 ? 'competition' : 'mr-3'}
-                    ${
-                      selectedTimeIndex === index
-                        ? 'font-semibold text-highEmphasis'
-                        : index === 3
-                        ? 'text-competition'
-                        : 'text-mediumEmphasis'
-                    }
+                    ${selectedTimeIndex === index ? 'text-highEmphasis' : index === 3 ? 'text-competition' : 'text-mediumEmphasis'}
                   `}
                   key={`time_${item.label}`}
                   onClick={() => clickSelectedTimeIndex(index)}
