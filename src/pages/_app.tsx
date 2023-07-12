@@ -11,6 +11,7 @@ import { CHAINS, DEFAULT_CHAIN } from '@/const/supportedChains';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
 import { publicProvider } from 'wagmi/providers/public';
+import MetamaskModal from '@/components/layout/header/desktop/MetamaskModal';
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
@@ -70,6 +71,7 @@ export default function App({ Component, pageProps }: AppProps) {
       />
 
       <TransferTokenModal />
+      <MetamaskModal />
     </>
   );
 }
