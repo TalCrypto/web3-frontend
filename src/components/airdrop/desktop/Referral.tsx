@@ -15,6 +15,7 @@ import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
 import ResponseModal from '@/components/airdrop/desktop/ResponseModal';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import Tooltip from '@/components/common/Tooltip';
+import { formatBigInt } from '@/utils/bigInt';
 
 function Referral() {
   const router = useRouter();
@@ -238,7 +239,7 @@ function Referral() {
                             ? `${item.username.substring(0, 10)}...`
                             : item.username;
                         const eligibleStatus = item.eligiable ? 'Eligible' : 'Not Eligible';
-                        const volume = item.tradeVol.toFixed(4);
+                        const volume = formatBigInt(item.tradeVol).toFixed(4);
                         const referralPoints = Number(item.referringRewardPoints).toFixed(1);
                         const redirect = () => {
                           window.location.href = `/userprofile/${item.userAddress}`;
