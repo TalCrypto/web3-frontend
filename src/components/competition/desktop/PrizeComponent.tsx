@@ -1,8 +1,9 @@
+/* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable max-len */
 import React from 'react';
 import Image from 'next/image';
 import CustomTable from '@/components/competition/desktop/CustomTable';
-import { $isCompetitionLeaderboardLoading, $mainLeaderboard, $mlCurrentUser } from '@/stores/competition';
+import { $activeDropdown, $isCompetitionLeaderboardLoading, $mainLeaderboard, $mlCurrentUser } from '@/stores/competition';
 import { localeConversion } from '@/utils/localeConversion';
 import { formatBigInt } from '@/utils/bigInt';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -14,13 +15,14 @@ const PrizeComponent = () => {
   const mainLeaderboardData = useNanostore($mainLeaderboard);
   const mlCurrentUserData = useNanostore($mlCurrentUser);
   const isCompetitionLeaderboardLoadingData = useNanostore($isCompetitionLeaderboardLoading);
+  const activeDropdown = useNanostore($activeDropdown);
 
   return (
-    <div className="container  h-auto w-full bg-black bg-opacity-30 px-0">
+    <div className={`${activeDropdown === 0 ? '' : 'hidden md:block'} h-auto w-full bg-black bg-opacity-30 px-0`}>
       <div
-        className="bg-[rgba(0, 0, 0, 0.3)] container  mb-9 flex h-auto w-full
-              flex-col-reverse flex-wrap items-center justify-center rounded-md border border-white border-opacity-20 bg-[url('/images/components/competition/backgrounds/first-section.svg')] bg-contain
-              bg-no-repeat px-0 min-[984px]:h-[456px] min-[984px]:flex-row">
+        className="bg-[rgba(0, 0, 0, 0.3)] flex  h-auto w-full flex-col-reverse flex-wrap
+              items-center justify-center bg-[url('/images/components/competition/backgrounds/first-section.svg')] bg-contain bg-no-repeat px-0 md:mb-9 md:rounded-md md:border md:border-white
+              md:border-opacity-20 min-[984px]:h-[456px] min-[984px]:flex-row">
         {/* <div
                 className="bg-[url('/static/containerbackgrounds/competition/reward.png')] bg-cover bg-[center_top] bg-no-repeat
                 h-full w-[477px] rounded-r-md"
@@ -137,7 +139,7 @@ const PrizeComponent = () => {
           <div className="mt-6 flex items-center justify-center">
             <div>
               <span className="text-b3">Check out the </span>
-              <span className="text-b3e cursor-pointer underline" onClick={openRules}>
+              <span className="cursor-pointer text-b3e underline" onClick={openRules}>
                 {' '}
                 Rules
               </span>

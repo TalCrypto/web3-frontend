@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/destructuring-assignment */
 import React, { useContext, useEffect, useState } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
@@ -31,6 +32,7 @@ export default function Competition() {
 
   useEffect(() => {
     getInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
   return (
@@ -41,13 +43,14 @@ export default function Competition() {
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>
-        <div className="relative hidden md:block">
+        {/* <div className="relative hidden md:block"> */}
+        <div className="relative">
           <TopComponent />
           <PrizeComponent />
           <Leaderboard />
         </div>
 
-        <div className="mobile-view" />
+        {/* <div className="mobile-view" /> */}
       </main>
     </>
   );
