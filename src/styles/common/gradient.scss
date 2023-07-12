@@ -100,8 +100,15 @@
   background: linear-gradient(180deg, #171731, #0c0d1f);
 
   .image-bg {
-    background: url('/images/components/trade/bg_sharing_rise.png');
-    background-size: 100% 100%;
+    &.win {
+      background: url('/images/components/trade/bg_sharing_rise.png');
+      background-size: 100% 100%;
+    }
+
+    &.lose {
+      background: url('/images/components/trade/bg_sharing_fail.png');
+      background-size: 100% 100%;
+    }
   }
 }
 
