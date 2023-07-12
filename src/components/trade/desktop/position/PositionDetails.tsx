@@ -26,14 +26,7 @@ function MedPriceIcon(props: any) {
 
   return (
     <div className="flex text-[16px] text-highEmphasis">
-      <Image
-        src={image || '/images/common/symbols/eth-tribe3.svg'}
-        className="icon"
-        alt=""
-        width={20}
-        height={20}
-        style={{ marginRight: '4px' }}
-      />
+      <Image src={image || '/images/common/symbols/eth-tribe3.svg'} className="mr-1" alt="" width={20} height={20} />
       <span className={`${isLoading ? 'flash' : ''}  ${className}`}>{priceValue}</span>
     </div>
   );
@@ -188,8 +181,14 @@ export default function PositionDetails() {
             </div>
             <div>
               <MedPriceIcon
-                priceValue={positionInfo.unrealizedPnl === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
-                className={positionInfo.unrealizedPnl > 0 ? 'text-marketGreen' : positionInfo.unrealizedPnl === 0 ? '' : 'text-marketRed'}
+                priceValue={Number(positionInfo.unrealizedPnl.toFixed(4)) === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
+                className={
+                  Number(positionInfo.unrealizedPnl.toFixed(4)) > 0
+                    ? 'text-marketGreen'
+                    : Number(positionInfo.unrealizedPnl.toFixed(4)) === 0
+                    ? ''
+                    : 'text-marketRed'
+                }
                 isLoading={isLoading || isPending}
               />
             </div>
