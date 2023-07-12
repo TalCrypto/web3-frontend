@@ -1,8 +1,10 @@
+/* eslint-disable implicit-arrow-linebreak */
 import React from 'react';
 import Image from 'next/image';
 import CustomTable from '@/components/competition/desktop/CustomTable';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
+  $activeDropdown,
   $firstLeaderboard,
   $flCurrentUser,
   $isCompetitionLeaderboardLoading,
@@ -16,7 +18,7 @@ import { localeConversion } from '@/utils/localeConversion';
 import { formatBigInt } from '@/utils/bigInt';
 import CustomReward from '@/components/competition/common/CustomReward';
 
-const Leaderboard = (props: any) => {
+const Leaderboard = () => {
   const firstLeaderboardData = useNanostore($firstLeaderboard);
   const flCurrentUserData = useNanostore($flCurrentUser);
   const secondLeaderboardData = useNanostore($secondLeaderboard);
@@ -24,15 +26,17 @@ const Leaderboard = (props: any) => {
   const thirdLeaderboardData = useNanostore($thirdLeaderboard);
   const tlCurrentUserData = useNanostore($tlCurrentUser);
   const isCompetitionLeaderboardLoadingData = useNanostore($isCompetitionLeaderboardLoading);
+  const activeDropdown = useNanostore($activeDropdown);
 
   return (
-    <div className="container mb-9 flex h-[456px] w-full flex-wrap items-center gap-[25px] px-0">
+    <div className="w-full flex-wrap items-center gap-[25px] px-0 md:mb-9 md:flex md:h-[456px]">
       <CustomTable
         data={firstLeaderboardData}
         userData={flCurrentUserData}
         selectedField="pnl"
-        tableClassName="flex-1 pt-[39px] rounde-md border border-white border-opacity-20 rounded-md
-                bg-[url('/images/components/competition/backgrounds/gainers.svg')] bg-no-repeat bg-contain"
+        tableClassName={`${activeDropdown === 1 ? '' : 'hidden md:block'} 
+                flex-1 pt-[39px] md:border md:border-white md:border-opacity-20 md:rounded-md
+                bg-[url('/images/components/competition/backgrounds/gainers.svg')] bg-no-repeat bg-contain`}
         titleClassName="flex justify-between mb-[18px] px-[25px] min-[1024px]:px-[36px]"
         tHeadClassName="flex text-b2 text-mediumEmphasis px-[25px] min-[1024px]:px-[36px]"
         tBodyClassName="scroll-style mt-6 overflow-y-scroll h-[320px] px-[25px] min-[1024px]:px-[36px]"
@@ -67,8 +71,9 @@ const Leaderboard = (props: any) => {
         data={secondLeaderboardData}
         userData={slCurrentUserData}
         selectedField="netConvergenceVol"
-        tableClassName="flex-1 pt-[39px] rounde-md border border-white border-opacity-20 rounded-md
-                bg-[url('/images/components/competition/backgrounds/convergence.svg')] bg-no-repeat bg-contain"
+        tableClassName={`${activeDropdown === 2 ? '' : 'hidden md:block'}
+                flex-1 pt-[39px] md:border md:border-white md:border-opacity-20 md:rounded-md
+                bg-[url('/images/components/competition/backgrounds/convergence.svg')] bg-no-repeat bg-contain`}
         titleClassName="flex justify-between mb-[18px] px-[25px] min-[1024px]:px-[36px]"
         tHeadClassName="flex text-b2 text-mediumEmphasis px-[25px] min-[1024px]:px-[36px]"
         tBodyClassName="scroll-style  mt-6 overflow-y-scroll h-[320px] px-[25px] min-[1024px]:px-[36px]"
@@ -102,8 +107,9 @@ const Leaderboard = (props: any) => {
         data={thirdLeaderboardData}
         userData={tlCurrentUserData}
         selectedField="pnl"
-        tableClassName="flex-1 pt-[39px] rounde-md border border-white border-opacity-20 rounded-md
-                bg-[url('/images/components/competition/backgrounds/losers.svg')] bg-no-repeat bg-contain"
+        tableClassName={`${activeDropdown === 3 ? '' : 'hidden md:block'}
+                flex-1 pt-[39px] md:border md:border-white md:border-opacity-20 md:rounded-md
+                bg-[url('/images/components/competition/backgrounds/losers.svg')] bg-no-repeat bg-contain`}
         titleClassName="flex justify-between mb-[18px] px-[25px] min-[1024px]:px-[36px]"
         tHeadClassName="flex text-b2 text-mediumEmphasis px-[25px] min-[1024px]:px-[36px]"
         tBodyClassName="scroll-style  mt-6 overflow-y-scroll h-[320px] px-[25px] min-[1024px]:px-[36px]"

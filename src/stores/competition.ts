@@ -21,3 +21,5 @@ export const $mlCurrentUser = atom<any>(null);
 export const $flCurrentUser = atom<any>(null);
 export const $slCurrentUser = atom<any>(null);
 export const $tlCurrentUser = atom<any>(null);
+
+export const $activeDropdown = atom<number>(0);
