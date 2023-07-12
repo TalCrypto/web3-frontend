@@ -26,6 +26,7 @@ import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
+import ApprovalModal from '@/components/trade/desktop/modals/ApprovalModal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -553,6 +554,7 @@ export default function MainTradeComponent() {
         isApproveRequired={isNeedApproval}
       />
       {estimation && <ExtendedEstimateComponent estimation={estimation} />}
+      <ApprovalModal />
     </div>
   );
 }

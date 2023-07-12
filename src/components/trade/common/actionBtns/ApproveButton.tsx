@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 // import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useApproveTransaction } from '@/hooks/trade';
+import { $isShowApproveModal } from '@/stores/modal';
 // import { useStore as useNanostore } from '@nanostores/react';
 // import { $currentAmm } from '@/stores/trading';
 // import { getCollectionInformation } from '@/const/collectionList';
@@ -40,6 +41,22 @@ function ApproveButton({
       onSuccess();
     }
   }, [isSuccess, onSuccess]);
+
+  useEffect(() => {
+    if (isLoading) {
+      $isShowApproveModal.set(true);
+    } else {
+      $isShowApproveModal.set(false);
+    }
+
+    if (isError) {
+      $isShowApproveModal.set(false);
+    }
+
+    if (isPending) {
+      $isShowApproveModal.set(false);
+    }
+  }, [isError, isPending, isLoading]);
 
   // useEffect(() => {
   //   if (isPending) {
