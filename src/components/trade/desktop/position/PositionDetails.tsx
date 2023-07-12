@@ -9,10 +9,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TitleTips from '@/components/common/TitleTips';
-
 import SharePosition from '@/components/trade/desktop/position/SharePosition';
-
 import Dropdown from '@/components/trade/desktop/position/Dropdown';
 import HistoryModal from '@/components/trade/desktop/position/HistoryModal';
 import FundingPaymentModal from '@/components/trade/desktop/position/FundingPaymentModal';
@@ -220,26 +217,36 @@ export default function PositionDetails() {
           </div>
           <div>
             <div className="mb-3 text-[14px] font-normal">Liqui. Price</div>
-            <div className="flex">
+            <div className="flex items-center">
               <MedPriceIcon
                 priceValue={!positionInfo ? '---' : positionInfo.liquidationPrice < 0 ? '0.00' : positionInfo.liquidationPrice.toFixed(2)}
                 className={`${isOverPriceGap ? 'text-warn' : ''} `}
                 isLoading={isLoading || isPending}
               />
               {liquidationChanceWarning() && !liquidationRiskWarning() ? (
-                <TitleTips
-                  placement="top"
-                  titleText={<Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
-                  tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
-                />
+                <Tooltip
+                  direction="top"
+                  content={
+                    <>
+                      Your position is in high chance to be liquidated, <br />
+                      please adjust your collateral to secure your trade.
+                    </>
+                  }>
+                  <Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" className="ml-[6px] cursor-pointer" />
+                </Tooltip>
               ) : null}
-              {liquidationRiskWarning() ? (
-                <TitleTips
-                  placement="top"
-                  titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
-                  tipsText="Your position is at risk of being liquidated. Please manage your risk."
-                />
-              ) : null}
+              {/* {liquidationRiskWarning() ? ( */}
+              <Tooltip
+                direction="top"
+                content={
+                  <>
+                    Your position is at risk of being liquidated. <br />
+                    Please manage your risk.
+                  </>
+                }>
+                <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" className="ml-[6px] cursor-pointer" />
+              </Tooltip>
+              {/* ) : null} */}
               {isOverPriceGap ? (
                 <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
@@ -279,8 +286,8 @@ export default function PositionDetails() {
                   : `${positionInfo.leverage.toFixed(2)} x`}
               </span>
               {positionInfo.leverage <= 0 ? (
-                <TitleTips
-                  placement="top"
+                <Tooltip
+                  direction="top"
                   titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
                   tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
                 />

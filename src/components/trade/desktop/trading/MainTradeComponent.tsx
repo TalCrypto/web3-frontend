@@ -8,8 +8,6 @@ import Image from 'next/image';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TitleTips from '@/components/common/TitleTips';
-
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import Tooltip from '@/components/common/Tooltip';

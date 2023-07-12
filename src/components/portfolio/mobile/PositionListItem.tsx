@@ -56,7 +56,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
   };
 
   return (
-    <div className="cursor-pointer border-b-[1px] border-b-secondaryBlue py-3" onClick={clickItem}>
+    <div className="cursor-pointer border-b-[1px] border-b-secondaryBlue px-5 py-3" onClick={clickItem}>
       <div className="flex items-center ">
         <div className="w-[35%]">
           <SmallTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />

@@ -7,7 +7,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-import TitleTips from '@/components/common/TitleTips';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
@@ -206,11 +205,9 @@ function EstimationComponent(props: {
           <span className="flex">
             Collateral&nbsp;
             {!isFullClose ? (
-              <TitleTips
-                titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                tipsText="Collateral will not change"
-                placement="top"
-              />
+              <Tooltip direction="top" content="Collateral will not change">
+                <Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />
+              </Tooltip>
             ) : null}
           </span>
         }
@@ -226,27 +223,7 @@ function EstimationComponent(props: {
         newValue={!estimation || isFullClose ? '-.--' : estimation.posInfo.leverage.toFixed(2)}
         unit="x"
       />
-      {/* {!userPosition || estimatedValue === null ? (
-        <UpdateValueNoDataDisplay title="Collateral Ratio" unit="%" />
-      ) : (
-        <UpdateValueDisplay
-          title="Collateral Ratio"
-          
-          currentValue={!userPosition ? '-.--' : userPosition.realMarginRatio.toFixed(2)}
-          currentUnit="%"
-          newValue={
-            !isNewPosition
-              ? '-.--'
-              : Number(closeValue) === Number(currentMaxValue)
-              ? '0.00'
-              : estimatedValue.newPosition.marginRatio.toFixed(2)
-          }
-          unit="%"
-        />
-      )} */}
       <SectionDividers />
-      {/* <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.fee, 5)} /> */}
-      {/* <DisplayValues title="Price Impact" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.priceImpact, 2, '%')} /> */}
     </div>
   );
 }
@@ -279,7 +256,6 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; 
         <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
       </div>
       <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
-      {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
       <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
         <Tooltip
@@ -509,12 +485,7 @@ export default function CloseCollateral() {
           onError={handleError}
         />
       )}
-      {/* {textErrorMessage ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
-      {/* <div className="row">
-        <div className="col-auto text-[14px] text-mediumEmphasis">
-          * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released
-        </div>
-      </div> */}
+
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
         <>
           <div className="mt-6 flex">
@@ -538,9 +509,6 @@ export default function CloseCollateral() {
         isShow={isShowPartialCloseModal}
         setIsShow={setIsShowPartialCloseModal}
         onClickSubmit={() => {
-          // setTradeWindowIndex(2); // set tab to adjust collateral
-
-          // actionButtonRef.current?.closePosition();
           setIsShowPartialCloseModal(false);
         }}
       />
