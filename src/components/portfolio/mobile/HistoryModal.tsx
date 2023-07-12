@@ -152,13 +152,12 @@ const HistoryModal = () => {
                                 </span>
                                 <span>
                                   <TypeWithIconByAmm
-                                    className="icon-label"
                                     amm={record.ammAddress}
                                     showCollectionName
                                     content={
                                       <div className="flex">
-                                        - {currentRecordType}
-                                        {record.liquidationPenalty !== 0 ? (
+                                        &nbsp;- {currentRecordType}
+                                        {currentRecordType === TradeActions.FULL_LIQ ? (
                                           <Image className="ml-1" src="/images/common/alert/alert_red.svg" width={16} height={16} alt="" />
                                         ) : (
                                           ''
@@ -225,11 +224,7 @@ const HistoryModal = () => {
                   {selectedRecord &&
                     detailRowMobile(
                       'Collection',
-                      selectedRecord.ammAddress ? (
-                        <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} showCollectionName />
-                      ) : (
-                        '-'
-                      )
+                      selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} showCollectionName /> : '-'
                     )}
                   {(selectedRecord && detailRowMobile('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                   {selectedRecord &&
@@ -249,7 +244,6 @@ const HistoryModal = () => {
                     ? detailRowMobile(
                         'Collateral Change',
                         <PriceWithIcon
-                          className="icon-label"
                           priceValue={
                             selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
                           }>
@@ -267,38 +261,27 @@ const HistoryModal = () => {
                     : selectedRecord
                     ? detailRowMobile(
                         'Resulting Collateral',
-                        <PriceWithIcon
-                          className="icon-label"
-                          priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'}
-                        />
+                        <PriceWithIcon priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'} />
                       )
                     : null}
                   {isLiquidation && selectedRecord
                     ? detailRowMobile(
                         'Resulting Contract Size',
-                        selectedRecord.ammAddress ? (
-                          <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
-                        ) : (
-                          '-'
-                        )
+                        selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
                       )
                     : selectedRecord
                     ? detailRowMobile(
                         'Contract Size',
-                        selectedRecord.ammAddress ? (
-                          <TypeWithIconByAmm className="icon-label" amm={selectedRecord.ammAddress} content={contractSize} />
-                        ) : (
-                          '-'
-                        )
+                        selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
                       )
                     : null}
                   {isLiquidation
-                    ? detailRowMobile('Resulting Notional', <PriceWithIcon className="icon-label" priceValue={`${notionalChange}`} />)
+                    ? detailRowMobile('Resulting Notional', <PriceWithIcon priceValue={`${notionalChange}`} />)
                     : detailRowMobile(
                         'Notional Change',
-                        <PriceWithIcon className="icon-label" priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
+                        <PriceWithIcon priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
                       )}
-                  {!isLiquidation ? detailRowMobile('Transaction Fee', <PriceWithIcon className="icon-label" priceValue={fee} />) : null}
+                  {!isLiquidation ? detailRowMobile('Transaction Fee', <PriceWithIcon priceValue={fee} />) : null}
                   {isLiquidation ? <DetailRowWithPriceIconMobile label="Liquidation Penalty" content={liquidationPenalty} /> : null}
                   {isFullClose ? <DetailRowWithPriceIconMobile label="Funding Payment" content={fundingPayment} /> : null}
                 </div>
