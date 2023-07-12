@@ -45,7 +45,7 @@ function ApproveButton({
   }, [isSuccess, onSuccess]);
 
   useEffect(() => {
-    if (isMobileView) {
+    if (!isMobileView) {
       if (isLoading) {
         $isShowApproveModal.set(true);
       } else {
