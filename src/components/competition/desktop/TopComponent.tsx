@@ -1,11 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import CountdownTimer from '@/components/common/CountdownTimer';
 import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
+import { apiConnection } from '@/utils/apiConnection';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $isCompetitionLeaderboardLoading } from '@/stores/competition';
 
 const TopComponent = (props: any) => {
   const router = useRouter();
   const openRules = () => window.open('https://mirror.xyz/tribe3.eth/Zjg7s1ORT06DtFJXOBDgTbW2O8v4y6bKaCUhKSsxDcI', '_blank');
+  const isCompetitionLeaderboardLoading = useNanostore($isCompetitionLeaderboardLoading);
+
+  const { address, isConnected, isConnecting } = useAccount();
+
+  const getInitialData = async () => {
+    $isCompetitionLeaderboardLoading.set(true);
+    const leaderboardPromises = [
+      apiConnection.getAbsPnlLeaderboard(address),
+      apiConnection.getRealizedPnlPercentageLeaderboard(address),
+      apiConnection.getNetConvergenceLeaderboard(address),
+      apiConnection.getTopLosersLeaderboard(address)
+    ];
+
+    await Promise.allSettled(leaderboardPromises);
+
+    setTimeout(() => {
+      $isCompetitionLeaderboardLoading.set(false);
+    }, 500);
+  };
+
+  useEffect(() => {
+    getInitialData();
+  }, [address]);
+
   return (
     <div className="relative mb-6 mt-12 pb-6 pt-4">
       <h1 className="text-glow-yellow text-shadow-lb mb-[14px] text-center text-h1">TRADING COMPETITION</h1>
@@ -31,11 +59,11 @@ const TopComponent = (props: any) => {
           <div
             className="flex cursor-pointer items-center"
             onClick={() => {
-              // leaderboardFetch();
+              getInitialData();
             }}>
             <Image
               alt="refresh"
-              // className={`${leaderboardIsLoading ? 'animate-spin' : ''}`}
+              className={`${isCompetitionLeaderboardLoading ? 'animate-spin' : ''}`}
               src="/images/components/airdrop/refresh.svg"
               width={30}
               height={30}

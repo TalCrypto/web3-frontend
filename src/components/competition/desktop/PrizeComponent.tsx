@@ -11,9 +11,9 @@ import CustomValue from '@/components/competition/common/CustomValue';
 const openRules = () => window.open('https://mirror.xyz/tribe3.eth/Zjg7s1ORT06DtFJXOBDgTbW2O8v4y6bKaCUhKSsxDcI', '_blank');
 
 const PrizeComponent = () => {
-  const mainLeaderboardData = useNanostore($mainLeaderboard);
-  const mlCurrentUserData = useNanostore($mlCurrentUser);
-  const isCompetitionLeaderboardLoadingData = useNanostore($isCompetitionLeaderboardLoading);
+  const mainLeaderboard = useNanostore($mainLeaderboard);
+  const mlCurrentUser = useNanostore($mlCurrentUser);
+  const isCompetitionLeaderboardLoading = useNanostore($isCompetitionLeaderboardLoading);
 
   return (
     <div className="container  h-auto w-full bg-black bg-opacity-30 px-0">
@@ -27,8 +27,8 @@ const PrizeComponent = () => {
               > */}
         <div className=" h-full w-full flex-grow min-[984px]:w-auto  min-[984px]:rounded-l-md">
           <CustomTable
-            data={mainLeaderboardData}
-            userData={mlCurrentUserData}
+            data={mainLeaderboard}
+            userData={mlCurrentUser}
             selectedField="pnl"
             tableClassName="py-9"
             titleClassName="flex justify-between mb-[18px] px-9"
@@ -36,7 +36,7 @@ const PrizeComponent = () => {
             tBodyClassName="mt-6 px-9 overflow-y-scroll h-[320px] scroll-style"
             icon={<Image alt="gainers" src="/images/components/competition/icons/gainers-colorful.svg" width={24} height={24} />}
             title={<h3 className="pl-[7px] text-h3">Top Gainer</h3>}
-            isLoading={isCompetitionLeaderboardLoadingData}
+            isLoading={isCompetitionLeaderboardLoading}
             thirdRowTitle="Realized P/L"
             thirdRowTips="Realized P/L is the sum of funding payment and P/L from price change of a position.
           P/L from price change refers to the gain & loss from full close, partial close and liquidation of a position."
@@ -137,7 +137,7 @@ const PrizeComponent = () => {
           <div className="mt-6 flex items-center justify-center">
             <div>
               <span className="text-b3">Check out the </span>
-              <span className="text-b3e cursor-pointer underline" onClick={openRules}>
+              <span className="cursor-pointer text-b3e underline" onClick={openRules}>
                 {' '}
                 Rules
               </span>
