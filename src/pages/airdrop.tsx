@@ -19,6 +19,7 @@ import TabSwitcher from '@/components/airdrop/mobile/TabSwitcher';
 import LeaderboardMobile from '@/components/airdrop/mobile/Leaderboard';
 import LeaderboardDataUpdater from '@/components/updaters/LeaderboardUpdater';
 import { ToastContainer } from 'react-toastify';
+import UserReferralUpdater from '@/components/updaters/UserReferralUpdater';
 
 export default function Home() {
   const router = useRouter();
@@ -114,6 +115,7 @@ export default function Home() {
         </div>
 
         <LeaderboardDataUpdater />
+        <UserReferralUpdater />
       </main>
     </>
   );

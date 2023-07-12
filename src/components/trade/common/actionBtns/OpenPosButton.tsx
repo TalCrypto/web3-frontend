@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/common/actionBtns/BaseButton';
+import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { OpenPositionEstimation, Side, useOpenPositionTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $tsTransactionStatus } from '@/stores/trading';
@@ -48,7 +48,7 @@ function OpenPosButton({
           ? `${TradeActions.OPEN} Position`
           : (-1) ** side * positionInfo.size > 0
           ? `${TradeActions.ADD} Position`
-          : `${TradeActions.REDUCE} Position`;
+          : `Close Position`;
       setLabel(posType);
     }
   }, [positionInfo, side]);

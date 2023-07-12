@@ -102,7 +102,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
             width={16}
             height={16}
             className="mt-[3px] justify-end !text-[12px]"
-            priceValue={isShowBalance ? (accFp ? accFp.toFixed(4) : 0) : '****'}
+            priceValue={isShowBalance ? (accFp ? accFp.toFixed(4) : '0.0000') : '****'}
             isElement={!isShowBalance}
           />
         </div>

@@ -23,7 +23,7 @@ import {
   $vammPrice
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
-import ChartDisplay from '@/components/common/ChartDisplay';
+import ChartDisplay from '@/components/trade/common/ChartDisplay';
 import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
@@ -264,7 +264,7 @@ const ChartFooter = () => {
     };
   }, [nextFundingTime]);
 
-  const priceGapPercentageSign = priceGapPercentage > 0 ? '+' : '';
+  const priceGapPercentageSign = Number(priceGapPercentage.toFixed(2)) > 0 ? '+' : '';
 
   return (
     <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
@@ -286,7 +286,7 @@ const ChartFooter = () => {
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
           <p className="text-highEmphasis">
             {`${priceGapPercentageSign}${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
-            (${priceGapPercentageSign}${priceGapPercentage.toFixed(2)}%)`}
+            (${priceGapPercentage.toFixed(2)}%)`}
           </p>
 
           {isGapAboveLimit ? (

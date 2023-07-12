@@ -64,7 +64,7 @@ function Overview() {
                   </p>
                 )}
 
-                <p className="body1e mb-[15px]">
+                <p className="mb-[15px] text-[15px] font-semibold">
                   {!eligible()
                     ? `${tradeVolTotal.toFixed(2)} / ${maxEligibilityTradeVol} WETH`
                     : `${maxEligibilityTradeVol} / ${maxEligibilityTradeVol} WETH ✅`}

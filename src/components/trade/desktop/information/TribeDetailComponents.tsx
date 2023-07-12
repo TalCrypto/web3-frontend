@@ -22,7 +22,7 @@ import { /* PriceWithIcon, */ PriceWithUsdc } from '@/components/common/PriceWit
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { formatBigInt } from '@/utils/bigInt';
-import { $userAddress } from '@/stores/user';
+import { $userAddress, $userInfo } from '@/stores/user';
 import { ThreeDots } from 'react-loader-spinner';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 
@@ -66,6 +66,7 @@ const MarketTrade = () => {
   const marketHistory = useNanostore($futureMarketHistory);
   const address = useNanostore($userAddress);
   const [newAdded, setNewAdded] = useState(false);
+  const userInfo = useNanostore($userInfo);
 
   useEffect(() => {
     if (marketHistory && marketHistory.length > 0) {
@@ -138,7 +139,9 @@ const MarketTrade = () => {
                   className="relative col-span-2 flex cursor-pointer items-center"
                   onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
                   <span className="market_user cursor-pointer overflow-x-hidden text-ellipsis">
-                    {trimString(record.userId, 10) || walletAddressToShow(record.userAddress)}
+                    {trimString(record.userId, 10) ||
+                      (address === record.userAddress ? trimString(userInfo?.username, 10) : null) ||
+                      walletAddressToShow(record.userAddress)}
                   </span>
                   {address === record.userAddress ? (
                     <span

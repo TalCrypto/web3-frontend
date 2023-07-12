@@ -1,16 +1,14 @@
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 import { CollateralActions, TradeActions } from '@/const';
-import { $isMobileView } from '@/stores/modal';
 
 export function getTradingActionType(item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number }) {
-  const isMobileView = $isMobileView.get();
   let actionType = '';
   if (item.liquidationPenalty !== 0) {
     if (item.positionSizeAfter === 0) {
-      actionType = isMobileView ? TradeActions.FULL_LIQ_MOBILE : TradeActions.FULL_LIQ;
+      actionType = TradeActions.FULL_LIQ;
     } else {
-      actionType = isMobileView ? TradeActions.PARTIAL_LIQ_MOBILE : TradeActions.PARTIAL_LIQ;
+      actionType = TradeActions.PARTIAL_LIQ;
     }
   } else if (item.exchangedPositionSize === item.positionSizeAfter) {
     actionType = TradeActions.OPEN;
@@ -64,5 +62,5 @@ export function getWalletBalanceChange(record: any) {
       : currentRecordType === TradeActions.CLOSE
       ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
       : -Math.abs(recordFee);
-  return balance;
+  return Number(balance.toFixed(4));
 }

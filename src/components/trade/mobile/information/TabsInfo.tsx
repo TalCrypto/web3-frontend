@@ -129,7 +129,7 @@ const MarketTrade = () => {
                 <span className="text-highEmphasis">{getTradingActionType(marketHistory[index])}</span>
               </div>
               <div className="col-span-2 ml-[-16px]">
-                <SmallPriceIcon priceValue={record.positionNotional.toFixed(2)} />
+                <SmallPriceIcon priceValue={record.positionNotional.toFixed(4)} />
                 <div className="h-[6px] w-full" />
                 <SmallPriceIcon priceValue={record.spotPrice.toFixed(2)} />
               </div>

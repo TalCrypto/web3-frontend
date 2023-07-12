@@ -16,12 +16,12 @@ import { usePositionInfo } from '@/hooks/collection';
 import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance, UserPositionInfo } from '@/stores/user';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
-import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
-import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import Tooltip from '@/components/common/Tooltip';
@@ -208,7 +208,7 @@ function EstimationComponent(props: {
             {!isFullClose ? (
               <TitleTips
                 titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                tipsText="Collateral will not change."
+                tipsText="Collateral will not change"
                 placement="top"
               />
             ) : null}
@@ -436,7 +436,7 @@ export default function CloseCollateral() {
               the time of trade confirmation <br />
               the actual price of the <br />
               transaction that the users are <br />
-              willing to acceptM
+              willing to accept
             </div>
           }>
           <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>

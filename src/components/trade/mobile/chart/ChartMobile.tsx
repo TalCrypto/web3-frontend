@@ -7,7 +7,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import ChartDisplay from '@/components/common/ChartDisplay';
+import ChartDisplay from '@/components/trade/common/ChartDisplay';
 
 import {
   $collectionConfig,
@@ -29,17 +29,17 @@ function PriceIndicator(props: any) {
 
   return priceChangeValue === undefined || priceChangeRatio === undefined ? (
     <div
-      className={`my-[11px] flex h-[32px] items-center rounded-full
+      className={`mt-1 flex h-[20px] items-center
         text-center text-[15px] font-semibold leading-[18px]
         ${priceChangeRatio > 0 ? 'text-marketGreen' : 'text-marketRed'}
         `}>
       <div>
-        <div className="col my-auto">-.-- (-.-- %)</div>
+        <div className="my-auto">-.-- (-.-- %)</div>
       </div>
     </div>
   ) : (
     <div
-      className={`my-[11px] flex h-[32px] items-center rounded-full
+      className={`mt-1 flex h-[20px] items-center
         text-center text-[15px] font-semibold leading-[18px]
         ${priceChangeRatio > 0 ? 'text-marketGreen' : 'text-marketRed'}`}>
       <Image
@@ -207,16 +207,18 @@ const ChartHeaders = () => {
     };
   }, [nextFundingTime]);
 
+  const priceGapPercentageSign = Number(priceGapPercentage.toFixed(2)) > 0 ? '+' : '';
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-2 px-[20px] pt-[27px]">
         <div className="col-span-1">
-          <PriceWithIcon priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'} width={30} height={30} large />
+          <PriceWithIcon priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'} className="leading-[30px]" width={30} height={30} large />
           <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
         </div>
 
         <div className="col-span-1 text-right">
-          <div className="font-400 mb-[14px] mt-[6px] text-[14px]">
+          <div className="font-400 mb-[14px] h-[15px] text-[14px]">
             <span className="mr-[6px] text-[12px] text-mediumEmphasis">Oracle:</span>
             <span className="text-[12px] text-highEmphasis">{oraclePrice ? oraclePrice.toFixed(2) : '-.--'}</span>
           </div>
@@ -226,8 +228,8 @@ const ChartHeaders = () => {
 
             <div className="mt-1 flex w-full items-center justify-end text-[12px] text-highEmphasis">
               <p className="text-highEmphasis">
-                {`${priceGapPercentage > 0 ? '+' : ''}${((vAMMPrice ?? 0) - (oraclePrice ?? 0)).toFixed(2)}
-                (${Math.abs(priceGapPercentage).toFixed(2)}%)`}
+                {`${priceGapPercentageSign}${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
+                (${priceGapPercentage.toFixed(2)}%)`}
               </p>
 
               {isGapAboveLimit ? (
@@ -252,7 +254,7 @@ const ChartHeaders = () => {
         </div>
       </div>
 
-      <div className="px-[20px] text-[12px]">
+      <div className="mt-[10px] px-[20px] text-[12px]">
         <div className="text-mediumEmphasis">
           <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
         </div>

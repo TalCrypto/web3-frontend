@@ -11,7 +11,8 @@ const errorMsgList = {
   CH_NW: 'Sorry your wallet address is not in the whitelist.',
   CH_BDP: 'Trade failed in execution due to bad debt incurred.',
   TH_STF: WETH_INSUFFICIENT,
-  CH_MRNC: 'Resulting position DOES NOT meet the maintenance leverage requirement.'
+  CH_MRNC: 'Resulting position DOES NOT meet the maintenance leverage requirement.',
+  CH_MNE: 'New Collateral must be above Initial Collateral Requirement.'
 };
 
 export const formatError = (errorMsg: string) => {

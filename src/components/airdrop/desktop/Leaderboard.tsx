@@ -1,10 +1,11 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
   $asCurrentSeason,
   $asIsLeaderboardLoading,
+  $asLeaderboardUpdateTrigger,
   $asSeason1LeaderboardData,
   $asSeason2LeaderboardData,
   $userPoint,
@@ -33,7 +34,6 @@ function Leaderboard() {
   const isLoading = useNanostore($asIsLeaderboardLoading);
   const isConnected = useNanostore($userIsConnected);
 
-  const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
   const currentSeason = useNanostore($asCurrentSeason);
   const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
@@ -108,21 +108,6 @@ function Leaderboard() {
   // for show loading, define array size n if necessary
   const dummyLoadingData = [...Array(10)];
 
-  // cooldown timer
-  function updateRefreshCooldown() {
-    if (refreshCooldown <= 0) {
-      //
-    } else {
-      setRefreshCooldown(refreshCooldown - 1);
-    }
-  }
-
-  // loop each 1s
-  useEffect(() => {
-    const interval = setInterval(updateRefreshCooldown, 1000);
-    return () => clearInterval(interval);
-  });
-
   // testing
   const isLockedConverg = false;
   const isLockedReferral = false;
@@ -137,7 +122,7 @@ function Leaderboard() {
       <div id="lb-sticky-header" className="sticky top-[60px] z-10">
         <div className="flex justify-between py-[24px]">
           <h3 className="text-[24px] font-bold">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
-          <div className="season-leaderboard flex justify-start text-[16px] font-semibold">
+          <div className="flex justify-start text-[16px] font-semibold">
             <div className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(0)}>
               Season 2 Leaderboard
               {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
@@ -150,16 +135,14 @@ function Leaderboard() {
         </div>
         <div className="flex justify-end">
           <div
-            className={`flex items-center ${refreshCooldown ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            className={`flex items-center ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={() => {
-              if (refreshCooldown || currentSeason !== 0) return;
-              // apiConnection.getLeaderboard(currentSeason);
-              // apiConnection.getUserPoint();
-              setRefreshCooldown(5);
+              if (isLoading || currentSeason !== 0) return;
+              $asLeaderboardUpdateTrigger.set(!$asLeaderboardUpdateTrigger.get());
             }}>
             {currentSeason === 0 ? (
               <Image
-                className={`${refreshCooldown > 0 ? 'animate-spin' : ''}`}
+                className={`${isLoading ? 'animate-spin' : ''}`}
                 src="/images/components/airdrop/refresh.svg"
                 width={32}
                 height={32}
@@ -168,7 +151,7 @@ function Leaderboard() {
             ) : (
               <div className="h-[32px] w-[1px]" />
             )}
-            <p>{refreshCooldown > 0 ? 'Updating...' : 'Update Leaderboard'}</p>
+            <p>{isLoading ? 'Updating...' : 'Update Leaderboard'}</p>
           </div>
         </div>
         <div className="w-full text-[14px] text-xs font-semibold xl:px-[50px]">
@@ -221,12 +204,12 @@ function Leaderboard() {
                       className={`table-border-grad flex h-[54px] items-center font-medium xl:px-[50px] ${
                         userIsBan ? 'disqualified' : 'active'
                       }`}>
-                      <div className="flex w-[10%] p-[18px]">
+                      <div className="flex w-[10%] px-[10px] py-[18px]">
                         <UserMedal rank={userData.rank} isYou isBan={userIsBan} isUnranked={userIsUnranked} />
                       </div>
                       <div className={`p-[18px] ${usernameWidth}`}>
                         <p
-                          className={`overflow-hidden text-ellipsis text-[15px] font-normal ${
+                          className={`overflow-hidden text-ellipsis text-[15px] font-semibold ${
                             userIsBan ? 'text-marketRed line-through' : ''
                           }`}>
                           {userData?.username ? trimString(userData.username, 10) : walletAddressToShow(userData.userAddress)}
@@ -321,7 +304,7 @@ function Leaderboard() {
                       </div>
                       <div className="w-[17%] p-[18px]">
                         <p className="text-highEmphasis} text-[15px] font-semibold">
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.originalTotal, 2, 2)}`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.originalTotal, 1, 1)}`}
                         </p>
                       </div>
                       <div className="w-[10%] p-[18px]">
@@ -329,12 +312,12 @@ function Leaderboard() {
                           className={`text-[15px] font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-marketGreen'
                           }`}>
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.multiplier, 2, 2)}x`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.multiplier, 1, 1)}x`}
                         </p>
                       </div>
                       <div className="w-[16%] p-[18px]">
                         <p className={`text-[15px] font-semibold  ${userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-warn'}`}>
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.total, 2, 2)}`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.total, 1, 1)}`}
                         </p>
                       </div>
                     </div>
@@ -364,7 +347,7 @@ function Leaderboard() {
                         className="relative cursor-pointer"
                         onClick={() => router.push(`/userprofile/${userAddress}`)}>
                         <div className="table-border-grad flex h-[54px] items-center xl:px-[50px]">
-                          <div className="flex w-[10%] p-[18px]">
+                          <div className="flex w-[10%] px-[10px] py-[18px]">
                             <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
                           </div>
                           <div className={`p-[18px] ${usernameWidth}`}>
@@ -399,7 +382,7 @@ function Leaderboard() {
                           </div>
                           <div className="w-[17%] p-[18px]">
                             <p className="text-[15px] font-semibold text-highEmphasis">
-                              {isBan ? '-' : `${localeConversion(originalTotal, 2, 2)}`}
+                              {isBan ? '-' : `${localeConversion(originalTotal, 1, 1)}`}
                             </p>
                           </div>
                           <div className="w-[10%] p-[18px]">
@@ -409,7 +392,7 @@ function Leaderboard() {
                           </div>
                           <div className="w-[16%] p-[18px]">
                             <p className={`text-[15px] font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
-                              {isBan ? '-' : `${localeConversion(total, 2, 2)}`}
+                              {isBan ? '-' : `${localeConversion(total, 1, 1)}`}
                             </p>
                           </div>
                         </div>

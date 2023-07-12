@@ -11,16 +11,16 @@ import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/mobile/trading/PartialCloseModal';
 
 import TitleTips from '@/components/common/TitleTips';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
-import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
-import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
 import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
 import { MINIMUM_COLLATERAL } from '@/const';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
@@ -196,7 +196,7 @@ function EstimationComponent(props: any) {
             {/* {!isFullClose ? (
               <TitleTips
                 titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                tipsText="Collateral will not change."
+                tipsText="Collateral will not change"
                 placement="top"
               />
             ) : null} */}
@@ -392,7 +392,7 @@ export default function CloseCollateral() {
           content={
             <div className="text-center">
               The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
-              the users are willing to acceptM
+              the users are willing to accept
             </div>
           }>
           <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>

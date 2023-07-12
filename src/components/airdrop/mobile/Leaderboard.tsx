@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
@@ -31,7 +31,6 @@ function LeaderboardMobile() {
   const isLoading = useNanostore($asIsLeaderboardLoading);
   const isConnected = useNanostore($userIsConnected);
 
-  const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
   const currentSeason = useNanostore($asCurrentSeason);
   const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
@@ -88,43 +87,28 @@ function LeaderboardMobile() {
   // for show loading, define array size n if necessary
   const dummyLoadingData = [...Array(10)];
 
-  // cooldown timer
-  function updateRefreshCooldown() {
-    if (refreshCooldown <= 0) {
-      //
-    } else {
-      setRefreshCooldown(refreshCooldown - 1);
-    }
-  }
-
-  // loop each 1s
-  useEffect(() => {
-    const interval = setInterval(updateRefreshCooldown, 1000);
-    return () => clearInterval(interval);
-  });
-
   // width handler for season 2
   const usernameWidth = currentSeason === 0 ? 'max-w-[162px]' : 'max-w-[132px]';
 
   return (
     <div className="mt-[-36px]">
-      <div className="sticky top-0 z-10 bg-darkBlue pt-9">
+      <div className="sticky top-[48px] z-10 bg-darkBlue pt-9">
         <div className="mx-5">
           <div className="flex justify-center">
-            <div className="season-leaderboard flex justify-start text-[12px] font-semibold">
+            <div className="flex justify-start text-[12px] font-semibold">
               <div
-                className={`item mr-[24px] cursor-pointer 
-                ${currentSeason === 0 ? 'active text-seasonGreen' : ''}`}
-                onClick={() => $asCurrentSeason.set(0)}>
-                Season 2 Leaderboard
-                {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
-              </div>
-              <div
-                className={`item cursor-pointer 
+                className={`item mr-6 cursor-pointer 
                 ${currentSeason === 1 ? 'active text-seasonGreen' : ''}`}
                 onClick={() => $asCurrentSeason.set(1)}>
                 Season 1 Leaderboard
                 {currentSeason === 1 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
+              </div>
+              <div
+                className={`item cursor-pointer 
+                ${currentSeason === 0 ? 'active text-seasonGreen' : ''}`}
+                onClick={() => $asCurrentSeason.set(0)}>
+                Season 2 Leaderboard
+                {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
               </div>
             </div>
           </div>
@@ -133,16 +117,15 @@ function LeaderboardMobile() {
             <h3 className="text-[20px] font-semibold">Season {currentSeason === 0 ? '2' : '1'} Pts Leaderboard</h3>
 
             <div
-              className={`flex items-center ${refreshCooldown ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              className={`flex items-center ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               onClick={() => {
-                if (refreshCooldown || currentSeason !== 0) return;
-                $asLeaderboardUpdateTrigger.set(!$asLeaderboardUpdateTrigger);
+                if (isLoading || currentSeason !== 0) return;
+                $asLeaderboardUpdateTrigger.set(!$asLeaderboardUpdateTrigger.get());
                 // apiConnection.getUserPoint();
-                setRefreshCooldown(5);
               }}>
               {currentSeason === 0 ? (
                 <Image
-                  className={`${refreshCooldown > 0 ? 'animate-spin' : ''}`}
+                  className={`${isLoading ? 'animate-spin' : ''}`}
                   src="/images/components/airdrop/refresh.svg"
                   width={32}
                   height={32}
@@ -177,21 +160,25 @@ function LeaderboardMobile() {
             {/* current user data */}
             {isConnected ? (
               <div
-                className="relative cursor-pointer border-t-[1px] border-[#2E4371] px-5"
+                className="relative mt-[10px] border-t-[1px] border-[#2E4371] bg-[#2d68ff40] px-5"
                 onClick={() => router.push(`/userprofile/${userWalletAddress}`)}>
-                <div className={`flex items-center font-medium  ${userIsBan ? 'disqualified' : 'active'}`}>
+                <div
+                  className={`flex items-center py-[10px] font-medium
+                  ${userIsBan ? 'disqualified' : 'active'}`}>
                   <div className="w-[56px]">
                     <UserMedal rank={userData.rank} isMobile isYou isBan={userIsBan} isUnranked={userIsUnranked} />
                   </div>
                   <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
-                    <p className={`overflow-hidden text-ellipsis ${userIsBan ? 'text-marketRed line-through' : ''}`}>
+                    <p className={`overflow-hidden text-ellipsis font-semibold ${userIsBan ? 'text-marketRed line-through' : ''}`}>
                       {userData?.username ? trimString(userData.username, 10) : walletAddressToShow(userData.userAddress)}
                     </p>
                   </div>
                   <div className="flex-1 text-right">
                     <p className="text-[14px] font-normal">
-                      {userIsBan || userIsUnranked ? (
+                      {userIsBan ? (
                         '-'
+                      ) : userIsUnranked ? (
+                        'Not Eligible'
                       ) : (
                         <>
                           {userData.total} <span className="text-marketGreen">({userData.multiplier}X)</span>
@@ -215,7 +202,7 @@ function LeaderboardMobile() {
                     onClick={() => router.push(`/userprofile/${userAddress}`)}>
                     <div className="my-[10px] flex items-center">
                       <div className="w-[56px]">
-                        <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
+                        <UserMedal rank={rank} isBan={isBan} isMobile isUnranked={rank < 1} isYou={isYou} />
                       </div>
                       <div className={`w-[132px] text-[14px] font-normal ${usernameWidth}`}>
                         <p

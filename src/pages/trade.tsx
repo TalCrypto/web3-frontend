@@ -27,7 +27,9 @@ function TradePage(props: WithRouterProps) {
   const { router } = props;
 
   useEffect(() => {
-    const collection = router?.query?.collection;
+    const queryCollection = router?.query?.collection;
+    const collection = queryCollection || router?.asPath.replace('/trade/', '');
+
     if (collection) {
       const amm = collection as AMM;
       if (Object.values(AMM).includes(amm)) {
