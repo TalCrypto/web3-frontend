@@ -235,18 +235,18 @@ export default function PositionDetails() {
                   <Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" className="ml-[6px] cursor-pointer" />
                 </Tooltip>
               ) : null}
-              {/* {liquidationRiskWarning() ? ( */}
-              <Tooltip
-                direction="top"
-                content={
-                  <>
-                    Your position is at risk of being liquidated. <br />
-                    Please manage your risk.
-                  </>
-                }>
-                <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" className="ml-[6px] cursor-pointer" />
-              </Tooltip>
-              {/* ) : null} */}
+              {liquidationRiskWarning() ? (
+                <Tooltip
+                  direction="top"
+                  content={
+                    <>
+                      Your position is at risk of being liquidated. <br />
+                      Please manage your risk.
+                    </>
+                  }>
+                  <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" className="ml-[6px] cursor-pointer" />
+                </Tooltip>
+              ) : null}
               {isOverPriceGap ? (
                 <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
