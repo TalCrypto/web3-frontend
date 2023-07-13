@@ -1,6 +1,7 @@
 import { Contract, getAMMContract, getCHViewerContract } from '@/const/contracts';
 import React, { useEffect } from 'react';
 import { useContractReads } from 'wagmi';
+import { Chain, arbitrum, arbitrumGoerli } from 'wagmi/chains';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $oraclePrice, $vammPrice, $nextFundingTime, $fundingRates, $openInterests } from '@/stores/trading';
 import { ammAbi, chViewerAbi } from '@/const/abi';
@@ -78,8 +79,9 @@ const Updater = ({ ammContract, chViewer }: { ammContract: Contract; chViewer: C
 const TradingDataUpdater: React.FC = () => {
   const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
-  const ammContract = getAMMContract(chain, currentAmm);
-  const chViewer = getCHViewerContract(chain);
+  const defaultChain = process.env.NEXT_PUBLIC_SUPPORT_CHAIN === '42161' ? arbitrum : arbitrumGoerli;
+  const ammContract = getAMMContract(defaultChain, currentAmm);
+  const chViewer = getCHViewerContract(defaultChain);
 
   if (!currentAmm || !ammContract || !chViewer) return null;
 

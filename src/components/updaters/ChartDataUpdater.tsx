@@ -11,21 +11,23 @@ import {
 import { useStore as useNanostore } from '@nanostores/react';
 import { Time } from 'lightweight-charts';
 import { useEffect } from 'react';
+import { Chain, arbitrum, arbitrumGoerli } from 'wagmi/chains';
 
 const ChartDataUpdater = () => {
-  const chain = useNanostore($currentChain);
   const currentAmm = useNanostore($currentAmm);
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
+  const defaultChain = process.env.NEXT_PUBLIC_SUPPORT_CHAIN === '42161' ? arbitrum : arbitrumGoerli;
 
   useEffect(() => {
     async function loadData() {
       let chartData;
       let dailyVolume: number = 0;
       if (currentAmm) {
-        const ammAddr = getAMMAddress(chain, currentAmm);
+        const ammAddr = getAMMAddress(defaultChain, currentAmm);
         if (!ammAddr) return;
         if (selectedTimeIndex === 0) {
           chartData = await getDailySpotPriceGraphData(ammAddr);
+          console.log({ ammAddr, chartData });
           dailyVolume = formatBigInt(chartData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else if (selectedTimeIndex === 1) {
           chartData = await getWeeklySpotPriceGraphData(ammAddr);
@@ -58,7 +60,7 @@ const ChartDataUpdater = () => {
     $ohlcData.set([]);
     $dailyVolume.set(undefined);
     loadData();
-  }, [selectedTimeIndex, currentAmm, chain]);
+  }, [selectedTimeIndex, currentAmm]);
 
   useEffect(() => {
     const timer = setInterval(addGraphRecord, 30000);
