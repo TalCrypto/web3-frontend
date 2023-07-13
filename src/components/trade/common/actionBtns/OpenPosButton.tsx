@@ -47,7 +47,7 @@ function OpenPosButton({
         positionInfo.size === 0
           ? `${TradeActions.OPEN} Position`
           : (-1) ** side * positionInfo.size > 0
-          ? `${TradeActions.ADD} Position`
+          ? `${TradeActions.ADD}`
           : `Close Position`;
       setLabel(posType);
     }

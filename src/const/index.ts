@@ -5,7 +5,7 @@ export const MINIMUM_COLLATERAL = 0.01;
 export enum TradeActions {
   OPEN = 'Open',
   CLOSE = 'Full Close',
-  ADD = 'Add',
+  ADD = 'Add Position',
   REDUCE = 'Partial Close',
   REVERSE = 'Reverse',
   FULL_LIQ = 'Full Liquidation',
