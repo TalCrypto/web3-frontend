@@ -274,8 +274,8 @@ const HistoryModal = (props: any) => {
                               <Image
                                 src="/images/components/trade/history/more_info.svg"
                                 alt=""
-                                width={16}
-                                height={16}
+                                width={12}
+                                height={12}
                                 className="ml-[6px] mr-0"
                               />
                             </MobileTooltip>
