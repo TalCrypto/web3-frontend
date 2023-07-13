@@ -327,16 +327,7 @@ function Tips({
   ) : isRequireWeth ? (
     'Please get WETH first !'
   ) : isApproveRequired ? (
-    <>
-      Please approve before trading! <br />{' '}
-      <a
-        target="_blank"
-        href="https://tribe3.gitbook.io/tribe3/getting-started/set-up-wallet-get-weth-and-start"
-        rel="noreferrer"
-        className="underline">
-        Learn more
-      </a>
-    </>
+    <>Please approve before trading!</>
   ) : null;
 
   return label ? (

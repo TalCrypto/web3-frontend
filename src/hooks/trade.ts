@@ -112,13 +112,13 @@ export const useApprovalCheck = (amount: number) => {
   const allowance = useNanostore($userWethAllowance);
 
   useEffect(() => {
-    setIsNeedApproval(allowance < amount);
+    setIsNeedApproval(allowance <= 0 || allowance < amount);
   }, [amount, allowance]);
 
   return isNeedApproval;
 };
 
-export const useApproveTransaction = (approvalAmount: number) => {
+export const useApproveTransaction = () => {
   const chain = useNanostore($currentChain);
   const chContract = getCHContract(chain);
   const weth = getWEthContract(chain);
@@ -131,8 +131,8 @@ export const useApproveTransaction = (approvalAmount: number) => {
     ...weth,
     abi: wethAbi,
     functionName: 'approve',
-    args: chContract && approvalAmount ? [chContract.address, parseBigInt(approvalAmount)] : undefined,
-    enabled: Boolean(chContract && approvalAmount)
+    args: chContract && [chContract.address, parseBigInt(10)],
+    enabled: Boolean(chContract)
   });
 
   const { write, data: writeData, error: writeError, isError: isWriteError } = useContractWrite(config);
