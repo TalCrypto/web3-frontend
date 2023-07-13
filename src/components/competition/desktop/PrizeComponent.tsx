@@ -27,18 +27,19 @@ const PrizeComponent = () => {
                 className="bg-[url('/static/containerbackgrounds/competition/reward.png')] bg-cover bg-[center_top] bg-no-repeat
                 h-full w-[477px] rounded-r-md"
               > */}
-        <div className=" h-full w-full flex-grow min-[984px]:w-auto  min-[984px]:rounded-l-md">
+        <div className="h-full w-full flex-grow bg-[#0c0d20] md:bg-transparent min-[984px]:w-auto  min-[984px]:rounded-l-md">
           <CustomTable
             data={mainLeaderboard}
             userData={mlCurrentUser}
             selectedField="pnl"
             tableClassName="py-9"
-            titleClassName="flex justify-between mb-[18px] px-9"
-            tHeadClassName="flex text-b2 text-mediumEmphasis px-9"
-            tBodyClassName="mt-6 px-9 overflow-y-scroll h-[320px] scroll-style"
+            titleClassName="flex justify-between mb-[18px] px-5 md:px-9"
+            tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-9"
+            tBodyClassName="mt-6 md:px-9 md:overflow-y-scroll md:h-[320px] scroll-style"
             icon={<Image alt="gainers" src="/images/components/competition/icons/gainers-colorful.svg" width={24} height={24} />}
-            title={<h3 className="pl-[7px] text-h3">Top Gainer</h3>}
+            title={<h3 className="text-h4 md:pl-[7px] md:text-h3">Top Gainer</h3>}
             isLoading={isCompetitionLeaderboardLoading}
+            reloadFunc={() => {}}
             thirdRowTitle="Realized P/L"
             thirdRowTips="Realized P/L is the sum of funding payment and P/L from price change of a position.
           P/L from price change refers to the gain & loss from full close, partial close and liquidation of a position."

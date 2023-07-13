@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-constant-condition */
 import React, { useEffect } from 'react';
 import Image from 'next/image';
@@ -38,7 +40,15 @@ const TopComponent = () => {
 
   return (
     <>
-      <div className="relative mb-6 mt-12 px-5 pb-6 pt-4 md:px-0">
+      <div className="relative mb-6 px-5 pb-6 pt-4 md:mt-12 md:px-0">
+        {/* view rule mobile btn */}
+        <div className="mb-6 flex justify-end md:hidden">
+          <div className="flex cursor-pointer items-center " onClick={openRules}>
+            <Image className="mb-[1px]" src="/images/common/rules.svg" alt="rules" width={20} height={18} />
+            <span className="pl-[5.33px] text-b2e">View Rules</span>
+          </div>
+        </div>
+
         <h1 className="text-glow-yellow text-shadow-lb mb-[14px] text-center text-h1">TRADING COMPETITION</h1>
         <CountdownTimer className="mb-11" date="2023-07-16 17:00:00" timeZone="Asia/Hong_Kong" />
         <h5 className="mb-9 text-center text-h5">

@@ -1,3 +1,7 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable indent */
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -45,11 +49,11 @@ const CustomTable = (props: any) => {
       {/* title and update btn */}
       <div className={titleClassName}>
         <div className="mb-[8px] flex items-center justify-center">
-          {icon}
+          <div className="hidden md:block">{icon}</div>
           {title}
         </div>
         <div
-          className="flex hidden cursor-pointer items-center"
+          className="flex cursor-pointer items-center space-x-2 md:hidden"
           onClick={() => {
             reloadFunc();
           }}>
@@ -57,9 +61,9 @@ const CustomTable = (props: any) => {
           <Image
             alt="refresh icon"
             className={`${isLoading ? 'animate-spin' : ''}`}
-            src="/static/icon/pointsystem/refresh.svg"
-            width={30}
-            height={30}
+            src="/images/components/competition/icons/refresh.svg"
+            width={20}
+            height={20}
           />
         </div>
       </div>
@@ -68,20 +72,22 @@ const CustomTable = (props: any) => {
       {reward || null}
 
       {/* table head */}
-      <div className={tHeadClassName}>
-        <div className="basis-[15%]">Rank</div>
-        <div className="basis-[45%] pl-[17.33px]">User</div>
-        <div className="flex basis-[40%] items-center">
-          <Tooltip direction="top" content={<div className="w-[250px] text-center">{thirdRowTips}</div>}>
-            <Image
-              src="/images/components/trade/history/more_info.svg"
-              alt="more info"
-              width={12}
-              height={12}
-              className="mr-[6px] cursor-pointer"
-            />
-          </Tooltip>
-          {thirdRowTitle}
+      <div className="sticky top-[48px] z-10 bg-[#0c0d20] pb-4 pt-6 md:static md:z-0 md:bg-transparent md:p-0">
+        <div className={tHeadClassName}>
+          <div className="basis-[15%]">Rank</div>
+          <div className="basis-[45%] pl-[17.33px]">User</div>
+          <div className="flex basis-[40%] items-center justify-end md:justify-normal">
+            <Tooltip direction="top" content={<div className="w-[250px] text-center">{thirdRowTips}</div>}>
+              <Image
+                src="/images/components/trade/history/more_info.svg"
+                alt="more info"
+                width={12}
+                height={12}
+                className="mr-[6px] cursor-pointer"
+              />
+            </Tooltip>
+            {thirdRowTitle}
+          </div>
         </div>
       </div>
 
@@ -157,7 +163,7 @@ const CustomTable = (props: any) => {
                   key={`user-list-${selectedField}-${userAddress}-${index}`}
                   className={`relative cursor-pointer ${
                     lastIndex ? 'border-none' : 'border-b'
-                  } border-[#2E4371] hover:bg-[rgba(32,34,73,0.5)]`}
+                  } border-[#2E4371] px-5 hover:bg-[rgba(32,34,73,0.5)] md:p-0`}
                   onClick={() => router.push(`/userprofile/${userAddress}`)}>
                   <div className={`flex h-[45px] items-center ${isBan ? 'disqualified' : 'active'}`}>
                     <div className="flex w-[15%]">

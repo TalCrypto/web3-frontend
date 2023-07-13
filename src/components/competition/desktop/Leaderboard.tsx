@@ -37,12 +37,13 @@ const Leaderboard = () => {
         tableClassName={`${activeDropdown === 1 ? '' : 'hidden md:block'} 
                 flex-1 pt-[39px] md:border md:border-white md:border-opacity-20 md:rounded-md
                 bg-[url('/images/components/competition/backgrounds/gainers.svg')] bg-no-repeat bg-contain`}
-        titleClassName="flex justify-between mb-[18px] px-[25px] min-[1024px]:px-[36px]"
-        tHeadClassName="flex text-b2 text-mediumEmphasis px-[25px] min-[1024px]:px-[36px]"
-        tBodyClassName="scroll-style mt-6 overflow-y-scroll h-[320px] px-[25px] min-[1024px]:px-[36px]"
+        titleClassName="flex justify-between mb-[18px] px-5 md:px-[25px] min-[1024px]:px-[36px]"
+        tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-[25px] min-[1024px]:px-[36px]"
+        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll md:h-[320px] md:px-[25px] min-[1024px]:px-[36px]"
         icon={<Image alt="gainers icon" src="/images/components/competition/icons/gainers.svg" width={22} height={22} />}
-        title={<h4 className="pl-[7px] text-h4">Top ROI</h4>}
+        title={<h4 className="text-h4 md:pl-[7px]">Top ROI</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
+        reloadFunc={() => {}}
         thirdRowTitle="Realized P/L%"
         thirdRowTips="Realized P/L divided by the maximum total collateral pledged across all opened 
         positions at any given point in time during the competition."
@@ -74,12 +75,13 @@ const Leaderboard = () => {
         tableClassName={`${activeDropdown === 2 ? '' : 'hidden md:block'}
                 flex-1 pt-[39px] md:border md:border-white md:border-opacity-20 md:rounded-md
                 bg-[url('/images/components/competition/backgrounds/convergence.svg')] bg-no-repeat bg-contain`}
-        titleClassName="flex justify-between mb-[18px] px-[25px] min-[1024px]:px-[36px]"
-        tHeadClassName="flex text-b2 text-mediumEmphasis px-[25px] min-[1024px]:px-[36px]"
-        tBodyClassName="scroll-style  mt-6 overflow-y-scroll h-[320px] px-[25px] min-[1024px]:px-[36px]"
+        titleClassName="flex justify-between mb-[18px] px-5 md:px-[25px] min-[1024px]:px-[36px]"
+        tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-[25px] min-[1024px]:px-[36px]"
+        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll md:h-[320px] md:px-[25px] min-[1024px]:px-[36px]"
         icon={<Image alt="convergence icon" src="/images/components/competition/icons/convergence.svg" width={20} height={20} />}
-        title={<h4 className="pl-[7px] text-h4">Top Converger</h4>}
+        title={<h4 className="text-h4 md:pl-[7px]">Top Converger</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
+        reloadFunc={() => {}}
         thirdRowTitle="Net Conv. Vol."
         thirdRowTips="Convergence trading volume minus divergence trading volume."
         thirdRowValueGenerator={(value: string) =>
@@ -110,12 +112,13 @@ const Leaderboard = () => {
         tableClassName={`${activeDropdown === 3 ? '' : 'hidden md:block'}
                 flex-1 pt-[39px] md:border md:border-white md:border-opacity-20 md:rounded-md
                 bg-[url('/images/components/competition/backgrounds/losers.svg')] bg-no-repeat bg-contain`}
-        titleClassName="flex justify-between mb-[18px] px-[25px] min-[1024px]:px-[36px]"
-        tHeadClassName="flex text-b2 text-mediumEmphasis px-[25px] min-[1024px]:px-[36px]"
-        tBodyClassName="scroll-style  mt-6 overflow-y-scroll h-[320px] px-[25px] min-[1024px]:px-[36px]"
+        titleClassName="flex justify-between mb-[18px] px-5 md:px-[25px] min-[1024px]:px-[36px]"
+        tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-[25px] min-[1024px]:px-[36px]"
+        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll md:h-[320px] md:px-[25px] min-[1024px]:px-[36px]"
         icon={<Image alt="losers icon" src="/images/components/competition/icons/losers.svg" width={22} height={22} />}
-        title={<h4 className="pl-[7px] text-h4">Rekt</h4>}
+        title={<h4 className="text-h4 md:pl-[7px]">Rekt</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
+        reloadFunc={() => {}}
         thirdRowTitle="Realized P/L"
         thirdRowTips="Realized P/L is the sum of funding payment and P/L from price change of a position. 
         P/L from price change refers to the gain & loss from full close, partial close and liquidation of a position."
