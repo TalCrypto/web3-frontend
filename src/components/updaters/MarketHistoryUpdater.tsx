@@ -88,7 +88,7 @@ const MarketHistoryUpdater = () => {
       if (ammAddr) {
         getFundingPaymentHistory(ammAddr).then(res => {
           $fundingRatesHistory.set(
-            res.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
+            res?.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
               amm: getAddress(record.amm),
               timestamp: Number(record.timestamp),
               underlyingPrice: formatBigInt(record.underlyingPrice),
