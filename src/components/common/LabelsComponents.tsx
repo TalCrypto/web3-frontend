@@ -16,11 +16,15 @@ export function ExplorerButton(props: any) {
   );
 }
 
-export function LiquidationWarning() {
+export function LiquidationWarning({ isFullLiquidation = true }) {
+  const fullContent = 'Your position has been liquidated because it no longer meet the collateral requirement.';
+  const partialContent = 'Your position has been partially liquidated because it no longer meet the collateral requirement.';
+  const content = isFullLiquidation ? fullContent : partialContent;
+
   return (
     <div className="flex items-start">
       <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="mr-[6px]" width={16} height={16} />
-      <div className="text-[12px] text-warn">Your position has been liquidated because it no longer meet the collateral requirement.</div>
+      <div className="text-[12px] text-warn">{content}</div>
     </div>
   );
 }

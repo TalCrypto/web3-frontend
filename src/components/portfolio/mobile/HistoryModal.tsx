@@ -15,6 +15,7 @@ import { getActionTypeFromApi, getWalletBalanceChange } from '@/utils/actionType
 import { $psShowHistory } from '@/stores/portfolio';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PositionHistoryRecord } from '@/stores/user';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 const HistoryModal = () => {
   const { psHistoryByMonth } = usePsHistoryByMonth();
@@ -218,9 +219,10 @@ const HistoryModal = () => {
                 <div className="mb-[6px] bg-lightBlue">
                   {isLiquidation ? (
                     <div className="bg-darkBlue px-5 pb-6 pt-[18px]">
-                      <LiquidationWarning />
+                      <LiquidationWarning isFullLiquidation={getActionTypeFromApi(selectedRecord) === TradeActions.FULL_LIQ} />
                     </div>
                   ) : null}
+
                   {selectedRecord &&
                     detailRowMobile(
                       'Collection',
@@ -248,13 +250,22 @@ const HistoryModal = () => {
                             selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
                           }>
                           {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
-                            <Image
-                              src="/images/components/trade/history/more_info.svg"
-                              alt=""
-                              width={16}
-                              height={16}
-                              className="ml-[6px] mr-0"
-                            />
+                            <MobileTooltip
+                              direction="top"
+                              content={
+                                <>
+                                  Partial close will not <br />
+                                  free any collateral
+                                </>
+                              }>
+                              <Image
+                                src="/images/components/trade/history/more_info.svg"
+                                alt=""
+                                width={16}
+                                height={16}
+                                className="ml-[6px] mr-0"
+                              />
+                            </MobileTooltip>
                           ) : null}
                         </PriceWithIcon>
                       )
@@ -283,7 +294,10 @@ const HistoryModal = () => {
                       )}
                   {!isLiquidation ? detailRowMobile('Transaction Fee', <PriceWithIcon priceValue={fee} />) : null}
                   {isLiquidation ? <DetailRowWithPriceIconMobile label="Liquidation Penalty" content={liquidationPenalty} /> : null}
-                  {isFullClose ? <DetailRowWithPriceIconMobile label="Funding Payment" content={fundingPayment} /> : null}
+
+                  <div className="mt-[6px] bg-lightBlue">
+                    {isFullClose ? <DetailRowWithPriceIconMobile label="Funding Payment" content={fundingPayment} /> : null}
+                  </div>
                 </div>
               </div>
             </div>

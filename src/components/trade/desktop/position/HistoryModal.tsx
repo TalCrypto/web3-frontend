@@ -242,7 +242,11 @@ const HistoryModal = (props: any) => {
                 <span>Details</span>
                 {selectedRecord && <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />}
               </div>
-              {isLiquidation ? <LiquidationWarning /> : null}
+              {isLiquidation ? (
+                <div className="mt-9">
+                  <LiquidationWarning isFullLiquidation={getActionTypeFromApi(selectedRecord) === TradeActions.FULL_LIQ} />
+                </div>
+              ) : null}
               <div className="p-3 text-mediumEmphasis">
                 {selectedRecord &&
                   detailRow('Collection', selectedRecord.amm ? <TypeWithIconByAmm amm={selectedRecord.amm} showCollectionName /> : '-')}
@@ -263,7 +267,14 @@ const HistoryModal = (props: any) => {
                       <PriceWithIcon
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
-                          <Tooltip direction="top" content="Collateral will not change">
+                          <Tooltip
+                            direction="top"
+                            content={
+                              <>
+                                Partial close will not <br />
+                                free any collateral
+                              </>
+                            }>
                             <Image
                               src="/images/components/trade/history/more_info.svg"
                               alt=""
