@@ -23,8 +23,10 @@
   -o-background-size: cover;
 }
 
-.bg-linear-gradient {
-  background: linear-gradient(180deg, #171731 0%, rgba(23, 23, 49, 0) 0.01%, rgba(18, 18, 30, 0.2) 50%, #252842 100%);
+@media only screen and (min-width: 1024px) {
+  .bg-linear-gradient {
+    background: linear-gradient(180deg, #171731 0%, rgba(23, 23, 49, 0) 0.01%, rgba(18, 18, 30, 0.2) 50%, #252842 100%);
+  }
 }
 
 .border-to-bottom-transparent {
@@ -78,5 +80,39 @@
   .scroll-style {
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+  }
+}
+
+.m_main_title_ {
+  text-align: center;
+
+  span {
+    font-weight: 700;
+    font-size: 36px;
+    font-family: Montserrat;
+    line-height: 50.4px;
+    color: hsla(0, 0%, 100%, 0.87);
+    position: relative;
+    display: inline-block;
+
+    &::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #fff, #ffe1a8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      z-index: 1;
+    }
+    &::after {
+      content: attr(data-text);
+      position: relative;
+      color: transparent;
+      text-shadow: -4px 4px 4px rgba(45, 29, 5, 0.76);
+      z-index: 0;
+    }
   }
 }

@@ -103,7 +103,7 @@ const CustomTable = (props: any) => {
         {/* current user data */}
         {isLogin && !isLoading && data.length > 0 && userData && Object.keys(userData).length !== 0 ? (
           <div
-            className="relative cursor-pointer border-b border-[#2E4371] hover:bg-[rgba(32,34,73,0.5)]"
+            className="relative cursor-pointer border-b border-[#2E4371] px-5 hover:bg-[rgba(32,34,73,0.5)] md:p-0"
             onClick={() => router.push(`/userprofile/${address}`)}>
             <div className={`flex h-[45px] items-center ${userIsBan ? 'disqualified' : 'active'}`}>
               <div className="flex w-[15%]">
@@ -125,9 +125,9 @@ const CustomTable = (props: any) => {
                   {userData?.username ? trimString(userData?.username, 10) : walletAddressToShow(userData?.userAddress)}
                 </span>
               </div>
-              <div className="relative w-[40%] pl-4">
+              <div className="relative flex w-[40%] justify-end pl-4 md:justify-normal">
                 {userIsUnranked ? (
-                  <div className="absolute left-0">
+                  <div className="md:absolute md:left-0">
                     <TitleTips
                       placement="top"
                       tipsText={

@@ -7,7 +7,7 @@ import CountdownTimer from '@/components/common/CountdownTimer';
 import { useRouter } from 'next/router';
 import MobileDropdown from '@/components/competition/desktop/MobileDropdown';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $isCompetitionLeaderboardLoading } from '@/stores/competition';
+import { $activeDropdown, $isCompetitionLeaderboardLoading } from '@/stores/competition';
 import { useAccount } from 'wagmi';
 import { apiConnection } from '@/utils/apiConnection';
 
@@ -15,6 +15,7 @@ const TopComponent = () => {
   const router = useRouter();
   const openRules = () => window.open('https://mirror.xyz/tribe3.eth/Zjg7s1ORT06DtFJXOBDgTbW2O8v4y6bKaCUhKSsxDcI', '_blank');
   const isCompetitionLeaderboardLoading = useNanostore($isCompetitionLeaderboardLoading);
+  const activeDropdown = useNanostore($activeDropdown);
 
   const { address, isConnected, isConnecting } = useAccount();
 
@@ -40,18 +41,25 @@ const TopComponent = () => {
 
   return (
     <>
-      <div className="relative mb-6 px-5 pb-6 pt-4 md:mt-12 md:px-0">
+      <div className={`${activeDropdown === 0 ? '' : 'hidden md:block'} relative mb-6 px-6 pb-6 pt-6 md:mt-12 md:px-0`}>
         {/* view rule mobile btn */}
         <div className="mb-6 flex justify-end md:hidden">
-          <div className="flex cursor-pointer items-center " onClick={openRules}>
-            <Image className="mb-[1px]" src="/images/common/rules.svg" alt="rules" width={20} height={18} />
-            <span className="pl-[5.33px] text-b2e">View Rules</span>
+          <div className="flex cursor-pointer items-center space-x-[5px]" onClick={openRules}>
+            <Image className="mb-[1px]" src="/images/common/rules.svg" alt="rules" width={16} height={16} />
+            <span className="text-b2e">View Rules</span>
           </div>
         </div>
 
-        <h1 className="text-glow-yellow text-shadow-lb mb-[14px] text-center text-h1">TRADING COMPETITION</h1>
-        <CountdownTimer className="mb-11" date="2023-07-16 17:00:00" timeZone="Asia/Hong_Kong" />
-        <h5 className="mb-9 text-center text-h5">
+        <h1 className="text-glow-yellow text-shadow-lb mb-[14px] hidden text-center text-h1 md:block">TRADING COMPETITION</h1>
+
+        <div className="m_main_title_ mb-3 md:hidden">
+          <span data-text="TRADING" />
+          <br />
+          <span data-text="COMPETITION" />
+        </div>
+
+        <CountdownTimer className="mb-9 md:mb-11" date="2023-07-16 17:00:00" timeZone="Asia/Hong_Kong" />
+        <h5 className="mb-9 flex flex-col justify-center text-center text-h5 md:flex-row md:space-x-2">
           <span className="text-[#3EF3FF]">Trade, Compete, Win! </span>
           <span>Join our Trading Competition Today</span>
         </h5>

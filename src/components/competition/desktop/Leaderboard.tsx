@@ -96,7 +96,7 @@ const Leaderboard = () => {
           <CustomReward
             prizeLeftText="Prize Pool for Top 10:"
             prizeRightText="1,000 USDT + 52,000 Tribe3 Pts"
-            mainClassName="px-[25px] min-[1024px]:px-[36px]"
+            mainClassName="px-2 md:px-[25px] min-[1024px]:px-[36px]"
             mainStyle={{
               background:
                 'linear-gradient(270deg, rgba(86, 220, 250, 0.1) 0%, rgba(86, 220, 250, 0.25) 51.04%, rgba(86, 220, 250, 0.1) 100%)'
