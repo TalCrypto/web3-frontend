@@ -1,10 +1,11 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
   $asCurrentSeason,
   $asIsLeaderboardLoading,
+  $asLeaderboardUpdateTrigger,
   $asSeason1LeaderboardData,
   $asSeason2LeaderboardData,
   $userPoint,
@@ -33,7 +34,6 @@ function Leaderboard() {
   const isLoading = useNanostore($asIsLeaderboardLoading);
   const isConnected = useNanostore($userIsConnected);
 
-  const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
   const currentSeason = useNanostore($asCurrentSeason);
   const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
@@ -108,21 +108,6 @@ function Leaderboard() {
   // for show loading, define array size n if necessary
   const dummyLoadingData = [...Array(10)];
 
-  // cooldown timer
-  function updateRefreshCooldown() {
-    if (refreshCooldown <= 0) {
-      //
-    } else {
-      setRefreshCooldown(refreshCooldown - 1);
-    }
-  }
-
-  // loop each 1s
-  useEffect(() => {
-    const interval = setInterval(updateRefreshCooldown, 1000);
-    return () => clearInterval(interval);
-  });
-
   // testing
   const isLockedConverg = false;
   const isLockedReferral = false;
@@ -150,16 +135,14 @@ function Leaderboard() {
         </div>
         <div className="flex justify-end">
           <div
-            className={`flex items-center ${refreshCooldown ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            className={`flex items-center ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={() => {
-              if (refreshCooldown || currentSeason !== 0) return;
-              // apiConnection.getLeaderboard(currentSeason);
-              // apiConnection.getUserPoint();
-              setRefreshCooldown(5);
+              if (isLoading || currentSeason !== 0) return;
+              $asLeaderboardUpdateTrigger.set(!$asLeaderboardUpdateTrigger.get());
             }}>
             {currentSeason === 0 ? (
               <Image
-                className={`${refreshCooldown > 0 ? 'animate-spin' : ''}`}
+                className={`${isLoading ? 'animate-spin' : ''}`}
                 src="/images/components/airdrop/refresh.svg"
                 width={32}
                 height={32}
@@ -168,7 +151,7 @@ function Leaderboard() {
             ) : (
               <div className="h-[32px] w-[1px]" />
             )}
-            <p>{refreshCooldown > 0 ? 'Updating...' : 'Update Leaderboard'}</p>
+            <p>{isLoading ? 'Updating...' : 'Update Leaderboard'}</p>
           </div>
         </div>
         <div className="w-full text-[14px] text-xs font-semibold xl:px-[50px]">

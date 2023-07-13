@@ -28,7 +28,7 @@ function ApproveButton({
   const [isLoading, setIsLoading] = useState(false);
   const isMobileView = useNanostore($isMobileView);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction(approvalAmount);
+  const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction();
 
   useEffect(() => {
     if (isError) {
@@ -82,7 +82,7 @@ function ApproveButton({
 
   return (
     <BaseButton
-      disabled={!write}
+      disabled={!write && approvalAmount > 0}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();

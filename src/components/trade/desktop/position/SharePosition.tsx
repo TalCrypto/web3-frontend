@@ -60,10 +60,7 @@ export default function SharePosition(props: {
       onClick={() => setShowShareComponent(false)}>
       <div className="share-container min-w-[600px] rounded-[12px]" onClick={e => e.stopPropagation()}>
         <div className="ml-3 flex py-4">
-          <div
-            className={`image-bg h-[618px] w-[440px] py-3 pl-3
-            ${pnlStatus ? 'win' : 'lose'}`}
-            id="image-bg">
+          <div className={`image-bg h-[618px] w-[440px] py-3 pl-3 ${pnlStatus ? 'win' : 'lose'}`} id="image-bg">
             <div className="mt-4">
               <div className="ml-6">
                 <Image src={collectionInfo.logo} alt="" width={64} height={64} />

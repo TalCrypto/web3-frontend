@@ -21,7 +21,7 @@ export const usePsHistoryByMonth = () => {
         res[month] = res[month] ?? [];
         res[month].push(record);
 
-        if (currentAmm && record.amm.toLowerCase() === currentAmm.toLowerCase()) {
+        if (currentAmm && record.amm && record.amm.toLowerCase() === currentAmm.toLowerCase()) {
           currentHistoryByMonth[month] = currentHistoryByMonth[month] ?? [];
           currentHistoryByMonth[month].push(record);
         }

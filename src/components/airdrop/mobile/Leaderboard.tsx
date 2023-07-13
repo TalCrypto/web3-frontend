@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
@@ -31,7 +31,6 @@ function LeaderboardMobile() {
   const isLoading = useNanostore($asIsLeaderboardLoading);
   const isConnected = useNanostore($userIsConnected);
 
-  const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
   const currentSeason = useNanostore($asCurrentSeason);
   const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
@@ -88,21 +87,6 @@ function LeaderboardMobile() {
   // for show loading, define array size n if necessary
   const dummyLoadingData = [...Array(10)];
 
-  // cooldown timer
-  function updateRefreshCooldown() {
-    if (refreshCooldown <= 0) {
-      //
-    } else {
-      setRefreshCooldown(refreshCooldown - 1);
-    }
-  }
-
-  // loop each 1s
-  useEffect(() => {
-    const interval = setInterval(updateRefreshCooldown, 1000);
-    return () => clearInterval(interval);
-  });
-
   // width handler for season 2
   const usernameWidth = currentSeason === 0 ? 'max-w-[162px]' : 'max-w-[132px]';
 
@@ -133,16 +117,15 @@ function LeaderboardMobile() {
             <h3 className="text-[20px] font-semibold">Season {currentSeason === 0 ? '2' : '1'} Pts Leaderboard</h3>
 
             <div
-              className={`flex items-center ${refreshCooldown ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              className={`flex items-center ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               onClick={() => {
-                if (refreshCooldown || currentSeason !== 0) return;
-                $asLeaderboardUpdateTrigger.set(!$asLeaderboardUpdateTrigger);
+                if (isLoading || currentSeason !== 0) return;
+                $asLeaderboardUpdateTrigger.set(!$asLeaderboardUpdateTrigger.get());
                 // apiConnection.getUserPoint();
-                setRefreshCooldown(5);
               }}>
               {currentSeason === 0 ? (
                 <Image
-                  className={`${refreshCooldown > 0 ? 'animate-spin' : ''}`}
+                  className={`${isLoading ? 'animate-spin' : ''}`}
                   src="/images/components/airdrop/refresh.svg"
                   width={32}
                   height={32}

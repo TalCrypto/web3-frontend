@@ -8,8 +8,6 @@ import Image from 'next/image';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TitleTips from '@/components/common/TitleTips';
-
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import Tooltip from '@/components/common/Tooltip';
@@ -330,16 +328,7 @@ function Tips({
   ) : isRequireWeth ? (
     'Please get WETH first !'
   ) : isApproveRequired ? (
-    <>
-      Please approve before trading! <br />{' '}
-      <a
-        target="_blank"
-        href="https://tribe3.gitbook.io/tribe3/getting-started/set-up-wallet-get-weth-and-start"
-        rel="noreferrer"
-        className="underline">
-        Learn more
-      </a>
-    </>
+    <>Please approve before trading!</>
   ) : null;
 
   return label ? (

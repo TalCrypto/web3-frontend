@@ -17,8 +17,9 @@ export function TypeWithIconByAmm(props: any) {
     return (
       <div className={`flex ${className} items-center`}>
         <Image src={targetCollection.image} alt="" width={imageWidth} height={imageHeight} className="mr-[6px]" />
-        <div className="flex">
-          {showCollectionName ? targetCollection.shortName : null} {content}
+        <div className="flex flex-wrap">
+          <div>{showCollectionName ? targetCollection.shortName : null}</div>
+          <div className="whitespace-nowrap">{content}</div>
         </div>
       </div>
     );

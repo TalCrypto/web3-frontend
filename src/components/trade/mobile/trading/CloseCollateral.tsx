@@ -9,8 +9,6 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/mobile/trading/PartialCloseModal';
-
-import TitleTips from '@/components/common/TitleTips';
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
 import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton';
 import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
@@ -193,13 +191,11 @@ function EstimationComponent(props: any) {
         title={
           <span className="flex">
             Collateral&nbsp;
-            {/* {!isFullClose ? (
-              <TitleTips
-                titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                tipsText="Collateral will not change"
-                placement="top"
-              />
-            ) : null} */}
+            {!isFullClose ? (
+              <MobileTooltip content="Collateral will not change">
+                <Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />
+              </MobileTooltip>
+            ) : null}
           </span>
         }
         currentValue={!userPosition ? '-.--' : userPosition.margin.toFixed(4)}

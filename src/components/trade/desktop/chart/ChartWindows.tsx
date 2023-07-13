@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getCollectionInformation } from '@/const/collectionList';
-import TitleTips from '@/components/common/TitleTips';
 
 import Tooltip from '@/components/common/Tooltip';
 import {
@@ -148,16 +147,9 @@ const ChartHeaders = () => {
     <div className="flex w-full flex-row items-center justify-start text-[16px]">
       <div className="left">
         <div className="col my-auto">
-          {/* <div className="col pricetitletext my-auto">
-            <TitleTips
-              titleText="Futures (vAMM Price)"
-              tipsText="Resulting price of users' trades in the VAMM system based on the constant product formula"
-            />
-          </div> */}
           <div className="col newcontenttext mb-[16px]">
             <div className="font-400 flex space-x-[12px] text-[14px] text-highEmphasis">
               <div className="flex items-center space-x-[6px] text-[14px] font-normal">
-                {/* <Image  src={selectedCollection.logo} width={16} height={16} alt="" /> */}
                 <span>{collectionInfo ? collectionInfo.displayCollectionPair : ''}</span>
               </div>
               <div className="font-400 flex text-[14px] text-highEmphasis">
@@ -316,13 +308,9 @@ const ChartFooter = () => {
         </div>
       </div>
       <div className="flex space-x-[12px]">
-        <TitleTips
-          titleText={
-            <span className="flex w-[209px] justify-between text-mediumEmphasis">
-              <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
-            </span>
-          }
-          tipsText={
+        <Tooltip
+          direction="top"
+          content={
             <div className="text-center">
               The rate of the funding <br />
               payment. Funding payment is <br />
@@ -335,9 +323,11 @@ const ChartFooter = () => {
               simple weighted rolling average <br />
               basis.
             </div>
-          }
-          placement="top"
-        />
+          }>
+          <span className="flex w-[209px] justify-between text-mediumEmphasis">
+            <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
+          </span>
+        </Tooltip>
         <div className="col text-highEmphasis">
           Long <span className={longSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{longSide}</span>
           {rateLong}

@@ -15,19 +15,13 @@ import { useIsOverPriceGap, usePositionInfo, useTransactionIsPending, useFunding
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
 import { $isShowMobileModal } from '@/stores/modal';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
   return (
     <div className={`flex text-[14px] font-normal text-highEmphasis ${className}`}>
-      <Image
-        src={image || '/images/components/layout/header/eth-tribe3.svg'}
-        className="icon"
-        alt=""
-        width={16}
-        height={16}
-        style={{ marginRight: '4px' }}
-      />
+      <Image src={image || '/images/components/layout/header/eth-tribe3.svg'} className="mr-1" alt="" width={16} height={16} />
       <span className={`${isLoading ? 'flash' : ''}`}>{priceValue}</span>
     </div>
   );
@@ -114,11 +108,37 @@ export default function PositionMobile() {
       <div>
         <div className="px-5 pb-2 pt-6">
           <div className="mb-3 flex">
-            <div className="w-[180px] text-[14px] text-mediumEmphasis">Unrealized P/L</div>
+            <div className="flex w-[180px] items-center text-[14px] text-mediumEmphasis">
+              Unrealized P/L
+              <MobileTooltip
+                content={
+                  <>
+                    <div className="mb-3 text-[15px] font-semibold">Accumulated Realized P/L</div>
+                    <div className="text-[12px] font-normal">
+                      Realized P/L is the sum of funding payment and P/L from price change. P/L from price change is included in realized
+                      P/L when a position is partially/fully closed/liquidated
+                    </div>
+                  </>
+                }>
+                <Image
+                  src="/images/components/trade/history/more_info.svg"
+                  alt=""
+                  width={12}
+                  height={12}
+                  className="ml-[6px] cursor-pointer"
+                />
+              </MobileTooltip>
+            </div>
             <div className="text-[14px] font-normal">
               <MedPriceIcon
-                priceValue={positionInfo.unrealizedPnl === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
-                className={positionInfo.unrealizedPnl > 0 ? 'text-marketGreen' : positionInfo.unrealizedPnl === 0 ? '' : 'text-marketRed'}
+                priceValue={Number(positionInfo.unrealizedPnl.toFixed(4)) === 0 ? '0.0000' : positionInfo.unrealizedPnl.toFixed(4)}
+                className={
+                  Number(positionInfo.unrealizedPnl.toFixed(4)) > 0
+                    ? 'text-marketGreen'
+                    : Number(positionInfo.unrealizedPnl.toFixed(4)) === 0
+                    ? ''
+                    : 'text-marketRed'
+                }
                 isLoading={isLoading || isPending}
               />
             </div>
@@ -175,13 +195,6 @@ export default function PositionMobile() {
                   ? '100.00 x +'
                   : `${positionInfo.leverage.toFixed(2)} x`}
               </span>
-              {/* {positionInfo.leverage <= 0 ? (
-                <TitleTips
-                  placement="top"
-                  titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
-                  tipsText="Leverage ratio not meaningful when collateral is ≤ 0"
-                />
-              ) : null} */}
             </div>
           </div>
 
@@ -193,20 +206,6 @@ export default function PositionMobile() {
                 className={`${isOverPriceGap ? 'text-warn' : ''} `}
                 isLoading={isLoading || isPending}
               />
-              {/* {liquidationChanceWarning() && !liquidationRiskWarning() ? (
-                <TitleTips
-                  placement="top"
-                  titleText={<Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />}
-                  tipsText="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade."
-                />
-              ) : null} */}
-              {/* {liquidationRiskWarning() ? (
-                <TitleTips
-                  placement="top"
-                  titleText={<Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />}
-                  tipsText="Your position is at risk of being liquidated. Please manage your risk."
-                />
-              ) : null} */}
               {isOverPriceGap ? (
                 <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}

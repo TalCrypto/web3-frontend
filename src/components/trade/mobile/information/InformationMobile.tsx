@@ -35,7 +35,7 @@ function InformationMobile() {
       className="mr-auto mt-[6px] cursor-default overflow-hidden whitespace-nowrap
       rounded-[6px] border-0 border-t-[1px] border-t-[#71AAFF]/[.12] bg-lightBlue p-0">
       <div
-        className="info-tab no-scrollable mb-6 flex items-center overflow-x-scroll
+        className="info-tab no-scrollable mb-6 flex items-center overflow-hidden
           border-b-[2px] border-b-[#71AAFF]/[.12]">
         {Tabs}
       </div>
