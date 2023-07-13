@@ -35,9 +35,9 @@ export function DetailRowWithPriceIcon(props: any) {
   return (
     <div
       className={`flex justify-between border-t-[1px] border-t-secondaryBlue
-        {${isMobile ? 'px-5' : ''} py-3 text-[14px]`}>
-      <div>{label}</div>
-      <div className="text-white">
+        {${isMobile ? 'px-5' : ''} py-3 `}>
+      <div className="text-[14px] font-normal">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">
         <PriceWithIcon
           className={`${numberVal > 0 ? '!text-marketGreen' : numberVal < 0 ? '!text-marketRed' : ''}`}
           priceValue={`${numberVal > 0 ? '+' : ''}${content}`}
@@ -53,9 +53,9 @@ export function DetailRowWithPriceIconMobile(props: any) {
   return (
     <div
       className={`flex justify-between border-t-[1px] border-t-secondaryBlue
-        px-5 py-3 text-[14px]`}>
-      <div>{label}</div>
-      <div className="text-white">
+        px-5 py-3 `}>
+      <div className="text-[12px] font-normal text-highEmphasis">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">
         <PriceWithIcon
           className={`${numberVal > 0 ? 'text-marketGreen' : numberVal < 0 ? 'text-marketRed' : ''}`}
           priceValue={`${numberVal > 0 ? '+' : ''}${content}`}
@@ -67,22 +67,18 @@ export function DetailRowWithPriceIconMobile(props: any) {
 
 export function detailRow(label: any, content: any) {
   return (
-    <div
-      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
-        py-3 text-[14px]`}>
-      <div>{label}</div>
-      <div className="text-white">{content}</div>
+    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue py-3">
+      <div className="text-[14px] font-normal">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">{content}</div>
     </div>
   );
 }
 
 export function detailRowMobile(label: any, content: any) {
   return (
-    <div
-      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
-        px-5 py-3 text-[14px]`}>
-      <div>{label}</div>
-      <div className="text-white">{content}</div>
+    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 ">
+      <div className="text-[12px] font-normal text-highEmphasis">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">{content}</div>
     </div>
   );
 }
