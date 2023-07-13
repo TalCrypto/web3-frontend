@@ -271,7 +271,7 @@ function AdjustCollateralSlidingBars(props: any) {
         onChange={onChange}
         onAfterChange={onChange}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
+      <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">
         <div>
           Current
           <br />
@@ -301,6 +301,8 @@ export default function AdjustCollateral() {
   const approvalAmount = marginIndex === 1 || !debonceBigIntValue ? 0 : formatBigInt(debonceBigIntValue);
   const isNeedApproval = useApprovalCheck(approvalAmount);
 
+  const [isDisabled, setIsDisabled] = useState(false);
+
   const initializeState = useCallback(() => {
     setAdjustMarginValue(0);
     setIsPending(false);
@@ -317,6 +319,9 @@ export default function AdjustCollateral() {
 
   const handleChange = (value: any) => {
     setAdjustMarginValue(value);
+    const isError = value > 0 && value < 0.01;
+    setIsDisabled(isError);
+    setTextErrorMessage(isError ? 'Minimum trading size 0.01.' : null);
   };
 
   useEffect(() => {
@@ -374,6 +379,7 @@ export default function AdjustCollateral() {
           onPending={handlePending}
           onSuccess={initializeState}
           onError={handleError}
+          isDisabled={isDisabled}
         />
       ) : (
         <ReduceCollateralButton

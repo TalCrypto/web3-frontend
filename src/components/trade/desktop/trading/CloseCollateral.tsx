@@ -35,6 +35,20 @@ function SectionDividers() {
   );
 }
 
+function QuantityTips(props: any) {
+  const { isAmountTooSmall, isAmountTooLarge } = props;
+
+  const label = isAmountTooLarge ? 'Value is too large!' : isAmountTooSmall ? 'Minimum collateral size 0.01' : '';
+
+  if (!label) return null;
+
+  return (
+    <div>
+      <span className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</span>
+    </div>
+  );
+}
+
 function QuantityEnter(props: {
   closeValue: number;
   maxCloseValue: number;
@@ -78,9 +92,9 @@ function QuantityEnter(props: {
       <div className={`${disabled ? 'disabled' : ''}`}>
         <div className="mb-3 text-[14px] text-mediumEmphasis">Amount to Close (Notional)</div>
       </div>
-      <div className="mb-3">
+      <div className="mb-6">
         <div
-          className={`trade-input-outline rounded-[4px] bg-none p-[1px]
+          className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
@@ -130,6 +144,7 @@ function QuantityEnter(props: {
             />
           </div>
         </div>
+        <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       </div>
     </>
   );
@@ -165,20 +180,6 @@ function DisplayValues(props: any) {
       <div className={`flex-1 flex-shrink-0 text-right text-mediumEmphasis ${valueClassName}`}>
         <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
-    </div>
-  );
-}
-
-function QuantityTips(props: any) {
-  const { isAmountTooSmall, isAmountTooLarge } = props;
-
-  const label = isAmountTooLarge ? 'Value is too large!' : isAmountTooSmall ? 'Minimum collateral size 0.01' : '';
-
-  if (!label) return null;
-
-  return (
-    <div>
-      <span className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</span>
     </div>
   );
 }
@@ -298,7 +299,7 @@ function CloseSlider(props: {
         onAfterChange={onChange}
         step={0.0001}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
+      <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">
         <div>0</div>
         <div>Total Notional Value</div>
       </div>
@@ -388,7 +389,6 @@ export default function CloseCollateral() {
         isAmountTooLarge={isAmountTooLarge}
         disabled={isPending || isWrongNetwork}
       />
-      <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       <ErrorTip label={textErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
