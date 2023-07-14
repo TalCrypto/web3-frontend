@@ -31,6 +31,7 @@ export interface OpenPositionEstimation {
     positionNotional: number;
     margin: number;
     isLiquidatable: boolean;
+    resultingPrice: number;
   };
   txSummary: {
     notionalSize: number;
@@ -90,7 +91,8 @@ export const useOpenPositionEstimation = (args: {
           liquidationPrice: Math.max(formatBigInt(data.positionInfo.liquidationPrice), 0),
           positionNotional: formatBigInt(data.positionInfo.positionNotional),
           margin: formatBigInt(data.positionInfo.margin),
-          isLiquidatable: data.positionInfo.isLiquidatable
+          isLiquidatable: data.positionInfo.isLiquidatable,
+          resultingPrice: formatBigInt(data.positionInfo.spotPrice)
         },
         txSummary: {
           notionalSize: formatBigInt(data.txSummary.exchangedQuoteAssetAmount),

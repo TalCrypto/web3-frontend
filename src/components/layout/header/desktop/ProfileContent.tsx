@@ -12,6 +12,7 @@ import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { $showSwitchNetworkErrorModal, $showGetWEthModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import networkNameDisplay from '@/utils/networkName';
 
 interface PriceContentProps {
   priceValue: string;
@@ -120,7 +121,7 @@ const BottomContent = () => {
             )} */}
             <div>
               <div className="gradient-bg !bg-clip-text text-transparent">{displayAddress}</div>
-              <div className="text-[12px] font-medium text-mediumEmphasis">{currentChain?.name}</div>
+              <div className="text-[12px] font-medium text-mediumEmphasis">{networkNameDisplay(currentChain?.id)}</div>
             </div>
           </div>
           <div className="flex items-center">

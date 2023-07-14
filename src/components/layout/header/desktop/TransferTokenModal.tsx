@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $showGetWEthModal } from '@/stores/modal';
+import { $showGetWEthModal, $isShowMetamaskModal, $metamaskModalTarget } from '@/stores/modal';
 
 interface ButtonContentProps {
   icon: string;
@@ -27,8 +27,44 @@ function ButtonContent({ icon, url, name }: ButtonContentProps) {
   );
 }
 
+interface StaticButtonProps {
+  icon: string;
+  name: string;
+  redirect: () => void;
+}
+
+function StaticButton({ icon, name, redirect }: StaticButtonProps) {
+  const openUrl = () => {
+    $showGetWEthModal.set(false);
+    redirect();
+  };
+
+  return (
+    <div
+      className="mr-[24px] flex h-[40px] min-w-[120px] cursor-pointer
+      items-center justify-between rounded-[8px] border border-solid
+      border-blue-500 px-3 font-normal text-highEmphasis"
+      onClick={openUrl}>
+      <Image src={icon} alt="" className="mr-1 h-6 w-6" width={24} height={24} />
+      {name}
+    </div>
+  );
+}
+
 const TransferTokenModal = () => {
   const showTransferTokenModal = useNanostore($showGetWEthModal);
+
+  const redirectBridge = () => {
+    $metamaskModalTarget.set(0);
+    $showGetWEthModal.set(false);
+    $isShowMetamaskModal.set(true);
+  };
+
+  const redirectWrap = () => {
+    $metamaskModalTarget.set(1);
+    $showGetWEthModal.set(false);
+    $isShowMetamaskModal.set(true);
+  };
 
   if (!showTransferTokenModal) {
     return null;
@@ -58,13 +94,14 @@ const TransferTokenModal = () => {
             <div className="text-[15px] font-semibold text-highEmphasis">Bridge ETH / WETH to Arbitrum👇</div>
             <div className="items-initial z-2 mt-4 flex content-center justify-start">
               <ButtonContent url="https://bridge.arbitrum.io/" name="Arbitrum" icon="/images/components/layout/header/arbitrum.png" />
+              <StaticButton name="Metamask" icon="/images/components/layout/header/metamask-logo.png" redirect={redirectBridge} />
             </div>
           </div>
-          <div className="mb-[60px]">
+          <div className="z-[10] mb-[60px]">
             <div className="text-[15px] font-semibold text-highEmphasis">Wrap ETH on Arbitrum👇</div>
-            <div className="items-initial z-2 mt-4 flex content-center justify-start">
+            <div className="items-initial  mt-4 flex content-center justify-start">
               <ButtonContent url="https://app.uniswap.org/#/swap/" name="Uniswap" icon="/images/components/layout/header/uniswap.png" />
-              <div className="w-[120px]" />
+              <StaticButton name="Metamask" icon="/images/components/layout/header/metamask-logo.png" redirect={redirectWrap} />
             </div>
           </div>
           <Image

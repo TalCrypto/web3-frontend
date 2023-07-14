@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 // import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useApproveTransaction } from '@/hooks/trade';
+import { $isShowApproveModal, $isMobileView } from '@/stores/modal';
+import { useStore as useNanostore } from '@nanostores/react';
 // import { useStore as useNanostore } from '@nanostores/react';
 // import { $currentAmm } from '@/stores/trading';
 // import { getCollectionInformation } from '@/const/collectionList';
@@ -24,6 +26,7 @@ function ApproveButton({
   // const currentAmm = useNanostore($currentAmm);
   // const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
+  const isMobileView = useNanostore($isMobileView);
 
   const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction();
 
@@ -40,6 +43,24 @@ function ApproveButton({
       onSuccess();
     }
   }, [isSuccess, onSuccess]);
+
+  useEffect(() => {
+    if (!isMobileView) {
+      if (isLoading) {
+        $isShowApproveModal.set(true);
+      } else {
+        $isShowApproveModal.set(false);
+      }
+
+      if (isError) {
+        $isShowApproveModal.set(false);
+      }
+
+      if (isPending) {
+        $isShowApproveModal.set(false);
+      }
+    }
+  }, [isError, isPending, isLoading, isMobileView]);
 
   // useEffect(() => {
   //   if (isPending) {

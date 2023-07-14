@@ -24,6 +24,7 @@ import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
+import ApprovalModal from '@/components/trade/desktop/modals/ApprovalModal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -383,7 +384,8 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
             <div className="mb-2 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
-          <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+          <DisplayValues title="Execution Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+          <DisplayValues title="Resulting Price" value={estimation?.posInfo.resultingPrice.toFixed(2)} unit="WETH" />
           <DisplayValues
             title={
               <Tooltip
@@ -542,6 +544,7 @@ export default function MainTradeComponent() {
         isApproveRequired={isNeedApproval}
       />
       {estimation && <ExtendedEstimateComponent estimation={estimation} />}
+      <ApprovalModal />
     </div>
   );
 }

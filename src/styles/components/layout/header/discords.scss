@@ -1,0 +1,33 @@
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.discord-popup {
+  &.close {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &.open {
+    animation: fadeIn 0.5s;
+  }
+  .button {
+    background-color: #313339;
+    padding: 8px;
+    @include display-flex(center, initial, center);
+    border-radius: 50%;
+    right: 8px;
+    top: 8px;
+    cursor: pointer;
+
+    &:hover {
+      background: #979c9f;
+    }
+  }
+}

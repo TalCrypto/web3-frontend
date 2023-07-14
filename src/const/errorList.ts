@@ -12,7 +12,10 @@ const errorMsgList = {
   CH_BDP: 'Trade failed in execution due to bad debt incurred.',
   TH_STF: WETH_INSUFFICIENT,
   CH_MRNC: 'Resulting position DOES NOT meet the maintenance leverage requirement.',
-  CH_MNE: 'New Collateral must be above Initial Collateral Requirement.'
+  CH_MNE: 'New Collateral must be above Initial Collateral Requirement.',
+  CH_FCNE: 'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.',
+  CH_AC: '',
+  'User rejected the request': ''
 };
 
 export const formatError = (errorMsg: string) => {

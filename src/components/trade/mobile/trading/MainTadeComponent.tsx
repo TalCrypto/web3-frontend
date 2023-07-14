@@ -344,6 +344,7 @@ function ExtendedEstimateComponent(props: any) {
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
           <DisplayValues title="Execution Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+          <DisplayValues title="Resulting Price" value={estimation?.posInfo.resultingPrice.toFixed(2)} unit="WETH" />
           <DisplayValues
             title={
               <MobileTooltip

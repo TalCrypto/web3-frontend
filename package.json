@@ -18,6 +18,7 @@
     "@nanostores/react": "^0.4.1",
     "@web3modal/ethereum": "^2.6.2",
     "@web3modal/react": "^2.6.2",
+    "@widgetbot/react-embed": "^1.7.0",
     "downloadjs": "^1.4.7",
     "ethereum-block-by-date": "^1.4.7",
     "firebase": "^9.22.0",
