@@ -109,7 +109,7 @@ export const setIsConnecting = (val: boolean) => {
   $userIsConnecting.set(val);
 };
 
-export const setUserInfo = (val: UserInfo) => {
+export const setUserInfo = (val: UserInfo, userAddress: Address) => {
   if (val) {
     if (val.username && val.username.length <= 10) {
       $userDisplayName.set(val.username);
@@ -118,6 +118,8 @@ export const setUserInfo = (val: UserInfo) => {
     } else if (val.userAddress) {
       $userDisplayName.set(`${val.userAddress.substring(0, 7)}...${val.userAddress.slice(-3)}`);
     }
+  } else {
+    $userDisplayName.set(`${userAddress.substring(0, 7)}...${userAddress.slice(-3)}`);
   }
 
   $userInfo.set(val);

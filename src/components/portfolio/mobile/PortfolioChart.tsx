@@ -213,7 +213,7 @@ function PortfolioChart() {
       };
 
       // Create and style the tooltip html element
-      const container: any = document.getElementById('divChartWindows');
+      const container: any = document.getElementById('divChartMobile');
       const toolTipWidth = 80;
       // Create and style the tooltip html element
 
@@ -269,7 +269,7 @@ function PortfolioChart() {
           //     ? coordinate - toolTipHeight - toolTipMargin
           //     : Math.max(0, Math.min(container.clientHeight - toolTipHeight - toolTipMargin, coordinate + toolTipMargin));
           toolTip.style.left = `${shiftedCoordinate}px`;
-          toolTip.style.top = `${40}px`;
+          toolTip.style.top = `${-60}px`;
         }
       });
 
@@ -288,7 +288,7 @@ function PortfolioChart() {
     };
   }, [lineChartData, histogramChartData, isShowBalance, isMobileView]);
 
-  return <div id="divChartWindows" className="relative" ref={chartContainerRef} />;
+  return <div id="divChartMobile" className="relative" ref={chartContainerRef} />;
 }
 
 export default PortfolioChart;

@@ -7,7 +7,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-import TitleTips from '@/components/common/TitleTips';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseModal';
 
@@ -16,12 +15,12 @@ import { usePositionInfo } from '@/hooks/collection';
 import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance, UserPositionInfo } from '@/stores/user';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
-import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
-import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import Tooltip from '@/components/common/Tooltip';
@@ -32,6 +31,20 @@ function SectionDividers() {
       <div>
         <div className="mb-6 h-[1px] bg-[#2e3064]" />
       </div>
+    </div>
+  );
+}
+
+function QuantityTips(props: any) {
+  const { isAmountTooSmall, isAmountTooLarge } = props;
+
+  const label = isAmountTooLarge ? 'Value is too large!' : isAmountTooSmall ? 'Minimum collateral size 0.01' : '';
+
+  if (!label) return null;
+
+  return (
+    <div>
+      <span className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</span>
     </div>
   );
 }
@@ -79,9 +92,9 @@ function QuantityEnter(props: {
       <div className={`${disabled ? 'disabled' : ''}`}>
         <div className="mb-3 text-[14px] text-mediumEmphasis">Amount to Close (Notional)</div>
       </div>
-      <div className="mb-3">
+      <div className="mb-6">
         <div
-          className={`trade-input-outline rounded-[4px] bg-none p-[1px]
+          className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
               ${disabled ? 'disabled' : ''}`}>
@@ -131,6 +144,7 @@ function QuantityEnter(props: {
             />
           </div>
         </div>
+        <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       </div>
     </>
   );
@@ -170,20 +184,6 @@ function DisplayValues(props: any) {
   );
 }
 
-function QuantityTips(props: any) {
-  const { isAmountTooSmall, isAmountTooLarge } = props;
-
-  const label = isAmountTooLarge ? 'Value is too large!' : isAmountTooSmall ? 'Minimum collateral size 0.01' : '';
-
-  if (!label) return null;
-
-  return (
-    <div>
-      <span className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</span>
-    </div>
-  );
-}
-
 function EstimationComponent(props: {
   userPosition: UserPositionInfo | undefined;
   estimation: OpenPositionEstimation | undefined;
@@ -206,11 +206,9 @@ function EstimationComponent(props: {
           <span className="flex">
             Collateral&nbsp;
             {!isFullClose ? (
-              <TitleTips
-                titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                tipsText="Collateral will not change."
-                placement="top"
-              />
+              <Tooltip direction="top" content="Collateral will not change">
+                <Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />
+              </Tooltip>
             ) : null}
           </span>
         }
@@ -226,27 +224,7 @@ function EstimationComponent(props: {
         newValue={!estimation || isFullClose ? '-.--' : estimation.posInfo.leverage.toFixed(2)}
         unit="x"
       />
-      {/* {!userPosition || estimatedValue === null ? (
-        <UpdateValueNoDataDisplay title="Collateral Ratio" unit="%" />
-      ) : (
-        <UpdateValueDisplay
-          title="Collateral Ratio"
-          
-          currentValue={!userPosition ? '-.--' : userPosition.realMarginRatio.toFixed(2)}
-          currentUnit="%"
-          newValue={
-            !isNewPosition
-              ? '-.--'
-              : Number(closeValue) === Number(currentMaxValue)
-              ? '0.00'
-              : estimatedValue.newPosition.marginRatio.toFixed(2)
-          }
-          unit="%"
-        />
-      )} */}
       <SectionDividers />
-      {/* <DisplayValues title="Transaction Fee" unit=" WETH" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.fee, 5)} /> */}
-      {/* <DisplayValues title="Price Impact" value={!isNewPosition ? '-.-' : formatterValue(estimatedValue.priceImpact, 2, '%')} /> */}
     </div>
   );
 }
@@ -279,8 +257,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; 
         <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
       </div>
       <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
-      {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
-      <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+      <DisplayValues title="Execution Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
         <Tooltip
           direction="right"
@@ -322,7 +299,7 @@ function CloseSlider(props: {
         onAfterChange={onChange}
         step={0.0001}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
+      <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">
         <div>0</div>
         <div>Total Notional Value</div>
       </div>
@@ -412,7 +389,6 @@ export default function CloseCollateral() {
         isAmountTooLarge={isAmountTooLarge}
         disabled={isPending || isWrongNetwork}
       />
-      <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       <ErrorTip label={textErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
@@ -436,7 +412,7 @@ export default function CloseCollateral() {
               the time of trade confirmation <br />
               the actual price of the <br />
               transaction that the users are <br />
-              willing to acceptM
+              willing to accept
             </div>
           }>
           <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
@@ -509,12 +485,7 @@ export default function CloseCollateral() {
           onError={handleError}
         />
       )}
-      {/* {textErrorMessage ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
-      {/* <div className="row">
-        <div className="col-auto text-[14px] text-mediumEmphasis">
-          * Collateral will {closeValue >= currentMaxValue ? '' : 'not'} be released
-        </div>
-      </div> */}
+
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
         <>
           <div className="mt-6 flex">
@@ -538,9 +509,6 @@ export default function CloseCollateral() {
         isShow={isShowPartialCloseModal}
         setIsShow={setIsShowPartialCloseModal}
         onClickSubmit={() => {
-          // setTradeWindowIndex(2); // set tab to adjust collateral
-
-          // actionButtonRef.current?.closePosition();
           setIsShowPartialCloseModal(false);
         }}
       />

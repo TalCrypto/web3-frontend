@@ -123,6 +123,8 @@ const PositionInfoUpdater: React.FC<{
 const UserDataUpdater: React.FC = () => {
   const [wethAddr, setWethAddr] = useState<Address>();
   const { address, isConnected, isConnecting } = useAccount();
+  // const { isConnected, isConnecting } = useAccount();
+  // const address = '0x958d58fbb67666e5f693895edc65f46d051ee304';
   const { chain } = useNetwork();
   const { isOpen } = useWeb3Modal();
   const { data } = useBalance({ address, token: wethAddr, watch: true, enabled: Boolean(wethAddr) });
@@ -144,7 +146,7 @@ const UserDataUpdater: React.FC = () => {
   useEffect(() => {
     if (address) {
       apiConnection.getUserInfo(address).then(result => {
-        setUserInfo(result.data);
+        setUserInfo(result.data, address);
       });
       apiConnection.getUserPoint(address).then(res => {
         if (res?.multiplier) {
@@ -196,59 +198,62 @@ const UserDataUpdater: React.FC = () => {
   }, [isConnected]);
 
   useEffect(() => {
-    if (address && chain) {
-      apiConnection.getUserTradingHistory(address).then(res => {
-        const history = res.data.tradeHistory.map(
-          (item: {
-            txHash: string;
-            entryPrice: string;
-            ammAddress: string;
-            timestamp: number;
-            amount: string;
-            collateralChange: string;
-            margin: string;
-            previousMargin: string;
-            fundingPayment: string;
-            type: string;
-            exchangedPositionSize: string;
-            positionSizeAfter: string;
-            positionNotional: string;
-            fee: string;
-            realizedPnl: string;
-            totalFundingPayment: string;
-            notionalChange: string;
-            liquidationPenalty: string;
-            badDebt: string;
-            openNotional: string;
-            previousOpenNotional: string;
-          }) => ({
-            amm: getAMMByAddress(getAddress(item.ammAddress), chain),
-            txHash: String(item.txHash),
-            entryPrice: formatBigInt(item.entryPrice),
-            ammAddress: getAddress(item.ammAddress),
-            timestamp: Number(item.timestamp),
-            amount: formatBigInt(item.amount),
-            collateralChange: formatBigInt(item.collateralChange),
-            margin: formatBigInt(item.margin),
-            previousMargin: formatBigInt(item.previousMargin),
-            fundingPayment: formatBigInt(item.fundingPayment),
-            type: String(item.type),
-            exchangedPositionSize: formatBigInt(item.exchangedPositionSize),
-            positionSizeAfter: formatBigInt(item.positionSizeAfter),
-            positionNotional: formatBigInt(item.positionNotional),
-            fee: formatBigInt(item.fee),
-            realizedPnl: formatBigInt(item.realizedPnl),
-            totalFundingPayment: formatBigInt(item.totalFundingPayment),
-            notionalChange: formatBigInt(item.notionalChange),
-            liquidationPenalty: formatBigInt(item.liquidationPenalty),
-            badDebt: formatBigInt(item.badDebt),
-            openNotional: formatBigInt(item.openNotional),
-            previousOpenNotional: formatBigInt(item.previousOpenNotional)
-          })
-        );
-        $userPositionHistory.set(history);
-      });
+    function update() {
+      if (address && chain) {
+        apiConnection.getUserTradingHistory(address).then(res => {
+          const history = res.data.tradeHistory.map(
+            (item: {
+              txHash: string;
+              entryPrice: string;
+              ammAddress: string;
+              timestamp: number;
+              amount: string;
+              collateralChange: string;
+              margin: string;
+              previousMargin: string;
+              fundingPayment: string;
+              type: string;
+              exchangedPositionSize: string;
+              positionSizeAfter: string;
+              positionNotional: string;
+              fee: string;
+              realizedPnl: string;
+              totalFundingPayment: string;
+              notionalChange: string;
+              liquidationPenalty: string;
+              badDebt: string;
+              openNotional: string;
+              previousOpenNotional: string;
+            }) => ({
+              amm: getAMMByAddress(getAddress(item.ammAddress), chain),
+              txHash: String(item.txHash),
+              entryPrice: formatBigInt(item.entryPrice),
+              ammAddress: getAddress(item.ammAddress),
+              timestamp: Number(item.timestamp),
+              amount: formatBigInt(item.amount),
+              collateralChange: formatBigInt(item.collateralChange),
+              margin: formatBigInt(item.margin),
+              previousMargin: formatBigInt(item.previousMargin),
+              fundingPayment: formatBigInt(item.fundingPayment),
+              type: String(item.type),
+              exchangedPositionSize: formatBigInt(item.exchangedPositionSize),
+              positionSizeAfter: formatBigInt(item.positionSizeAfter),
+              positionNotional: formatBigInt(item.positionNotional),
+              fee: formatBigInt(item.fee),
+              realizedPnl: formatBigInt(item.realizedPnl),
+              totalFundingPayment: formatBigInt(item.totalFundingPayment),
+              notionalChange: formatBigInt(item.notionalChange),
+              liquidationPenalty: formatBigInt(item.liquidationPenalty),
+              badDebt: formatBigInt(item.badDebt),
+              openNotional: formatBigInt(item.openNotional),
+              previousOpenNotional: formatBigInt(item.previousOpenNotional)
+            })
+          );
+          $userPositionHistory.set(history);
+        });
+      }
     }
+    update();
   }, [address, chain]);
 
   if (!amms) return null;

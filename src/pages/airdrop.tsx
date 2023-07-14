@@ -19,6 +19,7 @@ import TabSwitcher from '@/components/airdrop/mobile/TabSwitcher';
 import LeaderboardMobile from '@/components/airdrop/mobile/Leaderboard';
 import LeaderboardDataUpdater from '@/components/updaters/LeaderboardUpdater';
 import { ToastContainer } from 'react-toastify';
+import UserReferralUpdater from '@/components/updaters/UserReferralUpdater';
 
 export default function Home() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export default function Home() {
     <>
       <PageHeader
         title="Airdrop"
-        ogTitle="Start to trade, hedge, leverage with a real-time charts."
+        ogTitle="Start longing or shorting NFT collections with leverage."
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
 
@@ -114,6 +115,7 @@ export default function Home() {
         </div>
 
         <LeaderboardDataUpdater />
+        <UserReferralUpdater />
       </main>
     </>
   );

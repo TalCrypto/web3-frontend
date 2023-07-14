@@ -16,24 +16,69 @@ export function ExplorerButton(props: any) {
   );
 }
 
-export function LiquidationWarning() {
+export function LiquidationWarning({ isFullLiquidation = true }) {
+  const fullContent = 'Your position has been liquidated because it no longer meet the collateral requirement.';
+  const partialContent = 'Your position has been partially liquidated because it no longer meet the collateral requirement.';
+  const content = isFullLiquidation ? fullContent : partialContent;
+
   return (
     <div className="flex items-start">
       <Image src="/images/common/alert/dashboard_notice.svg" alt="" className="mr-[6px]" width={16} height={16} />
-      <div className="text-[12px] text-warn">Your position has been liquidated because it no longer meet the collateral requirement.</div>
+      <div className="text-[12px] text-warn">{content}</div>
     </div>
   );
 }
 
 export function DetailRowWithPriceIcon(props: any) {
+  const { label, content, isMobile = false } = props;
+  const numberVal = Number(content);
+  return (
+    <div
+      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
+        {${isMobile ? 'px-5' : ''} py-3 `}>
+      <div className="text-[14px] font-normal">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">
+        <PriceWithIcon
+          className={`${numberVal > 0 ? '!text-marketGreen' : numberVal < 0 ? '!text-marketRed' : ''}`}
+          priceValue={`${numberVal > 0 ? '+' : ''}${content}`}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function DetailRowWithPriceIconMobile(props: any) {
   const { label, content } = props;
   const numberVal = Number(content);
   return (
-    <div className="mt-6 flex justify-between text-[14px]">
-      <div>{label}</div>
-      <div className="text-white">
-        <PriceWithIcon className={`${numberVal > 0 ? 'plus' : numberVal < 0 ? 'minus' : ''}`} priceValue={content} />
+    <div
+      className={`flex justify-between border-t-[1px] border-t-secondaryBlue
+        px-5 py-3 `}>
+      <div className="text-[12px] font-normal text-highEmphasis">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">
+        <PriceWithIcon
+          className={`${numberVal > 0 ? 'text-marketGreen' : numberVal < 0 ? 'text-marketRed' : ''}`}
+          priceValue={`${numberVal > 0 ? '+' : ''}${content}`}
+        />
       </div>
+    </div>
+  );
+}
+
+export function detailRow(label: any, content: any) {
+  return (
+    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue py-3">
+      <div className="text-[14px] font-normal">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">{content}</div>
+    </div>
+  );
+}
+
+export function detailRowMobile(label: any, content: any) {
+  return (
+    <div className="flex justify-between border-t-[1px] border-t-secondaryBlue px-5 py-3 ">
+      <div className="text-[12px] font-normal text-highEmphasis">{label}</div>
+      <div className="text-[14px] font-medium text-highEmphasis">{content}</div>
     </div>
   );
 }

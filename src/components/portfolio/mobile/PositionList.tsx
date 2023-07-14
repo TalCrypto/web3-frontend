@@ -27,14 +27,12 @@ function PositionList() {
         </div>
       ) : (
         <div className="scrollable">
-          <div className="px-5">
-            {psUserPosition.map(item => {
-              if (!item) {
-                return null;
-              }
-              return <PositionListItem key={`position_item_mobile_${item.amm}`} userPosition={item} />;
-            })}
-          </div>
+          {psUserPosition.map(item => {
+            if (!item) {
+              return null;
+            }
+            return <PositionListItem key={`position_item_mobile_${item.amm}`} userPosition={item} />;
+          })}
         </div>
       )}
     </div>

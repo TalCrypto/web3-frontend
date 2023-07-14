@@ -12,11 +12,11 @@ import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
 import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
@@ -214,7 +214,7 @@ function EstimatedValueDisplay(props: any) {
             content={
               <div className="text-center">
                 The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
-                the users are willing to acceptM
+                the users are willing to accept
               </div>
             }>
             <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
@@ -287,16 +287,7 @@ function Tips({
   ) : isRequireWeth ? (
     'Please get WETH first !'
   ) : isApproveRequired ? (
-    <>
-      Please approve before trading! <br />{' '}
-      <a
-        target="_blank"
-        href="https://tribe3.gitbook.io/tribe3/getting-started/set-up-wallet-get-weth-and-start"
-        rel="noreferrer"
-        className="underline">
-        Learn more
-      </a>
-    </>
+    <>Please approve before trading!</>
   ) : null;
 
   return (
@@ -352,7 +343,7 @@ function ExtendedEstimateComponent(props: any) {
             <div className="mb-2 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
-          <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+          <DisplayValues title="Execution Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
           <DisplayValues
             title={
               <MobileTooltip

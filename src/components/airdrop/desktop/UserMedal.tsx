@@ -5,6 +5,7 @@ import Tooltip from '@/components/common/Tooltip';
 const UserMedal = (props: any) => {
   let medal = null;
   const { rank, isBan = false, isYou = false, isUnranked = false, isMobile = false } = props;
+  let isYouClass = 'bottom-1';
 
   if (isBan) {
     medal = (
@@ -12,17 +13,23 @@ const UserMedal = (props: any) => {
         <Image src="/images/components/airdrop/banned.svg" width={50} height={26} alt="" />
       </div>
     );
-  } else if (isUnranked) {
-    medal = <div className="flex h-[38px] items-center justify-center text-[12px] font-bold">{!isMobile ? 'Unranked' : 'Unrank'}</div>;
-  } else if (rank <= 3) {
+  } else if (isUnranked && !isMobile) {
+    medal = <div className="flex h-[38px] items-center justify-center text-[12px] font-bold">Unranked</div>;
+  } else if (rank >= 1 && rank <= 3) {
     medal = (
-      <div className="w-[50px]">
-        <Image src={`/images/components/airdrop/medal/medal${rank}.svg`} width={50} height={28} alt="" />
-      </div>
+      <Image
+        className={`${isMobile ? 'ml-[-11px]' : 'ml-[-4px]'}`}
+        src={`/images/components/airdrop/medal/medal${rank}.svg`}
+        width={50}
+        height={28}
+        alt=""
+      />
     );
+
+    isYouClass = isMobile ? 'ml-[1px] bottom-[-1px]' : 'ml-[-4px] bottom-[-3px]';
   } else {
     medal = (
-      <div className={`px-3 ${isYou ? 'pb-[10px]' : ''}`}>
+      <div className={`${isMobile ? 'ml-[1px]' : 'px-2'}`}>
         <div
           className="relative flex h-[26px] w-[26px] items-center justify-center
             rounded-full text-center text-[13px] font-semibold text-highEmphasis">
@@ -34,17 +41,21 @@ const UserMedal = (props: any) => {
             height={22}
             alt=""
           />
-          <div className="z-[1]">{rank}</div>
+          <div className="z-[1]">{isUnranked ? '-' : rank}</div>
         </div>
       </div>
     );
+    isYouClass = isMobile ? 'bottom-[-8px]' : 'bottom-[-8px]';
   }
 
   const content = (
     <div className="relative">
       {medal}
       {isYou ? (
-        <div style={{ left: 'calc(50% - 13px)' }} className="absolute bottom-1 h-[12px] w-[27px]">
+        <div
+          className={`absolute h-[12px] w-[27px] ${isYouClass}
+          ${isMobile ? '' : 'left-[calc(50%-13px)]'}
+        `}>
           <Image src="/images/components/airdrop/YOU.svg" width={27} height={12} alt="" />
         </div>
       ) : null}

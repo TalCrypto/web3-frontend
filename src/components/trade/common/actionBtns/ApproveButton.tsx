@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/common/actionBtns/BaseButton';
+import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useApproveTransaction } from '@/hooks/trade';
 // import { useStore as useNanostore } from '@nanostores/react';
 // import { $currentAmm } from '@/stores/trading';
@@ -25,7 +25,7 @@ function ApproveButton({
   // const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction(approvalAmount);
+  const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction();
 
   useEffect(() => {
     if (isError) {
@@ -61,7 +61,7 @@ function ApproveButton({
 
   return (
     <BaseButton
-      disabled={!write}
+      disabled={!write && approvalAmount > 0}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();

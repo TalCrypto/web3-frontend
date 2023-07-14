@@ -49,7 +49,6 @@ function PositionInfo() {
         const result = b.margin - a.margin;
         return collateralValue === 2 ? -result : result;
       });
-      $psUserPosition.set(temp);
     }
   }, [positionSorting]);
 
@@ -57,7 +56,7 @@ function PositionInfo() {
 
   return (
     <div>
-      <div className="mt-6 rounded-[12px] bg-lightBlue">
+      <div className="mt-6 min-h-[400px] rounded-[12px] bg-lightBlue">
         <div className="flex justify-between border-b-[1px] border-b-secondaryBlue p-6">
           <div className="flex items-center">
             <Image src="/images/components/portfolio/position_new.svg" width={20} height={20} alt="" />
@@ -68,7 +67,7 @@ function PositionInfo() {
           {isConnected ? <OutlineButton onClick={() => $psShowHistory.set(true)}>Trade History</OutlineButton> : null}
         </div>
 
-        <div className="mb-[66px] min-h-[444px] pb-[140px]">
+        <div className="mb-[66px] pb-5">
           {isConnected ? (
             <div className="dashboard-list">
               <div

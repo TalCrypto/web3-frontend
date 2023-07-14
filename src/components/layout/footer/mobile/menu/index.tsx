@@ -4,12 +4,23 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $isShowMobileModal, $showGetWEthModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
-import { $userAddress, $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import {
+  $userAddress,
+  $userIsConnected,
+  $userIsConnecting,
+  $userIsWrongNetwork,
+  $userWethBalance,
+  $userDisplayName,
+  $userTotalCollateral
+} from '@/stores/user';
 import { useDisconnect, useSwitchNetwork } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { showToast } from '@/components/common/Toast';
+import { $userPoint } from '@/stores/airdrop';
+import { localeConversion } from '@/utils/localeConversion';
 
 const MobileMenu = (props: any) => {
   const { setIsShowMobileMenu } = props;
@@ -19,9 +30,13 @@ const MobileMenu = (props: any) => {
 
   const address = useNanostore($userAddress);
   const wethBalance = useNanostore($userWethBalance);
+  const userPoint = useNanostore($userPoint);
+  const username = useNanostore($userDisplayName);
+  const userTotalCollateral = useNanostore($userTotalCollateral);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
   const [isOthersOpen, setIsOthersOpen] = useState(false);
+  const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { disconnect } = useDisconnect();
 
@@ -53,12 +68,23 @@ const MobileMenu = (props: any) => {
     disconnect();
   };
 
+  function showSnackBar() {
+    const snackbar = document.getElementById('snackbar');
+    if (snackbar) {
+      snackbar.className = 'snackbar show';
+      setTimeout(() => {
+        snackbar.className = snackbar.className.replace('show', '');
+      }, 3000);
+    }
+  }
+
   const onBtnCopyAddressClick = () => {
-    // navigator.clipboard.writeText(address);
+    navigator.clipboard.writeText(address || '');
+    showSnackBar();
   };
 
   const onBtnGetWethClick = () => {
-    // getTestToken();
+    setIsSwapWidgetOpen(true);
   };
 
   const onBtnClickSocial = () => {
@@ -71,40 +97,49 @@ const MobileMenu = (props: any) => {
     router.push(url);
   };
 
+  const redirectExternal = (url: string) => {
+    setIsSwapWidgetOpen(false);
+    window.open(url, '_blank');
+  };
+
   return (
     <div
       className="fixed bottom-0 left-0 right-0 top-0 z-10  h-screen w-full
         overflow-auto bg-lightBlue">
       <div className="flex h-full pt-[18px]">
         <div className="w-full pl-[20px] text-[14px] text-highEmphasis">
-          <div className="flex w-full items-center">
-            <div className="mr-3 w-[60px]">
-              <Image className="mr-[6px]" src="/images/mobile/common/avatar.svg" alt="" width={60} height={60} />
+          {isConnected ? (
+            <div className="flex w-full items-center">
+              <div className="mr-3 w-[60px]">
+                <Image className="mr-[6px]" src="/images/mobile/common/avatar.svg" alt="" width={60} height={60} />
+              </div>
+              <div className="max-w-[calc(100%-50px)] ">
+                <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">{username}</div>
+                <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
+                  Points: <span className="font-semibold">{localeConversion(userPoint?.total || 0, 2, 2)}</span>
+                </span>
+              </div>
             </div>
-            <div className="max-w-[calc(100%-50px)] ">
-              <div className="mb-3 overflow-hidden text-ellipsis text-[20px] font-semibold">EMMMMMMMMMMMA</div>
-              <span className="w-auto rounded-[12px] bg-[#71562E] px-[8px] py-1 text-[14px] ">
-                Points: <span className="font-semibold">{points}</span>
-              </span>
-            </div>
-          </div>
-          <div className="scrollable mt-9 h-[calc(100%-361px)] overflow-y-scroll">
+          ) : null}
+          <div className="scrollable mt-[36px] h-[calc(100%-361px)] overflow-y-scroll">
             <div className="pb-[35px]">
-              <div
-                onClick={() => onGotoPage('/portfolio')}
-                className={`
+              <div onClick={() => onGotoPage('/portfolio')}>
+                <span
+                  className={`
                 ${router.route.toLowerCase() === '/portfolio' ? 'mobile-menu-active font-semibold' : ''}
               `}>
-                Portfolio
+                  Portfolio
+                </span>
               </div>
             </div>
             <div className="pb-[35px]">
-              <div
-                onClick={() => onGotoPage('/trade')}
-                className={`
+              <div onClick={() => onGotoPage('/trade')}>
+                <span
+                  className={`
                 ${router.route.toLowerCase() === '/trade' ? 'mobile-menu-active font-semibold' : ''}
               `}>
-                Trade
+                  Trade
+                </span>
               </div>
             </div>
             {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
@@ -124,7 +159,7 @@ const MobileMenu = (props: any) => {
                 <div className="ml-5 pb-[35px]">
                   <div
                     onClick={() => onGotoPage('/airdrop')}
-                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    className={`${router.route.toLowerCase() === '/avatar' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Avatar
                     <span
                       className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
@@ -136,7 +171,7 @@ const MobileMenu = (props: any) => {
                 <div className="ml-5 pb-[35px]">
                   <div
                     onClick={() => onGotoPage('/airdrop')}
-                    className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
+                    className={`${router.route.toLowerCase() === '/battle' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Battle
                     <span
                       className="ml-[6px] rounded-[2px] border-[1px] border-comingSoon px-[3px]
@@ -149,9 +184,14 @@ const MobileMenu = (props: any) => {
             ) : null}
 
             <div className="pb-[35px]">
-              <Link href="/airdrop" className={`${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}`}>
-                Airdrop
-              </Link>
+              <div onClick={() => onGotoPage('/airdrop')}>
+                <span
+                  className={`
+                ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
+              `}>
+                  Airdrop
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -257,7 +297,12 @@ const MobileMenu = (props: any) => {
           ) : (
             <div className="mx-[26px]">
               <div className="mt-[20px] flex items-center justify-center">
-                <PriceWithIcon priceValue={wethBalance.toFixed(4)} className="text-[20px]" width={22} height={22} />
+                <PriceWithIcon
+                  priceValue={Number(wethBalance + userTotalCollateral).toFixed(4)}
+                  className="text-[20px]"
+                  width={22}
+                  height={22}
+                />
               </div>
               <div
                 className="mb-[24px] mt-[11px] text-[14px] font-normal
@@ -320,6 +365,58 @@ const MobileMenu = (props: any) => {
           />
         </div>
       </div>
+
+      <div className="snackbar" id="snackbar">
+        Copied to clipboard
+      </div>
+
+      {isSwapWidgetOpen ? (
+        <div
+          className={`fixed w-full transition
+        ${isSwapWidgetOpen ? 'bottom-[0px]' : 'bottom-[-250px]'}
+        bg-secondaryBlue duration-500
+      `}>
+          <div className="h-[250px] px-[20px] pb-[6px] pt-[24px] ">
+            <div className="font-[600] text-[#fff] ">Bridge ETH / WETH to Arbitrum👇</div>
+            <div className="mt-[16px]  flex flex-row">
+              <div
+                className="flex w-auto flex-row 
+                items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
+                px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
+                onClick={() => redirectExternal('https://bridge.arbitrum.io/')}>
+                <Image className="mr-[6px]" src="/icons/providers/arbitrum.png" alt="" width={24} height={24} />
+                Arbitrum
+              </div>
+              <div />
+            </div>
+            <div className="mt-[24px]  ">
+              <div className="font-[600] text-[#fff] ">Wrap ETH on Arbitrum👇</div>
+            </div>
+            <div className="mt-[16px] flex flex-row">
+              <div
+                className="flex w-auto flex-row 
+                items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
+                px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
+                onClick={() => redirectExternal('https://app.uniswap.org/#/swap/')}>
+                <Image className="mr-[6px]" src="/icons/providers/uniswap.png" alt="" width={24} height={24} />
+                Uniswap
+              </div>
+              <div />
+            </div>
+            <div className="flex flex-row justify-end">
+              <Image
+                src="/images/mobile/common/close.svg"
+                alt=""
+                width={40}
+                height={40}
+                onClick={() => {
+                  setIsSwapWidgetOpen(false);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

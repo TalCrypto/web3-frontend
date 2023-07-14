@@ -1,69 +1,37 @@
-/* eslint-disable operator-linebreak */
-/* eslint-disable indent */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
-import BaseButton from '@/components/common/actionBtns/BaseButton';
-import { OpenPositionEstimation, Side, useOpenPositionTransaction } from '@/hooks/trade';
+import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
+import { useAddCollateralTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm, $tsTransactionStatus } from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
-import { usePositionInfo } from '@/hooks/collection';
-import { TradeActions } from '@/const';
+import { CollateralActions } from '@/const';
 import { $isMobileView } from '@/stores/modal';
 
-function OpenPosButton({
+function AddCollateralButton({
   isEstimating,
-  side,
-  notionalAmount,
-  leverage,
-  slippagePercent,
-  estimation,
+  deltaMargin,
   onPending,
   onSuccess,
-  onError
+  onError,
+  isDisabled
 }: {
   isEstimating: boolean;
-  side: Side;
-  notionalAmount: number;
-  leverage: number;
-  slippagePercent: number;
-  estimation: OpenPositionEstimation | undefined;
+  deltaMargin: number;
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
   onError: (error: Error | null) => void;
+  isDisabled: boolean;
 }) {
+  if (deltaMargin < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
-  const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
-  const [label, setLabel] = useState('');
   const isMobileView = useNanostore($isMobileView);
 
-  useEffect(() => {
-    if (positionInfo) {
-      const posType =
-        positionInfo.size === 0
-          ? `${TradeActions.OPEN} Position`
-          : (-1) ** side * positionInfo.size > 0
-          ? `${TradeActions.ADD} Position`
-          : `${TradeActions.REDUCE} Position`;
-      setLabel(posType);
-    }
-  }, [positionInfo, side]);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, [currentAmm]);
-
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useOpenPositionTransaction({
-    side,
-    notionalAmount,
-    leverage,
-    slippagePercent,
-    estimation
-  });
+  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useAddCollateralTransaction(deltaMargin);
 
   useEffect(() => {
     if (isError) {
@@ -87,12 +55,12 @@ function OpenPosButton({
   }, [isSuccess, txHash, onSuccess]);
 
   useEffect(() => {
-    if (isPending && txHash) {
+    if (isPending) {
       if (!isMobileView) {
         showToast(
           {
             warning: true,
-            title: `${collectionInfo.shortName} - ${label}`,
+            title: `${collectionInfo.shortName} - ${CollateralActions.ADD}`,
             message: 'Order Received!',
             linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
             linkLabel: 'Check on Arbiscan'
@@ -104,20 +72,20 @@ function OpenPosButton({
         );
       }
     }
-  }, [isPending, label, txHash]);
+  }, [isPending, collectionInfo.shortName, txHash]);
 
   return (
     <BaseButton
-      disabled={!write}
+      disabled={!write || isDisabled}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();
         setIsLoading(true);
         write?.();
       }}
-      label={label}
+      label="Add Collateral"
     />
   );
 }
 
-export default OpenPosButton;
+export default AddCollateralButton;

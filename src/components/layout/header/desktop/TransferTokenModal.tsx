@@ -36,7 +36,7 @@ const TransferTokenModal = () => {
 
   return (
     <div
-      className="fixed inset-0 z-10 flex h-screen items-center
+      className="fixed inset-0 z-20 flex h-screen items-center
         justify-center overflow-auto bg-black bg-opacity-40"
       onClick={() => $showGetWEthModal.set(false)}>
       <div

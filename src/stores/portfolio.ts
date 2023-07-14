@@ -25,6 +25,8 @@ export const $psHistogramChartData = atom();
 
 export const $accumulatedDailyPnl = atom(0);
 
+export const $psLiqSwitchRatio = atom<number | undefined>();
+
 export const $psTimeDescription: any = {
   0: '(1 Week)',
   1: '(1 Month)',

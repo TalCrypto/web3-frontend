@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { $psShowBalance, $psUserPosition } from '@/stores/portfolio';
 import { useRouter } from 'next/router';
@@ -6,17 +5,21 @@ import React from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import PositionListItem from '@/components/portfolio/desktop/PositionListItem';
+import { $userTotalFP } from '@/stores/user';
+import { AMM } from '@/const/collectionList';
 
 function PositionList() {
   const router = useRouter();
   const psUserPosition = useNanostore($psUserPosition);
   const isShowBalance = useNanostore($psShowBalance);
+  const totalFP = useNanostore($userTotalFP);
 
   const totalCollateral = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
 
   const totalUnrealized = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.unrealizedPnl), 0);
-
-  const totalFundingPaymentAccount = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.fundingPayment), 0);
+  const totalFundingPaymentAccount = Object.keys(totalFP)
+    .map(amm => totalFP[amm as AMM])
+    .reduce((total, value) => (value ? total + value : total), 0);
 
   return (
     <div>
@@ -46,15 +49,13 @@ function PositionList() {
           <div className="flex px-9 pt-4 text-[16px] font-medium">
             <div className="w-[60%] pr-6 text-right text-mediumEmphasis">Total</div>
             <div className="w-[15%]">
-              <SingleRowPriceContent priceValue={isShowBalance ? totalCollateral.toFixed(4) : '****'} isElement />
+              <SingleRowPriceContent priceValue={isShowBalance ? totalCollateral.toFixed(4) : '****'} />
             </div>
             <div className="w-[13%]">
-              <SingleRowPriceContent priceValue={isShowBalance ? `${totalUnrealized.toFixed(4)}` : '****'} isElement={!isShowBalance} />
+              <SingleRowPriceContent priceValue={isShowBalance ? `${totalUnrealized.toFixed(4)}` : '****'} />
             </div>
             <div className="w-[17%]">
-              <SingleRowPriceContent
-                priceValue={isShowBalance ? `${totalFundingPaymentAccount > 0 ? '+' : ''}${totalFundingPaymentAccount.toFixed(4)}` : '****'}
-              />
+              <SingleRowPriceContent priceValue={isShowBalance ? `${totalFundingPaymentAccount.toFixed(4)}` : '****'} />
             </div>
             <div className="w-[12%]" />
           </div>

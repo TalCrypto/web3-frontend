@@ -1,5 +1,5 @@
 import React from 'react';
-import BaseButton from '@/components/common/actionBtns/BaseButton';
+import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $showGetWEthModal } from '@/stores/modal';
 

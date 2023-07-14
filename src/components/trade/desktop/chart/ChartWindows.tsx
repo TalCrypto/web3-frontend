@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getCollectionInformation } from '@/const/collectionList';
-import TitleTips from '@/components/common/TitleTips';
 
 import Tooltip from '@/components/common/Tooltip';
 import {
@@ -19,23 +18,16 @@ import {
   $openInterests,
   $oraclePrice,
   $selectedTimeIndex,
+  $tsIsShowPriceGapOverModal,
   $vammPrice
 } from '@/stores/trading';
 import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
-import ChartDisplay from '@/components/common/ChartDisplay';
+import ChartDisplay from '@/components/trade/common/ChartDisplay';
 import { $isMobileView } from '@/stores/modal';
+import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
+import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
 
 const flashAnim = 'flash';
-
-function SmallPriceIcon(props: any) {
-  const { priceValue, className = '', iconSize = 16, isLoading = false } = props;
-  return (
-    <div className={`flex items-center space-x-[6px] text-[14px] text-highEmphasis ${className}`}>
-      <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={iconSize} height={iconSize} />
-      <span className={`${isLoading ? 'flash' : ''}`}>{priceValue ?? '-.--'}</span>
-    </div>
-  );
-}
 
 function PriceIndicator(props: { priceChangeValue: number | undefined; priceChangeRatio: number | undefined }) {
   const { priceChangeValue, priceChangeRatio } = props;
@@ -155,16 +147,9 @@ const ChartHeaders = () => {
     <div className="flex w-full flex-row items-center justify-start text-[16px]">
       <div className="left">
         <div className="col my-auto">
-          {/* <div className="col pricetitletext my-auto">
-            <TitleTips
-              titleText="Futures (vAMM Price)"
-              tipsText="Resulting price of users' trades in the VAMM system based on the constant product formula"
-            />
-          </div> */}
           <div className="col newcontenttext mb-[16px]">
             <div className="font-400 flex space-x-[12px] text-[14px] text-highEmphasis">
               <div className="flex items-center space-x-[6px] text-[14px] font-normal">
-                {/* <Image  src={selectedCollection.logo} width={16} height={16} alt="" /> */}
                 <span>{collectionInfo ? collectionInfo.displayCollectionPair : ''}</span>
               </div>
               <div className="font-400 flex text-[14px] text-highEmphasis">
@@ -203,6 +188,8 @@ const ChartFooter = () => {
   const vAMMPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isGapAboveLimit = useIsOverPriceGap();
+  const isShowPriceGapOverModal = useNanostore($tsIsShowPriceGapOverModal);
+
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
 
@@ -269,7 +256,7 @@ const ChartFooter = () => {
     };
   }, [nextFundingTime]);
 
-  const priceGapPercentageSign = priceGapPercentage > 0 ? '+' : '';
+  const priceGapPercentageSign = Number(priceGapPercentage.toFixed(2)) > 0 ? '+' : '';
 
   return (
     <div className="flex flex-row items-center justify-between text-[14px] font-normal text-[#a8cbff]">
@@ -291,26 +278,39 @@ const ChartFooter = () => {
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
           <p className="text-highEmphasis">
             {`${priceGapPercentageSign}${(vAMMPrice ? vAMMPrice - (oraclePrice ?? 0) : -(oraclePrice ?? 0)).toFixed(2)}
-            (${priceGapPercentageSign}${priceGapPercentage.toFixed(2)}%)`}
+            (${priceGapPercentage.toFixed(2)}%)`}
           </p>
 
           {isGapAboveLimit ? (
-            <div>
-              <div className="flex items-center">
-                <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
-              </div>
+            <div className="relative">
+              {isShowPriceGapOverModal ? (
+                <>
+                  <Image className="cursor-pointer" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                  <ShowPriceGapOverModal />{' '}
+                </>
+              ) : (
+                <Tooltip
+                  direction="top"
+                  content={
+                    <p className="!text-left">
+                      vAMM - Oracle Price gap &gt; 10%, <br />
+                      Liquidation now occurs at Oracle <br />
+                      Price (note that P&L is still <br />
+                      calculated based on vAMM <br />
+                      price)
+                    </p>
+                  }>
+                  <Image className="cursor-pointer" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                </Tooltip>
+              )}
             </div>
           ) : null}
         </div>
       </div>
       <div className="flex space-x-[12px]">
-        <TitleTips
-          titleText={
-            <span className="flex w-[209px] justify-between text-mediumEmphasis">
-              <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
-            </span>
-          }
-          tipsText={
+        <Tooltip
+          direction="top"
+          content={
             <div className="text-center">
               The rate of the funding <br />
               payment. Funding payment is <br />
@@ -323,9 +323,11 @@ const ChartFooter = () => {
               simple weighted rolling average <br />
               basis.
             </div>
-          }
-          placement="top"
-        />
+          }>
+          <span className="flex w-[209px] justify-between text-mediumEmphasis">
+            <span>Funding Payments</span> <span>({timeLabel}):</span>{' '}
+          </span>
+        </Tooltip>
         <div className="col text-highEmphasis">
           Long <span className={longSide === 'Pay' ? 'text-marketRed' : 'text-marketGreen'}>{longSide}</span>
           {rateLong}

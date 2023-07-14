@@ -15,6 +15,7 @@ import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
 import ResponseModal from '@/components/airdrop/desktop/ResponseModal';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import Tooltip from '@/components/common/Tooltip';
+import { formatBigInt } from '@/utils/bigInt';
 
 function Referral() {
   const router = useRouter();
@@ -40,7 +41,7 @@ function Referral() {
   const totalReferralPoint = Number(userPoint.referral.referralSelfRewardPoints) + Number(userPoint.referral.referringRewardPoints);
   const totalReferees = userPoint.referredUserCount;
   const eligibleReferees = userPoint.eligibleCount;
-  const eligible = () => userPoint?.isEligible;
+  const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
 
   const eligibleTooltipMessage = (
@@ -164,14 +165,14 @@ function Referral() {
                             height={24}
                           />
                           <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
-                            <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                            <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(1)}</h2>&nbsp; Pts
                           </div>
                         </div>
                       </Tooltip>
                     </div>
                   ) : (
                     <div className={`flex flex-row items-end ${!eligible() ? 'opacity-50' : ''}`}>
-                      <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(4)}</h2>&nbsp; Pts
+                      <h2 className="text-glow-green text-[32px] font-bold">{totalReferralPoint.toFixed(1)}</h2>&nbsp; Pts
                     </div>
                   )}
                 </div>
@@ -182,14 +183,14 @@ function Referral() {
                   <div className="flex basis-1/2 flex-col text-[14px]">
                     <div>3% referees&#39; points</div>
                     <div className="mt-[12px] text-[15px]">
-                      <span className="text-glow-green font-semibold">{userPoint.referral.referringRewardPoints.toFixed(4)}</span>
+                      <span className="text-glow-green font-semibold">{userPoint.referral.referringRewardPoints.toFixed(1)}</span>
                       &nbsp; Pts.
                     </div>
                   </div>
                   <div className="flex basis-1/2 flex-col text-[14px]">
                     <div>2% own trading points</div>
                     <div className="mt-[12px] text-[15px]">
-                      <span className="text-glow-green font-semibold">{userPoint.referral.referralSelfRewardPoints.toFixed(4)}</span>
+                      <span className="text-glow-green font-semibold">{userPoint.referral.referralSelfRewardPoints.toFixed(1)}</span>
                       &nbsp; Pts.
                     </div>
                   </div>
@@ -238,7 +239,7 @@ function Referral() {
                             ? `${item.username.substring(0, 10)}...`
                             : item.username;
                         const eligibleStatus = item.eligiable ? 'Eligible' : 'Not Eligible';
-                        const volume = item.tradeVol.toFixed(4);
+                        const volume = formatBigInt(item.tradeVol).toFixed(4);
                         const referralPoints = Number(item.referringRewardPoints).toFixed(1);
                         const redirect = () => {
                           window.location.href = `/userprofile/${item.userAddress}`;
@@ -279,7 +280,7 @@ function Referral() {
         <div className="mb-[36px] flex h-fit basis-1/2 flex-col">
           {/* Share */}
           <div
-            className="border-1 bg-gradient-blue-referal relative flex h-fit flex-1
+            className="border-1 bg-gradient-blue-referral relative flex h-fit flex-1
               rounded-[6px] border-[#71AAFF]/20 bg-[#202249] p-[24px] md:p-[36px] ">
             <Image
               src="/images/components/airdrop/refer-share-bg.svg"

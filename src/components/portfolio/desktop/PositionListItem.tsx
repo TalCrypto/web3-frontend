@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
 import React, { useEffect, useState } from 'react';
@@ -5,23 +6,36 @@ import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import Image from 'next/image';
 import Tooltip from '@/components/common/Tooltip';
-import { $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment, $psShowShareIndicator } from '@/stores/portfolio';
+import {
+  $psLiqSwitchRatio,
+  $psSelectedCollectionAmm,
+  $psShowBalance,
+  $psShowFundingPayment,
+  $psShowShareIndicator
+} from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import { UserPositionInfo } from '@/stores/user';
-import { useIsOverPriceGap } from '@/hooks/collection';
+import { useFundingPaymentHistory } from '@/hooks/collection';
 import { usePublicClient } from 'wagmi';
 import { ammAbi } from '@/const/abi';
+import { formatBigInt } from '@/utils/bigInt';
 
 function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: number }) {
   const router = useRouter();
   const { userPosition, itemIndex } = props;
   const isShowBalance = useNanostore($psShowBalance);
-  const isOverPriceGap = useIsOverPriceGap();
+
+  const { total: accFp } = useFundingPaymentHistory(userPosition.amm);
+
+  const isBadDebt = userPosition ? userPosition.leverage === 0 : false;
+
   const publicClient = usePublicClient();
 
+  const [isOverPriceGap, setIsOverPriceGap] = useState(false);
   const [isLiquidationWarn, setIsLiquidationWarn] = useState(false);
   const [isLiquidationRisk, setIsLiquidationRisk] = useState(false);
-
+  const [oraclePrice, setOraclePrice] = useState(0);
+  const liqSwitchRatio = useNanostore($psLiqSwitchRatio);
   const { size } = userPosition;
   const sizeInEth = userPosition.currentNotional;
   const totalPnl = userPosition.unrealizedPnl;
@@ -30,28 +44,40 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
   const liquidationChanceLimit = 0.05;
 
   useEffect(() => {
-    async function checkLiquidation() {
-      const oraclePrice = await publicClient.readContract({
+    async function getOracle() {
+      const oraclePriceBn = await publicClient.readContract({
         address: userPosition.ammAddress,
         abi: ammAbi,
         functionName: 'getUnderlyingPrice'
       });
-      const selectedPriceForCalc = !isOverPriceGap ? userPosition.vammPrice : oraclePrice;
-      setIsLiquidationWarn(
-        (userPosition.size > 0 && // long
-          userPosition.liquidationPrice < selectedPriceForCalc &&
-          selectedPriceForCalc < userPosition.liquidationPrice * (1 + liquidationChanceLimit)) ||
-          (userPosition.size < 0 && // short
-            userPosition.liquidationPrice > selectedPriceForCalc &&
-            selectedPriceForCalc > userPosition.liquidationPrice * (1 - liquidationChanceLimit))
-      );
-      setIsLiquidationRisk(
-        (userPosition.size > 0 && selectedPriceForCalc <= userPosition.liquidationPrice) ||
-          (userPosition.size < 0 && selectedPriceForCalc >= userPosition.liquidationPrice)
-      );
+      setOraclePrice(formatBigInt(oraclePriceBn));
     }
-    checkLiquidation();
-  }, [isOverPriceGap, publicClient, userPosition]);
+
+    if (userPosition.ammAddress) {
+      getOracle();
+    }
+  }, [publicClient, userPosition.ammAddress]);
+
+  useEffect(() => {
+    const isOver =
+      oraclePrice && userPosition.vammPrice && liqSwitchRatio
+        ? Math.abs((userPosition.vammPrice - oraclePrice) / oraclePrice) >= liqSwitchRatio
+        : false;
+    setIsOverPriceGap(isOver);
+    const selectedPriceForCalc = !isOver ? userPosition.vammPrice : oraclePrice;
+    setIsLiquidationWarn(
+      (userPosition.size > 0 && // long
+        userPosition.liquidationPrice < selectedPriceForCalc &&
+        selectedPriceForCalc < userPosition.liquidationPrice * (1 + liquidationChanceLimit)) ||
+        (userPosition.size < 0 && // short
+          userPosition.liquidationPrice > selectedPriceForCalc &&
+          selectedPriceForCalc > userPosition.liquidationPrice * (1 - liquidationChanceLimit))
+    );
+    setIsLiquidationRisk(
+      (userPosition.size > 0 && selectedPriceForCalc <= userPosition.liquidationPrice) ||
+        (userPosition.size < 0 && selectedPriceForCalc >= userPosition.liquidationPrice)
+    );
+  }, [liqSwitchRatio, oraclePrice, userPosition]);
 
   // leverage handling
   const isLeverageNegative = userPosition ? userPosition.leverage <= 0 : false;
@@ -83,12 +109,15 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
 
   return (
     <div
-      className={`px-9 ${itemIndex % 2 === 0 ? 'bg-secondaryBlue/[.58]' : ''}
-        cursor-pointer border-b-[1px] border-b-secondaryBlue hover:bg-secondaryBlue
+      className={`px-9 ${itemIndex % 2 === 0 ? 'bg-secondaryBlue/[.58]' : ''}  cursor-pointer
+        border-b-[1px] border-b-secondaryBlue py-3 hover:bg-secondaryBlue
       `}>
-      <div className="flex py-3" onClick={clickItem}>
+      <div className="flex" onClick={clickItem}>
         <div className="relative w-[20%] pl-3">
-          <div className="absolute left-[-8px] top-[-4px] mt-[3px] h-[50px] w-[3px] rounded-[30px] bg-primaryBlue" />
+          <div
+            className={`absolute left-[-8px] top-[-4px] mt-[3px]  w-[3px] rounded-[30px]
+            ${isOverPriceGap ? 'h-[70px] bg-warn' : 'h-[50px] bg-primaryBlue'}`}
+          />
           <LargeTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />
         </div>
         <div className="w-[13%]">
@@ -100,23 +129,35 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
         <div className="w-[13%]">
           <SingleRowPriceContent
             priceValue={
-              <>
+              <div className="flex items-center">
                 {isShowBalance ? (userPosition.liquidationPrice < 0 ? '0.00' : userPosition.liquidationPrice?.toFixed(2)) : '****'}
                 <div className="ml-[4px] flex space-x-[4px]">
                   {isLiquidationWarn && !isLiquidationRisk ? (
                     <Tooltip
                       direction="top"
-                      content="Your position is in high chance to be liquidated, please adjust your collateral to secure your trade.">
-                      <Image src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />
+                      content={
+                        <>
+                          Your position is in high chance to be liquidated, <br />
+                          please adjust your collateral to secure your trade.
+                        </>
+                      }>
+                      <Image className="ml-1" src="/images/common/alert/alert_yellow.svg" width={20} height={20} alt="" />
                     </Tooltip>
                   ) : null}
                   {isLiquidationRisk ? (
-                    <Tooltip direction="top" content="Your position is at risk of being liquidated. Please manage your risk.">
-                      <Image src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
+                    <Tooltip
+                      direction="top"
+                      content={
+                        <>
+                          Your position is at risk of being liquidated. <br />
+                          Please manage your risk.
+                        </>
+                      }>
+                      <Image className="ml-1" src="/images/common/alert/alert_red.svg" width={20} height={20} alt="" />
                     </Tooltip>
                   ) : null}
                 </div>
-              </>
+              </div>
             }
             isElement
             className={isOverPriceGap ? 'text-warn' : ''}
@@ -154,17 +195,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
           <SingleRowPriceContent priceValue={isShowBalance ? totalPnl.toFixed(4) : '****'} isElement={!isShowBalance} />
         </div>
         <div className="w-[17%]">
-          <SingleRowPriceContent
-            priceValue={
-              isShowBalance
-                ? userPosition.fundingPayment > 0
-                  ? `+${userPosition.fundingPayment.toFixed(4)}`
-                  : userPosition.fundingPayment === 0
-                  ? Math.abs(userPosition.fundingPayment)?.toFixed(4)
-                  : userPosition.fundingPayment.toFixed(4)
-                : '****'
-            }
-          />
+          <SingleRowPriceContent priceValue={isShowBalance ? (accFp ? accFp.toFixed(4) : '0.0000') : '****'} isElement={!isShowBalance} />
         </div>
         <div className="w-[12%]">
           <div className="flex h-full items-center">
@@ -184,6 +215,26 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
           </div>
         </div>
       </div>
+
+      {/* wip price gap */}
+      {isOverPriceGap && liqSwitchRatio ? (
+        <div className="mb-3 ml-2 mt-1">
+          <div className="flex items-start space-x-[6px]">
+            <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
+            <p className="text-b3 text-warn">
+              Warning: vAMM - Oracle Price gap &gt; {liqSwitchRatio * 100}%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is
+              still calculated based on vAMM price). {isBadDebt ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
+              <a
+                target="_blank"
+                href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"
+                className="underline hover:text-warn/50"
+                rel="noreferrer">
+                Learn More
+              </a>
+            </p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

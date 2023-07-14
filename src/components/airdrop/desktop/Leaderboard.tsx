@@ -1,10 +1,11 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
   $asCurrentSeason,
   $asIsLeaderboardLoading,
+  $asLeaderboardUpdateTrigger,
   $asSeason1LeaderboardData,
   $asSeason2LeaderboardData,
   $userPoint,
@@ -17,6 +18,7 @@ import UserMedal from '@/components/airdrop/desktop/UserMedal';
 import { trimString } from '@/utils/string';
 import ScrollTopButton from '@/components/common/ScrollToTopButton';
 import { localeConversion } from '@/utils/localeConversion';
+import Tooltip from '@/components/common/Tooltip';
 
 function Leaderboard() {
   const router = useRouter();
@@ -32,7 +34,6 @@ function Leaderboard() {
   const isLoading = useNanostore($asIsLeaderboardLoading);
   const isConnected = useNanostore($userIsConnected);
 
-  const [refreshCooldown, setRefreshCooldown] = useState(0); // in second
   const currentSeason = useNanostore($asCurrentSeason);
   const leaderboardData = currentSeason === 0 ? season2Data : season1Data;
 
@@ -74,7 +75,7 @@ function Leaderboard() {
         og: userPrevPoint.og || 0,
         rank: userPrevPoint.rank || 0,
         tradeVolTotal: userPrevPoint.tradeVolTotal || 0,
-        eligible: userPrevPoint.isEligible || false
+        eligible: userPrevPoint.eligible || false
       };
     } else {
       selectedUserPoint = {
@@ -92,7 +93,7 @@ function Leaderboard() {
         og: userPoint.og || 0,
         rank: userPoint.rank || 0,
         tradeVolTotal: userPoint.tradeVolTotal || 0,
-        eligible: userPoint.isEligible || false
+        eligible: userPoint.eligible || false
       };
     }
 
@@ -107,28 +108,13 @@ function Leaderboard() {
   // for show loading, define array size n if necessary
   const dummyLoadingData = [...Array(10)];
 
-  // cooldown timer
-  function updateRefreshCooldown() {
-    if (refreshCooldown <= 0) {
-      //
-    } else {
-      setRefreshCooldown(refreshCooldown - 1);
-    }
-  }
-
-  // loop each 1s
-  useEffect(() => {
-    const interval = setInterval(updateRefreshCooldown, 1000);
-    return () => clearInterval(interval);
-  });
-
   // testing
   const isLockedConverg = false;
   const isLockedReferral = false;
   const isLockedOg = false;
 
   // width handler for season 2
-  const usernameWidth = currentSeason === 0 ? 'w-[17%] ' : 'w-[13%]';
+  const usernameWidth = currentSeason === 0 ? 'w-[17%] max-w-[162px]' : 'w-[13%] max-w-[132px]';
   const cellWidth = currentSeason === 0 ? 'w-[16%]' : 'w-[12%]';
 
   return (
@@ -136,7 +122,7 @@ function Leaderboard() {
       <div id="lb-sticky-header" className="sticky top-[60px] z-10">
         <div className="flex justify-between py-[24px]">
           <h3 className="text-[24px] font-bold">Season {currentSeason === 0 ? '2' : '1'} Points Leaderboard</h3>
-          <div className="season-leaderboard flex justify-start text-[16px] font-semibold">
+          <div className="flex justify-start text-[16px] font-semibold">
             <div className={`item mr-[24px] cursor-pointer ${currentSeason === 0 ? 'active' : ''}`} onClick={() => $asCurrentSeason.set(0)}>
               Season 2 Leaderboard
               {currentSeason === 0 ? <div className="mt-2 h-[2px] w-full rounded-[2px] bg-seasonGreen" /> : null}
@@ -149,16 +135,14 @@ function Leaderboard() {
         </div>
         <div className="flex justify-end">
           <div
-            className={`flex items-center ${refreshCooldown ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            className={`flex items-center ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={() => {
-              if (refreshCooldown || currentSeason !== 0) return;
-              // apiConnection.getLeaderboard(currentSeason);
-              // apiConnection.getUserPoint();
-              setRefreshCooldown(5);
+              if (isLoading || currentSeason !== 0) return;
+              $asLeaderboardUpdateTrigger.set(!$asLeaderboardUpdateTrigger.get());
             }}>
             {currentSeason === 0 ? (
               <Image
-                className={`${refreshCooldown > 0 ? 'animate-spin' : ''}`}
+                className={`${isLoading ? 'animate-spin' : ''}`}
                 src="/images/components/airdrop/refresh.svg"
                 width={32}
                 height={32}
@@ -167,7 +151,7 @@ function Leaderboard() {
             ) : (
               <div className="h-[32px] w-[1px]" />
             )}
-            <p>{refreshCooldown > 0 ? 'Updating...' : 'Update Leaderboard'}</p>
+            <p>{isLoading ? 'Updating...' : 'Update Leaderboard'}</p>
           </div>
         </div>
         <div className="w-full text-[14px] text-xs font-semibold xl:px-[50px]">
@@ -220,12 +204,12 @@ function Leaderboard() {
                       className={`table-border-grad flex h-[54px] items-center font-medium xl:px-[50px] ${
                         userIsBan ? 'disqualified' : 'active'
                       }`}>
-                      <div className="flex w-[10%] p-[18px]">
+                      <div className="flex w-[10%] px-[10px] py-[18px]">
                         <UserMedal rank={userData.rank} isYou isBan={userIsBan} isUnranked={userIsUnranked} />
                       </div>
                       <div className={`p-[18px] ${usernameWidth}`}>
                         <p
-                          className={`overflow-hidden text-ellipsis text-[15px] font-normal ${
+                          className={`overflow-hidden text-ellipsis text-[15px] font-semibold ${
                             userIsBan ? 'text-marketRed line-through' : ''
                           }`}>
                           {userData?.username ? trimString(userData.username, 10) : walletAddressToShow(userData.userAddress)}
@@ -234,65 +218,81 @@ function Leaderboard() {
                       <div className={`${cellWidth} relative p-[18px]`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0 top-[21px]">
-                            {/* <TitleTips
-                              placement="top"
-                              tipsText="Trade 5 WETH notional to unlock your reward"
-                              titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                            /> */}
-                            <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            <Tooltip
+                              direction="top"
+                              content={
+                                <>
+                                  Trade 5 WETH notional to
+                                  <br /> unlock your reward
+                                </>
+                              }>
+                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            </Tooltip>
                           </div>
                         ) : null}
                         <p className={`text-[15px] font-normal ${userIsBan ? 'text-marketRed line-through' : ''}`}>
-                          {localeConversion(userData.tradeVolPoints, 2, 2)}
+                          {localeConversion(userData.tradeVolPoints, 1, 1)}
                         </p>
                       </div>
                       {currentSeason !== 0 ? (
                         <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} relative`}>
                           {userIsUnranked ? (
                             <div className="absolute left-0 top-[21px]">
-                              {/* <TitleTips
-                                placement="top"
-                                tipsText="Trade 5 WETH notional to unlock your reward"
-                                titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                              /> */}
-                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                              <Tooltip
+                                direction="top"
+                                content={
+                                  <>
+                                    Trade 5 WETH notional to
+                                    <br /> unlock your reward
+                                  </>
+                                }>
+                                <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                              </Tooltip>
                             </div>
                           ) : null}
                           <p
                             className={`${userIsBan && !isLockedConverg ? 'text-marketRed line-through' : ''} ${
                               isLockedConverg ? '' : ''
                             }`}>
-                            {isLockedConverg ? '-' : localeConversion(userData.convergePoints, 2, 2)}
+                            {isLockedConverg ? '-' : localeConversion(userData.convergePoints, 1, 1)}
                           </p>
                         </div>
                       ) : null}
                       <div className={`${cellWidth} p-[18px] ${isLockedReferral ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0 top-[21px]">
-                            {/* <TitleTips
-                              placement="top"
-                              tipsText="Trade 5 WETH notional to unlock your reward"
-                              titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                            /> */}
-                            <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            <Tooltip
+                              direction="top"
+                              content={
+                                <>
+                                  Trade 5 WETH notional to
+                                  <br /> unlock your reward
+                                </>
+                              }>
+                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            </Tooltip>
                           </div>
                         ) : null}
                         <p
                           className={`${userIsBan && !isLockedReferral ? 'text-marketRed line-through' : ''} ${
                             isLockedReferral ? '' : ''
                           }`}>
-                          {isLockedReferral ? '-' : localeConversion(userData.referralPoints, 2, 2)}
+                          {isLockedReferral ? '-' : localeConversion(userData.referralPoints, 1, 1)}
                         </p>
                       </div>
                       <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} relative`}>
                         {userIsUnranked ? (
                           <div className="absolute left-0 top-[21px]">
-                            {/* <TitleTips
-                              placement="top"
-                              tipsText="Trade 5 WETH notional to unlock your reward"
-                              titleText={<Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />}
-                            /> */}
-                            <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            <Tooltip
+                              direction="top"
+                              content={
+                                <>
+                                  Trade 5 WETH notional to
+                                  <br /> unlock your reward
+                                </>
+                              }>
+                              <Image src="/images/components/airdrop/lock.svg" width={16} height={16} alt="" />
+                            </Tooltip>
                           </div>
                         ) : null}
                         <p
@@ -304,7 +304,7 @@ function Leaderboard() {
                       </div>
                       <div className="w-[17%] p-[18px]">
                         <p className="text-highEmphasis} text-[15px] font-semibold">
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.originalTotal, 2, 2)}`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.originalTotal, 1, 1)}`}
                         </p>
                       </div>
                       <div className="w-[10%] p-[18px]">
@@ -312,12 +312,12 @@ function Leaderboard() {
                           className={`text-[15px] font-semibold  ${
                             userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-marketGreen'
                           }`}>
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.multiplier, 2, 2)}x`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.multiplier, 1, 1)}x`}
                         </p>
                       </div>
                       <div className="w-[16%] p-[18px]">
                         <p className={`text-[15px] font-semibold  ${userIsBan || userIsUnranked ? 'text-highEmphasis' : 'text-warn'}`}>
-                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.total, 2, 2)}`}
+                          {userIsBan || userIsUnranked ? '-' : `${localeConversion(userData.total, 1, 1)}`}
                         </p>
                       </div>
                     </div>
@@ -347,7 +347,7 @@ function Leaderboard() {
                         className="relative cursor-pointer"
                         onClick={() => router.push(`/userprofile/${userAddress}`)}>
                         <div className="table-border-grad flex h-[54px] items-center xl:px-[50px]">
-                          <div className="flex w-[10%] p-[18px]">
+                          <div className="flex w-[10%] px-[10px] py-[18px]">
                             <UserMedal rank={rank} isBan={isBan} isUnranked={rank < 1} isYou={isYou} />
                           </div>
                           <div className={`p-[18px] ${usernameWidth}`}>
@@ -360,22 +360,19 @@ function Leaderboard() {
                           </div>
                           <div className={`${cellWidth} p-[18px]`}>
                             <p className={`text-[15px] font-normal ${isBan ? 'text-marketRed line-through' : ''}`}>
-                              {localeConversion(tradeVolPoints, 2, 2)}
+                              {localeConversion(tradeVolPoints, 1, 1)}
                             </p>
                           </div>
                           {currentSeason !== 0 ? (
                             <div className={`w-[12%] p-[18px] ${isLockedConverg ? 'col-locked' : ''} ${isLockedConverg ? '' : ''}`}>
                               <p className={`text-[15px] font-normal ${isBan && !isLockedConverg ? 'text-marketRed line-through' : ''}`}>
-                                {isLockedConverg ? '-' : localeConversion(convergePoints, 2, 2)}
+                                {isLockedConverg ? '-' : localeConversion(convergePoints, 1, 1)}
                               </p>
                             </div>
                           ) : null}
-                          <div
-                            className={`${cellWidth} w-[12%] p-[18px] ${isLockedReferral ? 'col-locked' : ''} ${
-                              isLockedReferral ? '' : ''
-                            }`}>
+                          <div className={`${cellWidth} p-[18px] ${isLockedReferral ? 'col-locked' : ''} ${isLockedReferral ? '' : ''}`}>
                             <p className={`text-[15px] font-normal ${isBan && !isLockedReferral ? 'text-marketRed line-through' : ''}`}>
-                              {isLockedReferral ? '-' : localeConversion(referralPoints, 2, 2)}
+                              {isLockedReferral ? '-' : localeConversion(referralPoints, 1, 1)}
                             </p>
                           </div>
                           <div className={`w-[12%] p-[18px] ${isLockedOg ? 'col-locked' : ''} ${isLockedOg ? '' : ''}`}>
@@ -385,7 +382,7 @@ function Leaderboard() {
                           </div>
                           <div className="w-[17%] p-[18px]">
                             <p className="text-[15px] font-semibold text-highEmphasis">
-                              {isBan ? '-' : `${localeConversion(originalTotal, 2, 2)}`}
+                              {isBan ? '-' : `${localeConversion(originalTotal, 1, 1)}`}
                             </p>
                           </div>
                           <div className="w-[10%] p-[18px]">
@@ -395,7 +392,7 @@ function Leaderboard() {
                           </div>
                           <div className="w-[16%] p-[18px]">
                             <p className={`text-[15px] font-semibold  ${isBan ? 'text-highEmphasis' : 'text-warn'}`}>
-                              {isBan ? '-' : `${localeConversion(total, 2, 2)}`}
+                              {isBan ? '-' : `${localeConversion(total, 1, 1)}`}
                             </p>
                           </div>
                         </div>

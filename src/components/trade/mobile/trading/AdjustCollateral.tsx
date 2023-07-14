@@ -10,18 +10,19 @@ import { useStore as useNanostore } from '@nanostores/react';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
-import AddCollateralButton from '@/components/common/actionBtns/AddCollateralButton';
-import ReduceCollateralButton from '@/components/common/actionBtns/ReduceCollateralButton';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import AddCollateralButton from '@/components/trade/common/actionBtns/AddCollateralButton';
+import ReduceCollateralButton from '@/components/trade/common/actionBtns/ReduceCollateralButton';
 import { useDebounce } from '@/hooks/debounce';
 import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
+import { $showGetWEthModal } from '@/stores/modal';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;
@@ -89,7 +90,12 @@ function QuantityEnter(props: any) {
             {/* {marginIndex === 0 ? 'Balance' : 'Free Collateral'} */}
             <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button type="button" className="ml-[8px] text-b2 text-primaryBlue">
+            <button
+              type="button"
+              className="ml-[8px] text-b2 text-primaryBlue"
+              onClick={() => {
+                $showGetWEthModal.set(true);
+              }}>
               Get WETH
             </button>
           </div>
@@ -316,7 +322,7 @@ function AdjustCollateralSlidingBars(props: any) {
         onChange={onChange}
         onAfterChange={onChange}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
+      <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">
         <div>
           Current
           <br />
@@ -346,6 +352,8 @@ export default function AdjustCollateral(props: any) {
   const approvalAmount = marginIndex === 1 || !debonceBigIntValue ? 0 : formatBigInt(debonceBigIntValue);
   const isNeedApproval = useApprovalCheck(approvalAmount);
 
+  const [isDisabled, setIsDisabled] = useState(false);
+
   const initializeState = useCallback(() => {
     setAdjustMarginValue(0);
     setIsPending(false);
@@ -362,6 +370,9 @@ export default function AdjustCollateral(props: any) {
 
   const handleChange = (value: any) => {
     setAdjustMarginValue(value);
+    const isError = value > 0 && value < 0.01;
+    setIsDisabled(isError);
+    setTextErrorMessage(isError ? 'Minimum trading size 0.01.' : null);
   };
 
   useEffect(() => {
@@ -436,6 +447,7 @@ export default function AdjustCollateral(props: any) {
             onPending={handlePending}
             onSuccess={initializeState}
             onError={handleError}
+            isDisabled={isDisabled}
           />
         ) : (
           <ReduceCollateralButton

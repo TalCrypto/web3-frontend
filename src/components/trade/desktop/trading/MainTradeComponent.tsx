@@ -8,8 +8,6 @@ import Image from 'next/image';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TitleTips from '@/components/common/TitleTips';
-
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import Tooltip from '@/components/common/Tooltip';
@@ -17,11 +15,11 @@ import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useAppro
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
-import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
@@ -102,7 +100,7 @@ function QuantityTips(props: any) {
 
   return label ? (
     <div>
-      <div className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</div>
+      <div className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</div>
     </div>
   ) : null;
 }
@@ -181,8 +179,8 @@ function QuantityEnter(props: any) {
             />
           </div>
         </div>
+        <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
       </div>
-      <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
     </>
   );
 }
@@ -257,7 +255,7 @@ function EstimatedValueDisplay(props: {
                 the time of trade confirmation <br />
                 the actual price of the <br />
                 transaction that the users are <br />
-                willing to acceptM
+                willing to accept
               </div>
             }>
             <div className="cursor-pointer text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
@@ -329,16 +327,7 @@ function Tips({
   ) : isRequireWeth ? (
     'Please get WETH first !'
   ) : isApproveRequired ? (
-    <>
-      Please approve before trading! <br />{' '}
-      <a
-        target="_blank"
-        href="https://tribe3.gitbook.io/tribe3/getting-started/set-up-wallet-get-weth-and-start"
-        rel="noreferrer"
-        className="underline">
-        Learn more
-      </a>
-    </>
+    <>Please approve before trading!</>
   ) : null;
 
   return label ? (

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
-import { useStore as useNanostore } from '@nanostores/react';
+import React, { useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
 import { withRouter } from 'next/router';
 import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
@@ -28,7 +27,9 @@ function TradePage(props: WithRouterProps) {
   const { router } = props;
 
   useEffect(() => {
-    const collection = router?.query?.collection;
+    const queryCollection = router?.query?.collection;
+    const collection = queryCollection || router?.asPath.replace('/trade/', '');
+
     if (collection) {
       const amm = collection as AMM;
       if (Object.values(AMM).includes(amm)) {
@@ -48,7 +49,7 @@ function TradePage(props: WithRouterProps) {
     <>
       <PageHeader
         title="Trade"
-        ogTitle="Start to trade, hedge, leverage with a real-time charts."
+        ogTitle="Start longing or shorting NFT collections with leverage."
         ogDesc="The most powerful Decentralized vAMM perpetual contract for trader to make a trade on NFT collection."
       />
       <main>

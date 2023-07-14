@@ -9,18 +9,16 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/mobile/trading/PartialCloseModal';
-
-import TitleTips from '@/components/common/TitleTips';
-import ApproveButton from '@/components/common/actionBtns/ApproveButton';
-import ClosePosButton from '@/components/common/actionBtns/ClosePosButton';
-import OpenPosButton from '@/components/common/actionBtns/OpenPosButton';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
 import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
 import { MINIMUM_COLLATERAL } from '@/const';
-import ConnectButton from '@/components/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/common/actionBtns/GetWETHButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
@@ -193,13 +191,11 @@ function EstimationComponent(props: any) {
         title={
           <span className="flex">
             Collateral&nbsp;
-            {/* {!isFullClose ? (
-              <TitleTips
-                titleText={<Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />}
-                tipsText="Collateral will not change."
-                placement="top"
-              />
-            ) : null} */}
+            {!isFullClose ? (
+              <MobileTooltip content="Collateral will not change">
+                <Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />
+              </MobileTooltip>
+            ) : null}
           </span>
         }
         currentValue={!userPosition ? '-.--' : userPosition.margin.toFixed(4)}
@@ -248,7 +244,7 @@ function ExtendedEstimateComponent(props: any) {
       </div>
       <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
       {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
-      <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+      <DisplayValues title="Execution Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
         <MobileTooltip
           content={
@@ -282,7 +278,7 @@ function CloseSlider(props: any) {
         onAfterChange={onChange}
         step={0.0001}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
+      <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">
         <div>0</div>
         <div>Total Notional Value</div>
       </div>
@@ -392,7 +388,7 @@ export default function CloseCollateral() {
           content={
             <div className="text-center">
               The maximum pricing difference between the price at the time of trade confirmation the actual price of the transaction that
-              the users are willing to acceptM
+              the users are willing to accept
             </div>
           }>
           <div className="text-[14px] text-mediumEmphasis">Slippage Tolerance</div>
