@@ -5,6 +5,7 @@ import CustomTable from '@/components/competition/desktop/CustomTable';
 import { useStore as useNanostore } from '@nanostores/react';
 import {
   $activeDropdown,
+  $asCompetitionLeaderboardUpdateTrigger,
   $firstLeaderboard,
   $flCurrentUser,
   $isCompetitionLeaderboardLoading,
@@ -43,7 +44,9 @@ const Leaderboard = () => {
         icon={<Image alt="gainers icon" src="/images/components/competition/icons/gainers.svg" width={22} height={22} />}
         title={<h4 className="text-h4 md:pl-[7px]">Top ROI</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
-        reloadFunc={() => {}}
+        reloadFunc={() => {
+          $asCompetitionLeaderboardUpdateTrigger.set(!$asCompetitionLeaderboardUpdateTrigger.get());
+        }}
         thirdRowTitle="Realized P/L%"
         thirdRowTips="Realized P/L divided by the maximum total collateral pledged across all opened 
         positions at any given point in time during the competition."
@@ -81,7 +84,9 @@ const Leaderboard = () => {
         icon={<Image alt="convergence icon" src="/images/components/competition/icons/convergence.svg" width={20} height={20} />}
         title={<h4 className="text-h4 md:pl-[7px]">Top Converger</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
-        reloadFunc={() => {}}
+        reloadFunc={() => {
+          $asCompetitionLeaderboardUpdateTrigger.set(!$asCompetitionLeaderboardUpdateTrigger.get());
+        }}
         thirdRowTitle="Net Conv. Vol."
         thirdRowTips="Convergence trading volume minus divergence trading volume."
         thirdRowValueGenerator={(value: string) =>
@@ -118,7 +123,9 @@ const Leaderboard = () => {
         icon={<Image alt="losers icon" src="/images/components/competition/icons/losers.svg" width={22} height={22} />}
         title={<h4 className="text-h4 md:pl-[7px]">Rekt</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
-        reloadFunc={() => {}}
+        reloadFunc={() => {
+          $asCompetitionLeaderboardUpdateTrigger.set(!$asCompetitionLeaderboardUpdateTrigger.get());
+        }}
         thirdRowTitle="Realized P/L"
         thirdRowTips="Realized P/L is the sum of funding payment and P/L from price change of a position. 
         P/L from price change refers to the gain & loss from full close, partial close and liquidation of a position."

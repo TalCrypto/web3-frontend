@@ -7,10 +7,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ThreeDots } from 'react-loader-spinner';
 import { trimString } from '@/utils/string';
-import TitleTips from '@/components/common/TitleTips';
 import { formatBigInt } from '@/utils/bigInt';
 import { useAccount } from 'wagmi';
 import Tooltip from '@/components/common/Tooltip';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 import UserMedal from '@/components/competition/common/UserMedal';
 
 const CustomTable = (props: any) => {
@@ -83,9 +83,18 @@ const CustomTable = (props: any) => {
                 alt="more info"
                 width={12}
                 height={12}
-                className="mr-[6px] cursor-pointer"
+                className="mr-[6px] hidden cursor-pointer md:block"
               />
             </Tooltip>
+            <MobileTooltip direction="top" content={<div className="text-center">{thirdRowTips}</div>}>
+              <Image
+                src="/images/components/trade/history/more_info.svg"
+                alt="more info"
+                width={12}
+                height={12}
+                className="mr-[6px] cursor-pointer md:hidden"
+              />
+            </MobileTooltip>
             {thirdRowTitle}
           </div>
         </div>
@@ -128,7 +137,7 @@ const CustomTable = (props: any) => {
               <div className="relative flex w-[40%] justify-end pl-4 md:justify-normal">
                 {userIsUnranked ? (
                   <div className="md:absolute md:left-0">
-                    <TitleTips
+                    <Tooltip
                       placement="top"
                       tipsText={
                         <>

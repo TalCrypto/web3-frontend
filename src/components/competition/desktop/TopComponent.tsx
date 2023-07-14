@@ -1,43 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-constant-condition */
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import CountdownTimer from '@/components/common/CountdownTimer';
 import { useRouter } from 'next/router';
 import MobileDropdown from '@/components/competition/desktop/MobileDropdown';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $activeDropdown, $isCompetitionLeaderboardLoading } from '@/stores/competition';
-import { useAccount } from 'wagmi';
-import { apiConnection } from '@/utils/apiConnection';
+import { $activeDropdown, $asCompetitionLeaderboardUpdateTrigger } from '@/stores/competition';
 
 const TopComponent = () => {
   const router = useRouter();
   const openRules = () => window.open('https://mirror.xyz/tribe3.eth/Zjg7s1ORT06DtFJXOBDgTbW2O8v4y6bKaCUhKSsxDcI', '_blank');
-  const isCompetitionLeaderboardLoading = useNanostore($isCompetitionLeaderboardLoading);
   const activeDropdown = useNanostore($activeDropdown);
-
-  const { address, isConnected, isConnecting } = useAccount();
-
-  const getInitialData = async () => {
-    $isCompetitionLeaderboardLoading.set(true);
-    const leaderboardPromises = [
-      apiConnection.getAbsPnlLeaderboard(address),
-      apiConnection.getRealizedPnlPercentageLeaderboard(address),
-      apiConnection.getNetConvergenceLeaderboard(address),
-      apiConnection.getTopLosersLeaderboard(address)
-    ];
-
-    await Promise.allSettled(leaderboardPromises);
-
-    setTimeout(() => {
-      $isCompetitionLeaderboardLoading.set(false);
-    }, 500);
-  };
-
-  useEffect(() => {
-    getInitialData();
-  }, [address]);
 
   return (
     <>
@@ -80,7 +55,7 @@ const TopComponent = () => {
             <div
               className="flex cursor-pointer items-center"
               onClick={() => {
-                // leaderboardFetch();
+                $asCompetitionLeaderboardUpdateTrigger.set(!$asCompetitionLeaderboardUpdateTrigger.get());
               }}>
               <Image
                 alt="refresh"

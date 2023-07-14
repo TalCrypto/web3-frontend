@@ -15,6 +15,7 @@ export const $mainLeaderboard = atom<LeaderboardItem[]>([]);
 export const $firstLeaderboard = atom<LeaderboardItem[]>([]);
 export const $secondLeaderboard = atom<LeaderboardItem[]>([]);
 export const $thirdLeaderboard = atom<LeaderboardItem[]>([]);
+export const $asCompetitionLeaderboardUpdateTrigger = atom(false);
 
 // current user based on leaderboard
 export const $mlCurrentUser = atom<any>(null);

@@ -3,7 +3,13 @@
 import React from 'react';
 import Image from 'next/image';
 import CustomTable from '@/components/competition/desktop/CustomTable';
-import { $activeDropdown, $isCompetitionLeaderboardLoading, $mainLeaderboard, $mlCurrentUser } from '@/stores/competition';
+import {
+  $activeDropdown,
+  $asCompetitionLeaderboardUpdateTrigger,
+  $isCompetitionLeaderboardLoading,
+  $mainLeaderboard,
+  $mlCurrentUser
+} from '@/stores/competition';
 import { localeConversion } from '@/utils/localeConversion';
 import { formatBigInt } from '@/utils/bigInt';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -40,7 +46,9 @@ const PrizeComponent = () => {
               icon={<Image alt="gainers" src="/images/components/competition/icons/gainers-colorful.svg" width={24} height={24} />}
               title={<h3 className="text-h4 md:pl-[7px] md:text-h3">Top Gainer</h3>}
               isLoading={isCompetitionLeaderboardLoading}
-              reloadFunc={() => {}}
+              reloadFunc={() => {
+                $asCompetitionLeaderboardUpdateTrigger.set(!$asCompetitionLeaderboardUpdateTrigger.get());
+              }}
               thirdRowTitle="Realized P/L"
               thirdRowTips="Realized P/L is the sum of funding payment and P/L from price change of a position.
           P/L from price change refers to the gain & loss from full close, partial close and liquidation of a position."
