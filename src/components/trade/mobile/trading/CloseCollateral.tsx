@@ -244,7 +244,7 @@ function ExtendedEstimateComponent(props: any) {
       </div>
       <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
       {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
-      <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+      <DisplayValues title="Execution Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
         <MobileTooltip
           content={
