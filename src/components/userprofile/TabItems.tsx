@@ -27,19 +27,13 @@ function TabIcon(props: any) {
             </mask>
           </defs>
 
-          <g mask={`url(#${idName})`} className="active_mask">
+          <g mask={`url(#${idName})`}>
             <rect x="0" y="0" width="16" height="16" fill="white" fillOpacity="0.87" />
             <rect id="tab-icon-transition" x="0" y="0" width="16" height="16" fill="url(#gradient)" />
-          </g>
-
-          <g mask={`url(#${idName})`} className="normal_mask">
-            <rect x="0" y="0" width="16" height="16" fill="white" fillOpacity="0.87" />
-            <rect id="tab-icon-transition" x="0" y="0" width="16" height="16" fill="white" />
           </g>
         </svg>
         <span className="">{label}</span>
       </div>
-      <div className="after absolute bottom-0 left-0 mt-2 h-[3px] w-full rounded-[3px]" />
     </div>
   );
 }

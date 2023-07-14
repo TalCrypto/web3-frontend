@@ -29,14 +29,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <Header />
       <div
-        className={`h-full w-full
+        className={`min-h-screen w-full
           ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}
           ${isUserprofilePage ? userprofileBgClass : ''}`}>
         <div
           className={`
-            ${isUserprofilePage ? userprofileBg2Class : 'content-container'}
+            ${isUserprofilePage ? userprofileBg2Class : 'content-container pb-[42px]'}
             mmd:pb-10 w-full
-            !px-0 pb-[42px] text-white md:h-full md:pt-20 
+            !px-0  text-white md:h-full md:min-h-screen md:pt-20 
             ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}
         `}>
           {children}
