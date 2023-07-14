@@ -35,7 +35,7 @@ const MobileDropdown = () => {
   return (
     <>
       {/* button dropdown */}
-      <div className="sticky top-0 z-20 md:hidden">
+      <div className="sticky top-0 z-10 md:hidden">
         <div className="flex justify-between bg-[#202249] px-5 py-[12px]" onClick={() => setIsExpand(!isExpand)}>
           <div className="flex space-x-[6px]">
             <Image alt="gainers" src={activeItem?.icon || '/images/components/competition/icons/m-gainer.svg'} width={16} height={16} />
