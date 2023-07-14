@@ -253,12 +253,7 @@ const UserDataUpdater: React.FC = () => {
         });
       }
     }
-
-    const timer = setInterval(update, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
+    update();
   }, [address, chain]);
 
   if (!amms) return null;
