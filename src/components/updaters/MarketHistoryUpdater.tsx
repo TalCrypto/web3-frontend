@@ -9,17 +9,15 @@ import { getAddress } from 'viem';
 import { $currentChain } from '@/stores/user';
 import { getBaycFromMainnet } from '@/utils/opensea';
 import { getCollectionInformation } from '@/const/collectionList';
-import { Chain, arbitrum, arbitrumGoerli } from 'wagmi/chains';
 
 const MarketHistoryUpdater = () => {
   const currentAmm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
-  const defaultChain = process.env.NEXT_PUBLIC_SUPPORT_CHAIN === '42161' ? arbitrum : arbitrumGoerli;
 
   // load future market history for once
   useEffect(() => {
     function fetch() {
-      const ammAddr = getAMMAddress(defaultChain, currentAmm);
+      const ammAddr = getAMMAddress(chain, currentAmm);
       if (ammAddr) {
         getMarketHistory(ammAddr).then(res => {
           $futureMarketHistory.set(
