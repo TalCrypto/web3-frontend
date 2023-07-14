@@ -8,8 +8,6 @@ import Image from 'next/image';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
-import TitleTips from '@/components/common/TitleTips';
-
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import Tooltip from '@/components/common/Tooltip';
@@ -102,7 +100,7 @@ function QuantityTips(props: any) {
 
   return label ? (
     <div>
-      <div className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</div>
+      <div className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</div>
     </div>
   ) : null;
 }
@@ -181,8 +179,8 @@ function QuantityEnter(props: any) {
             />
           </div>
         </div>
+        <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
       </div>
-      <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
     </>
   );
 }
@@ -329,16 +327,7 @@ function Tips({
   ) : isRequireWeth ? (
     'Please get WETH first !'
   ) : isApproveRequired ? (
-    <>
-      Please approve before trading! <br />{' '}
-      <a
-        target="_blank"
-        href="https://tribe3.gitbook.io/tribe3/getting-started/set-up-wallet-get-weth-and-start"
-        rel="noreferrer"
-        className="underline">
-        Learn more
-      </a>
-    </>
+    <>Please approve before trading!</>
   ) : null;
 
   return label ? (

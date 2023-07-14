@@ -2,7 +2,7 @@
 import { Address } from 'wagmi';
 import { Chain, arbitrum, arbitrumGoerli } from 'wagmi/chains';
 import { AMM, DEFAULT_AMM } from '@/const/collectionList';
-import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { DEFAULT_CHAIN, isSupportedChain } from '@/const/supportedChains';
 
 export interface AddressConfig {
   ch: Address;
@@ -51,9 +51,16 @@ const ADDRESSES: Record<number, AddressConfig> = {
 
 // get addresses, if chain is unsupported, then get the addresses of default chain
 export const getAddressConfig = (chain?: Chain): { chainId: number; config: AddressConfig } => {
-  const config = chain && ADDRESSES[chain.id] ? ADDRESSES[chain.id] : ADDRESSES[DEFAULT_CHAIN.id];
-  const chainId = chain && ADDRESSES[chain.id] ? chain.id : DEFAULT_CHAIN.id;
-  return { chainId, config };
+  if (chain && isSupportedChain(chain)) {
+    return {
+      chainId: chain.id,
+      config: ADDRESSES[chain.id]
+    };
+  }
+  return {
+    chainId: DEFAULT_CHAIN.id,
+    config: ADDRESSES[DEFAULT_CHAIN.id]
+  };
 };
 
 export const getAMMAddress = (chain?: Chain, amm?: AMM): Address | undefined => {

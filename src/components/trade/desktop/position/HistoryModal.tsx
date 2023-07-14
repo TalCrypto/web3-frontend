@@ -180,14 +180,15 @@ const HistoryModal = (props: any) => {
                                   <span className="text-[12px] text-mediumEmphasis">
                                     {formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}
                                   </span>
-                                  <span>
+                                  <span className="mt-[10px] text-[14px] font-normal">
                                     <TypeWithIconByAmm
                                       amm={record.ammAddress}
                                       showCollectionName
+                                      imageWidth={20}
+                                      imageHeight={20}
                                       content={
                                         <div className="flex">
                                           &nbsp;- {currentRecordType}
-                                          {/* &nbsp;- PARTIAL LIQUIDATION */}
                                           {currentRecordType === TradeActions.FULL_LIQ ? (
                                             <Image
                                               className="ml-1"
@@ -206,11 +207,12 @@ const HistoryModal = (props: any) => {
                                 </div>
                               </div>
                               <div
-                                className="flex flex-col items-end justify-between text-end
+                                className="flex flex-col items-end justify-center text-end
                                   text-[14px] text-mediumEmphasis">
-                                <span className="title">Wallet Balance</span>
+                                <span className="mb-[6px] text-[12px] font-normal">Wallet Balance</span>
                                 <PriceWithIcon
-                                  className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}`}
+                                  className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}
+                                    !text-[14px] font-medium`}
                                   priceValue={`${Number(balance) > 0 ? '+' : ''}${
                                     Number(balance) === 0 ? '-.---' : Number(balance).toFixed(4)
                                   }`}
@@ -242,14 +244,33 @@ const HistoryModal = (props: any) => {
                 <span>Details</span>
                 {selectedRecord && <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />}
               </div>
-              {isLiquidation ? <LiquidationWarning /> : null}
+              {isLiquidation ? (
+                <div className="mt-9">
+                  <LiquidationWarning isFullLiquidation={getActionTypeFromApi(selectedRecord) === TradeActions.FULL_LIQ} />
+                </div>
+              ) : null}
               <div className="p-3 text-mediumEmphasis">
                 {selectedRecord &&
-                  detailRow('Collection', selectedRecord.amm ? <TypeWithIconByAmm amm={selectedRecord.amm} showCollectionName /> : '-')}
+                  detailRow(
+                    'Collection',
+                    selectedRecord.amm ? (
+                      <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={selectedRecord.amm} showCollectionName />
+                    ) : (
+                      '-'
+                    )
+                  )}
                 {(selectedRecord && detailRow('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                 {selectedRecord &&
                   detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
-                {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                {selectedRecord &&
+                  detailRow(
+                    'Execution Price',
+                    <PriceWithIcon
+                      width={20}
+                      height={20}
+                      priceValue={!selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2)}
+                    />
+                  )}
                 {selectedRecord &&
                   detailRow(
                     'Type',
@@ -261,9 +282,18 @@ const HistoryModal = (props: any) => {
                   ? detailRow(
                       'Collateral Change',
                       <PriceWithIcon
+                        width={20}
+                        height={20}
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
-                          <Tooltip direction="top" content="Collateral will not change">
+                          <Tooltip
+                            direction="top"
+                            content={
+                              <>
+                                Partial close will not <br />
+                                free any collateral
+                              </>
+                            }>
                             <Image
                               src="/images/components/trade/history/more_info.svg"
                               alt=""
@@ -279,27 +309,41 @@ const HistoryModal = (props: any) => {
                   : selectedRecord
                   ? detailRow(
                       'Resulting Collateral',
-                      <PriceWithIcon priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'} />
+                      <PriceWithIcon
+                        width={20}
+                        height={20}
+                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'}
+                      />
                     )
                   : null}
                 {isLiquidation && selectedRecord
                   ? detailRow(
                       'Resulting Contract Size',
-                      selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
+                      selectedRecord.ammAddress ? (
+                        <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={selectedRecord.ammAddress} content={contractSize} />
+                      ) : (
+                        '-'
+                      )
                     )
                   : selectedRecord
                   ? detailRow(
                       'Contract Size',
-                      selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
+                      selectedRecord.ammAddress ? (
+                        <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={selectedRecord.ammAddress} content={contractSize} />
+                      ) : (
+                        '-'
+                      )
                     )
                   : null}
                 {isLiquidation && selectedRecord
-                  ? detailRow('Resulting Notional', <PriceWithIcon priceValue={`${notionalChange}`} />)
+                  ? detailRow('Resulting Notional', <PriceWithIcon width={20} height={20} priceValue={`${notionalChange}`} />)
                   : detailRow(
                       'Notional Change',
-                      <PriceWithIcon priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
+                      <PriceWithIcon width={20} height={20} priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
                     )}
-                {!isLiquidation && selectedRecord ? detailRow('Transaction Fee', <PriceWithIcon priceValue={fee} />) : null}
+                {!isLiquidation && selectedRecord
+                  ? detailRow('Transaction Fee', <PriceWithIcon width={20} height={20} priceValue={fee} />)
+                  : null}
                 {isLiquidation && selectedRecord ? (
                   <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} />
                 ) : null}
