@@ -322,7 +322,7 @@ function AdjustCollateralSlidingBars(props: any) {
         onChange={onChange}
         onAfterChange={onChange}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
+      <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">
         <div>
           Current
           <br />

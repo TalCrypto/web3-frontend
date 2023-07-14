@@ -179,10 +179,12 @@ const HistoryModal = () => {
                                   <span className="text-[12px] text-mediumEmphasis">
                                     {formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}
                                   </span>
-                                  <span>
+                                  <span className="mt-[10px] text-[14px] font-normal">
                                     <TypeWithIconByAmm
                                       amm={record.ammAddress}
                                       showCollectionName
+                                      imageWidth={20}
+                                      imageHeight={20}
                                       content={
                                         <div className="flex">
                                           &nbsp;- {currentRecordType}
@@ -204,11 +206,12 @@ const HistoryModal = () => {
                                 </div>
                               </div>
                               <div
-                                className="flex flex-col items-end justify-between text-end
+                                className="flex flex-col items-end justify-center text-end
                                   text-[14px] text-mediumEmphasis">
-                                <span className="title">Wallet Balance</span>
+                                <span className="mb-[6px] text-[12px] font-normal">Wallet Balance</span>
                                 <PriceWithIcon
-                                  className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}`}
+                                  className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}
+                                    !text-[14px] font-medium`}
                                   priceValue={`${Number(balance) > 0 ? '+' : ''}${
                                     Number(balance) === 0 ? '-.---' : Number(balance).toFixed(4)
                                   }`}
@@ -247,11 +250,26 @@ const HistoryModal = () => {
               ) : null}
               <div className="p-3 text-mediumEmphasis">
                 {selectedRecord &&
-                  detailRow('Collection', selectedRecord.amm ? <TypeWithIconByAmm amm={selectedRecord.amm} showCollectionName /> : '-')}
+                  detailRow(
+                    'Collection',
+                    selectedRecord.amm ? (
+                      <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={selectedRecord.amm} showCollectionName />
+                    ) : (
+                      '-'
+                    )
+                  )}
                 {(selectedRecord && detailRow('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                 {selectedRecord &&
                   detailRow('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
-                {selectedRecord && detailRow('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                {selectedRecord &&
+                  detailRow(
+                    'Execution Price',
+                    <PriceWithIcon
+                      width={20}
+                      height={20}
+                      priceValue={!selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2)}
+                    />
+                  )}
                 {selectedRecord &&
                   detailRow(
                     'Type',
@@ -263,6 +281,8 @@ const HistoryModal = () => {
                   ? detailRow(
                       'Collateral Change',
                       <PriceWithIcon
+                        width={20}
+                        height={20}
                         priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
                         {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                           <Tooltip
@@ -288,27 +308,41 @@ const HistoryModal = () => {
                   : selectedRecord
                   ? detailRow(
                       'Resulting Collateral',
-                      <PriceWithIcon priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'} />
+                      <PriceWithIcon
+                        width={20}
+                        height={20}
+                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'}
+                      />
                     )
                   : null}
                 {isLiquidation && selectedRecord
                   ? detailRow(
                       'Resulting Contract Size',
-                      selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
+                      selectedRecord.ammAddress ? (
+                        <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={selectedRecord.ammAddress} content={contractSize} />
+                      ) : (
+                        '-'
+                      )
                     )
                   : selectedRecord
                   ? detailRow(
                       'Contract Size',
-                      selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
+                      selectedRecord.ammAddress ? (
+                        <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={selectedRecord.ammAddress} content={contractSize} />
+                      ) : (
+                        '-'
+                      )
                     )
                   : null}
                 {isLiquidation && selectedRecord
-                  ? detailRow('Resulting Notional', <PriceWithIcon priceValue={`${notionalChange}`} />)
+                  ? detailRow('Resulting Notional', <PriceWithIcon width={20} height={20} priceValue={`${notionalChange}`} />)
                   : detailRow(
                       'Notional Change',
-                      <PriceWithIcon priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
+                      <PriceWithIcon width={20} height={20} priceValue={`${Number(notionalChange) > 0 ? '+' : ''}${notionalChange}`} />
                     )}
-                {!isLiquidation && selectedRecord ? detailRow('Transaction Fee', <PriceWithIcon priceValue={fee} />) : null}
+                {!isLiquidation && selectedRecord
+                  ? detailRow('Transaction Fee', <PriceWithIcon width={20} height={20} priceValue={fee} />)
+                  : null}
                 {isLiquidation && selectedRecord ? (
                   <DetailRowWithPriceIcon label="Liquidation Penalty" content={liquidationPenalty} />
                 ) : null}

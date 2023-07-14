@@ -101,7 +101,7 @@ function QuantityTips(props: any) {
 
   return label ? (
     <div>
-      <div className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</div>
+      <div className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</div>
     </div>
   ) : null;
 }
@@ -180,8 +180,8 @@ function QuantityEnter(props: any) {
             />
           </div>
         </div>
+        <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
       </div>
-      <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
     </>
   );
 }

@@ -109,7 +109,6 @@ const HistoryModal = (props: any) => {
   const onClickRow = (record: any) => {
     setSelectedRecord(record);
     setIsShowDetail(true);
-
     const balance = getWalletBalanceChange(record);
     setSelectedBalance(String(balance));
   };
@@ -184,11 +183,12 @@ const HistoryModal = (props: any) => {
                               </div>
                             </div>
                             <div
-                              className="flex flex-col items-end justify-between text-end
-                                  text-[14px] text-mediumEmphasis">
-                              <span className="title">Wallet Balance</span>
+                              className="flex flex-col items-end justify-center text-end
+                                text-[14px] text-mediumEmphasis">
+                              <span className="mb-[6px] text-[12px] font-normal">Wallet Balance</span>
                               <PriceWithIcon
-                                className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}`}
+                                className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}
+                                  !text-[14px] font-medium`}
                                 priceValue={`${Number(balance) > 0 ? '+' : ''}${
                                   Number(balance) === 0 ? '-.---' : Number(balance).toFixed(4)
                                 }`}
@@ -210,11 +210,14 @@ const HistoryModal = (props: any) => {
               `}>
               <div
                 className="mb-[6px] flex items-center justify-between
-                    bg-lightBlue px-5 py-6 text-[16px] text-highEmphasis">
+                    bg-lightBlue px-5 py-4 text-[16px] text-highEmphasis">
                 <div>
-                  <span>Wallet Balance</span>
+                  <span className="text-[12px] font-normal text-highEmphasis">Wallet Balance</span>
                   <PriceWithIcon
-                    className={`${Number(selectedBalance) > 0 ? 'text-marketGreen' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}`}
+                    width={22}
+                    height={22}
+                    className={`${Number(selectedBalance) > 0 ? 'text-marketGreen' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}
+                      mt-[6px] text-[20px] font-semibold`}
                     priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
                       Number(selectedBalance) === 0 ? '--.--' : Number(selectedBalance).toFixed(4)
                     }`}
@@ -223,7 +226,7 @@ const HistoryModal = (props: any) => {
                 {selectedRecord && <ExplorerButton className="mr-[6px]" txHash={selectedRecord.txHash} />}
               </div>
               <div className="text-mediumEmphasis">
-                <div className="mb-[6px]  bg-lightBlue">
+                <div className="mb-[6px] bg-lightBlue">
                   {isLiquidation ? (
                     <div className="bg-darkBlue px-5 pb-6 pt-[18px]">
                       <LiquidationWarning isFullLiquidation={getActionTypeFromApi(selectedRecord) === TradeActions.FULL_LIQ} />
@@ -232,13 +235,17 @@ const HistoryModal = (props: any) => {
                   {selectedRecord &&
                     detailRowMobile(
                       'Collection',
-                      selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} showCollectionName /> : '-'
+                      selectedRecord.ammAddress ? (
+                        <TypeWithIconByAmm imageWidth={16} imageHeight={16} amm={selectedRecord.ammAddress} showCollectionName />
+                      ) : (
+                        '-'
+                      )
                     )}
                   {(selectedRecord && detailRowMobile('Action', getActionTypeFromApi(selectedRecord))) || '-'}
                   {selectedRecord &&
                     detailRowMobile('Time', selectedRecord.timestamp ? formatDateTime(selectedRecord.timestamp, 'MM/DD/YYYY HH:mm') : '-')}
                   {selectedRecord &&
-                    detailRowMobile('Entry Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
+                    detailRowMobile('Execution Price', !selectedRecord.entryPrice ? '0.00' : selectedRecord.entryPrice.toFixed(2))}
                   {selectedRecord &&
                     detailRowMobile(
                       'Type',
@@ -267,8 +274,8 @@ const HistoryModal = (props: any) => {
                               <Image
                                 src="/images/components/trade/history/more_info.svg"
                                 alt=""
-                                width={16}
-                                height={16}
+                                width={12}
+                                height={12}
                                 className="ml-[6px] mr-0"
                               />
                             </MobileTooltip>
@@ -284,12 +291,20 @@ const HistoryModal = (props: any) => {
                   {isLiquidation && selectedRecord
                     ? detailRowMobile(
                         'Resulting Contract Size',
-                        selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
+                        selectedRecord.ammAddress ? (
+                          <TypeWithIconByAmm imageWidth={16} imageHeight={16} amm={selectedRecord.ammAddress} content={contractSize} />
+                        ) : (
+                          '-'
+                        )
                       )
                     : selectedRecord
                     ? detailRowMobile(
                         'Contract Size',
-                        selectedRecord.ammAddress ? <TypeWithIconByAmm amm={selectedRecord.ammAddress} content={contractSize} /> : '-'
+                        selectedRecord.ammAddress ? (
+                          <TypeWithIconByAmm imageWidth={16} imageHeight={16} amm={selectedRecord.ammAddress} content={contractSize} />
+                        ) : (
+                          '-'
+                        )
                       )
                     : null}
                   {isLiquidation

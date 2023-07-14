@@ -278,7 +278,7 @@ function CloseSlider(props: any) {
         onAfterChange={onChange}
         step={0.0001}
       />
-      <div className="mb-6 flex justify-between text-[12px] text-highEmphasis">
+      <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">
         <div>0</div>
         <div>Total Notional Value</div>
       </div>

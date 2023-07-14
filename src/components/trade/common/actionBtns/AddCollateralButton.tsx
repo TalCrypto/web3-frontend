@@ -14,7 +14,8 @@ function AddCollateralButton({
   deltaMargin,
   onPending,
   onSuccess,
-  onError
+  onError,
+  isDisabled
 }: {
   isEstimating: boolean;
   deltaMargin: number;
@@ -22,6 +23,7 @@ function AddCollateralButton({
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
   onError: (error: Error | null) => void;
+  isDisabled: boolean;
 }) {
   if (deltaMargin < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
@@ -74,7 +76,7 @@ function AddCollateralButton({
 
   return (
     <BaseButton
-      disabled={!write}
+      disabled={!write || isDisabled}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();
