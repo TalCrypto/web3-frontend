@@ -195,14 +195,17 @@ const MobileMenu = (props: any) => {
             </div>
 
             <div className="pb-[35px]">
-              <Link
-                href="/competition"
-                className={`glow-yellow flex ${router.route.toLowerCase() === '/competition' ? 'mobile-menu-active font-semibold' : ''}`}>
-                <div className="mr-1">
-                  <Image className="mt-[2px]" src="/images/common/fire.svg" width={15} height={15} alt="Competition Icon" />
+              <div onClick={() => onGotoPage('/competition')}>
+                <div className="flex flex-row items-center">
+                  <Image className="mr-[4px]" src="/images/common/fire.svg" width={15} height={15} alt="Competition Icon" />
+                  <span
+                    className={`glow-yellow flex ${
+                      router.route.toLowerCase() === '/competition' ? 'mobile-menu-active font-semibold' : ''
+                    }`}>
+                    Competition
+                  </span>
                 </div>
-                Competition
-              </Link>
+              </div>
             </div>
           </div>
         </div>
