@@ -42,7 +42,7 @@ const PrizeComponent = () => {
               tableClassName="pt-9"
               titleClassName="flex justify-between mb-[18px] px-5 md:px-9"
               tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-9"
-              tBodyClassName="mt-6 md:px-9 md:overflow-y-scroll md:h-[320px] scroll-style"
+              tBodyClassName="mt-6 md:px-9 md:overflow-y-scroll min-h-[70vh] md:min-h-[320px] md:h-[320px] scroll-style"
               icon={<Image alt="gainers" src="/images/components/competition/icons/gainers-colorful.svg" width={24} height={24} />}
               title={<h3 className="text-h4 md:pl-[7px] md:text-h3">Top Gainer</h3>}
               isLoading={isCompetitionLeaderboardLoading}
