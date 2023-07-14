@@ -47,6 +47,8 @@ module.exports = {
         competition: '#FFEFD0',
         seasonGreen: '#D0FF4B',
         tooltipArrow: '#213676',
+        buttonGreen: '#48AE36',
+        buttonRed: '#EA3E3F',
 
         gradientBlue: '#04AEFC',
         gradientPink: '#F703D9',
