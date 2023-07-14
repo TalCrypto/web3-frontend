@@ -84,7 +84,7 @@ const MarketHistoryUpdater = () => {
   // load funding payment history for once
   useEffect(() => {
     function fetch() {
-      const ammAddr = getAMMAddress(defaultChain, currentAmm);
+      const ammAddr = getAMMAddress(chain, currentAmm);
       if (ammAddr) {
         getFundingPaymentHistory(ammAddr).then(res => {
           if (res) {
