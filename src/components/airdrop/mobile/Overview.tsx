@@ -5,6 +5,7 @@ import { $userIsConnected } from '@/stores/user';
 import Image from 'next/image';
 import { BoxGradient, BoxLocked } from '@/components/common/Box';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function OverviewMobile() {
   const userPoint = useNanostore($userPoint);
@@ -123,88 +124,208 @@ function OverviewMobile() {
         <div className="mb-1 px-5 text-[20px] font-semibold">Points Details</div>
 
         {/* Trading Volume */}
-        <div className="relative mb-1 flex items-center justify-between px-5 py-2">
-          <div className="z-[2] flex flex-row items-center text-[14px]">
-            <div className="mr-[6px]">
-              <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+        {eligible() ? (
+          <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+            <div className="flex flex-row items-center text-[14px]">
+              <div className="mr-[6px]">
+                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+              </div>
+              Trading Vol.
             </div>
-            Trading Vol.
+            <div className="flex items-center">
+              <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
+              <p className="mt-[3px] text-[15px]">Pts</p>
+            </div>
           </div>
-          <div className="flex items-center">
-            <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
-            <p className="mt-[3px] text-[15px]">Pts</p>
-          </div>
-          {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
-        </div>
+        ) : (
+          <MobileTooltip
+            content={
+              <>
+                <div className="text-[15px] font-semibold">Unlock Reward</div>
+                <div className="mt-3 text-[12px] font-normal">Trade for 5 WETH notional to unlock your reward.</div>
+              </>
+            }>
+            <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+              <div className="flex flex-row items-center text-[14px]">
+                <div className="mr-[6px]">
+                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                </div>
+                Trading Vol.
+              </div>
+              <div className="flex items-center">
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
+                <p className="mt-[3px] text-[15px]">Pts</p>
+              </div>
+              {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
+            </div>
+          </MobileTooltip>
+        )}
 
         {/* Referral */}
-        <div className="relative mb-1 flex items-center justify-between px-5 py-2">
-          <div className="z-[2] flex flex-row items-center text-[14px]">
-            <div className="mr-[6px]">
-              <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+        {eligible() ? (
+          <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+            <div className="flex flex-row items-center text-[14px]">
+              <div className="mr-[6px]">
+                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+              </div>
+              Referral
             </div>
-            Referral
-          </div>
 
-          <div className="flex items-center">
-            <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
-              {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
-            </p>
-            <p className="mt-[3px] text-[15px]">Pts</p>
+            <div className="flex items-center">
+              <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
+                {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
+              </p>
+              <p className="mt-[3px] text-[15px]">Pts</p>
+            </div>
+            {!eligible() ? <BoxLocked tooltipContent="aa" blur={0} iconWidth={20} iconHeight={20} /> : null}
           </div>
-          {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
-        </div>
+        ) : (
+          <MobileTooltip
+            content={
+              <>
+                <div className="text-[15px] font-semibold">Unlock Reward</div>
+                <div className="mt-3 text-[12px] font-normal">Trade for 5 WETH notional to unlock your reward.</div>
+              </>
+            }>
+            <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+              <div className="flex flex-row items-center text-[14px]">
+                <div className="mr-[6px]">
+                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                </div>
+                Referral
+              </div>
+
+              <div className="flex items-center">
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
+                  {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
+                </p>
+                <p className="mt-[3px] text-[15px]">Pts</p>
+              </div>
+              {!eligible() ? <BoxLocked tooltipContent="aa" blur={0} iconWidth={20} iconHeight={20} /> : null}
+            </div>
+          </MobileTooltip>
+        )}
 
         {/* Others */}
-        <div className="relative mb-1 flex items-center justify-between px-5 py-2">
-          <div className="z-[2] flex flex-row items-center text-[14px]">
-            <div className="mr-[6px]">
-              <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+        {eligible() ? (
+          <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+            <div className="flex flex-row items-center text-[14px]">
+              <div className="mr-[6px]">
+                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+              </div>
+              Others
             </div>
-            Others
-          </div>
 
-          <div className="flex items-center">
-            <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
-            <p className="mt-[3px] text-[15px]">Pts</p>
+            <div className="flex items-center">
+              <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
+              <p className="mt-[3px] text-[15px]">Pts</p>
+            </div>
+            {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
           </div>
-          {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
-        </div>
-      </div>
-
-      <div className="bg-darkBlue">
-        <div className="mb-[6px] bg-lightBlue px-5 py-6">
-          <div className="mb-4 text-[16px] font-semibold">
-            <span className="text-gradient-vertical">Bonus Points</span>
-          </div>
-
-          <div className="flex items-center justify-between bg-lightBlue">
-            <div className="max-w-[70%]">
-              <div className="flex items-center justify-start text-[20px] font-semibold">
+        ) : (
+          <MobileTooltip
+            content={
+              <>
+                <div className="text-[15px] font-semibold">Unlock Reward</div>
+                <div className="mt-3 text-[12px] font-normal">Trade for 5 WETH notional to unlock your reward.</div>
+              </>
+            }>
+            <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+              <div className="flex flex-row items-center text-[14px]">
                 <div className="mr-[6px]">
-                  <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
                 </div>
-                <span className="text-[14px] font-normal">Net Converg. Trading Vol.</span>
+                Others
               </div>
-            </div>
-            <div>
-              <div className="relative flex items-center justify-start text-[15px] font-normal">
-                <div className="flex items-end text-[15px]">
-                  <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
-                    {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
-                  </span>
-                  Pts
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div className="mt-6 text-[14px] text-mediumEmphasis">
-            At the end of the season, bonus points will be added to your total points after multiplier, which will boost your ranking even
-            further!
+              <div className="flex items-center">
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
+                <p className="mt-[3px] text-[15px]">Pts</p>
+              </div>
+              {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
+            </div>
+          </MobileTooltip>
+        )}
+      </div>
+
+      {eligible() ? (
+        <div className="bg-darkBlue">
+          <div className="mb-[6px] bg-lightBlue px-5 py-6">
+            <div className="mb-4 text-[16px] font-semibold">
+              <span className="text-gradient-vertical">Bonus Points</span>
+            </div>
+
+            <div className="flex items-center justify-between bg-lightBlue">
+              <div className="max-w-[70%]">
+                <div className="flex items-center justify-start text-[20px] font-semibold">
+                  <div className="mr-[6px]">
+                    <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+                  </div>
+                  <span className="text-[14px] font-normal">Net Converg. Trading Vol.</span>
+                </div>
+              </div>
+              <div>
+                <div className="relative flex items-center justify-start text-[15px] font-normal">
+                  <div className="flex items-end text-[15px]">
+                    <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
+                      {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
+                    </span>
+                    Pts
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 text-[14px] text-mediumEmphasis">
+              At the end of the season, bonus points will be added to your total points after multiplier, which will boost your ranking even
+              further!
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <MobileTooltip
+          content={
+            <>
+              <div className="text-[15px] font-semibold">Unlock Reward</div>
+              <div className="mt-3 text-[12px] font-normal">Trade for 5 WETH notional to unlock your reward.</div>
+            </>
+          }>
+          <div className="relative bg-darkBlue">
+            <div className="mb-[6px] bg-lightBlue px-5 py-6">
+              <div className="mb-4 text-[16px] font-semibold">
+                <span className="text-gradient-vertical">Bonus Points</span>
+              </div>
+
+              <div className="flex items-center justify-between bg-lightBlue">
+                <div className="max-w-[70%]">
+                  <div className="flex items-center justify-start text-[20px] font-semibold">
+                    <div className="mr-[6px]">
+                      <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+                    </div>
+                    <span className="text-[14px] font-normal">Net Converg. Trading Vol.</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="relative flex items-center justify-start text-[15px] font-normal">
+                    <div className="flex items-end text-[15px]">
+                      <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
+                        {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
+                      </span>
+                      Pts
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 text-[14px] text-mediumEmphasis">
+                At the end of the season, bonus points will be added to your total points after multiplier, which will boost your ranking
+                even further!
+              </div>
+              {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
+            </div>
+          </div>
+        </MobileTooltip>
+      )}
     </div>
   );
 }
