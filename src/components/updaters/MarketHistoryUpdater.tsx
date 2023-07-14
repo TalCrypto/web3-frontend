@@ -87,21 +87,17 @@ const MarketHistoryUpdater = () => {
       const ammAddr = getAMMAddress(chain, currentAmm);
       if (ammAddr) {
         getFundingPaymentHistory(ammAddr).then(res => {
-          if (res) {
-            $fundingRatesHistory.set(
-              res.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
-                amm: getAddress(record.amm),
-                timestamp: Number(record.timestamp),
-                underlyingPrice: formatBigInt(record.underlyingPrice),
-                rateLong: formatBigInt(record.rateLong),
-                rateShort: formatBigInt(record.rateShort),
-                amountLong: formatBigInt(record.rateLong) * formatBigInt(record.underlyingPrice),
-                amountShort: formatBigInt(record.rateShort) * formatBigInt(record.underlyingPrice)
-              }))
-            );
-          } else {
-            $fundingRatesHistory.set([]);
-          }
+          $fundingRatesHistory.set(
+            res?.map((record: { amm: string; timestamp: string; rateLong: string; rateShort: string; underlyingPrice: string }) => ({
+              amm: getAddress(record.amm),
+              timestamp: Number(record.timestamp),
+              underlyingPrice: formatBigInt(record.underlyingPrice),
+              rateLong: formatBigInt(record.rateLong),
+              rateShort: formatBigInt(record.rateShort),
+              amountLong: formatBigInt(record.rateLong) * formatBigInt(record.underlyingPrice),
+              amountShort: formatBigInt(record.rateShort) * formatBigInt(record.underlyingPrice)
+            }))
+          );
         });
       }
     }

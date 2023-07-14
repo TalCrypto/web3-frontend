@@ -76,7 +76,7 @@ module.exports = {
         h2: [
           '32px',
           {
-            lineHeight: '39.01px',
+            // lineHeight: '39.01px',
             fontWeight: '700'
           }
         ],
@@ -134,6 +134,13 @@ module.exports = {
           {
             // lineHeight: '17.07px',
             fontWeight: '400'
+          }
+        ],
+        b3e: [
+          '12px',
+          {
+            lineHeight: '14.63px',
+            fontWeight: '600'
           }
         ]
       }
