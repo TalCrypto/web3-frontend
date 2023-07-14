@@ -72,7 +72,7 @@ const CustomTable = (props: any) => {
       {reward || null}
 
       {/* table head */}
-      <div className="sticky top-[48px] z-10 bg-[#0c0d20] pb-4 pt-6 md:static md:z-0 md:bg-transparent md:p-0">
+      <div className="sticky top-[48px] z-[9] bg-[#0c0d20] pb-4 pt-6 md:static md:z-0 md:bg-transparent md:p-0">
         <div className={tHeadClassName}>
           <div className="basis-[15%]">Rank</div>
           <div className="basis-[45%] pl-[17.33px]">User</div>
