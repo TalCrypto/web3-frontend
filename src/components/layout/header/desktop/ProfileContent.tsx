@@ -111,15 +111,17 @@ const BottomContent = () => {
         h-[64px] rounded-lg border border-solid border-primaryBlue">
         <div className="content px-4 py-3">
           <div className="start">
-            {account.connector?.name === 'MetaMask' ? (
-              <div className="mr-4 h-[34px] w-[34px]">
-                <Image src="/images/components/layout/header/metamask-logo.png" width={34} height={34} alt="" />
-              </div>
-            ) : (
-              <div className="mr-4 h-[34px] w-[34px]">
-                <Image src="/images/components/layout/header/walletconnect-logo.png" width={34} height={34} alt="" />
-              </div>
-            )}
+            {account.connector?.name ? (
+              account.connector?.name === 'MetaMask' ? (
+                <div className="mr-4 h-[34px] w-[34px]">
+                  <Image src="/images/components/layout/header/metamask-logo.png" width={34} height={34} alt="" />
+                </div>
+              ) : (
+                <div className="mr-4 h-[34px] w-[34px]">
+                  <Image src="/images/components/layout/header/walletconnect-logo.png" width={34} height={34} alt="" />
+                </div>
+              )
+            ) : null}
             <div>
               <div className="gradient-bg !bg-clip-text text-transparent">{displayAddress}</div>
               <div className="text-[12px] font-medium text-mediumEmphasis">{networkNameDisplay(currentChain?.id)}</div>
