@@ -224,7 +224,7 @@ const ChartHeaders = () => {
           </div>
 
           <div>
-            <div className="text-[12px] text-mediumEmphasis">VAMM - Oracle Price Gap:</div>
+            <div className="text-[12px] text-mediumEmphasis">vAMM - Oracle Price Gap:</div>
 
             <div className="mt-1 flex w-full items-center justify-end text-[12px] text-highEmphasis">
               <p className="text-highEmphasis">

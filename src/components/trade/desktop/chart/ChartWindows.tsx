@@ -270,7 +270,7 @@ const ChartFooter = () => {
                 <br /> vAMM and the oracle prices
               </p>
             }>
-            <p className="cursor-default text-mediumEmphasis">VAMM - Oracle Price Gap:</p>
+            <p className="cursor-default text-mediumEmphasis">vAMM - Oracle Price Gap:</p>
           </Tooltip>
         </div>
 
