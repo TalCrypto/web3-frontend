@@ -6,6 +6,7 @@ body {
 
   width: 100%;
   height: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -23,6 +24,27 @@ body {
     background: #c4c4c488;
     border-radius: 10px;
   }
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+}
+h2 {
+  font-size: 32px;
+  font-weight: 700;
+}
+h3 {
+  font-size: 24px;
+  font-weight: 700;
+}
+h4 {
+  font-size: 20px;
+  font-weight: 600;
+}
+h5 {
+  font-size: 16px;
+  font-weight: 600;
 }
 
 @media (min-width: 400px) {

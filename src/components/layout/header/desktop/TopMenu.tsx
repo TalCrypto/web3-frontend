@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
+import Image, { ImageProps } from 'next/image';
 import Link from 'next/link';
 import { withRouter } from 'next/router';
 
@@ -8,14 +8,16 @@ interface NavbarItem {
   path: string;
   other: string;
   child: NavbarItem[];
+  textClassName: string;
+  icon?: React.ReactElement;
 }
 
 function TopMenu(props: any) {
   const { router } = props;
 
   const navbarList: NavbarItem[] = [
-    { name: 'Portfolio', path: '/portfolio', other: '', child: [] },
-    { name: 'Trade', path: '/trade', other: '', child: [] },
+    { name: 'Portfolio', path: '/portfolio', other: '', child: [], textClassName: '' },
+    { name: 'Trade', path: '/trade', other: '', child: [], textClassName: '' },
     // {
     //   name: 'Others',
     //   path: '/others',
@@ -25,7 +27,19 @@ function TopMenu(props: any) {
     //     { name: 'Battle', path: '../comingsoonbattle', /*other: <Soon />,*/ child: [] }
     //   ]
     // },
-    { name: 'Airdrop', path: '/airdrop', other: '', child: [] }
+    { name: 'Airdrop', path: '/airdrop', other: '', child: [], textClassName: '' },
+    {
+      name: 'Competition',
+      path: '/competition',
+      other: '',
+      child: [],
+      textClassName: 'glow-yellow',
+      icon: (
+        <div className="mr-1">
+          <Image className="mt-[2px]" src="/images/common/fire.svg" width={18} height={18} alt="Competition Icon" />
+        </div>
+      )
+    }
   ];
 
   const handleDropdown = (name: string, isShow: boolean) => {
@@ -41,7 +55,7 @@ function TopMenu(props: any) {
     }
   };
 
-  const listUI = navbarList.map(({ name, path, other, child }) => {
+  const listUI = navbarList.map(({ name, path, other, child, icon, textClassName }) => {
     if (child.length !== 0) {
       return (
         <div
@@ -86,8 +100,9 @@ function TopMenu(props: any) {
     return (
       <Link key={name} href={path}>
         <div
-          className={`item relative cursor-pointer py-[16px]
+          className={`item relative flex cursor-pointer py-[16px] ${textClassName}
           ${router.route.toUpperCase() === path.toUpperCase() ? 'active' : ''}`}>
+          {icon}
           {name}
           {other}
           <div className="after absolute bottom-0 left-0 h-[3px] w-full rounded-[3px]" />
