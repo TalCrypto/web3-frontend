@@ -160,7 +160,7 @@ const HistoryModal = () => {
                                     content={
                                       <div className="flex">
                                         &nbsp;- {currentRecordType}
-                                        {currentRecordType === TradeActions.FULL_LIQ ? (
+                                        {currentRecordType === TradeActions.FULL_LIQ || currentRecordType === TradeActions.PARTIAL_LIQ ? (
                                           <Image className="ml-1" src="/images/common/alert/alert_red.svg" width={16} height={16} alt="" />
                                         ) : (
                                           ''
