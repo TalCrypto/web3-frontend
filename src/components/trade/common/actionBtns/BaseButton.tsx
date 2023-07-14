@@ -14,11 +14,16 @@ function BaseButton({
   // eslint-disable-next-line react/require-default-props
   disabled?: boolean;
 }) {
+  const greenButton = !isLoading && !disabled && (label === 'Open LONG' || label === 'Add Collateral');
+  const redButton = !isLoading && !disabled && (label === 'Open SHORT' || label === 'Reduce Collateral');
+
   return (
     <div className="flex">
       <PrimaryButton
         isDisabled={!isLoading && disabled}
         className={`${!isLoading && disabled ? 'opacity-30' : ''}
+          ${greenButton ? '!bg-buttonGreen' : ''}
+          ${redButton ? '!bg-buttonRed' : ''}
           h-[46px] w-full px-[10px] py-[14px]
         `}
         onClick={!isLoading && !disabled ? onClick : null}>

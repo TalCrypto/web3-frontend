@@ -41,11 +41,13 @@ function OpenPosButton({
   const [label, setLabel] = useState('');
   const isMobileView = useNanostore($isMobileView);
 
+  const sideDisplay = side === 0 ? 'LONG' : 'SHORT';
+
   useEffect(() => {
     if (positionInfo) {
       const posType =
         positionInfo.size === 0
-          ? `${TradeActions.OPEN} Position`
+          ? `${TradeActions.OPEN} ${sideDisplay}`
           : (-1) ** side * positionInfo.size > 0
           ? `${TradeActions.ADD}`
           : `Close Position`;
