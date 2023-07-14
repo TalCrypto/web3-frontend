@@ -61,7 +61,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
         <div className="w-[35%]">
           <SmallTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />
         </div>
-        <div className="w-[33%] text-right">
+        <div className="w-[32%] text-right">
           <div className="text-[14px]">
             <SingleRowPriceContent
               width={16}
@@ -90,7 +90,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
             ) : null} */}
           </div>
         </div>
-        <div className="w-[32%] ">
+        <div className="w-[35%] ">
           <SingleRowPriceContent
             width={16}
             height={16}

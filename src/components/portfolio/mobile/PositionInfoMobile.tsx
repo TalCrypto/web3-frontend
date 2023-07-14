@@ -15,6 +15,8 @@ import { SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelC
 import { $userIsConnected, $userTotalFP } from '@/stores/user';
 import { $isShowMobileModal } from '@/stores/modal';
 import { AMM } from '@/const/collectionList';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
+import Image from 'next/image';
 
 function PositionInfoMobile() {
   const isConnected = useNanostore($userIsConnected);
@@ -85,12 +87,31 @@ function PositionInfoMobile() {
                   Collection <br />
                   Type
                 </div>
-                <div className="w-[33%] text-right">
+                <div className="w-[32%] text-right">
                   Notional <br />
                   Leverage
                 </div>
-                <div className="w-[32%] text-right">
-                  Unrealized P/L <br />
+                <div className="w-[35%] text-right">
+                  <div className="flex items-center justify-end">
+                    Unrealized P/L
+                    <MobileTooltip
+                      content={
+                        <>
+                          <div className="mb-3 text-[15px] font-semibold">Accumulated Realized P/L</div>
+                          <div className="text-[12px] font-normal">
+                            Unrealized P/L is calculated based on the current vAMM price change and does not include funding payment.
+                          </div>
+                        </>
+                      }>
+                      <Image
+                        src="/images/components/trade/history/more_info.svg"
+                        alt=""
+                        width={12}
+                        height={12}
+                        className="ml-[6px] cursor-pointer"
+                      />
+                    </MobileTooltip>
+                  </div>
                   Accu. FP
                 </div>
               </div>
