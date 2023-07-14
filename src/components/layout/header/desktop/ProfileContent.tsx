@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 import { useStore as useNanostore } from '@nanostores/react';
 import { $currentChain, $userAddress, $userInfo, $userIsWrongNetwork, $userTotalCollateral, $userWethBalance } from '@/stores/user';
-import { useDisconnect, useSwitchNetwork } from 'wagmi';
+import { useAccount, useDisconnect, useSwitchNetwork } from 'wagmi';
 import { $showSwitchNetworkErrorModal, $showGetWEthModal } from '@/stores/modal';
 import { CHAINS } from '@/const/supportedChains';
 import PrimaryButton from '@/components/common/PrimaryButton';
@@ -101,6 +101,7 @@ const BottomContent = () => {
   const wethBalance = useNanostore($userWethBalance);
   const displayAddress = address ? `${address.substring(0, 7)}...${address.slice(-3)}` : null;
   const totalCollateral = useNanostore($userTotalCollateral);
+  const account = useAccount();
 
   return (
     <div className="bottoms">
@@ -110,7 +111,7 @@ const BottomContent = () => {
         h-[64px] rounded-lg border border-solid border-primaryBlue">
         <div className="content px-4 py-3">
           <div className="start">
-            {/* {walletProvider.provider && walletProvider.provider.connection.url === 'metamask' ? (
+            {account.connector?.name === 'MetaMask' ? (
               <div className="mr-4 h-[34px] w-[34px]">
                 <Image src="/images/components/layout/header/metamask-logo.png" width={34} height={34} alt="" />
               </div>
@@ -118,7 +119,7 @@ const BottomContent = () => {
               <div className="mr-4 h-[34px] w-[34px]">
                 <Image src="/images/components/layout/header/walletconnect-logo.png" width={34} height={34} alt="" />
               </div>
-            )} */}
+            )}
             <div>
               <div className="gradient-bg !bg-clip-text text-transparent">{displayAddress}</div>
               <div className="text-[12px] font-medium text-mediumEmphasis">{networkNameDisplay(currentChain?.id)}</div>
