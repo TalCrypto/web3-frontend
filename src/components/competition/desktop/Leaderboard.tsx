@@ -40,7 +40,8 @@ const Leaderboard = () => {
                 bg-[url('/images/components/competition/backgrounds/gainers.svg')] bg-no-repeat bg-contain`}
         titleClassName="flex justify-between mb-[18px] px-5 md:px-[25px] min-[1024px]:px-[36px]"
         tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-[25px] min-[1024px]:px-[36px]"
-        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll md:h-[320px] md:px-[25px] min-[1024px]:px-[36px]"
+        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll min-h-[70vh] md:min-h-[320px] md:h-[320px] 
+                md:px-[25px] min-[1024px]:px-[36px]"
         icon={<Image alt="gainers icon" src="/images/components/competition/icons/gainers.svg" width={22} height={22} />}
         title={<h4 className="text-h4 md:pl-[7px]">Top ROI</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
@@ -80,7 +81,8 @@ const Leaderboard = () => {
                 bg-[url('/images/components/competition/backgrounds/convergence.svg')] bg-no-repeat bg-contain`}
         titleClassName="flex justify-between mb-[18px] px-5 md:px-[25px] min-[1024px]:px-[36px]"
         tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-[25px] min-[1024px]:px-[36px]"
-        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll md:h-[320px] md:px-[25px] min-[1024px]:px-[36px]"
+        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll min-h-[70vh] md:min-h-[320px] md:h-[320px] 
+                md:px-[25px] min-[1024px]:px-[36px]"
         icon={<Image alt="convergence icon" src="/images/components/competition/icons/convergence.svg" width={20} height={20} />}
         title={<h4 className="text-h4 md:pl-[7px]">Top Converger</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
@@ -119,7 +121,8 @@ const Leaderboard = () => {
                 bg-[url('/images/components/competition/backgrounds/losers.svg')] bg-no-repeat bg-contain`}
         titleClassName="flex justify-between mb-[18px] px-5 md:px-[25px] min-[1024px]:px-[36px]"
         tHeadClassName="flex text-b2 text-mediumEmphasis px-5 md:px-[25px] min-[1024px]:px-[36px]"
-        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll md:h-[320px] md:px-[25px] min-[1024px]:px-[36px]"
+        tBodyClassName="scroll-style md:mt-6 md:overflow-y-scroll min-h-[70vh] md:min-h-[320px] md:h-[320px] 
+                md:px-[25px] min-[1024px]:px-[36px]"
         icon={<Image alt="losers icon" src="/images/components/competition/icons/losers.svg" width={22} height={22} />}
         title={<h4 className="text-h4 md:pl-[7px]">Rekt</h4>}
         isLoading={isCompetitionLeaderboardLoadingData}
