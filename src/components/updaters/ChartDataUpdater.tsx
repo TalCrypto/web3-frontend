@@ -26,6 +26,7 @@ const ChartDataUpdater = () => {
         if (!ammAddr) return;
         if (selectedTimeIndex === 0) {
           chartData = await getDailySpotPriceGraphData(ammAddr);
+          console.log({ ammAddr, chartData });
           dailyVolume = formatBigInt(chartData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else if (selectedTimeIndex === 1) {
           chartData = await getWeeklySpotPriceGraphData(ammAddr);
@@ -58,7 +59,7 @@ const ChartDataUpdater = () => {
     $ohlcData.set([]);
     $dailyVolume.set(undefined);
     loadData();
-  }, [selectedTimeIndex, currentAmm, chain]);
+  }, [selectedTimeIndex, currentAmm]);
 
   useEffect(() => {
     const timer = setInterval(addGraphRecord, 30000);

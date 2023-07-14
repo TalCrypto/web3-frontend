@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useStore } from '@nanostores/react';
+import { useStore, useStore as useNanostore } from '@nanostores/react';
 import { $activeDropdown } from '@/stores/competition';
+import { $isShowMobileModal } from '@/stores/modal';
 
 const mobileDropdownOptions = [
   {
@@ -29,13 +30,14 @@ const mobileDropdownOptions = [
 const MobileDropdown = () => {
   const [isExpand, setIsExpand] = useState(false);
   const activeDropdown = useStore($activeDropdown);
+  const isShowMobileMenu = useNanostore($isShowMobileModal);
 
   const activeItem = mobileDropdownOptions.find(i => i.id === activeDropdown);
 
   return (
     <>
       {/* button dropdown */}
-      <div className="sticky top-0 z-20 md:hidden">
+      <div className={`sticky top-0 md:hidden ${!isShowMobileMenu ? 'z-20' : ''}`}>
         <div className="flex justify-between bg-[#202249] px-5 py-[12px]" onClick={() => setIsExpand(!isExpand)}>
           <div className="flex space-x-[6px]">
             <Image alt="gainers" src={activeItem?.icon || '/images/components/competition/icons/m-gainer.svg'} width={16} height={16} />

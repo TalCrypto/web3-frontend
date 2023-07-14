@@ -1,11 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import TopMenu from '@/components/layout/header/desktop/TopMenu';
 import Web3Area from '@/components/layout/header/desktop/Web3Area';
+import WidgetBot from '@widgetbot/react-embed';
+import { $isShowDiscordModal } from '@/stores/modal';
+import { useStore as useNanostore } from '@nanostores/react';
 // import MobileHeader from '@/components/layout/header/mobile';
 
 function Header() {
+  const [isCompleteLoading, setIsCompleteLoading] = useState(false);
+  const [localDiscordKey, setLocalDiscordKey] = useState(false);
+
+  const isShowDiscordModal = useNanostore($isShowDiscordModal);
+
+  useEffect(() => {
+    setIsCompleteLoading(true);
+
+    const localStorageDiscord = localStorage.getItem('isDiscordShown');
+    if (!localStorageDiscord || localStorageDiscord === null) {
+      localStorage.setItem('isDiscordShown', 'false');
+      setLocalDiscordKey(false);
+    } else if (localStorageDiscord === 'true') {
+      setLocalDiscordKey(true);
+    }
+  }, []);
+
+  const closeDiscord = () => {
+    $isShowDiscordModal.set(false);
+    localStorage.setItem('isDiscordShown', 'false');
+  };
+
   return (
     <>
       <div
@@ -32,8 +57,23 @@ function Header() {
             <Web3Area />
           </div>
         </div>
+        {isCompleteLoading ? (
+          <div className={`discord-popup absolute right-[12px] ${!isShowDiscordModal && !localDiscordKey ? 'hidden' : 'open'}`}>
+            <div className="relative">
+              <div className="button absolute" onClick={closeDiscord}>
+                <Image alt="" src="/images/components/common/modal/close-white.svg" width={16} height={16} className="" />
+              </div>
+              <div className="absolute left-0 top-[0] h-[40px] w-[60px] bg-[#313339] " />
+              <WidgetBot
+                server={process.env.NEXT_PUBLIC_DISCORD_SERVER_ID}
+                channel={process.env.NEXT_PUBLIC_DISCORD_CHANNEL_ID}
+                width={430}
+                style={{ height: 'calc(100vh - 112px)' }}
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
-
       {/* <div className="block bg-lightBlue md:hidden">
         <MobileHeader />
       </div> */}
