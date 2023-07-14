@@ -257,7 +257,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; 
         <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
       </div>
       <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
-      <DisplayValues title="Entry Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+      <DisplayValues title="Execution Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
         <Tooltip
           direction="right"

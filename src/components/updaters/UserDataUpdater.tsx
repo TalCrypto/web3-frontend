@@ -146,7 +146,7 @@ const UserDataUpdater: React.FC = () => {
   useEffect(() => {
     if (address) {
       apiConnection.getUserInfo(address).then(result => {
-        setUserInfo(result.data);
+        setUserInfo(result.data, address);
       });
       apiConnection.getUserPoint(address).then(res => {
         if (res?.multiplier) {
@@ -253,12 +253,7 @@ const UserDataUpdater: React.FC = () => {
         });
       }
     }
-
-    const timer = setInterval(update, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
+    update();
   }, [address, chain]);
 
   if (!amms) return null;
