@@ -45,8 +45,9 @@ export default function PartialCloseModal() {
           </div>
           <div className="mt-7">
             <button
-              className="mb-3 w-full cursor-pointer rounded-[4px] bg-primaryBlue px-[10px]
-                py-[6px] text-[15px] font-semibold text-highEmphasis"
+              className="partial-button relative z-10 mb-3 min-w-[160px]
+              flex-1 cursor-pointer rounded-full border-[1px] border-[#3576f7]
+              px-4 py-[3px] text-[14px] text-highEmphasis"
               onClick={e => {
                 e.stopPropagation();
                 $tsIsFirstPartialClose.set(false);
@@ -57,8 +58,9 @@ export default function PartialCloseModal() {
             </button>
 
             <button
-              className="w-full cursor-pointer rounded-[4px] bg-primaryBlue px-[10px]
-                py-[6px] text-[15px] font-semibold text-highEmphasis"
+              className="partial-button relative z-10 min-w-[160px]
+                flex-1 cursor-pointer rounded-full border-[1px] border-[#3576f7] px-4
+                py-[3px] text-[14px] text-highEmphasis"
               onClick={e => {
                 e.preventDefault();
                 dismissModal();
