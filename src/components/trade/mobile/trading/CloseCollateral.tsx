@@ -122,7 +122,7 @@ function QuantityEnter(props: {
               ${disabled ? 'disabled' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
-            <div className="inputweth">
+            <div className="leading-[10px]">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
             <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
@@ -337,7 +337,6 @@ export default function CloseCollateral() {
   const [closeValue, setCloseValue] = useState(0);
   const [toleranceRate, setToleranceRate] = useState<number | string>(0.5);
   const [showDetail, setShowDetail] = useState(false);
-  const [isShowPartialCloseModal, setIsShowPartialCloseModal] = useState(false);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
@@ -527,13 +526,7 @@ export default function CloseCollateral() {
           <div>{showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}</div>
         </>
       ) : null}
-      <PartialCloseModal
-        isShow={isShowPartialCloseModal}
-        setIsShow={setIsShowPartialCloseModal}
-        onClickSubmit={() => {
-          setIsShowPartialCloseModal(false);
-        }}
-      />
+      <PartialCloseModal />
     </div>
   );
 }

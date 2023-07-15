@@ -1,14 +1,16 @@
 import React from 'react';
 import Image from 'next/image';
+import { $tsIsContinueClose, $tsIsFirstPartialClose, $tsIsShowPartialCloseModal } from '@/stores/trading';
+import { useStore as useNanostore } from '@nanostores/react';
 
-export default function PartialCloseModal(props: any) {
-  const { isShow, setIsShow, onClickSubmit } = props;
-  if (!isShow) {
+export default function PartialCloseModal() {
+  const isShowPartialCloseModal = useNanostore($tsIsShowPartialCloseModal);
+  if (!isShowPartialCloseModal) {
     return null;
   }
 
   const dismissModal = () => {
-    setIsShow(false);
+    $tsIsShowPartialCloseModal.set(false);
   };
 
   return (
@@ -19,7 +21,6 @@ export default function PartialCloseModal(props: any) {
       <div
         className={`relative mx-auto w-[500px] overflow-hidden
           rounded-[12px] bg-secondaryBlue`}>
-        {/* <div className="col headerrow"> */}
         <div className="mr-4 pb-1 pt-[10px] text-end">
           <div className="items-initial flex content-center justify-end">
             <Image
@@ -34,9 +35,6 @@ export default function PartialCloseModal(props: any) {
               }}
             />
           </div>
-          {/* <div className="col titlerow">
-            Adjust Collateral Function
-          </div> */}
         </div>
         <div className="relative px-16 py-9 text-center text-[16px]">
           <div className="text-[15px]">
@@ -47,17 +45,19 @@ export default function PartialCloseModal(props: any) {
           </div>
           <div className="mt-7">
             <button
-              className="z-700 partial-button relative min-w-[160px] flex-1
+              className="partial-button relative z-10 min-w-[160px] flex-1
                 cursor-pointer rounded-full border-[1px] border-[#3576f7] px-4
                 py-[3px] text-[14px] text-highEmphasis "
               onClick={e => {
                 e.stopPropagation();
-                onClickSubmit();
+                $tsIsFirstPartialClose.set(false);
+                $tsIsShowPartialCloseModal.set(false);
+                $tsIsContinueClose.set(true);
               }}>
               Continue Close
             </button>
             <button
-              className="z-700 partial-button relative ml-3 min-w-[160px]
+              className="partial-button relative z-10 ml-3 min-w-[160px]
                 flex-1 cursor-pointer rounded-full border-[1px] border-[#3576f7] px-4
                 py-[3px] text-[14px] text-highEmphasis"
               onClick={e => {

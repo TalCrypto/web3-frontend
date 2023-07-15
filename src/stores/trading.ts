@@ -176,3 +176,7 @@ export const $marketUpdateTrigger = atom(false);
 export const $isShowTradingMobile = atom(false);
 
 export const $tsIsShowPriceGapOverModal = atom(true);
+
+export const $tsIsFirstPartialClose = atom(true);
+export const $tsIsShowPartialCloseModal = atom(false);
+export const $tsIsContinueClose = atom(false);
