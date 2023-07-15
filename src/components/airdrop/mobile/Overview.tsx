@@ -248,13 +248,12 @@ function OverviewMobile() {
         )}
       </div>
 
-      {eligible() ? (
-        <div className="bg-darkBlue">
-          <div className="mb-[6px] bg-lightBlue px-5 py-6">
-            <div className="mb-4 text-[16px] font-semibold">
-              <span className="text-gradient-vertical">Bonus Points</span>
-            </div>
-
+      <div className="bg-darkBlue">
+        <div className="mb-[6px] bg-lightBlue px-5 py-6">
+          <div className="mb-4 text-[16px] font-semibold">
+            <span className="text-gradient-vertical">Bonus Points</span>
+          </div>
+          {eligible() ? (
             <div className="flex items-center justify-between bg-lightBlue">
               <div className="max-w-[70%]">
                 <div className="flex items-center justify-start text-[20px] font-semibold">
@@ -275,28 +274,15 @@ function OverviewMobile() {
                 </div>
               </div>
             </div>
-
-            <div className="mt-6 text-[14px] text-mediumEmphasis">
-              At the end of the season, bonus points will be added to your total points after multiplier, which will boost your ranking even
-              further!
-            </div>
-          </div>
-        </div>
-      ) : (
-        <MobileTooltip
-          content={
-            <>
-              <div className="text-[15px] font-semibold">Unlock Reward</div>
-              <div className="mt-3 text-[12px] font-normal">Trade for 5 WETH notional to unlock your reward.</div>
-            </>
-          }>
-          <div className="relative bg-darkBlue">
-            <div className="mb-[6px] bg-lightBlue px-5 py-6">
-              <div className="mb-4 text-[16px] font-semibold">
-                <span className="text-gradient-vertical">Bonus Points</span>
-              </div>
-
-              <div className="flex items-center justify-between bg-lightBlue">
+          ) : (
+            <MobileTooltip
+              content={
+                <>
+                  <div className="text-[15px] font-semibold">Unlock Reward</div>
+                  <div className="mt-3 text-[12px] font-normal">Trade for 5 WETH notional to unlock your reward.</div>
+                </>
+              }>
+              <div className="relative flex items-center justify-between bg-lightBlue">
                 <div className="max-w-[70%]">
                   <div className="flex items-center justify-start text-[20px] font-semibold">
                     <div className="mr-[6px]">
@@ -315,17 +301,17 @@ function OverviewMobile() {
                     </div>
                   </div>
                 </div>
+                {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
               </div>
+            </MobileTooltip>
+          )}
 
-              <div className="mt-6 text-[14px] text-mediumEmphasis">
-                At the end of the season, bonus points will be added to your total points after multiplier, which will boost your ranking
-                even further!
-              </div>
-              {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
-            </div>
+          <div className="mt-6 text-[14px] text-mediumEmphasis">
+            At the end of the season, bonus points will be added to your total points after multiplier, which will boost your ranking even
+            further!
           </div>
-        </MobileTooltip>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
