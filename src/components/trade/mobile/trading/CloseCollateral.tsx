@@ -62,7 +62,7 @@ function QuantityTips(props: any) {
 
   return (
     <div>
-      <span className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</span>
+      <span className="mb-3 text-[12px] leading-[16px] text-marketRed">{label}</span>
     </div>
   );
 }

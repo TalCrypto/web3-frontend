@@ -6,7 +6,7 @@ export const ErrorTip = ({ label }: { label: string | null }) => {
   if (!label) return null;
 
   return (
-    <div className="mb-3 text-[12px] leading-[20px] text-marketRed">
+    <div className="mb-3 text-[12px] leading-[16px] text-marketRed">
       {label !== WETH_INSUFFICIENT ? (
         label
       ) : (

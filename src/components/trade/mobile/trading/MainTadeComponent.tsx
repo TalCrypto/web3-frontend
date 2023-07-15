@@ -133,7 +133,7 @@ function QuantityTips(props: any) {
 
   return label ? (
     <div>
-      <div className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</div>
+      <div className="mb-3 text-[12px] leading-[16px] text-marketRed">{label}</div>
     </div>
   ) : null;
 }
