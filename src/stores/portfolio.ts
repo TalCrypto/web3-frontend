@@ -13,6 +13,8 @@ export const $psSelectedCollectionAmm = atom();
 
 export const $psShowFundingPayment = atom(false);
 
+export const $psShowPositionDetail = atom(false);
+
 export const $psShowShareIndicator = atom(false);
 
 export const $psShowHistory = atom(false);

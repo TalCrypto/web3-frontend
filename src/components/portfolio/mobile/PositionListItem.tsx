@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psLiqSwitchRatio, $psSelectedCollectionAmm, $psShowBalance, $psShowFundingPayment } from '@/stores/portfolio';
+import { $psLiqSwitchRatio, $psSelectedCollectionAmm, $psShowBalance, $psShowPositionDetail } from '@/stores/portfolio';
 import { SingleRowPriceContent, SmallTypeIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import { $isShowMobileModal } from '@/stores/modal';
 import { useFundingPaymentHistory } from '@/hooks/collection';
@@ -51,12 +51,15 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
     e.preventDefault();
     e.stopPropagation();
     $psSelectedCollectionAmm.set(userPositionAmm);
-    $psShowFundingPayment.set(true);
+    $psShowPositionDetail.set(true);
     $isShowMobileModal.set(true);
   };
 
   return (
-    <div className="cursor-pointer border-b-[1px] border-b-secondaryBlue px-5 py-3" onClick={clickItem}>
+    <div
+      className="cursor-pointer border-b-[1px]
+      border-b-secondaryBlue px-5 py-3 text-highEmphasis"
+      onClick={clickItem}>
       <div className="flex items-center ">
         <div className="w-[35%]">
           <SmallTypeIcon amm={userPositionAmm} className={className} size={size} isShowBalance={isShowBalance} />
@@ -66,12 +69,12 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
             <SingleRowPriceContent
               width={16}
               height={16}
-              className="justify-end text-[14px]"
+              className="justify-end text-[14px] font-normal"
               priceValue={isShowBalance ? sizeInEth.toFixed(4) : '****'}
               isElement
             />
           </div>
-          <div className="mt-1 flex justify-end text-right text-[12px] font-medium">
+          <div className="mt-1 flex justify-end text-right text-[12px] font-normal">
             <div>{`${
               userPosition === null
                 ? '---'
@@ -94,14 +97,14 @@ function PositionListItem(props: { userPosition: UserPositionInfo }) {
           <SingleRowPriceContent
             width={16}
             height={16}
-            className="justify-end text-[14px]"
+            className="justify-end text-[14px] font-normal"
             priceValue={isShowBalance ? totalPnl.toFixed(4) : '****'}
             isElement={!isShowBalance}
           />
           <SingleRowPriceContent
             width={16}
             height={16}
-            className="mt-[3px] justify-end !text-[12px]"
+            className="mt-[3px] justify-end !text-[12px] font-normal"
             priceValue={isShowBalance ? (accFp ? accFp.toFixed(4) : '0.0000') : '****'}
             isElement={!isShowBalance}
           />
