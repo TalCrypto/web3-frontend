@@ -123,8 +123,6 @@ const PositionInfoUpdater: React.FC<{
 const UserDataUpdater: React.FC = () => {
   const [wethAddr, setWethAddr] = useState<Address>();
   const { address, isConnected, isConnecting } = useAccount();
-  // const { isConnected, isConnecting } = useAccount();
-  // const address = '0x958d58fbb67666e5f693895edc65f46d051ee304';
   const { chain } = useNetwork();
   const { isOpen } = useWeb3Modal();
   const { data } = useBalance({ address, token: wethAddr, watch: true, enabled: Boolean(wethAddr) });

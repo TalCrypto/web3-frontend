@@ -55,7 +55,7 @@ function QuantityEnter(props: any) {
     onChange(Number(maxCloseValue / 2).toFixed(4));
   };
   const showMaxValue = () => {
-    onChange(Number(maxCloseValue).toFixed(4));
+    onChange(Number(maxCloseValue - 0.00005).toFixed(4));
   };
 
   // determine if input is valid or error state
@@ -171,7 +171,7 @@ function QuantityTips(props: any) {
 
   return (
     <div>
-      <span className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</span>
+      <div className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</div>
     </div>
   );
 }

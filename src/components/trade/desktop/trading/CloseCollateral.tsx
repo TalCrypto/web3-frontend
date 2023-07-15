@@ -12,7 +12,14 @@ import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseMo
 
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
+import {
+  OpenPositionEstimation,
+  Side,
+  getApprovalAmountFromEstimation,
+  useApprovalCheck,
+  useFluctuationLimit,
+  useOpenPositionEstimation
+} from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance, UserPositionInfo } from '@/stores/user';
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
@@ -24,6 +31,7 @@ import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import Tooltip from '@/components/common/Tooltip';
+import { $showGetWEthModal } from '@/stores/modal';
 
 function SectionDividers() {
   return (
@@ -36,9 +44,25 @@ function SectionDividers() {
 }
 
 function QuantityTips(props: any) {
-  const { isAmountTooSmall, isAmountTooLarge } = props;
+  const { isAmountTooSmall, isAmountTooLarge, isOverFee } = props;
+  const onClickWeth = () => {
+    $showGetWEthModal.set(true);
+  };
 
-  const label = isAmountTooLarge ? 'Value is too large!' : isAmountTooSmall ? 'Minimum collateral size 0.01' : '';
+  const label = isAmountTooLarge ? (
+    'Notional Collateral is too large!'
+  ) : isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isOverFee ? (
+    <>
+      Not enough transaction fee to close your position. <br />
+      <span className="cursor-pointer text-white underline" onClick={onClickWeth}>
+        Get WETH
+      </span>{' '}
+    </>
+  ) : (
+    ''
+  );
 
   if (!label) return null;
 
@@ -55,11 +79,14 @@ function QuantityEnter(props: {
   onChange: (value: any) => void;
   isAmountTooSmall: boolean;
   isAmountTooLarge: boolean;
+  estimation: OpenPositionEstimation | undefined;
   disabled: boolean;
 }) {
-  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled } = props;
+  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled, estimation } = props;
 
   const [isFocus, setIsFocus] = useState(false);
+  const wethBalance = useNanostore($userWethBalance);
+  const isOverFee = Number(estimation?.txSummary?.fee) > wethBalance;
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -76,8 +103,9 @@ function QuantityEnter(props: {
   const showHalfValue = () => {
     onChange(Number(maxCloseValue / 2).toFixed(4));
   };
+
   const showMaxValue = () => {
-    onChange(Number(maxCloseValue).toFixed(4));
+    onChange(Number(maxCloseValue - 0.00005).toFixed(4));
   };
 
   // determine if input is valid or error state
@@ -144,7 +172,7 @@ function QuantityEnter(props: {
             />
           </div>
         </div>
-        <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
+        <QuantityTips isOverFee={isOverFee} isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       </div>
     </>
   );
@@ -388,6 +416,7 @@ export default function CloseCollateral() {
         }}
         isAmountTooSmall={isAmountTooSmall}
         isAmountTooLarge={isAmountTooLarge}
+        estimation={estimation}
         disabled={isPending || isWrongNetwork}
       />
       <ErrorTip label={textErrorMessage} />

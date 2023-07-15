@@ -3,7 +3,7 @@
 export const WETH_INSUFFICIENT = 'WETH_INSUFFICIENT';
 const errorMsgList = {
   AMM_POFL:
-    "Can't proceed your transaction due to high price impact of the trade. Please reduce the notional size of your trade to be succeeded in transaction.",
+    'Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.',
   CH_TMRL: 'Your transaction has failed due to high price fluctuation. Please increase your slippage tolerance or try again later.',
   CH_TMRS: 'Your transaction has failed due to high price fluctuation. Please increase your slippage tolerance or try again later.',
   CH_TLRL: 'Your transaction has failed due to high price fluctuation. Please increase your slippage tolerance or try again later.',
@@ -15,7 +15,9 @@ const errorMsgList = {
   CH_MNE: 'New Collateral must be above Initial Collateral Requirement.',
   CH_FCNE: 'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.',
   CH_AC: '',
-  'User rejected the request': ''
+  'User rejected the request': 'User rejected the request.',
+  underflow:
+    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
 };
 
 export const formatError = (errorMsg: string) => {

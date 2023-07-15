@@ -7,7 +7,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $currentAmm } from '@/stores/trading';
 import { absBigInt, formatBigInt, parseBigInt } from '@/utils/bigInt';
 import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/contracts';
-import { chAbi, chViewerAbi, wethAbi } from '@/const/abi';
+import { ammAbi, chAbi, chViewerAbi, wethAbi } from '@/const/abi';
 import { $userAddress, $currentChain, $userWethAllowance } from '@/stores/user';
 import { useDebounce } from '@/hooks/debounce';
 import { usePositionInfo } from '@/hooks/collection';
@@ -366,4 +366,22 @@ export const useReduceCollateralTransaction = (deltaMargin: number) => {
 
   // eslint-disable-next-line consistent-return
   return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
+};
+
+export const useFluctuationLimit = () => {
+  const amm = useNanostore($currentAmm);
+  const chain = useNanostore($currentChain);
+  const ammAddr = getAMMAddress(chain, amm);
+  // estimate position
+  const rate = useContractRead({
+    address: ammAddr,
+    abi: ammAbi,
+    functionName: 'fluctuationLimitRatio'
+  });
+
+  if (typeof rate?.data === 'bigint') {
+    return formatBigInt(rate?.data);
+  }
+
+  return 0;
 };

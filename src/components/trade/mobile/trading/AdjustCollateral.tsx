@@ -214,57 +214,6 @@ function UpdatedCollateralValue(props: any) {
   );
 }
 
-// function QuantityTips(props: any) {
-//   const {
-//     balanceChecking,
-//     marginRatioChecker,
-//     minimalMarginChecking,
-//     initialMarginChecker,
-//     reduceMarginChecking,
-//     value,
-//     isPending,
-//     marginIndex
-//   } = props;
-//   const maxReduceValue = useNanostore(wsMaxReduceValue);
-//   const decreaseMax = Number(maxReduceValue) - 0.0001;
-
-//   if (
-//     (decreaseMax > 0 || marginIndex === 0) &&
-//     (value === 0 ||
-//       (!balanceChecking && !marginRatioChecker && !minimalMarginChecking && !initialMarginChecker && !reduceMarginChecking && !isPending))
-//   ) {
-//     return null;
-//   }
-
-//   const label =
-//     initialMarginChecker || reduceMarginChecking || decreaseMax <= 0 ? (
-//       'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.'
-//     ) : isPending ? (
-//       'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
-//     ) : marginRatioChecker ? (
-//       'New Collateral must be above Initial Collateral Requirement.'
-//     ) : balanceChecking ? (
-//       <>
-//         Not enough WETH (including transaction fee).
-//         <button className="ml-1 text-white underline">Get WETH</button> first
-//       </>
-//     ) : minimalMarginChecking ? (
-//       'Minimum collateral size 0.01'
-//     ) : (
-//       ''
-//     );
-
-//   return (
-//     <div className={` ${isPending ? 'price-fluc' : ''}`}>
-//       <span
-//         className={`${isPending ? 'text-warn' : 'text-marketRed}'}
-//           mb-2 text-[12px] leading-[20px]`}>
-//         {label}
-//       </span>
-//     </div>
-//   );
-// }
-
 function EstimationValueDisplay(props: any) {
   const { isError, estimation } = props;
   const currentAmm = useNanostore($currentAmm);

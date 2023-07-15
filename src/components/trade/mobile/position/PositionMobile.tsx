@@ -216,7 +216,7 @@ export default function PositionMobile() {
             <div className=" flex items-start">
               <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
               <p className="ml-1 text-[12px] font-normal text-warn">
-                Warning: vAMM Oracle price gap &gt; 20%, liquidation now occurs at <b>Oracle Price</b> (Note that p&l is still based on vAMM
+                Warning: vAMM Oracle price gap &gt; 10%, liquidation now occurs at <b>Oracle Price</b> (Note that p&l is still based on vAMM
                 price). {positionInfo.leverage <= 0 ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
                 <a
                   target="_blank"

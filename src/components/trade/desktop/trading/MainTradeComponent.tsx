@@ -11,7 +11,14 @@ import { useStore as useNanostore } from '@nanostores/react';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import Tooltip from '@/components/common/Tooltip';
-import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
+import {
+  OpenPositionEstimation,
+  Side,
+  getApprovalAmountFromEstimation,
+  useApprovalCheck,
+  useFluctuationLimit,
+  useOpenPositionEstimation
+} from '@/hooks/trade';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
@@ -96,8 +103,24 @@ function LongShortRatio(props: any) {
 }
 
 function QuantityTips(props: any) {
-  const { isAmountTooSmall } = props;
-  const label = isAmountTooSmall ? 'Minimum collateral size 0.01' : null;
+  const { isAmountTooSmall, isInsuffBalance, isFluctuationLmt } = props;
+  const onClickWeth = () => {
+    $showGetWEthModal.set(true);
+  };
+
+  const label = isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isInsuffBalance ? (
+    <>
+      Not enough WETH (including transaction fee). <br />
+      <span className="cursor-pointer text-white underline" onClick={onClickWeth}>
+        Get WETH
+      </span>{' '}
+      first.
+    </>
+  ) : isFluctuationLmt ? (
+    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : null;
 
   return label ? (
     <div>
@@ -107,13 +130,19 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled } = props;
+  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const wethBalance = useNanostore($userWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
+
+  const fluctuationPct =
+    (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
+  const fluctuationLmt = useFluctuationLimit();
+  const isFluctuationLmt = Math.abs(fluctuationPct) >= fluctuationLmt;
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -127,6 +156,8 @@ function QuantityEnter(props: any) {
       }
       onChange(inputValue);
     }
+
+    setIsInsuffBalance(wethBalance < Number(inputValue));
   };
 
   return (
@@ -180,7 +211,13 @@ function QuantityEnter(props: any) {
             />
           </div>
         </div>
-        <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
+        <QuantityTips
+          isFluctuationLmt={isFluctuationLmt}
+          isAmountTooSmall={isAmountTooSmall}
+          isInsuffBalance={isInsuffBalance}
+          value={value}
+        />
+        {!isAmountTooSmall && !isInsuffBalance && !isFluctuationLmt ? <ErrorTip label={textErrorMessage} /> : null}
       </div>
     </>
   );
@@ -483,14 +520,15 @@ export default function MainTradeComponent() {
     <div>
       <LongShortRatio saleOrBuyIndex={saleOrBuyIndex} setSaleOrBuyIndex={setSaleOrBuyIndex} />
       <QuantityEnter
+        estimation={estimation}
         disabled={isWrongNetwork || isPending}
         value={quantity}
         onChange={(value: string) => {
           handleQuantityInput(value);
         }}
         isAmountTooSmall={isAmountTooSmall}
+        textErrorMessage={textErrorMessage}
       />
-      <ErrorTip label={textErrorMessage} />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}

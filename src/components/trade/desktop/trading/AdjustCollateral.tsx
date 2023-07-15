@@ -175,19 +175,6 @@ function UpdateValueDisplay(props: any) {
   );
 }
 
-function UpdateValueNoDataDisplay(props: any) {
-  const { title, unit } = props;
-
-  return (
-    <div className="row adjustcollateralrow items-center">
-      <div className="text-[14px] text-mediumEmphasis">{title}</div>
-      <div className="text-[14px] font-semibold text-mediumEmphasis">
-        <span>{`-.--${unit}`}</span>
-      </div>
-    </div>
-  );
-}
-
 function SectionDividers() {
   return (
     <div className="row">
