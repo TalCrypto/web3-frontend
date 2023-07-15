@@ -8,18 +8,19 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
+import { AdjustMarginEstimation, useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
+import { useDebounce } from '@/hooks/debounce';
+import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
 import AddCollateralButton from '@/components/trade/common/actionBtns/AddCollateralButton';
 import ReduceCollateralButton from '@/components/trade/common/actionBtns/ReduceCollateralButton';
-import { useDebounce } from '@/hooks/debounce';
-import { formatBigInt, parseBigInt } from '@/utils/bigInt';
-import { useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
-import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
 import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
-import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
@@ -175,19 +176,6 @@ function UpdateValueDisplay(props: any) {
   );
 }
 
-function UpdateValueNoDataDisplay(props: any) {
-  const { title, unit } = props;
-
-  return (
-    <div className="row adjustcollateralrow items-center">
-      <div className="col text-[14px] text-mediumEmphasis">{title}</div>
-      <div className="col-auto text-[14px] font-semibold text-mediumEmphasis">
-        <span>{`-.--${unit}`}</span>
-      </div>
-    </div>
-  );
-}
-
 function SectionDividers() {
   return (
     <div className="row">
@@ -214,7 +202,7 @@ function UpdatedCollateralValue(props: any) {
   );
 }
 
-function EstimationValueDisplay(props: any) {
+function EstimationValueDisplay(props: { isError: boolean; estimation: AdjustMarginEstimation | undefined }) {
   const { isError, estimation } = props;
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
@@ -283,18 +271,18 @@ function AdjustCollateralSlidingBars(props: any) {
   );
 }
 
-export default function AdjustCollateral(props: any) {
+export default function AdjustCollateral() {
   const currentAmm = useNanostore($currentAmm);
   const [adjustMarginValue, setAdjustMarginValue] = useState(0);
   const debonceBigIntValue = useDebounce(parseBigInt(adjustMarginValue));
   const [marginIndex, setMarginIndex] = useState(0);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   const freeCollateral = useFreeCollateral();
   const wethBalance = useNanostore($userWethBalance);
-  const isConnected = useNanostore($userIsConnected);
-  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   const { isLoading: isEstLoading, estimation } = useAdjustCollateralEstimation(adjustMarginValue * (-1) ** marginIndex);
 
@@ -349,16 +337,6 @@ export default function AdjustCollateral(props: any) {
         isError={textErrorMessage !== null}
       />
       <ErrorTip label={textErrorMessage} />
-      {/* <QuantityTips
-        balanceChecking={balanceChecking}
-        marginRatioChecker={marginRatioChecker}
-        minimalMarginChecking={minimalMarginChecking}
-        initialMarginChecker={initialMarginChecker}
-        reduceMarginChecking={reduceMarginChecking}
-        value={adjustMarginValue}
-        marginIndex={marginIndex}
-        isPending={isPending}
-      /> */}
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
         adjustMarginValue={adjustMarginValue}

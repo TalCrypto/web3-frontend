@@ -12,14 +12,7 @@ import PartialCloseModal from '@/components/trade/desktop/trading/PartialCloseMo
 
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import {
-  OpenPositionEstimation,
-  Side,
-  getApprovalAmountFromEstimation,
-  useApprovalCheck,
-  useFluctuationLimit,
-  useOpenPositionEstimation
-} from '@/hooks/trade';
+import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance, UserPositionInfo } from '@/stores/user';
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
@@ -28,6 +21,7 @@ import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton'
 import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
 import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import Tooltip from '@/components/common/Tooltip';
@@ -201,7 +195,7 @@ function DisplayValues(props: any) {
 
   return (
     <div
-      className={`${className !== '' ? className : 'sumrow'}
+      className={`${className !== '' ? className : ''}
       mb-[2px] flex items-center
     `}>
       <div className="text-[14px] text-mediumEmphasis">{title}</div>

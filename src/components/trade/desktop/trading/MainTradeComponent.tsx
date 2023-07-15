@@ -11,6 +11,16 @@ import { useStore as useNanostore } from '@nanostores/react';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import Tooltip from '@/components/common/Tooltip';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import { $currentAmm } from '@/stores/trading';
+import { usePositionInfo } from '@/hooks/collection';
+
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+
 import {
   OpenPositionEstimation,
   Side,
@@ -19,14 +29,7 @@ import {
   useFluctuationLimit,
   useOpenPositionEstimation
 } from '@/hooks/trade';
-import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import { $currentAmm } from '@/stores/trading';
-import { usePositionInfo } from '@/hooks/collection';
-import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
-import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
-import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
@@ -50,7 +53,7 @@ function LongShortRatio(props: any) {
             </div>
           }
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
+          ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
           text-center text-[14px] font-semibold`}
           key="long">
           <div>LONG</div>
@@ -58,8 +61,9 @@ function LongShortRatio(props: any) {
       ) : (
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
-          text-center text-[14px] font-semibold hover:text-highEmphasis`}
+            ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+            text-center text-[14px] font-semibold hover:text-highEmphasis`}
+          key="long"
           onClick={() => {
             if (!userPosition || userPosition.size === 0) {
               setSaleOrBuyIndex(Side.LONG);
@@ -197,10 +201,8 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               // pattern="[0-9]*"
-              className={`
-                w-full border-none border-mediumBlue bg-mediumBlue text-right
-                text-[15px] font-semibold text-white outline-none
-              `}
+              className="w-full border-none border-mediumBlue bg-mediumBlue text-right
+                text-[15px] font-semibold text-white outline-none"
               value={value}
               placeholder="0.00"
               onChange={handleEnter}
@@ -371,7 +373,7 @@ function Tips({
   return label ? (
     <div
       className="mt-4 flex h-[16px] items-center text-[12px]
-    font-normal leading-[16px] text-warn">
+        font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span>{label}</span>
     </div>
@@ -574,7 +576,7 @@ export default function MainTradeComponent() {
           onError={handleError}
         />
       )}
-      {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
+
       <Tips
         isConnected={isConnected}
         isWrongNetwork={isWrongNetwork}

@@ -12,7 +12,8 @@ export const ErrorTip = ({ label }: { label: string | null }) => {
       ) : (
         <>
           Not enough WETH (including transaction fee).
-          <span onClick={() => $showGetWEthModal.set(true)} className="ml-1 cursor-pointer text-white underline">
+          <br />
+          <span onClick={() => $showGetWEthModal.set(true)} className="cursor-pointer text-white underline">
             Get WETH
           </span>{' '}
           first

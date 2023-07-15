@@ -8,7 +8,6 @@ export default function ApprovalModal() {
   const isShowApproveModal = useNanostore($isShowApproveModal);
 
   const closeModal = () => {
-    // setIsShow(false);
     $isShowApproveModal.set(false);
   };
 
@@ -46,10 +45,12 @@ export default function ApprovalModal() {
           <div className="mb-[66px] mt-[36px] flex flex-row justify-between">
             <div className="relative z-[2] h-[201px] ">
               <Image src="/images/components/trade/modals/approval/left.png" alt="" width={356} height={201} />
-              <img
+              <Image
                 src="/images/components/trade/modals/approval/arrow-points.png"
                 alt=""
-                className="absolute right-[-48px] top-[30px] z-[5] h-[17px] w-[69px] "
+                className="absolute right-[-48px] top-[30px] z-[5]"
+                height={17}
+                width={69}
               />
             </div>
             <div className="relative z-[1] h-[201px]">

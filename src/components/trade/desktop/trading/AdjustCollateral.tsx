@@ -18,8 +18,9 @@ import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
 import AddCollateralButton from '@/components/trade/common/actionBtns/AddCollateralButton';
 import ReduceCollateralButton from '@/components/trade/common/actionBtns/ReduceCollateralButton';
 import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
@@ -138,7 +139,6 @@ function QuantityEnter(props: any) {
             </div>
             <input
               type="text"
-              // pattern="[0-9]*"
               className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none`}
               value={adjustMarginValue}
@@ -318,7 +318,12 @@ export default function AdjustCollateral() {
 
   return (
     <div>
-      <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
+      <SaleOrBuyRadio
+        disabled={isPending || isWrongNetwork}
+        marginIndex={marginIndex}
+        setMarginIndex={setMarginIndex}
+        onChange={initializeState}
+      />
       <QuantityEnter
         disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
         adjustMarginValue={adjustMarginValue}

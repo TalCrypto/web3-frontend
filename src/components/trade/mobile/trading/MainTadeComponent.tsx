@@ -7,22 +7,33 @@
 import Image from 'next/image';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-// import collectionList from '@/const/collectionList';
+
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
+
+import MobileTooltip from '@/components/common/mobile/Tooltip';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
-import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
-import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
 import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
-import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+
+import {
+  OpenPositionEstimation,
+  Side,
+  getApprovalAmountFromEstimation,
+  useApprovalCheck,
+  useFluctuationLimit,
+  useOpenPositionEstimation
+} from '@/hooks/trade';
+
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
-import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -31,53 +42,116 @@ function LongShortRatio(props: any) {
 
   return (
     <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+      {userPosition && userPosition.size > 0 ? (
+        <div className="flex flex-1 items-center justify-center">
+          <MobileTooltip
+            content={
+              <div className="text-center font-normal text-highEmphasis">
+                To open a long position, please
+                <br /> close your short position first
+              </div>
+            }>
+            <div
+              className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+              ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+              text-center text-[14px] font-semibold`}
+              key="long">
+              <div>LONG</div>
+            </div>
+          </MobileTooltip>
+        </div>
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+          ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        onClick={() => {
-          if (!userPosition || userPosition.size === 0) {
-            setSaleOrBuyIndex(0);
-          }
-        }}
-        key="long">
-        <div>LONG</div>
-      </div>
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 1 ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+          key="long"
+          onClick={() => {
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.LONG);
+            }
+          }}>
+          <div>LONG</div>
+        </div>
+      )}
+
+      {userPosition && userPosition.size < 0 ? (
+        <div className="flex flex-1 items-center justify-center">
+          <MobileTooltip
+            content={
+              <div className="text-center font-normal text-highEmphasis">
+                To open a short position, please
+                <br /> close your long position first
+              </div>
+            }>
+            <div
+              className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+              ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+              text-center text-[14px] font-semibold hover:text-highEmphasis`}
+              key="short">
+              <div>SHORT</div>
+            </div>
+          </MobileTooltip>
+        </div>
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+          ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        onClick={() => {
-          if (!userPosition || userPosition.size === 0) {
-            setSaleOrBuyIndex(1);
-          }
-        }}
-        key="short">
-        <div>SHORT</div>
-      </div>
+          key="short"
+          onClick={() => {
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.SHORT);
+            }
+          }}>
+          <div>SHORT</div>
+        </div>
+      )}
     </div>
   );
 }
 
 function QuantityTips(props: any) {
-  const { isAmountTooSmall } = props;
-  const label = isAmountTooSmall ? 'Minimum collateral size 0.01' : null;
+  const { isAmountTooSmall, isInsuffBalance, isFluctuationLmt } = props;
+  const onClickWeth = () => {
+    $showGetWEthModal.set(true);
+  };
+
+  const label = isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isInsuffBalance ? (
+    <>
+      Not enough WETH (including transaction fee). <br />
+      <span className="cursor-pointer text-white underline" onClick={onClickWeth}>
+        Get WETH
+      </span>{' '}
+      first.
+    </>
+  ) : isFluctuationLmt ? (
+    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : null;
 
   return label ? (
     <div>
-      <div className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</div>
+      <div className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</div>
     </div>
   ) : null;
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled } = props;
+  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const wethBalance = useNanostore($userWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
+
+  const fluctuationPct =
+    (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
+  const fluctuationLmt = useFluctuationLimit();
+  const isFluctuationLmt = Math.abs(fluctuationPct) >= fluctuationLmt;
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -91,6 +165,8 @@ function QuantityEnter(props: any) {
       }
       onChange(inputValue);
     }
+
+    setIsInsuffBalance(wethBalance < Number(inputValue));
   };
 
   return (
@@ -102,7 +178,7 @@ function QuantityEnter(props: any) {
             <div className="mr-1 flex flex-1">
               <Image alt="" src="/images/common/wallet-white.svg" height={16} width={16} />
             </div>
-            <span className="text-[14px] text-[#ffffffde]">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
+            <span className="text-[14px] text-[#ffffffde]">{`${wethBalance.toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
             <button
               type="button"
@@ -116,7 +192,7 @@ function QuantityEnter(props: any) {
         ) : null}
       </div>
       {/* ${isError ? 'bg-marketRed' : ''} */}
-      <div className="py-3">
+      <div className="pb-3">
         <div
           className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
             ${isFocus ? 'valid' : ''}
@@ -130,8 +206,8 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               // pattern="[0-9]*"
-              className={`w-full border-none border-mediumBlue bg-mediumBlue text-right
-                text-[15px] font-semibold text-white outline-none`}
+              className="w-full border-none border-mediumBlue bg-mediumBlue text-right
+                text-[15px] font-semibold text-white outline-none"
               value={value}
               placeholder="0.00"
               onChange={handleEnter}
@@ -139,16 +215,17 @@ function QuantityEnter(props: any) {
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               min={0}
-
-              // onClick={e => {
-              //   e.target.selectionStart = e.target.value.length;
-              //   e.target.selectionEnd = e.target.value.length;
-              // }}
             />
           </div>
         </div>
+        <QuantityTips
+          isFluctuationLmt={isFluctuationLmt}
+          isAmountTooSmall={isAmountTooSmall}
+          isInsuffBalance={isInsuffBalance}
+          value={value}
+        />
+        {!isAmountTooSmall && !isInsuffBalance && !isFluctuationLmt ? <ErrorTip label={textErrorMessage} /> : null}
       </div>
-      <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
     </>
   );
 }
@@ -166,19 +243,17 @@ function LeverageComponent(props: any) {
         <div className="text-[14px] text-[#a3c2ff]">Leverage</div>
         <div className="flex-1 flex-shrink-0 text-right text-[14px] font-semibold">{`${value}x`}</div>
       </div>
-      <div className="row">
-        <div className="col mb-6 mt-3">
-          <InputSlider
-            disabled={disabled}
-            defaultValue={1}
-            value={value}
-            min={1}
-            max={10}
-            step={0.1}
-            onChange={onChange}
-            marks={leverageMarks}
-          />
-        </div>
+      <div className="mb-6 mt-3">
+        <InputSlider
+          disabled={disabled}
+          defaultValue={1}
+          value={value}
+          min={1}
+          max={10}
+          step={0.1}
+          onChange={onChange}
+          marks={leverageMarks}
+        />
       </div>
     </>
   );
@@ -194,13 +269,19 @@ function DisplayValues(props: any) {
     `}>
       <div className="text-[14px] text-mediumEmphasis">{title}</div>
       <div className={`flex-1 flex-shrink-0 text-right text-mediumEmphasis ${valueClassName}`}>
-        <span className="text-[14px]">{value}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
+        <span className="text-[14px]">{value ?? '-.--'}</span> <span className={`text-[12px] ${unitClassName}`}>{unit}</span>
       </div>
     </div>
   );
 }
 
-function EstimatedValueDisplay(props: any) {
+function EstimatedValueDisplay(props: {
+  estimation: OpenPositionEstimation | undefined;
+  toleranceRate: number;
+  setToleranceRate: (value: any) => void;
+  isAmountTooSmall: boolean;
+  disabled: boolean;
+}) {
   const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled } = props;
 
   const sizeNotional = estimation ? estimation.txSummary.notionalSize.toFixed(4) : '-.--';
@@ -250,7 +331,6 @@ function EstimatedValueDisplay(props: any) {
         title="Size (Notional)"
         value={isAmountTooSmall ? '-.--' : sizeNotional}
         unit="WETH"
-        className="slipagerow"
         valueClassName="text-color-primary font-14-600"
         unitClassName="font-12"
       />
@@ -290,17 +370,17 @@ function Tips({
     <>Please approve before trading!</>
   ) : null;
 
-  return (
+  return label ? (
     <div
       className="mt-4 flex h-[16px] items-center text-[12px]
-      font-normal leading-[16px] text-warn">
+        font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span>{label}</span>
     </div>
-  );
+  ) : null;
 }
 
-function ExtendedEstimateComponent(props: any) {
+function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
   const { estimation } = props;
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
@@ -318,9 +398,9 @@ function ExtendedEstimateComponent(props: any) {
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (
-            <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+            <Image src="/images/common/angle_up.svg" alt="" width={12} height={12} />
           ) : (
-            <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+            <Image src="/images/common/angle_down.svg" alt="" width={12} height={12} />
           )}
         </div>
         <div className="flex-1" />
@@ -370,7 +450,7 @@ function ExtendedEstimateComponent(props: any) {
   );
 }
 
-export default function MainTradeComponent(props: any) {
+export default function MainTradeComponent() {
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
   const isConnected = useNanostore($userIsConnected);
@@ -438,21 +518,17 @@ export default function MainTradeComponent(props: any) {
 
   return (
     <div>
-      <LongShortRatio
-        saleOrBuyIndex={saleOrBuyIndex}
-        setSaleOrBuyIndex={setSaleOrBuyIndex}
-
-        // tokenRef={tokenRef}
-      />
+      <LongShortRatio saleOrBuyIndex={saleOrBuyIndex} setSaleOrBuyIndex={setSaleOrBuyIndex} />
       <QuantityEnter
+        estimation={estimation}
         disabled={isWrongNetwork || isPending}
         value={quantity}
         onChange={(value: string) => {
           handleQuantityInput(value);
         }}
         isAmountTooSmall={isAmountTooSmall}
+        textErrorMessage={textErrorMessage}
       />
-      <ErrorTip label={textErrorMessage} />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}
@@ -502,14 +578,6 @@ export default function MainTradeComponent(props: any) {
         )}
       </div>
 
-      {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
-
-      {/* <Tips
-        isConnected={isConnected}
-        isWrongNetwork={isWrongNetwork}
-        isRequireWeth={wethBalance === 0}
-        isApproveRequired={isNeedApproval}
-      /> */}
       {estimation && <ExtendedEstimateComponent estimation={estimation} />}
     </div>
   );
