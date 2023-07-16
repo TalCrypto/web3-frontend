@@ -194,7 +194,7 @@ function LeaderboardMobile() {
               leaderboardData.map((item: any) => {
                 const { total, multiplier, username, userAddress, isBan, rank } = item;
 
-                const isYou = userAddress === userData.userAddress;
+                const isYou = isConnected && userAddress === userData.userAddress;
                 return (
                   <div
                     key={`rank-${userAddress}`}

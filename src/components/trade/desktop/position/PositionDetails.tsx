@@ -217,7 +217,7 @@ export default function PositionDetails() {
           </div>
           <div>
             <div className="mb-3 text-[14px] font-normal">Liqui. Price</div>
-            <div className="flex items-center">
+            <div className="relative flex items-center">
               <MedPriceIcon
                 priceValue={!positionInfo ? '---' : positionInfo.liquidationPrice < 0 ? '0.00' : positionInfo.liquidationPrice.toFixed(2)}
                 className={`${isOverPriceGap ? 'text-warn' : ''} `}
@@ -248,7 +248,7 @@ export default function PositionDetails() {
                 </Tooltip>
               ) : null}
               {isOverPriceGap ? (
-                <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
+                <div className="absolute bottom-[-9px] left-[26px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
             </div>
           </div>
@@ -295,24 +295,24 @@ export default function PositionDetails() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* {isOverPriceGap ? (
-        <div className="mt-[18px] flex items-start space-x-[6px]">
-          <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
-          <p className="text-b3 text-warn">
-            Warning: vAMM - Oracle Price gap &gt; 20%, liquidation now occurs at <b>Oracle Price</b> (note that P&L is still calculated
-            based on vAMM price). {positionInfo.leverage <= 0 ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
-            <a
-              target="_blank"
-              href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"
-              className="underline hover:text-warn/50"
-              rel="noreferrer">
-              Learn More
-            </a>
-          </p>
-        </div>
-      ) : null} */}
+        {isOverPriceGap ? (
+          <div className="mt-[18px] flex items-start space-x-[6px]">
+            <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
+            <p className="text-b3 text-warn">
+              Warning: vAMM Oracle price gap &gt; 10%, liquidation now occurs at <b>Oracle Price</b> (Note that p&l is still based on vAMM
+              price). {positionInfo.leverage <= 0 ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
+              <a
+                target="_blank"
+                href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"
+                className="underline hover:text-warn/50"
+                rel="noreferrer">
+                Learn More
+              </a>
+            </p>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -11,19 +11,30 @@ import { useStore as useNanostore } from '@nanostores/react';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 
 import Tooltip from '@/components/common/Tooltip';
-import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $currentAmm } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
-import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
-import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+
+import {
+  OpenPositionEstimation,
+  Side,
+  getApprovalAmountFromEstimation,
+  useApprovalCheck,
+  useFluctuationLimit,
+  useOpenPositionEstimation
+} from '@/hooks/trade';
+
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
+import ApprovalModal from '@/components/trade/desktop/modals/ApprovalModal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -42,7 +53,7 @@ function LongShortRatio(props: any) {
             </div>
           }
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === 0 ? 'long-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
+          ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-disabled'}
           text-center text-[14px] font-semibold`}
           key="long">
           <div>LONG</div>
@@ -50,8 +61,9 @@ function LongShortRatio(props: any) {
       ) : (
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
-          ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
-          text-center text-[14px] font-semibold hover:text-highEmphasis`}
+            ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
+            text-center text-[14px] font-semibold hover:text-highEmphasis`}
+          key="long"
           onClick={() => {
             if (!userPosition || userPosition.size === 0) {
               setSaleOrBuyIndex(Side.LONG);
@@ -95,24 +107,46 @@ function LongShortRatio(props: any) {
 }
 
 function QuantityTips(props: any) {
-  const { isAmountTooSmall } = props;
-  const label = isAmountTooSmall ? 'Minimum collateral size 0.01' : null;
+  const { isAmountTooSmall, isInsuffBalance, isFluctuationLmt } = props;
+  const onClickWeth = () => {
+    $showGetWEthModal.set(true);
+  };
+
+  const label = isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isInsuffBalance ? (
+    <>
+      Not enough WETH (including transaction fee). <br />
+      <span className="cursor-pointer text-white underline" onClick={onClickWeth}>
+        Get WETH
+      </span>{' '}
+      first.
+    </>
+  ) : isFluctuationLmt ? (
+    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : null;
 
   return label ? (
     <div>
-      <div className="mb-3 text-[12px] leading-[20px] text-marketRed">{label}</div>
+      <div className="mb-3 text-[12px] leading-[16px] text-marketRed">{label}</div>
     </div>
   ) : null;
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled } = props;
+  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const wethBalance = useNanostore($userWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
+
+  const fluctuationPct =
+    (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
+  const fluctuationLmt = useFluctuationLimit();
+  const isFluctuationLmt = Math.abs(fluctuationPct) >= fluctuationLmt;
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -126,6 +160,8 @@ function QuantityEnter(props: any) {
       }
       onChange(inputValue);
     }
+
+    setIsInsuffBalance(wethBalance < Number(inputValue));
   };
 
   return (
@@ -165,10 +201,8 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               // pattern="[0-9]*"
-              className={`
-                w-full border-none border-mediumBlue bg-mediumBlue text-right
-                text-[15px] font-semibold text-white outline-none
-              `}
+              className="w-full border-none border-mediumBlue bg-mediumBlue text-right
+                text-[15px] font-semibold text-white outline-none"
               value={value}
               placeholder="0.00"
               onChange={handleEnter}
@@ -179,7 +213,13 @@ function QuantityEnter(props: any) {
             />
           </div>
         </div>
-        <QuantityTips isAmountTooSmall={isAmountTooSmall} value={value} />
+        <QuantityTips
+          isFluctuationLmt={isFluctuationLmt}
+          isAmountTooSmall={isAmountTooSmall}
+          isInsuffBalance={isInsuffBalance}
+          value={value}
+        />
+        {!isAmountTooSmall && !isInsuffBalance && !isFluctuationLmt ? <ErrorTip label={textErrorMessage} /> : null}
       </div>
     </>
   );
@@ -333,7 +373,7 @@ function Tips({
   return label ? (
     <div
       className="mt-4 flex h-[16px] items-center text-[12px]
-    font-normal leading-[16px] text-warn">
+        font-normal leading-[16px] text-warn">
       <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
       <span>{label}</span>
     </div>
@@ -383,7 +423,8 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
             <div className="mb-2 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
           </div>
           <DisplayValues title="Transaction Fee" value={estimation?.txSummary.fee.toFixed(4)} unit="WETH" />
-          <DisplayValues title="Entry Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+          <DisplayValues title="Execution Price" value={estimation?.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+          <DisplayValues title="Resulting Price" value={estimation?.posInfo.resultingPrice.toFixed(2)} unit="WETH" />
           <DisplayValues
             title={
               <Tooltip
@@ -481,14 +522,15 @@ export default function MainTradeComponent() {
     <div>
       <LongShortRatio saleOrBuyIndex={saleOrBuyIndex} setSaleOrBuyIndex={setSaleOrBuyIndex} />
       <QuantityEnter
+        estimation={estimation}
         disabled={isWrongNetwork || isPending}
         value={quantity}
         onChange={(value: string) => {
           handleQuantityInput(value);
         }}
         isAmountTooSmall={isAmountTooSmall}
+        textErrorMessage={textErrorMessage}
       />
-      <ErrorTip label={textErrorMessage} />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}
@@ -534,7 +576,7 @@ export default function MainTradeComponent() {
           onError={handleError}
         />
       )}
-      {/* {textErrorMessage ? <p className="font-12 text-marketRed">{textErrorMessage}</p> : null} */}
+
       <Tips
         isConnected={isConnected}
         isWrongNetwork={isWrongNetwork}
@@ -542,6 +584,7 @@ export default function MainTradeComponent() {
         isApproveRequired={isNeedApproval}
       />
       {estimation && <ExtendedEstimateComponent estimation={estimation} />}
+      <ApprovalModal />
     </div>
   );
 }

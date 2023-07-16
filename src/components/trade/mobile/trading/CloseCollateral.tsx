@@ -9,20 +9,23 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import PartialCloseModal from '@/components/trade/mobile/trading/PartialCloseModal';
-import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
-import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton';
-import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
-import { Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
-import { usePositionInfo } from '@/hooks/collection';
+
 import { $currentAmm } from '@/stores/trading';
+import { usePositionInfo } from '@/hooks/collection';
+import { OpenPositionEstimation, Side, getApprovalAmountFromEstimation, useApprovalCheck, useOpenPositionEstimation } from '@/hooks/trade';
 import { MINIMUM_COLLATERAL } from '@/const';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance, UserPositionInfo } from '@/stores/user';
+import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
+import OpenPosButton from '@/components/trade/common/actionBtns/OpenPosButton';
+import ClosePosButton from '@/components/trade/common/actionBtns/ClosePosButton';
 import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
 import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
-import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
+import { $showGetWEthModal } from '@/stores/modal';
 
 function SectionDividers() {
   return (
@@ -34,10 +37,50 @@ function SectionDividers() {
   );
 }
 
-function QuantityEnter(props: any) {
-  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled } = props;
+function QuantityTips(props: any) {
+  const { isAmountTooSmall, isAmountTooLarge, isOverFee } = props;
+  const onClickWeth = () => {
+    $showGetWEthModal.set(true);
+  };
+
+  const label = isAmountTooLarge ? (
+    'Notional Collateral is too large!'
+  ) : isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isOverFee ? (
+    <>
+      Not enough transaction fee to close your position. <br />
+      <span className="cursor-pointer text-white underline" onClick={onClickWeth}>
+        Get WETH
+      </span>{' '}
+    </>
+  ) : (
+    ''
+  );
+
+  if (!label) return null;
+
+  return (
+    <div>
+      <span className="mb-3 text-[12px] leading-[16px] text-marketRed">{label}</span>
+    </div>
+  );
+}
+
+function QuantityEnter(props: {
+  closeValue: number;
+  maxCloseValue: number;
+  onChange: (value: any) => void;
+  isAmountTooSmall: boolean;
+  isAmountTooLarge: boolean;
+  estimation: OpenPositionEstimation | undefined;
+  disabled: boolean;
+}) {
+  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled, estimation } = props;
 
   const [isFocus, setIsFocus] = useState(false);
+  const wethBalance = useNanostore($userWethBalance);
+  const isOverFee = Number(estimation?.txSummary?.fee) > wethBalance;
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -54,8 +97,9 @@ function QuantityEnter(props: any) {
   const showHalfValue = () => {
     onChange(Number(maxCloseValue / 2).toFixed(4));
   };
+
   const showMaxValue = () => {
-    onChange(Number(maxCloseValue).toFixed(4));
+    onChange(Number(maxCloseValue - 0.00005).toFixed(4));
   };
 
   // determine if input is valid or error state
@@ -78,7 +122,7 @@ function QuantityEnter(props: any) {
               ${disabled ? 'disabled' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
-            <div className="inputweth">
+            <div className="leading-[10px]">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
             <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
@@ -110,9 +154,8 @@ function QuantityEnter(props: any) {
             <input
               type="text"
               // pattern="[0-9]*"
-              className={`w-full border-none border-mediumBlue bg-mediumBlue
-                  text-right text-[15px] font-bold text-white outline-none`}
-              value={closeValue === 0 ? '' : closeValue}
+              className="w-full border-none border-mediumBlue bg-mediumBlue text-right text-[15px] font-bold text-white outline-none"
+              value={closeValue}
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}
@@ -123,6 +166,7 @@ function QuantityEnter(props: any) {
             />
           </div>
         </div>
+        <QuantityTips isOverFee={isOverFee} isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       </div>
     </>
   );
@@ -162,21 +206,13 @@ function DisplayValues(props: any) {
   );
 }
 
-function QuantityTips(props: any) {
-  const { isAmountTooSmall, isAmountTooLarge } = props;
-
-  const label = isAmountTooLarge ? 'Value is too large!' : isAmountTooSmall ? 'Minimum collateral size 0.01' : '';
-
-  if (!label) return null;
-
-  return (
-    <div>
-      <span className="mb-2 text-[12px] leading-[20px] text-marketRed">{label}</span>
-    </div>
-  );
-}
-
-function EstimationComponent(props: any) {
+function EstimationComponent(props: {
+  userPosition: UserPositionInfo | undefined;
+  estimation: OpenPositionEstimation | undefined;
+  isAmountTooSmall: boolean;
+  isAmountTooLarge: boolean;
+  isFullClose: boolean;
+}) {
   const { userPosition, estimation, isAmountTooSmall, isAmountTooLarge, isFullClose } = props;
 
   return (
@@ -215,7 +251,7 @@ function EstimationComponent(props: any) {
   );
 }
 
-function ExtendedEstimateComponent(props: any) {
+function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation; isFullClose: boolean }) {
   const { estimation, isFullClose } = props;
 
   return (
@@ -243,8 +279,8 @@ function ExtendedEstimateComponent(props: any) {
         <div className="mb-1 mt-4 text-[14px] font-semibold text-white underline">Transaction Details</div>
       </div>
       <DisplayValues title="Transaction Fee" unit=" WETH" value={!estimation ? '-.--' : estimation.txSummary.fee.toFixed(5)} />
-      {/* <DisplayValues title="Estimated Exposure" value={exposure} unit={currentType} /> */}
       <DisplayValues title="Execution Price" value={!estimation ? '-.--' : estimation.txSummary.entryPrice.toFixed(2)} unit="WETH" />
+      <DisplayValues title="Resulting Price" value={!estimation ? '-.--' : estimation.posInfo.resultingPrice.toFixed(2)} unit="WETH" />
       <div className="flex justify-between">
         <MobileTooltip
           content={
@@ -264,7 +300,13 @@ function ExtendedEstimateComponent(props: any) {
   );
 }
 
-function CloseSlider(props: any) {
+function CloseSlider(props: {
+  closeValue: number;
+  maxCloseValue: number;
+  onChange: (value: any) => void;
+  onSlide: (value: any) => void;
+  disabled: boolean;
+}) {
   const { closeValue, maxCloseValue, onChange, onSlide, disabled } = props;
   return (
     <div className={`${disabled ? 'disabled' : ''}`}>
@@ -295,7 +337,6 @@ export default function CloseCollateral() {
   const [closeValue, setCloseValue] = useState(0);
   const [toleranceRate, setToleranceRate] = useState<number | string>(0.5);
   const [showDetail, setShowDetail] = useState(false);
-  const [isShowPartialCloseModal, setIsShowPartialCloseModal] = useState(false);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
@@ -308,9 +349,9 @@ export default function CloseCollateral() {
   });
   const approvalAmount = getApprovalAmountFromEstimation(estimation);
   const isNeedApproval = useApprovalCheck(approvalAmount);
-  const wethBalance = useNanostore($userWethBalance);
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
+  const wethBalance = useNanostore($userWethBalance);
 
   useEffect(() => {
     if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL && !isFullClose) {
@@ -366,9 +407,9 @@ export default function CloseCollateral() {
         }}
         isAmountTooSmall={isAmountTooSmall}
         isAmountTooLarge={isAmountTooLarge}
+        estimation={estimation}
         disabled={isPending || isWrongNetwork}
       />
-      <QuantityTips isAmountTooSmall={isAmountTooSmall} isAmountTooLarge={isAmountTooLarge} />
       <ErrorTip label={textErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
@@ -403,8 +444,9 @@ export default function CloseCollateral() {
               disabled={isPending || isWrongNetwork}
               title=""
               type="text"
-              className="text-[15px]font-semibold w-[90%]  max-w-[100px] border-[1px]
-                border-mediumBlue bg-mediumBlue px-1 outline-none"
+              className="w-[90%] max-w-[100px]  border-[1px] border-mediumBlue
+                bg-mediumBlue px-1 text-right
+                text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
               onChange={e => {
@@ -474,9 +516,9 @@ export default function CloseCollateral() {
               onClick={() => setShowDetail(val => !val)}>
               {!showDetail ? 'Show' : 'Hide'} Advanced Details
               {!showDetail ? (
-                <Image src="/images/common/angle_down.svg" className="mr-2" alt="" width={12} height={12} />
+                <Image src="/images/common/angle_down.svg" alt="" width={12} height={12} />
               ) : (
-                <Image src="/images/common/angle_up.svg" className="mr-2" alt="" width={12} height={12} />
+                <Image src="/images/common/angle_up.svg" alt="" width={12} height={12} />
               )}
             </div>
             <div className="flex-1" />
@@ -484,16 +526,7 @@ export default function CloseCollateral() {
           <div>{showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}</div>
         </>
       ) : null}
-      <PartialCloseModal
-        isShow={isShowPartialCloseModal}
-        setIsShow={setIsShowPartialCloseModal}
-        onClickSubmit={() => {
-          // setTradeWindowIndex(2); // set tab to adjust collateral
-
-          // actionButtonRef.current?.closePosition();
-          setIsShowPartialCloseModal(false);
-        }}
-      />
+      <PartialCloseModal />
     </div>
   );
 }

@@ -8,18 +8,19 @@ import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
+import { AdjustMarginEstimation, useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
+import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { usePositionInfo } from '@/hooks/collection';
 import { $currentAmm } from '@/stores/trading';
+import { useDebounce } from '@/hooks/debounce';
+import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
 import AddCollateralButton from '@/components/trade/common/actionBtns/AddCollateralButton';
 import ReduceCollateralButton from '@/components/trade/common/actionBtns/ReduceCollateralButton';
-import { useDebounce } from '@/hooks/debounce';
-import { formatBigInt, parseBigInt } from '@/utils/bigInt';
-import { useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
-import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
+import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
 import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
-import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
+
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
@@ -109,7 +110,7 @@ function QuantityEnter(props: any) {
               ${disabled ? 'disabled' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
-            <div className="inputweth">
+            <div className="leading-[10px]">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
             <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
@@ -175,19 +176,6 @@ function UpdateValueDisplay(props: any) {
   );
 }
 
-function UpdateValueNoDataDisplay(props: any) {
-  const { title, unit } = props;
-
-  return (
-    <div className="row adjustcollateralrow items-center">
-      <div className="col text-[14px] text-mediumEmphasis">{title}</div>
-      <div className="col-auto text-[14px] font-semibold text-mediumEmphasis">
-        <span>{`-.--${unit}`}</span>
-      </div>
-    </div>
-  );
-}
-
 function SectionDividers() {
   return (
     <div className="row">
@@ -214,58 +202,7 @@ function UpdatedCollateralValue(props: any) {
   );
 }
 
-// function QuantityTips(props: any) {
-//   const {
-//     balanceChecking,
-//     marginRatioChecker,
-//     minimalMarginChecking,
-//     initialMarginChecker,
-//     reduceMarginChecking,
-//     value,
-//     isPending,
-//     marginIndex
-//   } = props;
-//   const maxReduceValue = useNanostore(wsMaxReduceValue);
-//   const decreaseMax = Number(maxReduceValue) - 0.0001;
-
-//   if (
-//     (decreaseMax > 0 || marginIndex === 0) &&
-//     (value === 0 ||
-//       (!balanceChecking && !marginRatioChecker && !minimalMarginChecking && !initialMarginChecker && !reduceMarginChecking && !isPending))
-//   ) {
-//     return null;
-//   }
-
-//   const label =
-//     initialMarginChecker || reduceMarginChecking || decreaseMax <= 0 ? (
-//       'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.'
-//     ) : isPending ? (
-//       'Your previous transaction is pending, you can trade this collection again after the transaction is completed.'
-//     ) : marginRatioChecker ? (
-//       'New Collateral must be above Initial Collateral Requirement.'
-//     ) : balanceChecking ? (
-//       <>
-//         Not enough WETH (including transaction fee).
-//         <button className="ml-1 text-white underline">Get WETH</button> first
-//       </>
-//     ) : minimalMarginChecking ? (
-//       'Minimum collateral size 0.01'
-//     ) : (
-//       ''
-//     );
-
-//   return (
-//     <div className={` ${isPending ? 'price-fluc' : ''}`}>
-//       <span
-//         className={`${isPending ? 'text-warn' : 'text-marketRed}'}
-//           mb-2 text-[12px] leading-[20px]`}>
-//         {label}
-//       </span>
-//     </div>
-//   );
-// }
-
-function EstimationValueDisplay(props: any) {
+function EstimationValueDisplay(props: { isError: boolean; estimation: AdjustMarginEstimation | undefined }) {
   const { isError, estimation } = props;
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
@@ -334,18 +271,18 @@ function AdjustCollateralSlidingBars(props: any) {
   );
 }
 
-export default function AdjustCollateral(props: any) {
+export default function AdjustCollateral() {
   const currentAmm = useNanostore($currentAmm);
   const [adjustMarginValue, setAdjustMarginValue] = useState(0);
   const debonceBigIntValue = useDebounce(parseBigInt(adjustMarginValue));
   const [marginIndex, setMarginIndex] = useState(0);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const isConnected = useNanostore($userIsConnected);
+  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   const freeCollateral = useFreeCollateral();
   const wethBalance = useNanostore($userWethBalance);
-  const isConnected = useNanostore($userIsConnected);
-  const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
   const { isLoading: isEstLoading, estimation } = useAdjustCollateralEstimation(adjustMarginValue * (-1) ** marginIndex);
 
@@ -400,16 +337,6 @@ export default function AdjustCollateral(props: any) {
         isError={textErrorMessage !== null}
       />
       <ErrorTip label={textErrorMessage} />
-      {/* <QuantityTips
-        balanceChecking={balanceChecking}
-        marginRatioChecker={marginRatioChecker}
-        minimalMarginChecking={minimalMarginChecking}
-        initialMarginChecker={initialMarginChecker}
-        reduceMarginChecking={reduceMarginChecking}
-        value={adjustMarginValue}
-        marginIndex={marginIndex}
-        isPending={isPending}
-      /> */}
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
         adjustMarginValue={adjustMarginValue}

@@ -76,8 +76,7 @@ export default function InputSlider(props: any) {
         className="input-slider pointer-events-none absolute top-2 flex h-[14px]
         w-[14px] cursor-pointer items-center justify-center rounded-full"
         style={{
-          left: `calc(${fill}% - ${lerp(0, 14, alphaFill)}px)`,
-          opacity: disabled ? '0.6' : '1'
+          left: `calc(${fill}% - ${lerp(0, 14, alphaFill)}px)`
         }}>
         <div className="h-[10px] w-[10px] rounded-full bg-white" />
       </div>

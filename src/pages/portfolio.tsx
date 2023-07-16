@@ -51,6 +51,7 @@ export default function Portfolio() {
               <PositionInfoMobile />
             </>
           )}
+          {isConnecting ? <PageLoading /> : null}
         </div>
       </main>
 

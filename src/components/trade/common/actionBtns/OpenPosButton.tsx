@@ -1,12 +1,19 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { OpenPositionEstimation, Side, useOpenPositionTransaction } from '@/hooks/trade';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAmm, $tsTransactionStatus } from '@/stores/trading';
+import {
+  $currentAmm,
+  $tsIsContinueClose,
+  $tsIsFirstPartialClose,
+  $tsIsShowPartialCloseModal,
+  $tsTransactionStatus
+} from '@/stores/trading';
 import { getCollectionInformation } from '@/const/collectionList';
 import { usePositionInfo } from '@/hooks/collection';
 import { TradeActions } from '@/const';
@@ -41,11 +48,16 @@ function OpenPosButton({
   const [label, setLabel] = useState('');
   const isMobileView = useNanostore($isMobileView);
 
+  const sideDisplay = side === 0 ? 'LONG' : 'SHORT';
+  const isFirstPartialClose = useNanostore($tsIsFirstPartialClose);
+  const isShowPartialCloseModal = useNanostore($tsIsShowPartialCloseModal);
+  const isContinueClose = useNanostore($tsIsContinueClose);
+
   useEffect(() => {
     if (positionInfo) {
       const posType =
         positionInfo.size === 0
-          ? `${TradeActions.OPEN} Position`
+          ? `${TradeActions.OPEN} ${sideDisplay}`
           : (-1) ** side * positionInfo.size > 0
           ? `${TradeActions.ADD}`
           : `Close Position`;
@@ -106,17 +118,27 @@ function OpenPosButton({
     }
   }, [isPending, label, txHash]);
 
+  useEffect(() => {
+    if (isContinueClose) {
+      onPending();
+      setIsLoading(true);
+      write?.();
+      $tsIsContinueClose.set(false);
+    }
+  }, [isShowPartialCloseModal, isContinueClose]);
+
+  const handleOnClick = () => {
+    if (isFirstPartialClose) {
+      $tsIsShowPartialCloseModal.set(true);
+    } else if (!isShowPartialCloseModal) {
+      onPending();
+      setIsLoading(true);
+      write?.();
+    }
+  };
+
   return (
-    <BaseButton
-      disabled={!write}
-      isLoading={isLoading || isPreparing || isPending || isEstimating}
-      onClick={() => {
-        onPending();
-        setIsLoading(true);
-        write?.();
-      }}
-      label={label}
-    />
+    <BaseButton disabled={!write} isLoading={isLoading || isPreparing || isPending || isEstimating} onClick={handleOnClick} label={label} />
   );
 }
 

@@ -1,0 +1,118 @@
+@mixin colorful-text($color) {
+  background: $color;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.text-shadow-lb::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #1f1209;
+  text-shadow: 2px 2px 4px #1f1209;
+}
+
+.bg-video {
+  background: url('/static/containerbackgrounds/competition/bg-spot-light.mp4') no-repeat center center fixed;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+}
+
+@media only screen and (min-width: 1024px) {
+  .bg-linear-gradient {
+    background: linear-gradient(180deg, #171731 0%, rgba(23, 23, 49, 0) 0.01%, rgba(18, 18, 30, 0.2) 50%, #252842 100%);
+  }
+}
+
+.border-to-bottom-transparent {
+  border: 1px solid;
+  border-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent) 1;
+  border-radius: 6px;
+}
+
+.colorful-text {
+  cursor: pointer;
+  @include colorful-text(linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%));
+}
+
+/* Define the scrollbar styles for WebKit browsers */
+.scroll-style::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scroll-style::-webkit-scrollbar-thumb {
+  background: rgba(196, 196, 196, 0.5);
+  border-radius: 5px; /* Adjust the thumb border radius */
+}
+
+.scroll-style::-webkit-scrollbar-track,
+.scroll-style::-webkit-scrollbar-corner {
+  background-color: transparent; /* Adjust the track color */
+}
+
+/* Define the scrollbar styles for Firefox */
+@-moz-document url-prefix() {
+  .scroll-style {
+    scrollbar-width: thin;
+    scrollbar-color: transparent rgba(196, 196, 196, 0.5);
+  }
+}
+
+/* Define the scrollbar styles for Edge and IE */
+@supports (-ms-overflow-style: none) {
+  .scroll-style::-ms-scrollbar-thumb {
+    background-image: rgba(196, 196, 196, 0.5);
+    border-radius: 5px; /* Adjust the thumb border radius */
+  }
+
+  .scroll-style::-ms-scrollbar-track {
+    background-color: transparent; /* Adjust the track color */
+  }
+}
+
+/* Smooth scrolling polyfill for Safari */
+@supports (-webkit-overflow-scrolling: touch) {
+  .scroll-style {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.m_main_title_ {
+  text-align: center;
+
+  span {
+    font-weight: 700;
+    font-size: 36px;
+    font-family: Montserrat;
+    line-height: 50.4px;
+    color: hsla(0, 0%, 100%, 0.87);
+    position: relative;
+    display: inline-block;
+
+    &::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #fff, #ffe1a8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      z-index: 1;
+    }
+    &::after {
+      content: attr(data-text);
+      position: relative;
+      color: transparent;
+      text-shadow: -4px 4px 4px rgba(45, 29, 5, 0.76);
+      z-index: 0;
+    }
+  }
+}

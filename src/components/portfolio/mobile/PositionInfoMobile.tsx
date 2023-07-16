@@ -7,7 +7,7 @@
 import React from 'react';
 import HistoryModal from '@/components/portfolio/mobile/HistoryModal';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $psShowBalance, $psShowHistory, $psUserPosition } from '@/stores/portfolio';
+import { $psShowBalance, $psShowHistory, $psShowPositionDetail, $psUserPosition } from '@/stores/portfolio';
 import PositionList from '@/components/portfolio/mobile/PositionList';
 import FundingPaymentModal from '@/components/portfolio/mobile/FundingPaymentModal';
 import OutlineButton from '@/components/common/OutlineButton';
@@ -15,6 +15,9 @@ import { SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelC
 import { $userIsConnected, $userTotalFP } from '@/stores/user';
 import { $isShowMobileModal } from '@/stores/modal';
 import { AMM } from '@/const/collectionList';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
+import Image from 'next/image';
+import PositionDetailMobile from '@/components/portfolio/mobile/PositionDetailMobile';
 
 function PositionInfoMobile() {
   const isConnected = useNanostore($userIsConnected);
@@ -23,6 +26,7 @@ function PositionInfoMobile() {
   const totalFP = useNanostore($userTotalFP);
 
   const currentPositionCount = psUserPosition.filter((item: any) => item !== null).length;
+  const showPositionDetail = useNanostore($psShowPositionDetail);
 
   const totalUnrealized = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.unrealizedPnl), 0);
   const totalFundingPaymentAccount = Object.keys(totalFP)
@@ -85,12 +89,31 @@ function PositionInfoMobile() {
                   Collection <br />
                   Type
                 </div>
-                <div className="w-[33%] text-right">
+                <div className="w-[32%] text-right">
                   Notional <br />
                   Leverage
                 </div>
-                <div className="w-[32%] text-right">
-                  Unrealized P/L <br />
+                <div className="w-[35%] text-right">
+                  <div className="flex items-center justify-end">
+                    Unrealized P/L
+                    <MobileTooltip
+                      content={
+                        <>
+                          <div className="mb-3 text-[15px] font-semibold">Accumulated Realized P/L</div>
+                          <div className="text-[12px] font-normal">
+                            Unrealized P/L is calculated based on the current vAMM price change and does not include funding payment.
+                          </div>
+                        </>
+                      }>
+                      <Image
+                        src="/images/components/trade/history/more_info.svg"
+                        alt=""
+                        width={12}
+                        height={12}
+                        className="ml-[6px] cursor-pointer"
+                      />
+                    </MobileTooltip>
+                  </div>
                   Accu. FP
                 </div>
               </div>
@@ -103,6 +126,7 @@ function PositionInfoMobile() {
         </div>
       </div>
 
+      {showPositionDetail ? <PositionDetailMobile /> : null}
       <FundingPaymentModal />
       <HistoryModal />
     </div>

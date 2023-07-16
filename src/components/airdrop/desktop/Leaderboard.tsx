@@ -340,7 +340,7 @@ function Leaderboard() {
                       originalTotal
                     } = item;
 
-                    const isYou = userAddress === userData.userAddress;
+                    const isYou = isConnected && userAddress === userData.userAddress;
                     return (
                       <div
                         key={`rank-${userAddress}`}

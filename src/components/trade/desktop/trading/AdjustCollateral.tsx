@@ -18,8 +18,9 @@ import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
 import AddCollateralButton from '@/components/trade/common/actionBtns/AddCollateralButton';
 import ReduceCollateralButton from '@/components/trade/common/actionBtns/ReduceCollateralButton';
 import ConnectButton from '@/components/trade/common/actionBtns/ConnectButton';
-import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
 import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
+import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
+
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import { $showGetWEthModal } from '@/stores/modal';
@@ -108,7 +109,7 @@ function QuantityEnter(props: any) {
               ${disabled ? 'disabled' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
-            <div className="inputweth">
+            <div className="leading-[10px]">
               <span className="input-with-text ml-1 text-[12px] font-bold">WETH</span>
             </div>
             <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
@@ -138,7 +139,6 @@ function QuantityEnter(props: any) {
             </div>
             <input
               type="text"
-              // pattern="[0-9]*"
               className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none`}
               value={adjustMarginValue}
@@ -170,19 +170,6 @@ function UpdateValueDisplay(props: any) {
           <span className="text-[14px] font-semibold">{newValue}</span>
           {unit}
         </span>
-      </div>
-    </div>
-  );
-}
-
-function UpdateValueNoDataDisplay(props: any) {
-  const { title, unit } = props;
-
-  return (
-    <div className="row adjustcollateralrow items-center">
-      <div className="text-[14px] text-mediumEmphasis">{title}</div>
-      <div className="text-[14px] font-semibold text-mediumEmphasis">
-        <span>{`-.--${unit}`}</span>
       </div>
     </div>
   );
@@ -331,7 +318,12 @@ export default function AdjustCollateral() {
 
   return (
     <div>
-      <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
+      <SaleOrBuyRadio
+        disabled={isPending || isWrongNetwork}
+        marginIndex={marginIndex}
+        setMarginIndex={setMarginIndex}
+        onChange={initializeState}
+      />
       <QuantityEnter
         disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
         adjustMarginValue={adjustMarginValue}

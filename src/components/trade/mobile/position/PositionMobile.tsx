@@ -198,19 +198,36 @@ export default function PositionMobile() {
             </div>
           </div>
 
-          <div className="mb-3 flex">
+          <div className="mb-4 flex">
             <div className="w-[180px] text-[14px] text-mediumEmphasis">Liqui. Price</div>
-            <div className="text-[14px] font-normal">
+            <div className="relative text-[14px] font-normal">
               <MedPriceIcon
                 priceValue={!positionInfo ? '---' : positionInfo.liquidationPrice < 0 ? '0.00' : positionInfo.liquidationPrice.toFixed(2)}
                 className={`${isOverPriceGap ? 'text-warn' : ''} `}
                 isLoading={isLoading || isPending}
               />
               {isOverPriceGap ? (
-                <div className="absolute bottom-[-5px] left-[50px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
+                <div className="absolute left-[22px] top-[26px] border-[7px] border-b-0 border-x-transparent border-t-warn" />
               ) : null}
             </div>
           </div>
+
+          {isOverPriceGap ? (
+            <div className=" flex items-start">
+              <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
+              <p className="ml-1 text-[12px] font-normal text-warn">
+                Warning: vAMM Oracle price gap &gt; 10%, liquidation now occurs at <b>Oracle Price</b> (Note that p&l is still based on vAMM
+                price). {positionInfo.leverage <= 0 ? 'Positions with negative collateral value cannot be closed.' : ''}{' '}
+                <a
+                  target="_blank"
+                  href="https://tribe3.gitbook.io/tribe3/getting-started/liquidation-mechanism"
+                  className="underline hover:text-warn/50"
+                  rel="noreferrer">
+                  Learn More
+                </a>
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
 

@@ -47,6 +47,8 @@ module.exports = {
         competition: '#FFEFD0',
         seasonGreen: '#D0FF4B',
         tooltipArrow: '#213676',
+        buttonGreen: '#48AE36',
+        buttonRed: '#EA3E3F',
 
         gradientBlue: '#04AEFC',
         gradientPink: '#F703D9',
@@ -76,7 +78,7 @@ module.exports = {
         h2: [
           '32px',
           {
-            lineHeight: '39.01px',
+            // lineHeight: '39.01px',
             fontWeight: '700'
           }
         ],
@@ -134,6 +136,13 @@ module.exports = {
           {
             // lineHeight: '17.07px',
             fontWeight: '400'
+          }
+        ],
+        b3e: [
+          '12px',
+          {
+            lineHeight: '14.63px',
+            fontWeight: '600'
           }
         ]
       }

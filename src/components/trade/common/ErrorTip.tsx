@@ -6,20 +6,19 @@ export const ErrorTip = ({ label }: { label: string | null }) => {
   if (!label) return null;
 
   return (
-    <div className="mb-2">
-      <span className="text-[12px] leading-[20px] text-marketRed">
-        {label !== WETH_INSUFFICIENT ? (
-          label
-        ) : (
-          <>
-            Not enough WETH (including transaction fee).
-            <span onClick={() => $showGetWEthModal.set(true)} className="ml-1 cursor-pointer text-white underline">
-              Get WETH
-            </span>{' '}
-            first
-          </>
-        )}
-      </span>
+    <div className="mb-3 text-[12px] leading-[16px] text-marketRed">
+      {label !== WETH_INSUFFICIENT ? (
+        label
+      ) : (
+        <>
+          Not enough WETH (including transaction fee).
+          <br />
+          <span onClick={() => $showGetWEthModal.set(true)} className="cursor-pointer text-white underline">
+            Get WETH
+          </span>{' '}
+          first
+        </>
+      )}
     </div>
   );
 };
