@@ -127,9 +127,9 @@ function QuantityTips(props: any) {
       </span>{' '}
       first.
     </>
-  ) : isFluctuationLmt ? (
-    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
-  ) : null;
+  ) : // ) : isFluctuationLmt ? (
+  //   'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  null;
 
   return label ? (
     <div>

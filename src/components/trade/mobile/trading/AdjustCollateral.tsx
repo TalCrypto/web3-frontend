@@ -76,7 +76,8 @@ function QuantityEnter(props: any) {
   };
 
   const showMaxValue = () => {
-    onChange(Number(maxValue - 0.00005).toFixed(4));
+    // onChange(Number(maxValue - 0.00005).toFixed(4));
+    onChange(Number(maxValue).toFixed(4));
   };
 
   return (
@@ -289,8 +290,6 @@ export default function AdjustCollateral() {
   const approvalAmount = marginIndex === 1 || !debonceBigIntValue ? 0 : formatBigInt(debonceBigIntValue);
   const isNeedApproval = useApprovalCheck(approvalAmount);
 
-  const [isDisabled, setIsDisabled] = useState(false);
-
   const initializeState = useCallback(() => {
     setAdjustMarginValue(0);
     setIsPending(false);
@@ -307,9 +306,6 @@ export default function AdjustCollateral() {
 
   const handleChange = (value: any) => {
     setAdjustMarginValue(value);
-    const isError = value > 0 && value < 0.01;
-    setIsDisabled(isError);
-    setTextErrorMessage(isError ? 'Minimum trading size 0.01.' : null);
   };
 
   useEffect(() => {
@@ -374,7 +370,6 @@ export default function AdjustCollateral() {
             onPending={handlePending}
             onSuccess={initializeState}
             onError={handleError}
-            isDisabled={isDisabled}
           />
         ) : (
           <ReduceCollateralButton

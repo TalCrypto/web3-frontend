@@ -99,7 +99,8 @@ function QuantityEnter(props: {
   };
 
   const showMaxValue = () => {
-    onChange(Number(maxCloseValue - 0.00005).toFixed(4));
+    // onChange(Number(maxCloseValue - 0.00005).toFixed(4));
+    onChange(Number(maxCloseValue).toFixed(4));
   };
 
   // determine if input is valid or error state

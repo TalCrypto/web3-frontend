@@ -49,6 +49,8 @@ function OpenPosButton({
   const isMobileView = useNanostore($isMobileView);
 
   const sideDisplay = side === 0 ? 'LONG' : 'SHORT';
+
+  const [isPartialClose, setIsPartialClose] = useState(false);
   const isFirstPartialClose = useNanostore($tsIsFirstPartialClose);
   const isShowPartialCloseModal = useNanostore($tsIsShowPartialCloseModal);
   const isContinueClose = useNanostore($tsIsContinueClose);
@@ -62,6 +64,8 @@ function OpenPosButton({
           ? `${TradeActions.ADD}`
           : `Close Position`;
       setLabel(posType);
+
+      setIsPartialClose(posType === `Close Position`);
     }
   }, [positionInfo, side]);
 
@@ -119,7 +123,7 @@ function OpenPosButton({
   }, [isPending, label, txHash]);
 
   useEffect(() => {
-    if (isContinueClose) {
+    if (isPartialClose && isContinueClose) {
       onPending();
       setIsLoading(true);
       write?.();
@@ -128,9 +132,9 @@ function OpenPosButton({
   }, [isShowPartialCloseModal, isContinueClose]);
 
   const handleOnClick = () => {
-    if (isFirstPartialClose) {
+    if (isPartialClose && isFirstPartialClose) {
       $tsIsShowPartialCloseModal.set(true);
-    } else if (!isShowPartialCloseModal) {
+    } else if (!isPartialClose || !isShowPartialCloseModal) {
       onPending();
       setIsLoading(true);
       write?.();
