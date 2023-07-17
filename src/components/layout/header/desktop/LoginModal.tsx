@@ -27,7 +27,7 @@ const PlatformButton: React.FC<Platform> = ({ title, icon, desc, redirect }) => 
 export default function LoginModal() {
   const isShowLoginModal = useNanostore($isShowLoginModal);
   const { open } = useWeb3Modal();
-  // const { connect } = useConnect();
+  const { connect, connectors } = useConnect();
 
   if (!isShowLoginModal) return null;
 
@@ -36,8 +36,9 @@ export default function LoginModal() {
   };
 
   const redirectMetamask = () => {
-    // console.log({ connectors });
-    // connect();
+    const connector = connectors[1];
+    connect({ connector });
+    closeModal();
   };
 
   const redirectWalletConnect = () => {
@@ -78,7 +79,7 @@ export default function LoginModal() {
             icon="/icons/providers/okx.png"
             title="OKX Wallet"
             desc="Connect to your OKX Wallet."
-            redirect={() => console.log('fuck')}
+            redirect={redirectMetamask}
           />
           <PlatformButton
             icon="/icons/providers/walletconnect.png"

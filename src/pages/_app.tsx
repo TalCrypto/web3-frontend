@@ -51,6 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
         <UserDataUpdater />
+        <LoginModal />
       </WagmiConfig>
 
       <Web3Modal
@@ -74,7 +75,6 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <TransferTokenModal />
       <MetamaskModal />
-      <LoginModal />
     </>
   );
 }
