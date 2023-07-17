@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { FC, PropsWithChildren, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
@@ -61,7 +62,7 @@ const AddressPage: NextPage = () => {
   const addressTrimmed = address ? trimAddress(address as string) : '';
 
   useEffect(() => {
-    userprofileAddress.set(address);
+    $userprofileAddress.set(address);
   }, [address]);
 
   return (
