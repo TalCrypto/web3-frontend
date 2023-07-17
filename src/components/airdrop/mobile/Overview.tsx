@@ -7,6 +7,7 @@ import { BoxGradient, BoxLocked } from '@/components/common/Box';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
 import { useRouter } from 'next/router';
+import WalletNotConnectedMobile from '@/components/airdrop/mobile/WalletNotConnectedMobile';
 
 function OverviewMobile() {
   const userPoint = useNanostore($userPoint);
@@ -38,6 +39,10 @@ function OverviewMobile() {
 
   const tradeVolTotal = userPoint ? userPoint.tradeVolTotal : defaultUserPoint.tradeVolTotal;
   const maxEligibilityTradeVol = Number(5).toFixed(2);
+
+  if (!isConnected) {
+    return <WalletNotConnectedMobile />;
+  }
 
   return (
     <div>
