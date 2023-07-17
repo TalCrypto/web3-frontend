@@ -433,6 +433,7 @@ export const apiConnection = {
       const { data } = result;
       $mainLeaderboard.set(data?.leaderboard);
       if (userAddress) {
+        console.log(data?.user);
         $mlCurrentUser.set(data?.user);
       } else {
         $mlCurrentUser.set(null);
