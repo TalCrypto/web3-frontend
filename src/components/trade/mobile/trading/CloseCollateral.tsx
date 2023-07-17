@@ -99,7 +99,8 @@ function QuantityEnter(props: {
   };
 
   const showMaxValue = () => {
-    onChange(Number(maxCloseValue - 0.00005).toFixed(4));
+    // onChange(Number(maxCloseValue - 0.00005).toFixed(4));
+    onChange(Number(maxCloseValue).toFixed(4));
   };
 
   // determine if input is valid or error state
@@ -352,6 +353,7 @@ export default function CloseCollateral() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const wethBalance = useNanostore($userWethBalance);
+  const [isFirstPartialClose, setIsFirstPartialClose] = useState(true);
 
   useEffect(() => {
     if (estimation?.txSummary.notionalSize && estimation?.txSummary.notionalSize < MINIMUM_COLLATERAL && !isFullClose) {
@@ -453,7 +455,7 @@ export default function CloseCollateral() {
                 const { value: inputValue } = e.target;
                 const reg = /^\d*(\.\d*)?$/;
                 if (reg.test(inputValue) || inputValue === '') {
-                  setToleranceRate(Number(e.target.value));
+                  setToleranceRate(e.target.value);
                 }
               }}
             />

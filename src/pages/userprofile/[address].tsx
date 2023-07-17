@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react';
+import React, { FC, PropsWithChildren, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import PageHeader from '@/components/layout/header/PageHeader';
@@ -6,7 +6,7 @@ import Image from 'next/image';
 import OutlineButton from '@/components/common/OutlineButton';
 import ProfileBadge from '@/components/userprofile/ProfileBadge';
 import TabItems from '@/components/userprofile/TabItems';
-import { $activeTab } from '@/stores/userprofile';
+import { $activeTab, $userprofileAddress } from '@/stores/userprofile';
 import { useStore } from '@nanostores/react';
 import Portfolio from '@/components/userprofile/Portfolio';
 import Activities from '@/components/userprofile/Activities';
@@ -56,8 +56,13 @@ const AddressPage: NextPage = () => {
   const router = useRouter();
   const { address } = router.query;
   const activeTab = useStore($activeTab);
+  const userprofileAddress = useStore($userprofileAddress);
 
   const addressTrimmed = address ? trimAddress(address as string) : '';
+
+  useEffect(() => {
+    userprofileAddress.set(address);
+  }, [address]);
 
   return (
     <>

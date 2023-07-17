@@ -112,7 +112,7 @@ function LongShortRatio(props: any) {
 }
 
 function QuantityTips(props: any) {
-  const { isAmountTooSmall, isInsuffBalance, isFluctuationLmt } = props;
+  const { isAmountTooSmall, isInsuffBalance, estPriceFluctuation, textErrorMessage } = props;
   const onClickWeth = () => {
     $showGetWEthModal.set(true);
   };
@@ -127,8 +127,11 @@ function QuantityTips(props: any) {
       </span>{' '}
       first.
     </>
-  ) : isFluctuationLmt ? (
-    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.'
+  ) : !textErrorMessage && estPriceFluctuation ? (
+    <span className="text-warn">
+      Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the
+      notional size of your trade.
+    </span>
   ) : null;
 
   return label ? (
@@ -151,7 +154,7 @@ function QuantityEnter(props: any) {
   const fluctuationPct =
     (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
   const fluctuationLmt = useFluctuationLimit();
-  const isFluctuationLmt = Math.abs(fluctuationPct) >= fluctuationLmt;
+  const estPriceFluctuation = fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -219,12 +222,13 @@ function QuantityEnter(props: any) {
           </div>
         </div>
         <QuantityTips
-          isFluctuationLmt={isFluctuationLmt}
+          estPriceFluctuation={estPriceFluctuation}
           isAmountTooSmall={isAmountTooSmall}
           isInsuffBalance={isInsuffBalance}
+          textErrorMessage={textErrorMessage}
           value={value}
         />
-        {!isAmountTooSmall && !isInsuffBalance && !isFluctuationLmt ? <ErrorTip label={textErrorMessage} /> : null}
+        {!isAmountTooSmall && !isInsuffBalance ? <ErrorTip label={textErrorMessage} /> : null}
       </div>
     </>
   );
