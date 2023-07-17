@@ -266,7 +266,7 @@ export const useAdjustCollateralEstimation = (
     abi: chViewerAbi,
     functionName: 'getMarginAdjustmentEstimation',
     args: ammAddr && address && dmargin ? [ammAddr, address, dmargin] : undefined,
-    enabled: Boolean(ammAddr && address && dmargin)
+    enabled: Boolean(ammAddr && address && dmargin && Math.abs(formatBigInt(dmargin)) >= 0.01)
   });
 
   const estimation = data
