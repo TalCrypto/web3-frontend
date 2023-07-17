@@ -6,10 +6,12 @@ import Image from 'next/image';
 import { BoxGradient, BoxLocked } from '@/components/common/Box';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
+import { useRouter } from 'next/router';
 
 function OverviewMobile() {
   const userPoint = useNanostore($userPoint);
   const userPrevPoint = useNanostore($userPrevPoint);
+  const router = useRouter();
 
   const rank = userPoint ? userPoint.rank : defaultUserPoint.rank;
   const multiplier = userPoint ? userPoint.multiplier : defaultUserPoint.multiplier;
@@ -125,18 +127,31 @@ function OverviewMobile() {
 
         {/* Trading Volume */}
         {eligible() ? (
-          <div className="relative mb-1 flex items-center justify-between px-5 py-2">
-            <div className="flex flex-row items-center text-[14px]">
-              <div className="mr-[6px]">
-                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+          <MobileTooltip
+            content={
+              <>
+                <div className="text-[15px] font-semibold">Trading Vol.</div>
+                <div className="mt-3 text-[12px] font-normal">
+                  Trading Volume (Notional) will be <br />
+                  counted for every action of open position, <br />
+                  add position, partially close and fully close <br />
+                  position.
+                </div>
+              </>
+            }>
+            <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+              <div className="flex flex-row items-center text-[14px]">
+                <div className="mr-[6px]">
+                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                </div>
+                Trading Vol.
               </div>
-              Trading Vol.
+              <div className="flex items-center">
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
+                <p className="mt-[3px] text-[15px]">Pts</p>
+              </div>
             </div>
-            <div className="flex items-center">
-              <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
-              <p className="mt-[3px] text-[15px]">Pts</p>
-            </div>
-          </div>
+          </MobileTooltip>
         ) : (
           <MobileTooltip
             content={
@@ -163,7 +178,7 @@ function OverviewMobile() {
 
         {/* Referral */}
         {eligible() ? (
-          <div className="relative mb-1 flex items-center justify-between px-5 py-2">
+          <div className="relative mb-1 flex items-center justify-between px-5 py-2" onClick={() => router.push(`/airdrop/refer`)}>
             <div className="flex flex-row items-center text-[14px]">
               <div className="mr-[6px]">
                 <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
@@ -180,11 +195,36 @@ function OverviewMobile() {
             {!eligible() ? <BoxLocked tooltipContent="aa" blur={0} iconWidth={20} iconHeight={20} /> : null}
           </div>
         ) : (
+          <div className="relative mb-1 flex items-center justify-between px-5 py-2" onClick={() => router.push(`/airdrop/refer`)}>
+            <div className="flex flex-row items-center text-[14px]">
+              <div className="mr-[6px]">
+                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+              </div>
+              Referral
+            </div>
+
+            <div className="flex items-center">
+              <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
+                {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
+              </p>
+              <p className="mt-[3px] text-[15px]">Pts</p>
+            </div>
+            <BoxLocked tooltipContent="aa" blur={0} iconWidth={20} iconHeight={20} />
+          </div>
+        )}
+
+        {/* Others */}
+        {eligible() ? (
           <MobileTooltip
             content={
               <>
-                <div className="text-[15px] font-semibold">Unlock Reward</div>
-                <div className="mt-3 text-[12px] font-normal">Trade for 5 WETH notional to unlock your reward.</div>
+                <div className="text-[15px] font-semibold">Others</div>
+                <div className="mt-3 text-[12px] font-normal">
+                  It includes, but not limited to, your social <br />
+                  media engagement with Tribe3, <br />
+                  campaign participation, contribution to <br />
+                  Tribe3 Beta &amp; Testnet.
+                </div>
               </>
             }>
             <div className="relative mb-1 flex items-center justify-between px-5 py-2">
@@ -192,36 +232,15 @@ function OverviewMobile() {
                 <div className="mr-[6px]">
                   <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
                 </div>
-                Referral
+                Others
               </div>
 
               <div className="flex items-center">
-                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
-                  {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
-                </p>
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
                 <p className="mt-[3px] text-[15px]">Pts</p>
               </div>
-              {!eligible() ? <BoxLocked tooltipContent="aa" blur={0} iconWidth={20} iconHeight={20} /> : null}
             </div>
           </MobileTooltip>
-        )}
-
-        {/* Others */}
-        {eligible() ? (
-          <div className="relative mb-1 flex items-center justify-between px-5 py-2">
-            <div className="flex flex-row items-center text-[14px]">
-              <div className="mr-[6px]">
-                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
-              </div>
-              Others
-            </div>
-
-            <div className="flex items-center">
-              <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
-              <p className="mt-[3px] text-[15px]">Pts</p>
-            </div>
-            {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
-          </div>
         ) : (
           <MobileTooltip
             content={
@@ -242,7 +261,7 @@ function OverviewMobile() {
                 <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
                 <p className="mt-[3px] text-[15px]">Pts</p>
               </div>
-              {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
+              <BoxLocked blur={0} iconWidth={20} iconHeight={20} />
             </div>
           </MobileTooltip>
         )}
@@ -254,26 +273,38 @@ function OverviewMobile() {
             <span className="text-gradient-vertical">Bonus Points</span>
           </div>
           {eligible() ? (
-            <div className="flex items-center justify-between bg-lightBlue">
-              <div className="max-w-[70%]">
-                <div className="flex items-center justify-start text-[20px] font-semibold">
-                  <div className="mr-[6px]">
-                    <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+            <MobileTooltip
+              content={
+                <>
+                  <div className="text-[15px] font-semibold">Converg. Trading Vol.</div>
+                  <div className="mt-3 text-[12px] font-normal">
+                    Trades that help to close the price gap <br />
+                    between futures and spot price will be <br />
+                    counted as convergence trade.
                   </div>
-                  <span className="text-[14px] font-normal">Net Converg. Trading Vol.</span>
+                </>
+              }>
+              <div className="flex items-center justify-between bg-lightBlue">
+                <div className="max-w-[70%]">
+                  <div className="flex items-center justify-start text-[20px] font-semibold">
+                    <div className="mr-[6px]">
+                      <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+                    </div>
+                    <span className="text-[14px] font-normal">Net Converg. Trading Vol.</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="relative flex items-center justify-start text-[15px] font-normal">
+                    <div className="flex items-end text-[15px]">
+                      <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
+                        {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
+                      </span>
+                      Pts
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <div className="relative flex items-center justify-start text-[15px] font-normal">
-                  <div className="flex items-end text-[15px]">
-                    <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
-                      {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
-                    </span>
-                    Pts
-                  </div>
-                </div>
-              </div>
-            </div>
+            </MobileTooltip>
           ) : (
             <MobileTooltip
               content={
@@ -301,7 +332,7 @@ function OverviewMobile() {
                     </div>
                   </div>
                 </div>
-                {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
+                <BoxLocked blur={0} iconWidth={20} iconHeight={20} />
               </div>
             </MobileTooltip>
           )}
