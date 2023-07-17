@@ -1,5 +1,5 @@
 import React from 'react';
-import { toast } from 'react-toastify';
+import { ToastOptions, toast } from 'react-toastify';
 import Image from 'next/image';
 
 interface CustomToastProps {
@@ -51,7 +51,10 @@ interface ToastProps {
  * @param {*} param0
  * @param {*} options
  */
-export const showToast = ({ title, message, linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps, options = {}) => {
+export const showToast = (
+  { title, message, linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps,
+  options: ToastOptions<{}> = {}
+) => {
   toast(<CustomToast title={title} message={message} linkUrl={linkUrl} linkLabel={linkLabel} warning={warning} error={error} />, {
     containerId: 'GLOBAL',
     ...options

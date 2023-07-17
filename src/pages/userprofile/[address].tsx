@@ -13,6 +13,7 @@ import Activities from '@/components/userprofile/Activities';
 import Social from '@/components/userprofile/Social';
 import Analysis from '@/components/userprofile/Analysis';
 import Link from 'next/link';
+import { showToast } from '@/components/common/Toast';
 
 function trimAddress(str: string) {
   if (str.length > 10) {
@@ -21,19 +22,35 @@ function trimAddress(str: string) {
   return str;
 }
 
-const ProfileHeaderCard: FC<PropsWithChildren> = ({ children }) => (
+type ProfileHeaderCardProps = PropsWithChildren & {
+  isEnded?: boolean;
+};
+
+const ProfileHeaderCard: FC<ProfileHeaderCardProps> = ({ children, isEnded = false }) => (
   <div
-    className="basis-1/2 rounded-[12px] bg-[#0C0D20CC] 
+    className="relative basis-1/2 overflow-hidden rounded-[12px] bg-[#0C0D20CC] 
                 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] 
               from-[rgba(72,50,24,0.7)] to-50%">
+    {isEnded ? (
+      <div
+        className="absolute left-0 top-0 min-w-[300px] translate-x-[-42%] translate-y-[40%] -rotate-45 
+          border border-y-white/50 bg-gradient-to-r from-[#BB3930] 
+        via-[#CE716B] to-[#C2342B] py-1 text-center text-[8px] font-semibold text-[#FFF6D7]">
+        ENDED
+      </div>
+    ) : null}
     <div
-      className="flex h-full flex-col items-center rounded-[12px] border-[0.5px] border-[#FFD392]  
+      className="flex h-full flex-col items-center  rounded-[12px] border-[0.5px] border-[#FFD392]  
                   bg-[url('/images/components/userprofile/profilecardbg.png')] bg-cover bg-[center_bottom_-3rem] bg-no-repeat 
                   px-[8px] py-6 md:px-8">
       {children}
     </div>
   </div>
 );
+
+ProfileHeaderCard.defaultProps = {
+  isEnded: false
+};
 
 const AddressPage: NextPage = () => {
   const router = useRouter();
@@ -69,7 +86,11 @@ const AddressPage: NextPage = () => {
                     <OutlineButton onClick={() => router.push('/userprofile/edit')}>
                       <p className="font-normal">Edit</p>
                     </OutlineButton>
-                    <OutlineButton>
+                    <OutlineButton
+                      onClick={() => {
+                        console.log('copied');
+                        showToast({ title: 'asdf', message: 'asdf' }, { position: 'top-center' });
+                      }}>
                       <Image src="/images/components/userprofile/share.svg" alt="" width={20} height={20} />
                     </OutlineButton>
                   </div>
@@ -81,7 +102,7 @@ const AddressPage: NextPage = () => {
                     <div className="mb-4 md:mb-0">
                       <p className="bg-gradient-to-b from-[#FFC977]  to-white bg-clip-text text-h2 text-transparent">JEFFGPT9999999</p>
                     </div>
-                    <div className="flex justify-between md:block">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-[6px]">
                         <p className="text-mediumEmphasis">{addressTrimmed}</p>
                         <Image src="/images/components/userprofile/copy.svg" alt="" width={20} height={20} />
@@ -171,8 +192,8 @@ const AddressPage: NextPage = () => {
                 </ProfileHeaderCard>
 
                 {/* trading competition */}
-                <ProfileHeaderCard>
-                  <p className="mb-[36px] flex-1 text-center text-b1e text-[#FFD392]">Trading Competition</p>
+                <ProfileHeaderCard isEnded>
+                  <p className="z-[1] mb-[36px] flex-1 text-center text-b1e text-[#FFD392]">Trading Competition</p>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Realized P/L</p>
                   <div className="mb-6 flex items-center space-x-[6px]">
                     <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={16} height={16} />
