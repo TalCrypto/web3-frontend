@@ -11,7 +11,7 @@ import InputSlider from '@/components/trade/desktop/trading/InputSlider';
 import { AdjustMarginEstimation, useAdjustCollateralEstimation, useApprovalCheck, useFreeCollateral } from '@/hooks/trade';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { usePositionInfo } from '@/hooks/collection';
-import { $currentAmm } from '@/stores/trading';
+import { $collectionConfig, $currentAmm } from '@/stores/trading';
 import { useDebounce } from '@/hooks/debounce';
 import { formatBigInt, parseBigInt } from '@/utils/bigInt';
 import ApproveButton from '@/components/trade/common/actionBtns/ApproveButton';
@@ -77,7 +77,12 @@ function QuantityEnter(props: any) {
 
   const showMaxValue = () => {
     // onChange(Number(maxValue - 0.00005).toFixed(4));
-    onChange(Number(maxValue).toFixed(4));
+    onChange(Number(maxValue - 0.0001).toFixed(4));
+    // onChange(Number(maxValue).toFixed(4));
+  };
+
+  const handleGetWethClick = () => {
+    $showGetWEthModal.set(true);
   };
 
   return (
@@ -92,12 +97,7 @@ function QuantityEnter(props: any) {
             {/* {marginIndex === 0 ? 'Balance' : 'Free Collateral'} */}
             <span className="text-b2 text-highEmphasis">{`${Number(wethBalance).toFixed(4)} WETH`}</span>
             {/* get weth button. was: wethBalance <= 0 */}
-            <button
-              type="button"
-              className="ml-[8px] text-b2 text-primaryBlue"
-              onClick={() => {
-                $showGetWEthModal.set(true);
-              }}>
+            <button type="button" className="ml-[8px] text-b2 text-primaryBlue" onClick={handleGetWethClick}>
               Get WETH
             </button>
           </div>
@@ -313,14 +313,18 @@ export default function AdjustCollateral() {
     initializeState();
   }, [currentAmm]);
 
+  const userPosition = usePositionInfo();
+  const { initMarginRatio } = useNanostore($collectionConfig);
+
+  const initialMarginChecker = estimation !== null && marginIndex === 1 && Number(userPosition?.marginRatio) < initMarginRatio;
+  const reduceMarginChecking = Number(freeCollateral) - 0.0001 < 0 && marginIndex === 1;
+  const isNotReduce = initialMarginChecker || reduceMarginChecking;
+  const isCollateralErorr =
+    'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.';
+
   return (
     <div>
-      <SaleOrBuyRadio
-        disabled={isPending || isWrongNetwork}
-        marginIndex={marginIndex}
-        setMarginIndex={setMarginIndex}
-        onChange={initializeState}
-      />
+      <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
       <QuantityEnter
         disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
         adjustMarginValue={adjustMarginValue}
@@ -332,7 +336,12 @@ export default function AdjustCollateral() {
         wethBalance={wethBalance}
         isError={textErrorMessage !== null}
       />
-      <ErrorTip label={textErrorMessage} />
+      {isNotReduce ? (
+        <ErrorTip label="Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation." />
+      ) : textErrorMessage ? (
+        <ErrorTip label={textErrorMessage} />
+      ) : null}
+
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
         adjustMarginValue={adjustMarginValue}

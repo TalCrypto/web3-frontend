@@ -306,8 +306,6 @@ export default function AdjustCollateral() {
 
   const handleChange = (value: any) => {
     setAdjustMarginValue(value);
-    // const isError = value > 0 && value < 0.01;
-    // setTextErrorMessage(isError ? 'Minimum collateral size 0.01.' : null);
   };
 
   useEffect(() => {
