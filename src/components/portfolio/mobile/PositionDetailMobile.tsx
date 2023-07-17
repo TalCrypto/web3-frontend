@@ -142,10 +142,13 @@ const PositionDetailMobile = () => {
               'Liq. Price',
               <PriceWithIcon className="font-normal" priceValue={isShowBalance ? userPosition.liquidationPrice?.toFixed(2) : '****'} />
             )}
-            {detailRowMobile('Leverage', isShowBalance ? `${userPosition.leverage?.toFixed(2)} x` : '****')}
+            {detailRowMobile(
+              'Leverage',
+              <div className="font-normal">{isShowBalance ? `${userPosition.leverage?.toFixed(2)} x` : '****'}</div>
+            )}
             {detailRowMobile(
               'Contract Size',
-              <div className="flex">
+              <div className="flex font-normal">
                 <Image src={collectionInfo?.image} width={16} height={16} alt="" />
                 <div className="ml-[6px]">{isShowBalance ? userPosition.size?.toFixed(4) : '****'}</div>
               </div>
