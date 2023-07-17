@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { FC, PropsWithChildren, useEffect } from 'react';
+import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import PageHeader from '@/components/layout/header/PageHeader';
@@ -59,6 +59,8 @@ const AddressPage: NextPage = () => {
   const activeTab = useStore($activeTab);
   const userprofileAddress = useStore($userprofileAddress);
 
+  const [showSearchResult, setShowSearchResult] = useState(false);
+
   const addressTrimmed = address ? trimAddress(address as string) : '';
 
   useEffect(() => {
@@ -80,14 +82,36 @@ const AddressPage: NextPage = () => {
               <div className="flex-1">
                 {/* desktop only search and edit share btn */}
                 <div className="mb-[36px] hidden justify-between md:flex">
-                  <div className="flex min-w-[280px] space-x-2 rounded-full border border-[#FFFFFF26] bg-white/10 px-4 py-2">
-                    <Image src="/images/components/userprofile/search.svg" alt="" width={20} height={20} />
-                    <input
-                      type="text"
-                      className="flex-1 bg-transparent py-[2px] text-b3 outline-none"
-                      placeholder="Search user ID / wallet address"
-                    />
+                  <div className="relative">
+                    <div className="flex min-w-[280px] space-x-2 rounded-full border border-[#FFFFFF26] bg-white/10 px-4 py-2">
+                      <Image src="/images/components/userprofile/search.svg" alt="" width={20} height={20} />
+                      <input
+                        type="text"
+                        className="flex-1 bg-transparent py-[2px] text-b3 outline-none"
+                        placeholder="Search user ID / wallet address"
+                        onFocus={() => setShowSearchResult(true)}
+                        onBlur={() => setShowSearchResult(false)}
+                      />
+                    </div>
+                    <div className={`absolute ${showSearchResult ? 'visible' : 'invisible'} mt-2 w-full rounded-lg bg-secondaryBlue py-2`}>
+                      {/* search result */}
+                      <div className="flex space-x-2 p-2 hover:bg-darkBlue/50">
+                        <div className="w-[3px] rounded bg-[#2574FB]" />
+                        <div className="flex flex-col space-y-2">
+                          <p>lorem ipsum</p>
+                          <p className="text-xs">NO TITLE</p>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2 p-2 hover:bg-darkBlue/50">
+                        <div className="w-[3px] rounded bg-[#2574FB]" />
+                        <div className="flex flex-col space-y-2">
+                          <p>lorem ipsum</p>
+                          <p className="text-xs">NO TITLE</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
                   <div className="flex space-x-4">
                     <OutlineButton onClick={() => router.push('/userprofile/edit')}>
                       <p className="font-normal">Edit</p>
