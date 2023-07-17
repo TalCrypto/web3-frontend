@@ -7,7 +7,7 @@ export enum TradeActions {
   CLOSE = 'Full Close',
   ADD = 'Add Position',
   REDUCE = 'Partial Close',
-  REVERSE = 'Reverse',
+  REVERSE = 'Close & Open',
   FULL_LIQ = 'Full Liquidation',
   PARTIAL_LIQ = 'Partial Liquidation'
 }
