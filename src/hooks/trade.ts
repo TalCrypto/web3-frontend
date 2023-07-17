@@ -62,7 +62,7 @@ export const useOpenPositionEstimation = (args: {
   notionalAmount: number;
   slippagePercent: number;
   leverage: number;
-}): { isLoading: boolean; estimation?: OpenPositionEstimation } => {
+}): { isLoading: boolean; estimation?: OpenPositionEstimation; error: Error | null; isError: boolean } => {
   const amm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
   const address = useNanostore($userAddress);
@@ -72,7 +72,7 @@ export const useOpenPositionEstimation = (args: {
   const ammAddr = getAMMAddress(chain, amm);
   const chViewer = getCHViewerContract(chain);
   // estimate position
-  const { data, isLoading } = useContractRead({
+  const { data, isLoading, isError, error } = useContractRead({
     address: chViewer.address,
     abi: chViewerAbi,
     functionName: 'getOpenPositionEstimation',
@@ -106,7 +106,7 @@ export const useOpenPositionEstimation = (args: {
       }
     : undefined;
 
-  return { isLoading, estimation };
+  return { isLoading, estimation, isError, error };
 };
 
 export const useApprovalCheck = (amount: number) => {
