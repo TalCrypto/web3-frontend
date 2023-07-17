@@ -13,7 +13,7 @@ import Activities from '@/components/userprofile/Activities';
 import Social from '@/components/userprofile/Social';
 import Analysis from '@/components/userprofile/Analysis';
 import Link from 'next/link';
-import { showToast } from '@/components/common/Toast';
+import { showOutlineToast } from '@/components/common/Toast';
 
 function trimAddress(str: string) {
   if (str.length > 10) {
@@ -88,8 +88,10 @@ const AddressPage: NextPage = () => {
                     </OutlineButton>
                     <OutlineButton
                       onClick={() => {
-                        console.log('copied');
-                        showToast({ title: 'asdf', message: 'asdf' }, { position: 'top-center' });
+                        if (typeof address === 'string') {
+                          navigator.clipboard.writeText(address);
+                          showOutlineToast({ title: 'Profile link copied to clipboard!' });
+                        }
                       }}>
                       <Image src="/images/components/userprofile/share.svg" alt="" width={20} height={20} />
                     </OutlineButton>

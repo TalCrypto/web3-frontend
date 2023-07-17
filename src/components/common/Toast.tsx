@@ -11,7 +11,14 @@ interface CustomToastProps {
   error: boolean;
 }
 
-const CustomToast: React.FC<CustomToastProps> = ({ title, message, linkUrl = '', linkLabel = '', warning = false, error = false }) => (
+const CustomToast: React.FC<CustomToastProps> = ({
+  title = '',
+  message = '',
+  linkUrl = '',
+  linkLabel = '',
+  warning = false,
+  error = false
+}) => (
   <div className="flex">
     <div className="mr-[6px]">
       <Image
@@ -21,9 +28,9 @@ const CustomToast: React.FC<CustomToastProps> = ({ title, message, linkUrl = '',
         height={48}
       />
     </div>
-    <div>
-      <div className="mb-[4px] text-[14px] font-semibold text-white">{title}</div>
-      <div className="mb-[4px] text-[12px] font-normal text-white">{message}</div>
+    <div className="flex flex-col justify-center">
+      {title ? <div className="mb-[4px] text-[14px] font-semibold text-white">{title}</div> : null}
+      {message ? <div className="mb-[4px] text-[12px] font-normal text-white">{message}</div> : null}
       <div className="flex items-center">
         {linkLabel && linkUrl ? (
           <a href={linkUrl} target="_blank" rel="noreferrer" className="flex flex-1 text-[12px] font-medium text-primaryBlue no-underline">
@@ -37,8 +44,8 @@ const CustomToast: React.FC<CustomToastProps> = ({ title, message, linkUrl = '',
 );
 
 interface ToastProps {
-  title: string;
-  message: string;
+  title?: string;
+  message?: string;
   linkUrl?: string;
   linkLabel?: string;
   warning?: boolean;
@@ -52,11 +59,21 @@ interface ToastProps {
  * @param {*} options
  */
 export const showToast = (
-  { title, message, linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps,
+  { title = '', message = '', linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps,
   options: ToastOptions<{}> = {}
 ) => {
   toast(<CustomToast title={title} message={message} linkUrl={linkUrl} linkLabel={linkLabel} warning={warning} error={error} />, {
     containerId: 'GLOBAL',
+    ...options
+  });
+};
+
+export const showOutlineToast = (
+  { title = '', message = '', linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps,
+  options: ToastOptions<{}> = {}
+) => {
+  toast(<CustomToast title={title} message={message} linkUrl={linkUrl} linkLabel={linkLabel} warning={warning} error={error} />, {
+    containerId: 'GLOBAL_OUTLINE',
     ...options
   });
 };
