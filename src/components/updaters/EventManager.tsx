@@ -14,6 +14,7 @@ import { ammAbi, chAbi } from '@/const/abi';
 import { formatBigInt } from '@/utils/bigInt';
 import { zeroAddress } from 'viem';
 import { $isMobileView } from '@/stores/modal';
+import { TradeActions } from '@/const';
 
 const EventHandlers = () => {
   const pendingPositionChangedEvents = useNanostore($pendingPositionChangedEvents);
@@ -40,7 +41,9 @@ const EventHandlers = () => {
           if (!isMobileView) {
             showToast(
               {
-                title: `${ammInfo?.shortName} - ${type} Position`,
+                title: `${ammInfo?.shortName} - ${type} ${
+                  type === TradeActions.OPEN ? (event.positionSizeAfter > 0 ? 'LONG' : 'SHORT') : ''
+                }`,
                 message: 'Order Completed!',
                 linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`,
                 linkLabel: 'Check on Arbiscan'
