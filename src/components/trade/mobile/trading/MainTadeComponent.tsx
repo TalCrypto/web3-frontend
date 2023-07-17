@@ -113,9 +113,23 @@ function LongShortRatio(props: any) {
 
 function QuantityTips(props: any) {
   const { isAmountTooSmall, isInsuffBalance, estPriceFluctuation, textErrorMessage } = props;
+  const [isEstPriceFluctuation, setIsEstPriceFluctuation] = useState(false);
+
   const onClickWeth = () => {
     $showGetWEthModal.set(true);
   };
+
+  useEffect(() => {
+    if (estPriceFluctuation) {
+      const interval = setTimeout(() => {
+        setIsEstPriceFluctuation(true);
+        clearInterval(interval);
+        console.log('here');
+      }, 1000);
+    } else {
+      setIsEstPriceFluctuation(false);
+    }
+  }, [estPriceFluctuation]);
 
   const label = isAmountTooSmall ? (
     'Minimum collateral size 0.01'
@@ -127,7 +141,7 @@ function QuantityTips(props: any) {
       </span>{' '}
       first.
     </>
-  ) : !textErrorMessage && estPriceFluctuation ? (
+  ) : !textErrorMessage && isEstPriceFluctuation ? (
     <span className="text-warn">
       Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the
       notional size of your trade.
@@ -468,7 +482,12 @@ export default function MainTradeComponent() {
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const notionalAmount = Number(quantity) * leverageValue ?? 0;
-  const { isLoading: isEstLoading, estimation } = useOpenPositionEstimation({
+  const {
+    isLoading: isEstLoading,
+    estimation,
+    isError: isEstError,
+    error: estError
+  } = useOpenPositionEstimation({
     side: saleOrBuyIndex,
     notionalAmount,
     slippagePercent: toleranceRate,
@@ -490,6 +509,12 @@ export default function MainTradeComponent() {
       setIsAmountTooSmall(false);
     }
   }, [estimation?.txSummary.collateral]);
+
+  useEffect(() => {
+    if (isEstError) {
+      setTextErrorMessage(estError ? formatError(estError.message) : null);
+    }
+  }, [isEstError, estError]);
 
   const initializeState = useCallback(() => {
     setQuantity('');
