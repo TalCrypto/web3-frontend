@@ -22,6 +22,7 @@ import ChartMobile from '@/components/trade/mobile/chart/ChartMobile';
 import InformationMobile from '@/components/trade/mobile/information/InformationMobile';
 import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
+import DisplayCollections from '@/components/trade/mobile/trading/DisplayCollections';
 
 function TradePage(props: WithRouterProps) {
   const { router } = props;
@@ -83,6 +84,8 @@ function TradePage(props: WithRouterProps) {
             <InformationMobile />
 
             <TradingMobile />
+
+            <DisplayCollections />
           </div>
         </div>
 

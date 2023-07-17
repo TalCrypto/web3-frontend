@@ -177,6 +177,8 @@ export const $isShowTradingMobile = atom(false);
 
 export const $tsIsShowPriceGapOverModal = atom(true);
 
+export const $isShowDisplayCollections = atom(false);
+
 export const $tsIsFirstPartialClose = atom(true);
 export const $tsIsShowPartialCloseModal = atom(false);
 export const $tsIsContinueClose = atom(false);
