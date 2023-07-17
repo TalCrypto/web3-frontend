@@ -43,7 +43,7 @@ export default function DisplayCollections() {
           </div>
           <div className="mt-[12px] h-[1px] w-full bg-[#2E4371]" />
         </div>
-        <div className="h-[calc(100%-49px) overflow-y-scroll pt-[54px]">
+        <div className="overflow-y-scroll pt-[54px] " style={{ height: 'calc(100vh - 54px)' }}>
           {ammList.map((item: any, index) => {
             const key = `switcher_collection_${index}`;
             const collectionInfo = getCollectionInformation(item);
@@ -78,7 +78,7 @@ export default function DisplayCollections() {
                       <Image src={collectionInfo.image} width={20} height={20} alt="" className="mr-[6px]" />
                       {collectionInfo.collectionName}
                     </div>
-                    {isHasPos(tradingData.amm) ? (
+                    {isHasPos(tradingData?.amm) ? (
                       <Image src="/images/mobile/pages/trade/shopping-bag-green.svg" width={20} height={20} alt="" />
                     ) : null}
                   </div>
@@ -88,7 +88,7 @@ export default function DisplayCollections() {
                         priceValue={tradingData && tradingData.vammPrice ? tradingData.vammPrice.toFixed(2) : '-.--'}
                         className={`${tradingData ? '' : 'flash'} !font-[400]`}
                       />
-                      &nbsp; /&nbsp;
+                      &nbsp; / &nbsp;
                       <PriceWithIcon
                         priceValue={tradingData && tradingData.vammPrice ? tradingData.vammPrice.toFixed(2) : '-.--'}
                         className={`${tradingData ? '' : 'flash'} !font-[400] !text-mediumEmphasis`}
