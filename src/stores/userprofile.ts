@@ -1,4 +1,5 @@
-import { atom } from 'nanostores';
+import { UserPositionInfos } from '@/stores/user';
+import { atom, map } from 'nanostores';
 
 export const $activeTab = atom<number>(0);
 
@@ -9,7 +10,7 @@ export const $userprofileAddress = atom<any>(null);
 export const $userInfo = atom<any>(null);
 export const $userAirdropRank = atom<any>(null);
 export const $userCompetitionRank = atom<any>(null);
-export const $userPosition = atom<any>(null);
+export const $userProfilePositionInfos = map<UserPositionInfos>();
 export const $userHistory = atom<any[]>([]);
 export const $userFollowings = atom<any[]>([]);
 export const $userFollowers = atom<any[]>([]);
