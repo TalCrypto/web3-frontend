@@ -86,3 +86,11 @@ export const $asActiveTab = atom(0);
 export const $asCurrentSeason = atom(0);
 
 export const $asLeaderboardUpdateTrigger = atom(false);
+
+// Referral Modal
+export const $asShowResponseModal = atom(false);
+
+export const $asHasReferCode = atom(false);
+export const $asReferResponse = atom(0);
+
+export const $asReferredUser = atom();
