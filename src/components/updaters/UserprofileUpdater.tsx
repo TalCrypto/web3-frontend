@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useStore as useNanostore } from '@nanostores/react';
 import { useEffect } from 'react';
 import { apiConnection } from '@/utils/apiConnection';
@@ -26,7 +27,7 @@ function UserprofileUpdater() {
     async function fetchData() {
       // set store to default
       $isUserprofileLoading.set(true);
-      $userprofileAddress.set(null);
+      // $userprofileAddress.set('');
       $userInfo.set(null);
       $userAirdropRank.set(null);
       $userCompetitionRank.set(null);
@@ -79,7 +80,7 @@ function UserprofileUpdater() {
       $isUserprofileLoading.set(false);
     }
 
-    if (trigger) {
+    if (trigger !== '') {
       fetchData();
     }
   }, [trigger]);
