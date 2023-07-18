@@ -168,7 +168,8 @@ function QuantityEnter(props: any) {
   const fluctuationPct =
     (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
   const fluctuationLmt = useFluctuationLimit();
-  const estPriceFluctuation = fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
+  const estPriceFluctuation =
+    value > 0 && fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
