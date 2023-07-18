@@ -147,7 +147,7 @@ function OverviewMobile() {
             <div className="relative mb-1 flex items-center justify-between px-5 py-2">
               <div className="flex flex-row items-center text-[14px]">
                 <div className="mr-[6px]">
-                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                  <Image src="/images/components/airdrop/trading-vol.svg" width={24} height={24} alt="" />
                 </div>
                 Trading Vol.
               </div>
@@ -168,7 +168,7 @@ function OverviewMobile() {
             <div className="relative mb-1 flex items-center justify-between px-5 py-2">
               <div className="flex flex-row items-center text-[14px]">
                 <div className="mr-[6px]">
-                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                  <Image src="/images/components/airdrop/trading-vol.svg" width={24} height={24} alt="" />
                 </div>
                 Trading Vol.
               </div>
@@ -186,7 +186,7 @@ function OverviewMobile() {
           <div className="relative mb-1 flex items-center justify-between px-5 py-2" onClick={() => router.push(`/airdrop/refer`)}>
             <div className="flex flex-row items-center text-[14px]">
               <div className="mr-[6px]">
-                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                <Image src="/images/components/airdrop/referral-blue.svg" width={24} height={24} alt="" />
               </div>
               Referral
             </div>
@@ -203,7 +203,7 @@ function OverviewMobile() {
           <div className="relative mb-1 flex items-center justify-between px-5 py-2" onClick={() => router.push(`/airdrop/refer`)}>
             <div className="flex flex-row items-center text-[14px]">
               <div className="mr-[6px]">
-                <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                <Image src="/images/components/airdrop/referral-blue.svg" width={24} height={24} alt="" />
               </div>
               Referral
             </div>
@@ -235,7 +235,7 @@ function OverviewMobile() {
             <div className="relative mb-1 flex items-center justify-between px-5 py-2">
               <div className="flex flex-row items-center text-[14px]">
                 <div className="mr-[6px]">
-                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                  <Image src="/images/components/airdrop/og-points.svg" width={24} height={24} alt="" />
                 </div>
                 Others
               </div>
@@ -257,7 +257,7 @@ function OverviewMobile() {
             <div className="relative mb-1 flex items-center justify-between px-5 py-2">
               <div className="flex flex-row items-center text-[14px]">
                 <div className="mr-[6px]">
-                  <Image src="/images/components/airdrop/trading-vol.svg" width={26} height={26} alt="" />
+                  <Image src="/images/components/airdrop/og-points.svg" width={24} height={24} alt="" />
                 </div>
                 Others
               </div>
@@ -293,7 +293,7 @@ function OverviewMobile() {
                 <div className="max-w-[70%]">
                   <div className="flex items-center justify-start text-[20px] font-semibold">
                     <div className="mr-[6px]">
-                      <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+                      <Image src="/images/components/airdrop/net-conv.svg" width={24} height={24} alt="" />
                     </div>
                     <span className="text-[14px] font-normal">Net Converg. Trading Vol.</span>
                   </div>
@@ -322,7 +322,7 @@ function OverviewMobile() {
                 <div className="max-w-[70%]">
                   <div className="flex items-center justify-start text-[20px] font-semibold">
                     <div className="mr-[6px]">
-                      <Image src="/images/components/airdrop/net-conv.svg" width={26} height={26} alt="" />
+                      <Image src="/images/components/airdrop/net-conv.svg" width={24} height={24} alt="" />
                     </div>
                     <span className="text-[14px] font-normal">Net Converg. Trading Vol.</span>
                   </div>
