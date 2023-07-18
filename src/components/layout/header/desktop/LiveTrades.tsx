@@ -4,8 +4,14 @@ import { $isShowDiscordModal } from '@/stores/modal';
 
 export default function LiveTrades() {
   const openDiscordModal = () => {
-    localStorage.setItem('isDiscordShown', 'true');
-    $isShowDiscordModal.set(true);
+    const localIsDiscordShown = localStorage.getItem('isDiscordShown');
+    if (localIsDiscordShown === 'true') {
+      localStorage.setItem('isDiscordShown', 'false');
+      $isShowDiscordModal.set(false);
+    } else {
+      localStorage.setItem('isDiscordShown', 'true');
+      $isShowDiscordModal.set(true);
+    }
   };
   return (
     <div className="navbar-outer">
