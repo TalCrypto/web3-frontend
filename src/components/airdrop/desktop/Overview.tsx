@@ -9,6 +9,7 @@ import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import Tooltip from '@/components/common/Tooltip';
 import { formatBigInt } from '@/utils/bigInt';
+import WalletNotConnected from '@/components/airdrop/desktop/WalletNotConnected';
 
 function Overview() {
   const userPoint = useNanostore($userPoint);
@@ -29,7 +30,7 @@ function Overview() {
   const router = useRouter();
 
   if (!isConnected) {
-    //   return <WalletNotConnected connectWallet={connectWallet} />;
+    return <WalletNotConnected />;
   }
 
   // testing

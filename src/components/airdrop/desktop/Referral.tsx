@@ -16,6 +16,7 @@ import ResponseModal from '@/components/airdrop/desktop/ResponseModal';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import Tooltip from '@/components/common/Tooltip';
 import { formatBigInt } from '@/utils/bigInt';
+import { useWeb3Modal } from '@web3modal/react';
 
 function Referral() {
   const router = useRouter();
@@ -43,6 +44,8 @@ function Referral() {
   const eligibleReferees = userPoint.eligibleCount;
   const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
+
+  const { open } = useWeb3Modal();
 
   const eligibleTooltipMessage = (
     <>
@@ -99,20 +102,18 @@ function Referral() {
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
   };
 
+  const onBtnConnectWallet = () => {
+    open();
+  };
+
   if (!isConnected) {
     return (
-      <div className="container flex min-h-[400px] flex-col items-center">
-        <div className="flex w-fit flex-col items-center">
-          <p className="mb-[24px]">Please connect wallet to get started!</p>
-          <button
-            type="button"
-            // onClick={connectWallet}
-            disabled={isConnecting}
-            className="rounded-[6px] bg-primaryBlue px-[14px] py-[7px] text-[14px] font-semibold leading-[28px]
-            text-white hover:bg-primaryBlueHover">
-            {isConnecting ? <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" /> : 'Connect Wallet'}
-          </button>
-        </div>
+      <div className="flex h-[calc(100vh-400px)] flex-col items-center">
+        <p className="mb-6 mt-4">Please connect wallet to get started!</p>
+        <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
+          Connect Wallet
+        </PrimaryButton>
+
         {isReadyInputReferralPopupShow ? (
           <ReferUserModal
             isShow={isReadyInputReferralPopupShow}

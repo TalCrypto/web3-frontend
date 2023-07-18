@@ -1,12 +1,17 @@
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 /* eslint-disable implicit-arrow-linebreak */
-import React from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
+import { $userIsConnected } from '@/stores/user';
+import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
+import PrimaryButton from '@/components/common/PrimaryButton';
+import { useWeb3Modal } from '@web3modal/react';
 
 function ReferralMobile() {
   const router = useRouter();
@@ -23,6 +28,13 @@ function ReferralMobile() {
   const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
 
+  const isConnected = useNanostore($userIsConnected);
+  const [isReadyInputReferralPopupShow, setIsReadyInputReferralPopupShow] = useState(false);
+  const [referralOnboardingStatus, setReferralOnboardingStatus] = useState(0);
+  const [referedUser, setReferedUser] = useState({});
+
+  const { open } = useWeb3Modal();
+
   const eligibleTooltipMessage = (
     <>
       You must have a minimum <br /> trading volume of 5 WETH notional <br /> to unlock all the points!
@@ -36,6 +48,30 @@ function ReferralMobile() {
       on your trading volume
     </>
   );
+
+  const onBtnConnectWallet = () => {
+    open();
+  };
+
+  if (!isConnected) {
+    return (
+      <div className="flex h-[calc(100vh-325px)] flex-col items-center">
+        <p className="mb-6 mt-4">Please connect wallet to get started!</p>
+        <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
+          Connect Wallet
+        </PrimaryButton>
+
+        {isReadyInputReferralPopupShow ? (
+          <ReferUserModal
+            isShow={isReadyInputReferralPopupShow}
+            setIsShow={setIsReadyInputReferralPopupShow}
+            setReferralOnboardingStatus={setReferralOnboardingStatus}
+            referedUser={referedUser}
+          />
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div>
