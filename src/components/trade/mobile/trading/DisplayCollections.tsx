@@ -35,7 +35,7 @@ export default function DisplayCollections() {
     `}>
       <div>
         <div
-          className="fixed h-[54px] w-full bg-[#171833] pt-[24px]
+          className="h-[54px] w-full bg-[#171833] pt-[24px]
         text-[12px] font-[400] text-[#A8CBFF]">
           <div className="flex flex-row items-center justify-between px-[20px]">
             <div>vAMM / Oracle</div>
@@ -43,7 +43,7 @@ export default function DisplayCollections() {
           </div>
           <div className="mt-[12px] h-[1px] w-full bg-[#2E4371]" />
         </div>
-        <div className="overflow-y-scroll pt-[54px] " style={{ height: 'calc(100vh - 54px)' }}>
+        <div className="h-[calc(100vh-104px)] overflow-y-scroll ">
           {ammList.map((item: any, index) => {
             const key = `switcher_collection_${index}`;
             const collectionInfo = getCollectionInformation(item);
