@@ -1,7 +1,7 @@
 import OutlineButton from '@/components/common/OutlineButton';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
-import { $userFollowers, $userFollowings } from '@/stores/userprofile';
+import { $userFollowers, $userFollowings, $userInfo } from '@/stores/userprofile';
 import { trimAddress } from '@/utils/string';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
@@ -16,6 +16,7 @@ const TableContainer: React.FC<PropsWithChildren> = ({ children }) => (
 );
 
 const Social: React.FC<PropsWithChildren> = () => {
+  const userInfo = useStore($userInfo);
   const userFollowings = useStore($userFollowings);
   const userFollowers = useStore($userFollowers);
 
@@ -25,7 +26,7 @@ const Social: React.FC<PropsWithChildren> = () => {
       <TableContainer>
         <div className="mb-[16px] md:mb-[36px] md:flex md:space-x-2 md:px-[36px]">
           <div className="hidden w-[3px] rounded bg-[#2574FB] md:block" />
-          <p className="text-h4 text-highEmphasis md:text-b1e">Following ({userFollowers.length})</p>
+          <p className="text-h4 text-highEmphasis md:text-b1e">Following ({userInfo?.following})</p>
         </div>
 
         <div className="scrollable block w-full overflow-auto md:max-h-[300px] md:px-[36px]">
@@ -111,7 +112,7 @@ const Social: React.FC<PropsWithChildren> = () => {
       <TableContainer>
         <div className="mb-[16px] md:mb-[36px] md:flex md:space-x-2 md:px-[36px]">
           <div className="hidden w-[3px] rounded bg-[#2574FB] md:block" />
-          <p className="text-h4 text-highEmphasis md:text-b1e">Follower ({userFollowers.length})</p>
+          <p className="text-h4 text-highEmphasis md:text-b1e">Follower ({userInfo?.followers})</p>
         </div>
 
         <div className="scrollable block w-full overflow-auto md:max-h-[300px] md:px-[36px]">

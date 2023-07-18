@@ -27,6 +27,8 @@ import UserprofileUpdater from '@/components/updaters/UserprofileUpdater';
 import { trimAddress } from '@/utils/string';
 import { $userAddress, $userIsConnected } from '@/stores/user';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import { localeConversion } from '@/utils/localeConversion';
+import { formatBigInt } from '@/utils/bigInt';
 
 type ProfileHeaderCardProps = PropsWithChildren & {
   isEnded?: boolean;
@@ -71,8 +73,8 @@ const AddressPage: NextPage = () => {
   const userprofileAddress = useStore($userprofileAddress);
   const userAirdropRank = useStore($userAirdropRank);
   const userCompetitionRank = useStore($userCompetitionRank);
-  // const userPnl = formatBigInt(parseBigInt(userCompetitionRank?.pnl || 0));
-  const userPnl = userCompetitionRank?.pnl;
+
+  const userPnl = Number(localeConversion(formatBigInt(userCompetitionRank?.pnl || 0), 2));
 
   const [showSearchResult, setShowSearchResult] = useState(false);
 
@@ -82,13 +84,10 @@ const AddressPage: NextPage = () => {
     if (typeof address === 'string') {
       $userprofileAddress.set(address);
     }
+    return () => {
+      $userprofileAddress.set('');
+    };
   }, [address]);
-
-  // currently user address
-  // useEffect(() => {
-  //   console.log('currentUserAddress', currentUserAddress);
-  //   console.log('userprofileAddress', userprofileAddress);
-  // }, [currentUserAddress, userprofileAddress]);
 
   const isCurrentUserProfilePage = currentUserAddress?.toLowerCase() === userprofileAddress.toLowerCase();
 
@@ -275,7 +274,7 @@ const AddressPage: NextPage = () => {
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Leaderboard Rank</p>
                   <p className="mb-[24px] text-h5">{userAirdropRank?.rank}</p>
-                  <Link href="/" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  <Link href="/airdrop/leaderboard" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
                     View Leaderboard
                     <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
                   </Link>
@@ -287,11 +286,14 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Realized P/L</p>
                   <div className="mb-6 flex items-center space-x-[6px]">
                     <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={16} height={16} />
-                    <p className="text-h5 text-marketGreen">{userPnl}</p>
+                    <p className={`text-h5 ${userPnl > 0 ? 'text-marketGreen' : userPnl < 0 ? 'text-marketRed' : ''}`}>
+                      {userPnl > 0 ? '+' : ''}
+                      {userPnl}
+                    </p>
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Top Gainer Rank</p>
                   <p className="mb-[24px] text-h5">{userCompetitionRank?.rank}</p>
-                  <Link href="/" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  <Link href="/competition" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
                     View Leaderboard
                     <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
                   </Link>
