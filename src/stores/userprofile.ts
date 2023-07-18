@@ -1,4 +1,5 @@
-import { atom } from 'nanostores';
+import { UserPositionInfos } from '@/stores/user';
+import { atom, map } from 'nanostores';
 
 type UserProfileInfo = {
   id: string;
@@ -97,6 +98,7 @@ export const $userInfo = atom<UserProfileInfo | null>(null);
 export const $userAirdropRank = atom<UserAirdropRank | null>(null);
 export const $userCompetitionRank = atom<UserCompetitionRank | null>(null);
 export const $userPosition = atom<any>(null);
+export const $userProfilePositionInfos = map<UserPositionInfos>();
 export const $userHistory = atom<any[]>([]);
 export const $userFollowings = atom<UserFollow[]>([]);
 export const $userFollowers = atom<UserFollow[]>([]);
