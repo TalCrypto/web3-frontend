@@ -3,7 +3,7 @@
 import { AMM } from '@/const/collectionList';
 import { useEffect, useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $marketUpdateTrigger } from '@/stores/trading';
+import { $marketUpdateTrigger, $isMarketDataUpdating } from '@/stores/trading';
 import { $currentChain } from '@/stores/user';
 import { getAMMByAddress, getSupportedAMMAddresses } from '@/const/addresses';
 import { getDailySpotPriceGraphData } from '@/utils/trading';
@@ -44,6 +44,7 @@ export const useMarketOverview = (): GetMktOverview => {
     async function getGraphData() {
       if (isLoading) return;
       setIsLoading(true);
+      $isMarketDataUpdating.set(true);
       const nowTs = Math.round(new Date().getTime() / 1000);
       const ts24hr = nowTs - 1 * 24 * 3600;
       const ts7Days = nowTs - 7 * 24 * 3600;
@@ -127,6 +128,7 @@ export const useMarketOverview = (): GetMktOverview => {
       }
       setData(results);
       setIsLoading(false);
+      $isMarketDataUpdating.set(false);
     }
     getGraphData();
   }, [chain, marketUpdateTrigger, publicClient]);
