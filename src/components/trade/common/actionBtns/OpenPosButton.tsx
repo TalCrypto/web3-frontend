@@ -62,10 +62,10 @@ function OpenPosButton({
           ? `${TradeActions.OPEN} ${sideDisplay}`
           : (-1) ** side * positionInfo.size > 0
           ? `${TradeActions.ADD}`
-          : `Close Position`;
+          : `${TradeActions.REDUCE}`;
       setLabel(posType);
 
-      setIsPartialClose(posType === `Close Position`);
+      setIsPartialClose(posType === `${TradeActions.REDUCE}`);
     }
   }, [positionInfo, side]);
 
@@ -142,7 +142,12 @@ function OpenPosButton({
   };
 
   return (
-    <BaseButton disabled={!write} isLoading={isLoading || isPreparing || isPending || isEstimating} onClick={handleOnClick} label={label} />
+    <BaseButton
+      disabled={!write}
+      isLoading={isLoading || isPreparing || isPending || isEstimating}
+      onClick={handleOnClick}
+      label="Close Position"
+    />
   );
 }
 

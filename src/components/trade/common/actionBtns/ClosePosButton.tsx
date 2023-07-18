@@ -57,7 +57,7 @@ function ClosePosButton({
         showToast(
           {
             warning: true,
-            title: `${collectionInfo.shortName} - ${TradeActions.CLOSE} Position`,
+            title: `${collectionInfo.shortName} - ${TradeActions.CLOSE}`,
             message: 'Order Received!',
             linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
             linkLabel: 'Check on Arbiscan'

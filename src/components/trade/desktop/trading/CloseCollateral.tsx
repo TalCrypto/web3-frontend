@@ -344,7 +344,12 @@ export default function CloseCollateral() {
   const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-  const { isLoading: isEstLoading, estimation } = useOpenPositionEstimation({
+  const {
+    isLoading: isEstLoading,
+    estimation,
+    isError: isEstError,
+    error: estError
+  } = useOpenPositionEstimation({
     side: closeSide,
     notionalAmount: closeValue,
     slippagePercent: Number(toleranceRate),
@@ -376,6 +381,12 @@ export default function CloseCollateral() {
       setIsFullClose(false);
     }
   }, [estimation?.txSummary.notionalSize, isFullClose]);
+
+  useEffect(() => {
+    if (isEstError) {
+      setTextErrorMessage(estError ? formatError(estError.message) : null);
+    }
+  }, [isEstError, estError]);
 
   const initializeState = useCallback(() => {
     setCloseValue(0);

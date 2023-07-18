@@ -15,6 +15,9 @@ const errorMsgList = {
   CH_MNE: 'New Collateral must be above Initial Collateral Requirement.',
   CH_FCNE: 'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.',
   CH_AC: '',
+  Arithmic:
+    'Transaction will fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the notional size of your trade.',
+  'RPC Error': 'RPC Network Error',
   'User rejected the request': 'User rejected the request.'
 };
 
