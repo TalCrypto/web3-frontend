@@ -1,3 +1,5 @@
+/* eslint-disable no-alert */
+/* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
 import React, { useEffect, useRef } from 'react';
 import { $isMobileView, $isShowMobileModal } from '@/stores/modal';
@@ -5,6 +7,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import LayoutUpdater from '@/components/updaters/LayoutUpdater';
 import { useRouter } from 'next/router';
 import { $activeDropdown } from '@/stores/competition';
+import { $isNotFoundPage } from '@/stores/route';
 import Header from './header';
 import Footer from './footer';
 
@@ -17,6 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isShowMobileMenu = useNanostore($isShowMobileModal);
   const isMobileView = useNanostore($isMobileView);
 
+  const isNotFoundPage = useNanostore($isNotFoundPage);
   const isAirdropPage = router.pathname === '/airdrop';
   const isCompetitionPage = router.pathname === '/competition';
   const airdropBgClass = isMobileView
@@ -98,10 +102,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div
         className={`min-h-screen w-full
           ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}
-          ${isUserprofilePage ? userprofileBgClass : ''}`}>
+          ${isUserprofilePage || isNotFoundPage ? userprofileBgClass : ''}`}>
         <div
           className={`
-            ${isUserprofilePage ? userprofileBg2Class : 'content-container pb-[42px]'}
+            ${isUserprofilePage || isNotFoundPage ? userprofileBg2Class : 'content-container pb-[42px]'}
             mmd:pb-10 w-full
             !px-0  text-white md:h-full md:min-h-screen md:pt-20 
             ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}

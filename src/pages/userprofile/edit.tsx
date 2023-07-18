@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import PageHeader from '@/components/layout/header/PageHeader';
@@ -8,7 +8,22 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 const AddressPage: NextPage = () => {
   const router = useRouter();
   // const { address } = router.query;
+  const [userId, setUserId] = useState('');
+  const [about, setAbout] = useState('');
+  const userCharLongMin = 3;
+  const userCharLongMax = 20;
+  const isUserCharLongValid = userId.length >= userCharLongMin && userId.length <= userCharLongMax;
+  const regex = /[^A-Za-z0-9_-]/;
+  const isUserCharValid = !regex.test(userId);
+  const isUserIdValid = isUserCharLongValid && isUserCharValid;
 
+  const aboutCharLongMax = 200;
+  const isAboutCharLongValid = about.length <= aboutCharLongMax;
+
+  const submit = () => {
+    // todo: fetch api to submit
+    console.log(userId, about);
+  };
   return (
     <>
       <PageHeader
@@ -40,17 +55,20 @@ const AddressPage: NextPage = () => {
                   className={`flex-1 bg-transparent py-[2px] text-[16px]
                   leading-[19.5px] text-highEmphasis outline-none placeholder:text-mediumEmphasis`}
                   placeholder="Enter your name here"
+                  onChange={e => setUserId(e.target.value)}
                 />
-                <p className="text-[16px] leading-[19.5px] text-highEmphasis">0/20</p>
+                <p className="text-[16px] leading-[19.5px] text-highEmphasis">
+                  <span className={`${isUserCharLongValid ? '' : 'text-red-500'}`}>{userId.length}</span>/{userCharLongMax}
+                </p>
               </div>
 
               <ul className="mb-[36px] ml-6 list-disc text-b2 leading-[21.83px] text-highEmphasis">
-                <li>
-                  Your nickname will be displayed to other users in leaderboard, social sharing page etc. and can be edited 3 more times
-                  this year.
+                <li>Your nickname will be displayed to other users in leaderboard, social sharing page etc.</li>
+                <li className={`${isUserCharLongValid ? '' : 'text-red-500'}`}>User ID has to be 3-20 characters long.</li>
+                <li className={`${isUserCharValid ? '' : 'text-red-500'}`}>
+                  Valid Characters include A-z, 0-9, &quot;_&quot; and &quot;-&quot;
                 </li>
                 <li>User ID needs to be unique.</li>
-                <li>When creating your nickname, please ensure it does not contain disrespectful and racist words.</li>
                 <li>After you submit, it usually takes a few minutes to review and approve.</li>
               </ul>
 
@@ -65,17 +83,23 @@ const AddressPage: NextPage = () => {
                   className={`flex-1 bg-transparent py-[2px] text-[16px]
                   leading-[19.5px] text-highEmphasis outline-none placeholder:text-mediumEmphasis`}
                   placeholder="Tell your story to the world !"
+                  onChange={e => setAbout(e.target.value)}
                 />
-                <p className="text-end text-[16px] leading-[19.5px] text-highEmphasis">0/200</p>
+                <p className="text-end text-[16px] leading-[19.5px] text-highEmphasis">
+                  <span className={`${isAboutCharLongValid ? '' : 'text-red-500'}`}>{about.length}</span>/{aboutCharLongMax}
+                </p>
               </div>
 
               <div className="flex justify-end space-x-[24px]">
-                <OutlineButton
-                  onClick={() => router.push('/userprofile/edit')}
-                  className="w-[100px] rounded-[6px] !px-[24px] !py-[14px] !text-b2e text-white">
+                <OutlineButton onClick={() => router.back()} className="w-[100px] rounded-[6px] !px-[24px] !py-[14px] !text-b2e text-white">
                   Cancel
                 </OutlineButton>
-                <PrimaryButton className="w-[100px] rounded-[6px] !px-[24px] !py-[14px] !text-b2e text-white">Save</PrimaryButton>
+                <PrimaryButton
+                  onClick={() => submit()}
+                  isDisabled={!isUserIdValid}
+                  className="w-[100px] rounded-[6px] !px-[24px] !py-[14px] !text-b2e text-white">
+                  Save
+                </PrimaryButton>
               </div>
             </div>
           </div>
