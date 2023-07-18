@@ -19,6 +19,8 @@ const ConnectWalletButton: React.FC = () => {
   const isConnected = useNanostore($userIsConnected);
   const wethBalance = useNanostore($userWethBalance);
   const userDisplayName = useNanostore($userDisplayName);
+  const isShowLoginModal = useNanostore($isShowLoginModal);
+
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
@@ -42,7 +44,7 @@ const ConnectWalletButton: React.FC = () => {
         onClick={() => (isWrongNetwork ? updateTargetNetwork() : !isConnected ? openLoginModal() : null)}>
         <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
         <div className="flex flex-row items-center justify-center px-5" id="login-btn">
-          {isConnecting ? (
+          {isConnecting || isShowLoginModal ? (
             <ThreeDots ariaLabel="loading-indicator" height={20} width={50} color="white" />
           ) : (
             <>
