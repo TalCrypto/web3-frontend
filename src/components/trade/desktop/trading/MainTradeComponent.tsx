@@ -37,12 +37,15 @@ import { $showGetWEthModal } from '@/stores/modal';
 import ApprovalModal from '@/components/trade/desktop/modals/ApprovalModal';
 
 function LongShortRatio(props: any) {
-  const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
+  const { setSaleOrBuyIndex, saleOrBuyIndex, disabled } = props;
   const currentAmm = useNanostore($currentAmm);
   const userPosition = usePositionInfo(currentAmm);
 
   return (
-    <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
+    <div
+      className={`mb-[26px] flex h-[40px] rounded-full bg-mediumBlue
+      ${disabled ? 'opacity-30' : ''}
+    `}>
       {userPosition && userPosition.size < 0 ? (
         <Tooltip
           direction="top"
@@ -62,11 +65,14 @@ function LongShortRatio(props: any) {
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
             ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
-            text-center text-[14px] font-semibold hover:text-highEmphasis`}
+            ${!disabled ? 'hover:text-highEmphasis' : ''}
+            text-center text-[14px] font-semibold`}
           key="long"
           onClick={() => {
-            if (!userPosition || userPosition.size === 0) {
-              setSaleOrBuyIndex(Side.LONG);
+            if (!disabled) {
+              if (!userPosition || userPosition.size === 0) {
+                setSaleOrBuyIndex(Side.LONG);
+              }
             }
           }}>
           LONG
@@ -92,11 +98,14 @@ function LongShortRatio(props: any) {
         <div
           className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
             ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
-            text-center text-[14px] font-semibold hover:text-highEmphasis`}
+            ${!disabled ? 'hover:text-highEmphasis' : ''}
+            text-center text-[14px] font-semibold `}
           key="short"
           onClick={() => {
-            if (!userPosition || userPosition.size === 0) {
-              setSaleOrBuyIndex(Side.SHORT);
+            if (!disabled) {
+              if (!userPosition || userPosition.size === 0) {
+                setSaleOrBuyIndex(Side.SHORT);
+              }
             }
           }}>
           SHORT
@@ -549,10 +558,14 @@ export default function MainTradeComponent() {
 
   return (
     <div>
-      <LongShortRatio saleOrBuyIndex={saleOrBuyIndex} setSaleOrBuyIndex={setSaleOrBuyIndex} />
+      <LongShortRatio
+        disabled={isPending || isWrongNetwork || !isConnected}
+        saleOrBuyIndex={saleOrBuyIndex}
+        setSaleOrBuyIndex={setSaleOrBuyIndex}
+      />
       <QuantityEnter
         estimation={estimation}
-        disabled={isWrongNetwork || isPending}
+        disabled={isWrongNetwork || isPending || !isConnected}
         value={quantity}
         onChange={(value: string) => {
           handleQuantityInput(value);
@@ -561,7 +574,7 @@ export default function MainTradeComponent() {
         textErrorMessage={textErrorMessage}
       />
       <LeverageComponent
-        disabled={isPending || isWrongNetwork}
+        disabled={isPending || isWrongNetwork || !isConnected}
         value={leverageValue}
         setValue={setLeverageValue}
         onChange={(value: any) => {
@@ -572,7 +585,7 @@ export default function MainTradeComponent() {
       <div className="mb-4 h-[0.5px] bg-[#2E4371]" />
 
       <EstimatedValueDisplay
-        disabled={isPending || isWrongNetwork}
+        disabled={isPending || isWrongNetwork || !isConnected}
         estimation={estimation}
         toleranceRate={toleranceRate}
         setToleranceRate={setToleranceRate}
