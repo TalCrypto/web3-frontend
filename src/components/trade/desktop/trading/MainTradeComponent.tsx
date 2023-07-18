@@ -42,10 +42,7 @@ function LongShortRatio(props: any) {
   const userPosition = usePositionInfo(currentAmm);
 
   return (
-    <div
-      className={`mb-[26px] flex h-[40px] rounded-full bg-mediumBlue
-      ${disabled ? 'opacity-30' : ''}
-    `}>
+    <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
       {userPosition && userPosition.size < 0 ? (
         <Tooltip
           direction="top"
