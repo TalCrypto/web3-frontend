@@ -150,7 +150,7 @@ const PositionDetailMobile = () => {
               'Contract Size',
               <div className="flex font-normal">
                 <Image src={collectionInfo?.image} width={16} height={16} alt="" />
-                <div className="ml-[6px]">{isShowBalance ? userPosition.size?.toFixed(4) : '****'}</div>
+                <div className="ml-[6px]">{isShowBalance ? Math.abs(userPosition.size)?.toFixed(4) : '****'}</div>
               </div>
             )}
             {detailRowMobile(
