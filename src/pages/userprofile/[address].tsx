@@ -123,7 +123,8 @@ const AddressPage: NextPage = () => {
                     <OutlineButton
                       onClick={() => {
                         if (typeof address === 'string') {
-                          navigator.clipboard.writeText(address);
+                          const url = `${window.location.origin}/userprofile/${address}`;
+                          navigator.clipboard.writeText(url);
                           showOutlineToast({ title: 'Profile link copied to clipboard!' });
                         }
                       }}>
@@ -143,13 +144,32 @@ const AddressPage: NextPage = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-[6px]">
                         <p className="text-mediumEmphasis">{addressTrimmed}</p>
-                        <Image src="/images/components/userprofile/copy.svg" alt="" width={20} height={20} />
+                        <Image
+                          src="/images/components/userprofile/copy.svg"
+                          alt=""
+                          className="cursor-pointer"
+                          width={20}
+                          height={20}
+                          onClick={() => {
+                            if (typeof address === 'string') {
+                              navigator.clipboard.writeText(address);
+                              showOutlineToast({ title: 'Address copied to clipboard!' });
+                            }
+                          }}
+                        />
                       </div>
                       <div className="flex space-x-4 md:hidden">
                         <OutlineButton onClick={() => router.push('/userprofile/edit')}>
                           <p className="font-normal">Edit</p>
                         </OutlineButton>
-                        <OutlineButton>
+                        <OutlineButton
+                          onClick={() => {
+                            if (typeof address === 'string') {
+                              const url = `${window.location.origin}/userprofile/${address}`;
+                              navigator.clipboard.writeText(url);
+                              showOutlineToast({ title: 'Profile link copied to clipboard!' });
+                            }
+                          }}>
                           <Image src="/images/components/userprofile/share.svg" alt="" width={20} height={20} />
                         </OutlineButton>
                       </div>
