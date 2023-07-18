@@ -50,6 +50,7 @@ function OpenPosButton({
   const isMobileView = useNanostore($isMobileView);
 
   const sideDisplay = side === 0 ? 'LONG' : 'SHORT';
+  const sideDisplayLabel = side === 0 ? 'Long' : 'Short';
 
   const [isPartialClose, setIsPartialClose] = useState(false);
   const isFirstPartialClose = useNanostore($tsIsFirstPartialClose);
@@ -68,7 +69,7 @@ function OpenPosButton({
 
       const buttonLabelTemp =
         positionInfo.size === 0
-          ? `${TradeActions.OPEN} ${sideDisplay}`
+          ? `${TradeActions.OPEN} ${sideDisplayLabel}`
           : (-1) ** side * positionInfo.size > 0
           ? `${TradeActions.ADD} Position`
           : `Close Position`;

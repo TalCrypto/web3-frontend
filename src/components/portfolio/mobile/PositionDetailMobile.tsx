@@ -91,14 +91,14 @@ const PositionDetailMobile = () => {
               height={22}
               className={`text-[20px] font-semibold
                 ${
-                  Number(userPosition?.margin.toFixed(4)) > 0
+                  Number(userPosition?.unrealizedPnl.toFixed(4)) > 0
                     ? 'text-marketGreen'
-                    : Number(userPosition?.margin.toFixed(4)) < 0
-                    ? 'text-ma rketRed'
+                    : Number(userPosition?.unrealizedPnl.toFixed(4)) < 0
+                    ? 'text-marketRed'
                     : ''
                 }`}
               priceValue={`
-                ${Number(userPosition?.margin.toFixed(4)) > 0 ? '+' : ''}${userPosition?.margin.toFixed(4)}
+                ${Number(userPosition?.unrealizedPnl.toFixed(4)) > 0 ? '+' : ''}${userPosition?.unrealizedPnl.toFixed(4)}
               `}
             />
           </div>
