@@ -1,16 +1,6 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable max-len */
 // import React from 'react';
-import {
-  $firstLeaderboard,
-  $flCurrentUser,
-  $mainLeaderboard,
-  $mlCurrentUser,
-  $secondLeaderboard,
-  $slCurrentUser,
-  $thirdLeaderboard,
-  $tlCurrentUser
-} from '@/stores/competition';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
 import { isReferralListLoading, setReferralList } from '../stores/airdrop';
@@ -431,13 +421,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $mainLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        console.log(data?.user);
-        $mlCurrentUser.set(data?.user);
-      } else {
-        $mlCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
@@ -449,12 +432,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $firstLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        $flCurrentUser.set(data?.user);
-      } else {
-        $flCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
@@ -466,12 +443,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $secondLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        $slCurrentUser.set(data?.user);
-      } else {
-        $slCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
@@ -483,12 +454,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $thirdLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        $tlCurrentUser.set(data?.user);
-      } else {
-        $tlCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);

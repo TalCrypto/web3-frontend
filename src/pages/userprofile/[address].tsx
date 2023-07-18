@@ -7,7 +7,7 @@ import Image from 'next/image';
 import OutlineButton from '@/components/common/OutlineButton';
 import ProfileBadge from '@/components/userprofile/ProfileBadge';
 import TabItems from '@/components/userprofile/TabItems';
-import { $activeTab, $userprofileAddress } from '@/stores/userprofile';
+import { $activeTab, $userFollowers, $userFollowings, $userInfo, $userprofileAddress } from '@/stores/userprofile';
 import { useStore } from '@nanostores/react';
 import Portfolio from '@/components/userprofile/Portfolio';
 import Activities from '@/components/userprofile/Activities';
@@ -15,6 +15,7 @@ import Social from '@/components/userprofile/Social';
 import Analysis from '@/components/userprofile/Analysis';
 import Link from 'next/link';
 import { showOutlineToast } from '@/components/common/Toast';
+import UserprofileUpdater from '@/components/updaters/UserprofileUpdater';
 
 function trimAddress(str: string) {
   if (str.length > 10) {
@@ -57,6 +58,9 @@ const AddressPage: NextPage = () => {
   const router = useRouter();
   const { address } = router.query;
   const activeTab = useStore($activeTab);
+  const userInfo = useStore($userInfo);
+  const userFollowings = useStore($userFollowings);
+  const userFollowers = useStore($userFollowers);
   const userprofileAddress = useStore($userprofileAddress);
 
   const [showSearchResult, setShowSearchResult] = useState(false);
@@ -132,7 +136,9 @@ const AddressPage: NextPage = () => {
                 <div className="mb-4 md:flex md:justify-between">
                   <div className="md:flex md:space-x-4">
                     <div className="mb-4 md:mb-0">
-                      <p className="bg-gradient-to-b from-[#FFC977]  to-white bg-clip-text text-h2 text-transparent">JEFFGPT9999999</p>
+                      <p className="bg-gradient-to-b from-[#FFC977]  to-white bg-clip-text text-h2 text-transparent">
+                        {userInfo?.username || 'Unnamed'}
+                      </p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-[6px]">
@@ -154,12 +160,12 @@ const AddressPage: NextPage = () => {
                   <div className="hidden space-x-[16px] md:flex">
                     <div>
                       <p className="text-b1 text-mediumEmphasis">
-                        Followers <span className="text-b1e text-highEmphasis">10</span>
+                        Following <span className="text-b1e text-highEmphasis">{userFollowings.length}</span>
                       </p>
                     </div>
                     <div>
                       <p className="text-b1 text-mediumEmphasis">
-                        Followers <span className="text-b1e text-highEmphasis">10</span>
+                        Followers <span className="text-b1e text-highEmphasis">{userFollowers.length}</span>
                       </p>
                     </div>
                   </div>
@@ -250,6 +256,7 @@ const AddressPage: NextPage = () => {
             {activeTab === 0 ? <Portfolio /> : activeTab === 1 ? <Activities /> : activeTab === 2 ? <Social /> : <Analysis />}
           </div>
         </div>
+        <UserprofileUpdater />
       </main>
     </>
   );

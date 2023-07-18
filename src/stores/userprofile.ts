@@ -7,7 +7,8 @@ export const $isUserprofileLoading = atom<boolean>(false);
 // user data
 export const $userprofileAddress = atom<any>(null);
 export const $userInfo = atom<any>(null);
-export const $userRanking = atom<any>(null);
+export const $userAirdropRank = atom<any>(null);
+export const $userCompetitionRank = atom<any>(null);
 export const $userPosition = atom<any>(null);
 export const $userHistory = atom<any[]>([]);
 export const $userFollowings = atom<any[]>([]);
