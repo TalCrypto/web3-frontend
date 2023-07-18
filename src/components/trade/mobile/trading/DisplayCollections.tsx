@@ -25,6 +25,7 @@ export default function DisplayCollections() {
 
   const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
   const updateOverviewData = () => {
+    alert('updateOverviewData');
     $marketUpdateTrigger.set(!marketUpdateTrigger);
   };
 
