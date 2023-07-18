@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable no-unused-vars */
 import { useStore as useNanostore } from '@nanostores/react';
 import React, { useEffect, useState } from 'react';
 import { apiConnection } from '@/utils/apiConnection';
@@ -162,8 +163,7 @@ function UserprofileUpdater() {
       $isUserprofileLoading.set(false);
     }
 
-    if (chain && userprofileAddress) {
-      console.log({ userprofileAddress });
+    if (chain && userprofileAddress && userprofileAddress !== '') {
       fetchData();
       setAmms(getSupportedAMMs(chain));
     }

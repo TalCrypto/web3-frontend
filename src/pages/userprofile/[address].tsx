@@ -7,7 +7,15 @@ import Image from 'next/image';
 import OutlineButton from '@/components/common/OutlineButton';
 import ProfileBadge from '@/components/userprofile/ProfileBadge';
 import TabItems from '@/components/userprofile/TabItems';
-import { $activeTab, $userFollowers, $userFollowings, $userInfo, $userprofileAddress } from '@/stores/userprofile';
+import {
+  $activeTab,
+  $userAirdropRank,
+  $userCompetitionRank,
+  $userFollowers,
+  $userFollowings,
+  $userInfo,
+  $userprofileAddress
+} from '@/stores/userprofile';
 import { useStore } from '@nanostores/react';
 import Portfolio from '@/components/userprofile/Portfolio';
 import Activities from '@/components/userprofile/Activities';
@@ -16,13 +24,11 @@ import Analysis from '@/components/userprofile/Analysis';
 import Link from 'next/link';
 import { showOutlineToast } from '@/components/common/Toast';
 import UserprofileUpdater from '@/components/updaters/UserprofileUpdater';
-
-function trimAddress(str: string) {
-  if (str.length > 10) {
-    return `${str.substring(0, 7)}...${str.slice(-3)}`;
-  }
-  return str;
-}
+import { trimAddress } from '@/utils/string';
+import { $userAddress, $userIsConnected } from '@/stores/user';
+import PrimaryButton from '@/components/common/PrimaryButton';
+import { localeConversion } from '@/utils/localeConversion';
+import { formatBigInt } from '@/utils/bigInt';
 
 type ProfileHeaderCardProps = PropsWithChildren & {
   isEnded?: boolean;
@@ -57,19 +63,71 @@ ProfileHeaderCard.defaultProps = {
 const AddressPage: NextPage = () => {
   const router = useRouter();
   const { address } = router.query;
+
+  const isConnected = useStore($userIsConnected);
+  const currentUserAddress = useStore($userAddress);
   const activeTab = useStore($activeTab);
   const userInfo = useStore($userInfo);
   const userFollowings = useStore($userFollowings);
   const userFollowers = useStore($userFollowers);
   const userprofileAddress = useStore($userprofileAddress);
+  const userAirdropRank = useStore($userAirdropRank);
+  const userCompetitionRank = useStore($userCompetitionRank);
+
+  const userPnl = Number(localeConversion(formatBigInt(userCompetitionRank?.pnl || 0), 2));
 
   const [showSearchResult, setShowSearchResult] = useState(false);
 
   const addressTrimmed = address ? trimAddress(address as string) : '';
 
   useEffect(() => {
-    $userprofileAddress.set(address);
+    if (typeof address === 'string') {
+      $userprofileAddress.set(address);
+    }
+    return () => {
+      $userprofileAddress.set('');
+    };
   }, [address]);
+
+  const isCurrentUserProfilePage = currentUserAddress?.toLowerCase() === userprofileAddress.toLowerCase();
+
+  const renderEditShareOrFollowButton = () => (
+    <div>
+      {isConnected && currentUserAddress ? (
+        <div>
+          {!isCurrentUserProfilePage ? (
+            <div>
+              {userInfo?.isFollowing ? (
+                <OutlineButton className="w-fit">
+                  <p className="font-normal">Unfollow</p>
+                </OutlineButton>
+              ) : (
+                <PrimaryButton className="w-fit px-[12px] py-[8px]">
+                  <p className="text-[14px] font-normal">Follow</p>
+                </PrimaryButton>
+              )}
+            </div>
+          ) : (
+            <div className="flex space-x-4">
+              <OutlineButton onClick={() => router.push('/userprofile/edit')}>
+                <p className="font-normal">Edit</p>
+              </OutlineButton>
+              <OutlineButton
+                onClick={() => {
+                  if (typeof address === 'string') {
+                    const url = `${window.location.origin}/userprofile/${address}`;
+                    navigator.clipboard.writeText(url);
+                    showOutlineToast({ title: 'Profile link copied to clipboard!' });
+                  }
+                }}>
+                <Image src="/images/components/userprofile/share.svg" alt="" width={20} height={20} />
+              </OutlineButton>
+            </div>
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
 
   return (
     <>
@@ -115,22 +173,7 @@ const AddressPage: NextPage = () => {
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex space-x-4">
-                    <OutlineButton onClick={() => router.push('/userprofile/edit')}>
-                      <p className="font-normal">Edit</p>
-                    </OutlineButton>
-                    <OutlineButton
-                      onClick={() => {
-                        if (typeof address === 'string') {
-                          const url = `${window.location.origin}/userprofile/${address}`;
-                          navigator.clipboard.writeText(url);
-                          showOutlineToast({ title: 'Profile link copied to clipboard!' });
-                        }
-                      }}>
-                      <Image src="/images/components/userprofile/share.svg" alt="" width={20} height={20} />
-                    </OutlineButton>
-                  </div>
+                  {renderEditShareOrFollowButton()}
                 </div>
 
                 {/* username / wallet address */}
@@ -158,21 +201,7 @@ const AddressPage: NextPage = () => {
                           }}
                         />
                       </div>
-                      <div className="flex space-x-4 md:hidden">
-                        <OutlineButton onClick={() => router.push('/userprofile/edit')}>
-                          <p className="font-normal">Edit</p>
-                        </OutlineButton>
-                        <OutlineButton
-                          onClick={() => {
-                            if (typeof address === 'string') {
-                              const url = `${window.location.origin}/userprofile/${address}`;
-                              navigator.clipboard.writeText(url);
-                              showOutlineToast({ title: 'Profile link copied to clipboard!' });
-                            }
-                          }}>
-                          <Image src="/images/components/userprofile/share.svg" alt="" width={20} height={20} />
-                        </OutlineButton>
-                      </div>
+                      <div className="md:hidden">{renderEditShareOrFollowButton()}</div>
                     </div>
                   </div>
 
@@ -180,12 +209,12 @@ const AddressPage: NextPage = () => {
                   <div className="hidden space-x-[16px] md:flex">
                     <div>
                       <p className="text-b1 text-mediumEmphasis">
-                        Following <span className="text-b1e text-highEmphasis">{userFollowings.length}</span>
+                        Following <span className="text-b1e text-highEmphasis">{userInfo?.following || 0}</span>
                       </p>
                     </div>
                     <div>
                       <p className="text-b1 text-mediumEmphasis">
-                        Followers <span className="text-b1e text-highEmphasis">{userFollowers.length}</span>
+                        Followers <span className="text-b1e text-highEmphasis">{userInfo?.followers || 0}</span>
                       </p>
                     </div>
                   </div>
@@ -217,19 +246,19 @@ const AddressPage: NextPage = () => {
                 <div className="mb-[24px] flex space-x-[16px] md:hidden">
                   <div>
                     <p className="text-b1 text-mediumEmphasis">
-                      Followers <span className="text-b1e text-highEmphasis">10</span>
+                      Followers <span className="text-b1e text-highEmphasis">{userFollowers.length}</span>
                     </p>
                   </div>
                   <div>
                     <p className="text-b1 text-mediumEmphasis">
-                      Followers <span className="text-b1e text-highEmphasis">10</span>
+                      Followers <span className="text-b1e text-highEmphasis">{userFollowings.length}</span>
                     </p>
                   </div>
                 </div>
 
                 <div className="mb-[36px] md:flex md:space-x-[36px]">
                   <p className="mb-2 text-b1e text-highEmphasis">About</p>
-                  <p className="text-b1 text-highEmphasis">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                  <p className="text-b1 text-highEmphasis">{userInfo?.about}</p>
                 </div>
               </div>
               <div className="flex space-x-[16px] lg:space-x-[24px]">
@@ -238,12 +267,14 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[36px] flex-1 text-center text-b1e text-[#FFD392]">Airdrop Season 2</p>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Season 2 Pts</p>
                   <div className="mb-[24px] flex items-center space-x-[6px]">
-                    <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 text-transparent">9999.99</span>
+                    <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 text-transparent">
+                      {userAirdropRank?.total}
+                    </span>
                     <span className="text-b3">Pts</span>
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Leaderboard Rank</p>
-                  <p className="mb-[24px] text-h5">5</p>
-                  <Link href="/" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  <p className="mb-[24px] text-h5">{userAirdropRank?.rank}</p>
+                  <Link href="/airdrop/leaderboard" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
                     View Leaderboard
                     <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
                   </Link>
@@ -255,11 +286,14 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Realized P/L</p>
                   <div className="mb-6 flex items-center space-x-[6px]">
                     <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={16} height={16} />
-                    <p className="text-h5 text-marketGreen">+2.22</p>
+                    <p className={`text-h5 ${userPnl > 0 ? 'text-marketGreen' : userPnl < 0 ? 'text-marketRed' : ''}`}>
+                      {userPnl > 0 ? '+' : ''}
+                      {userPnl}
+                    </p>
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Top Gainer Rank</p>
-                  <p className="mb-[24px] text-h5">5</p>
-                  <Link href="/" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  <p className="mb-[24px] text-h5">{userCompetitionRank?.rank}</p>
+                  <Link href="/competition" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
                     View Leaderboard
                     <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
                   </Link>
