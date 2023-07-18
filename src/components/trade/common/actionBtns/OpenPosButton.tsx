@@ -46,6 +46,7 @@ function OpenPosButton({
   const positionInfo = usePositionInfo(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
   const [label, setLabel] = useState('');
+  const [buttonLabel, setButtonLabel] = useState('');
   const isMobileView = useNanostore($isMobileView);
 
   const sideDisplay = side === 0 ? 'LONG' : 'SHORT';
@@ -64,6 +65,14 @@ function OpenPosButton({
           ? `${TradeActions.ADD}`
           : `${TradeActions.REDUCE}`;
       setLabel(posType);
+
+      const buttonLabelTemp =
+        positionInfo.size === 0
+          ? `${TradeActions.OPEN} ${sideDisplay}`
+          : (-1) ** side * positionInfo.size > 0
+          ? `${TradeActions.ADD} Position`
+          : `Close Position`;
+      setButtonLabel(buttonLabelTemp);
 
       setIsPartialClose(posType === `${TradeActions.REDUCE}`);
     }
@@ -146,7 +155,7 @@ function OpenPosButton({
       disabled={!write}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={handleOnClick}
-      label="Close Position"
+      label={buttonLabel}
     />
   );
 }
