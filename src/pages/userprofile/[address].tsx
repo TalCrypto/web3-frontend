@@ -195,8 +195,12 @@ const AddressPage: NextPage = () => {
                           type="text"
                           className="flex-1 bg-transparent py-[2px] text-b3 outline-none"
                           placeholder="Search user ID / wallet address"
-                          onFocus={() => setShowSearchResult(true)}
-                          onBlur={() => setShowSearchResult(false)}
+                          onClick={e => {
+                            e.stopPropagation();
+                            window.addEventListener('click', () => setShowSearchResult(false));
+                            setShowSearchResult(true);
+                          }}
+                          // onBlur={() => setShowSearchResult(false)}
                           onChange={e => {
                             setSearchQuery(e.target.value);
                             debouncedSearch(e.target.value, userprofileAddress);
@@ -211,7 +215,14 @@ const AddressPage: NextPage = () => {
                       {/* search result */}
                       {searchResults.length > 0 &&
                         searchResults.map((d, i) => (
-                          <div key={`res-${i}`} className="flex space-x-2 p-2 px-4 py-2 hover:bg-white/10">
+                          <div
+                            key={`res-${i}`}
+                            className="flex cursor-pointer space-x-2 p-2 px-4 py-2 hover:bg-white/10"
+                            onClick={e => {
+                              e.stopPropagation();
+                              router.push(`/userprofile/${d.userAddress}`);
+                              setShowSearchResult(false);
+                            }}>
                             <div className="w-[3px] rounded bg-[#2574FB]" />
                             <div className="flex flex-col space-y-2 text-b3 text-mediumEmphasis">
                               {d.username ? (
