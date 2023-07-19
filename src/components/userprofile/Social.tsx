@@ -46,41 +46,41 @@ const Social: React.FC<PropsWithChildren> = () => {
           <p className="text-h4 text-highEmphasis md:text-b1e">Following ({userInfo?.following})</p>
         </div>
 
-        <div className="scrollable block w-full overflow-auto md:max-h-[300px] md:px-[36px]">
-          <table className="w-full items-center text-mediumEmphasis">
-            <thead className="hidden md:table-header-group">
-              <tr className="text-left text-b2">
-                <th className="pb-4 font-normal">User ID</th>
-                <th className="pb-4 font-normal">Portfolio</th>
-                <th className="pb-4 font-normal">Leaderboard Rank</th>
-                <th className="pb-4 font-normal">No. of Followers</th>
-                <th className="pb-4 font-normal"> </th>
-              </tr>
-            </thead>
-            <tbody className=" text-b1">
+        <div className="md:px-[36px]">
+          <div className="w-full items-center text-mediumEmphasis">
+            <div className="hidden w-full md:block">
+              <div className="flex text-left text-b2">
+                <div className="flex-1 pb-4 font-normal">User ID</div>
+                <div className="flex-1 pb-4 font-normal">Portfolio</div>
+                <div className="flex-1 pb-4 font-normal">Leaderboard Rank</div>
+                <div className="flex-1 pb-4 font-normal">No. of Followers</div>
+                <div className="flex-1 pb-4 font-normal"> </div>
+              </div>
+            </div>
+            <div className="scrollable max-h-[400px] overflow-auto text-b1">
               {userFollowings.map(d => (
-                <tr>
+                <div className="flex">
                   {/* desktop cols */}
-                  <td className="hidden py-[10px] md:table-cell">
+                  <div className="hidden flex-1 py-[10px] md:table-cell">
                     <p>{d.username || d.followerAddress ? trimAddress(d.followerAddress!) : ''}</p>
-                  </td>
-                  <td className="hidden py-[10px] text-highEmphasis md:table-cell">
+                  </div>
+                  <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-[-12px]">
                       {d.amm.map(amm => (
                         <TypeIconWithTooltip amm={amm} />
                       ))}
                     </div>
-                  </td>
+                  </div>
 
-                  <td className="hidden py-[10px] text-highEmphasis md:table-cell">
+                  <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-2">
                       <Image src="/images/components/userprofile/leaderboard_rank.svg" alt="" width={20} height={20} />
                       <p>{d.ranking}</p>
                     </div>
-                  </td>
-                  <td className="hidden py-[10px] text-highEmphasis md:table-cell">{d.followers}</td>
+                  </div>
+                  <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">{d.followers}</div>
                   {/* mobile cols */}
-                  <td className="table-cell md:hidden">
+                  <div className="flex-1 md:hidden">
                     <div className="flex space-x-2 py-[12px]">
                       <div className="w-[3px] rounded bg-[#2574FB]" />
                       <div className="flex flex-col space-y-2">
@@ -93,8 +93,8 @@ const Social: React.FC<PropsWithChildren> = () => {
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="py-[10px] text-highEmphasis">
+                  </div>
+                  <div className="flex-1 py-[10px] text-highEmphasis">
                     <div className="flex justify-end">
                       {d.isFollowing ? (
                         <OutlineButton className="w-fit">
@@ -106,11 +106,11 @@ const Social: React.FC<PropsWithChildren> = () => {
                         </PrimaryButton>
                       )}
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       </TableContainer>
       {/* Follower table card */}
@@ -120,41 +120,41 @@ const Social: React.FC<PropsWithChildren> = () => {
           <p className="text-h4 text-highEmphasis md:text-b1e">Follower ({userInfo?.followers})</p>
         </div>
 
-        <div className="scrollable block w-full overflow-auto md:max-h-[300px] md:px-[36px]">
-          <table className="w-full items-center text-mediumEmphasis">
-            <thead className="hidden md:table-header-group">
-              <tr className="text-left text-b2">
-                <th className="pb-4 font-normal">User ID</th>
-                <th className="pb-4 font-normal">Portfolio</th>
-                <th className="pb-4 font-normal">Leaderboard Rank</th>
-                <th className="pb-4 font-normal">No. of Followers</th>
-                <th className="pb-4 font-normal"> </th>
-              </tr>
-            </thead>
-            <tbody className=" text-b1">
+        <div className="md:px-[36px]">
+          <div className="w-full items-center text-mediumEmphasis">
+            <div className="hidden w-full md:block">
+              <div className="flex text-left text-b2">
+                <div className="flex-1 pb-4 font-normal">User ID</div>
+                <div className="flex-1 pb-4 font-normal">Portfolio</div>
+                <div className="flex-1 pb-4 font-normal">Leaderboard Rank</div>
+                <div className="flex-1 pb-4 font-normal">No. of Followers</div>
+                <div className="flex-1 pb-4 font-normal"> </div>
+              </div>
+            </div>
+            <div className="scrollable max-h-[400px] overflow-auto text-b1">
               {userFollowers.map(d => (
-                <tr>
+                <div className="flex">
                   {/* desktop cols */}
-                  <td className="hidden py-[10px] md:table-cell">
+                  <div className="hidden flex-1 py-[10px] md:table-cell">
                     <p>{d.username || trimAddress(d.userAddress)}</p>
-                  </td>
-                  <td className="hidden py-[10px] text-highEmphasis md:table-cell">
+                  </div>
+                  <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-[-12px]">
                       {d.amm.map(amm => (
                         <TypeIconWithTooltip amm={amm} />
                       ))}
                     </div>
-                  </td>
+                  </div>
 
-                  <td className="hidden py-[10px] text-highEmphasis md:table-cell">
+                  <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-2">
                       <Image src="/images/components/userprofile/leaderboard_rank.svg" alt="" width={20} height={20} />
                       <p>{d.ranking}</p>
                     </div>
-                  </td>
-                  <td className="hidden py-[10px] text-highEmphasis md:table-cell">{d.followers}</td>
+                  </div>
+                  <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">{d.followers}</div>
                   {/* mobile cols */}
-                  <td className="table-cell md:hidden">
+                  <div className="flex-1 md:hidden">
                     <div className="flex space-x-2 py-[12px]">
                       <div className="w-[3px] rounded bg-[#2574FB]" />
                       <div className="flex flex-col space-y-2">
@@ -166,8 +166,8 @@ const Social: React.FC<PropsWithChildren> = () => {
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="py-[10px] text-highEmphasis">
+                  </div>
+                  <div className="flex-1 py-[10px] text-highEmphasis">
                     <div className="flex justify-end">
                       {d.isFollowing ? (
                         <OutlineButton className="w-fit">
@@ -179,11 +179,11 @@ const Social: React.FC<PropsWithChildren> = () => {
                         </PrimaryButton>
                       )}
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       </TableContainer>
     </div>
