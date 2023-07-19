@@ -72,13 +72,11 @@ function QuantityEnter(props: any) {
   const maxValue = marginIndex === 0 ? increaseMax : decreaseMax;
 
   const showHalfValue = () => {
-    onChange((maxValue / 2).toFixed(4));
+    onChange(maxValue / 2);
   };
 
   const showMaxValue = () => {
-    // onChange(Number(maxValue - 0.00005).toFixed(4));
-    onChange(Number(maxValue - 0.0001).toFixed(4));
-    // onChange(Number(maxValue).toFixed(4));
+    onChange(Number(maxValue));
   };
 
   const handleGetWethClick = () => {
@@ -87,7 +85,7 @@ function QuantityEnter(props: any) {
 
   return (
     <>
-      <div className={`mb-4 flex ${disabled ? 'disabled' : ''}`}>
+      <div className={`mb-4 flex ${disabled ? 'opacity-30' : ''}`}>
         <div className="flex-1 text-[14px] text-mediumEmphasis">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
         {marginIndex === 0 ? (
           <div className="flex text-[14px] text-mediumEmphasis" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
@@ -105,10 +103,10 @@ function QuantityEnter(props: any) {
       </div>
       <div className="mb-3">
         <div
-          className={`trade-input-outline rounded-[4px] bg-none p-[1px]
+          className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
-              ${disabled ? 'disabled' : ''}`}>
+              ${disabled ? 'opacity-30' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
             <div className="leading-[10px]">
@@ -117,7 +115,7 @@ function QuantityEnter(props: any) {
             <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
             <div className="flex">
               <div
-                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                className={`trade-btn mr-1 flex h-[22px] w-[42px]
                     items-center justify-center rounded-[6px] text-[12px] font-bold
                     ${disabled ? 'disabled' : ''}`}
                 onClick={() => {
@@ -128,7 +126,7 @@ function QuantityEnter(props: any) {
                 <span className="text-center text-mediumEmphasis">MAX</span>
               </div>
               <div
-                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                className={`trade-btn mr-1 flex h-[22px] w-[42px]
                     items-center justify-center rounded-[6px] text-[12px] font-bold
                     ${disabled ? 'disabled' : ''}`}
                 onClick={() => {
@@ -143,7 +141,7 @@ function QuantityEnter(props: any) {
               type="text"
               className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none`}
-              value={adjustMarginValue}
+              value={Number(adjustMarginValue).toFixed(4)}
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}
@@ -326,7 +324,7 @@ export default function AdjustCollateral() {
     <div>
       <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
       <QuantityEnter
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && Number(freeCollateral.toFixed(4)) <= 0) || isWrongNetwork}
         adjustMarginValue={adjustMarginValue}
         onChange={(value: any) => {
           handleChange(value);
@@ -350,7 +348,7 @@ export default function AdjustCollateral() {
         onChange={(value: any) => {
           handleChange(value);
         }}
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && Number(freeCollateral.toFixed(4)) <= 0) || isWrongNetwork}
       />
       <SectionDividers />
       <EstimationValueDisplay isError={textErrorMessage !== null} estimation={estimation} />
