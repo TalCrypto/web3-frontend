@@ -163,8 +163,8 @@ function UserprofileUpdater() {
       // console.log({ $userFollowers: $userFollowers.get() });
       // console.log({ $userprofilePositionInfos: $userprofilePositionInfos.get() });
 
-      // console.log($userHistories.get()[1]);
-      // getTradingActionTypeFromSubgraph($userHistories.get()[1]);
+      // console.log($userHistories.get()[150]);
+      // getTradingActionTypeFromSubgraph($userHistories.get()[150]);
 
       $isUserprofileLoading.set(false);
     }

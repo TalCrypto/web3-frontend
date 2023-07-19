@@ -147,6 +147,7 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
                     spotPrice
                     fee
                     realizedPnl
+                    liquidationPenalty
                     amount
                   }
               }`
@@ -173,7 +174,8 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
       realizedPnl: BigInt(position.realizedPnl),
       txHash: position.id.split('-')[0],
       positionNotional: BigInt(position.positionNotional),
-      amount: BigInt(position.amount)
+      amount: BigInt(position.amount),
+      liquidationPenalty: BigInt(position.liquidationPenalty)
     };
   });
 
@@ -318,12 +320,12 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
     .then(res => res.json())
     .then(resJson => resJson.data.reserveSnapshottedEvents);
 
-  return positions.length > 0 ?
-    {
-      timestamp: Number(positions[0].timestamp),
-      spotPrice: BigInt(positions[0].spotPrice)
-    } :
-    null;
+  return positions.length > 0
+    ? {
+        timestamp: Number(positions[0].timestamp),
+        spotPrice: BigInt(positions[0].spotPrice)
+      }
+    : null;
 };
 
 export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {

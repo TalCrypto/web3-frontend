@@ -6,7 +6,6 @@ import { formatBigInt } from '@/utils/bigInt';
 export function getTradingActionType(item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number }) {
   let actionType = '';
   if (item.liquidationPenalty !== 0) {
-    console.log(item.liquidationPenalty);
     if (item.positionSizeAfter === 0) {
       actionType = TradeActions.FULL_LIQ;
     } else {
@@ -63,22 +62,29 @@ export function getTradingActionTypeFromSubgraph(item: any, isMobile = false) {
     if (liquidationPenaltyNumber !== 0) {
       const positionSizeAfterNumber = item.positionSizeAfter ? formatBigInt(item.positionSizeAfter) : 0;
       if (positionSizeAfterNumber === 0) {
-        actionType = !isMobile ? 'Full Liquidation' : 'Full Liquid.';
+        actionType = !isMobile ? TradeActions.FULL_LIQ : 'Full Liquid.';
       } else {
-        actionType = !isMobile ? 'Partial Liquidation' : 'Partial Liquid.';
+        actionType = !isMobile ? TradeActions.PARTIAL_LIQ : 'Partial Liquid.';
       }
     } else if (formatBigInt(item.exchangedPositionSize) === formatBigInt(item.positionSizeAfter)) {
-      actionType = 'Open';
+      actionType = TradeActions.OPEN;
     } else if (formatBigInt(item.positionSizeAfter) === 0) {
-      actionType = 'Full Close';
-    } else if (Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter))) {
-      actionType = 'Add';
+      actionType = TradeActions.CLOSE;
+    } else if (
+      Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
+      Math.abs(formatBigInt(item.exchangedPositionSize)) < Math.abs(formatBigInt(item.positionSizeAfter))
+    ) {
+      actionType = TradeActions.ADD;
+    } else if (
+      Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
+      Math.abs(formatBigInt(item.exchangedPositionSize)) > Math.abs(formatBigInt(item.positionSizeAfter))
+    ) {
+      actionType = TradeActions.REVERSE;
     } else if (Math.sign(formatBigInt(item.exchangedPositionSize)) !== Math.sign(formatBigInt(item.positionSizeAfter))) {
-      actionType = 'Partial Close';
+      actionType = TradeActions.REDUCE;
     }
   }
 
-  console.log({ actionType });
   return actionType;
 }
 
