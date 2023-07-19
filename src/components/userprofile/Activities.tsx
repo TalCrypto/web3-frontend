@@ -28,7 +28,7 @@ const Activities: React.FC = () => {
             <div className="hidden flex-1 py-4 font-normal md:table-cell"> </div>
             {/* mobile cols */}
             <div className="table-cell flex-1 py-4 font-normal md:hidden">Action / Type</div>
-            <div className="table-cell flex-1 py-4 text-right font-normal md:hidden">Execution Price</div>
+            <div className="table-cell flex-1 py-4 text-right font-normal md:hidden">Execution Price / Size</div>
           </div>
         </div>
         <div className="scrollable max-h-[400px] overflow-auto text-b1">
@@ -81,7 +81,7 @@ const Activities: React.FC = () => {
                       <p>{formatDateTime(d.timestamp, 'MM/DD/YYYY HH:mm')}</p>
                       <p className="text-highEmphasis">{tradingType}</p>
                       <div className="flex space-x-1">
-                        <Image src="/images/collections/small/azuki.svg" alt="" width={20} height={20} />
+                        <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={d.amm} showCollectionName />
                         <p className={d.type.toUpperCase() === 'LONG' ? 'text-marketGreen' : 'text-marketRed'}>{d.type.toUpperCase()}</p>
                       </div>
                     </div>
@@ -92,11 +92,11 @@ const Activities: React.FC = () => {
                     <ExplorerButton width={20} height={20} txHash={d.txHash} />
                     <div className="flex space-x-2">
                       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={20} height={20} />
-                      <p>{formatBigInt(d.positionNotional).toFixed(4)}</p>
+                      <p>{d.entryPrice.toFixed(2)}</p>
                     </div>
                     <div className="flex space-x-2">
                       <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={20} height={20} />
-                      <p>{d.entryPrice.toFixed(2)}</p>
+                      <p>{formatBigInt(d.positionNotional).toFixed(4)}</p>
                     </div>
                   </div>
                 </div>
