@@ -1,15 +1,19 @@
+/* eslint-disable no-unused-vars */
 import OutlineButton from '@/components/common/OutlineButton';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import Tooltip from '@/components/common/Tooltip';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import { getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
-import { $currentChain } from '@/stores/user';
-import { $userFollowers, $userFollowings, $userInfo } from '@/stores/userprofile';
+import { firebaseAuth } from '@/const/firebaseConfig';
+import { $currentChain, $userIsConnected } from '@/stores/user';
+import { $userFollowers, $userFollowings, $userInfo, $userprofileAddress } from '@/stores/userprofile';
+import { apiConnection } from '@/utils/apiConnection';
 import { trimAddress } from '@/utils/string';
 import { useStore } from '@nanostores/react';
+import { getAuth } from 'firebase/auth';
 import Image from 'next/image';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 
 const TableContainer: React.FC<PropsWithChildren> = ({ children }) => (
   <div
@@ -32,7 +36,65 @@ const TypeIconWithTooltip = ({ amm }: { amm: any }) => {
   );
 };
 
+export const FollowButton = ({
+  isFollowing,
+  visible,
+  targetAddress
+}: {
+  isFollowing: boolean;
+  visible: boolean;
+  targetAddress?: string;
+}) => {
+  const currentUserAddress = useStore($userprofileAddress);
+  const [localIsFollowing, setLocalIsFollowing] = useState(false);
+
+  useEffect(() => {
+    setLocalIsFollowing(isFollowing);
+  }, [isFollowing]);
+
+  const follow = async () => {
+    const auth = getAuth();
+    const currentUser = auth?.currentUser;
+    console.log('currentUser', currentUser);
+    if (currentUser) {
+      const newToken = await currentUser.getIdToken(true);
+      console.log('newToken', newToken);
+      try {
+        const res = await apiConnection.followUser(targetAddress, newToken, currentUserAddress);
+        console.log('follow', res);
+        if (res.code === 0) {
+          // todo:  update button
+          setLocalIsFollowing(true);
+        }
+      } catch (error) {
+        console.log('err', error);
+      }
+    }
+  };
+
+  if (!visible) {
+    return null;
+  }
+  return (
+    <div>
+      {localIsFollowing ? (
+        <OutlineButton className="w-fit">
+          <p className="font-normal">Unfollow</p>
+        </OutlineButton>
+      ) : (
+        <PrimaryButton className="w-fit px-[12px] py-[8px]" onClick={follow}>
+          <p className="text-[14px] font-normal">Follow</p>
+        </PrimaryButton>
+      )}
+    </div>
+  );
+};
+FollowButton.defaultProps = {
+  targetAddress: undefined
+};
+
 const Social: React.FC<PropsWithChildren> = () => {
+  const isConnected = useStore($userIsConnected);
   const userInfo = useStore($userInfo);
   const userFollowings = useStore($userFollowings);
   const userFollowers = useStore($userFollowers);
@@ -96,15 +158,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                   </div>
                   <div className="flex-1 py-[10px] text-highEmphasis">
                     <div className="flex justify-end">
-                      {d.isFollowing ? (
-                        <OutlineButton className="w-fit">
-                          <p className="font-normal">Unfollow</p>
-                        </OutlineButton>
-                      ) : (
-                        <PrimaryButton className="w-fit px-[12px] py-[8px]">
-                          <p className="text-[14px] font-normal">Follow</p>
-                        </PrimaryButton>
-                      )}
+                      <FollowButton isFollowing={d.isFollowing} visible={isConnected} targetAddress={d.followerAddress || ''} />
                     </div>
                   </div>
                 </div>
@@ -169,15 +223,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                   </div>
                   <div className="flex-1 py-[10px] text-highEmphasis">
                     <div className="flex justify-end">
-                      {d.isFollowing ? (
-                        <OutlineButton className="w-fit">
-                          <p className="font-normal">Unfollow</p>
-                        </OutlineButton>
-                      ) : (
-                        <PrimaryButton className="w-fit px-[12px] py-[8px]">
-                          <p className="text-[14px] font-normal">Follow</p>
-                        </PrimaryButton>
-                      )}
+                      <FollowButton isFollowing={d.isFollowing} visible={isConnected} targetAddress={d.userAddress || ''} />
                     </div>
                   </div>
                 </div>
