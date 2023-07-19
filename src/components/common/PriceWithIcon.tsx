@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 function Base(props: any, image: any) {
   const { priceValue = 0, children, colorChange, large, medium, className } = props;
-  const [localValue, setLocalValue] = useState('--.--');
+  const [localValue, setLocalValue] = useState('-.--');
   const [color, setColor] = useState('');
 
   useEffect(() => {

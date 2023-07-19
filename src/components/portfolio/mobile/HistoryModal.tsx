@@ -210,7 +210,7 @@ const HistoryModal = () => {
                     className={`${Number(selectedBalance) > 0 ? 'text-marketGreen' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}
                       mt-[6px] text-[20px] font-semibold`}
                     priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
-                      Number(selectedBalance) === 0 ? '--.--' : Number(selectedBalance).toFixed(4)
+                      Number(selectedBalance) === 0 ? '-.--' : Number(selectedBalance).toFixed(4)
                     }`}
                   />
                 </div>
@@ -250,9 +250,7 @@ const HistoryModal = () => {
                     ? detailRowMobile(
                         'Collateral Change',
                         <PriceWithIcon
-                          priceValue={
-                            selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
-                          }>
+                          priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '-.--'}>
                           {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                             <MobileTooltip
                               direction="top"
@@ -276,7 +274,7 @@ const HistoryModal = () => {
                     : selectedRecord
                     ? detailRowMobile(
                         'Resulting Collateral',
-                        <PriceWithIcon priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'} />
+                        <PriceWithIcon priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '-.--'} />
                       )
                     : null}
                   {isLiquidation && selectedRecord

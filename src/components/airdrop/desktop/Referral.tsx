@@ -281,7 +281,7 @@ function Referral() {
             />
             <div className="flex-1">
               <h3 className="mb-[24px]">📢 My Referral Link</h3>
-              <p className="body2 mb-[36px]">
+              <p className="body2 mb-[36px] text-[14px] font-normal">
                 Share you referral code to get 3% of their trading volume points, while they can get 2% of their own trading volume points!
               </p>
               <div className="mb-[36px] flex items-center space-x-[12px] md:space-x-[24px]">
