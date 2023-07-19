@@ -11,7 +11,7 @@ export const formatDateTime = (value: number, format = 'DD/MM/YY HH:mm'): any =>
   const date = new Date(tempDate.getTime());
   const year = date.getFullYear();
   const month = date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
-  const monthShort = date.toLocaleString('default', { month: 'short' });
+  const monthShort = date.toLocaleString('en-US', { month: 'short' });
   const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
   const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
   const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
