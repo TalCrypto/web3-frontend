@@ -103,7 +103,6 @@ const AddressPage: NextPage = () => {
   const addressTrimmed = address ? trimAddress(address as string) : '';
 
   // search function
-  //
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResult] = useState<SearchUserData[]>([]);
