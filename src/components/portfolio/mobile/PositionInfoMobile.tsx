@@ -24,6 +24,7 @@ function PositionInfoMobile() {
   const isShowBalance = useNanostore($psShowBalance);
   const psUserPosition = useNanostore($psUserPosition);
   const totalFP = useNanostore($userTotalFP);
+  const isShowMobileModal = useNanostore($isShowMobileModal);
 
   const currentPositionCount = psUserPosition.filter((item: any) => item !== null).length;
   const showPositionDetail = useNanostore($psShowPositionDetail);
@@ -126,9 +127,9 @@ function PositionInfoMobile() {
         </div>
       </div>
 
-      {showPositionDetail ? <PositionDetailMobile /> : null}
-      <FundingPaymentModal />
-      <HistoryModal />
+      {showPositionDetail && isShowMobileModal ? <PositionDetailMobile /> : null}
+      {isShowMobileModal ? <FundingPaymentModal /> : null}
+      {isShowMobileModal ? <HistoryModal /> : null}
     </div>
   );
 }
