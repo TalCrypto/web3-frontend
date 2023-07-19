@@ -33,7 +33,7 @@ import {
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
-import { $showGetWEthModal } from '@/stores/modal';
+import { $showGetWEthModal, $isShowMobileTokenModal } from '@/stores/modal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -116,7 +116,8 @@ function QuantityTips(props: any) {
   const [isEstPriceFluctuation, setIsEstPriceFluctuation] = useState(false);
 
   const onClickWeth = () => {
-    $showGetWEthModal.set(true);
+    // $showGetWEthModal.set(true);
+    $isShowMobileTokenModal.set(true);
   };
 
   useEffect(() => {
@@ -202,7 +203,8 @@ function QuantityEnter(props: any) {
               type="button"
               className="ml-[8px] text-[14px] text-primaryBlue"
               onClick={() => {
-                $showGetWEthModal.set(true);
+                // $showGetWEthModal.set(true);
+                $isShowMobileTokenModal.set(true);
               }}>
               Get WETH
             </button>

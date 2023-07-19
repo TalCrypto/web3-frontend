@@ -14,6 +14,7 @@ import TransferTokenModal from '@/components/layout/header/desktop/TransferToken
 import { publicProvider } from 'wagmi/providers/public';
 import MetamaskModal from '@/components/layout/header/desktop/MetamaskModal';
 import LoginModal from '@/components/layout/header/desktop/LoginModal';
+import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetTokenModal';
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
@@ -75,6 +76,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <TransferTokenModal />
       <MetamaskModal />
+      <MobileGetTokenModal />
     </>
   );
 }

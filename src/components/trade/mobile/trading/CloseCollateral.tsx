@@ -25,7 +25,7 @@ import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
-import { $showGetWEthModal } from '@/stores/modal';
+import { $showGetWEthModal, $isShowMobileTokenModal } from '@/stores/modal';
 
 function SectionDividers() {
   return (
@@ -40,7 +40,8 @@ function SectionDividers() {
 function QuantityTips(props: any) {
   const { isAmountTooSmall, isAmountTooLarge, isOverFee } = props;
   const onClickWeth = () => {
-    $showGetWEthModal.set(true);
+    // $showGetWEthModal.set(true);
+    $isShowMobileTokenModal.set(true);
   };
 
   const label = isAmountTooLarge ? (
