@@ -1,5 +1,7 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
-import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import PageHeader from '@/components/layout/header/PageHeader';
@@ -31,6 +33,9 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 import { localeConversion } from '@/utils/localeConversion';
 import { formatBigInt } from '@/utils/bigInt';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { debounce } from 'lodash';
+import { SearchUserData, apiConnection } from '@/utils/apiConnection';
 
 type ProfileHeaderCardProps = PropsWithChildren & {
   isEnded?: boolean;
@@ -62,6 +67,21 @@ ProfileHeaderCard.defaultProps = {
   isEnded: false
 };
 
+const LabelStringMatch = ({ label, match }: { label: string; match: string }) => {
+  // split label to span with match
+  const regex = new RegExp(`(${match})`, 'i');
+  const items = label.split(regex);
+  return (
+    <p>
+      {items?.map((i, idx) => (
+        <span key={`lsm-${idx}`} className={`${i === match ? 'text-highEmphasis' : ''}`}>
+          {i}
+        </span>
+      ))}
+    </p>
+  );
+};
+
 const AddressPage: NextPage = () => {
   const router = useRouter();
   const { address } = router.query;
@@ -80,10 +100,25 @@ const AddressPage: NextPage = () => {
   const userprofilePositionInfosArrKey = Object.keys(userprofilePositionInfos);
 
   const userPnl = Number(localeConversion(formatBigInt(userCompetitionRank?.pnl || 0), 2));
-
-  const [showSearchResult, setShowSearchResult] = useState(false);
-
   const addressTrimmed = address ? trimAddress(address as string) : '';
+
+  // search function
+  //
+  const [showSearchResult, setShowSearchResult] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResult] = useState<SearchUserData[]>([]);
+
+  const search = async (val: string, holderAddress: string) => {
+    // console.log(val, holderAddress);
+    if (!val || !holderAddress) return;
+    const res = await apiConnection.searchUser(val, holderAddress);
+    // console.log(res);
+    if (res.data) {
+      setSearchResult(res.data);
+    }
+  };
+
+  const debouncedSearch = useMemo(() => debounce(search, 500), []);
 
   useEffect(() => {
     if (typeof address === 'string') {
@@ -150,32 +185,60 @@ const AddressPage: NextPage = () => {
                 {/* desktop only search and edit share btn */}
                 <div className="mb-[36px] hidden justify-between md:flex">
                   <div className="relative">
-                    <div className="flex min-w-[280px] space-x-2 rounded-full border border-[#FFFFFF26] bg-white/10 px-4 py-2">
-                      <Image src="/images/components/userprofile/search.svg" alt="" width={20} height={20} />
-                      <input
-                        type="text"
-                        className="flex-1 bg-transparent py-[2px] text-b3 outline-none"
-                        placeholder="Search user ID / wallet address"
-                        onFocus={() => setShowSearchResult(true)}
-                        onBlur={() => setShowSearchResult(false)}
-                      />
+                    <div
+                      className={`${
+                        showSearchResult ? 'bg-gradient-to-r from-[#04AEFC] via-[#795AF4] to-[#F703D9]' : 'bg-white/30'
+                      } rounded-full p-[1px]`}>
+                      <div className="flex min-w-[280px] space-x-2 rounded-full bg-[#382c5e] px-4 py-2 shadow-xl">
+                        <Image src="/images/components/userprofile/search.svg" alt="" width={20} height={20} />
+                        <input
+                          type="text"
+                          className="flex-1 bg-transparent py-[2px] text-b3 outline-none"
+                          placeholder="Search user ID / wallet address"
+                          onClick={e => {
+                            e.stopPropagation();
+                            window.addEventListener('click', () => setShowSearchResult(false));
+                            setShowSearchResult(true);
+                          }}
+                          // onBlur={() => setShowSearchResult(false)}
+                          onChange={e => {
+                            setSearchQuery(e.target.value);
+                            debouncedSearch(e.target.value, userprofileAddress);
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className={`absolute ${showSearchResult ? 'visible' : 'invisible'} mt-2 w-full rounded-lg bg-secondaryBlue py-2`}>
+                    <div
+                      className={`absolute z-[1] ${
+                        showSearchResult ? 'visible' : 'invisible'
+                      } scrollable mt-2 max-h-[300px] w-full overflow-auto rounded-lg bg-secondaryBlue`}>
                       {/* search result */}
-                      <div className="flex space-x-2 p-2 hover:bg-darkBlue/50">
-                        <div className="w-[3px] rounded bg-[#2574FB]" />
-                        <div className="flex flex-col space-y-2">
-                          <p>lorem ipsum</p>
-                          <p className="text-xs">NO TITLE</p>
+                      {searchResults.length > 0 &&
+                        searchResults.map((d, i) => (
+                          <div
+                            key={`res-${i}`}
+                            className="flex cursor-pointer space-x-2 p-2 px-4 py-2 hover:bg-white/10"
+                            onClick={e => {
+                              e.stopPropagation();
+                              router.push(`/userprofile/${d.userAddress}`);
+                              setShowSearchResult(false);
+                            }}>
+                            <div className="w-[3px] rounded bg-[#2574FB]" />
+                            <div className="flex flex-col space-y-2 text-b3 text-mediumEmphasis">
+                              {d.username ? (
+                                <LabelStringMatch label={d.username} match={searchQuery} />
+                              ) : (
+                                <LabelStringMatch label={trimAddress(d.userAddress)} match={searchQuery} />
+                              )}
+                              {/* <p className="">{d.username || trimAddress(d.userAddress)}</p> */}
+                            </div>
+                          </div>
+                        ))}
+                      {searchResults.length === 0 && (
+                        <div className="flex min-h-[80px] items-center justify-center">
+                          <p className="text-center text-b3 text-highEmphasis">No Match.</p>
                         </div>
-                      </div>
-                      <div className="flex space-x-2 p-2 hover:bg-darkBlue/50">
-                        <div className="w-[3px] rounded bg-[#2574FB]" />
-                        <div className="flex flex-col space-y-2">
-                          <p>lorem ipsum</p>
-                          <p className="text-xs">NO TITLE</p>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                   {renderEditShareOrFollowButton()}

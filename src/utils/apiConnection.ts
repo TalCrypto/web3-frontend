@@ -9,6 +9,23 @@ const apiUrl = process.env.NEXT_PUBLIC_DASHBOARD_API_URL;
 const authUrl = process.env.NEXT_PUBLIC_AUTHENTICATION_API_URL;
 const leaderboardUrl = process.env.NEXT_PUBLIC_LEADERBOARD_USER_RANKING;
 
+type ApiResponse<T> = {
+  message: string;
+  code: number;
+  data: T;
+};
+
+export type SearchUserData = {
+  isFollowing: boolean;
+  userAddress: string;
+  followers: number;
+  following: number;
+  username?: string;
+  about: string;
+  points: string;
+  ranking: number;
+};
+
 export const apiConnection = {
   getDashboardContent: async function getDashboardContent(address: string, timestamp = Math.floor(Date.now() / 1000)) {
     const dashboardApiUrl = `${apiUrl}/allPositions?trader=${address}&timestamp=${timestamp}`;
@@ -164,7 +181,7 @@ export const apiConnection = {
           'Content-Type': 'application/json'
         }
       });
-      const result = await callPost.json();
+      const result = (await callPost.json()) as ApiResponse<SearchUserData[] | null>;
       return Promise.resolve(result);
     } catch (error) {
       return Promise.reject(error);
