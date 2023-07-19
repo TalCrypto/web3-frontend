@@ -13,7 +13,7 @@ import {
   $userCompetitionRank,
   $userFollowers,
   $userFollowings,
-  $userHistory,
+  $userHistories,
   $userInfo,
   $userprofilePositionInfos,
   $userprofileAddress
@@ -25,6 +25,7 @@ import { Address, zeroAddress } from 'viem';
 import { AMM } from '@/const/collectionList';
 import { formatBigInt } from '@/utils/bigInt';
 import { getAMMAddress, getSupportedAMMs } from '@/const/addresses';
+import { getTradingActionTypeFromSubgraph } from '@/utils/actionType';
 
 const PositionInfoUpdater: React.FC<{
   chain: Chain | undefined;
@@ -114,7 +115,7 @@ function UserprofileUpdater() {
       $userAirdropRank.set(null);
       $userCompetitionRank.set(null);
       // $userprofilePositionInfos.setKey(amm, undefined);
-      $userHistory.set([]);
+      $userHistories.set([]);
       $userFollowings.set([]);
       $userFollowers.set([]);
       $searchQuery.set('');
@@ -126,6 +127,7 @@ function UserprofileUpdater() {
         apiConnection.getUserPointLite(userprofileAddress),
         apiConnection.getAbsPnlLeaderboard(userprofileAddress),
         getAllTraderPositionHistory(userprofileAddress, 500, 0),
+        // apiConnection.getUserTradingHistory(userprofileAddress),
         apiConnection.getUserFollowings(userprofileAddress, userprofileAddress),
         apiConnection.getUserFollowers(userprofileAddress, userprofileAddress)
       ];
@@ -143,7 +145,7 @@ function UserprofileUpdater() {
         $userCompetitionRank.set(userCompetitionRankRes.value?.user);
       }
       if (userPositionHistoryRes.status === 'fulfilled') {
-        $userHistory.set(userPositionHistoryRes.value);
+        $userHistories.set(userPositionHistoryRes.value);
       }
       if (userFollowingsRes.status === 'fulfilled') {
         $userFollowings.set(userFollowingsRes.value.data);
@@ -155,10 +157,13 @@ function UserprofileUpdater() {
       // console.log({ $userInfo: $userInfo.get() });
       // console.log({ $userAirdropRank: $userAirdropRank.get() });
       // console.log({ $userCompetitionRank: $userCompetitionRank.get() });
-      // console.log({ $userHistory: $userHistory.get() });
+      // console.log({ $userHistories: $userHistories.get() });
       // console.log({ $userFollowings: $userFollowings.get() });
       // console.log({ $userFollowers: $userFollowers.get() });
       // console.log({ $userprofilePositionInfos: $userprofilePositionInfos.get() });
+
+      // console.log($userHistories.get()[1]);
+      // getTradingActionTypeFromSubgraph($userHistories.get()[1]);
 
       $isUserprofileLoading.set(false);
     }

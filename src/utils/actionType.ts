@@ -1,10 +1,12 @@
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 import { CollateralActions, TradeActions } from '@/const';
+import { formatBigInt } from '@/utils/bigInt';
 
 export function getTradingActionType(item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number }) {
   let actionType = '';
   if (item.liquidationPenalty !== 0) {
+    console.log(item.liquidationPenalty);
     if (item.positionSizeAfter === 0) {
       actionType = TradeActions.FULL_LIQ;
     } else {
@@ -45,6 +47,39 @@ export function getActionTypeFromApi(item: any) {
     return getCollateralActionType(Number(item.collateralChange));
   }
   return getTradingActionType(item);
+}
+
+export function getTradingActionTypeFromSubgraph(item: any, isMobile = false) {
+  let actionType = '';
+  if (item.type === 'adjust') {
+    const collateralNumber = item.collateralChange ? formatBigInt(item.collateralChange) : 0;
+    if (collateralNumber > 0) {
+      actionType = 'Add Collateral';
+    } else {
+      actionType = 'Reduce Collateral';
+    }
+  } else {
+    const liquidationPenaltyNumber = item.liquidationPenalty ? formatBigInt(item.liquidationPenalty) : 0;
+    if (liquidationPenaltyNumber !== 0) {
+      const positionSizeAfterNumber = item.positionSizeAfter ? formatBigInt(item.positionSizeAfter) : 0;
+      if (positionSizeAfterNumber === 0) {
+        actionType = !isMobile ? 'Full Liquidation' : 'Full Liquid.';
+      } else {
+        actionType = !isMobile ? 'Partial Liquidation' : 'Partial Liquid.';
+      }
+    } else if (formatBigInt(item.exchangedPositionSize) === formatBigInt(item.positionSizeAfter)) {
+      actionType = 'Open';
+    } else if (formatBigInt(item.positionSizeAfter) === 0) {
+      actionType = 'Full Close';
+    } else if (Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter))) {
+      actionType = 'Add';
+    } else if (Math.sign(formatBigInt(item.exchangedPositionSize)) !== Math.sign(formatBigInt(item.positionSizeAfter))) {
+      actionType = 'Partial Close';
+    }
+  }
+
+  console.log({ actionType });
+  return actionType;
 }
 
 export function getWalletBalanceChange(record: any) {

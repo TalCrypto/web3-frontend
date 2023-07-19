@@ -1,37 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $userHistories } from '@/stores/userprofile';
+import { formatDateTime } from '@/utils/date';
+import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
+import { getActionTypeFromApi, getTradingActionTypeFromSubgraph } from '@/utils/actionType';
 
 const Activities: React.FC = () => {
-  const tableData = [
-    {
-      date: '07/18/2022 10:55',
-      collection: 'AZUKI',
-      action: 'Full Close',
-      type: 'LONG',
-      notional: 1.0401,
-      exePrice: 14.01,
-      leverage: '-'
-    },
-    {
-      date: '07/18/2022 10:55',
-      collection: 'MAYC',
-      action: 'Close & Open',
-      type: 'LONG',
-      notional: 1.0401,
-      exePrice: 14.01,
-      leverage: '3X'
-    },
-    {
-      date: '07/18/2022 10:55',
-      collection: 'AZUKI',
-      action: 'Full Close',
-      type: 'SHORT',
-      notional: 1.0401,
-      exePrice: 14.01,
-      leverage: '-'
-    }
-  ];
+  const userHistories = useNanostore($userHistories);
+  console.log({ userHistories });
 
   return (
     <div>
@@ -53,24 +31,26 @@ const Activities: React.FC = () => {
           </tr>
         </thead>
         <tbody className="text-b1">
-          {tableData.map(d => (
+          {userHistories.map(d => (
             <tr>
               {/* desktop cols */}
               <td className="hidden py-[10px] md:table-cell">
                 <div className="flex space-x-2">
                   <div className="w-[3px] rounded bg-[#2574FB]" />
-                  <p>{d.date}</p>
+                  <p>{formatDateTime(d.timestamp, 'MM/DD/YYYY HH:mm')}</p>
                 </div>
               </td>
               <td className="hidden py-[10px] text-highEmphasis md:table-cell">
                 <div className="flex space-x-2">
-                  <Image src="/images/collections/small/azuki.svg" alt="" width={20} height={20} />
-                  <p>{d.collection}</p>
+                  <TypeWithIconByAmm imageWidth={20} imageHeight={20} amm={d.amm} showCollectionName />
+
+                  {/* <Image src="/images/collections/small/azuki.svg" alt="" width={20} height={20} />
+                  <p>{d.collection}</p> */}
                 </div>
               </td>
-              <td className="hidden py-[10px] text-highEmphasis md:table-cell">{d.action}</td>
+              <td className="hidden py-[10px] text-highEmphasis md:table-cell">{getTradingActionTypeFromSubgraph(d)}</td>
               <td className="hidden py-[10px] md:table-cell">
-                <p className={d.type === 'LONG' ? 'text-marketGreen' : 'text-marketRed'}>{d.type}</p>
+                <p className={d.type.toUpperCase() === 'LONG' ? 'text-marketGreen' : 'text-marketRed'}>{d.type.toUpperCase()}</p>
               </td>
               <td className="hidden py-[10px] text-highEmphasis md:table-cell">
                 <div className="flex space-x-2">
@@ -99,7 +79,7 @@ const Activities: React.FC = () => {
                     <p className="text-highEmphasis">{d.action}</p>
                     <div className="flex space-x-1">
                       <Image src="/images/collections/small/azuki.svg" alt="" width={20} height={20} />
-                      <p className={d.type === 'LONG' ? 'text-marketGreen' : 'text-marketRed'}>{d.type}</p>
+                      <p className={d.type.toUpperCase() === 'LONG' ? 'text-marketGreen' : 'text-marketRed'}>{d.type.toUpperCase()}</p>
                     </div>
                   </div>
                 </div>

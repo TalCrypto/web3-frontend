@@ -89,7 +89,7 @@ const AddressPage: NextPage = () => {
     };
   }, [address]);
 
-  const isCurrentUserProfilePage = currentUserAddress?.toLowerCase() === userprofileAddress.toLowerCase();
+  const isCurrentUserProfilePage = currentUserAddress?.toLowerCase() === userprofileAddress?.toLowerCase();
 
   const renderEditShareOrFollowButton = () => (
     <div>

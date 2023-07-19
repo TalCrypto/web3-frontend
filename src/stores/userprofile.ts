@@ -98,9 +98,7 @@ export const $userInfo = atom<any>(null);
 export const $userAirdropRank = atom<any>(null);
 export const $userCompetitionRank = atom<any>(null);
 export const $userprofilePositionInfos = map<UserPositionInfos>();
-export const $userPosition = atom<any>(null);
-export const $userProfilePositionInfos = map<UserPositionInfos>();
-export const $userHistory = atom<any[]>([]);
+export const $userHistories = atom<any[]>([]);
 export const $userFollowings = atom<UserFollow[]>([]);
 export const $userFollowers = atom<UserFollow[]>([]);
 

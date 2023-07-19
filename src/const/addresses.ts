@@ -72,7 +72,7 @@ export const getAMMByAddress = (address?: Address, chain?: Chain): AMM | undefin
   const { config: addressConfig } = getAddressConfig(chain);
   const amms = Object.keys(addressConfig.amms) as AMM[];
   for (let i = 0; i < amms.length; i += 1) {
-    if (addressConfig.amms[amms[i]] === address) {
+    if (addressConfig.amms[amms[i]]?.toLowerCase() === address?.toLowerCase()) {
       return amms[i];
     }
   }
