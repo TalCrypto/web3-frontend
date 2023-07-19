@@ -246,12 +246,12 @@ const AddressPage: NextPage = () => {
                 <div className="mb-[24px] flex space-x-[16px] md:hidden">
                   <div>
                     <p className="text-b1 text-mediumEmphasis">
-                      Followers <span className="text-b1e text-highEmphasis">{userFollowers.length}</span>
+                      Followers <span className="text-b1e text-highEmphasis">{userFollowers?.length || 0}</span>
                     </p>
                   </div>
                   <div>
                     <p className="text-b1 text-mediumEmphasis">
-                      Followers <span className="text-b1e text-highEmphasis">{userFollowings.length}</span>
+                      Followers <span className="text-b1e text-highEmphasis">{userFollowings?.length || 0}</span>
                     </p>
                   </div>
                 </div>

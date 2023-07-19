@@ -105,6 +105,7 @@ function UserprofileUpdater() {
   const userprofileAddress = useNanostore($userprofileAddress);
   const { chain } = useNetwork();
   const [amms, setAmms] = useState<Array<AMM>>();
+  const { address, isConnected, isConnecting } = useAccount();
 
   useEffect(() => {
     async function fetchData() {
@@ -123,13 +124,13 @@ function UserprofileUpdater() {
       $searchResult.set([]);
 
       const userprofilePromises = [
-        apiConnection.getTargetUserInfo(userprofileAddress, userprofileAddress),
+        apiConnection.getTargetUserInfo(userprofileAddress, address || userprofileAddress),
         apiConnection.getUserPointLite(userprofileAddress),
         apiConnection.getAbsPnlLeaderboard(userprofileAddress),
         getAllTraderPositionHistory(userprofileAddress, 500, 0),
         // apiConnection.getUserTradingHistory(userprofileAddress),
-        apiConnection.getUserFollowings(userprofileAddress, userprofileAddress),
-        apiConnection.getUserFollowers(userprofileAddress, userprofileAddress)
+        apiConnection.getUserFollowings(userprofileAddress, address || userprofileAddress),
+        apiConnection.getUserFollowers(userprofileAddress, address || userprofileAddress)
       ];
 
       const [userProfileRes, userAirdropRankRes, userCompetitionRankRes, userPositionHistoryRes, userFollowingsRes, userFollowersRes] =
@@ -168,7 +169,7 @@ function UserprofileUpdater() {
       $isUserprofileLoading.set(false);
     }
 
-    if (chain && userprofileAddress && userprofileAddress !== '') {
+    if (userprofileAddress !== '') {
       fetchData();
       setAmms(getSupportedAMMs(chain));
     }
