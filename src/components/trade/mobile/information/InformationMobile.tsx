@@ -39,7 +39,7 @@ function InformationMobile() {
           border-b-[2px] border-b-[#71AAFF]/[.12]">
         {Tabs}
       </div>
-      <div className="display-content h-full">
+      <div className="display-content relative h-full">
         <div className={`${detailHeaderIndex === 0 ? 'block' : 'hidden'} h-full`}>
           <TabsInfo activeTab={activeTab} />
         </div>
