@@ -14,7 +14,8 @@ import {
   $userFollowers,
   $userFollowings,
   $userInfo,
-  $userprofileAddress
+  $userprofileAddress,
+  $userprofilePositionInfos
 } from '@/stores/userprofile';
 import { useStore } from '@nanostores/react';
 import Portfolio from '@/components/userprofile/Portfolio';
@@ -29,6 +30,7 @@ import { $userAddress, $userIsConnected } from '@/stores/user';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { localeConversion } from '@/utils/localeConversion';
 import { formatBigInt } from '@/utils/bigInt';
+import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 
 type ProfileHeaderCardProps = PropsWithChildren & {
   isEnded?: boolean;
@@ -68,11 +70,15 @@ const AddressPage: NextPage = () => {
   const currentUserAddress = useStore($userAddress);
   const activeTab = useStore($activeTab);
   const userInfo = useStore($userInfo);
+  const userprofilePositionInfos: any = useStore($userprofilePositionInfos);
   const userFollowings = useStore($userFollowings);
   const userFollowers = useStore($userFollowers);
   const userprofileAddress = useStore($userprofileAddress);
   const userAirdropRank = useStore($userAirdropRank);
   const userCompetitionRank = useStore($userCompetitionRank);
+
+  const userprofilePositionInfosArrKey = Object.keys(userprofilePositionInfos);
+  console.log({ userprofilePositionInfos });
 
   const userPnl = Number(localeConversion(formatBigInt(userCompetitionRank?.pnl || 0), 2));
 
@@ -233,11 +239,13 @@ const AddressPage: NextPage = () => {
 
                   <div className="flex items-center space-x-2">
                     <p className="text-b1 text-mediumEmphasis">NFT Holding</p>
-                    <div className="flex space-x-[-4px]">
-                      <Image src="/images/collections/small/azuki.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/bayc.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/doodle.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/cryptopunks.svg" alt="" width={24} height={24} />
+                    <div className="flex space-x-[-10px]">
+                      {userprofilePositionInfosArrKey.length > 0 &&
+                        userprofilePositionInfosArrKey?.map(amm =>
+                          userprofilePositionInfos[amm].currentNotional > 0 ? (
+                            <TypeWithIconByAmm imageWidth={24} imageHeight={24} amm={amm} />
+                          ) : null
+                        )}
                     </div>
                   </div>
                 </div>
