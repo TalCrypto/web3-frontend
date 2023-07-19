@@ -78,7 +78,6 @@ const AddressPage: NextPage = () => {
   const userCompetitionRank = useStore($userCompetitionRank);
 
   const userprofilePositionInfosArrKey = Object.keys(userprofilePositionInfos);
-  console.log({ userprofilePositionInfos });
 
   const userPnl = Number(localeConversion(formatBigInt(userCompetitionRank?.pnl || 0), 2));
 
