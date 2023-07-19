@@ -71,5 +71,5 @@ export function getWalletBalanceChange(record: any) {
       : currentRecordType === TradeActions.CLOSE
       ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
       : -Math.abs(recordFee);
-  return Number(balance.toFixed(4));
+  return Number(balance.toFixed(6));
 }

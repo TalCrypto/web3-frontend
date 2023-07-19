@@ -32,7 +32,7 @@ export default function ApprovalModal() {
             onClick={closeModal}
           />
         </div>
-        <div className="mx-[24px] mt-[4px]  ">
+        <div className="mx-[24px] mt-[4px]">
           <div className="text-[16px] font-[600]">Approve - Spending Cap Issue</div>
           <div className="mt-[36px] ">
             The spending cap is the amount, on accumulated basis, that you are comfortable to spend on Tribe3 platform.
