@@ -93,10 +93,10 @@ export const $activeTab = atom<number>(0);
 export const $isUserprofileLoading = atom<boolean>(false);
 
 // user data
-export const $userprofileAddress = atom<any>(null);
-export const $userInfo = atom<any>(null);
-export const $userAirdropRank = atom<any>(null);
-export const $userCompetitionRank = atom<any>(null);
+export const $userprofileAddress = atom<string>('');
+export const $userInfo = atom<UserProfileInfo | null>(null);
+export const $userAirdropRank = atom<UserAirdropRank | null>(null);
+export const $userCompetitionRank = atom<UserCompetitionRank | null>(null);
 export const $userprofilePositionInfos = map<UserPositionInfos>();
 export const $userHistories = atom<any[]>([]);
 export const $userFollowings = atom<UserFollow[]>([]);

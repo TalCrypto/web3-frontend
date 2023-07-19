@@ -1,6 +1,10 @@
 import OutlineButton from '@/components/common/OutlineButton';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import Tooltip from '@/components/common/Tooltip';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
+import { getAMMByAddress } from '@/const/addresses';
+import { getCollectionInformation } from '@/const/collectionList';
+import { $currentChain } from '@/stores/user';
 import { $userFollowers, $userFollowings, $userInfo } from '@/stores/userprofile';
 import { trimAddress } from '@/utils/string';
 import { useStore } from '@nanostores/react';
@@ -14,6 +18,19 @@ const TableContainer: React.FC<PropsWithChildren> = ({ children }) => (
     {children}
   </div>
 );
+
+const TypeIconWithTooltip = ({ amm }: { amm: any }) => {
+  const chain = useStore($currentChain);
+  const ammValue = getAMMByAddress(amm, chain);
+
+  const targetAmm = getCollectionInformation(amm);
+  const targetCollection = targetAmm ?? getCollectionInformation(ammValue);
+  return (
+    <Tooltip direction="top" content={targetCollection.collectionName}>
+      <TypeWithIconByAmm amm={amm} imageWidth={24} imageHeight={24} />
+    </Tooltip>
+  );
+};
 
 const Social: React.FC<PropsWithChildren> = () => {
   const userInfo = useStore($userInfo);
@@ -48,17 +65,11 @@ const Social: React.FC<PropsWithChildren> = () => {
                     <p>{d.username || d.followerAddress ? trimAddress(d.followerAddress!) : ''}</p>
                   </td>
                   <td className="hidden py-[10px] text-highEmphasis md:table-cell">
-                    <div className="flex space-x-[-4px]">
+                    <div className="flex space-x-[-12px]">
                       {d.amm.map(amm => (
-                        <TypeWithIconByAmm amm={amm} imageWidth={24} imageHeight={24} />
+                        <TypeIconWithTooltip amm={amm} />
                       ))}
                     </div>
-                    {/* <div className="flex space-x-[-4px]">
-                      <Image src="/images/collections/small/azuki.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/bayc.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/doodle.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/cryptopunks.svg" alt="" width={24} height={24} />
-                    </div> */}
                   </td>
 
                   <td className="hidden py-[10px] text-highEmphasis md:table-cell">
@@ -75,17 +86,11 @@ const Social: React.FC<PropsWithChildren> = () => {
                       <div className="flex flex-col space-y-2">
                         <p>{d.username || d.followerAddress ? trimAddress(d.followerAddress!) : ''}</p>
 
-                        <div className="flex space-x-[-4px]">
+                        <div className="flex space-x-[-12px]">
                           {d.amm.map(amm => (
-                            <TypeWithIconByAmm amm={amm} imageWidth={24} imageHeight={24} />
+                            <TypeWithIconByAmm amm={amm} />
                           ))}
                         </div>
-                        {/* <div className="flex space-x-[-4px]">
-                          <Image src="/images/collections/small/azuki.svg" alt="" width={24} height={24} />
-                          <Image src="/images/collections/small/bayc.svg" alt="" width={24} height={24} />
-                          <Image src="/images/collections/small/doodle.svg" alt="" width={24} height={24} />
-                          <Image src="/images/collections/small/cryptopunks.svg" alt="" width={24} height={24} />
-                        </div> */}
                       </div>
                     </div>
                   </td>
@@ -134,17 +139,11 @@ const Social: React.FC<PropsWithChildren> = () => {
                     <p>{d.username || trimAddress(d.userAddress)}</p>
                   </td>
                   <td className="hidden py-[10px] text-highEmphasis md:table-cell">
-                    <div className="flex space-x-[-4px]">
+                    <div className="flex space-x-[-12px]">
                       {d.amm.map(amm => (
-                        <TypeWithIconByAmm amm={amm} imageWidth={24} imageHeight={24} />
+                        <TypeIconWithTooltip amm={amm} />
                       ))}
                     </div>
-                    {/* <div className="flex space-x-[-4px]">
-                      <Image src="/images/collections/small/azuki.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/bayc.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/doodle.svg" alt="" width={24} height={24} />
-                      <Image src="/images/collections/small/cryptopunks.svg" alt="" width={24} height={24} />
-                    </div> */}
                   </td>
 
                   <td className="hidden py-[10px] text-highEmphasis md:table-cell">
@@ -160,11 +159,10 @@ const Social: React.FC<PropsWithChildren> = () => {
                       <div className="w-[3px] rounded bg-[#2574FB]" />
                       <div className="flex flex-col space-y-2">
                         <p>{d.username || trimAddress(d.userAddress)}</p>
-                        <div className="flex space-x-[-4px]">
-                          <Image src="/images/collections/small/azuki.svg" alt="" width={24} height={24} />
-                          <Image src="/images/collections/small/bayc.svg" alt="" width={24} height={24} />
-                          <Image src="/images/collections/small/doodle.svg" alt="" width={24} height={24} />
-                          <Image src="/images/collections/small/cryptopunks.svg" alt="" width={24} height={24} />
+                        <div className="flex space-x-[-12px]">
+                          {d.amm.map(amm => (
+                            <TypeWithIconByAmm amm={amm} />
+                          ))}
                         </div>
                       </div>
                     </div>
