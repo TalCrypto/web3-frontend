@@ -3,7 +3,7 @@
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 
@@ -51,9 +51,31 @@ function SaleOrBuyRadio(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { disabled, adjustMarginValue, onChange, marginIndex, freeCollateral, wethBalance, isError } = props;
+  const {
+    disabled,
+    adjustMarginValue,
+    onChange,
+    estPriceFluctuation,
+    textErrorMessage,
+    marginIndex,
+    freeCollateral,
+    wethBalance,
+    estimation,
+    isError,
+    isInputBlur,
+    setIsInputBlur
+  } = props;
 
   const [isFocus, setIsFocus] = useState(false);
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -140,6 +162,7 @@ function QuantityEnter(props: any) {
             </div>
             <input
               type="text"
+              ref={refInputBox}
               className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none`}
               value={Number(adjustMarginValue).toFixed(4)}
@@ -148,7 +171,10 @@ function QuantityEnter(props: any) {
               disabled={disabled}
               min={0}
               // onClick={e => e.target.setSelectionRange(e.target.value.length, e.target.value.length)}
-              onFocus={() => setIsFocus(true)}
+              onFocus={() => {
+                setIsFocus(true);
+                setIsInputBlur(false);
+              }}
               onBlur={() => setIsFocus(false)}
             />
           </div>
@@ -288,6 +314,7 @@ export default function AdjustCollateral() {
 
   const approvalAmount = marginIndex === 1 || !debonceBigIntValue ? 0 : formatBigInt(debonceBigIntValue);
   const isNeedApproval = useApprovalCheck(approvalAmount);
+  const [isInputBlur, setIsInputBlur] = useState(false);
 
   const initializeState = useCallback(() => {
     setAdjustMarginValue(0);
@@ -347,6 +374,7 @@ export default function AdjustCollateral() {
         freeCollateral={freeCollateral}
         wethBalance={wethBalance}
         onChange={(value: any) => {
+          setIsInputBlur(true);
           handleChange(value);
         }}
         disabled={isPending || (marginIndex === 1 && freeCollateral && Number(freeCollateral.toFixed(4)) <= 0) || isWrongNetwork}
