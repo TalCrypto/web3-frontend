@@ -102,7 +102,7 @@ const PositionInfoUpdater: React.FC<{
 };
 
 function UserprofileUpdater() {
-  const userprofileAddress = useNanostore($userprofileAddress);
+  const userprofileAddress: any = useNanostore($userprofileAddress);
   const { chain } = useNetwork();
   const [amms, setAmms] = useState<Array<AMM>>();
   const { address, isConnected, isConnecting } = useAccount();
