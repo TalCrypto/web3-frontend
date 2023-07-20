@@ -26,6 +26,7 @@ import ChartDisplay from '@/components/trade/common/ChartDisplay';
 import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
+import CheckBox from '@/components/common/CheckBox';
 
 const flashAnim = 'flash';
 
@@ -136,6 +137,27 @@ function ChartTimeTabs(props: any) {
   );
 }
 
+const ChartSetting = () => {
+  const foo = 'bar';
+  return (
+    <div className="relative">
+      <Image src="/images/components/trade/chart/settings.svg" alt="" width={20} height={20} />
+      <div className="absolute left-0 top-5 mt-[6px] flex w-[160px] flex-col rounded-[6px] border border-[#2E4371] bg-secondaryBlue p-1 shadow-lg">
+        <div className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10">
+          <CheckBox checked />
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
+          <p className="text-b3">VAMM Price</p>
+        </div>
+        <div className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10">
+          <CheckBox />
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#1B9C94]" />
+          <p className="text-b3">Oracle Price</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ChartHeaders = () => {
   const currentAmm = useNanostore($currentAmm);
   const oraclePrice = useNanostore($oraclePrice);
@@ -163,7 +185,8 @@ const ChartHeaders = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-1 items-end justify-end">
+      <div className="flex flex-1 items-center justify-end space-x-[8px]">
+        <ChartSetting />
         <ChartTimeTabs
           name="group-1"
           controlRef={useRef()}
