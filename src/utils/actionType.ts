@@ -55,9 +55,9 @@ export function getWalletBalanceChange(record: any) {
   const recordRealizedFundingPayment = record.fundingPayment;
   const recordCollateralChange = record.collateralChange;
   const balance =
-    currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD
+    currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD || currentRecordType === CollateralActions.ADD
       ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-      : currentRecordType === CollateralActions.REDUCE || currentRecordType === CollateralActions.ADD
+      : currentRecordType === CollateralActions.REDUCE
       ? -(recordCollateralChange + recordRealizedFundingPayment)
       : currentRecordType === TradeActions.CLOSE
       ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)
