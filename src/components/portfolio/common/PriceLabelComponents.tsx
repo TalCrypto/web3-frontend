@@ -5,7 +5,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { getCollectionInformation } from '@/const/collectionList';
 
 export function SingleRowPriceContent(props: any) {
-  const { priceValue, width = 20, height = 20, className = '', isElement = false, amm } = props;
+  const { priceValue, width = 20, height = 20, className = '', isElement = false, amm, isAbsolute = false } = props;
   const currentAmm: any = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
   const iconImage = amm && collectionInfo ? collectionInfo.logo : '/images/common/symbols/eth-tribe3.svg';
@@ -16,8 +16,8 @@ export function SingleRowPriceContent(props: any) {
       {isElement ? (
         <span>{priceValue}</span>
       ) : (
-        <span className={`${priceValue > 0 ? 'text-marketGreen' : priceValue < 0 ? 'text-marketRed' : ''}`}>
-          {priceValue > 0 ? `+${priceValue}` : priceValue < 0 ? `${priceValue}` : priceValue}
+        <span className={`${isAbsolute ? '' : priceValue > 0 ? 'text-marketGreen' : priceValue < 0 ? 'text-marketRed' : ''}`}>
+          {priceValue > 0 && !isAbsolute ? `+${priceValue}` : priceValue}
         </span>
       )}
     </div>

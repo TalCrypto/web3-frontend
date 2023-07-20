@@ -49,7 +49,7 @@ function PositionList() {
           <div className="flex px-9 pt-4 text-[16px] font-medium">
             <div className="w-[60%] pr-6 text-right text-mediumEmphasis">Total</div>
             <div className="w-[15%]">
-              <SingleRowPriceContent priceValue={isShowBalance ? totalCollateral.toFixed(4) : '****'} />
+              <SingleRowPriceContent isAbsolute priceValue={isShowBalance ? totalCollateral.toFixed(4) : '****'} />
             </div>
             <div className="w-[13%]">
               <SingleRowPriceContent priceValue={isShowBalance ? `${totalUnrealized.toFixed(4)}` : '****'} />

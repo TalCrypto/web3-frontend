@@ -126,7 +126,7 @@ const MarketTrade = () => {
                   {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
                 </span>
                 <div className="h-[6px] w-full" />
-                <span className="text-highEmphasis">{getTradingActionType(marketHistory[index])}</span>
+                <span className="text-highEmphasis">{getTradingActionType(marketHistory[index], true)}</span>
               </div>
               <div className="col-span-2 ml-[-16px]">
                 <SmallPriceIcon priceValue={record.positionNotional.toFixed(4)} />
@@ -152,7 +152,7 @@ const MarketTrade = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                setDisplayCount(displayCount + 5);
+                setDisplayCount(displayCount + 15);
               }}>
               Show More
             </span>
@@ -244,7 +244,7 @@ const SpotTable = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                setDisplayCount(displayCount + 5);
+                setDisplayCount(displayCount + 15);
               }}>
               Show More
             </span>
@@ -301,7 +301,7 @@ const FundingPaymentHistory = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                setDisplayCount(displayCount + 5);
+                setDisplayCount(displayCount + 15);
               }}>
               Show More
             </span>

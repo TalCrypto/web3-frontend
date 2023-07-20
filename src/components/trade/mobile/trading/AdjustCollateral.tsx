@@ -23,7 +23,7 @@ import SwitchButton from '@/components/trade/common/actionBtns/SwitchButton';
 
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
-import { $showGetWEthModal } from '@/stores/modal';
+import { $showGetWEthModal, $isShowMobileTokenModal } from '@/stores/modal';
 
 function SaleOrBuyRadio(props: any) {
   const { marginIndex, setMarginIndex, onChange, disabled } = props;
@@ -80,7 +80,8 @@ function QuantityEnter(props: any) {
   };
 
   const handleGetWethClick = () => {
-    $showGetWEthModal.set(true);
+    // $showGetWEthModal.set(true);
+    $isShowMobileTokenModal.set(true);
   };
 
   return (

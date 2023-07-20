@@ -171,11 +171,14 @@ export function addGraphRecord(price?: number /* TODO , notionalValue?: number *
 
 // Market Overview Data Trigger
 export const $marketUpdateTrigger = atom(false);
+export const $isMarketDataUpdating = atom(false);
 
 // mobile specialized stores
 export const $isShowTradingMobile = atom(false);
 
 export const $tsIsShowPriceGapOverModal = atom(true);
+
+export const $isShowDisplayCollections = atom(false);
 
 export const $tsIsFirstPartialClose = atom(true);
 export const $tsIsShowPartialCloseModal = atom(false);
