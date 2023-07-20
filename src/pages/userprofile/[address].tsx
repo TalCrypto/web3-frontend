@@ -295,8 +295,8 @@ const AddressPage: NextPage = () => {
 
                 <div className="mb-[24px] space-y-[24px] md:mb-[36px] md:flex md:space-x-[36px] md:space-y-0">
                   {/* badge labels */}
-                  {/*
-                  <div className="overflow-auto">
+
+                  {/* <div className="overflow-auto">
                     <div className="flex space-x-[6px]">
                       <ProfileBadge color="sky">WHALE</ProfileBadge>
                       <ProfileBadge color="red">OG</ProfileBadge>
@@ -304,7 +304,7 @@ const AddressPage: NextPage = () => {
                       <ProfileBadge color="green">PUNK LOVER</ProfileBadge>
                     </div>
                   </div>
-                  */}
+                 
 
                   <div className="flex items-center space-x-2">
                     <p className="text-b1 text-mediumEmphasis">NFT Holding</p>
@@ -316,7 +316,7 @@ const AddressPage: NextPage = () => {
                           ) : null
                         )}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* mobile only followers */}
