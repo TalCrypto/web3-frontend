@@ -119,7 +119,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                 <div className="flex-1 pb-4 font-normal"> </div>
               </div>
             </div>
-            <div className="scrollable max-h-[400px] overflow-auto text-b1">
+            <div className="scrollable max-h-[424px] min-h-[424px] overflow-auto text-b1">
               {userFollowings.map(d => (
                 <div className="flex">
                   {/* desktop cols */}
@@ -185,7 +185,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                 <div className="flex-1 pb-4 font-normal"> </div>
               </div>
             </div>
-            <div className="scrollable max-h-[400px] overflow-auto text-b1">
+            <div className="scrollable max-h-[424px] min-h-[424px] overflow-auto text-b1">
               {userFollowers.map(d => (
                 <div className="flex">
                   {/* desktop cols */}

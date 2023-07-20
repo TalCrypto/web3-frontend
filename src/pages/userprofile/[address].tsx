@@ -48,7 +48,7 @@ const ProfileHeaderCard: FC<ProfileHeaderCardProps> = ({ children, isEnded = fal
               from-[rgba(72,50,24,0.7)] to-50%">
     {isEnded ? (
       <div
-        className="absolute left-0 top-0 flex min-w-[300px] translate-x-[-42%] translate-y-[47%] 
+        className="absolute left-0 top-0 flex min-w-[100px] translate-x-[-25%] translate-y-[50%] 
           -rotate-45 items-center justify-center border 
         border-y-white/50 bg-gradient-to-r from-[#BB3930] via-[#CE716B] to-[#C2342B] py-1 
         text-[8px] font-semibold leading-[9.75px] text-[#FFF6D7]">
@@ -335,7 +335,7 @@ const AddressPage: NextPage = () => {
 
                 <div className="mb-[36px] md:flex md:space-x-[36px]">
                   <p className="mb-2 text-b1e text-highEmphasis">About</p>
-                  <p className="text-b1 text-highEmphasis">{userInfo?.about}</p>
+                  <p className="text-b1 text-highEmphasis">{userInfo?.about || '-'}</p>
                 </div>
               </div>
               <div className="flex space-x-[16px] lg:min-w-[425px] lg:space-x-[24px]">

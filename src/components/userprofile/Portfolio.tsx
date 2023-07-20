@@ -7,6 +7,7 @@ import React from 'react';
 const Portfolio: React.FC = () => {
   const userprofilePositionInfos: any = useStore($userprofilePositionInfos);
   const userprofilePositionInfosArrKey: any[] = Object.keys(userprofilePositionInfos);
+  const userprofilePositionsKeys = userprofilePositionInfosArrKey.filter(i => userprofilePositionInfos[i].currentNotional > 0);
 
   const renderValueWithStatement = (value: number, result1: string, result2: string, result3: string) => {
     if (value > 0) {
@@ -17,6 +18,14 @@ const Portfolio: React.FC = () => {
     }
     return result3;
   };
+
+  if (userprofilePositionsKeys.length === 0) {
+    return (
+      <div className="pt-[121px]">
+        <p className="text-center text-b1 text-mediumEmphasis">No opened position.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">

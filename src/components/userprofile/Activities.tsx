@@ -11,6 +11,14 @@ import { ExplorerButton } from '@/components/common/LabelsComponents';
 const Activities: React.FC = () => {
   const userHistories = useNanostore($userHistories);
 
+  if (!userHistories || userHistories.length === 0) {
+    return (
+      <div className="pt-[121px]">
+        <p className="text-center text-b1 text-mediumEmphasis">No trading record.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="w-full items-center text-mediumEmphasis">
