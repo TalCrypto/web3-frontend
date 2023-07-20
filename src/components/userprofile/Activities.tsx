@@ -32,7 +32,7 @@ const Activities: React.FC = () => {
           </div>
         </div>
         <div className="scrollable max-h-[400px] overflow-auto text-b1">
-          {userHistories.map(d => {
+          {userHistories?.map(d => {
             const tradingType = getTradingActionTypeFromSubgraph(d);
             const isOpen = tradingType === 'Open' || tradingType === 'Add';
             const showLeverageValue = !isOpen ? '-' : `${(formatBigInt(d.positionNotional) / formatBigInt(d.amount)).toFixed(2)}X`;

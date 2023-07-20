@@ -1,7 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
-import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import PageHeader from '@/components/layout/header/PageHeader';
@@ -47,14 +47,15 @@ const ProfileHeaderCard: FC<ProfileHeaderCardProps> = ({ children, isEnded = fal
               from-[rgba(72,50,24,0.7)] to-50%">
     {isEnded ? (
       <div
-        className="absolute left-0 top-0 min-w-[300px] translate-x-[-42%] translate-y-[40%] -rotate-45 
-          border border-y-white/50 bg-gradient-to-r from-[#BB3930] 
-        via-[#CE716B] to-[#C2342B] py-1 text-center text-[8px] font-semibold text-[#FFF6D7]">
-        ENDED
+        className="absolute left-0 top-0 flex min-w-[300px] translate-x-[-42%] translate-y-[47%] 
+          -rotate-45 items-center justify-center border 
+        border-y-white/50 bg-gradient-to-r from-[#BB3930] via-[#CE716B] to-[#C2342B] py-1 
+        text-[8px] font-semibold leading-[9.75px] text-[#FFF6D7]">
+        <p>ENDED</p>
       </div>
     ) : null}
     <div
-      className="flex h-full flex-col items-center  rounded-[12px] border-[0.5px] border-[#FFD392]  
+      className="flex h-full flex-col items-center  rounded-[12px] border-[0.5px] border-[#FFD39240]  
                   bg-[url('/images/components/userprofile/profilecardbg.png')] bg-cover bg-[center_bottom_-3rem] bg-no-repeat 
                   px-[8px] py-6 md:px-8">
       {children}
@@ -110,11 +111,16 @@ const AddressPage: NextPage = () => {
 
   const search = async (val: string, holderAddress: string) => {
     // console.log(val, holderAddress);
-    if (!val || !holderAddress) return;
+    if (!val || !holderAddress) {
+      setSearchResult([]);
+      return;
+    }
     const res = await apiConnection.searchUser(val, holderAddress);
     // console.log(res);
-    if (res.data) {
+    if (res.data && res.data.length > 0) {
       setSearchResult(res.data);
+    } else {
+      setSearchResult([]);
     }
   };
 
@@ -217,7 +223,7 @@ const AddressPage: NextPage = () => {
                         searchResults.map((d, i) => (
                           <div
                             key={`res-${i}`}
-                            className="flex cursor-pointer space-x-2 p-2 px-4 py-2 hover:bg-white/10"
+                            className="flex cursor-pointer space-x-2 px-4 py-[10px] hover:bg-white/10"
                             onClick={e => {
                               e.stopPropagation();
                               router.push(`/userprofile/${d.userAddress}`);
@@ -344,7 +350,9 @@ const AddressPage: NextPage = () => {
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Leaderboard Rank</p>
                   <p className="mb-[24px] text-h5">{userAirdropRank?.rank}</p>
-                  <Link href="/airdrop/leaderboard" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  <Link
+                    href="/airdrop/leaderboard"
+                    className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392] hover:bg-[#FFD39233]">
                     View Leaderboard
                     <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
                   </Link>
@@ -363,7 +371,9 @@ const AddressPage: NextPage = () => {
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Top Gainer Rank</p>
                   <p className="mb-[24px] text-h5">{userCompetitionRank?.rank}</p>
-                  <Link href="/competition" className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392]">
+                  <Link
+                    href="/competition"
+                    className="flex rounded border-[0.5px] border-[#FFD392] p-2 text-b3 text-[#FFD392] hover:bg-[#FFD39233]">
                     View Leaderboard
                     <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
                   </Link>

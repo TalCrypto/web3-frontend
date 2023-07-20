@@ -9,11 +9,13 @@ const Portfolio: React.FC = () => (
         bg-gradient-to-b from-[#37387280] to-[#0C0D1F80] p-[24px] text-b2 text-mediumEmphasis`}>
       <div className="flex">
         <div className="flex-1">
-          <span
-            className={`mb-[6px] bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink 
-          bg-clip-text text-h5 text-transparent`}>
-            BAYC
-          </span>
+          <p className="mb-[6px] text-h5 ">
+            <span
+              className={`bg-gradient-to-r from-gradientBlue via-[#795AF4] to-gradientPink 
+          bg-clip-text text-transparent`}>
+              BAYC
+            </span>
+          </p>
           <p className="mb-[24px] text-b3 text-highEmphasis">PUNKS/WETH</p>
         </div>
         <div>

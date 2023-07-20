@@ -32,7 +32,7 @@ function TabIcon(props: any) {
             <rect id="tab-icon-transition" x="0" y="0" width="16" height="16" fill="url(#gradient)" />
           </g>
         </svg>
-        <span className="">{label}</span>
+        <span className="text-b1e">{label}</span>
       </div>
     </div>
   );
