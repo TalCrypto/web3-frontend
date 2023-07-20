@@ -59,39 +59,30 @@ export function getActionTypeFromApi(item: any) {
 
 export function getTradingActionTypeFromSubgraph(item: any, isMobile = false) {
   let actionType = '';
-  if (item.type === 'adjust') {
-    const collateralNumber = item.collateralChange ? formatBigInt(item.collateralChange) : 0;
-    if (collateralNumber > 0) {
-      actionType = 'Add Collateral';
+  const liquidationPenaltyNumber = item.liquidationPenalty ? formatBigInt(item.liquidationPenalty) : 0;
+  if (liquidationPenaltyNumber !== 0) {
+    const positionSizeAfterNumber = item.positionSizeAfter ? formatBigInt(item.positionSizeAfter) : 0;
+    if (positionSizeAfterNumber === 0) {
+      actionType = !isMobile ? TradeActions.FULL_LIQ : TradeActions.FULL_LIQ_MOBILE;
     } else {
-      actionType = 'Reduce Collateral';
+      actionType = !isMobile ? TradeActions.PARTIAL_LIQ : TradeActions.PARTIAL_LIQ_MOBILE;
     }
-  } else {
-    const liquidationPenaltyNumber = item.liquidationPenalty ? formatBigInt(item.liquidationPenalty) : 0;
-    if (liquidationPenaltyNumber !== 0) {
-      const positionSizeAfterNumber = item.positionSizeAfter ? formatBigInt(item.positionSizeAfter) : 0;
-      if (positionSizeAfterNumber === 0) {
-        actionType = !isMobile ? TradeActions.FULL_LIQ : 'Full Liquid.';
-      } else {
-        actionType = !isMobile ? TradeActions.PARTIAL_LIQ : 'Partial Liquid.';
-      }
-    } else if (formatBigInt(item.exchangedPositionSize) === formatBigInt(item.positionSizeAfter)) {
-      actionType = TradeActions.OPEN;
-    } else if (formatBigInt(item.positionSizeAfter) === 0) {
-      actionType = TradeActions.CLOSE;
-    } else if (
-      Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
-      Math.abs(formatBigInt(item.exchangedPositionSize)) < Math.abs(formatBigInt(item.positionSizeAfter))
-    ) {
-      actionType = TradeActions.ADD;
-    } else if (
-      Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
-      Math.abs(formatBigInt(item.exchangedPositionSize)) > Math.abs(formatBigInt(item.positionSizeAfter))
-    ) {
-      actionType = TradeActions.REVERSE;
-    } else if (Math.sign(formatBigInt(item.exchangedPositionSize)) !== Math.sign(formatBigInt(item.positionSizeAfter))) {
-      actionType = TradeActions.REDUCE;
-    }
+  } else if (formatBigInt(item.exchangedPositionSize) === formatBigInt(item.positionSizeAfter)) {
+    actionType = TradeActions.OPEN;
+  } else if (formatBigInt(item.positionSizeAfter) === 0) {
+    actionType = TradeActions.CLOSE;
+  } else if (
+    Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
+    Math.abs(formatBigInt(item.exchangedPositionSize)) < Math.abs(formatBigInt(item.positionSizeAfter))
+  ) {
+    actionType = TradeActions.ADD;
+  } else if (
+    Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
+    Math.abs(formatBigInt(item.exchangedPositionSize)) > Math.abs(formatBigInt(item.positionSizeAfter))
+  ) {
+    actionType = TradeActions.REVERSE;
+  } else if (Math.sign(formatBigInt(item.exchangedPositionSize)) !== Math.sign(formatBigInt(item.positionSizeAfter))) {
+    actionType = TradeActions.REDUCE;
   }
 
   return actionType;

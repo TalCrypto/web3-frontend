@@ -333,7 +333,7 @@ const AddressPage: NextPage = () => {
                   </div>
                 </div>
 
-                <div className="mb-[36px] md:flex md:space-x-[36px]">
+                <div className="mb-[36px] md:flex md:space-x-[16px]">
                   <p className="mb-2 text-b1e text-highEmphasis">About</p>
                   <p className="text-b1 text-highEmphasis">{userInfo?.about || '-'}</p>
                 </div>
