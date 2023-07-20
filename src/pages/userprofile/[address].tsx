@@ -58,7 +58,7 @@ const ProfileHeaderCard: FC<ProfileHeaderCardProps> = ({ children, isEnded = fal
     <div
       className="flex h-full flex-col items-center  rounded-[12px] border-[0.5px] border-[#FFD39240]  
                   bg-[url('/images/components/userprofile/profilecardbg.png')] bg-cover bg-[center_bottom_-3rem] bg-no-repeat 
-                  px-[8px] py-6 md:px-8">
+                  px-[8px] py-6 md:px-[18px]">
       {children}
     </div>
   </div>
@@ -295,6 +295,7 @@ const AddressPage: NextPage = () => {
 
                 <div className="mb-[24px] space-y-[24px] md:mb-[36px] md:flex md:space-x-[36px] md:space-y-0">
                   {/* badge labels */}
+                  {/*
                   <div className="overflow-auto">
                     <div className="flex space-x-[6px]">
                       <ProfileBadge color="sky">WHALE</ProfileBadge>
@@ -303,6 +304,7 @@ const AddressPage: NextPage = () => {
                       <ProfileBadge color="green">PUNK LOVER</ProfileBadge>
                     </div>
                   </div>
+                  */}
 
                   <div className="flex items-center space-x-2">
                     <p className="text-b1 text-mediumEmphasis">NFT Holding</p>
@@ -336,7 +338,7 @@ const AddressPage: NextPage = () => {
                   <p className="text-b1 text-highEmphasis">{userInfo?.about}</p>
                 </div>
               </div>
-              <div className="flex space-x-[16px] lg:space-x-[24px]">
+              <div className="flex space-x-[16px] lg:min-w-[425px] lg:space-x-[24px]">
                 {/* cards airdrop */}
                 <ProfileHeaderCard>
                   <p className="mb-[36px] flex-1 text-center text-b1e text-[#FFD392]">Airdrop Season 2</p>
