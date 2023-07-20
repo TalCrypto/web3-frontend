@@ -10,7 +10,6 @@ import { ExplorerButton } from '@/components/common/LabelsComponents';
 
 const Activities: React.FC = () => {
   const userHistories = useNanostore($userHistories);
-  console.log({ userHistories });
 
   return (
     <div>
@@ -37,7 +36,7 @@ const Activities: React.FC = () => {
             const isOpen = tradingType === 'Open' || tradingType === 'Add';
             const showLeverageValue = !isOpen ? '-' : `${(formatBigInt(d.positionNotional) / formatBigInt(d.amount)).toFixed(2)}X`;
             return (
-              <div className="flex">
+              <div className="flex" key={d.timestamp}>
                 {/* desktop cols */}
                 <div className="hidden flex-1 py-[10px] md:table-cell">
                   <div className="flex space-x-2">

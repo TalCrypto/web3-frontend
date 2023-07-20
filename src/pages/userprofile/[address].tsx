@@ -33,6 +33,7 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 import { localeConversion } from '@/utils/localeConversion';
 import { formatBigInt } from '@/utils/bigInt';
 import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { debounce } from 'lodash';
 import { SearchUserData, apiConnection } from '@/utils/apiConnection';
 
@@ -98,13 +99,11 @@ const AddressPage: NextPage = () => {
   const userCompetitionRank = useStore($userCompetitionRank);
 
   const userprofilePositionInfosArrKey = Object.keys(userprofilePositionInfos);
-  // console.log({ userprofilePositionInfos });
 
   const userPnl = Number(localeConversion(formatBigInt(userCompetitionRank?.pnl || 0), 2));
   const addressTrimmed = address ? trimAddress(address as string) : '';
 
   // search function
-  //
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResult] = useState<SearchUserData[]>([]);
