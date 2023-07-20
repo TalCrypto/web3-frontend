@@ -17,6 +17,7 @@ import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import Tooltip from '@/components/common/Tooltip';
 import { formatBigInt } from '@/utils/bigInt';
 import { useWeb3Modal } from '@web3modal/react';
+import { $isShowLoginModal } from '@/stores/modal';
 
 function Referral() {
   const router = useRouter();
@@ -99,7 +100,8 @@ function Referral() {
   };
 
   const onBtnConnectWallet = () => {
-    open();
+    // open();
+    $isShowLoginModal.set(true);
   };
 
   if (!isConnected) {

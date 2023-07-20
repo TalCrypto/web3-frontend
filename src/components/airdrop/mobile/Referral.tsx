@@ -8,9 +8,12 @@ import { useRouter } from 'next/router';
 import { $asHasReferCode, $asReferResponse, $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
-import { useWeb3Modal } from '@web3modal/react';
+import { $userIsConnected } from '@/stores/user';
+import PrimaryButton from '@/components/common/PrimaryButton';
+// import { useWeb3Modal } from '@web3modal/react';
 import ReferUserMobileModal from '@/components/airdrop/mobile/ReferUserMobileModal';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
+import { $isShowLoginModal } from '@/stores/modal';
 
 function ReferralMobile() {
   const router = useRouter();
@@ -28,9 +31,10 @@ function ReferralMobile() {
   const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
 
+  const isConnected = useNanostore($userIsConnected);
   const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
 
-  const { open } = useWeb3Modal();
+  // const { open } = useWeb3Modal();
 
   const eligibleTooltipMessage = (
     <>
@@ -47,21 +51,22 @@ function ReferralMobile() {
   );
 
   const onBtnConnectWallet = () => {
-    open();
+    // open();
+    $isShowLoginModal.set(true);
   };
 
-  // if (!isConnected) {
-  //   return (
-  //     <div className="flex h-[calc(100vh-325px)] flex-col items-center">
-  //       <p className="mb-6 mt-4">Please connect wallet to get started!</p>
-  //       <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
-  //         Connect Wallet
-  //       </PrimaryButton>
+  if (!isConnected) {
+    return (
+      <div className="flex h-[calc(100vh-325px)] flex-col items-center">
+        <p className="mb-6 mt-4">Please connect wallet to get started!</p>
+        <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
+          Connect Wallet
+        </PrimaryButton>
 
-  //       {hasReferCode ? <ReferUserMobileModal /> : null}
-  //     </div>
-  //   );
-  // }
+        {hasReferCode ? <ReferUserMobileModal /> : null}
+      </div>
+    );
+  }
 
   const copyTextFunc = (text: any) => {
     if (navigator.clipboard && window.isSecureContext) {

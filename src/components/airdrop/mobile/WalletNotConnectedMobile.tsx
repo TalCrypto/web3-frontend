@@ -1,12 +1,14 @@
 import React from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
-import { useWeb3Modal } from '@web3modal/react';
+// import { useWeb3Modal } from '@web3modal/react';
+import { $isShowLoginModal } from '@/stores/modal';
 
 const WalletNotConnectedMobile = () => {
-  const { open } = useWeb3Modal();
+  // const { open } = useWeb3Modal();
 
   const onBtnConnectWallet = () => {
-    open();
+    // open();
+    $isShowLoginModal.set(true);
   };
 
   return (

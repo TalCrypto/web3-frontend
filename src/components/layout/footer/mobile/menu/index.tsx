@@ -4,7 +4,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $isShowLoginModal, $isShowMobileModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import {
   $userAddress,
@@ -15,9 +15,9 @@ import {
   $userDisplayName,
   $userTotalCollateral
 } from '@/stores/user';
-import { useDisconnect, useSwitchNetwork } from 'wagmi';
-import { useWeb3Modal } from '@web3modal/react';
-import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { useDisconnect /* , useSwitchNetwork */ } from 'wagmi';
+// import { useWeb3Modal } from '@web3modal/react';
+// import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $userPoint } from '@/stores/airdrop';
 import { localeConversion } from '@/utils/localeConversion';
 
@@ -44,8 +44,8 @@ const MobileMenu = (props: any) => {
   // const tradeVolume = calculateNumber(tradeVol.vol, 4);
   // const eligible = () => Number(tradeVolume) >= 5;
   // const points = eligible() && !isBan ? localeConversion(total) : '0.0';
-  const { open } = useWeb3Modal();
-  const { switchNetwork } = useSwitchNetwork();
+  // const { open } = useWeb3Modal();
+  // const { switchNetwork } = useSwitchNetwork();
 
   const walletAddressToShow = (addr: any) => {
     if (!addr) {
@@ -55,11 +55,12 @@ const MobileMenu = (props: any) => {
   };
 
   const onBtnConnectClick = () => {
-    if (!isConnected) {
-      open({ route: 'ConnectWallet' });
-    } else if (isWrongNetwork && switchNetwork) {
-      switchNetwork(DEFAULT_CHAIN.id);
-    }
+    $isShowLoginModal.set(true);
+    // if (!isConnected) {
+    //   open({ route: 'ConnectWallet' });
+    // } else if (isWrongNetwork && switchNetwork) {
+    //   switchNetwork(DEFAULT_CHAIN.id);
+    // }
   };
 
   const onBtnDisonnectClick = () => {
