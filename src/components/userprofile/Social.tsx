@@ -6,7 +6,7 @@ import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 import { getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
 import { firebaseAuth } from '@/const/firebaseConfig';
-import { $currentChain, $userIsConnected } from '@/stores/user';
+import { $currentChain, $userIsConnected, $userAddress } from '@/stores/user';
 import { $userFollowers, $userFollowings, $userInfo, $userprofileAddress } from '@/stores/userprofile';
 import { apiConnection } from '@/utils/apiConnection';
 import { trimAddress } from '@/utils/string';
@@ -14,6 +14,7 @@ import { useStore } from '@nanostores/react';
 import { getAuth } from 'firebase/auth';
 import Image from 'next/image';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
+import { authConnections } from '@/utils/authConnections';
 
 const TableContainer: React.FC<PropsWithChildren> = ({ children }) => (
   <div
@@ -47,28 +48,47 @@ export const FollowButton = ({
 }) => {
   const currentUserAddress = useStore($userprofileAddress);
   const [localIsFollowing, setLocalIsFollowing] = useState(false);
+  const userAddress = useStore($userAddress);
 
   useEffect(() => {
     setLocalIsFollowing(isFollowing);
   }, [isFollowing]);
 
+  const unfollow = async () => {
+    const auth = getAuth();
+    const currentUser = auth?.currentUser;
+    const userAddr = userAddress?.toLowerCase();
+    if (!currentUser || currentUser.uid !== userAddr) {
+      await authConnections.switchCurrentUser(userAddr || '');
+    }
+    const newToken = await currentUser?.getIdToken(true);
+    try {
+      const res = await apiConnection.unfollowUser(targetAddress, newToken, userAddr);
+      if (res.code === 0) {
+        // todo:  update button
+        setLocalIsFollowing(false);
+      }
+    } catch (error) {
+      console.log('err', error);
+    }
+  };
+
   const follow = async () => {
     const auth = getAuth();
     const currentUser = auth?.currentUser;
-    console.log('currentUser', currentUser);
-    if (currentUser) {
-      const newToken = await currentUser.getIdToken(true);
-      console.log('newToken', newToken);
-      try {
-        const res = await apiConnection.followUser(targetAddress, newToken, currentUserAddress);
-        console.log('follow', res);
-        if (res.code === 0) {
-          // todo:  update button
-          setLocalIsFollowing(true);
-        }
-      } catch (error) {
-        console.log('err', error);
+    const userAddr = userAddress?.toLowerCase();
+    if (!currentUser || currentUser.uid !== userAddr) {
+      await authConnections.switchCurrentUser(userAddr!);
+    }
+    const newToken = await currentUser?.getIdToken(true);
+    try {
+      const res = await apiConnection.followUser(targetAddress, newToken, userAddr!);
+      if (res.code === 0) {
+        // todo:  update button
+        setLocalIsFollowing(true);
       }
+    } catch (error) {
+      console.log('err', error);
     }
   };
 
@@ -78,7 +98,7 @@ export const FollowButton = ({
   return (
     <div>
       {localIsFollowing ? (
-        <OutlineButton className="w-fit">
+        <OutlineButton className="w-fit" onClick={unfollow}>
           <p className="font-normal">Unfollow</p>
         </OutlineButton>
       ) : (

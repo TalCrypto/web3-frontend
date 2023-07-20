@@ -89,7 +89,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  unfollowUser: async function unfollowUser(followerAddress: string, firebaseToken: string, userAddress: string) {
+  unfollowUser: async function unfollowUser(followerAddress: any, firebaseToken: any, userAddress: any) {
     const url = `${authUrl}/users/unfollow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };

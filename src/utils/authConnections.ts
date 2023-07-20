@@ -28,7 +28,6 @@ export const authConnections = {
   },
   postAuthUser: async function postAuthUser(nonce: string, userAddress: string) {
     const messageHex = `\x19Ethereum Signed Message:\nHi there! Welcome to Tribe3!\n\nClick to log in to access your very own profile on Tribe3. Please note that this will not execute any blockchain transaction nor it will cost you any gas fee.\n\nYour Nonce: ${nonce}`;
-
     const walletClient = await getWalletClient();
     // const userAddress = useNanostore($userAddress);
 
@@ -57,6 +56,7 @@ export const authConnections = {
     const postUserContent = await this.postUserContent(userAddress);
     const { nonce } = postUserContent.data;
     const postAuthUser = await this.postAuthUser(nonce, userAddress);
+    console.log({ postAuthUser });
     const firToken = postAuthUser.data.token;
     try {
       const userCredential = await signInWithCustomToken(firebaseAuth!, firToken);
