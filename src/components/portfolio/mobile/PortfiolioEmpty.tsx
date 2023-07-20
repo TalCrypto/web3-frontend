@@ -3,19 +3,17 @@ import { useStore as useNanostore } from '@nanostores/react';
 import Image from 'next/image';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { $userIsConnected } from '@/stores/user';
-// import { useWeb3Modal } from '@web3modal/react';
+import { useWeb3Modal } from '@web3modal/react';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
-import { $isShowLoginModal } from '@/stores/modal';
 
 function PortfolioEmpty() {
   const isConnected = useNanostore($userIsConnected);
-  // const { open } = useWeb3Modal();
+  const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
   const onClickConnect = () => {
-    // open();
-    $isShowLoginModal.set(true);
+    open();
   };
 
   const updateTargetNetwork = () => {

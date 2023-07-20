@@ -10,10 +10,9 @@ import { useStore as useNanostore } from '@nanostores/react';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
 import { $userIsConnected } from '@/stores/user';
 import PrimaryButton from '@/components/common/PrimaryButton';
-// import { useWeb3Modal } from '@web3modal/react';
+import { useWeb3Modal } from '@web3modal/react';
 import ReferUserMobileModal from '@/components/airdrop/mobile/ReferUserMobileModal';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
-import { $isShowLoginModal } from '@/stores/modal';
 
 function ReferralMobile() {
   const router = useRouter();
@@ -34,7 +33,7 @@ function ReferralMobile() {
   const isConnected = useNanostore($userIsConnected);
   const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
 
-  // const { open } = useWeb3Modal();
+  const { open } = useWeb3Modal();
 
   const eligibleTooltipMessage = (
     <>
@@ -51,8 +50,7 @@ function ReferralMobile() {
   );
 
   const onBtnConnectWallet = () => {
-    // open();
-    $isShowLoginModal.set(true);
+    open();
   };
 
   if (!isConnected) {
@@ -97,7 +95,7 @@ function ReferralMobile() {
   };
 
   return (
-    <div className="relative">
+    <div>
       <div className="flex flex-col">
         <div className="flex h-fit basis-1/2 flex-col bg-darkBlue">
           {/* Share */}
