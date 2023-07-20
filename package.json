@@ -21,7 +21,7 @@
     "@widgetbot/react-embed": "^1.7.0",
     "downloadjs": "^1.4.7",
     "ethereum-block-by-date": "^1.4.7",
-    "firebase": "^9.22.0",
+    "firebase": "^10.0.0",
     "html-to-image": "^1.10.8",
     "lightweight-charts": "^4.0.1",
     "localforage": "^1.10.0",
