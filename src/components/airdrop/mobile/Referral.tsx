@@ -5,19 +5,19 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import { $asHasReferCode, $asReferResponse, $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
-import { $userIsConnected } from '@/stores/user';
-import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
-import PrimaryButton from '@/components/common/PrimaryButton';
 import { useWeb3Modal } from '@web3modal/react';
+import ReferUserMobileModal from '@/components/airdrop/mobile/ReferUserMobileModal';
+import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 
 function ReferralMobile() {
   const router = useRouter();
   const userPointData = useNanostore($userPoint);
+  const hasReferCode = useNanostore($asHasReferCode);
   const referralListData = useNanostore($referralList);
-  // const refersCode = router.query.ref;
+  const referResponse = useNanostore($asReferResponse);
 
   const userPoint = userPointData || defaultUserPoint;
 
@@ -28,10 +28,7 @@ function ReferralMobile() {
   const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
 
-  const isConnected = useNanostore($userIsConnected);
-  const [isReadyInputReferralPopupShow, setIsReadyInputReferralPopupShow] = useState(false);
-  const [referralOnboardingStatus, setReferralOnboardingStatus] = useState(0);
-  const [referedUser, setReferedUser] = useState({});
+  const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
 
   const { open } = useWeb3Modal();
 
@@ -53,28 +50,49 @@ function ReferralMobile() {
     open();
   };
 
-  if (!isConnected) {
-    return (
-      <div className="flex h-[calc(100vh-325px)] flex-col items-center">
-        <p className="mb-6 mt-4">Please connect wallet to get started!</p>
-        <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
-          Connect Wallet
-        </PrimaryButton>
+  // if (!isConnected) {
+  //   return (
+  //     <div className="flex h-[calc(100vh-325px)] flex-col items-center">
+  //       <p className="mb-6 mt-4">Please connect wallet to get started!</p>
+  //       <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
+  //         Connect Wallet
+  //       </PrimaryButton>
 
-        {/* {isReadyInputReferralPopupShow ? (
-          <ReferUserModal
-            isShow={isReadyInputReferralPopupShow}
-            setIsShow={setIsReadyInputReferralPopupShow}
-            setReferralOnboardingStatus={setReferralOnboardingStatus}
-            referedUser={referedUser}
-          />
-        ) : null} */}
-      </div>
-    );
-  }
+  //       {hasReferCode ? <ReferUserMobileModal /> : null}
+  //     </div>
+  //   );
+  // }
+
+  const copyTextFunc = (text: any) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    }
+  };
+
+  const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
+    if (isReferralPopupShow) {
+      setIsReferralPopupShow(false);
+    }
+    // setTargetTooltip(targetElement);
+    copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
+    // notifyCopyLink();
+  };
+
+  const shareToCopyText = () => `📢 Use my referral link to enjoy extra Tribe3 points!
+  🎉 Long & short Blue-chips NFTs with leverage at any amount on ${referralCode?.toUpperCase()}`;
+
+  const shareToTwitter = () => {
+    // logHelper('reward_my_referral_code_share_twitter_pressed', walletProvider.holderAddress, { page: 'Reward' });
+    setIsReferralPopupShow(false);
+    const encodeItem = `🎉 Long & short Blue-chips NFTs with leverage at any amount on
+      https://app.tribe3.xyz/airdrop/refer?ref=${referralCode?.toUpperCase()}
+      \n📢 Use my referral link to enjoy extra Tribe3 points!
+      \n@Tribe3Official`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
+  };
 
   return (
-    <div>
+    <div className="relative">
       <div className="flex flex-col">
         <div className="flex h-fit basis-1/2 flex-col bg-darkBlue">
           {/* Share */}
@@ -92,13 +110,25 @@ function ReferralMobile() {
                 <span className="text-[12px] font-normal text-mediumEmphasis">
                   {`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode}`}
                 </span>
-                <Image
-                  className="ml-[6px] mr-0 cursor-pointer"
-                  src="/images/components/airdrop/copy-white.svg"
-                  alt=""
-                  width={16}
-                  height={16}
-                />
+                <div className="flex">
+                  <Image
+                    onClick={() => setIsReferralPopupShow(true)}
+                    className="cursor-pointer"
+                    src="/images/components/airdrop/share-white.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                  />
+
+                  <Image
+                    onClick={e => copyCode(e.target)}
+                    className="ml-4 mr-0 cursor-pointer"
+                    src="/images/components/airdrop/copy-white.svg"
+                    alt=""
+                    width={16}
+                    height={16}
+                  />
+                </div>
               </div>
 
               <div className="rounded-[6px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px]">
@@ -291,33 +321,21 @@ function ReferralMobile() {
               </div>
             </div>
           </div>
-
-          {/* Show Referral */}
-
-          {/* {hadEnterCode ? (
-            <div
-              className="border-1 relative z-0 mt-8 flex h-fit
-              flex-1 flex-col-reverse rounded-[6px] border-[#71AAFF]/20 p-[1px] ">
-              <div className="flex-1 p-[24px]">
-                <h3 className="mb-6">My Referrer</h3>
-                {hadEnterCode ? (
-                  <>
-                    <p className="mb-6 pt-3 text-[14px] font-normal text-highEmphasis">🥳 Congrats! You already have a referrer!</p>
-                    <h5 className="mb-9">
-                      My Referrer:{' '}
-                      <span
-                        className="cursor-pointer text-primaryBlue"
-                        onClick={() => router.push(`/userprofile/${userPoint.referralUser?.userAddress}`)}>
-                        {userPoint.referralUser?.username || userPoint.referralUser?.userAddress}
-                      </span>
-                    </h5>
-                  </>
-                ) : null}
-              </div>
-            </div>
-          ) : null} */}
         </div>
       </div>
+
+      {isReferralPopupShow ? (
+        <ShareMobileModal
+          setIsShow={setIsReferralPopupShow}
+          referralCode={referralCode}
+          copyCode={copyCode}
+          shareToTwitter={shareToTwitter}
+          shareToCopyText={shareToCopyText}
+        />
+      ) : null}
+
+      {hasReferCode ? <ReferUserMobileModal /> : null}
+      {referResponse !== 0 ? <ReferUserMobileModal /> : null}
     </div>
   );
 }
