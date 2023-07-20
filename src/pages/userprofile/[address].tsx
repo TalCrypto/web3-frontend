@@ -296,12 +296,12 @@ const AddressPage: NextPage = () => {
                 <div className="mb-4 md:flex md:justify-between">
                   <div className="md:flex md:space-x-4">
                     <div className="mb-4 md:mb-0">
-                      <p className="bg-gradient-to-b from-[#FFC977]  to-white bg-clip-text text-h2 text-transparent">
+                      <p className="bg-gradient-to-b from-[#FFC977] to-white bg-clip-text text-h2 leading-[1] text-transparent">
                         {userInfo?.username || 'Unnamed'}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-[6px]">
+                      <div className="flex items-start space-x-[6px]">
                         <p className="text-mediumEmphasis">{addressTrimmed}</p>
                         <Image
                           src="/images/components/userprofile/copy.svg"
@@ -366,12 +366,12 @@ const AddressPage: NextPage = () => {
                 <div className="mb-[24px] flex space-x-[16px] md:hidden">
                   <div>
                     <p className="text-b1 text-mediumEmphasis">
-                      Followers <span className="text-b1e text-highEmphasis">{userFollowers?.length || 0}</span>
+                      Following <span className="text-b1e text-highEmphasis">{userFollowings?.length || 0}</span>
                     </p>
                   </div>
                   <div>
                     <p className="text-b1 text-mediumEmphasis">
-                      Followers <span className="text-b1e text-highEmphasis">{userFollowings?.length || 0}</span>
+                      Followers <span className="text-b1e text-highEmphasis">{userFollowers?.length || 0}</span>
                     </p>
                   </div>
                 </div>
