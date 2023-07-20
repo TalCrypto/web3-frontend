@@ -47,8 +47,10 @@ export default function InputSlider(props: any) {
             {Object.keys(marks).map(i => (
               <div
                 key={`dot-${i}`}
-                className="pointer-events-auto h-[8px] w-[8px] cursor-pointer rounded-[4px] bg-mediumEmphasis
-                  hover:bg-highEmphasis hover:outline-[3px] hover:outline-white/[.20]"
+                className={`pointer-events-auto h-[8px] w-[8px] 
+                  ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+                  rounded-[4px] bg-mediumEmphasis
+                  hover:bg-highEmphasis hover:outline-[3px] hover:outline-white/[.20]`}
                 onClick={() => {
                   if (!disabled) onChange(i);
                 }}
@@ -61,7 +63,8 @@ export default function InputSlider(props: any) {
               return (
                 <div
                   key={`mark-${i}`}
-                  className="cursor-pointer text-[14px] text-mediumEmphasis"
+                  className={`${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+                    text-[14px] text-mediumEmphasis`}
                   onClick={() => {
                     if (!disabled) onChange(i);
                   }}>
@@ -73,8 +76,9 @@ export default function InputSlider(props: any) {
         </>
       ) : null}
       <div
-        className="input-slider pointer-events-none absolute top-2 flex h-[14px]
-        w-[14px] cursor-pointer items-center justify-center rounded-full"
+        className={`input-slider pointer-events-none absolute top-2 flex h-[14px] w-[14px]
+          ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+          items-center justify-center rounded-full`}
         style={{
           left: `calc(${fill}% - ${lerp(0, 14, alphaFill)}px)`
         }}>

@@ -1,6 +1,7 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { InjectedConnector } from 'wagmi/connectors/injected';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { ToastContainer } from 'react-toastify';
@@ -12,6 +13,8 @@ import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
 import { publicProvider } from 'wagmi/providers/public';
 import MetamaskModal from '@/components/layout/header/desktop/MetamaskModal';
+import LoginModal from '@/components/layout/header/desktop/LoginModal';
+import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetTokenModal';
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
@@ -19,7 +22,7 @@ const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProv
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ projectId, chains: CHAINS }),
+  connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
   publicClient,
   webSocketPublicClient
 });
@@ -80,6 +83,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
         <UserDataUpdater />
+        <LoginModal />
       </WagmiConfig>
 
       <Web3Modal
@@ -103,6 +107,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <TransferTokenModal />
       <MetamaskModal />
+      <MobileGetTokenModal />
     </>
   );
 }

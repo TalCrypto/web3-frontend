@@ -49,6 +49,7 @@ module.exports = {
         tooltipArrow: '#213676',
         buttonGreen: '#48AE36',
         buttonRed: '#EA3E3F',
+        buttonHover: '#ffffff33',
 
         gradientBlue: '#04AEFC',
         gradientPink: '#F703D9',

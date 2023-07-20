@@ -190,7 +190,7 @@ const HistoryModal = (props: any) => {
                                 className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}
                                   !text-[14px] font-medium`}
                                 priceValue={`${Number(balance) > 0 ? '+' : ''}${
-                                  Number(balance) === 0 ? '-.---' : Number(balance).toFixed(4)
+                                  Number(balance) === 0 ? '-.--' : Number(balance).toFixed(4)
                                 }`}
                               />
                             </div>
@@ -219,7 +219,7 @@ const HistoryModal = (props: any) => {
                     className={`${Number(selectedBalance) > 0 ? 'text-marketGreen' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}
                       mt-[6px] text-[20px] font-semibold`}
                     priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
-                      Number(selectedBalance) === 0 ? '--.--' : Number(selectedBalance).toFixed(4)
+                      Number(selectedBalance) === 0 ? '-.--' : Number(selectedBalance).toFixed(4)
                     }`}
                   />
                 </div>
@@ -259,9 +259,7 @@ const HistoryModal = (props: any) => {
                     ? detailRowMobile(
                         'Collateral Change',
                         <PriceWithIcon
-                          priceValue={
-                            selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'
-                          }>
+                          priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '-.--'}>
                           {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                             <MobileTooltip
                               direction="top"
@@ -285,7 +283,7 @@ const HistoryModal = (props: any) => {
                     : selectedRecord
                     ? detailRowMobile(
                         'Resulting Collateral',
-                        <PriceWithIcon priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'} />
+                        <PriceWithIcon priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '-.--'} />
                       )
                     : null}
                   {isLiquidation && selectedRecord

@@ -2,13 +2,13 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { ThreeDots } from 'react-loader-spinner';
 import { useRouter } from 'next/router';
-import { $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import { $asHasReferCode, $asReferResponse, $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $userIsConnected, $userIsConnecting } from '@/stores/user';
+import { $userIsConnected } from '@/stores/user';
 import { toast } from 'react-toastify';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import ReferUserModal from '@/components/airdrop/desktop/ReferUserModal';
@@ -21,24 +21,18 @@ import { useWeb3Modal } from '@web3modal/react';
 function Referral() {
   const router = useRouter();
   const userPointData = useNanostore($userPoint);
+  const hasReferCode = useNanostore($asHasReferCode);
+  const referResponse = useNanostore($asReferResponse);
+
   const [targetTooltip, setTargetTooltip] = useState(null);
   const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
-  const [isReadyInputReferralPopupShow, setIsReadyInputReferralPopupShow] = useState(false);
-  const [isReferralCompletedPopup, setIsReferralCompletedPopup] = useState(false);
-  const [isReferralCodeEnterPopup, setIsReferralCodeEnterPopup] = useState(false);
-  const [isReferralHadTradedPopup, setIsReferralHadTradedPopup] = useState(false);
-  const [isUsingOwnCodePopup, setIsUsingOwnCodePopup] = useState(false);
-  const [referralOnboardingStatus, setReferralOnboardingStatus] = useState(0);
-  const [referedUser, setReferedUser] = useState({});
 
   const isConnected = useNanostore($userIsConnected);
   const referralListData = useNanostore($referralList);
-  const isConnecting = useNanostore($userIsConnecting);
 
   const userPoint = userPointData || defaultUserPoint;
 
   const { referralCode } = userPoint;
-  const hadEnterCode = userPoint.isInputCode && userPoint.referralUser?.userAddress;
   const totalReferralPoint = Number(userPoint.referral.referralSelfRewardPoints) + Number(userPoint.referral.referringRewardPoints);
   const totalReferees = userPoint.referredUserCount;
   const eligibleReferees = userPoint.eligibleCount;
@@ -49,7 +43,9 @@ function Referral() {
 
   const eligibleTooltipMessage = (
     <>
-      You must have a minimum <br /> trading volume of 5 WETH notional <br /> to unlock all the points!
+      You must have a minimum <br />
+      trading volume of 5 WETH notional <br />
+      to unlock all the points!
     </>
   );
   const tooltipMessage = (
@@ -114,14 +110,7 @@ function Referral() {
           Connect Wallet
         </PrimaryButton>
 
-        {isReadyInputReferralPopupShow ? (
-          <ReferUserModal
-            isShow={isReadyInputReferralPopupShow}
-            setIsShow={setIsReadyInputReferralPopupShow}
-            setReferralOnboardingStatus={setReferralOnboardingStatus}
-            referedUser={referedUser}
-          />
-        ) : null}
+        {hasReferCode ? <ReferUserModal /> : null}
       </div>
     );
   }
@@ -292,7 +281,7 @@ function Referral() {
             />
             <div className="flex-1">
               <h3 className="mb-[24px]">📢 My Referral Link</h3>
-              <p className="body2 mb-[36px]">
+              <p className="body2 mb-[36px] text-[14px] font-normal">
                 Share you referral code to get 3% of their trading volume points, while they can get 2% of their own trading volume points!
               </p>
               <div className="mb-[36px] flex items-center space-x-[12px] md:space-x-[24px]">
@@ -317,14 +306,6 @@ function Referral() {
                   <Image className="cursor-pointer" src="/images/components/airdrop/share-white.svg" alt="" width={24} height={24} />
                 </PrimaryButton>
               </div>
-
-              {/* <Overlay target={targetTooltip} show={showCopyNotice} placement="top">
-                {prop => (
-                  <Tooltip id="overlay-example" {...prop}>
-                    Copied!
-                  </Tooltip>
-                )}
-              </Overlay> */}
 
               <div className="hidden rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px] md:block">
                 <div className="rounded-[15px] bg-lightBlue p-[24px] outline-dashed outline-2 outline-lightBlue">
@@ -386,36 +367,10 @@ function Referral() {
               </div>
             </div>
           </div>
-
-          {/* Show Referral */}
-
-          {hadEnterCode ? (
-            <div
-              className="border-1 relative z-0 mt-8 flex h-fit
-              flex-1 flex-col-reverse rounded-[6px] border-[#71AAFF]/20 bg-lightBlue/50 p-[1px] ">
-              <div className="flex-1 p-[24px] md:p-[36px]">
-                <h3 className="mb-[24px]">My Referrer</h3>
-                {hadEnterCode ? (
-                  <>
-                    <p className="body2 mb-[24px] pt-[12px]">🥳 Congrats! You already have a referrer!</p>
-                    <h5 className="mb-[36px]">
-                      My Referrer:{' '}
-                      <span
-                        className="cursor-pointer text-primaryBlue"
-                        onClick={() => router.push(`/userprofile/${userPoint.referralUser?.userAddress}`)}>
-                        {userPoint.referralUser?.username || userPoint.referralUser?.userAddress}
-                      </span>
-                    </h5>
-                  </>
-                ) : null}
-              </div>
-            </div>
-          ) : null}
         </div>
       </div>
       {isReferralPopupShow ? (
         <ShareModal
-          isShow={isReferralPopupShow}
           setIsShow={setIsReferralPopupShow}
           referralCode={referralCode}
           copyCode={copyCode}
@@ -423,50 +378,9 @@ function Referral() {
           shareToCopyText={shareToCopyText}
         />
       ) : null}
-      {isReadyInputReferralPopupShow ? (
-        <ReferUserModal
-          isShow={isReadyInputReferralPopupShow}
-          setIsShow={setIsReadyInputReferralPopupShow}
-          setReferralOnboardingStatus={setReferralOnboardingStatus}
-          referedUser={referedUser}
-        />
-      ) : null}
-      {isReferralHadTradedPopup ? (
-        <ResponseModal
-          isShow={isReferralHadTradedPopup}
-          setIsShow={setIsReferralHadTradedPopup}
-          title="You have Traded Once"
-          description="Referral code can only be entered before trading."
-          buttonLabel="Close"
-        />
-      ) : null}
-      {isReferralCodeEnterPopup ? (
-        <ResponseModal
-          isShow={isReferralCodeEnterPopup}
-          setIsShow={setIsReferralCodeEnterPopup}
-          title="You Already have a Referrer"
-          description="You are currently getting 2% of your own trading volume bonus points."
-          buttonLabel="Close"
-        />
-      ) : null}
-      {isUsingOwnCodePopup ? (
-        <ResponseModal
-          isShow={isUsingOwnCodePopup}
-          setIsShow={setIsUsingOwnCodePopup}
-          title="Invalid Referral Code"
-          description="Please use a valid referral code."
-          buttonLabel="Close"
-        />
-      ) : null}
-      {isReferralCompletedPopup ? (
-        <ResponseModal
-          isShow={isReferralCompletedPopup}
-          setIsShow={setIsReferralCompletedPopup}
-          title="Congrats!"
-          description="You can get 2% of your own trading volume bonus points!"
-          buttonLabel="Close"
-        />
-      ) : null}
+
+      {hasReferCode ? <ReferUserModal /> : null}
+      {referResponse !== 0 ? <ResponseModal /> : null}
     </div>
   );
 }

@@ -188,7 +188,6 @@ export const getMarketHistory = async (ammAddr: string) => {
     body: JSON.stringify({
       query: `{
                 positionChangedEvents(
-                    first: 20,
                     orderBy: timestampIndex,
                     orderDirection: desc,
                     where:{

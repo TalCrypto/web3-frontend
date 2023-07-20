@@ -58,7 +58,7 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/address/0x5af0d9827e0c53e4799bb226655a1de152a425a5',
     shortName: 'MILADY',
     displayCollectionPair: 'MILADY/WETH',
-    isNew: true,
+    isNew: false,
     sort: 1
   },
   [AMM.PPG]: {
@@ -79,7 +79,7 @@ export const collectionsInfos: CollectionInfos = {
     etherscanUrl: 'https://etherscan.io/address/0xbd3531da5cf5857e7cfaa92426877b022e612cf8',
     shortName: 'PUDGY',
     displayCollectionPair: 'PPG/WETH',
-    isNew: true,
+    isNew: false,
     sort: 2
   },
   [AMM.DEGODS]: {

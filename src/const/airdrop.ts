@@ -40,3 +40,11 @@ export const airdropTabsInfo: AirdropTabInfos = {
     route: 'rules'
   }
 };
+
+export enum ReferredResponse {
+  NoResponse = 0,
+  Congrats = 1,
+  IsInvalidCode = 2,
+  IsTradedOnce = 3,
+  IsHadEnterCode = 4
+}

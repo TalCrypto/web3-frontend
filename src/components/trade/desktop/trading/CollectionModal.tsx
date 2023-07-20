@@ -109,48 +109,56 @@ const CollectionModal = (props: any) => {
       const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
       const priceGapPercentage = priceGap * 100;
 
-      const changed24h = tradingData.priceChange24h ? (
+      const changed24h = tradingData.priceChangeRatio24h ? (
         <p
           className={`${
-            Number(tradingData.priceChange24h?.toFixed(2)) > 0
+            Number(tradingData.priceChangeRatio24h?.toFixed(2)) > 0
               ? 'text-marketGreen'
-              : Number(tradingData.priceChange24h?.toFixed(2)) < 0
+              : Number(tradingData.priceChangeRatio24h?.toFixed(2)) < 0
               ? 'text-marketRed'
               : 'text-white'
           }`}>
-          {Number(tradingData.priceChange24h?.toFixed(2)) > 0 ? '+' : Number(tradingData.priceChange24h?.toFixed(2)) < 0 ? '-' : ''}
+          {Number(tradingData.priceChangeRatio24h?.toFixed(2)) > 0
+            ? '+'
+            : Number(tradingData.priceChangeRatio24h?.toFixed(2)) < 0
+            ? '-'
+            : ''}
           {Math.abs(Number(tradingData.priceChange24h)).toFixed(2)}({Math.abs(Number(tradingData.priceChangeRatio24h)).toFixed(2)}%)
         </p>
       ) : (
         <p className="text-white">0.00(0.00%)</p>
       );
 
-      const changed7d = tradingData.priceChange7d ? (
+      const changed7d = tradingData.priceChangeRatio7d ? (
         <p
           className={`${
-            Number(tradingData.priceChange7d?.toFixed(2)) > 0
+            Number(tradingData.priceChangeRatio7d?.toFixed(2)) > 0
               ? 'text-marketGreen'
-              : Number(tradingData.priceChange7d?.toFixed(2)) < 0
+              : Number(tradingData.priceChangeRatio7d?.toFixed(2)) < 0
               ? 'text-marketRed'
               : 'text-white'
           }`}>
-          {Number(tradingData.priceChange7d?.toFixed(2)) > 0 ? '+' : Number(tradingData.priceChange7d?.toFixed(2)) < 0 ? '-' : ''}
+          {Number(tradingData.priceChangeRatio7d?.toFixed(2)) > 0 ? '+' : Number(tradingData.priceChangeRatio7d?.toFixed(2)) < 0 ? '-' : ''}
           {Math.abs(Number(tradingData.priceChange7d)).toFixed(2)}({Math.abs(Number(tradingData.priceChangeRatio7d)).toFixed(2)}%)
         </p>
       ) : (
         <p className="text-white">0.00(0.00%)</p>
       );
 
-      const changed30d = tradingData.priceChange30d ? (
+      const changed30d = tradingData.priceChangeRatio30d ? (
         <p
           className={`${
-            Number(tradingData.priceChange30d?.toFixed(2)) > 0
+            Number(tradingData.priceChangeRatio30d?.toFixed(2)) > 0
               ? 'text-marketGreen'
-              : Number(tradingData.priceChange30d?.toFixed(2)) < 0
+              : Number(tradingData.priceChangeRatio30d?.toFixed(2)) < 0
               ? 'text-marketRed'
               : 'text-white'
           }`}>
-          {Number(tradingData.priceChange30d?.toFixed(2)) > 0 ? '+' : Number(tradingData.priceChange30d?.toFixed(2)) < 0 ? '-' : ''}
+          {Number(tradingData.priceChangeRatio30d?.toFixed(2)) > 0
+            ? '+'
+            : Number(tradingData.priceChangeRatio30d?.toFixed(2)) < 0
+            ? '-'
+            : ''}
           {Math.abs(Number(tradingData.priceChange30d)).toFixed(2)}({Math.abs(Number(tradingData.priceChangeRatio30d)).toFixed(2)}%)
         </p>
       ) : (

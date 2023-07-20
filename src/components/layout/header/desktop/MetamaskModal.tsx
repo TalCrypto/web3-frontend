@@ -58,31 +58,26 @@ export default function MetamaskModal() {
         <div className="relative flex flex-col items-center justify-center">
           <div className="mt-[4px] text-[15px] font-[600] text-[#fff] ">{displayContent[currentPage].title}</div>
           <div className="z-[2] mt-[16px] flex flex-row items-center justify-center ">
-            {currentPage !== 0 ? (
-              <Image
-                src="/images/common/page-prev.svg"
-                width={10}
-                height={20}
-                alt=""
-                className="mr-[30px] cursor-pointer"
-                onClick={() => setCurrentPage(currentPage - 1)}
-              />
-            ) : (
-              <div className="mr-[30px] h-[20px] w-[10px]" />
-            )}
+            <Image
+              src="/images/common/page-prev.svg"
+              width={40}
+              height={40}
+              alt=""
+              className={`mr-[24px] cursor-pointer rounded-[50%] px-[12px] py-[8px] hover:bg-buttonHover ${
+                currentPage === 0 ? 'invisible' : ''
+              }`}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            />
             <Image src={currentItem.image} width={356} height={219} alt="" className="" />
-            {currentPage + 1 < displayContent.length ? (
-              <Image
-                src="/images/common/page-next.svg"
-                width={10}
-                height={20}
-                alt=""
-                className="ml-[30px] cursor-pointer "
-                onClick={() => setCurrentPage(currentPage + 1)}
-              />
-            ) : (
-              <div className="ml-[30px] h-[20px] w-[10px]" />
-            )}
+            <Image
+              src="/images/common/page-next.svg"
+              width={40}
+              height={40}
+              alt=""
+              className={`ml-[24px] cursor-pointer rounded-[50%] px-[12px] py-[8px] hover:bg-buttonHover
+                  ${currentPage + 1 < displayContent.length ? '' : 'invisible'}`}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            />
           </div>
           <div className="my-[24px] flex flex-row ">
             {displayContent.map((item, index) => (

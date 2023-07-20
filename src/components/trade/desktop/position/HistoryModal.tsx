@@ -214,7 +214,7 @@ const HistoryModal = (props: any) => {
                                   className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}
                                     !text-[14px] font-medium`}
                                   priceValue={`${Number(balance) > 0 ? '+' : ''}${
-                                    Number(balance) === 0 ? '-.---' : Number(balance).toFixed(4)
+                                    Number(balance) === 0 ? '-.--' : Number(balance).toFixed(4)
                                   }`}
                                 />
                               </div>
@@ -284,7 +284,7 @@ const HistoryModal = (props: any) => {
                       <PriceWithIcon
                         width={20}
                         height={20}
-                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
+                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '-.--'}>
                         {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                           <Tooltip
                             direction="top"
@@ -312,7 +312,7 @@ const HistoryModal = (props: any) => {
                       <PriceWithIcon
                         width={20}
                         height={20}
-                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'}
+                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '-.--'}
                       />
                     )
                   : null}

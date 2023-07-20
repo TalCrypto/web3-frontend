@@ -29,7 +29,7 @@ function Cell(props: any) {
   const { items, classNames, isHeader } = props;
   return (
     <div
-      className={`relative mb-6 grid grid-cols-12 whitespace-break-spaces
+      className={`mb-6 grid grid-cols-12 whitespace-break-spaces
         text-[12px] text-mediumEmphasis
         ${isHeader ? 'font-normal' : 'items-center'}
       `}>
@@ -105,14 +105,14 @@ const MarketTrade = () => {
         ) : marketHistory.length > 0 ? (
           marketHistory.slice(0, displayCount > marketHistory.length ? marketHistory.length : displayCount).map((record, index) => (
             <div
-              className={`relative mb-1 grid grid-cols-12 items-center whitespace-break-spaces
+              className={`mb-1 grid grid-cols-12 items-center whitespace-break-spaces
                   px-5 py-2 text-[12px] text-mediumEmphasis
                   ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
                    ${newAdded && record.isNew ? 'flash' : ''}
                 `}
               key={`market_${record.timestamp}_${index}`}
               onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
-              <div className="time relative col-span-4 border-l-[2px] border-primaryBlue pl-2">
+              <div className="col-span-4 border-l-[2px] border-primaryBlue pl-2">
                 <span>{formatDateTime(record.timestamp, 'MM/DD/YYYY HH:mm')}</span>
                 <div className="h-[6px] w-full" />
                 <div className="max-w-[100px] overflow-x-hidden text-ellipsis">
@@ -126,7 +126,7 @@ const MarketTrade = () => {
                   {record.exchangedPositionSize > 0 ? 'LONG' : 'SHORT'}
                 </span>
                 <div className="h-[6px] w-full" />
-                <span className="text-highEmphasis">{getTradingActionType(marketHistory[index])}</span>
+                <span className="text-highEmphasis">{getTradingActionType(marketHistory[index], true)}</span>
               </div>
               <div className="col-span-2 ml-[-16px]">
                 <SmallPriceIcon priceValue={record.positionNotional.toFixed(4)} />
@@ -152,7 +152,7 @@ const MarketTrade = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                setDisplayCount(displayCount + 5);
+                setDisplayCount(displayCount + 15);
               }}>
               Show More
             </span>
@@ -212,7 +212,7 @@ const SpotTable = () => {
                 classNames={['col-span-4', 'col-span-4 px-2 text-[14px]', 'col-span-3 px-1', 'col-span-1 flex justify-end']}
                 key={`spot_${keyValue}`}
                 items={[
-                  <div className="relative border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(event_timestamp)}</div>,
+                  <div className="border-l-[2px] border-primaryBlue px-3">{formatDateTimeFromString(event_timestamp)}</div>,
                   <div className="flex items-center text-[14px] text-[#6286e3]">
                     <Image src={src} className="mr-1 rounded-[5px]" alt="" width={16} height={16} />
                     {`#${assetToken}` || 'No Name'}
@@ -244,7 +244,7 @@ const SpotTable = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                setDisplayCount(displayCount + 5);
+                setDisplayCount(displayCount + 15);
               }}>
               Show More
             </span>
@@ -301,7 +301,7 @@ const FundingPaymentHistory = () => {
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
               onClick={() => {
-                setDisplayCount(displayCount + 5);
+                setDisplayCount(displayCount + 15);
               }}>
               Show More
             </span>

@@ -61,14 +61,14 @@ function ReferralMobile() {
           Connect Wallet
         </PrimaryButton>
 
-        {isReadyInputReferralPopupShow ? (
+        {/* {isReadyInputReferralPopupShow ? (
           <ReferUserModal
             isShow={isReadyInputReferralPopupShow}
             setIsShow={setIsReadyInputReferralPopupShow}
             setReferralOnboardingStatus={setReferralOnboardingStatus}
             referedUser={referedUser}
           />
-        ) : null}
+        ) : null} */}
       </div>
     );
   }

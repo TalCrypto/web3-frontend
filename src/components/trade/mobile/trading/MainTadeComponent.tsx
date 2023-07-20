@@ -33,7 +33,7 @@ import {
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
-import { $showGetWEthModal } from '@/stores/modal';
+import { $showGetWEthModal, $isShowMobileTokenModal } from '@/stores/modal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -116,7 +116,8 @@ function QuantityTips(props: any) {
   const [isEstPriceFluctuation, setIsEstPriceFluctuation] = useState(false);
 
   const onClickWeth = () => {
-    $showGetWEthModal.set(true);
+    // $showGetWEthModal.set(true);
+    $isShowMobileTokenModal.set(true);
   };
 
   useEffect(() => {
@@ -168,7 +169,8 @@ function QuantityEnter(props: any) {
   const fluctuationPct =
     (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
   const fluctuationLmt = useFluctuationLimit();
-  const estPriceFluctuation = fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
+  const estPriceFluctuation =
+    value > 0 && fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -201,7 +203,8 @@ function QuantityEnter(props: any) {
               type="button"
               className="ml-[8px] text-[14px] text-primaryBlue"
               onClick={() => {
-                $showGetWEthModal.set(true);
+                // $showGetWEthModal.set(true);
+                $isShowMobileTokenModal.set(true);
               }}>
               Get WETH
             </button>
