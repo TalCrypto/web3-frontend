@@ -296,7 +296,7 @@ const AddressPage: NextPage = () => {
                 <div className="mb-4 md:flex md:justify-between">
                   <div className="md:flex md:space-x-4">
                     <div className="mb-4 md:mb-0">
-                      <p className="bg-gradient-to-b from-[#FFC977] to-white bg-clip-text text-h2 leading-[1] text-transparent">
+                      <p className="bg-gradient-to-b from-[#FFC977] to-white bg-clip-text text-h2 text-transparent">
                         {userInfo?.username || 'Unnamed'}
                       </p>
                     </div>
@@ -322,7 +322,7 @@ const AddressPage: NextPage = () => {
                   </div>
 
                   {/* desktop only followers */}
-                  <div className="hidden space-x-[16px] md:flex">
+                  <div className="hidden space-x-[16px] md:flex md:items-center">
                     <div>
                       <p className="text-b1 text-mediumEmphasis">
                         Following <span className="text-b1e text-highEmphasis">{userInfo?.following || 0}</span>
