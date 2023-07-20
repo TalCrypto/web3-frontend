@@ -10,6 +10,7 @@ import { getAuth } from 'firebase/auth';
 import { $asHasReferCode, $asReferResponse, $asReferredUser, $asShowResponseModal, $userPoint } from '@/stores/airdrop';
 import { useRouter } from 'next/router';
 import { ReferredResponse } from '@/const/airdrop';
+import { authConnections } from '@/utils/authConnections';
 
 const UserReferralUpdater = () => {
   const router = useRouter();
@@ -43,15 +44,16 @@ const UserReferralUpdater = () => {
   }, [refersCode]);
 
   useEffect(() => {
-    function useReferral() {
+    async function useReferral() {
       const { currentUser } = auth;
       try {
-        if (currentUser) {
-          const idToken = currentUser.getIdToken(true);
-          const response: any = apiConnection.useReferralCode(refersCode, idToken, String(address));
-          if (response.code === 0) {
-            $asReferResponse.set(ReferredResponse.Congrats);
-          }
+        if (!currentUser || currentUser.uid === address) {
+          await authConnections.switchCurrentUser(address || '');
+        }
+        const idToken = await currentUser?.getIdToken(true);
+        const response: any = apiConnection.useReferralCode(refersCode, idToken, String(address));
+        if (response.code === 0) {
+          $asReferResponse.set(ReferredResponse.Congrats);
         }
       } catch (e) {
         // console.log({ e });
