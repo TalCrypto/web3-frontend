@@ -11,6 +11,7 @@ import ProfileBadge from '@/components/userprofile/ProfileBadge';
 import TabItems from '@/components/userprofile/TabItems';
 import {
   $activeTab,
+  $asTargetUserInfoUpdateTrigger,
   $userAirdropRank,
   $userCompetitionRank,
   $userFollowers,
@@ -111,13 +112,11 @@ const AddressPage: NextPage = () => {
   const [searchResults, setSearchResult] = useState<SearchUserData[]>([]);
 
   const search = async (val: string, holderAddress: string) => {
-    // console.log(val, holderAddress);
     if (!val || !holderAddress) {
       setSearchResult([]);
       return;
     }
     const res = await apiConnection.searchUser(val, holderAddress);
-    // console.log(res);
     if (res.data && res.data.length > 0) {
       setSearchResult(res.data);
     } else {
@@ -138,7 +137,7 @@ const AddressPage: NextPage = () => {
     try {
       const res = await apiConnection.unfollowUser(userprofileAddress, newToken, userAddr);
       if (res.code === 0) {
-        // todo:  update button
+        $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
     } catch (error) {
       console.log('err', error);
@@ -158,8 +157,7 @@ const AddressPage: NextPage = () => {
     try {
       const res = await apiConnection.followUser(userprofileAddress, newToken, userAddr!);
       if (res.code === 0) {
-        // todo:  update button
-        // setLocalIsFollowing(true);
+        $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
     } catch (error) {
       console.log('err', error);
@@ -296,7 +294,7 @@ const AddressPage: NextPage = () => {
                 <div className="mb-4 md:flex md:justify-between">
                   <div className="md:flex md:space-x-4">
                     <div className="mb-4 md:mb-0">
-                      <p className="bg-gradient-to-b from-[#FFC977] to-white bg-clip-text text-h2 text-transparent">
+                      <p className="bg-gradient-to-b from-[#FFC977] to-white bg-clip-text text-h2 leading-none text-transparent">
                         {userInfo?.username || 'Unnamed'}
                       </p>
                     </div>

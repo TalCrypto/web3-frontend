@@ -7,7 +7,7 @@ import { getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
 import { firebaseAuth } from '@/const/firebaseConfig';
 import { $currentChain, $userIsConnected, $userAddress } from '@/stores/user';
-import { $userFollowers, $userFollowings, $userInfo, $userprofileAddress } from '@/stores/userprofile';
+import { $asTargetUserInfoUpdateTrigger, $userFollowers, $userFollowings, $userInfo, $userprofileAddress } from '@/stores/userprofile';
 import { apiConnection } from '@/utils/apiConnection';
 import { trimAddress } from '@/utils/string';
 import { useStore } from '@nanostores/react';
@@ -46,9 +46,11 @@ export const FollowButton = ({
   visible: boolean;
   targetAddress?: string;
 }) => {
-  const currentUserAddress = useStore($userprofileAddress);
   const [localIsFollowing, setLocalIsFollowing] = useState(false);
   const userAddress = useStore($userAddress);
+  const userprofileAddress = useStore($userprofileAddress);
+  const isCurrentUser = userAddress?.toLowerCase() === targetAddress?.toLowerCase();
+  const isCurrentUserProfilePage = userAddress?.toLowerCase() === userprofileAddress?.toLowerCase();
 
   useEffect(() => {
     setLocalIsFollowing(isFollowing);
@@ -67,8 +69,10 @@ export const FollowButton = ({
     try {
       const res = await apiConnection.unfollowUser(targetAddress, newToken, userAddr);
       if (res.code === 0) {
-        // todo:  update button
         setLocalIsFollowing(false);
+        if (isCurrentUserProfilePage) {
+          $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
+        }
       }
     } catch (error) {
       console.log('err', error);
@@ -88,15 +92,17 @@ export const FollowButton = ({
     try {
       const res = await apiConnection.followUser(targetAddress, newToken, userAddr!);
       if (res.code === 0) {
-        // todo:  update button
         setLocalIsFollowing(true);
+        if (isCurrentUserProfilePage) {
+          $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
+        }
       }
     } catch (error) {
       console.log('err', error);
     }
   };
 
-  if (!visible) {
+  if (!visible || isCurrentUser) {
     return null;
   }
   return (
@@ -122,11 +128,6 @@ const Social: React.FC<PropsWithChildren> = () => {
   const userInfo = useStore($userInfo);
   const userFollowings = useStore($userFollowings);
   const userFollowers = useStore($userFollowers);
-
-  console.log({
-    userFollowings,
-    userFollowers
-  });
 
   return (
     <div className="space-y-[36px]">
@@ -157,7 +158,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                   </div>
                   <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-[-12px]">
-                      {d.amm.map(amm => (
+                      {d.amm?.map(amm => (
                         <TypeIconWithTooltip amm={amm} />
                       ))}
                     </div>
@@ -178,7 +179,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                         <p>{d.username || trimAddress(d.followerAddress)}</p>
 
                         <div className="flex space-x-[-12px]">
-                          {d.amm.map(amm => (
+                          {d.amm?.map(amm => (
                             <TypeWithIconByAmm amm={amm} />
                           ))}
                         </div>
@@ -223,7 +224,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                   </div>
                   <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-[-12px]">
-                      {d.amm.map(amm => (
+                      {d.amm?.map(amm => (
                         <TypeIconWithTooltip amm={amm} />
                       ))}
                     </div>
@@ -243,7 +244,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                       <div className="flex flex-col space-y-2">
                         <p>{d.username || trimAddress(d.userAddress)}</p>
                         <div className="flex space-x-[-12px]">
-                          {d.amm.map(amm => (
+                          {d.amm?.map(amm => (
                             <TypeWithIconByAmm amm={amm} />
                           ))}
                         </div>

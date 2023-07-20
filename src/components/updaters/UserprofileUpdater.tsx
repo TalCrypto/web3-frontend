@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
 import { useStore as useNanostore } from '@nanostores/react';
@@ -16,7 +17,8 @@ import {
   $userHistories,
   $userInfo,
   $userprofilePositionInfos,
-  $userprofileAddress
+  $userprofileAddress,
+  $asTargetUserInfoUpdateTrigger
 } from '@/stores/userprofile';
 import { getAllTraderPositionHistory } from '@/utils/trading';
 import { getCHViewerContract } from '@/const/contracts';
@@ -102,43 +104,58 @@ const PositionInfoUpdater: React.FC<{
 };
 
 function UserprofileUpdater() {
+  const targetUserTrigger = useNanostore($asTargetUserInfoUpdateTrigger);
   const userprofileAddress: any = useNanostore($userprofileAddress);
   const { chain } = useNetwork();
   const [amms, setAmms] = useState<Array<AMM>>();
   const { address, isConnected, isConnecting } = useAccount();
 
-  useEffect(() => {
-    async function fetchData() {
-      // set store to default
-      $isUserprofileLoading.set(true);
-      // $userprofileAddress.set(null);
+  const fetchTargetUserInfo = async (isResetState: boolean = true) => {
+    if (isResetState) {
       $userInfo.set(null);
-      $userAirdropRank.set(null);
-      $userCompetitionRank.set(null);
-      // $userprofilePositionInfos.setKey(amm, undefined);
-      $userHistories.set([]);
       $userFollowings.set([]);
       $userFollowers.set([]);
+    }
+
+    const targetUserInfoPromises = [
+      apiConnection.getTargetUserInfo(userprofileAddress, address || userprofileAddress),
+      apiConnection.getUserFollowings(userprofileAddress, address || userprofileAddress),
+      apiConnection.getUserFollowers(userprofileAddress, address || userprofileAddress)
+    ];
+
+    const [userProfileRes, userFollowingsRes, userFollowersRes] = await Promise.allSettled(targetUserInfoPromises);
+
+    if (userProfileRes.status === 'fulfilled') {
+      $userInfo.set(userProfileRes.value.data);
+    }
+    if (userFollowingsRes.status === 'fulfilled') {
+      $userFollowings.set(userFollowingsRes.value.data);
+    }
+    if (userFollowersRes.status === 'fulfilled') {
+      $userFollowers.set(userFollowersRes.value.data);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      $isUserprofileLoading.set(true);
+      $userAirdropRank.set(null);
+      $userCompetitionRank.set(null);
+      $userHistories.set([]);
       $searchQuery.set('');
       $showSearchWindow.set(false);
       $searchResult.set([]);
 
+      fetchTargetUserInfo();
+
       const userprofilePromises = [
-        apiConnection.getTargetUserInfo(userprofileAddress, address || userprofileAddress),
         apiConnection.getUserPointLite(userprofileAddress),
         apiConnection.getAbsPnlLeaderboard(userprofileAddress),
-        getAllTraderPositionHistory(userprofileAddress, 500, 0),
+        getAllTraderPositionHistory(userprofileAddress, 500, 0)
         // apiConnection.getUserTradingHistory(userprofileAddress),
-        apiConnection.getUserFollowings(userprofileAddress, address || userprofileAddress),
-        apiConnection.getUserFollowers(userprofileAddress, address || userprofileAddress)
       ];
 
-      const [userProfileRes, userAirdropRankRes, userCompetitionRankRes, userPositionHistoryRes, userFollowingsRes, userFollowersRes] =
-        await Promise.allSettled(userprofilePromises);
-
-      if (userProfileRes.status === 'fulfilled') {
-        $userInfo.set(userProfileRes.value.data);
-      }
+      const [userAirdropRankRes, userCompetitionRankRes, userPositionHistoryRes] = await Promise.allSettled(userprofilePromises);
       if (userAirdropRankRes.status === 'fulfilled') {
         $userAirdropRank.set(userAirdropRankRes.value);
       }
@@ -148,23 +165,6 @@ function UserprofileUpdater() {
       if (userPositionHistoryRes.status === 'fulfilled') {
         $userHistories.set(userPositionHistoryRes.value);
       }
-      if (userFollowingsRes.status === 'fulfilled') {
-        $userFollowings.set(userFollowingsRes.value.data);
-      }
-      if (userFollowersRes.status === 'fulfilled') {
-        $userFollowers.set(userFollowersRes.value.data);
-      }
-
-      // console.log({ $userInfo: $userInfo.get() });
-      // console.log({ $userAirdropRank: $userAirdropRank.get() });
-      // console.log({ $userCompetitionRank: $userCompetitionRank.get() });
-      // console.log({ $userHistories: $userHistories.get() });
-      // console.log({ $userFollowings: $userFollowings.get() });
-      // console.log({ $userFollowers: $userFollowers.get() });
-      // console.log({ $userprofilePositionInfos: $userprofilePositionInfos.get() });
-
-      // console.log($userHistories.get()[150]);
-      // getTradingActionTypeFromSubgraph($userHistories.get()[150]);
 
       $isUserprofileLoading.set(false);
     }
@@ -173,8 +173,13 @@ function UserprofileUpdater() {
       fetchData();
       setAmms(getSupportedAMMs(chain));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userprofileAddress]);
+
+  useEffect(() => {
+    if (userprofileAddress !== '') {
+      fetchTargetUserInfo(false);
+    }
+  }, [targetUserTrigger]);
 
   if (!amms || !userprofileAddress) return null;
 

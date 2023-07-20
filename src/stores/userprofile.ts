@@ -101,6 +101,7 @@ export const $userprofilePositionInfos = map<UserPositionInfos>();
 export const $userHistories = atom<any[]>([]);
 export const $userFollowings = atom<UserFollow[]>([]);
 export const $userFollowers = atom<UserFollow[]>([]);
+export const $asTargetUserInfoUpdateTrigger = atom(false);
 
 // search data
 export const $searchQuery = atom<string>('');
