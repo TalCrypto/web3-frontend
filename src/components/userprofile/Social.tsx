@@ -119,6 +119,11 @@ const Social: React.FC<PropsWithChildren> = () => {
   const userFollowings = useStore($userFollowings);
   const userFollowers = useStore($userFollowers);
 
+  console.log({
+    userFollowings,
+    userFollowers
+  });
+
   return (
     <div className="space-y-[36px]">
       {/* Following table card */}
@@ -144,7 +149,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                 <div className="flex">
                   {/* desktop cols */}
                   <div className="hidden flex-1 py-[10px] md:table-cell">
-                    <p>{d.username || d.followerAddress ? trimAddress(d.followerAddress!) : ''}</p>
+                    <p>{d.username || trimAddress(d.followerAddress)}</p>
                   </div>
                   <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-[-12px]">
@@ -166,7 +171,7 @@ const Social: React.FC<PropsWithChildren> = () => {
                     <div className="flex space-x-2 py-[12px]">
                       <div className="w-[3px] rounded bg-[#2574FB]" />
                       <div className="flex flex-col space-y-2">
-                        <p>{d.username || d.followerAddress ? trimAddress(d.followerAddress!) : ''}</p>
+                        <p>{d.username || trimAddress(d.followerAddress)}</p>
 
                         <div className="flex space-x-[-12px]">
                           {d.amm.map(amm => (
