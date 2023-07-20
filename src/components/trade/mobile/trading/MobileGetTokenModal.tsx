@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { $isShowMobileModal, $isShowMobileTokenModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import Image from 'next/image';
