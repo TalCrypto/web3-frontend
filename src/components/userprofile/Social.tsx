@@ -55,11 +55,13 @@ export const FollowButton = ({
   }, [isFollowing]);
 
   const unfollow = async () => {
-    const auth = getAuth();
-    const currentUser = auth?.currentUser;
+    let auth = getAuth();
+    let currentUser = auth?.currentUser;
     const userAddr = userAddress?.toLowerCase();
     if (!currentUser || currentUser.uid !== userAddr) {
-      await authConnections.switchCurrentUser(userAddr || '');
+      await authConnections.switchCurrentUser(userAddr!);
+      auth = getAuth();
+      currentUser = auth?.currentUser;
     }
     const newToken = await currentUser?.getIdToken(true);
     try {
@@ -74,11 +76,13 @@ export const FollowButton = ({
   };
 
   const follow = async () => {
-    const auth = getAuth();
-    const currentUser = auth?.currentUser;
+    let auth = getAuth();
+    let currentUser = auth?.currentUser;
     const userAddr = userAddress?.toLowerCase();
     if (!currentUser || currentUser.uid !== userAddr) {
       await authConnections.switchCurrentUser(userAddr!);
+      auth = getAuth();
+      currentUser = auth?.currentUser;
     }
     const newToken = await currentUser?.getIdToken(true);
     try {

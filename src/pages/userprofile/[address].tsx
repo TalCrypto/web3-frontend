@@ -36,6 +36,8 @@ import { TypeWithIconByAmm } from '@/components/common/TypeWithIcon';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { debounce } from 'lodash';
 import { SearchUserData, apiConnection } from '@/utils/apiConnection';
+import { getAuth } from 'firebase/auth';
+import { authConnections } from '@/utils/authConnections';
 
 type ProfileHeaderCardProps = PropsWithChildren & {
   isEnded?: boolean;
@@ -123,6 +125,47 @@ const AddressPage: NextPage = () => {
     }
   };
 
+  const unfollow = async () => {
+    let auth = getAuth();
+    let currentUser = auth?.currentUser;
+    const userAddr = currentUserAddress?.toLowerCase();
+    if (!currentUser || currentUser.uid !== userAddr) {
+      await authConnections.switchCurrentUser(userAddr || '');
+      auth = getAuth();
+      currentUser = auth?.currentUser;
+    }
+    const newToken = await currentUser?.getIdToken(true);
+    try {
+      const res = await apiConnection.unfollowUser(userprofileAddress, newToken, userAddr);
+      if (res.code === 0) {
+        // todo:  update button
+      }
+    } catch (error) {
+      console.log('err', error);
+    }
+  };
+
+  const follow = async () => {
+    let auth = getAuth();
+    let currentUser = auth?.currentUser;
+    const userAddr = currentUserAddress?.toLowerCase();
+    if (!currentUser || currentUser.uid !== userAddr) {
+      await authConnections.switchCurrentUser(userAddr!);
+      auth = getAuth();
+      currentUser = auth?.currentUser;
+    }
+    const newToken = await currentUser?.getIdToken(true);
+    try {
+      const res = await apiConnection.followUser(userprofileAddress, newToken, userAddr!);
+      if (res.code === 0) {
+        // todo:  update button
+        // setLocalIsFollowing(true);
+      }
+    } catch (error) {
+      console.log('err', error);
+    }
+  };
+
   const debouncedSearch = useMemo(() => debounce(search, 500), []);
 
   useEffect(() => {
@@ -143,11 +186,11 @@ const AddressPage: NextPage = () => {
           {!isCurrentUserProfilePage ? (
             <div>
               {userInfo?.isFollowing ? (
-                <OutlineButton className="w-fit">
+                <OutlineButton className="w-fit" onClick={unfollow}>
                   <p className="font-normal">Unfollow</p>
                 </OutlineButton>
               ) : (
-                <PrimaryButton className="w-fit px-[12px] py-[8px]">
+                <PrimaryButton className="w-fit px-[12px] py-[8px]" onClick={follow}>
                   <p className="text-[14px] font-normal">Follow</p>
                 </PrimaryButton>
               )}
