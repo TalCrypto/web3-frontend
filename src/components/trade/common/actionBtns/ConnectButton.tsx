@@ -21,6 +21,7 @@ function ConnectButton() {
         if (connector?.id.includes('injected')) {
           connect({ connector });
           isInjected = true;
+          break;
         }
       }
 

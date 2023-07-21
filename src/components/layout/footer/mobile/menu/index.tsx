@@ -59,6 +59,7 @@ const MobileMenu = (props: any) => {
         if (connector?.id.includes('injected')) {
           connect({ connector });
           isInjected = true;
+          break;
         }
       }
 

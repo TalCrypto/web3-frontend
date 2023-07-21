@@ -15,6 +15,7 @@ const WalletNotConnectedMobile = () => {
       if (connector?.id.includes('injected')) {
         connect({ connector });
         isInjected = true;
+        break;
       }
     }
 
