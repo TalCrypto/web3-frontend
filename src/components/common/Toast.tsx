@@ -68,12 +68,45 @@ export const showToast = (
   });
 };
 
+const CustomOutlineToast: React.FC<CustomToastProps> = ({
+  title = '',
+  message = '',
+  linkUrl = '',
+  linkLabel = '',
+  warning = false,
+  error = false
+}) => (
+  <div className="flex">
+    <div className="mr-[6px]">
+      <Image
+        src={`/images/components/common/toast/icon-${warning ? 'warning' : error ? 'error' : 'success'}.svg`}
+        alt=""
+        width={32}
+        height={32}
+      />
+    </div>
+    <div className="flex flex-col justify-center">
+      {title ? <div className="mb-[4px] text-[14px] font-semibold text-white">{title}</div> : null}
+      {message ? <div className="mb-[4px] text-[12px] font-normal text-white">{message}</div> : null}
+      <div className="flex items-center">
+        {linkLabel && linkUrl ? (
+          <a href={linkUrl} target="_blank" rel="noreferrer" className="flex flex-1 text-[12px] font-medium text-primaryBlue no-underline">
+            {linkLabel} <Image src="/images/common/out.svg" className="ml-1" alt="" width={16} height={16} />
+          </a>
+        ) : null}
+      </div>
+    </div>
+  </div>
+);
+
 export const showOutlineToast = (
   { title = '', message = '', linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps,
   options: ToastOptions<{}> = {}
 ) => {
-  toast(<CustomToast title={title} message={message} linkUrl={linkUrl} linkLabel={linkLabel} warning={warning} error={error} />, {
+  toast(<CustomOutlineToast title={title} message={message} linkUrl={linkUrl} linkLabel={linkLabel} warning={warning} error={error} />, {
     containerId: 'GLOBAL_OUTLINE',
+    type: error ? 'error' : warning ? 'warning' : 'default',
+    icon: false,
     ...options
   });
 };
