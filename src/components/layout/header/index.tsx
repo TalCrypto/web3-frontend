@@ -32,10 +32,6 @@ function Header() {
     localStorage.setItem('isDiscordShown', 'false');
   };
 
-  useEffect(() => {
-    console.log(firebaseAuth?.currentUser);
-  }, []);
-
   return (
     <>
       <div

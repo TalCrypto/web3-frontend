@@ -143,7 +143,6 @@ const UserDataUpdater: React.FC = () => {
 
   useEffect(() => {
     if (address) {
-      console.log('address', address);
       apiConnection.getUserInfo(address).then(result => {
         setUserInfo(result.data, address);
       });
