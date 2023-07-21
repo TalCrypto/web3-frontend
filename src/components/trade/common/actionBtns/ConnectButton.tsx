@@ -4,15 +4,29 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { $userIsConnecting } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
 import { $isMobileView, $isShowLoginModal } from '@/stores/modal';
+import { useConnect } from 'wagmi';
 
 function ConnectButton() {
   const { open } = useWeb3Modal();
   const isConnecting = useNanostore($userIsConnecting);
   const isMobileView = useNanostore($isMobileView);
+  const { connect, connectors } = useConnect();
 
   const traderConnectWallet = () => {
     if (isMobileView) {
-      open({ route: 'ConnectWallet' });
+      let isInjected = false;
+
+      for (let i = 0; i < connectors.length; i += 1) {
+        const connector = connectors[i];
+        if (connector?.id.includes('injected')) {
+          connect({ connector });
+          isInjected = true;
+        }
+      }
+
+      if (!isInjected) {
+        open();
+      }
     } else {
       $isShowLoginModal.set(true);
     }

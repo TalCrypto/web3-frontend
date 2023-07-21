@@ -21,7 +21,6 @@ const ConnectWalletButton: React.FC = () => {
   const userDisplayName = useNanostore($userDisplayName);
   const isShowLoginModal = useNanostore($isShowLoginModal);
 
-  const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
   const updateTargetNetwork = () => {

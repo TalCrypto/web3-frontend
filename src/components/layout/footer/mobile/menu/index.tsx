@@ -15,7 +15,7 @@ import {
   $userDisplayName,
   $userTotalCollateral
 } from '@/stores/user';
-import { useDisconnect, useSwitchNetwork } from 'wagmi';
+import { useConnect, useDisconnect, useSwitchNetwork } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $userPoint } from '@/stores/airdrop';
@@ -38,12 +38,8 @@ const MobileMenu = (props: any) => {
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { disconnect } = useDisconnect();
+  const { connect, connectors } = useConnect();
 
-  // const userPointData = useNanostore(userPoint);
-  // const { total, tradeVol, isBan } = userPointData;
-  // const tradeVolume = calculateNumber(tradeVol.vol, 4);
-  // const eligible = () => Number(tradeVolume) >= 5;
-  // const points = eligible() && !isBan ? localeConversion(total) : '0.0';
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
@@ -56,7 +52,19 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
-      open({ route: 'ConnectWallet' });
+      let isInjected = false;
+
+      for (let i = 0; i < connectors.length; i += 1) {
+        const connector = connectors[i];
+        if (connector?.id.includes('injected')) {
+          connect({ connector });
+          isInjected = true;
+        }
+      }
+
+      if (!isInjected) {
+        open();
+      }
     } else if (isWrongNetwork) {
       if (switchNetwork) {
         switchNetwork(DEFAULT_CHAIN.id);

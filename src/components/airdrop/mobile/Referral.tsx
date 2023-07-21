@@ -14,6 +14,7 @@ import { useWeb3Modal } from '@web3modal/react';
 import ReferUserMobileModal from '@/components/airdrop/mobile/ReferUserMobileModal';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import ResponseModal from '@/components/airdrop/mobile/ResponseModal';
+import { useConnect } from 'wagmi';
 
 function ReferralMobile() {
   const router = useRouter();
@@ -34,6 +35,7 @@ function ReferralMobile() {
   const isConnected = useNanostore($userIsConnected);
   const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
 
+  const { connect, connectors } = useConnect();
   const { open } = useWeb3Modal();
 
   const eligibleTooltipMessage = (
@@ -51,7 +53,19 @@ function ReferralMobile() {
   );
 
   const onBtnConnectWallet = () => {
-    open();
+    let isInjected = false;
+
+    for (let i = 0; i < connectors.length; i += 1) {
+      const connector = connectors[i];
+      if (connector?.id.includes('injected')) {
+        connect({ connector });
+        isInjected = true;
+      }
+    }
+
+    if (!isInjected) {
+      open();
+    }
   };
 
   if (!isConnected) {

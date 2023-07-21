@@ -42,7 +42,6 @@ function TrendContent() {
   const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
 
   const onBtnConnectWallet = () => {
-    // open();
     $isShowLoginModal.set(true);
   };
 

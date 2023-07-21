@@ -100,7 +100,6 @@ function Referral() {
   };
 
   const onBtnConnectWallet = () => {
-    // open();
     $isShowLoginModal.set(true);
   };
 

@@ -4,7 +4,6 @@ import { $isShowLoginModal } from '@/stores/modal';
 
 const WalletNotConnected = () => {
   const onBtnConnectWallet = () => {
-    // open();
     $isShowLoginModal.set(true);
   };
 

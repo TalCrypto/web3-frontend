@@ -4,7 +4,7 @@ import Image from 'next/image';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { $userIsConnected } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
-import { useSwitchNetwork } from 'wagmi';
+import { useConnect, useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $showSwitchNetworkErrorModal } from '@/stores/modal';
 
@@ -12,9 +12,22 @@ function PortfolioEmpty() {
   const isConnected = useNanostore($userIsConnected);
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
+  const { connect, connectors } = useConnect();
 
   const onClickConnect = () => {
-    open();
+    let isInjected = false;
+
+    for (let i = 0; i < connectors.length; i += 1) {
+      const connector = connectors[i];
+      if (connector?.id.includes('injected')) {
+        connect({ connector });
+        isInjected = true;
+      }
+    }
+
+    if (!isInjected) {
+      open();
+    }
   };
 
   const updateTargetNetwork = () => {
