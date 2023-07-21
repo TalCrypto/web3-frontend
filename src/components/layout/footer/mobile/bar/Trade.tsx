@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import React from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 // import Sidebar from '@/components/layout/footer/mobile/Sidebar';
@@ -22,7 +23,13 @@ function MobileTradeFooterInfo() {
 
   const onClickBottomButton = async () => {
     if (!isConnected) {
-      const connector = connectors[1];
+      const connector0 = connectors[0];
+      const connector1 = connectors[1];
+      alert(connector0);
+      alert(connector0.id);
+      alert(connector1);
+      alert(connector1.id);
+      const connector = connectors[0];
       connect({ connector });
       // let isInjected = false;
 
