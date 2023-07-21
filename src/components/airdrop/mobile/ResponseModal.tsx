@@ -14,7 +14,7 @@ function ResponseModal() {
   };
 
   useEffect(() => {
-    if (referResponse > 0) {
+    if (referResponse !== 0) {
       setIsExpand(true);
     }
   }, [referResponse]);

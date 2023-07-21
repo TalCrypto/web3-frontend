@@ -55,7 +55,7 @@ const UserReferralUpdater = () => {
         }
 
         const idToken = await currentUser?.getIdToken(true);
-        const response: any = apiConnection.useReferralCode(refersCode, idToken, String(address));
+        const response: any = await apiConnection.useReferralCode(refersCode, idToken, String(address));
         if (response.code === 0) {
           $asReferResponse.set(ReferredResponse.Congrats);
         }
