@@ -40,7 +40,7 @@ const CollectionConfigLoader: React.FC = () => {
               liqSwitchRatio: formatBigInt(liqSwitchRatio)
             });
           } catch (e) {
-            console.log(e);
+            // console.log(e);
           }
         }
       }

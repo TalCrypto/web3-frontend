@@ -1,7 +1,7 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+// import { InjectedConnector } from 'wagmi/connectors/injected';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { ToastContainer } from 'react-toastify';

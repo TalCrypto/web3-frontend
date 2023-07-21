@@ -125,7 +125,6 @@ function QuantityTips(props: any) {
       const interval = setTimeout(() => {
         setIsEstPriceFluctuation(true);
         clearInterval(interval);
-        console.log('here');
       }, 1000);
     } else {
       setIsEstPriceFluctuation(false);
@@ -577,6 +576,10 @@ export default function MainTradeComponent() {
   const handleLeverageChange = (leverage: number) => {
     setLeverageValue(leverage);
   };
+
+  useEffect(() => {
+    setTextErrorMessage(null);
+  }, [currentAmm, saleOrBuyIndex]);
 
   return (
     <div>

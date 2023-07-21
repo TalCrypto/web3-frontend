@@ -4,6 +4,7 @@ import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useApproveTransaction } from '@/hooks/trade';
 import { $isShowApproveModal, $isMobileView } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
+import { $userWethBalance } from '@/stores/user';
 // import { useStore as useNanostore } from '@nanostores/react';
 // import { $currentAmm } from '@/stores/trading';
 // import { getCollectionInformation } from '@/const/collectionList';
@@ -27,6 +28,8 @@ function ApproveButton({
   // const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
   const isMobileView = useNanostore($isMobileView);
+  const wethBalance = useNanostore($userWethBalance);
+  const isInsuffBalance = wethBalance < approvalAmount;
 
   const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction();
 
@@ -82,7 +85,7 @@ function ApproveButton({
 
   return (
     <BaseButton
-      disabled={!write && approvalAmount > 0}
+      disabled={(!write && approvalAmount > 0) || isInsuffBalance}
       isLoading={isLoading || isPreparing || isPending || isEstimating}
       onClick={() => {
         onPending();
