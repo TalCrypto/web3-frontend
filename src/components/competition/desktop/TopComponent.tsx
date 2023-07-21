@@ -33,19 +33,23 @@ const TopComponent = () => {
           <span data-text="COMPETITION" />
         </div>
 
-        <CountdownTimer className="mb-9 md:mb-11" date="2023-07-16 17:00:00" timeZone="Asia/Hong_Kong" />
+        {/* <CountdownTimer className="mb-9 md:mb-11" date="2023-07-16 17:00:00" timeZone="Asia/Hong_Kong" /> */}
+        <h6 className="mb-6 text-center text-b2e text-[#FFC24B] md:mb-12">
+          Trading Competition ended, <br className="block md:hidden" />
+          prepare for the next round!
+        </h6>
         <h5 className="mb-9 flex flex-col justify-center text-center text-h5 md:flex-row md:space-x-2">
           <span className="text-[#3EF3FF]">Trade, Compete, Win! </span>
-          <span>Join our Trading Competition Today</span>
+          {/* <span>Join our Trading Competition Today</span> */}
         </h5>
-        <div className="item-center flex justify-center">
+        {/* <div className="item-center flex justify-center">
           <button
             type="button"
             className="rounded bg-primaryBlue px-6 py-[12px] text-b1e hover:bg-primaryBlueHover"
             onClick={() => router.push('/trade/MILADY')}>
             Trade Now !
           </button>
-        </div>
+        </div> */}
         <div className="absolute bottom-0 right-0 hidden items-center justify-center md:flex">
           <div className="mr-2 flex cursor-pointer items-center justify-center" onClick={openRules}>
             <Image className="mb-[1px]" src="/images/common/rules.svg" alt="rules" width={20} height={18} />

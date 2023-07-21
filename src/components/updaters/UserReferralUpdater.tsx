@@ -7,9 +7,17 @@ import { $userAddress, $userIsConnected } from '@/stores/user';
 import { apiConnection } from '@/utils/apiConnection';
 import { firebaseApp } from '@/const/firebaseConfig';
 import { getAuth } from 'firebase/auth';
-import { $asHasReferCode, $asReferResponse, $asReferredUser, $asShowResponseModal, $userPoint } from '@/stores/airdrop';
+import {
+  $asHasReferCode,
+  $asReferResponse,
+  $asReferredUser,
+  $asShowResponseModal,
+  $userPoint,
+  $targetReferralCode
+} from '@/stores/airdrop';
 import { useRouter } from 'next/router';
 import { ReferredResponse } from '@/const/airdrop';
+import { authConnections } from '@/utils/authConnections';
 
 const UserReferralUpdater = () => {
   const router = useRouter();
@@ -24,7 +32,6 @@ const UserReferralUpdater = () => {
   const hadTradedOnce = userPoint?.isInputCode && Object.keys(userPoint.referralUser).length === 0;
   const hadEnterCode = userPoint?.isInputCode && userPoint.referralUser?.userAddress;
   const fbApp = firebaseApp;
-  const auth = getAuth();
 
   useEffect(() => {
     if (isConnected === true) {
@@ -34,6 +41,7 @@ const UserReferralUpdater = () => {
 
   useEffect(() => {
     if (refersCode) {
+      $targetReferralCode.set(refersCode);
       apiConnection.getUsernameFromReferral(refersCode).then(item => {
         $asReferredUser.set(item);
         $asShowResponseModal.set(false);
@@ -43,23 +51,29 @@ const UserReferralUpdater = () => {
   }, [refersCode]);
 
   useEffect(() => {
-    function useReferral() {
-      const { currentUser } = auth;
+    let auth = getAuth();
+    const userAddr: any = address?.toLowerCase();
+    async function useReferral() {
+      let currentUser = auth?.currentUser;
       try {
-        if (currentUser) {
-          const idToken = currentUser.getIdToken(true);
-          const response: any = apiConnection.useReferralCode(refersCode, idToken, String(address));
-          if (response.code === 0) {
-            $asReferResponse.set(ReferredResponse.Congrats);
-          }
+        if (!currentUser || currentUser.uid !== userAddr) {
+          await authConnections.switchCurrentUser(userAddr || '');
+          auth = getAuth();
+          currentUser = auth.currentUser;
+        }
+
+        const idToken = await currentUser?.getIdToken(true);
+        const response: any = await apiConnection.useReferralCode(refersCode, idToken, String(address));
+        if (response.code === 0) {
+          $asReferResponse.set(ReferredResponse.Congrats);
         }
       } catch (e) {
-        // console.log({ e });
+        $asReferResponse.set(ReferredResponse.IsError);
       }
     }
 
     if (showResponseModal && isConnected && userPoint && referredUser) {
-      if (referredUser?.userAddress === address?.toLowerCase()) {
+      if (referredUser?.userAddress === userAddr) {
         $asReferResponse.set(ReferredResponse.IsInvalidCode);
       } else if (hadTradedOnce) {
         $asReferResponse.set(ReferredResponse.IsTradedOnce);

@@ -1,3 +1,5 @@
+/* eslint-disable no-alert */
+/* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
 import React, { useEffect, useRef } from 'react';
 import { $isMobileView, $isShowMobileModal } from '@/stores/modal';
@@ -5,6 +7,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import LayoutUpdater from '@/components/updaters/LayoutUpdater';
 import { useRouter } from 'next/router';
 import { $activeDropdown } from '@/stores/competition';
+import { $isNotFoundPage } from '@/stores/route';
 import Header from './header';
 import Footer from './footer';
 
@@ -17,12 +20,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isShowMobileMenu = useNanostore($isShowMobileModal);
   const isMobileView = useNanostore($isMobileView);
 
+  const isNotFoundPage = useNanostore($isNotFoundPage);
   const isAirdropPage = router.pathname === '/airdrop';
   const isCompetitionPage = router.pathname === '/competition';
   const airdropBgClass = isMobileView
     ? ''
     : "bg-black bg-[url('/images/components/airdrop/bg-s2.png')] bg-cover bg-fixed bg-[center_top] bg-no-repeat";
 
+  const isUserprofilePage = router.pathname.match('/userprofile');
+  const userprofileBgClass = "bg-black bg-[url('/images/components/userprofile/bg1.png')] bg-cover bg-fixed bg-[center_top] bg-no-repeat";
+  const userprofileBg2Class = "bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-center bg-no-repeat";
   const competitionActiveDropdown = useNanostore($activeDropdown);
 
   // competition page bg video
@@ -70,12 +77,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </video>
       ) : null}
       <div
-        className={`h-full w-full
-          ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}`}>
+        className={`min-h-screen w-full
+          ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}
+          ${isUserprofilePage || isNotFoundPage ? userprofileBgClass : ''}`}>
         <div
-          className={`content-container mmd:pb-10 w-full
-            !px-0 pb-12 text-white md:h-full md:pt-20 
-            ${isShowMobileMenu ? 'h-[100dvh] overflow-y-hidden' : ''}
+          className={`
+            ${isUserprofilePage || isNotFoundPage ? userprofileBg2Class : 'content-container pb-[42px]'}
+            mmd:pb-10 w-full
+            !px-0  text-white md:h-full md:min-h-screen md:pt-20 
+            ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}
         `}>
           {children}
         </div>

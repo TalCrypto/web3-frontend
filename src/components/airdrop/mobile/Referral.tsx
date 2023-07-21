@@ -13,6 +13,7 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 import { useWeb3Modal } from '@web3modal/react';
 import ReferUserMobileModal from '@/components/airdrop/mobile/ReferUserMobileModal';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
+import ResponseModal from '@/components/airdrop/mobile/ResponseModal';
 
 function ReferralMobile() {
   const router = useRouter();
@@ -338,7 +339,7 @@ function ReferralMobile() {
       ) : null}
 
       {hasReferCode ? <ReferUserMobileModal /> : null}
-      {referResponse !== 0 ? <ReferUserMobileModal /> : null}
+      {referResponse !== 0 ? <ResponseModal /> : null}
     </div>
   );
 }

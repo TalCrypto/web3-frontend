@@ -159,6 +159,7 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
           spotPrice
           fee
           realizedPnl
+          liquidationPenalty
           amount
         }
     }`
@@ -183,7 +184,8 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
       realizedPnl: BigInt(position.realizedPnl),
       txHash: position.id.split('-')[0],
       positionNotional: BigInt(position.positionNotional),
-      amount: BigInt(position.amount)
+      amount: BigInt(position.amount),
+      liquidationPenalty: BigInt(position.liquidationPenalty)
     };
   });
 

@@ -1,16 +1,6 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable max-len */
 // import React from 'react';
-import {
-  $firstLeaderboard,
-  $flCurrentUser,
-  $mainLeaderboard,
-  $mlCurrentUser,
-  $secondLeaderboard,
-  $slCurrentUser,
-  $thirdLeaderboard,
-  $tlCurrentUser
-} from '@/stores/competition';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
 import { isReferralListLoading, setReferralList } from '../stores/airdrop';
@@ -18,6 +8,23 @@ import { isReferralListLoading, setReferralList } from '../stores/airdrop';
 const apiUrl = process.env.NEXT_PUBLIC_DASHBOARD_API_URL;
 const authUrl = process.env.NEXT_PUBLIC_AUTHENTICATION_API_URL;
 const leaderboardUrl = process.env.NEXT_PUBLIC_LEADERBOARD_USER_RANKING;
+
+type ApiResponse<T> = {
+  message: string;
+  code: number;
+  data: T;
+};
+
+export type SearchUserData = {
+  isFollowing: boolean;
+  userAddress: string;
+  followers: number;
+  following: number;
+  username?: string;
+  about: string;
+  points: string;
+  ranking: number;
+};
 
 export const apiConnection = {
   getDashboardContent: async function getDashboardContent(address: string, timestamp = Math.floor(Date.now() / 1000)) {
@@ -44,8 +51,11 @@ export const apiConnection = {
         timeRelatedKey = '2m';
         break;
       case 3:
-        timeRelatedKey = 'competition';
+        timeRelatedKey = '6m';
         break;
+      // case 3:
+      //   timeRelatedKey = 'competition';
+      //   break;
       default:
         timeRelatedKey = '1w';
     }
@@ -79,7 +89,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  unfollowUser: async function unfollowUser(followerAddress: string, firebaseToken: string, userAddress: string) {
+  unfollowUser: async function unfollowUser(followerAddress: any, firebaseToken: any, userAddress: any) {
     const url = `${authUrl}/users/unfollow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };
@@ -95,7 +105,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  getUserInfo: async function getUserInfo(address: string) {
+  getUserInfo: async function getUserInfo(address: any) {
     const url = `${authUrl}/users?publicAddress=${address}`;
     try {
       const call = await fetch(url);
@@ -174,7 +184,7 @@ export const apiConnection = {
           'Content-Type': 'application/json'
         }
       });
-      const result = await callPost.json();
+      const result = (await callPost.json()) as ApiResponse<SearchUserData[] | null>;
       return Promise.resolve(result);
     } catch (error) {
       return Promise.reject(error);
@@ -431,12 +441,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $mainLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        $mlCurrentUser.set(data?.user);
-      } else {
-        $mlCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
@@ -448,12 +452,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $firstLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        $flCurrentUser.set(data?.user);
-      } else {
-        $flCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
@@ -465,12 +463,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $secondLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        $slCurrentUser.set(data?.user);
-      } else {
-        $slCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
@@ -482,12 +474,6 @@ export const apiConnection = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      $thirdLeaderboard.set(data?.leaderboard);
-      if (userAddress) {
-        $tlCurrentUser.set(data?.user);
-      } else {
-        $tlCurrentUser.set(null);
-      }
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
