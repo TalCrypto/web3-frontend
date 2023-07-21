@@ -6,6 +6,7 @@ import { $userIsConnected } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
+import { $showSwitchNetworkErrorModal } from '@/stores/modal';
 
 function PortfolioEmpty() {
   const isConnected = useNanostore($userIsConnected);
@@ -19,6 +20,8 @@ function PortfolioEmpty() {
   const updateTargetNetwork = () => {
     if (switchNetwork) {
       switchNetwork(DEFAULT_CHAIN.id);
+    } else {
+      $showSwitchNetworkErrorModal.set(true);
     }
   };
 

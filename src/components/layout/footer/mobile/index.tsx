@@ -6,6 +6,7 @@ import { $isShowMobileModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import MobileTradeFooterInfo from '@/components/layout/footer/mobile/bar/Trade';
 import MobileCommonFooterInfo from '@/components/layout/footer/mobile/bar/Common';
+import SwitchNetworkErrorModal from '@/components/trade/mobile/SwitchhNetworkErrorModal';
 
 function MobileFooter() {
   const router = useRouter();
@@ -36,6 +37,8 @@ function MobileFooter() {
       </div>
 
       {isShowMobileMenu ? <MobileMenu setIsShowMobileMenu={setIsShowMobileMenu} /> : null}
+
+      <SwitchNetworkErrorModal />
     </>
   );
 }

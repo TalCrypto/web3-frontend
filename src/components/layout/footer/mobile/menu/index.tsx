@@ -4,7 +4,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $isShowMobileModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import {
   $userAddress,
@@ -57,8 +57,12 @@ const MobileMenu = (props: any) => {
   const onBtnConnectClick = () => {
     if (!isConnected) {
       open({ route: 'ConnectWallet' });
-    } else if (isWrongNetwork && switchNetwork) {
-      switchNetwork(DEFAULT_CHAIN.id);
+    } else if (isWrongNetwork) {
+      if (switchNetwork) {
+        switchNetwork(DEFAULT_CHAIN.id);
+      } else {
+        $showSwitchNetworkErrorModal.set(true);
+      }
     }
   };
 

@@ -7,7 +7,7 @@ import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { useSwitchNetwork } from 'wagmi';
 import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $isShowTradingMobile } from '@/stores/trading';
-import { $isShowMobileModal, $isShowMobileTokenModal } from '@/stores/modal';
+import { $isShowMobileModal, $isShowMobileTokenModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
 
 function MobileTradeFooterInfo() {
   const { open } = useWeb3Modal();
@@ -25,8 +25,12 @@ function MobileTradeFooterInfo() {
       return;
     }
 
-    if (isWrongNetwork && switchNetwork) {
-      switchNetwork(DEFAULT_CHAIN.id);
+    if (isWrongNetwork) {
+      if (switchNetwork) {
+        switchNetwork(DEFAULT_CHAIN.id);
+      } else {
+        $showSwitchNetworkErrorModal.set(true);
+      }
       return;
     }
 
