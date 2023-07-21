@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 
 import Image from 'next/image';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
@@ -157,7 +157,7 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation } = props;
+  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation, isInputBlur, setIsInputBlur } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -171,6 +171,15 @@ function QuantityEnter(props: any) {
   const fluctuationLmt = useFluctuationLimit();
   const estPriceFluctuation =
     value > 0 && fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -224,6 +233,7 @@ function QuantityEnter(props: any) {
               <span className="input-with-text text-[12px] font-semibold">WETH</span>
             </div>
             <input
+              ref={refInputBox}
               type="text"
               // pattern="[0-9]*"
               className="w-full border-none border-mediumBlue bg-mediumBlue text-right
@@ -232,7 +242,10 @@ function QuantityEnter(props: any) {
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}
-              onFocus={() => setIsFocus(true)}
+              onFocus={() => {
+                setIsInputBlur(false);
+                setIsFocus(true);
+              }}
               onBlur={() => setIsFocus(false)}
               min={0}
             />
@@ -302,10 +315,21 @@ function EstimatedValueDisplay(props: {
   setToleranceRate: (value: any) => void;
   isAmountTooSmall: boolean;
   disabled: boolean;
+  isInputBlur: boolean;
+  setIsInputBlur: (value: any) => void;
 }) {
-  const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled } = props;
+  const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled, isInputBlur, setIsInputBlur } = props;
 
   const sizeNotional = estimation ? estimation.txSummary.notionalSize.toFixed(4) : '-.--';
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   return (
     <>
@@ -328,6 +352,7 @@ function EstimatedValueDisplay(props: {
             rounded-[4px] bg-mediumBlue px-[10px] py-1
             ${disabled ? 'opacity-30' : ''}`}>
             <input
+              ref={refInputBox}
               disabled={disabled}
               title=""
               type="text"
@@ -336,6 +361,9 @@ function EstimatedValueDisplay(props: {
                 text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
+              onFocus={() => {
+                setIsInputBlur(false);
+              }}
               onChange={e => {
                 const { value: inputValue } = e.target;
                 const reg = /^\d*(\.\d*)?$/;
@@ -485,6 +513,8 @@ export default function MainTradeComponent() {
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const notionalAmount = Number(quantity) * leverageValue ?? 0;
+  const [isInputBlur, setIsInputBlur] = useState(false);
+
   const {
     isLoading: isEstLoading,
     estimation,
@@ -560,12 +590,15 @@ export default function MainTradeComponent() {
         }}
         isAmountTooSmall={isAmountTooSmall}
         textErrorMessage={textErrorMessage}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}
         setValue={setLeverageValue}
         onChange={(value: any) => {
+          setIsInputBlur(true);
           handleLeverageChange(value);
         }}
       />
@@ -578,6 +611,8 @@ export default function MainTradeComponent() {
         toleranceRate={toleranceRate}
         setToleranceRate={setToleranceRate}
         isAmountTooSmall={isAmountTooSmall}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
 
       <div className="pb-4">

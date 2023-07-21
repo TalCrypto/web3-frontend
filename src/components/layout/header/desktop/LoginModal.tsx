@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $isShowLoginModal } from '@/stores/modal';
-import { useWeb3Modal } from '@web3modal/react';
+// import { useWeb3Modal } from '@web3modal/react';
 import { useConnect } from 'wagmi';
 
 interface Platform {
@@ -26,7 +26,7 @@ const PlatformButton: React.FC<Platform> = ({ title, icon, desc, redirect }) => 
 
 export default function LoginModal() {
   const isShowLoginModal = useNanostore($isShowLoginModal);
-  const { open } = useWeb3Modal();
+  // const { open } = useWeb3Modal();
   const { connect, connectors } = useConnect();
 
   if (!isShowLoginModal) return null;
@@ -43,7 +43,8 @@ export default function LoginModal() {
 
   const redirectWalletConnect = () => {
     closeModal();
-    open();
+    // open();
+    $isShowLoginModal.set(true);
   };
 
   return (

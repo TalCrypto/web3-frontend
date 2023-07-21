@@ -387,53 +387,51 @@ const MobileMenu = (props: any) => {
         Copied to clipboard
       </div>
 
-      {isSwapWidgetOpen ? (
-        <div
-          className={`fixed w-full transition
-        ${isSwapWidgetOpen ? 'bottom-[0px]' : 'bottom-[-250px]'}
-        bg-secondaryBlue duration-500
-      `}>
-          <div className="h-[250px] px-[20px] pb-[6px] pt-[24px] ">
-            <div className="font-[600] text-[#fff] ">Bridge ETH / WETH to Arbitrum👇</div>
-            <div className="mt-[16px]  flex flex-row">
-              <div
-                className="flex w-auto flex-row 
+      <div
+        className={`transition-left fixed bottom-0 w-full
+          ${isSwapWidgetOpen ? 'left-0' : 'left-[100%]'}
+          bg-secondaryBlue duration-500
+        `}>
+        <div className="h-[250px] px-[20px] pb-[6px] pt-[24px] ">
+          <div className="font-[600] text-[#fff] ">Bridge ETH / WETH to Arbitrum👇</div>
+          <div className="mt-[16px] flex flex-row">
+            <div
+              className="flex w-auto flex-row 
                 items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
                 px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
-                onClick={() => redirectExternal('https://bridge.arbitrum.io/')}>
-                <Image className="mr-[6px]" src="/icons/providers/arbitrum.png" alt="" width={24} height={24} />
-                Arbitrum
-              </div>
-              <div />
+              onClick={() => redirectExternal('https://bridge.arbitrum.io/')}>
+              <Image className="mr-[6px]" src="/icons/providers/arbitrum.png" alt="" width={24} height={24} />
+              Arbitrum
             </div>
-            <div className="mt-[24px]  ">
-              <div className="font-[600] text-[#fff] ">Wrap ETH on Arbitrum👇</div>
-            </div>
-            <div className="mt-[16px] flex flex-row">
-              <div
-                className="flex w-auto flex-row 
+            <div />
+          </div>
+          <div className="mt-[24px]">
+            <div className="font-[600] text-[#fff] ">Wrap ETH on Arbitrum👇</div>
+          </div>
+          <div className="mt-[16px] flex flex-row">
+            <div
+              className="flex w-auto flex-row 
                 items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
                 px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
-                onClick={() => redirectExternal('https://app.uniswap.org/#/swap/')}>
-                <Image className="mr-[6px]" src="/icons/providers/uniswap.png" alt="" width={24} height={24} />
-                Uniswap
-              </div>
-              <div />
+              onClick={() => redirectExternal('https://app.uniswap.org/#/swap/')}>
+              <Image className="mr-[6px]" src="/icons/providers/uniswap.png" alt="" width={24} height={24} />
+              Uniswap
             </div>
-            <div className="flex flex-row justify-end">
-              <Image
-                src="/images/mobile/common/close.svg"
-                alt=""
-                width={40}
-                height={40}
-                onClick={() => {
-                  setIsSwapWidgetOpen(false);
-                }}
-              />
-            </div>
+            <div />
+          </div>
+          <div className="flex flex-row justify-end">
+            <Image
+              src="/images/mobile/common/close.svg"
+              alt=""
+              width={40}
+              height={40}
+              onClick={() => {
+                setIsSwapWidgetOpen(false);
+              }}
+            />
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 };

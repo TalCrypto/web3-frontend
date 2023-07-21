@@ -6,7 +6,7 @@ import { $isShowMobileModal } from '@/stores/modal';
 import { $currentAmm, $isShowTradingMobile } from '@/stores/trading';
 import { usePositionInfo } from '@/hooks/collection';
 
-import MainTradeComponent from '@/components/trade/mobile/trading/MainTadeComponent';
+import MainTradeComponent from '@/components/trade/mobile/trading/MainTradeComponent';
 import AdjustCollateral from '@/components/trade/mobile/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/mobile/trading/CloseCollateral';
 import { getCollectionInformation } from '@/const/collectionList';
