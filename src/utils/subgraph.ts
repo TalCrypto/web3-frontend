@@ -1,7 +1,7 @@
 import { binarySearch } from '@/utils/arrayHelper';
 
 const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
-const subgraphBackupUrl = process.env.NEXT_PUBLIC_SUPGRAPH_PAID_ENDPOINT ?? '';
+const subgraphBackupUrl = process.env.NEXT_PUBLIC_SUPGRAPH_BACKUP_ENDPOINT ?? '';
 
 const fetchMethod = async (_method: string, _query: string) => {
   const normalFetch = await fetch(subgraphUrl, {
