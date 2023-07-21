@@ -16,11 +16,13 @@ import TrendContent from '@/components/portfolio/desktop/TrendContent';
 import PageLoading from '@/components/common/PageLoading';
 import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork } from '@/stores/user';
 import PortfolioUpdater from '@/components/updaters/PortfolioUpdater';
+import { $isShowMobileModal } from '@/stores/modal';
 
 export default function Portfolio() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const isConnecting = useNanostore($userIsConnecting);
+  $isShowMobileModal.set(false);
 
   return (
     <>

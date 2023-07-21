@@ -23,7 +23,7 @@ function PortfolioEmpty() {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-50px)] w-full items-center justify-center">
+    <div className="relative flex min-h-[calc(100dvh-50px)] w-full items-center justify-center">
       {!isConnected ? (
         <div>
           <div className="mb-6 flex items-center justify-center">

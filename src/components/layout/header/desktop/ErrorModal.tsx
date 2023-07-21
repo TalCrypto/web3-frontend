@@ -16,7 +16,7 @@ export default function ErrorModal(props: ErrorModalProps) {
 
   return (
     <div
-      className="fixed bottom-0 left-0 top-0 z-10 flex h-[100vh]
+      className="fixed bottom-0 left-0 top-0 z-10 flex h-[100dvh]
       w-full items-center justify-center overflow-auto bg-black/[.4]
     "
       onClick={() => $showSwitchNetworkErrorModal.set(false)}>

@@ -5,7 +5,7 @@ import { useStore as useNanostore } from '@nanostores/react';
 import CollectionListModal from '@/components/trade/mobile/collection/CollectionListModal';
 import { $isShowMobileModal } from '@/stores/modal';
 import { getCollectionInformation } from '@/const/collectionList';
-import { $currentAmm } from '@/stores/trading';
+import { $currentAmm, $isShowDisplayCollections } from '@/stores/trading';
 
 export default function Switcher() {
   const [isShowModal, setIsShowModal] = useState(false);
@@ -13,10 +13,11 @@ export default function Switcher() {
   const collectionInfo = getCollectionInformation(currentAmm);
 
   const onSwitcherClick = async () => {
-    if (isShowModal) return;
+    // if (isShowModal) return;
 
-    setIsShowModal(true);
+    // setIsShowModal(true);
     $isShowMobileModal.set(true);
+    $isShowDisplayCollections.set(true);
   };
 
   return (
@@ -32,7 +33,7 @@ export default function Switcher() {
           </div>
         </div>
       </div>
-      {isShowModal && <CollectionListModal setIsShowModal={setIsShowModal} />}
+      {/* {isShowModal && <CollectionListModal setIsShowModal={setIsShowModal} />} */}
     </>
   );
 }

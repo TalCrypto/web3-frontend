@@ -17,6 +17,7 @@ import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import Tooltip from '@/components/common/Tooltip';
 import { formatBigInt } from '@/utils/bigInt';
 import { useWeb3Modal } from '@web3modal/react';
+import { $isShowLoginModal } from '@/stores/modal';
 
 function Referral() {
   const router = useRouter();
@@ -99,12 +100,13 @@ function Referral() {
   };
 
   const onBtnConnectWallet = () => {
-    open();
+    // open();
+    $isShowLoginModal.set(true);
   };
 
   if (!isConnected) {
     return (
-      <div className="flex h-[calc(100vh-400px)] flex-col items-center">
+      <div className="flex h-[calc(100dvh-400px)] flex-col items-center">
         <p className="mb-6 mt-4">Please connect wallet to get started!</p>
         <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
           Connect Wallet
@@ -281,7 +283,7 @@ function Referral() {
             />
             <div className="flex-1">
               <h3 className="mb-[24px]">📢 My Referral Link</h3>
-              <p className="body2 mb-[36px]">
+              <p className="body2 mb-[36px] text-[14px] font-normal">
                 Share you referral code to get 3% of their trading volume points, while they can get 2% of their own trading volume points!
               </p>
               <div className="mb-[36px] flex items-center space-x-[12px] md:space-x-[24px]">

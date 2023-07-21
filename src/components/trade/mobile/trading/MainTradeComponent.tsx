@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 
 import Image from 'next/image';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
@@ -33,7 +33,7 @@ import {
 import { MINIMUM_COLLATERAL } from '@/const';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
-import { $showGetWEthModal } from '@/stores/modal';
+import { $showGetWEthModal, $isShowMobileTokenModal } from '@/stores/modal';
 
 function LongShortRatio(props: any) {
   const { setSaleOrBuyIndex, saleOrBuyIndex } = props;
@@ -116,7 +116,8 @@ function QuantityTips(props: any) {
   const [isEstPriceFluctuation, setIsEstPriceFluctuation] = useState(false);
 
   const onClickWeth = () => {
-    $showGetWEthModal.set(true);
+    // $showGetWEthModal.set(true);
+    $isShowMobileTokenModal.set(true);
   };
 
   useEffect(() => {
@@ -124,7 +125,6 @@ function QuantityTips(props: any) {
       const interval = setTimeout(() => {
         setIsEstPriceFluctuation(true);
         clearInterval(interval);
-        console.log('here');
       }, 1000);
     } else {
       setIsEstPriceFluctuation(false);
@@ -156,7 +156,7 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation } = props;
+  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation, isInputBlur, setIsInputBlur } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -170,6 +170,15 @@ function QuantityEnter(props: any) {
   const fluctuationLmt = useFluctuationLimit();
   const estPriceFluctuation =
     value > 0 && fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -202,7 +211,8 @@ function QuantityEnter(props: any) {
               type="button"
               className="ml-[8px] text-[14px] text-primaryBlue"
               onClick={() => {
-                $showGetWEthModal.set(true);
+                // $showGetWEthModal.set(true);
+                $isShowMobileTokenModal.set(true);
               }}>
               Get WETH
             </button>
@@ -222,6 +232,7 @@ function QuantityEnter(props: any) {
               <span className="input-with-text text-[12px] font-semibold">WETH</span>
             </div>
             <input
+              ref={refInputBox}
               type="text"
               // pattern="[0-9]*"
               className="w-full border-none border-mediumBlue bg-mediumBlue text-right
@@ -230,7 +241,10 @@ function QuantityEnter(props: any) {
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}
-              onFocus={() => setIsFocus(true)}
+              onFocus={() => {
+                setIsInputBlur(false);
+                setIsFocus(true);
+              }}
               onBlur={() => setIsFocus(false)}
               min={0}
             />
@@ -300,10 +314,21 @@ function EstimatedValueDisplay(props: {
   setToleranceRate: (value: any) => void;
   isAmountTooSmall: boolean;
   disabled: boolean;
+  isInputBlur: boolean;
+  setIsInputBlur: (value: any) => void;
 }) {
-  const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled } = props;
+  const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled, isInputBlur, setIsInputBlur } = props;
 
   const sizeNotional = estimation ? estimation.txSummary.notionalSize.toFixed(4) : '-.--';
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   return (
     <>
@@ -326,6 +351,7 @@ function EstimatedValueDisplay(props: {
             rounded-[4px] bg-mediumBlue px-[10px] py-1
             ${disabled ? 'opacity-30' : ''}`}>
             <input
+              ref={refInputBox}
               disabled={disabled}
               title=""
               type="text"
@@ -334,6 +360,9 @@ function EstimatedValueDisplay(props: {
                 text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
+              onFocus={() => {
+                setIsInputBlur(false);
+              }}
               onChange={e => {
                 const { value: inputValue } = e.target;
                 const reg = /^\d*(\.\d*)?$/;
@@ -483,6 +512,8 @@ export default function MainTradeComponent() {
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const notionalAmount = Number(quantity) * leverageValue ?? 0;
+  const [isInputBlur, setIsInputBlur] = useState(false);
+
   const {
     isLoading: isEstLoading,
     estimation,
@@ -546,6 +577,10 @@ export default function MainTradeComponent() {
     setLeverageValue(leverage);
   };
 
+  useEffect(() => {
+    setTextErrorMessage(null);
+  }, [currentAmm, saleOrBuyIndex]);
+
   return (
     <div>
       <LongShortRatio saleOrBuyIndex={saleOrBuyIndex} setSaleOrBuyIndex={setSaleOrBuyIndex} />
@@ -558,12 +593,15 @@ export default function MainTradeComponent() {
         }}
         isAmountTooSmall={isAmountTooSmall}
         textErrorMessage={textErrorMessage}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
       <LeverageComponent
         disabled={isPending || isWrongNetwork}
         value={leverageValue}
         setValue={setLeverageValue}
         onChange={(value: any) => {
+          setIsInputBlur(true);
           handleLeverageChange(value);
         }}
       />
@@ -576,6 +614,8 @@ export default function MainTradeComponent() {
         toleranceRate={toleranceRate}
         setToleranceRate={setToleranceRate}
         isAmountTooSmall={isAmountTooSmall}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
 
       <div className="pb-4">

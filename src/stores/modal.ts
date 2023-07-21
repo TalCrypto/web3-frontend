@@ -15,3 +15,7 @@ export const $isShowMetamaskModal = atom(false);
 export const $metamaskModalTarget = atom(0);
 
 export const $isShowDiscordModal = atom(false);
+
+export const $isShowLoginModal = atom(false);
+
+export const $isShowMobileTokenModal = atom(false);

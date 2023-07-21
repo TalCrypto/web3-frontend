@@ -25,7 +25,7 @@ import GetWETHButton from '@/components/trade/common/actionBtns/GetWETHButton';
 import { formatError } from '@/const/errorList';
 import { ErrorTip } from '@/components/trade/common/ErrorTip';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
-import { $showGetWEthModal } from '@/stores/modal';
+import { $showGetWEthModal, $isShowMobileTokenModal } from '@/stores/modal';
 
 function SectionDividers() {
   return (
@@ -40,7 +40,8 @@ function SectionDividers() {
 function QuantityTips(props: any) {
   const { isAmountTooSmall, isAmountTooLarge, isOverFee } = props;
   const onClickWeth = () => {
-    $showGetWEthModal.set(true);
+    // $showGetWEthModal.set(true);
+    $isShowMobileTokenModal.set(true);
   };
 
   const label = isAmountTooLarge ? (
@@ -75,8 +76,11 @@ function QuantityEnter(props: {
   isAmountTooLarge: boolean;
   estimation: OpenPositionEstimation | undefined;
   disabled: boolean;
+  isInputBlur: boolean;
+  setIsInputBlur: (value: any) => void;
 }) {
-  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled, estimation } = props;
+  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled, estimation, isInputBlur, setIsInputBlur } =
+    props;
 
   const [isFocus, setIsFocus] = useState(false);
   const wethBalance = useNanostore($userWethBalance);
@@ -109,6 +113,15 @@ function QuantityEnter(props: {
   if (closeValue <= 0) {
     isError = false;
   }
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   return (
     <>
@@ -153,6 +166,7 @@ function QuantityEnter(props: {
               </div>
             </div>
             <input
+              ref={refInputBox}
               type="text"
               // pattern="[0-9]*"
               className="w-full border-none border-mediumBlue bg-mediumBlue text-right text-[15px] font-bold text-white outline-none"
@@ -342,6 +356,8 @@ export default function CloseCollateral() {
   const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [isInputBlur, setIsInputBlur] = useState(false);
+
   const {
     isLoading: isEstLoading,
     estimation,
@@ -390,6 +406,7 @@ export default function CloseCollateral() {
     setCloseValue(0);
     setToleranceRate(0.5);
     setIsPending(false);
+    setTextErrorMessage(null);
   }, []);
 
   const handleError = useCallback((error: Error | null) => {
@@ -422,15 +439,19 @@ export default function CloseCollateral() {
         isAmountTooLarge={isAmountTooLarge}
         estimation={estimation}
         disabled={isPending || isWrongNetwork}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
       <ErrorTip label={textErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
         maxCloseValue={maxCloseValue}
         onChange={(value: any) => {
+          setIsInputBlur(true);
           handleChange(value);
         }}
         onSlide={(value: any) => {
+          setIsInputBlur(true);
           handleChange(value);
         }}
         disabled={isPending || isWrongNetwork}

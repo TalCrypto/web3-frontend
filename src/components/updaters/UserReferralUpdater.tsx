@@ -57,7 +57,6 @@ const UserReferralUpdater = () => {
         // console.log({ e });
       }
     }
-    console.log(showResponseModal, isConnected, userPoint, referredUser);
 
     if (showResponseModal && isConnected && userPoint && referredUser) {
       if (referredUser?.userAddress === address?.toLowerCase()) {
@@ -71,6 +70,8 @@ const UserReferralUpdater = () => {
       }
     }
   }, [showResponseModal, isConnected, userPoint]);
+
+  return null;
 };
 
 export default UserReferralUpdater;

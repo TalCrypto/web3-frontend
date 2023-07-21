@@ -50,10 +50,75 @@ function SaleOrBuyRadio(props: any) {
   return <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">{radioGroup}</div>;
 }
 
+function QuantityTips(props: any) {
+  const { isInsuffBalance, isAmountTooSmall, estPriceFluctuation, textErrorMessage } = props;
+  const [isEstPriceFluctuation, setIsEstPriceFluctuation] = useState(false);
+
+  const onClickWeth = () => {
+    $showGetWEthModal.set(true);
+  };
+
+  useEffect(() => {
+    if (estPriceFluctuation) {
+      const interval = setTimeout(() => {
+        setIsEstPriceFluctuation(true);
+        clearInterval(interval);
+      }, 1000);
+    } else {
+      setIsEstPriceFluctuation(false);
+    }
+  }, [estPriceFluctuation]);
+
+  const label = isAmountTooSmall ? (
+    'Minimum collateral size 0.01'
+  ) : isInsuffBalance ? (
+    <>
+      Not enough WETH (including transaction fee). <br />
+      <span className="cursor-pointer text-white underline" onClick={onClickWeth}>
+        Get WETH
+      </span>{' '}
+      first.
+    </>
+  ) : !textErrorMessage && isEstPriceFluctuation ? (
+    <span className="text-warn">
+      Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the
+      notional size of your trade.
+    </span>
+  ) : null;
+
+  return label ? (
+    <div>
+      <div className="mb-3 text-[12px] leading-[16px] text-marketRed">{label}</div>
+    </div>
+  ) : null;
+}
+
 function QuantityEnter(props: any) {
-  const { disabled, adjustMarginValue, onChange, marginIndex, freeCollateral, wethBalance, isError } = props;
+  const {
+    disabled,
+    adjustMarginValue,
+    onChange,
+    estPriceFluctuation,
+    textErrorMessage,
+    marginIndex,
+    freeCollateral,
+    wethBalance,
+    estimation,
+    isError
+  } = props;
 
   const [isFocus, setIsFocus] = useState(false);
+  const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
+
+  const userPosition = usePositionInfo();
+  const { initMarginRatio } = useNanostore($collectionConfig);
+
+  const initialMarginChecker = estimation !== null && marginIndex === 1 && Number(userPosition?.marginRatio) < initMarginRatio;
+  const reduceMarginChecking = Number(freeCollateral) - 0.0001 < 0 && marginIndex === 1;
+  const isNotReduce = initialMarginChecker || reduceMarginChecking;
+  // const isCollateralErorr =
+  //   'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.';
 
   const handleEnter = (params: any) => {
     const { value: inputValue } = params.target;
@@ -65,6 +130,9 @@ function QuantityEnter(props: any) {
       }
       onChange(inputValue);
     }
+
+    setIsAmountTooSmall(Number(inputValue) < 0.01);
+    setIsInsuffBalance(marginIndex === 0 && wethBalance < Number(inputValue));
   };
 
   const increaseMax = wethBalance;
@@ -72,13 +140,11 @@ function QuantityEnter(props: any) {
   const maxValue = marginIndex === 0 ? increaseMax : decreaseMax;
 
   const showHalfValue = () => {
-    onChange((maxValue / 2).toFixed(4));
+    onChange(Number(maxValue / 2).toFixed(4));
   };
 
   const showMaxValue = () => {
-    // onChange(Number(maxValue - 0.00005).toFixed(4));
-    onChange(Number(maxValue - 0.0001).toFixed(4));
-    // onChange(Number(maxValue).toFixed(4));
+    onChange(Number(maxValue - 0.00005).toFixed(4));
   };
 
   const handleGetWethClick = () => {
@@ -87,7 +153,7 @@ function QuantityEnter(props: any) {
 
   return (
     <>
-      <div className={`mb-4 flex ${disabled ? 'disabled' : ''}`}>
+      <div className={`mb-4 flex ${disabled ? 'opacity-30' : ''}`}>
         <div className="flex-1 text-[14px] text-mediumEmphasis">{marginIndex === 0 ? 'Add' : 'Reduce'} Amount</div>
         {marginIndex === 0 ? (
           <div className="flex text-[14px] text-mediumEmphasis" style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
@@ -105,10 +171,10 @@ function QuantityEnter(props: any) {
       </div>
       <div className="mb-3">
         <div
-          className={`trade-input-outline rounded-[4px] bg-none p-[1px]
+          className={`trade-input-outline mb-3 rounded-[4px] bg-none p-[1px]
               ${isFocus ? 'valid' : ''}
               ${isError ? 'error' : ''}
-              ${disabled ? 'disabled' : ''}`}>
+              ${disabled ? 'opacity-30' : ''}`}>
           <div className="flex h-12 items-center rounded-[4px] bg-mediumBlue p-3">
             <Image src="/images/components/layout/header/eth-tribe3.svg" alt="" width={18} height={24} />
             <div className="leading-[10px]">
@@ -117,7 +183,7 @@ function QuantityEnter(props: any) {
             <div className="mx-2 h-[40%] w-[1px] bg-[#404f84]" />
             <div className="flex">
               <div
-                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                className={`trade-btn mr-1 flex h-[22px] w-[42px]
                     items-center justify-center rounded-[6px] text-[12px] font-bold
                     ${disabled ? 'disabled' : ''}`}
                 onClick={() => {
@@ -128,7 +194,7 @@ function QuantityEnter(props: any) {
                 <span className="text-center text-mediumEmphasis">MAX</span>
               </div>
               <div
-                className={`trade-btn mr-1 flex h-[22px] w-[42px] cursor-pointer
+                className={`trade-btn mr-1 flex h-[22px] w-[42px]
                     items-center justify-center rounded-[6px] text-[12px] font-bold
                     ${disabled ? 'disabled' : ''}`}
                 onClick={() => {
@@ -154,6 +220,18 @@ function QuantityEnter(props: any) {
             />
           </div>
         </div>
+        <QuantityTips
+          estPriceFluctuation={estPriceFluctuation}
+          isAmountTooSmall={isAmountTooSmall}
+          isInsuffBalance={isInsuffBalance}
+          textErrorMessage={textErrorMessage}
+          value={adjustMarginValue}
+        />
+        {!isAmountTooSmall && isNotReduce && !isInsuffBalance ? (
+          <ErrorTip label="Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation." />
+        ) : textErrorMessage ? (
+          <ErrorTip label={textErrorMessage} />
+        ) : null}{' '}
       </div>
     </>
   );
@@ -313,20 +391,15 @@ export default function AdjustCollateral() {
     initializeState();
   }, [currentAmm]);
 
-  const userPosition = usePositionInfo();
-  const { initMarginRatio } = useNanostore($collectionConfig);
-
-  const initialMarginChecker = estimation !== null && marginIndex === 1 && Number(userPosition?.marginRatio) < initMarginRatio;
-  const reduceMarginChecking = Number(freeCollateral) - 0.0001 < 0 && marginIndex === 1;
-  const isNotReduce = initialMarginChecker || reduceMarginChecking;
-  const isCollateralErorr =
-    'Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation.';
+  useEffect(() => {
+    setTextErrorMessage(null);
+  }, [currentAmm, marginIndex]);
 
   return (
     <div>
       <SaleOrBuyRadio disabled={isPending} marginIndex={marginIndex} setMarginIndex={setMarginIndex} onChange={initializeState} />
       <QuantityEnter
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && Number(freeCollateral) < 0.0001) || isWrongNetwork}
         adjustMarginValue={adjustMarginValue}
         onChange={(value: any) => {
           handleChange(value);
@@ -335,12 +408,9 @@ export default function AdjustCollateral() {
         freeCollateral={freeCollateral}
         wethBalance={wethBalance}
         isError={textErrorMessage !== null}
+        estimation={estimation}
+        textErrorMessage={textErrorMessage}
       />
-      {isNotReduce ? (
-        <ErrorTip label="Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation." />
-      ) : textErrorMessage ? (
-        <ErrorTip label={textErrorMessage} />
-      ) : null}
 
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
@@ -350,7 +420,7 @@ export default function AdjustCollateral() {
         onChange={(value: any) => {
           handleChange(value);
         }}
-        disabled={isPending || (marginIndex === 1 && freeCollateral && freeCollateral <= 0) || isWrongNetwork}
+        disabled={isPending || (marginIndex === 1 && freeCollateral && Number(freeCollateral) < 0.0001) || isWrongNetwork}
       />
       <SectionDividers />
       <EstimationValueDisplay isError={textErrorMessage !== null} estimation={estimation} />

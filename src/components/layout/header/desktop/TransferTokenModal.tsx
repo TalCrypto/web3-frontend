@@ -19,7 +19,7 @@ function ButtonContent({ icon, url, name }: ButtonContentProps) {
     <div
       className="mr-[24px] flex h-[40px] min-w-[120px] cursor-pointer
       items-center justify-between rounded-[8px] border border-solid
-      border-blue-500 px-3 font-normal text-highEmphasis"
+      border-blue-500 px-3 font-normal text-highEmphasis hover:bg-[#2574fb33]"
       onClick={openUrl}>
       <Image src={icon} alt="" className="mr-1 h-6 w-6" width={24} height={24} />
       {name}
@@ -43,7 +43,7 @@ function StaticButton({ icon, name, redirect }: StaticButtonProps) {
     <div
       className="mr-[24px] flex h-[40px] min-w-[120px] cursor-pointer
       items-center justify-between rounded-[8px] border border-solid
-      border-blue-500 px-3 font-normal text-highEmphasis"
+      border-blue-500 px-3 font-normal text-highEmphasis hover:bg-[#2574fb33]"
       onClick={openUrl}>
       <Image src={icon} alt="" className="mr-1 h-6 w-6" width={24} height={24} />
       {name}

@@ -12,7 +12,7 @@ import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
-import { $isMobileView, $showGetWEthModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
+import { $isMobileView, $showGetWEthModal, $showSwitchNetworkErrorModal, $isShowLoginModal } from '@/stores/modal';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import Tooltip from '@/components/common/Tooltip';
@@ -41,7 +41,8 @@ function TrendContent() {
   const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
 
   const onBtnConnectWallet = () => {
-    open();
+    // open();
+    $isShowLoginModal.set(true);
   };
 
   const onBtnUpdateTargetNetwork = () => {

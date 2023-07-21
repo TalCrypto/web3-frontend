@@ -68,7 +68,7 @@ function Header() {
                 server={process.env.NEXT_PUBLIC_DISCORD_SERVER_ID}
                 channel={process.env.NEXT_PUBLIC_DISCORD_CHANNEL_ID}
                 width={430}
-                style={{ height: 'calc(100vh - 112px)' }}
+                style={{ height: 'calc(100dvh - 112px)' }}
               />
             </div>
           </div>

@@ -2,11 +2,20 @@
 /* eslint-disable operator-linebreak */
 import { CollateralActions, TradeActions } from '@/const';
 
-export function getTradingActionType(item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number }) {
+export function getTradingActionType(
+  item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number },
+  isMobile = false
+) {
   let actionType = '';
   if (item.liquidationPenalty !== 0) {
     if (item.positionSizeAfter === 0) {
-      actionType = TradeActions.FULL_LIQ;
+      if (isMobile) {
+        actionType = TradeActions.FULL_LIQ_MOBILE;
+      } else {
+        actionType = TradeActions.FULL_LIQ;
+      }
+    } else if (isMobile) {
+      actionType = TradeActions.PARTIAL_LIQ_MOBILE;
     } else {
       actionType = TradeActions.PARTIAL_LIQ;
     }
@@ -55,9 +64,9 @@ export function getWalletBalanceChange(record: any) {
   const recordRealizedFundingPayment = record.fundingPayment;
   const recordCollateralChange = record.collateralChange;
   const balance =
-    currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD
+    currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD || currentRecordType === CollateralActions.ADD
       ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
-      : currentRecordType === CollateralActions.REDUCE || currentRecordType === CollateralActions.ADD
+      : currentRecordType === CollateralActions.REDUCE
       ? -(recordCollateralChange + recordRealizedFundingPayment)
       : currentRecordType === TradeActions.CLOSE
       ? Math.abs(recordAmount + recordRealizedPnl - recordFee - recordRealizedFundingPayment)

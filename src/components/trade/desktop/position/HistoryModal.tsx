@@ -284,7 +284,7 @@ const HistoryModal = (props: any) => {
                       <PriceWithIcon
                         width={20}
                         height={20}
-                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '--.--'}>
+                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange) > 0 ? '+' : ''}${collateralChange}` : '-.--'}>
                         {getActionTypeFromApi(selectedRecord) === TradeActions.REDUCE ? (
                           <Tooltip
                             direction="top"
@@ -312,7 +312,7 @@ const HistoryModal = (props: any) => {
                       <PriceWithIcon
                         width={20}
                         height={20}
-                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '--.--'}
+                        priceValue={selectedRecord.ammAddress ? `${Number(collateralChange).toFixed(4)}` : '-.--'}
                       />
                     )
                   : null}
