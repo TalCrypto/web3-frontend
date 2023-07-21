@@ -79,11 +79,7 @@ function MobileTradeFooterInfo() {
         {isConnecting ? (
           <ThreeDots ariaLabel="loading-indicator" height={50} width={50} color="white" />
         ) : !isConnected ? (
-          <>
-            Connect
-            <br />
-            Wallet
-          </>
+          <div>{connectors[1].ready ? 't' : 'f'}</div>
         ) : isWrongNetwork ? (
           <>
             Switch to <br /> Arbitrum
