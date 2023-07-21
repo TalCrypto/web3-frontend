@@ -46,5 +46,6 @@ export enum ReferredResponse {
   Congrats = 1,
   IsInvalidCode = 2,
   IsTradedOnce = 3,
-  IsHadEnterCode = 4
+  IsHadEnterCode = 4,
+  IsError = 5
 }

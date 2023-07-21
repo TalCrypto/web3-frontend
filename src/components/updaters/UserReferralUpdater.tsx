@@ -7,7 +7,14 @@ import { $userAddress, $userIsConnected } from '@/stores/user';
 import { apiConnection } from '@/utils/apiConnection';
 import { firebaseApp } from '@/const/firebaseConfig';
 import { getAuth } from 'firebase/auth';
-import { $asHasReferCode, $asReferResponse, $asReferredUser, $asShowResponseModal, $userPoint } from '@/stores/airdrop';
+import {
+  $asHasReferCode,
+  $asReferResponse,
+  $asReferredUser,
+  $asShowResponseModal,
+  $userPoint,
+  $targetReferralCode
+} from '@/stores/airdrop';
 import { useRouter } from 'next/router';
 import { ReferredResponse } from '@/const/airdrop';
 import { authConnections } from '@/utils/authConnections';
@@ -34,6 +41,7 @@ const UserReferralUpdater = () => {
 
   useEffect(() => {
     if (refersCode) {
+      $targetReferralCode.set(refersCode);
       apiConnection.getUsernameFromReferral(refersCode).then(item => {
         $asReferredUser.set(item);
         $asShowResponseModal.set(false);
@@ -60,7 +68,7 @@ const UserReferralUpdater = () => {
           $asReferResponse.set(ReferredResponse.Congrats);
         }
       } catch (e) {
-        // console.log({ e });
+        $asReferResponse.set(ReferredResponse.IsError);
       }
     }
 

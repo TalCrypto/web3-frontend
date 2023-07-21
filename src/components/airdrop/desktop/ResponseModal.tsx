@@ -1,11 +1,13 @@
+/* eslint-disable max-len */
 import React from 'react';
 import Image from 'next/image';
-import { $asReferResponse } from '@/stores/airdrop';
+import { $asReferResponse, $targetReferralCode } from '@/stores/airdrop';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ReferredResponse } from '@/const/airdrop';
 
 function ResponseModal() {
   const referResponse = useNanostore($asReferResponse);
+  const targetReferralCode = useNanostore($targetReferralCode);
 
   const dismissModal = () => {
     $asReferResponse.set(0);
@@ -26,6 +28,9 @@ function ResponseModal() {
   } else if (referResponse === ReferredResponse.IsHadEnterCode) {
     title = 'You Already have a Referrer';
     description = 'You are currently getting 2% of your own trading volume bonus points.';
+  } else if (referResponse === ReferredResponse.IsError) {
+    title = 'Fail to apply the referral code';
+    description = `Oops, an error occurred, please try again with this referral link: https://app.tribe3.xyz/airdrop/refer?ref=${targetReferralCode}`;
   }
 
   return (
