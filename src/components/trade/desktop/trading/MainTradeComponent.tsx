@@ -553,6 +553,10 @@ export default function MainTradeComponent() {
     setLeverageValue(leverage);
   };
 
+  useEffect(() => {
+    setTextErrorMessage(null);
+  }, [currentAmm, saleOrBuyIndex]);
+
   return (
     <div>
       <LongShortRatio

@@ -406,6 +406,7 @@ export default function CloseCollateral() {
     setCloseValue(0);
     setToleranceRate(0.5);
     setIsPending(false);
+    setTextErrorMessage(null);
   }, []);
 
   const handleError = useCallback((error: Error | null) => {
