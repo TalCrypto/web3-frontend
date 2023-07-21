@@ -9,7 +9,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { $isShowMobileModal } from '@/stores/modal';
 import { AMM, getCollectionInformation } from '@/const/collectionList';
-import { $isShowDisplayCollections, $currentAmm, $marketUpdateTrigger, $isMarketDataUpdating } from '@/stores/trading';
+import { $isShowDisplayCollections, /* $currentAmm, */ $marketUpdateTrigger, $isMarketDataUpdating } from '@/stores/trading';
 import { getSupportedAMMs } from '@/const/addresses';
 import { useMarketOverview } from '@/hooks/market';
 import { $userPositionInfos } from '@/stores/user';
@@ -19,11 +19,11 @@ export default function DisplayCollections() {
 
   const { data: overviewData } = useMarketOverview();
   const isShowDisplayCollections = useNanostore($isShowDisplayCollections);
-  const currentAmm = useNanostore($currentAmm);
+  // const currentAmm = useNanostore($currentAmm);
   const positionInfos = useNanostore($userPositionInfos);
   const isMarketDataUpdating = useNanostore($isMarketDataUpdating);
 
-  const ammList = getSupportedAMMs().filter((amm: AMM) => amm !== currentAmm);
+  const ammList = getSupportedAMMs(); // .filter((amm: AMM) => amm !== currentAmm);
 
   const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
   const updateOverviewData = () => {
