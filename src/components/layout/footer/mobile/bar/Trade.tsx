@@ -29,7 +29,7 @@ function MobileTradeFooterInfo() {
       alert(connector0.id);
       alert(connector1);
       alert(connector1.id);
-      const connector = connectors[0];
+      const connector = connectors[1];
       connect({ connector });
       // let isInjected = false;
 
