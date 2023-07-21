@@ -1,7 +1,7 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+// import { InjectedConnector } from 'wagmi/connectors/injected';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { ToastContainer } from 'react-toastify';
@@ -33,7 +33,7 @@ const outlineToastClass = {
   success: 'border border-marketGreen',
   error: 'border border-marketRed',
   info: 'border border-gray-600',
-  warning: 'border border-orange-400',
+  warning: 'border border-yellow-500',
   default: 'border border-marketGreen',
   dark: 'border border-white-600 font-gray-300'
 };
@@ -64,7 +64,7 @@ export default function App({ Component, pageProps }: AppProps) {
               const { type } = opt;
               return `bg-[#121212] ${
                 outlineToastClass[type || 'default']
-              } w-[350px] relative flex min-h-10 justify-between overflow-hidden rounded-lg p-2`;
+              } w-[350px] relative flex min-h-10 justify-between overflow-hidden rounded-lg p-2 mb-2`;
             }}
             enableMultiContainer
             containerId="GLOBAL_OUTLINE"

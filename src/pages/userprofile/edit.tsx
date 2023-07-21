@@ -30,6 +30,12 @@ const AddressPage: NextPage = () => {
   const isAboutCharLongValid = about.length <= aboutCharLongMax;
   const isSaveAllowed = isUserIdValid && isAboutCharLongValid && isConnected;
 
+  // useEffect(() => {
+  //   showOutlineToast({ title: 'Changes have not been saved' });
+  //   showOutlineToast({ title: 'Changes have not been saved', error: true });
+  //   showOutlineToast({ title: 'Changes have not been saved', warning: true });
+  // }, []);
+
   const submit = async () => {
     try {
       setIsLoading(true);
