@@ -140,7 +140,7 @@ const AddressPage: NextPage = () => {
         $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
     } catch (error) {
-      console.log('err', error);
+      // console.log('err', error);
     }
   };
 
@@ -160,7 +160,7 @@ const AddressPage: NextPage = () => {
         $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
     } catch (error) {
-      console.log('err', error);
+      // console.log('err', error);
     }
   };
 
@@ -304,7 +304,7 @@ const AddressPage: NextPage = () => {
                         <Image
                           src="/images/components/userprofile/copy.svg"
                           alt=""
-                          className="cursor-pointer"
+                          className="cursor-pointer hover:brightness-[120%]"
                           width={20}
                           height={20}
                           onClick={() => {

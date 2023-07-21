@@ -75,7 +75,7 @@ export const FollowButton = ({
         }
       }
     } catch (error) {
-      console.log('err', error);
+      // console.log('err', error);
     }
   };
 
@@ -98,7 +98,7 @@ export const FollowButton = ({
         }
       }
     } catch (error) {
-      console.log('err', error);
+      // console.log('err', error);
     }
   };
 

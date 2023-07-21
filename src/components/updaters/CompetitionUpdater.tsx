@@ -35,7 +35,6 @@ function CompetitionDataUpdater() {
 
       if (absPnlLboardRes.status === 'fulfilled') {
         const absPnlLboardData = absPnlLboardRes.value;
-        console.log({ absPnlLboardRes });
         $mainLeaderboard.set(absPnlLboardData?.leaderboard);
         if (address) {
           $mlCurrentUser.set(absPnlLboardData?.user);

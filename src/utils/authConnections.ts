@@ -51,12 +51,9 @@ export const authConnections = {
     }
   },
   switchCurrentUser: async function switchCurrentUser(userAddress: string) {
-    const auth = firebaseAuth;
-    const currentUser = auth?.currentUser;
     const postUserContent = await this.postUserContent(userAddress);
     const { nonce } = postUserContent.data;
     const postAuthUser = await this.postAuthUser(nonce, userAddress);
-    console.log({ postAuthUser });
     const firToken = postAuthUser.data.token;
     try {
       const userCredential = await signInWithCustomToken(firebaseAuth!, firToken);
