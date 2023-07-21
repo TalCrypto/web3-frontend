@@ -19,29 +19,33 @@ function MobileTradeFooterInfo() {
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const isWethCollected = wethBalance !== 0;
   const showWethBalanceLabel = !isConnected ? '' : isWrongNetwork ? '-.-- WETH' : `${Number(wethBalance).toFixed(2)} WETH`;
-  const { connect, connectors } = useConnect();
+  const { /* connect, */ connectors } = useConnect();
 
   const onClickBottomButton = async () => {
     if (!isConnected) {
-      const connector0 = connectors[0];
-      const connector1 = connectors[1];
-      alert(connector0);
-      alert(connector0.id);
-      alert(connector0.name);
-      alert(connector1);
-      alert(connector1.id);
-      alert(connector1.name);
-      const connector = connectors[1];
-      connect({ connector });
+      // console.log(connectors);
+      // const connector0 = connectors[0];
+      // const connector1 = connectors[1];
+      // alert(connector0);
+      // alert(connector0.id);
+      // alert(connector0.name);
+      // alert(connector1);
+      // alert(connector1.id);
+      // alert(connector1.name);
+      // const connector = connectors[1];
+      // connect({ connector });
+
       // let isInjected = false;
 
-      // for (let i = 0; i < connectors.length; i += 1) {
-      //   const connector = connectors[i];
-      //   if (connector?.id.includes('injected')) {
-      //     connect({ connector });
-      //     isInjected = true;
-      //   }
-      // }
+      for (let i = 0; i < connectors.length; i += 1) {
+        const connector = connectors[i];
+        alert(connector.id);
+        alert(connector.name);
+        // if (connector?.id.includes('injected')) {
+        //   connect({ connector });
+        //   isInjected = true;
+        // }
+      }
 
       // if (!isInjected) {
       //   open();
