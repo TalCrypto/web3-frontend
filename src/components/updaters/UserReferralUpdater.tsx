@@ -25,7 +25,6 @@ const UserReferralUpdater = () => {
   const hadTradedOnce = userPoint?.isInputCode && Object.keys(userPoint.referralUser).length === 0;
   const hadEnterCode = userPoint?.isInputCode && userPoint.referralUser?.userAddress;
   const fbApp = firebaseApp;
-  let auth = getAuth();
 
   useEffect(() => {
     if (isConnected === true) {
@@ -44,14 +43,17 @@ const UserReferralUpdater = () => {
   }, [refersCode]);
 
   useEffect(() => {
+    let auth = getAuth();
+    const userAddr: any = address?.toLowerCase();
     async function useReferral() {
       let currentUser = auth?.currentUser;
       try {
-        if (!currentUser || currentUser.uid === address) {
-          await authConnections.switchCurrentUser(address || '');
+        if (!currentUser || currentUser.uid !== userAddr) {
+          await authConnections.switchCurrentUser(userAddr || '');
           auth = getAuth();
           currentUser = auth.currentUser;
         }
+
         const idToken = await currentUser?.getIdToken(true);
         const response: any = apiConnection.useReferralCode(refersCode, idToken, String(address));
         if (response.code === 0) {
@@ -63,7 +65,7 @@ const UserReferralUpdater = () => {
     }
 
     if (showResponseModal && isConnected && userPoint && referredUser) {
-      if (referredUser?.userAddress === address?.toLowerCase()) {
+      if (referredUser?.userAddress === userAddr) {
         $asReferResponse.set(ReferredResponse.IsInvalidCode);
       } else if (hadTradedOnce) {
         $asReferResponse.set(ReferredResponse.IsTradedOnce);
