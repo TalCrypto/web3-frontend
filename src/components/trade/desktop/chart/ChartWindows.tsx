@@ -5,7 +5,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { useStore as useNanostore } from '@nanostores/react';
+import { useStore as useNanostore, useStore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { getCollectionInformation } from '@/const/collectionList';
 
@@ -27,6 +27,7 @@ import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
 import CheckBox from '@/components/common/CheckBox';
+import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
 
 const flashAnim = 'flash';
 
@@ -138,29 +139,50 @@ function ChartTimeTabs(props: any) {
 }
 
 const ChartSetting = () => {
-  const foo = 'bar';
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const isSettingVammOn = useStore($isSettingVammOn);
+  const isSettingOracleOn = useStore($isSettingOracleOn);
+
   return (
     <div className="flex space-x-[18px]">
-      <div className="flex items-center space-x-2 rounded">
-        <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
-        <p className="text-b3">VAMM Price</p>
-      </div>
-      <div className="flex items-center space-x-2 rounded">
-        <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#1B9C94]" />
-        <p className="text-b3">Oracle Price</p>
-      </div>
+      {isSettingVammOn ? (
+        <div className="flex items-center space-x-2 rounded">
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
+          <p className="select-none text-b3">VAMM Price</p>
+        </div>
+      ) : null}
+      {isSettingOracleOn ? (
+        <div className="flex items-center space-x-2 rounded">
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#1B9C94]" />
+          <p className="select-none text-b3">Oracle Price</p>
+        </div>
+      ) : null}
       <div className="relative">
-        <div className="cursor-pointer">
+        <div
+          className="cursor-pointer"
+          onClick={e => {
+            e.stopPropagation();
+            document.addEventListener('click', () => setIsMenuVisible(false));
+            setIsMenuVisible(!isMenuVisible);
+          }}>
           <Image src="/images/components/trade/chart/settings.svg" alt="" width={20} height={20} />
         </div>
-        <div className="absolute left-0 top-5 mt-[6px] flex w-[160px] flex-col rounded-[6px] border border-[#2E4371] bg-secondaryBlue p-1 shadow-lg">
-          <div className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10">
-            <CheckBox checked />
+        <div
+          onClick={e => e.stopPropagation()}
+          className={`${
+            isMenuVisible ? '' : 'hidden'
+          } absolute left-0 top-5 mt-[6px] flex w-[160px] flex-col rounded-[6px] border border-[#2E4371] bg-secondaryBlue p-1 shadow-lg`}>
+          <div
+            className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10"
+            onClick={() => $isSettingVammOn.set(!isSettingVammOn)}>
+            <CheckBox checked={isSettingVammOn} />
             <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
             <p className="text-b3">VAMM Price</p>
           </div>
-          <div className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10">
-            <CheckBox />
+          <div
+            className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10"
+            onClick={() => $isSettingOracleOn.set(!isSettingOracleOn)}>
+            <CheckBox checked={isSettingOracleOn} />
             <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#1B9C94]" />
             <p className="text-b3">Oracle Price</p>
           </div>
