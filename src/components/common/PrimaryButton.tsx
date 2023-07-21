@@ -8,7 +8,7 @@ const PrimaryButton = (props: any) => {
     <div
       className={`${className} flex items-center justify-center rounded-[6px] text-[16px]
         ${isDisabled ? 'cursor-default bg-[#272955]' : normalClasses}`}
-      onClick={onClick}>
+      onClick={isDisabled ? null : onClick}>
       {children}
     </div>
   );

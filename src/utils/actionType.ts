@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 import { CollateralActions, TradeActions } from '@/const';
+import { formatBigInt } from '@/utils/bigInt';
 
 export function getTradingActionType(
   item: { exchangedPositionSize: number; liquidationPenalty: number; positionSizeAfter: number },
@@ -54,6 +55,37 @@ export function getActionTypeFromApi(item: any) {
     return getCollateralActionType(Number(item.collateralChange));
   }
   return getTradingActionType(item);
+}
+
+export function getTradingActionTypeFromSubgraph(item: any, isMobile = false) {
+  let actionType = '';
+  const liquidationPenaltyNumber = item.liquidationPenalty ? formatBigInt(item.liquidationPenalty) : 0;
+  if (liquidationPenaltyNumber !== 0) {
+    const positionSizeAfterNumber = item.positionSizeAfter ? formatBigInt(item.positionSizeAfter) : 0;
+    if (positionSizeAfterNumber === 0) {
+      actionType = !isMobile ? TradeActions.FULL_LIQ : TradeActions.FULL_LIQ_MOBILE;
+    } else {
+      actionType = !isMobile ? TradeActions.PARTIAL_LIQ : TradeActions.PARTIAL_LIQ_MOBILE;
+    }
+  } else if (formatBigInt(item.exchangedPositionSize) === formatBigInt(item.positionSizeAfter)) {
+    actionType = TradeActions.OPEN;
+  } else if (formatBigInt(item.positionSizeAfter) === 0) {
+    actionType = TradeActions.CLOSE;
+  } else if (
+    Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
+    Math.abs(formatBigInt(item.exchangedPositionSize)) < Math.abs(formatBigInt(item.positionSizeAfter))
+  ) {
+    actionType = TradeActions.ADD;
+  } else if (
+    Math.sign(formatBigInt(item.exchangedPositionSize)) === Math.sign(formatBigInt(item.positionSizeAfter)) &&
+    Math.abs(formatBigInt(item.exchangedPositionSize)) > Math.abs(formatBigInt(item.positionSizeAfter))
+  ) {
+    actionType = TradeActions.REVERSE;
+  } else if (Math.sign(formatBigInt(item.exchangedPositionSize)) !== Math.sign(formatBigInt(item.positionSizeAfter))) {
+    actionType = TradeActions.REDUCE;
+  }
+
+  return actionType;
 }
 
 export function getWalletBalanceChange(record: any) {

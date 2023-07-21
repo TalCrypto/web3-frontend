@@ -19,7 +19,7 @@ export const $psShowShareIndicator = atom(false);
 
 export const $psShowHistory = atom(false);
 
-export const $psSelectedTimeIndex = atom(3);
+export const $psSelectedTimeIndex = atom(0);
 
 export const $psLineChartData = atom();
 
@@ -32,6 +32,7 @@ export const $psLiqSwitchRatio = atom<number | undefined>();
 export const $psTimeDescription: any = {
   0: '(1 Week)',
   1: '(1 Month)',
-  2: '(2 Month)',
-  3: '(Since Trading Competition)'
+  2: '(2 Months)',
+  3: '(6 Months)'
+  // 3: '(Since Trading Competition)'
 };

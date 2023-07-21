@@ -94,3 +94,5 @@ export const $asHasReferCode = atom(false);
 export const $asReferResponse = atom(0);
 
 export const $asReferredUser = atom();
+
+export const $targetReferralCode = atom();

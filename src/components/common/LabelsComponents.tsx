@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 
 export function ExplorerButton(props: any) {
-  const { txHash, onClick, className = '' } = props;
+  const { txHash, onClick, className = '', width = 24, height = 24 } = props;
   return (
     <a
       href={`${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`}
@@ -11,7 +11,7 @@ export function ExplorerButton(props: any) {
       target="_blank"
       rel="noreferrer"
       className={className}>
-      <Image alt="" src="/images/common/out.svg" width={24} height={24} />
+      <Image alt="" src="/images/common/out.svg" width={width} height={height} />
     </a>
   );
 }
