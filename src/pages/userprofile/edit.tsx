@@ -1,29 +1,86 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import PageHeader from '@/components/layout/header/PageHeader';
 import OutlineButton from '@/components/common/OutlineButton';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import { $userAddress, $userIsConnected } from '@/stores/user';
+import { useStore } from '@nanostores/react';
+import { getAuth } from 'firebase/auth';
+import { authConnections } from '@/utils/authConnections';
+import { apiConnection } from '@/utils/apiConnection';
+import { showOutlineToast } from '@/components/common/Toast';
 
 const AddressPage: NextPage = () => {
   const router = useRouter();
-  // const { address } = router.query;
+  const isConnected = useStore($userIsConnected);
+  const currentUserAddress = useStore($userAddress);
   const [userId, setUserId] = useState('');
   const [about, setAbout] = useState('');
+  const [isErrorUnique, setIsErrorUnique] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const userCharLongMin = 3;
   const userCharLongMax = 20;
   const isUserCharLongValid = userId.length >= userCharLongMin && userId.length <= userCharLongMax;
   const regex = /[^A-Za-z0-9_-]/;
   const isUserCharValid = !regex.test(userId);
-  const isUserIdValid = isUserCharLongValid && isUserCharValid;
+  const isUserIdValid = isUserCharLongValid && isUserCharValid && !isLoading;
 
   const aboutCharLongMax = 200;
   const isAboutCharLongValid = about.length <= aboutCharLongMax;
+  const isSaveAllowed = isUserIdValid && isAboutCharLongValid && isConnected;
 
-  const submit = () => {
-    // todo: fetch api to submit
-    console.log(userId, about);
+  const submit = async () => {
+    try {
+      setIsLoading(true);
+      let auth = getAuth();
+      let currentUser = auth?.currentUser;
+      const userAddr: any = currentUserAddress?.toLowerCase();
+      if (!currentUser || currentUser.uid !== userAddr) {
+        await authConnections.switchCurrentUser(userAddr || '');
+        auth = getAuth();
+        currentUser = auth?.currentUser;
+      }
+      const newToken: any = await currentUser?.getIdToken(true);
+      try {
+        const res = await apiConnection.updateUserInfo(userId, about, newToken, userAddr);
+        if (res.code === 0) {
+          showOutlineToast({ title: 'Changes have been saved.' });
+          setTimeout(() => {
+            router.push(`/userprofile/${currentUserAddress}`);
+          }, 500);
+        } else {
+          showOutlineToast({ title: 'Changes have not been saved.', error: true });
+          setIsErrorUnique(true);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        showOutlineToast({ title: 'Changes have not been saved.', warning: true });
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    async function getUserInfo() {
+      setIsLoading(true);
+      const userInfoRes = await apiConnection.getUserInfo(currentUserAddress);
+
+      if (userInfoRes.code === 0) {
+        const { username, about: userAbout } = userInfoRes.data;
+        setUserId(username);
+        setAbout(userAbout);
+      }
+      setIsLoading(false);
+    }
+
+    if (currentUserAddress) {
+      getUserInfo();
+    }
+  }, [currentUserAddress]);
+
   return (
     <>
       <PageHeader
@@ -56,6 +113,7 @@ const AddressPage: NextPage = () => {
                   leading-[19.5px] text-highEmphasis outline-none placeholder:text-mediumEmphasis`}
                   placeholder="Enter your name here"
                   onChange={e => setUserId(e.target.value)}
+                  value={userId}
                 />
                 <p className="text-[16px] leading-[19.5px] text-highEmphasis">
                   <span className={`${isUserCharLongValid ? '' : 'text-red-500'}`}>{userId.length}</span>/{userCharLongMax}
@@ -68,7 +126,7 @@ const AddressPage: NextPage = () => {
                 <li className={`${isUserCharValid ? '' : 'text-red-500'}`}>
                   Valid Characters include A-z, 0-9, &quot;_&quot; and &quot;-&quot;
                 </li>
-                <li>User ID needs to be unique.</li>
+                <li className={`${!isErrorUnique ? '' : 'text-red-500'}`}>User ID needs to be unique.</li>
                 <li>After you submit, it usually takes a few minutes to review and approve.</li>
               </ul>
 
@@ -84,6 +142,7 @@ const AddressPage: NextPage = () => {
                   leading-[19.5px] text-highEmphasis outline-none placeholder:text-mediumEmphasis`}
                   placeholder="Tell your story to the world !"
                   onChange={e => setAbout(e.target.value)}
+                  value={about}
                 />
                 <p className="text-end text-[16px] leading-[19.5px] text-highEmphasis">
                   <span className={`${isAboutCharLongValid ? '' : 'text-red-500'}`}>{about.length}</span>/{aboutCharLongMax}
@@ -91,12 +150,14 @@ const AddressPage: NextPage = () => {
               </div>
 
               <div className="flex justify-end space-x-[24px]">
-                <OutlineButton onClick={() => router.back()} className="w-[100px] rounded-[6px] !px-[24px] !py-[14px] !text-b2e text-white">
+                <OutlineButton
+                  onClick={() => router.push(`/userprofile/${currentUserAddress}`)}
+                  className="w-[100px] rounded-[6px] !px-[24px] !py-[14px] !text-b2e text-white">
                   Cancel
                 </OutlineButton>
                 <PrimaryButton
                   onClick={() => submit()}
-                  isDisabled={!isUserIdValid}
+                  isDisabled={!isSaveAllowed}
                   className="w-[100px] rounded-[6px] !px-[24px] !py-[14px] !text-b2e text-white">
                   Save
                 </PrimaryButton>

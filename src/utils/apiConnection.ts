@@ -105,7 +105,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  getUserInfo: async function getUserInfo(address: string) {
+  getUserInfo: async function getUserInfo(address: any) {
     const url = `${authUrl}/users?publicAddress=${address}`;
     try {
       const call = await fetch(url);

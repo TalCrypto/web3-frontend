@@ -27,7 +27,6 @@ import { Address, zeroAddress } from 'viem';
 import { AMM } from '@/const/collectionList';
 import { formatBigInt } from '@/utils/bigInt';
 import { getAMMAddress, getSupportedAMMs } from '@/const/addresses';
-import { getTradingActionTypeFromSubgraph } from '@/utils/actionType';
 
 const PositionInfoUpdater: React.FC<{
   chain: Chain | undefined;
