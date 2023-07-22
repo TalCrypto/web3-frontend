@@ -412,11 +412,9 @@ export default function CloseCollateral() {
 
   const handleError = useCallback((error: Error | null, isPrepareError: boolean) => {
     setIsPending(false);
-    if (isPrepareError) {
-      setPrepareTextErrorMessage(error ? formatError(error.message) : null);
-    } else {
-      setWriteTextErrorMessage(error ? formatError(error.message) : null);
-    }
+
+    setPrepareTextErrorMessage(error && isPrepareError ? formatError(error.message) : null);
+    setWriteTextErrorMessage(error && !isPrepareError ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
