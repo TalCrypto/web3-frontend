@@ -29,12 +29,7 @@ const wagmiConfig = createConfig({
   autoConnect: true,
   // connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
   connectors: [
-    new MetaMaskConnector({
-      chains: CHAINS,
-      options: {
-        name: 'wagmi'
-      }
-    }),
+    new MetaMaskConnector({ chains: CHAINS }),
     new CoinbaseWalletConnector({
       chains: CHAINS,
       options: {
@@ -44,7 +39,7 @@ const wagmiConfig = createConfig({
     new WalletConnectConnector({
       chains: CHAINS,
       options: {
-        projectId
+        projectId: '...'
       }
     }),
     new InjectedConnector({
