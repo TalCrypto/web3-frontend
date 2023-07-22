@@ -89,6 +89,16 @@ function ClosePosButton({
         );
       }
     }
+
+    if (isError && isMobileView) {
+      if (String(error).includes('rejected')) {
+        $tsTransactionStatus.set({
+          isShow: true,
+          isSuccess: false,
+          linkUrl: ''
+        });
+      }
+    }
   }, [isError, error]);
 
   return (
