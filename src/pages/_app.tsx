@@ -11,22 +11,29 @@ import '@/styles/all.scss';
 import { CHAINS, DEFAULT_CHAIN } from '@/const/supportedChains';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
-import { publicProvider } from 'wagmi/providers/public';
+// import { publicProvider } from 'wagmi/providers/public';
 import MetamaskModal from '@/components/layout/header/desktop/MetamaskModal';
 import LoginModal from '@/components/layout/header/desktop/LoginModal';
 import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetTokenModal';
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
-const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
+// const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
 
+// const wagmiConfig = createConfig({
+//   autoConnect: true,
+//   connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
+//   publicClient,
+//   webSocketPublicClient
+// });
+// const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
+
+const { publicClient } = configureChains(CHAINS, [w3mProvider({ projectId })]);
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
-  publicClient,
-  webSocketPublicClient
+  connectors: w3mConnectors({ projectId, chains: CHAINS }),
+  publicClient
 });
-
 const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
 
 const outlineToastClass = {
