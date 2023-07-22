@@ -1,6 +1,6 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
-import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { EthereumClient, /* w3mConnectors, */ w3mProvider } from '@web3modal/ethereum';
 // import { InjectedConnector } from 'wagmi/connectors/injected';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
@@ -16,13 +16,45 @@ import MetamaskModal from '@/components/layout/header/desktop/MetamaskModal';
 import LoginModal from '@/components/layout/header/desktop/LoginModal';
 import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetTokenModal';
 
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
 const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
+  // connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
+  connectors: [
+    new MetaMaskConnector({
+      chains: CHAINS,
+      options: {
+        name: 'wagmi'
+      }
+    }),
+    new CoinbaseWalletConnector({
+      chains: CHAINS,
+      options: {
+        appName: 'wagmi'
+      }
+    }),
+    new WalletConnectConnector({
+      chains: CHAINS,
+      options: {
+        projectId
+      }
+    }),
+    new InjectedConnector({
+      chains: CHAINS,
+      options: {
+        name: 'Injected',
+        shimDisconnect: true
+      }
+    })
+  ],
   publicClient,
   webSocketPublicClient
 });

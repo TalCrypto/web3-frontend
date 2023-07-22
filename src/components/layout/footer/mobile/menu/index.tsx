@@ -16,7 +16,7 @@ import {
   $userTotalCollateral
 } from '@/stores/user';
 import { useConnect, useDisconnect, useSwitchNetwork } from 'wagmi';
-import { useWeb3Modal } from '@web3modal/react';
+// import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $userPoint } from '@/stores/airdrop';
 import { localeConversion } from '@/utils/localeConversion';
@@ -40,7 +40,7 @@ const MobileMenu = (props: any) => {
   const { disconnect } = useDisconnect();
   const { connect, connectors } = useConnect();
 
-  const { open } = useWeb3Modal();
+  // const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
   const walletAddressToShow = (addr: any) => {
@@ -52,20 +52,24 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
-      let isInjected = false;
+      console.log(connectors);
+      const connector = connectors[3];
+      connect({ connector });
 
-      for (let i = 0; i < connectors.length; i += 1) {
-        const connector = connectors[i];
-        if (connector?.id.includes('injected')) {
-          connect({ connector });
-          isInjected = true;
-          break;
-        }
-      }
+      // let isInjected = false;
 
-      if (!isInjected) {
-        open();
-      }
+      // for (let i = 0; i < connectors.length; i += 1) {
+      //   const connector = connectors[i];
+      //   if (connector?.id.includes('injected')) {
+      //     connect({ connector });
+      //     isInjected = true;
+      //     break;
+      //   }
+      // }
+
+      // if (!isInjected) {
+      //   open();
+      // }
     } else if (isWrongNetwork) {
       if (switchNetwork) {
         switchNetwork(DEFAULT_CHAIN.id);
