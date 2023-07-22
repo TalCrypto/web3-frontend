@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 import React from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 // import Sidebar from '@/components/layout/footer/mobile/Sidebar';
@@ -35,9 +34,7 @@ function MobileTradeFooterInfo() {
       // }
 
       // if (!isInjected) {
-      alert(1);
       open();
-      alert(2);
       // }
       return;
     }
