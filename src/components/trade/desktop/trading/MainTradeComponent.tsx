@@ -113,7 +113,7 @@ function LongShortRatio(props: any) {
 }
 
 function QuantityTips(props: any) {
-  const { isAmountTooSmall, isInsuffBalance, estPriceFluctuation, textErrorMessage } = props;
+  const { isAmountTooSmall, isInsuffBalance, estPriceFluctuation, prepareTextErrorMessage } = props;
   const [isEstPriceFluctuation, setIsEstPriceFluctuation] = useState(false);
 
   const onClickWeth = () => {
@@ -141,7 +141,7 @@ function QuantityTips(props: any) {
       </span>{' '}
       first.
     </>
-  ) : !textErrorMessage && isEstPriceFluctuation ? (
+  ) : !prepareTextErrorMessage && isEstPriceFluctuation ? (
     <span className="text-warn">
       Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the
       notional size of your trade.
@@ -156,7 +156,7 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation } = props;
+  const { value, onChange, isAmountTooSmall, disabled, prepareTextErrorMessage, estimation, isInputBlur, setIsInputBlur } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -240,10 +240,10 @@ function QuantityEnter(props: any) {
           estPriceFluctuation={estPriceFluctuation}
           isAmountTooSmall={isAmountTooSmall}
           isInsuffBalance={isInsuffBalance}
-          textErrorMessage={textErrorMessage}
+          prepareTextErrorMessage={prepareTextErrorMessage}
           value={value}
         />
-        {!isAmountTooSmall && !isInsuffBalance ? <ErrorTip label={textErrorMessage} /> : null}
+        {!isAmountTooSmall && !isInsuffBalance ? <ErrorTip label={prepareTextErrorMessage} /> : null}
       </div>
     </>
   );
@@ -373,37 +373,6 @@ function EstimatedValueDisplay(props: {
   );
 }
 
-function Tips({
-  isConnected,
-  isWrongNetwork,
-  isRequireWeth,
-  isApproveRequired
-}: {
-  isConnected: boolean;
-  isWrongNetwork: boolean;
-  isRequireWeth: boolean;
-  isApproveRequired: boolean;
-}) {
-  const label = !isConnected ? (
-    'Please connect the wallets to trade !'
-  ) : isWrongNetwork ? (
-    'Wrong Network, please switch to Arbitrum!'
-  ) : isRequireWeth ? (
-    'Please get WETH first !'
-  ) : isApproveRequired ? (
-    <>Please approve before trading!</>
-  ) : null;
-
-  return label ? (
-    <div
-      className="mt-4 flex h-[16px] items-center text-[12px]
-        font-normal leading-[16px] text-warn">
-      <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
-      <span>{label}</span>
-    </div>
-  ) : null;
-}
-
 function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
   const { estimation } = props;
   const currentAmm = useNanostore($currentAmm);
@@ -488,7 +457,8 @@ export default function MainTradeComponent() {
   const [toleranceRate, setToleranceRate] = useState(0.5);
   const [leverageValue, setLeverageValue] = useState(1);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
-  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
+  const [prepareTextErrorMessage, setPrepareTextErrorMessage] = useState<string | null>(null);
+  const [writeTextErrorMessage, setWriteTextErrorMessage] = useState<string | null>(null);
   const notionalAmount = Number(quantity) * leverageValue ?? 0;
   const {
     isLoading: isEstLoading,
@@ -520,7 +490,7 @@ export default function MainTradeComponent() {
 
   useEffect(() => {
     if (isEstError) {
-      setTextErrorMessage(estError ? formatError(estError.message) : null);
+      setPrepareTextErrorMessage(estError ? formatError(estError.message) : null);
     }
   }, [isEstError, estError]);
 
@@ -531,9 +501,13 @@ export default function MainTradeComponent() {
     setIsPending(false);
   }, []);
 
-  const handleError = useCallback((error: Error | null) => {
+  const handleError = useCallback((error: Error | null, isPrepareError: boolean) => {
     setIsPending(false);
-    setTextErrorMessage(error ? formatError(error.message) : null);
+    if (isPrepareError) {
+      setPrepareTextErrorMessage(error ? formatError(error.message) : null);
+    } else {
+      setWriteTextErrorMessage(error ? formatError(error.message) : null);
+    }
   }, []);
 
   const handlePending = useCallback(() => {
@@ -554,7 +528,7 @@ export default function MainTradeComponent() {
   };
 
   useEffect(() => {
-    setTextErrorMessage(null);
+    setPrepareTextErrorMessage(null);
   }, [currentAmm, saleOrBuyIndex]);
 
   return (
@@ -572,7 +546,7 @@ export default function MainTradeComponent() {
           handleQuantityInput(value);
         }}
         isAmountTooSmall={isAmountTooSmall}
-        textErrorMessage={textErrorMessage}
+        prepareTextErrorMessage={prepareTextErrorMessage}
       />
       <LeverageComponent
         disabled={isPending || isWrongNetwork || !isConnected}
@@ -620,12 +594,10 @@ export default function MainTradeComponent() {
         />
       )}
 
-      <Tips
-        isConnected={isConnected}
-        isWrongNetwork={isWrongNetwork}
-        isRequireWeth={wethBalance === 0}
-        isApproveRequired={isNeedApproval}
-      />
+      <div className="mt-4">
+        <ErrorTip label={writeTextErrorMessage} />
+      </div>
+
       {estimation && <ExtendedEstimateComponent estimation={estimation} />}
       <ApprovalModal />
     </div>

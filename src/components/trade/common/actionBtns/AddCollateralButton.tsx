@@ -21,7 +21,7 @@ function AddCollateralButton({
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
-  onError: (error: Error | null) => void;
+  onError: (error: Error | null, isPrepareError: boolean) => void;
 }) {
   if (deltaMargin < 0) throw new Error('invalid prop');
   const currentAmm = useNanostore($currentAmm);
@@ -29,13 +29,14 @@ function AddCollateralButton({
   const [isLoading, setIsLoading] = useState(false);
   const isMobileView = useNanostore($isMobileView);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useAddCollateralTransaction(deltaMargin);
+  const { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash } = useAddCollateralTransaction(deltaMargin);
 
   useEffect(() => {
+    console.log(error);
     if (isError) {
       setIsLoading(false);
     }
-    onError(isError ? error : null);
+    onError(isError ? error : null, isPrepareError);
   }, [isError, error, onError]);
 
   useEffect(() => {
@@ -71,6 +72,26 @@ function AddCollateralButton({
       }
     }
   }, [isPending, collectionInfo.shortName, txHash]);
+
+  useEffect(() => {
+    if (isError && !isMobileView) {
+      if (String(error).includes('RPC')) {
+        showToast(
+          {
+            error: true,
+            title: `${collectionInfo.shortName} - ${CollateralActions.ADD}`,
+            message: 'Your transaction has failed due to network error. Please try again.',
+            linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
+            linkLabel: 'Check on Arbiscan'
+          },
+          {
+            autoClose: 5000,
+            hideProgressBar: true
+          }
+        );
+      }
+    }
+  }, [isError, error]);
 
   return (
     <BaseButton

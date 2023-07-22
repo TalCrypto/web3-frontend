@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 // import { showToast } from '@/components/common/Toast';
 import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
@@ -21,7 +22,7 @@ function ApproveButton({
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
-  onError: (error: Error | null) => void;
+  onError: (error: Error | null, isPrepareError: boolean) => void;
 }) {
   if (approvalAmount < 0) throw new Error('invalid prop');
   // const currentAmm = useNanostore($currentAmm);
@@ -31,13 +32,13 @@ function ApproveButton({
   const wethBalance = useNanostore($userWethBalance);
   const isInsuffBalance = wethBalance < approvalAmount;
 
-  const { write, isError, error, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction();
+  const { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess /* txHash */ } = useApproveTransaction();
 
   useEffect(() => {
     if (isError) {
       setIsLoading(false);
     }
-    onError(isError ? error : null);
+    onError(isError ? error : null, isPrepareError);
   }, [isError, error, onError]);
 
   useEffect(() => {
@@ -64,24 +65,6 @@ function ApproveButton({
       }
     }
   }, [isError, isPending, isLoading, isMobileView]);
-
-  // useEffect(() => {
-  //   if (isPending) {
-  //     showToast(
-  //       {
-  //         warning: true,
-  //         title: `${collectionInfo.shortName} - Add Collateral`,
-  //         message: 'Order Received!',
-  //         linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
-  //         linkLabel: 'Check on Arbiscan'
-  //       },
-  //       {
-  //         autoClose: 5000,
-  //         hideProgressBar: true
-  //       }
-  //     );
-  //   }
-  // }, [isPending, onPending, collectionInfo.shortName, txHash]);
 
   return (
     <BaseButton

@@ -39,7 +39,7 @@ function OpenPosButton({
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
-  onError: (error: Error | null) => void;
+  onError: (error: Error | null, isPrepareError: boolean) => void;
 }) {
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
@@ -83,7 +83,7 @@ function OpenPosButton({
     setIsLoading(false);
   }, [currentAmm]);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useOpenPositionTransaction({
+  const { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash } = useOpenPositionTransaction({
     side,
     notionalAmount,
     leverage,
@@ -95,7 +95,7 @@ function OpenPosButton({
     if (isError) {
       setIsLoading(false);
     }
-    onError(isError ? error : null);
+    onError(isError ? error : null, isPrepareError);
   }, [isError, error, onError]);
 
   useEffect(() => {
@@ -131,6 +131,26 @@ function OpenPosButton({
       }
     }
   }, [isPending, label, txHash]);
+
+  useEffect(() => {
+    if (isError && !isMobileView) {
+      if (String(error).includes('RPC')) {
+        showToast(
+          {
+            error: true,
+            title: `${collectionInfo.shortName} - ${label}`,
+            message: 'Your transaction has failed due to network error. Please try again.',
+            linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
+            linkLabel: 'Check on Arbiscan'
+          },
+          {
+            autoClose: 5000,
+            hideProgressBar: true
+          }
+        );
+      }
+    }
+  }, [isError, error]);
 
   useEffect(() => {
     if (isPartialClose && isContinueClose) {
