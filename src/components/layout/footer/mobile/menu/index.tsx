@@ -301,7 +301,7 @@ const MobileMenu = (props: any) => {
                   'Connect'
                 )}
               </div>
-              {error && <div>{error.message}</div>}
+              <div className="text-highEmphasis">error:{error && <div>{error.message}</div>}</div>
             </div>
           ) : isWrongNetwork ? (
             <div className="mx-5">
