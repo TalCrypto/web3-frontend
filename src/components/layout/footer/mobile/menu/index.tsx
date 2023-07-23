@@ -38,7 +38,7 @@ const MobileMenu = (props: any) => {
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { disconnect } = useDisconnect();
-  const { connect, connectors, error } = useConnect();
+  const { connect, connectors } = useConnect();
 
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
@@ -301,7 +301,6 @@ const MobileMenu = (props: any) => {
                   'Connect'
                 )}
               </div>
-              <div className="text-highEmphasis">error:{error && <div>{error.message}</div>}</div>
             </div>
           ) : isWrongNetwork ? (
             <div className="mx-5">
