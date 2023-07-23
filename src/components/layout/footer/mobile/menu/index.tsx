@@ -39,7 +39,7 @@ const MobileMenu = (props: any) => {
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { reset, disconnect } = useDisconnect();
-  const { status, connect, connectors } = useConnect();
+  const { status, connectAsync, connectors } = useConnect();
 
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
@@ -61,7 +61,7 @@ const MobileMenu = (props: any) => {
       for (let i = 0; i < connectors.length; i += 1) {
         const connector = connectors[i];
         if (connector?.id.includes('injected')) {
-          connect({ connector });
+          connectAsync({ connector });
           isInjected = true;
           break;
         }
