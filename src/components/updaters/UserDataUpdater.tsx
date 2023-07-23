@@ -166,7 +166,6 @@ const UserDataUpdater: React.FC = () => {
   }, [address]);
 
   useEffect(() => {
-    alert(address);
     setIsConnecting(/* isOpen && */ isConnecting);
   }, [isConnecting /* , isOpen */]);
 
