@@ -1961,37 +1961,6 @@
     "@walletconnect/window-getters" "^1.0.1"
     tslib "1.14.1"
 
-"@web3modal/core@2.6.2":
-  version "2.6.2"
-  resolved "https://registry.npmjs.org/@web3modal/core/-/core-2.6.2.tgz"
-  integrity sha512-7gi618Z+bFOwEzhdxROt4AC8N45oiPHJFEA0AX3PxhB+ni5Usc1VQ03jQhk7DnQLDnQq+3hCY71F1escdxkdBA==
-  dependencies:
-    buffer "6.0.3"
-    valtio "1.10.6"
-
-"@web3modal/ethereum@^2.6.2":
-  version "2.6.2"
-  resolved "https://registry.npmjs.org/@web3modal/ethereum/-/ethereum-2.6.2.tgz"
-  integrity sha512-8QCzJj0+x6y/7V++DQnXdPjdmMvq+zm/Fl8CEKhNlni9p4H406q7ramjdJEu1Bk4xtCklYh/aU3ZGR5wUIDysA==
-
-"@web3modal/react@^2.6.2":
-  version "2.6.2"
-  resolved "https://registry.npmjs.org/@web3modal/react/-/react-2.6.2.tgz"
-  integrity sha512-Fi4rFCFI5L0w2Mx8hmY6Nwh4fQapGfKZA2JgXT8cduTk9N+Qov+clwyt9bhRC/60F1g8Kq+/L8a3T1OoEFvHyg==
-  dependencies:
-    "@web3modal/core" "2.6.2"
-    "@web3modal/ui" "2.6.2"
-
-"@web3modal/ui@2.6.2":
-  version "2.6.2"
-  resolved "https://registry.npmjs.org/@web3modal/ui/-/ui-2.6.2.tgz"
-  integrity sha512-bhBNsookaqkTdLjyERBA7XM9KV8XPQ2bWAGd3roIgAFxLlaoWqrV0pPZHLtp+C97AglV4mbeqvFsHZ0jwpm8lw==
-  dependencies:
-    "@web3modal/core" "2.6.2"
-    lit "2.7.5"
-    motion "10.16.2"
-    qrcode "1.5.3"
-
 "@widgetbot/embed-api@^1.1.3":
   version "1.2.9"
   resolved "https://registry.npmjs.org/@widgetbot/embed-api/-/embed-api-1.2.9.tgz"
@@ -4599,6 +4568,11 @@ lit@2.7.5:
     "@lit/reactive-element" "^1.6.0"
     lit-element "^3.3.0"
     lit-html "^2.7.0"
+
+loadash@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/loadash/-/loadash-1.0.0.tgz#b92e54d809f3c225f4f9a9cfbaeae5b56de1ca9f"
+  integrity sha512-xlX5HBsXB3KG0FJbJJG/3kYWCfsCyCSus3T+uHVu6QL6YxAdggmm3QeyLgn54N2yi5/UE6xxL5ZWJAAiHzHYEg==
 
 localforage@^1.10.0:
   version "1.10.0"
