@@ -24,7 +24,7 @@ import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetToke
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
 // const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
-const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [
+const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [
   alchemyProvider({ apiKey: 'Tl96rbTfIVIaVixF9FDMBWk9Wjq0IxvQ' }),
   publicProvider()
 ]);
@@ -34,13 +34,13 @@ const wagmiConfig = createConfig({
   // connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
   connectors: [
     new WalletConnectConnector({
-      chains: CHAINS,
+      chains,
       options: {
         projectId
       }
     }),
     new InjectedConnector({
-      chains: CHAINS,
+      chains,
       options: {
         name: 'Injected',
         shimDisconnect: true
@@ -51,7 +51,7 @@ const wagmiConfig = createConfig({
   webSocketPublicClient
 });
 
-const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
+const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
 const outlineToastClass = {
   success: 'border border-marketGreen',
