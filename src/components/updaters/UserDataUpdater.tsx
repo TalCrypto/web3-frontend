@@ -1,5 +1,6 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
+/* eslint-disable */
 import { chViewerAbi, wethAbi } from '@/const/abi';
 import { getAMMAddress, getAMMByAddress, getAddressConfig, getSupportedAMMs } from '@/const/addresses';
 import { AMM } from '@/const/collectionList';
@@ -165,6 +166,7 @@ const UserDataUpdater: React.FC = () => {
   }, [address]);
 
   useEffect(() => {
+    alert(address);
     setIsConnecting(/* isOpen && */ isConnecting);
   }, [isConnecting /* , isOpen */]);
 

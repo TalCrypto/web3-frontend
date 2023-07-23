@@ -30,7 +30,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, 
 ]);
 
 const wagmiConfig = createConfig({
-  autoConnect: false,
+  autoConnect: true,
   // connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
   connectors: [
     new WalletConnectConnector({
