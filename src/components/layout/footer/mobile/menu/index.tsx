@@ -53,9 +53,7 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
-      alert('disconnect');
       disconnect();
-      alert('reset');
       reset();
 
       let isInjected = false;
