@@ -1,9 +1,6 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
-
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { EthereumClient, w3mConnectors /* , w3mProvider */ } from '@web3modal/ethereum';
-
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 // import { InjectedConnector } from 'wagmi/connectors/injected';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
@@ -21,11 +18,7 @@ import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetToke
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 
-// const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
-const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [
-  alchemyProvider({ apiKey: 'Tl96rbTfIVIaVixF9FDMBWk9Wjq0IxvQ' }),
-  publicProvider()
-]);
+const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
