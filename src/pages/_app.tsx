@@ -9,7 +9,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 // import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-// import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import Layout from '@/components/layout';
 import '@/styles/globals.css';
 import '@/styles/all.scss';
@@ -53,21 +53,21 @@ const wagmiConfig = createConfig({
 
 // const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
-// const outlineToastClass = {
-//   success: 'border border-marketGreen',
-//   error: 'border border-marketRed',
-//   info: 'border border-gray-600',
-//   warning: 'border border-yellow-500',
-//   default: 'border border-marketGreen',
-//   dark: 'border border-white-600 font-gray-300'
-// };
+const outlineToastClass = {
+  success: 'border border-marketGreen',
+  error: 'border border-marketRed',
+  info: 'border border-gray-600',
+  warning: 'border border-yellow-500',
+  default: 'border border-marketGreen',
+  dark: 'border border-white-600 font-gray-300'
+};
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <WagmiConfig config={wagmiConfig}>
         <Layout>
-          {/* <ToastContainer
+          <ToastContainer
             enableMultiContainer
             containerId="GLOBAL"
             position="top-right"
@@ -103,7 +103,7 @@ export default function App({ Component, pageProps }: AppProps) {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-          /> */}
+          />
           <Component {...pageProps} />
         </Layout>
         <UserDataUpdater />
