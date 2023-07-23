@@ -2,9 +2,11 @@ import React from 'react';
 import type { AppProps } from 'next/app';
 
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { EthereumClient, w3mConnectors /* , w3mProvider */ } from '@web3modal/ethereum';
+import { EthereumClient /* w3mConnectors /* , w3mProvider */ } from '@web3modal/ethereum';
 
-// import { InjectedConnector } from 'wagmi/connectors/injected';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { ToastContainer } from 'react-toastify';
@@ -29,7 +31,22 @@ const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
+  // connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
+  connectors: [
+    new WalletConnectConnector({
+      chains: CHAINS,
+      options: {
+        projectId
+      }
+    }),
+    new InjectedConnector({
+      chains: CHAINS,
+      options: {
+        name: 'Injected',
+        shimDisconnect: true
+      }
+    })
+  ],
   publicClient,
   webSocketPublicClient
 });
