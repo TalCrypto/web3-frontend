@@ -39,7 +39,7 @@ const MobileMenu = (props: any) => {
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { reset, disconnect } = useDisconnect();
-  const { connect, connectors } = useConnect();
+  const { status, connect, connectors } = useConnect();
 
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
@@ -303,6 +303,7 @@ const MobileMenu = (props: any) => {
                   'Connect'
                 )}
               </div>
+              <div className="text-highEmphasis">Status: {status} </div>
             </div>
           ) : isWrongNetwork ? (
             <div className="mx-5">
