@@ -16,14 +16,16 @@
   },
   "dependencies": {
     "@nanostores/react": "^0.4.1",
+    "@web3modal/ethereum": "^2.6.2",
+    "@web3modal/react": "^2.6.2",
     "@widgetbot/react-embed": "^1.7.0",
     "downloadjs": "^1.4.7",
     "ethereum-block-by-date": "^1.4.7",
     "firebase": "^10.0.0",
     "html-to-image": "^1.10.8",
     "lightweight-charts": "^4.0.1",
-    "loadash": "^1.0.0",
     "localforage": "^1.10.0",
+    "lodash": "^4.17.21",
     "nanostores": "^0.8.1",
     "next": "13.4.2",
     "react": "18.2.0",
@@ -33,8 +35,8 @@
     "react-tooltip": "^5.18.0",
     "react-vis": "^1.12.1",
     "ua-parser-js": "^1.0.35",
-    "viem": "^1.4.1",
-    "wagmi": "^1.3.9"
+    "viem": "~0.3.12",
+    "wagmi": "1.0.0-next.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
