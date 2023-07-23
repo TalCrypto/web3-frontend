@@ -53,19 +53,21 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
+      const connector = connectors[1];
+      connect({ connector });
       // disconnect();
       // reset();
 
       // let isInjected = false;
 
-      for (let i = 0; i < connectors.length; i += 1) {
-        const connector = connectors[i];
-        if (connector?.id.includes('injected')) {
-          connect({ connector });
-          // isInjected = true;
-          break;
-        }
-      }
+      // for (let i = 0; i < connectors.length; i += 1) {
+      //   const connector = connectors[i];
+      //   if (connector?.id.includes('injected')) {
+      //     connect({ connector });
+      //     // isInjected = true;
+      //     break;
+      //   }
+      // }
 
       // if (!isInjected) {
       //   open();
