@@ -9,7 +9,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 // import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { ToastContainer } from 'react-toastify';
+// import { ToastContainer } from 'react-toastify';
 import Layout from '@/components/layout';
 import '@/styles/globals.css';
 import '@/styles/all.scss';
@@ -53,62 +53,62 @@ const wagmiConfig = createConfig({
 
 // const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
-const outlineToastClass = {
-  success: 'border border-marketGreen',
-  error: 'border border-marketRed',
-  info: 'border border-gray-600',
-  warning: 'border border-yellow-500',
-  default: 'border border-marketGreen',
-  dark: 'border border-white-600 font-gray-300'
-};
+// const outlineToastClass = {
+//   success: 'border border-marketGreen',
+//   error: 'border border-marketRed',
+//   info: 'border border-gray-600',
+//   warning: 'border border-yellow-500',
+//   default: 'border border-marketGreen',
+//   dark: 'border border-white-600 font-gray-300'
+// };
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-      <Layout>
-        <ToastContainer
-          enableMultiContainer
-          containerId="GLOBAL"
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop
-          theme="dark"
-          progressClassName="toastLoading"
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <ToastContainer
-          toastClassName={opt => {
-            if (!opt) return '';
-            const { type } = opt;
-            return `bg-[#121212] ${
-              outlineToastClass[type || 'default']
-            } w-[350px] relative flex min-h-10 justify-between overflow-hidden rounded-lg p-2 mb-2`;
-          }}
-          enableMultiContainer
-          containerId="GLOBAL_OUTLINE"
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar
-          newestOnTop
-          theme="dark"
-          progressClassName="toastLoading"
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <WagmiConfig config={wagmiConfig}>
+      <WagmiConfig config={wagmiConfig}>
+        <Layout>
+          {/* <ToastContainer
+            enableMultiContainer
+            containerId="GLOBAL"
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop
+            theme="dark"
+            progressClassName="toastLoading"
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+          <ToastContainer
+            toastClassName={opt => {
+              if (!opt) return '';
+              const { type } = opt;
+              return `bg-[#121212] ${
+                outlineToastClass[type || 'default']
+              } w-[350px] relative flex min-h-10 justify-between overflow-hidden rounded-lg p-2 mb-2`;
+            }}
+            enableMultiContainer
+            containerId="GLOBAL_OUTLINE"
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar
+            newestOnTop
+            theme="dark"
+            progressClassName="toastLoading"
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          /> */}
           <Component {...pageProps} />
-          <UserDataUpdater />
-          <LoginModal />
-        </WagmiConfig>
-      </Layout>
+        </Layout>
+        <UserDataUpdater />
+        <LoginModal />
+      </WagmiConfig>
 
       {/* <Web3Modal
         projectId={projectId}
