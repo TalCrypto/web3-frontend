@@ -16,7 +16,7 @@ import ResponseModal from '@/components/airdrop/desktop/ResponseModal';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import Tooltip from '@/components/common/Tooltip';
 import { formatBigInt } from '@/utils/bigInt';
-// import { useWeb3Modal } from '@web3modal/react';
+import { useWeb3Modal } from '@web3modal/react';
 import { $isShowLoginModal } from '@/stores/modal';
 
 function Referral() {
@@ -40,7 +40,7 @@ function Referral() {
   const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
 
-  // const { open } = useWeb3Modal();
+  const { open } = useWeb3Modal();
 
   const eligibleTooltipMessage = (
     <>

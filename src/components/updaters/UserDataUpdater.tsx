@@ -20,7 +20,7 @@ import {
 } from '@/stores/user';
 import { apiConnection } from '@/utils/apiConnection';
 import { formatBigInt } from '@/utils/bigInt';
-// import { useWeb3Modal } from '@web3modal/react';
+import { useWeb3Modal } from '@web3modal/react';
 import React, { useEffect, useState } from 'react';
 import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
@@ -124,7 +124,7 @@ const UserDataUpdater: React.FC = () => {
   const [wethAddr, setWethAddr] = useState<Address>();
   const { address, isConnected, isConnecting } = useAccount();
   const { chain } = useNetwork();
-  // const { isOpen } = useWeb3Modal();
+  const { isOpen } = useWeb3Modal();
   const { data } = useBalance({ address, token: wethAddr, watch: true, enabled: Boolean(wethAddr) });
   const [amms, setAmms] = useState<Array<AMM>>();
 
@@ -165,8 +165,8 @@ const UserDataUpdater: React.FC = () => {
   }, [address]);
 
   useEffect(() => {
-    setIsConnecting(/* isOpen && */ isConnecting);
-  }, [isConnecting /* , isOpen */]);
+    setIsConnecting(isOpen && isConnecting);
+  }, [isConnecting, isOpen]);
 
   useEffect(() => {
     if (data) {

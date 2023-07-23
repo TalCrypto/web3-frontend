@@ -1,27 +1,27 @@
 import React from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
-// import { useWeb3Modal } from '@web3modal/react';
+import { useWeb3Modal } from '@web3modal/react';
 import { useConnect } from 'wagmi';
 
 const WalletNotConnectedMobile = () => {
-  // const { open } = useWeb3Modal();
+  const { open } = useWeb3Modal();
   const { connect, connectors } = useConnect();
 
   const onBtnConnectWallet = () => {
-    // const isInjected = false;
+    let isInjected = false;
 
     for (let i = 0; i < connectors.length; i += 1) {
       const connector = connectors[i];
       if (connector?.id.includes('injected')) {
         connect({ connector });
-        // isInjected = true;
+        isInjected = true;
         break;
       }
     }
 
-    // if (!isInjected) {
-    //   open();
-    // }
+    if (!isInjected) {
+      open();
+    }
   };
 
   return (
