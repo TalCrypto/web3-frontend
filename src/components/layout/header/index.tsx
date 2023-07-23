@@ -6,7 +6,7 @@ import Web3Area from '@/components/layout/header/desktop/Web3Area';
 import WidgetBot from '@widgetbot/react-embed';
 import { $isShowDiscordModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
-import { firebaseAuth } from '@/const/firebaseConfig';
+// import { firebaseAuth } from '@/const/firebaseConfig';
 // import MobileHeader from '@/components/layout/header/mobile';
 
 function Header() {

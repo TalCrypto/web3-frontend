@@ -8,7 +8,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import ProfileContent from '@/components/layout/header/desktop/ProfileContent';
 import { $userIsConnecting, $userWethBalance, $userIsWrongNetwork, $userIsConnected, $userDisplayName } from '@/stores/user';
-import { useWeb3Modal } from '@web3modal/react';
+// import { useWeb3Modal } from '@web3modal/react';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $showSwitchNetworkErrorModal, $isShowLoginModal } from '@/stores/modal';

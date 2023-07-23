@@ -17,7 +17,7 @@ import {
   $userTotalCollateral
 } from '@/stores/user';
 import { useConnect, useDisconnect, useSwitchNetwork } from 'wagmi';
-import { useWeb3Modal } from '@web3modal/react';
+// import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $userPoint } from '@/stores/airdrop';
 import { localeConversion } from '@/utils/localeConversion';
@@ -39,9 +39,9 @@ const MobileMenu = (props: any) => {
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { reset, disconnect } = useDisconnect();
-  const { status, connectAsync, connectors } = useConnect();
+  const { /* status, */ connectAsync, connectors } = useConnect();
 
-  const { open } = useWeb3Modal();
+  // const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
   const walletAddressToShow = (addr: any) => {
@@ -56,20 +56,20 @@ const MobileMenu = (props: any) => {
       disconnect();
       reset();
 
-      let isInjected = false;
+      // const isInjected = false;
 
       for (let i = 0; i < connectors.length; i += 1) {
         const connector = connectors[i];
         if (connector?.id.includes('injected')) {
           connectAsync({ connector });
-          isInjected = true;
+          // isInjected = true;
           break;
         }
       }
 
-      if (!isInjected) {
-        open();
-      }
+      // if (!isInjected) {
+      //   open();
+      // }
     } else if (isWrongNetwork) {
       if (switchNetwork) {
         switchNetwork(DEFAULT_CHAIN.id);
@@ -303,7 +303,7 @@ const MobileMenu = (props: any) => {
                   'Connect'
                 )}
               </div>
-              <div className="text-highEmphasis">Status: {status} </div>
+              {/* <div className="text-highEmphasis">Status: {status} </div> */}
             </div>
           ) : isWrongNetwork ? (
             <div className="mx-5">

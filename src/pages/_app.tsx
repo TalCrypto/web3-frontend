@@ -2,18 +2,18 @@ import React from 'react';
 import type { AppProps } from 'next/app';
 
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { EthereumClient /* w3mConnectors /* , w3mProvider */ } from '@web3modal/ethereum';
+// import { EthereumClient /* w3mConnectors /* , w3mProvider */ } from '@web3modal/ethereum';
 
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
-import { Web3Modal } from '@web3modal/react';
+// import { Web3Modal } from '@web3modal/react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { ToastContainer } from 'react-toastify';
 import Layout from '@/components/layout';
 import '@/styles/globals.css';
 import '@/styles/all.scss';
-import { CHAINS, DEFAULT_CHAIN } from '@/const/supportedChains';
+import { CHAINS /* , DEFAULT_CHAIN */ } from '@/const/supportedChains';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
 import { publicProvider } from 'wagmi/providers/public';
@@ -51,7 +51,7 @@ const wagmiConfig = createConfig({
   webSocketPublicClient
 });
 
-const ethereumClient = new EthereumClient(wagmiConfig, chains);
+// const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
 const outlineToastClass = {
   success: 'border border-marketGreen',
@@ -110,7 +110,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <LoginModal />
       </WagmiConfig>
 
-      <Web3Modal
+      {/* <Web3Modal
         projectId={projectId}
         ethereumClient={ethereumClient}
         defaultChain={DEFAULT_CHAIN}
@@ -127,7 +127,7 @@ export default function App({ Component, pageProps }: AppProps) {
           '--w3m-logo-image-url': '/images/logos/wallet_nav_logo.svg',
           '--w3m-background-border-radius': '0.5rem'
         }}
-      />
+      /> */}
 
       <TransferTokenModal />
       <MetamaskModal />

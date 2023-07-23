@@ -11,14 +11,14 @@ import { $accumulatedDailyPnl, $psSelectedTimeIndex, $psShowBalance, $psTimeDesc
 import Image from 'next/image';
 import PortfolioChart from '@/components/portfolio/desktop/PortfolioChart';
 import { $userIsConnected, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
-import { useWeb3Modal } from '@web3modal/react';
+// import { useWeb3Modal } from '@web3modal/react';
 import { $isMobileView, $showGetWEthModal, $showSwitchNetworkErrorModal, $isShowLoginModal } from '@/stores/modal';
 import { useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import Tooltip from '@/components/common/Tooltip';
 
 function TrendContent() {
-  const { open } = useWeb3Modal();
+  // const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
   const isConnected = useNanostore($userIsConnected);
