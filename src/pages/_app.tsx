@@ -65,50 +65,50 @@ const outlineToastClass = {
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-      <WagmiConfig config={wagmiConfig}>
-        <Layout>
-          <ToastContainer
-            enableMultiContainer
-            containerId="GLOBAL"
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            theme="dark"
-            progressClassName="toastLoading"
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-          <ToastContainer
-            toastClassName={opt => {
-              if (!opt) return '';
-              const { type } = opt;
-              return `bg-[#121212] ${
-                outlineToastClass[type || 'default']
-              } w-[350px] relative flex min-h-10 justify-between overflow-hidden rounded-lg p-2 mb-2`;
-            }}
-            enableMultiContainer
-            containerId="GLOBAL_OUTLINE"
-            position="top-center"
-            autoClose={3000}
-            hideProgressBar
-            newestOnTop
-            theme="dark"
-            progressClassName="toastLoading"
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
+      <Layout>
+        <ToastContainer
+          enableMultiContainer
+          containerId="GLOBAL"
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          theme="dark"
+          progressClassName="toastLoading"
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        <ToastContainer
+          toastClassName={opt => {
+            if (!opt) return '';
+            const { type } = opt;
+            return `bg-[#121212] ${
+              outlineToastClass[type || 'default']
+            } w-[350px] relative flex min-h-10 justify-between overflow-hidden rounded-lg p-2 mb-2`;
+          }}
+          enableMultiContainer
+          containerId="GLOBAL_OUTLINE"
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar
+          newestOnTop
+          theme="dark"
+          progressClassName="toastLoading"
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        <WagmiConfig config={wagmiConfig}>
           <Component {...pageProps} />
-        </Layout>
-        <UserDataUpdater />
-        <LoginModal />
-      </WagmiConfig>
+          <UserDataUpdater />
+          <LoginModal />
+        </WagmiConfig>
+      </Layout>
 
       {/* <Web3Modal
         projectId={projectId}
