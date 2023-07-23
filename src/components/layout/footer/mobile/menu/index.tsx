@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
@@ -37,8 +38,8 @@ const MobileMenu = (props: any) => {
   const [isOthersOpen, setIsOthersOpen] = useState(false);
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
-  const { disconnect } = useDisconnect();
-  const { reset, connect, connectors } = useConnect();
+  const { reset, disconnect } = useDisconnect();
+  const { connect, connectors } = useConnect();
 
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
@@ -52,6 +53,9 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
+      alert('disconnect');
+      disconnect();
+      alert('reset');
       reset();
 
       let isInjected = false;
