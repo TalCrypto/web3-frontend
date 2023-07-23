@@ -52,6 +52,8 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
+      disconnect();
+
       let isInjected = false;
 
       for (let i = 0; i < connectors.length; i += 1) {
