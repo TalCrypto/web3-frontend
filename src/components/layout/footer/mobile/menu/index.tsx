@@ -38,7 +38,7 @@ const MobileMenu = (props: any) => {
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { disconnect } = useDisconnect();
-  const { connect, connectors } = useConnect();
+  const { reset, connect, connectors } = useConnect();
 
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
@@ -52,7 +52,7 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
-      disconnect();
+      reset();
 
       let isInjected = false;
 
