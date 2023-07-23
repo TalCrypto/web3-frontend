@@ -55,6 +55,7 @@ const MobileMenu = (props: any) => {
     if (!isConnected) {
       const connector = connectors[1];
       connect({ connector });
+      alert(connector.name);
       // disconnect();
       // reset();
 
