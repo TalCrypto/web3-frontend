@@ -43,7 +43,7 @@ const wagmiConfig = createConfig({
       chains: CHAINS,
       options: {
         name: 'Injected',
-        shimDisconnect: false
+        shimDisconnect: true
       }
     })
   ],
