@@ -3,7 +3,7 @@
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
-import { createChart, ColorType, ISeriesApi, IChartApi, SingleValueData, isUTCTimestamp } from 'lightweight-charts';
+import { createChart, ColorType, ISeriesApi, IChartApi, SingleValueData, isUTCTimestamp, MouseEventHandler } from 'lightweight-charts';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useChartData } from '@/hooks/collection';
@@ -99,51 +99,37 @@ function ChartDisplay() {
     setOracleSeries(undefined);
   };
 
-  const handleTooltip = () => {
-    if (!chart) return;
+  const toolTipWidth = 100;
+  const toolTipHeight = 80;
+  const toolTipMargin = 20;
 
-    const toolTipWidth = 100;
-    const toolTipHeight = 80;
-    const toolTipMargin = 20;
-
-    // Create and style the tooltip html element
-    const toolTip = document.createElement('div');
-    toolTip.setAttribute(
-      'style',
-      `width: 100px; height: 80px; position: absolute; display: none; 
-      padding: 8px 12px 8px 12px; box-sizing: border-box; font-size: 12px; text-align: left; 
-      z-index: 100; top: 0; left: 0; pointer-events: none; 
-      border: 0.5px solid; border-radius: 4px;`
-    );
-    toolTip.style.background = 'rgba(32, 34, 73, 0.9)';
-    toolTip.style.color = '#A8CBFFBF';
-    toolTip.style.borderColor = '#C970D0';
+  const crossHairMoveHandler: MouseEventHandler = param => {
+    const toolTip = document.getElementById('chartTooltip');
+    if (!toolTip) return;
     const container = document.getElementById('chartDisplay') || chartContainerRef.current;
-    container.appendChild(toolTip);
 
-    chart.subscribeCrosshairMove(param => {
-      if (
-        param.point === undefined ||
-        !param.time ||
-        param.point.x < 0 ||
-        param.point.x > container.clientWidth ||
-        param.point.y < 0 ||
-        param.point.y > container.clientHeight
-      ) {
-        toolTip.style.display = 'none';
-      } else {
-        // time will be in the same format that we supplied to setData.
-        // thus it will be YYYY-MM-DD
-        const dateStr = isUTCTimestamp(param.time) ? moment.unix(param.time).format('DD/MM HH:mm') : param.time;
-        toolTip.style.display = 'block';
+    if (
+      param.point === undefined ||
+      !param.time ||
+      param.point.x < 0 ||
+      param.point.x > container.clientWidth ||
+      param.point.y < 0 ||
+      param.point.y > container.clientHeight
+    ) {
+      toolTip.style.display = 'none';
+    } else {
+      // time will be in the same format that we supplied to setData.
+      // thus it will be YYYY-MM-DD
+      const dateStr = isUTCTimestamp(param.time) ? moment.unix(param.time).format('DD/MM HH:mm') : param.time;
+      toolTip.style.display = 'block';
 
-        if (!areaSeries || !oracleSeries) return;
+      if (!areaSeries || !oracleSeries) return;
 
-        const data = param.seriesData.get(areaSeries) as SingleValueData | undefined;
-        const dataTwo = param.seriesData.get(oracleSeries) as SingleValueData | undefined;
-        const price = data ? Math.round(data.value * 100) / 100 : 0;
-        const priceTwo = dataTwo ? Math.round(dataTwo.value * 100) / 100 : 0;
-        toolTip.innerHTML = `
+      const data = param.seriesData.get(areaSeries) as SingleValueData | undefined;
+      const dataTwo = param.seriesData.get(oracleSeries) as SingleValueData | undefined;
+      const price = data ? Math.round(data.value * 100) / 100 : 0;
+      const priceTwo = dataTwo ? Math.round(dataTwo.value * 100) / 100 : 0;
+      toolTip.innerHTML = `
           <div class="flex flex-col space-y-1">
           <p>${dateStr}</p>
           ${data ? `<p class="text-white">vAMM: ${price}</p>` : ''}
@@ -151,22 +137,31 @@ function ChartDisplay() {
           </div>
         `;
 
-        const coordinate = areaSeries.priceToCoordinate(price);
-        let shiftedCoordinate = param.point.x - 50;
-        if (coordinate === null) {
-          return;
-        }
-        // console.log(container.clientWidth, container.clientHeight);
-        shiftedCoordinate = Math.max(0, Math.min(container.clientWidth - toolTipWidth, shiftedCoordinate));
-        // console.log(shiftedCoordinate);
-        const coordinateY =
-          coordinate - toolTipHeight - toolTipMargin > 0
-            ? coordinate - toolTipHeight - toolTipMargin
-            : Math.max(0, Math.min(container.clientHeight - toolTipHeight - toolTipMargin, coordinate + toolTipMargin));
-        toolTip.style.left = `${shiftedCoordinate}px`;
-        toolTip.style.top = `${coordinateY}px`;
+      let coordinate;
+      if (data) {
+        coordinate = areaSeries.priceToCoordinate(price);
+      } else {
+        coordinate = oracleSeries.priceToCoordinate(priceTwo);
       }
-    });
+      let shiftedCoordinate = param.point.x - 50;
+      if (coordinate === null) {
+        return;
+      }
+      shiftedCoordinate = Math.max(0, Math.min(container.clientWidth - toolTipWidth, shiftedCoordinate));
+      const coordinateY =
+        coordinate - toolTipHeight - toolTipMargin > 0
+          ? coordinate - toolTipHeight - toolTipMargin
+          : Math.max(0, Math.min(container.clientHeight - toolTipHeight - toolTipMargin, coordinate + toolTipMargin));
+      toolTip.style.left = `${shiftedCoordinate}px`;
+      toolTip.style.top = `${coordinateY}px`;
+    }
+  };
+
+  const handleTooltip = () => {
+    if (!chart) return;
+    // console.log('unsub sub');
+    chart.unsubscribeCrosshairMove(crossHairMoveHandler);
+    chart.subscribeCrosshairMove(crossHairMoveHandler);
   };
 
   useEffect(() => {
@@ -239,8 +234,8 @@ function ChartDisplay() {
       areaSeries.setData(graphData);
       volumeSeries.setData(graphVolData);
       chart.timeScale().fitContent();
-      // wip: handle tooltip with show hide
-      // handleTooltip();
+      // console.log('graph data sync');
+      handleTooltip();
     }
   }, [graphData, chart, areaSeries, volumeSeries]);
 
@@ -248,6 +243,8 @@ function ChartDisplay() {
     if (oracleSeries && chart) {
       oracleSeries.setData(graphTwoData);
       chart.timeScale().fitContent();
+      // console.log('graph two data sync');
+      handleTooltip();
     }
   }, [graphTwoData, chart, oracleSeries]);
 
@@ -256,6 +253,8 @@ function ChartDisplay() {
     if (chart) {
       if (isSettingVammOn) {
         addVammSeries();
+        // console.log('add vamm series');
+        handleTooltip();
       } else {
         removeVammSeries();
       }
@@ -266,13 +265,22 @@ function ChartDisplay() {
     if (chart) {
       if (isSettingOracleOn) {
         addOracleSeries();
+        // console.log('add oracle series');
+        handleTooltip();
       } else {
         removeOracleSeries();
       }
     }
   }, [isSettingOracleOn, chart]);
 
-  return <div ref={chartContainerRef} id="chartDisplay" className="relative" />;
+  return (
+    <div ref={chartContainerRef} id="chartDisplay" className="relative">
+      <div
+        id="chartTooltip"
+        className="pointer-events-none absolute z-10 hidden h-[80px] w-[100px] rounded border-[0.5px] border-[#C970D0] bg-[rgba(32,34,73,0.9)] px-2 py-3 text-[12px] text-mediumEmphasis "
+      />
+    </div>
+  );
 }
 
 export default ChartDisplay;
