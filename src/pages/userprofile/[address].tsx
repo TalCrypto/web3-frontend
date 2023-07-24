@@ -18,7 +18,8 @@ import {
   $userFollowings,
   $userInfo,
   $userprofileAddress,
-  $userprofilePositionInfos
+  $userprofilePositionInfos,
+  $isUserprofileLoading
 } from '@/stores/userprofile';
 import { useStore } from '@nanostores/react';
 import Portfolio from '@/components/userprofile/Portfolio';
@@ -39,6 +40,7 @@ import { debounce } from 'lodash';
 import { SearchUserData, apiConnection } from '@/utils/apiConnection';
 import { getAuth } from 'firebase/auth';
 import { authConnections } from '@/utils/authConnections';
+import { ThreeDots } from 'react-loader-spinner';
 
 type ProfileHeaderCardProps = PropsWithChildren & {
   isEnded?: boolean;
@@ -100,6 +102,7 @@ const AddressPage: NextPage = () => {
   const userprofileAddress = useStore($userprofileAddress);
   const userAirdropRank = useStore($userAirdropRank);
   const userCompetitionRank = useStore($userCompetitionRank);
+  const isUserProfileLoading = useStore($isUserprofileLoading);
 
   const userprofilePositionInfosArrKey = Object.keys(userprofilePositionInfos);
 
@@ -124,7 +127,10 @@ const AddressPage: NextPage = () => {
     }
   };
 
+  const [isLoadingFollow, setIsLoadingFollow] = useState(false);
+
   const unfollow = async () => {
+    setIsLoadingFollow(true);
     let auth = getAuth();
     let currentUser = auth?.currentUser;
     const userAddr = currentUserAddress?.toLowerCase();
@@ -139,12 +145,15 @@ const AddressPage: NextPage = () => {
       if (res.code === 0) {
         $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
+      setIsLoadingFollow(false);
     } catch (error) {
       // console.log('err', error);
+      setIsLoadingFollow(false);
     }
   };
 
   const follow = async () => {
+    setIsLoadingFollow(true);
     let auth = getAuth();
     let currentUser = auth?.currentUser;
     const userAddr = currentUserAddress?.toLowerCase();
@@ -159,8 +168,10 @@ const AddressPage: NextPage = () => {
       if (res.code === 0) {
         $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
+      setIsLoadingFollow(false);
     } catch (error) {
       // console.log('err', error);
+      setIsLoadingFollow(false);
     }
   };
 
@@ -184,12 +195,23 @@ const AddressPage: NextPage = () => {
           {!isCurrentUserProfilePage ? (
             <div>
               {userInfo?.isFollowing ? (
-                <OutlineButton className="w-fit" onClick={unfollow}>
-                  <p className="font-normal">Unfollow</p>
+                <OutlineButton className="min-w-[100px]" onClick={unfollow} isDisabled={isLoadingFollow || isUserProfileLoading}>
+                  {isLoadingFollow || isUserProfileLoading ? (
+                    <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+                  ) : (
+                    <p className="font-normal">Unfollow</p>
+                  )}
                 </OutlineButton>
               ) : (
-                <PrimaryButton className="w-fit px-[12px] py-[8px]" onClick={follow}>
-                  <p className="text-[14px] font-normal">Follow</p>
+                <PrimaryButton
+                  className="min-w-[100px] px-[12px] py-[8px]"
+                  onClick={follow}
+                  isDisabled={isLoadingFollow || isUserProfileLoading}>
+                  {isLoadingFollow || isUserProfileLoading ? (
+                    <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+                  ) : (
+                    <p className="text-[14px] font-normal">Follow</p>
+                  )}
                 </PrimaryButton>
               )}
             </div>
@@ -385,7 +407,7 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[36px] flex-1 text-center text-b1e text-[#FFD392]">Airdrop Season 2</p>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Season 2 Pts</p>
                   <div className="mb-[24px] flex items-center space-x-[6px]">
-                    <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 text-transparent">
+                    <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 font-bold text-transparent">
                       {userAirdropRank?.total}
                     </span>
                     <span className="text-b3">Pts</span>

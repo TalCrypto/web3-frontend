@@ -15,6 +15,7 @@ import { getAuth } from 'firebase/auth';
 import Image from 'next/image';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { authConnections } from '@/utils/authConnections';
+import { ThreeDots } from 'react-loader-spinner';
 
 const TableContainer: React.FC<PropsWithChildren> = ({ children }) => (
   <div
@@ -46,6 +47,7 @@ export const FollowButton = ({
   visible: boolean;
   targetAddress?: string;
 }) => {
+  const [isLoadingFollow, setIsLoadingFollow] = useState(false);
   const [localIsFollowing, setLocalIsFollowing] = useState(false);
   const userAddress = useStore($userAddress);
   const userprofileAddress = useStore($userprofileAddress);
@@ -57,6 +59,7 @@ export const FollowButton = ({
   }, [isFollowing]);
 
   const unfollow = async () => {
+    setIsLoadingFollow(true);
     let auth = getAuth();
     let currentUser = auth?.currentUser;
     const userAddr = userAddress?.toLowerCase();
@@ -69,17 +72,21 @@ export const FollowButton = ({
     try {
       const res = await apiConnection.unfollowUser(targetAddress, newToken, userAddr);
       if (res.code === 0) {
+        setIsLoadingFollow(false);
         setLocalIsFollowing(false);
         if (isCurrentUserProfilePage) {
           $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
         }
       }
+      setIsLoadingFollow(false);
     } catch (error) {
       // console.log('err', error);
+      setIsLoadingFollow(false);
     }
   };
 
   const follow = async () => {
+    setIsLoadingFollow(true);
     let auth = getAuth();
     let currentUser = auth?.currentUser;
     const userAddr = userAddress?.toLowerCase();
@@ -92,13 +99,16 @@ export const FollowButton = ({
     try {
       const res = await apiConnection.followUser(targetAddress, newToken, userAddr!);
       if (res.code === 0) {
+        setIsLoadingFollow(false);
         setLocalIsFollowing(true);
         if (isCurrentUserProfilePage) {
           $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
         }
       }
+      setIsLoadingFollow(false);
     } catch (error) {
       // console.log('err', error);
+      setIsLoadingFollow(false);
     }
   };
 
@@ -108,12 +118,20 @@ export const FollowButton = ({
   return (
     <div>
       {localIsFollowing ? (
-        <OutlineButton className="w-fit" onClick={unfollow}>
-          <p className="font-normal">Unfollow</p>
+        <OutlineButton className="min-w-[100px]" onClick={unfollow} isDisabled={isLoadingFollow}>
+          {isLoadingFollow ? (
+            <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+          ) : (
+            <p className="font-normal">Unfollow</p>
+          )}
         </OutlineButton>
       ) : (
-        <PrimaryButton className="w-fit px-[12px] py-[8px]" onClick={follow}>
-          <p className="text-[14px] font-normal">Follow</p>
+        <PrimaryButton className="min-w-[100px] px-[12px] py-[8px]" onClick={follow} isDisabled={isLoadingFollow}>
+          {isLoadingFollow ? (
+            <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+          ) : (
+            <p className="text-[14px] font-normal">Follow</p>
+          )}
         </PrimaryButton>
       )}
     </div>

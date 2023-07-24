@@ -38,7 +38,7 @@ const Activities: React.FC = () => {
             <div className="table-cell flex-1 py-4 text-right font-normal md:hidden">Execution Price / Size</div>
           </div>
         </div>
-        <div className="scrollable max-h-[400px] overflow-auto text-b1">
+        <div className="scrollable max-h-[400px] overflow-auto text-b1 2xl:max-h-[60vh]">
           {userHistories?.map(d => {
             const tradingType = getTradingActionTypeFromSubgraph(d);
             const isOpen = tradingType === 'Open' || tradingType === 'Add';
