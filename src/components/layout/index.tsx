@@ -28,8 +28,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     : "bg-black bg-[url('/images/components/airdrop/bg-s2.png')] bg-cover bg-fixed bg-[center_top] bg-no-repeat";
 
   const isUserprofilePage = router.pathname.match('/userprofile');
-  const userprofileBgClass = "bg-black bg-[url('/images/components/userprofile/bg1.png')] bg-cover bg-fixed bg-[center_top] bg-no-repeat";
-  const userprofileBg2Class = "bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-center bg-no-repeat";
+  const userprofileBgClass =
+    "bg-black bg-[url('/images/components/userprofile/bg1.png')] bg-cover bg-fixed bg-left-top 4xl:bg-[left_top_-10rem] bg-no-repeat";
+  const userprofileBg2Class = "bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-right-top bg-no-repeat";
   const competitionActiveDropdown = useNanostore($activeDropdown);
 
   // competition page bg video

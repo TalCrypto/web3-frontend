@@ -18,7 +18,8 @@ import {
   $userFollowings,
   $userInfo,
   $userprofileAddress,
-  $userprofilePositionInfos
+  $userprofilePositionInfos,
+  $isUserprofileLoading
 } from '@/stores/userprofile';
 import { useStore } from '@nanostores/react';
 import Portfolio from '@/components/userprofile/Portfolio';
@@ -39,6 +40,7 @@ import { debounce } from 'lodash';
 import { SearchUserData, apiConnection } from '@/utils/apiConnection';
 import { getAuth } from 'firebase/auth';
 import { authConnections } from '@/utils/authConnections';
+import { ThreeDots } from 'react-loader-spinner';
 
 type ProfileHeaderCardProps = PropsWithChildren & {
   isEnded?: boolean;
@@ -100,6 +102,7 @@ const AddressPage: NextPage = () => {
   const userprofileAddress = useStore($userprofileAddress);
   const userAirdropRank = useStore($userAirdropRank);
   const userCompetitionRank = useStore($userCompetitionRank);
+  const isUserProfileLoading = useStore($isUserprofileLoading);
 
   const userprofilePositionInfosArrKey = Object.keys(userprofilePositionInfos);
 
@@ -108,11 +111,22 @@ const AddressPage: NextPage = () => {
 
   // search function
   const [showSearchResult, setShowSearchResult] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResult] = useState<SearchUserData[]>([]);
 
+  useEffect(() => {
+    if (searchQuery) {
+      setShowSearchResult(true);
+    } else {
+      setShowSearchResult(false);
+    }
+  }, [searchQuery]);
+
   const search = async (val: string, holderAddress: string) => {
+    setIsSearchLoading(true);
     if (!val || !holderAddress) {
+      setIsSearchLoading(false);
       setSearchResult([]);
       return;
     }
@@ -122,9 +136,13 @@ const AddressPage: NextPage = () => {
     } else {
       setSearchResult([]);
     }
+    setIsSearchLoading(false);
   };
 
+  const [isLoadingFollow, setIsLoadingFollow] = useState(false);
+
   const unfollow = async () => {
+    setIsLoadingFollow(true);
     let auth = getAuth();
     let currentUser = auth?.currentUser;
     const userAddr = currentUserAddress?.toLowerCase();
@@ -139,12 +157,15 @@ const AddressPage: NextPage = () => {
       if (res.code === 0) {
         $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
+      setIsLoadingFollow(false);
     } catch (error) {
       // console.log('err', error);
+      setIsLoadingFollow(false);
     }
   };
 
   const follow = async () => {
+    setIsLoadingFollow(true);
     let auth = getAuth();
     let currentUser = auth?.currentUser;
     const userAddr = currentUserAddress?.toLowerCase();
@@ -159,8 +180,10 @@ const AddressPage: NextPage = () => {
       if (res.code === 0) {
         $asTargetUserInfoUpdateTrigger.set(!$asTargetUserInfoUpdateTrigger.get());
       }
+      setIsLoadingFollow(false);
     } catch (error) {
       // console.log('err', error);
+      setIsLoadingFollow(false);
     }
   };
 
@@ -184,12 +207,23 @@ const AddressPage: NextPage = () => {
           {!isCurrentUserProfilePage ? (
             <div>
               {userInfo?.isFollowing ? (
-                <OutlineButton className="w-fit" onClick={unfollow}>
-                  <p className="font-normal">Unfollow</p>
+                <OutlineButton className="min-w-[100px]" onClick={unfollow} isDisabled={isLoadingFollow || isUserProfileLoading}>
+                  {isLoadingFollow || isUserProfileLoading ? (
+                    <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+                  ) : (
+                    <p className="font-normal">Unfollow</p>
+                  )}
                 </OutlineButton>
               ) : (
-                <PrimaryButton className="w-fit px-[12px] py-[8px]" onClick={follow}>
-                  <p className="text-[14px] font-normal">Follow</p>
+                <PrimaryButton
+                  className="min-w-[100px] px-[12px] py-[8px]"
+                  onClick={follow}
+                  isDisabled={isLoadingFollow || isUserProfileLoading}>
+                  {isLoadingFollow || isUserProfileLoading ? (
+                    <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+                  ) : (
+                    <p className="text-[14px] font-normal">Follow</p>
+                  )}
                 </PrimaryButton>
               )}
             </div>
@@ -244,11 +278,11 @@ const AddressPage: NextPage = () => {
                           onClick={e => {
                             e.stopPropagation();
                             window.addEventListener('click', () => setShowSearchResult(false));
-                            setShowSearchResult(true);
                           }}
                           // onBlur={() => setShowSearchResult(false)}
                           onChange={e => {
                             setSearchQuery(e.target.value);
+                            setIsSearchLoading(true);
                             debouncedSearch(e.target.value, userprofileAddress);
                           }}
                         />
@@ -259,30 +293,38 @@ const AddressPage: NextPage = () => {
                         showSearchResult ? 'visible' : 'invisible'
                       } scrollable mt-2 max-h-[300px] w-full overflow-auto rounded-lg bg-secondaryBlue`}>
                       {/* search result */}
-                      {searchResults.length > 0 &&
-                        searchResults.map((d, i) => (
-                          <div
-                            key={`res-${i}`}
-                            className="flex cursor-pointer space-x-2 px-4 py-[10px] hover:bg-white/10"
-                            onClick={e => {
-                              e.stopPropagation();
-                              router.push(`/userprofile/${d.userAddress}`);
-                              setShowSearchResult(false);
-                            }}>
-                            <div className="w-[3px] rounded bg-[#2574FB]" />
-                            <div className="flex flex-col space-y-2 text-b3 text-mediumEmphasis">
-                              {d.username ? (
-                                <LabelStringMatch label={d.username} match={searchQuery} />
-                              ) : (
-                                <LabelStringMatch label={trimAddress(d.userAddress)} match={searchQuery} />
-                              )}
-                              {/* <p className="">{d.username || trimAddress(d.userAddress)}</p> */}
-                            </div>
-                          </div>
-                        ))}
-                      {searchResults.length === 0 && (
+                      {isSearchLoading ? (
                         <div className="flex min-h-[80px] items-center justify-center">
-                          <p className="text-center text-b3 text-highEmphasis">No Match.</p>
+                          <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+                        </div>
+                      ) : (
+                        <div>
+                          {searchResults.length > 0 &&
+                            searchResults.map((d, i) => (
+                              <div
+                                key={`res-${i}`}
+                                className="flex cursor-pointer space-x-2 px-4 py-[10px] hover:bg-white/10"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  router.push(`/userprofile/${d.userAddress}`);
+                                  setShowSearchResult(false);
+                                }}>
+                                <div className="w-[3px] rounded bg-[#2574FB]" />
+                                <div className="flex flex-col space-y-2 text-b3 text-mediumEmphasis">
+                                  {d.username ? (
+                                    <LabelStringMatch label={d.username} match={searchQuery} />
+                                  ) : (
+                                    <LabelStringMatch label={trimAddress(d.userAddress)} match={searchQuery} />
+                                  )}
+                                  {/* <p className="">{d.username || trimAddress(d.userAddress)}</p> */}
+                                </div>
+                              </div>
+                            ))}
+                          {searchResults.length === 0 && (
+                            <div className="flex min-h-[80px] items-center justify-center">
+                              <p className="text-center text-b3 text-highEmphasis">No Match.</p>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -385,7 +427,7 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[36px] flex-1 text-center text-b1e text-[#FFD392]">Airdrop Season 2</p>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Season 2 Pts</p>
                   <div className="mb-[24px] flex items-center space-x-[6px]">
-                    <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 text-transparent">
+                    <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 font-bold text-transparent">
                       {userAirdropRank?.total}
                     </span>
                     <span className="text-b3">Pts</span>
