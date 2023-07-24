@@ -2,14 +2,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
 import SidebarCollection from '@/components/trade/desktop/trading/SidebarCollection';
 import InformationWindow from '@/components/trade/desktop/information/InformationWindow';
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
-import { WithRouterProps } from 'next/dist/client/with-router';
 import { $currentAmm, $isMarketDataUpdating } from '@/stores/trading';
 import { AMM, DEFAULT_AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
@@ -27,8 +26,8 @@ import UpdatingTradeData from '@/components/trade/mobile/UpdatingTradeData';
 
 import { useStore as useNanostore } from '@nanostores/react';
 
-function TradePage(props: WithRouterProps) {
-  const { router } = props;
+function TradePage() {
+  const router = useRouter();
 
   const isMarketDataUpdating = useNanostore($isMarketDataUpdating);
 
@@ -106,4 +105,4 @@ function TradePage(props: WithRouterProps) {
   );
 }
 
-export default withRouter(TradePage);
+export default TradePage;

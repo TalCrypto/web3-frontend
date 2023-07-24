@@ -20,7 +20,6 @@ function SwitchButton() {
   const handleSwitch = () => {
     if (switchNetwork) {
       setIsLoading(true);
-      const env = process.env.NEXT_PUBLIC_ENV;
       switchNetwork(DEFAULT_CHAIN.id);
     } else {
       $showSwitchNetworkErrorModal.set(true);

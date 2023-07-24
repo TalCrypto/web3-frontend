@@ -1,6 +1,5 @@
 import React from 'react';
 import { ThreeDots } from 'react-loader-spinner';
-// import Sidebar from '@/components/layout/footer/mobile/Sidebar';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';

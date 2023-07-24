@@ -1,16 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
-import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
-// import { InjectedConnector } from 'wagmi/connectors/injected';
-import { Web3Modal } from '@web3modal/react';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { infuraProvider } from 'wagmi/providers/infura';
 import { ToastContainer } from 'react-toastify';
 import Layout from '@/components/layout';
 import '@/styles/globals.css';
 import '@/styles/all.scss';
-import { CHAINS, DEFAULT_CHAIN } from '@/const/supportedChains';
+import { CHAINS /* , DEFAULT_CHAIN */ } from '@/const/supportedChains';
 import UserDataUpdater from '@/components/updaters/UserDataUpdater';
 import TransferTokenModal from '@/components/layout/header/desktop/TransferTokenModal';
 import { publicProvider } from 'wagmi/providers/public';
@@ -18,25 +12,39 @@ import MetamaskModal from '@/components/layout/header/desktop/MetamaskModal';
 import LoginModal from '@/components/layout/header/desktop/LoginModal';
 import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetTokenModal';
 
-const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
-const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? '';
-const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY ?? '';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
 
-const { publicClient, webSocketPublicClient } = configureChains(CHAINS, [
-  alchemyProvider({ apiKey: alchemyKey }),
-  infuraProvider({ apiKey: infuraKey }),
-  w3mProvider({ projectId }),
+// Wagmi config
+const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [
+  alchemyProvider({ apiKey: 'Tl96rbTfIVIaVixF9FDMBWk9Wjq0IxvQ' }),
   publicProvider()
 ]);
 
+const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
+
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: [...w3mConnectors({ projectId, chains: CHAINS })],
+  connectors: [
+    new WalletConnectConnector({
+      chains,
+      options: {
+        projectId
+      }
+    }),
+    new InjectedConnector({
+      chains,
+      options: {
+        name: 'Injected',
+        shimDisconnect: false
+      }
+    })
+  ],
   publicClient,
   webSocketPublicClient
 });
-
-const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
 
 const outlineToastClass = {
   success: 'border border-marketGreen',
@@ -48,6 +56,14 @@ const outlineToastClass = {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (!ready) return null;
+
   return (
     <>
       <WagmiConfig config={wagmiConfig}>
@@ -95,7 +111,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <LoginModal />
       </WagmiConfig>
 
-      <Web3Modal
+      {/* <Web3Modal
         projectId={projectId}
         ethereumClient={ethereumClient}
         defaultChain={DEFAULT_CHAIN}
@@ -112,7 +128,7 @@ export default function App({ Component, pageProps }: AppProps) {
           '--w3m-logo-image-url': '/images/logos/wallet_nav_logo.svg',
           '--w3m-background-border-radius': '0.5rem'
         }}
-      />
+      /> */}
 
       <TransferTokenModal />
       <MetamaskModal />
