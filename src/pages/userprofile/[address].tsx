@@ -111,6 +111,7 @@ const AddressPage: NextPage = () => {
 
   // search function
   const [showSearchResult, setShowSearchResult] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResult] = useState<SearchUserData[]>([]);
 
@@ -119,12 +120,14 @@ const AddressPage: NextPage = () => {
       setSearchResult([]);
       return;
     }
+    setIsSearchLoading(true);
     const res = await apiConnection.searchUser(val, holderAddress);
     if (res.data && res.data.length > 0) {
       setSearchResult(res.data);
     } else {
       setSearchResult([]);
     }
+    setIsSearchLoading(false);
   };
 
   const [isLoadingFollow, setIsLoadingFollow] = useState(false);
@@ -266,10 +269,10 @@ const AddressPage: NextPage = () => {
                           onClick={e => {
                             e.stopPropagation();
                             window.addEventListener('click', () => setShowSearchResult(false));
-                            setShowSearchResult(true);
                           }}
                           // onBlur={() => setShowSearchResult(false)}
                           onChange={e => {
+                            setShowSearchResult(true);
                             setSearchQuery(e.target.value);
                             debouncedSearch(e.target.value, userprofileAddress);
                           }}
@@ -281,30 +284,38 @@ const AddressPage: NextPage = () => {
                         showSearchResult ? 'visible' : 'invisible'
                       } scrollable mt-2 max-h-[300px] w-full overflow-auto rounded-lg bg-secondaryBlue`}>
                       {/* search result */}
-                      {searchResults.length > 0 &&
-                        searchResults.map((d, i) => (
-                          <div
-                            key={`res-${i}`}
-                            className="flex cursor-pointer space-x-2 px-4 py-[10px] hover:bg-white/10"
-                            onClick={e => {
-                              e.stopPropagation();
-                              router.push(`/userprofile/${d.userAddress}`);
-                              setShowSearchResult(false);
-                            }}>
-                            <div className="w-[3px] rounded bg-[#2574FB]" />
-                            <div className="flex flex-col space-y-2 text-b3 text-mediumEmphasis">
-                              {d.username ? (
-                                <LabelStringMatch label={d.username} match={searchQuery} />
-                              ) : (
-                                <LabelStringMatch label={trimAddress(d.userAddress)} match={searchQuery} />
-                              )}
-                              {/* <p className="">{d.username || trimAddress(d.userAddress)}</p> */}
-                            </div>
-                          </div>
-                        ))}
-                      {searchResults.length === 0 && (
+                      {isSearchLoading ? (
                         <div className="flex min-h-[80px] items-center justify-center">
-                          <p className="text-center text-b3 text-highEmphasis">No Match.</p>
+                          <ThreeDots ariaLabel="loading-indicator" height={24} width={24} color="white" />
+                        </div>
+                      ) : (
+                        <div>
+                          {searchResults.length > 0 &&
+                            searchResults.map((d, i) => (
+                              <div
+                                key={`res-${i}`}
+                                className="flex cursor-pointer space-x-2 px-4 py-[10px] hover:bg-white/10"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  router.push(`/userprofile/${d.userAddress}`);
+                                  setShowSearchResult(false);
+                                }}>
+                                <div className="w-[3px] rounded bg-[#2574FB]" />
+                                <div className="flex flex-col space-y-2 text-b3 text-mediumEmphasis">
+                                  {d.username ? (
+                                    <LabelStringMatch label={d.username} match={searchQuery} />
+                                  ) : (
+                                    <LabelStringMatch label={trimAddress(d.userAddress)} match={searchQuery} />
+                                  )}
+                                  {/* <p className="">{d.username || trimAddress(d.userAddress)}</p> */}
+                                </div>
+                              </div>
+                            ))}
+                          {searchResults.length === 0 && (
+                            <div className="flex min-h-[80px] items-center justify-center">
+                              <p className="text-center text-b3 text-highEmphasis">No Match.</p>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
