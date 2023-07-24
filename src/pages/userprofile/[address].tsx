@@ -115,12 +115,21 @@ const AddressPage: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResult] = useState<SearchUserData[]>([]);
 
+  useEffect(() => {
+    if (searchQuery) {
+      setShowSearchResult(true);
+    } else {
+      setShowSearchResult(false);
+    }
+  }, [searchQuery]);
+
   const search = async (val: string, holderAddress: string) => {
+    setIsSearchLoading(true);
     if (!val || !holderAddress) {
+      setIsSearchLoading(false);
       setSearchResult([]);
       return;
     }
-    setIsSearchLoading(true);
     const res = await apiConnection.searchUser(val, holderAddress);
     if (res.data && res.data.length > 0) {
       setSearchResult(res.data);
@@ -272,8 +281,8 @@ const AddressPage: NextPage = () => {
                           }}
                           // onBlur={() => setShowSearchResult(false)}
                           onChange={e => {
-                            setShowSearchResult(true);
                             setSearchQuery(e.target.value);
+                            setIsSearchLoading(true);
                             debouncedSearch(e.target.value, userprofileAddress);
                           }}
                         />
