@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { $isShowMobileModal } from '@/stores/modal';
+import { $isShowMobileModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import {
   $userAddress,
@@ -15,7 +16,7 @@ import {
   $userDisplayName,
   $userTotalCollateral
 } from '@/stores/user';
-import { useDisconnect, useSwitchNetwork } from 'wagmi';
+import { useConnect, useDisconnect, useSwitchNetwork } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
 import { $userPoint } from '@/stores/airdrop';
@@ -38,12 +39,8 @@ const MobileMenu = (props: any) => {
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { disconnect } = useDisconnect();
+  const { connect, connectors } = useConnect();
 
-  // const userPointData = useNanostore(userPoint);
-  // const { total, tradeVol, isBan } = userPointData;
-  // const tradeVolume = calculateNumber(tradeVol.vol, 4);
-  // const eligible = () => Number(tradeVolume) >= 5;
-  // const points = eligible() && !isBan ? localeConversion(total) : '0.0';
   const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
 
@@ -56,9 +53,26 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
-      open({ route: 'ConnectWallet' });
-    } else if (isWrongNetwork && switchNetwork) {
-      switchNetwork(DEFAULT_CHAIN.id);
+      // let isInjected = false;
+
+      // for (let i = 0; i < connectors.length; i += 1) {
+      //   const connector = connectors[i];
+      //   if (connector?.id.includes('injected')) {
+      //     connect({ connector });
+      //     isInjected = true;
+      //     break;
+      //   }
+      // }
+
+      // if (!isInjected) {
+      open();
+      // }
+    } else if (isWrongNetwork) {
+      if (switchNetwork) {
+        switchNetwork(DEFAULT_CHAIN.id);
+      } else {
+        $showSwitchNetworkErrorModal.set(true);
+      }
     }
   };
 
@@ -197,10 +211,15 @@ const MobileMenu = (props: any) => {
                 <div className="flex flex-row items-center">
                   <Image className="mr-[4px]" src="/images/common/fire.svg" width={15} height={15} alt="Competition Icon" />
                   <span
-                    className={`glow-yellow flex ${
+                    className={`glow-yellow relative flex ${
                       router.route.toLowerCase() === '/competition' ? 'mobile-menu-active font-semibold' : ''
                     }`}>
                     Competition
+                    <div
+                      className="absolute right-0 top-0 mr-[-6px] mt-[-2px] rounded-br-[6px] rounded-tl-[6px] 
+                    bg-gradient-to-b from-[#FF9D56] to-[#B23333] px-[3px] py-[2px] text-[6px] font-bold italic leading-[6px]">
+                      END
+                    </div>
                   </span>
                 </div>
               </div>
@@ -382,53 +401,51 @@ const MobileMenu = (props: any) => {
         Copied to clipboard
       </div>
 
-      {isSwapWidgetOpen ? (
-        <div
-          className={`fixed w-full transition
-        ${isSwapWidgetOpen ? 'bottom-[0px]' : 'bottom-[-250px]'}
-        bg-secondaryBlue duration-500
-      `}>
-          <div className="h-[250px] px-[20px] pb-[6px] pt-[24px] ">
-            <div className="font-[600] text-[#fff] ">Bridge ETH / WETH to Arbitrum👇</div>
-            <div className="mt-[16px]  flex flex-row">
-              <div
-                className="flex w-auto flex-row 
+      <div
+        className={`transition-left fixed bottom-0 w-full
+          ${isSwapWidgetOpen ? 'left-0' : 'left-[100%]'}
+          bg-secondaryBlue duration-500
+        `}>
+        <div className="h-[250px] px-[20px] pb-[6px] pt-[24px] ">
+          <div className="font-[600] text-[#fff] ">Bridge ETH / WETH to Arbitrum👇</div>
+          <div className="mt-[16px] flex flex-row">
+            <div
+              className="flex w-auto flex-row 
                 items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
                 px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
-                onClick={() => redirectExternal('https://bridge.arbitrum.io/')}>
-                <Image className="mr-[6px]" src="/icons/providers/arbitrum.png" alt="" width={24} height={24} />
-                Arbitrum
-              </div>
-              <div />
+              onClick={() => redirectExternal('https://bridge.arbitrum.io/')}>
+              <Image className="mr-[6px]" src="/icons/providers/arbitrum.png" alt="" width={24} height={24} />
+              Arbitrum
             </div>
-            <div className="mt-[24px]  ">
-              <div className="font-[600] text-[#fff] ">Wrap ETH on Arbitrum👇</div>
-            </div>
-            <div className="mt-[16px] flex flex-row">
-              <div
-                className="flex w-auto flex-row 
+            <div />
+          </div>
+          <div className="mt-[24px]">
+            <div className="font-[600] text-[#fff] ">Wrap ETH on Arbitrum👇</div>
+          </div>
+          <div className="mt-[16px] flex flex-row">
+            <div
+              className="flex w-auto flex-row 
                 items-center justify-center rounded-[4px] border-[1px] border-[#2574FB] 
                 px-[12px] py-[6px] align-middle text-[14px] text-[#fff] "
-                onClick={() => redirectExternal('https://app.uniswap.org/#/swap/')}>
-                <Image className="mr-[6px]" src="/icons/providers/uniswap.png" alt="" width={24} height={24} />
-                Uniswap
-              </div>
-              <div />
+              onClick={() => redirectExternal('https://app.uniswap.org/#/swap/')}>
+              <Image className="mr-[6px]" src="/icons/providers/uniswap.png" alt="" width={24} height={24} />
+              Uniswap
             </div>
-            <div className="flex flex-row justify-end">
-              <Image
-                src="/images/mobile/common/close.svg"
-                alt=""
-                width={40}
-                height={40}
-                onClick={() => {
-                  setIsSwapWidgetOpen(false);
-                }}
-              />
-            </div>
+            <div />
+          </div>
+          <div className="flex flex-row justify-end">
+            <Image
+              src="/images/mobile/common/close.svg"
+              alt=""
+              width={40}
+              height={40}
+              onClick={() => {
+                setIsSwapWidgetOpen(false);
+              }}
+            />
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 };

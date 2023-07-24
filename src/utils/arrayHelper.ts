@@ -43,3 +43,8 @@ export function binarySearch<T>(array: T[], value: any) {
 
   return -1; // Value not found
 }
+
+// eslint-disable-next-line no-unused-vars
+export function objectMap(obj: Object, fn: (v: string, k: string, i: number) => void) {
+  return Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
+}

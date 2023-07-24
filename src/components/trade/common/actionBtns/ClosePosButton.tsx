@@ -21,20 +21,20 @@ function ClosePosButton({
   onPending: () => void;
   onSuccess: () => void;
   // eslint-disable-next-line no-unused-vars
-  onError: (error: Error | null) => void;
+  onError: (error: Error | null, isPrepareError: boolean) => void;
 }) {
   const currentAmm = useNanostore($currentAmm);
   const collectionInfo = getCollectionInformation(currentAmm);
   const [isLoading, setIsLoading] = useState(false);
   const isMobileView = useNanostore($isMobileView);
 
-  const { write, isError, error, isPreparing, isPending, isSuccess, txHash } = useClosePositionTransaction(slippagePercent);
+  const { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash } = useClosePositionTransaction(slippagePercent);
 
   useEffect(() => {
     if (isError) {
       setIsLoading(false);
     }
-    onError(isError ? error : null);
+    onError(isError ? error : null, isPrepareError);
   }, [isError, error, onError]);
 
   useEffect(() => {
@@ -70,6 +70,36 @@ function ClosePosButton({
       }
     }
   }, [isPending, onPending, collectionInfo.shortName, txHash]);
+
+  useEffect(() => {
+    if (isError && !isMobileView) {
+      if (String(error).includes('RPC')) {
+        showToast(
+          {
+            error: true,
+            title: `${collectionInfo.shortName} - ${TradeActions.CLOSE}`,
+            message: 'Your transaction has failed due to network error. Please try again.',
+            linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${txHash}`,
+            linkLabel: 'Check on Arbiscan'
+          },
+          {
+            autoClose: 5000,
+            hideProgressBar: true
+          }
+        );
+      }
+    }
+
+    if (isError && isMobileView) {
+      if (String(error).includes('rejected')) {
+        $tsTransactionStatus.set({
+          isShow: true,
+          isSuccess: false,
+          linkUrl: ''
+        });
+      }
+    }
+  }, [isError, error]);
 
   return (
     <BaseButton

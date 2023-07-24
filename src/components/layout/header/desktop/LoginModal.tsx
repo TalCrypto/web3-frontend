@@ -44,6 +44,7 @@ export default function LoginModal() {
   const redirectWalletConnect = () => {
     closeModal();
     open();
+    // $isShowLoginModal.set(true);
   };
 
   return (

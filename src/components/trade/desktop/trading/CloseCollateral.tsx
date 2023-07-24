@@ -342,7 +342,8 @@ export default function CloseCollateral() {
   const [showDetail, setShowDetail] = useState(false);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
-  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
+  const [prepareTextErrorMessage, setPrepareTextErrorMessage] = useState<string | null>(null);
+  const [writeTextErrorMessage, setWriteTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const {
     isLoading: isEstLoading,
@@ -384,7 +385,7 @@ export default function CloseCollateral() {
 
   useEffect(() => {
     if (isEstError) {
-      setTextErrorMessage(estError ? formatError(estError.message) : null);
+      setPrepareTextErrorMessage(estError ? formatError(estError.message) : null);
     }
   }, [isEstError, estError]);
 
@@ -392,11 +393,14 @@ export default function CloseCollateral() {
     setCloseValue(0);
     setToleranceRate(0.5);
     setIsPending(false);
+    setPrepareTextErrorMessage(null);
   }, []);
 
-  const handleError = useCallback((error: Error | null) => {
+  const handleError = useCallback((error: Error | null, isPrepareError: boolean) => {
     setIsPending(false);
-    setTextErrorMessage(error ? formatError(error.message) : null);
+
+    setPrepareTextErrorMessage(error && isPrepareError ? formatError(error.message) : null);
+    setWriteTextErrorMessage(error && !isPrepareError ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -425,7 +429,7 @@ export default function CloseCollateral() {
         estimation={estimation}
         disabled={isPending || isWrongNetwork}
       />
-      <ErrorTip label={textErrorMessage} />
+      <ErrorTip label={prepareTextErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
         maxCloseValue={maxCloseValue}
@@ -521,6 +525,10 @@ export default function CloseCollateral() {
           onError={handleError}
         />
       )}
+
+      <div className="mt-4">
+        <ErrorTip label={writeTextErrorMessage} />
+      </div>
 
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
         <>

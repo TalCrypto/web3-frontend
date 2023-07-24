@@ -4,10 +4,10 @@ import { ThreeDots } from 'react-loader-spinner';
 import { useStore as useNanostore } from '@nanostores/react';
 import { useWeb3Modal } from '@web3modal/react';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
-import { useSwitchNetwork } from 'wagmi';
+import { /* useConnect, */ useSwitchNetwork } from 'wagmi';
 import { $userIsConnected, $userIsConnecting, $userIsWrongNetwork, $userWethBalance } from '@/stores/user';
 import { $isShowTradingMobile } from '@/stores/trading';
-import { $isShowMobileModal, $showGetWEthModal, $isShowMobileTokenModal } from '@/stores/modal';
+import { $isShowMobileModal, $isShowMobileTokenModal } from '@/stores/modal';
 
 function MobileTradeFooterInfo() {
   const { open } = useWeb3Modal();
@@ -18,10 +18,24 @@ function MobileTradeFooterInfo() {
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const isWethCollected = wethBalance !== 0;
   const showWethBalanceLabel = !isConnected ? '' : isWrongNetwork ? '-.-- WETH' : `${Number(wethBalance).toFixed(2)} WETH`;
+  // const { connect, connectors } = useConnect();
 
   const onClickBottomButton = async () => {
     if (!isConnected) {
-      open({ route: 'ConnectWallet' });
+      // let isInjected = false;
+
+      // for (let i = 0; i < connectors.length; i += 1) {
+      //   const connector = connectors[i];
+      //   if (connector?.id.includes('injected')) {
+      //     connect({ connector });
+      //     isInjected = true;
+      //     break;
+      //   }
+      // }
+
+      // if (!isInjected) {
+      open();
+      // }
       return;
     }
 

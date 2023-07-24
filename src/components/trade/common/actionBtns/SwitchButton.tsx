@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -20,6 +21,7 @@ function SwitchButton() {
   const handleSwitch = () => {
     if (switchNetwork) {
       setIsLoading(true);
+      const env = process.env.NEXT_PUBLIC_ENV;
       switchNetwork(DEFAULT_CHAIN.id);
     } else {
       $showSwitchNetworkErrorModal.set(true);

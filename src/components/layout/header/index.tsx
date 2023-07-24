@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,6 +7,7 @@ import Web3Area from '@/components/layout/header/desktop/Web3Area';
 import WidgetBot from '@widgetbot/react-embed';
 import { $isShowDiscordModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
+import { firebaseAuth } from '@/const/firebaseConfig';
 // import MobileHeader from '@/components/layout/header/mobile';
 
 function Header() {
@@ -68,7 +70,7 @@ function Header() {
                 server={process.env.NEXT_PUBLIC_DISCORD_SERVER_ID}
                 channel={process.env.NEXT_PUBLIC_DISCORD_CHANNEL_ID}
                 width={430}
-                style={{ height: 'calc(100vh - 112px)' }}
+                style={{ height: 'calc(100dvh - 112px)' }}
               />
             </div>
           </div>

@@ -1,7 +1,18 @@
 import { useStore as useNanostore } from '@nanostores/react';
 import { useEffect } from 'react';
 import { apiConnection } from '@/utils/apiConnection';
-import { $asCompetitionLeaderboardUpdateTrigger, $isCompetitionLeaderboardLoading } from '@/stores/competition';
+import {
+  $asCompetitionLeaderboardUpdateTrigger,
+  $firstLeaderboard,
+  $flCurrentUser,
+  $isCompetitionLeaderboardLoading,
+  $mainLeaderboard,
+  $mlCurrentUser,
+  $secondLeaderboard,
+  $slCurrentUser,
+  $thirdLeaderboard,
+  $tlCurrentUser
+} from '@/stores/competition';
 import { useAccount } from 'wagmi';
 
 function CompetitionDataUpdater() {
@@ -18,7 +29,49 @@ function CompetitionDataUpdater() {
         apiConnection.getTopLosersLeaderboard(address)
       ];
 
-      await Promise.allSettled(leaderboardPromises);
+      const [absPnlLboardRes, realizedPnlPctLboardRes, netConvergenceLboardRes, losersLboardRes] = await Promise.allSettled(
+        leaderboardPromises
+      );
+
+      if (absPnlLboardRes.status === 'fulfilled') {
+        const absPnlLboardData = absPnlLboardRes.value;
+        $mainLeaderboard.set(absPnlLboardData?.leaderboard);
+        if (address) {
+          $mlCurrentUser.set(absPnlLboardData?.user);
+        } else {
+          $mlCurrentUser.set(null);
+        }
+      }
+
+      if (realizedPnlPctLboardRes.status === 'fulfilled') {
+        const realizedPnlPctLboardData = realizedPnlPctLboardRes.value;
+        $firstLeaderboard.set(realizedPnlPctLboardData?.leaderboard);
+        if (address) {
+          $flCurrentUser.set(realizedPnlPctLboardData?.user);
+        } else {
+          $flCurrentUser.set(null);
+        }
+      }
+
+      if (netConvergenceLboardRes.status === 'fulfilled') {
+        const netConvergenceLboardData = netConvergenceLboardRes.value;
+        $secondLeaderboard.set(netConvergenceLboardData?.leaderboard);
+        if (address) {
+          $slCurrentUser.set(netConvergenceLboardData?.user);
+        } else {
+          $slCurrentUser.set(null);
+        }
+      }
+
+      if (losersLboardRes.status === 'fulfilled') {
+        const losersLboardData = losersLboardRes.value;
+        $thirdLeaderboard.set(losersLboardData?.leaderboard);
+        if (address) {
+          $tlCurrentUser.set(losersLboardData?.user);
+        } else {
+          $tlCurrentUser.set(null);
+        }
+      }
 
       setTimeout(() => {
         $isCompetitionLeaderboardLoading.set(false);
@@ -26,6 +79,7 @@ function CompetitionDataUpdater() {
     }
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]);
 
   return null;

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import Image, { ImageProps } from 'next/image';
 import Link from 'next/link';
@@ -6,7 +7,7 @@ import { withRouter } from 'next/router';
 interface NavbarItem {
   name: string;
   path: string;
-  other: string;
+  other: React.ReactElement | string;
   child: NavbarItem[];
   textClassName: string;
   icon?: React.ReactElement;
@@ -31,7 +32,13 @@ function TopMenu(props: any) {
     {
       name: 'Competition',
       path: '/competition',
-      other: '',
+      other: (
+        <div
+          className="absolute right-0 top-0 mr-[-12px] mt-[12px] rounded-br-[6px] rounded-tl-[6px] 
+        bg-gradient-to-b from-[#FF9D56] to-[#B23333] px-[3px] py-[2px] text-[8px] font-bold italic leading-[8px]">
+          END
+        </div>
+      ),
       child: [],
       textClassName: 'glow-yellow',
       icon: (

@@ -76,8 +76,11 @@ function QuantityEnter(props: {
   isAmountTooLarge: boolean;
   estimation: OpenPositionEstimation | undefined;
   disabled: boolean;
+  isInputBlur: boolean;
+  setIsInputBlur: (value: any) => void;
 }) {
-  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled, estimation } = props;
+  const { closeValue, maxCloseValue, onChange, isAmountTooSmall, isAmountTooLarge, disabled, estimation, isInputBlur, setIsInputBlur } =
+    props;
 
   const [isFocus, setIsFocus] = useState(false);
   const wethBalance = useNanostore($userWethBalance);
@@ -110,6 +113,15 @@ function QuantityEnter(props: {
   if (closeValue <= 0) {
     isError = false;
   }
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   return (
     <>
@@ -154,6 +166,7 @@ function QuantityEnter(props: {
               </div>
             </div>
             <input
+              ref={refInputBox}
               type="text"
               // pattern="[0-9]*"
               className="w-full border-none border-mediumBlue bg-mediumBlue text-right text-[15px] font-bold text-white outline-none"
@@ -341,8 +354,11 @@ export default function CloseCollateral() {
   const [showDetail, setShowDetail] = useState(false);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
   const [isAmountTooLarge, setIsAmountTooLarge] = useState(false);
-  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
+  const [prepareTextErrorMessage, setPrepareTextErrorMessage] = useState<string | null>(null);
+  const [writeTextErrorMessage, setWriteTextErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [isInputBlur, setIsInputBlur] = useState(false);
+
   const {
     isLoading: isEstLoading,
     estimation,
@@ -383,7 +399,7 @@ export default function CloseCollateral() {
 
   useEffect(() => {
     if (isEstError) {
-      setTextErrorMessage(estError ? formatError(estError.message) : null);
+      setPrepareTextErrorMessage(estError ? formatError(estError.message) : null);
     }
   }, [isEstError, estError]);
 
@@ -391,11 +407,14 @@ export default function CloseCollateral() {
     setCloseValue(0);
     setToleranceRate(0.5);
     setIsPending(false);
+    setPrepareTextErrorMessage(null);
   }, []);
 
-  const handleError = useCallback((error: Error | null) => {
+  const handleError = useCallback((error: Error | null, isPrepareError: boolean) => {
     setIsPending(false);
-    setTextErrorMessage(error ? formatError(error.message) : null);
+
+    setPrepareTextErrorMessage(error && isPrepareError ? formatError(error.message) : null);
+    setWriteTextErrorMessage(error && !isPrepareError ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -423,15 +442,19 @@ export default function CloseCollateral() {
         isAmountTooLarge={isAmountTooLarge}
         estimation={estimation}
         disabled={isPending || isWrongNetwork}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
-      <ErrorTip label={textErrorMessage} />
+      <ErrorTip label={prepareTextErrorMessage} />
       <CloseSlider
         closeValue={closeValue}
         maxCloseValue={maxCloseValue}
         onChange={(value: any) => {
+          setIsInputBlur(true);
           handleChange(value);
         }}
         onSlide={(value: any) => {
+          setIsInputBlur(true);
           handleChange(value);
         }}
         disabled={isPending || isWrongNetwork}
@@ -521,7 +544,10 @@ export default function CloseCollateral() {
         )}
       </div>
 
-      {/* {textErrorMessageShow ? <p className="text-color-warning text-[12px]">{textErrorMessage}</p> : null} */}
+      <div className="mt-4">
+        <ErrorTip label={writeTextErrorMessage} />
+      </div>
+
       {estimation && !isAmountTooLarge && !isAmountTooSmall && closeValue > 0 ? (
         <>
           <div className="flex pb-4">
@@ -540,6 +566,7 @@ export default function CloseCollateral() {
           <div>{showDetail && <ExtendedEstimateComponent estimation={estimation} isFullClose={isFullClose} />}</div>
         </>
       ) : null}
+
       <PartialCloseModal />
     </div>
   );

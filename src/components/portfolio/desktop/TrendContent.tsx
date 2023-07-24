@@ -35,13 +35,13 @@ function TrendContent() {
     { label: '1W', ref: useRef() },
     { label: '1M', ref: useRef() },
     { label: '2M', ref: useRef() },
-    { label: 'Competition', ref: useRef() }
+    { label: '6M', ref: useRef() }
+    // { label: 'Competition', ref: useRef() }
   ];
 
   const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
 
   const onBtnConnectWallet = () => {
-    // open();
     $isShowLoginModal.set(true);
   };
 
@@ -146,24 +146,27 @@ function TrendContent() {
           </div>
 
           <div className="relative mt-[-40px] flex h-full flex-1 flex-col" ref={controlRef}>
-            <div className="mb-5 flex items-center justify-center">
+            <div className="mb-5 flex items-center justify-end">
               {contentArray.map((item: any, index: any) => (
                 <div
-                  className={`item-overview cursor-pointer text-[12px] 
+                  // ${index === 3 ? 'competition' : 'mr-3'}
+                  // ${selectedTimeIndex === index ? 'text-highEmphasis' : index === 3 ? 'text-competition' : 'text-mediumEmphasis'}
+                  className={`item-overview mr-3 cursor-pointer text-[12px]
+                  ${index === 3 ? 'mr-6' : 'mr-3'}
                   ${index === selectedTimeIndex ? 'active' : ''}
-                  ${index === 3 ? 'competition' : 'mr-3'}
-                    ${selectedTimeIndex === index ? 'text-highEmphasis' : index === 3 ? 'text-competition' : 'text-mediumEmphasis'}
+                    ${selectedTimeIndex === index ? 'text-highEmphasis' : 'text-mediumEmphasis'}
                   `}
                   key={`time_${item.label}`}
                   onClick={() => clickSelectedTimeIndex(index)}
                   ref={item.ref}>
-                  {index === 3 ? (
+                  {item.label}
+                  {/* {index === 3 ? (
                     <Tooltip direction="top" content="Since Trading Competition" className="!text-highEmphasis">
                       <div className={`${index === 3 ? 'glow-yellow' : 'mr-3'} cursor-pointe`}>{item.label}</div>
                     </Tooltip>
                   ) : (
                     item.label
-                  )}
+                  )} */}
                 </div>
               ))}
             </div>

@@ -1,10 +1,13 @@
+/* eslint-disable no-alert */
+/* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { $isMobileView, $isShowMobileModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import LayoutUpdater from '@/components/updaters/LayoutUpdater';
 import { useRouter } from 'next/router';
 import { $activeDropdown } from '@/stores/competition';
+import { $isNotFoundPage } from '@/stores/route';
 import Header from './header';
 import Footer from './footer';
 
@@ -17,12 +20,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isShowMobileMenu = useNanostore($isShowMobileModal);
   const isMobileView = useNanostore($isMobileView);
 
+  const isNotFoundPage = useNanostore($isNotFoundPage);
   const isAirdropPage = router.pathname === '/airdrop';
   const isCompetitionPage = router.pathname === '/competition';
   const airdropBgClass = isMobileView
     ? ''
     : "bg-black bg-[url('/images/components/airdrop/bg-s2.png')] bg-cover bg-fixed bg-[center_top] bg-no-repeat";
 
+  const isUserprofilePage = router.pathname.match('/userprofile');
+  const userprofileBgClass =
+    "bg-black bg-[url('/images/components/userprofile/bg1.png')] bg-cover bg-fixed bg-left-top 4xl:bg-[left_top_-10rem] bg-no-repeat";
+  const userprofileBg2Class = "bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-right-top bg-no-repeat";
   const competitionActiveDropdown = useNanostore($activeDropdown);
 
   // competition page bg video
@@ -50,29 +58,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  function failed(e: any) {
-    // video playback failed - show a message saying why
-    switch (e.target.error.code) {
-      case e.target.error.MEDIA_ERR_ABORTED:
-        alert('You aborted the video playback.');
-        break;
-      case e.target.error.MEDIA_ERR_NETWORK:
-        alert('A network error caused the video download to fail part-way.');
-        break;
-      case e.target.error.MEDIA_ERR_DECODE:
-        alert(
-          'The video playback was aborted due to a corruption problem or because the video used features your browser did not support.'
-        );
-        break;
-      case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-        alert('The video could not be loaded, either because the server or network failed or because the format is not supported.');
-        break;
-      default:
-        alert('An unknown error occurred.');
-        break;
-    }
-  }
-
   return (
     <>
       <Header />
@@ -93,11 +78,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </video>
       ) : null}
       <div
-        className={`h-full w-full
-          ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}`}>
+        className={`min-h-screen w-full
+          ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}
+          ${isUserprofilePage || isNotFoundPage ? userprofileBgClass : ''}`}>
         <div
-          className={`content-container mmd:pb-10 w-full
-            !px-0 pb-12 text-white md:h-full md:pt-20 
+          className={`
+            ${isUserprofilePage || isNotFoundPage ? userprofileBg2Class : 'content-container pb-[42px]'}
+            mmd:pb-10 w-full
+            !px-0  text-white md:h-full md:min-h-screen md:pt-20 
             ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}
         `}>
           {children}

@@ -10,7 +10,7 @@ import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
 import { WithRouterProps } from 'next/dist/client/with-router';
-import { $currentAmm } from '@/stores/trading';
+import { $currentAmm, $isMarketDataUpdating } from '@/stores/trading';
 import { AMM, DEFAULT_AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
@@ -23,9 +23,14 @@ import InformationMobile from '@/components/trade/mobile/information/Information
 import PositionMobile from '@/components/trade/mobile/position/PositionMobile';
 import TradingMobile from '@/components/trade/mobile/trading/TradingMobile';
 import DisplayCollections from '@/components/trade/mobile/trading/DisplayCollections';
+import UpdatingTradeData from '@/components/trade/mobile/UpdatingTradeData';
+
+import { useStore as useNanostore } from '@nanostores/react';
 
 function TradePage(props: WithRouterProps) {
   const { router } = props;
+
+  const isMarketDataUpdating = useNanostore($isMarketDataUpdating);
 
   useEffect(() => {
     const queryCollection = router?.query?.collection;
@@ -77,6 +82,8 @@ function TradePage(props: WithRouterProps) {
           <Switcher />
 
           <div className="mt-12 bg-darkBlue">
+            {isMarketDataUpdating ? <UpdatingTradeData /> : null}
+
             <ChartMobile />
 
             <PositionMobile />

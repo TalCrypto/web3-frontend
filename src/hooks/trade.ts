@@ -148,7 +148,7 @@ export const useApproveTransaction = () => {
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
+  return { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useOpenPositionTransaction = (args: {
@@ -201,7 +201,7 @@ export const useOpenPositionTransaction = (args: {
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
+  return { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useClosePositionTransaction = (_slippagePercent: number) => {
@@ -244,7 +244,7 @@ export const useClosePositionTransaction = (_slippagePercent: number) => {
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
+  return { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash };
 };
 /**
  *
@@ -332,7 +332,7 @@ export const useAddCollateralTransaction = (deltaMargin: number) => {
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
+  return { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useReduceCollateralTransaction = (deltaMargin: number) => {
@@ -365,7 +365,7 @@ export const useReduceCollateralTransaction = (deltaMargin: number) => {
   const error = prepareError || writeError;
 
   // eslint-disable-next-line consistent-return
-  return { write, isError, error, isPreparing, isPending, isSuccess, txHash };
+  return { write, isError, error, isPrepareError, isPreparing, isPending, isSuccess, txHash };
 };
 
 export const useFluctuationLimit = () => {

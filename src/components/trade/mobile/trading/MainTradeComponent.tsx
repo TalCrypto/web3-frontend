@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 
 import Image from 'next/image';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 
 import InputSlider from '@/components/trade/desktop/trading/InputSlider';
@@ -112,7 +112,7 @@ function LongShortRatio(props: any) {
 }
 
 function QuantityTips(props: any) {
-  const { isAmountTooSmall, isInsuffBalance, estPriceFluctuation, textErrorMessage } = props;
+  const { isAmountTooSmall, isInsuffBalance, estPriceFluctuation, prepareTextErrorMessage } = props;
   const [isEstPriceFluctuation, setIsEstPriceFluctuation] = useState(false);
 
   const onClickWeth = () => {
@@ -125,7 +125,6 @@ function QuantityTips(props: any) {
       const interval = setTimeout(() => {
         setIsEstPriceFluctuation(true);
         clearInterval(interval);
-        console.log('here');
       }, 1000);
     } else {
       setIsEstPriceFluctuation(false);
@@ -142,7 +141,7 @@ function QuantityTips(props: any) {
       </span>{' '}
       first.
     </>
-  ) : !textErrorMessage && isEstPriceFluctuation ? (
+  ) : !prepareTextErrorMessage && isEstPriceFluctuation ? (
     <span className="text-warn">
       Transaction might fail due to high price impact of the trade. To increase the chance of executing the transaction, please reduce the
       notional size of your trade.
@@ -157,7 +156,7 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled, textErrorMessage, estimation } = props;
+  const { value, onChange, isAmountTooSmall, disabled, prepareTextErrorMessage, estimation, isInputBlur, setIsInputBlur } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
@@ -171,6 +170,15 @@ function QuantityEnter(props: any) {
   const fluctuationLmt = useFluctuationLimit();
   const estPriceFluctuation =
     value > 0 && fluctuationPct && !(fluctuationPct <= fluctuationLmt * 0.3 && fluctuationPct >= fluctuationLmt * -0.3);
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   const handleEnter = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -224,6 +232,7 @@ function QuantityEnter(props: any) {
               <span className="input-with-text text-[12px] font-semibold">WETH</span>
             </div>
             <input
+              ref={refInputBox}
               type="text"
               // pattern="[0-9]*"
               className="w-full border-none border-mediumBlue bg-mediumBlue text-right
@@ -232,7 +241,10 @@ function QuantityEnter(props: any) {
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}
-              onFocus={() => setIsFocus(true)}
+              onFocus={() => {
+                setIsInputBlur(false);
+                setIsFocus(true);
+              }}
               onBlur={() => setIsFocus(false)}
               min={0}
             />
@@ -242,10 +254,10 @@ function QuantityEnter(props: any) {
           estPriceFluctuation={estPriceFluctuation}
           isAmountTooSmall={isAmountTooSmall}
           isInsuffBalance={isInsuffBalance}
-          textErrorMessage={textErrorMessage}
+          prepareTextErrorMessage={prepareTextErrorMessage}
           value={value}
         />
-        {!isAmountTooSmall && !isInsuffBalance ? <ErrorTip label={textErrorMessage} /> : null}
+        {!isAmountTooSmall && !isInsuffBalance ? <ErrorTip label={prepareTextErrorMessage} /> : null}
       </div>
     </>
   );
@@ -302,10 +314,21 @@ function EstimatedValueDisplay(props: {
   setToleranceRate: (value: any) => void;
   isAmountTooSmall: boolean;
   disabled: boolean;
+  isInputBlur: boolean;
+  setIsInputBlur: (value: any) => void;
 }) {
-  const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled } = props;
+  const { estimation, toleranceRate, setToleranceRate, isAmountTooSmall, disabled, isInputBlur, setIsInputBlur } = props;
 
   const sizeNotional = estimation ? estimation.txSummary.notionalSize.toFixed(4) : '-.--';
+
+  const refInputBox = useRef(null);
+
+  useEffect(() => {
+    if (isInputBlur && refInputBox.current) {
+      const ref: any = refInputBox.current;
+      ref.blur();
+    }
+  }, [isInputBlur]);
 
   return (
     <>
@@ -328,6 +351,7 @@ function EstimatedValueDisplay(props: {
             rounded-[4px] bg-mediumBlue px-[10px] py-1
             ${disabled ? 'opacity-30' : ''}`}>
             <input
+              ref={refInputBox}
               disabled={disabled}
               title=""
               type="text"
@@ -336,6 +360,9 @@ function EstimatedValueDisplay(props: {
                 text-[15px] font-semibold outline-none"
               placeholder="0.0 "
               value={toleranceRate}
+              onFocus={() => {
+                setIsInputBlur(false);
+              }}
               onChange={e => {
                 const { value: inputValue } = e.target;
                 const reg = /^\d*(\.\d*)?$/;
@@ -368,37 +395,6 @@ function EstimatedValueDisplay(props: {
       </div>
     </>
   );
-}
-
-function Tips({
-  isConnected,
-  isWrongNetwork,
-  isRequireWeth,
-  isApproveRequired
-}: {
-  isConnected: boolean;
-  isWrongNetwork: boolean;
-  isRequireWeth: boolean;
-  isApproveRequired: boolean;
-}) {
-  const label = !isConnected ? (
-    'Please connect the wallets to trade !'
-  ) : isWrongNetwork ? (
-    'Wrong Network, please switch to Arbitrum!'
-  ) : isRequireWeth ? (
-    'Please get WETH first !'
-  ) : isApproveRequired ? (
-    <>Please approve before trading!</>
-  ) : null;
-
-  return label ? (
-    <div
-      className="mt-4 flex h-[16px] items-center text-[12px]
-        font-normal leading-[16px] text-warn">
-      <Image src="/images/common/info_warning_icon.svg" alt="" width={12} height={12} className="mr-2" />
-      <span>{label}</span>
-    </div>
-  ) : null;
 }
 
 function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
@@ -483,8 +479,11 @@ export default function MainTradeComponent() {
   const [toleranceRate, setToleranceRate] = useState(0.5);
   const [leverageValue, setLeverageValue] = useState(1);
   const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
-  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
+  const [prepareTextErrorMessage, setPrepareTextErrorMessage] = useState<string | null>(null);
+  const [writeTextErrorMessage, setWriteTextErrorMessage] = useState<string | null>(null);
   const notionalAmount = Number(quantity) * leverageValue ?? 0;
+  const [isInputBlur, setIsInputBlur] = useState(false);
+
   const {
     isLoading: isEstLoading,
     estimation,
@@ -515,7 +514,7 @@ export default function MainTradeComponent() {
 
   useEffect(() => {
     if (isEstError) {
-      setTextErrorMessage(estError ? formatError(estError.message) : null);
+      setPrepareTextErrorMessage(estError ? formatError(estError.message) : null);
     }
   }, [isEstError, estError]);
 
@@ -526,9 +525,11 @@ export default function MainTradeComponent() {
     setIsPending(false);
   }, []);
 
-  const handleError = useCallback((error: Error | null) => {
+  const handleError = useCallback((error: Error | null, isPrepareError: boolean) => {
     setIsPending(false);
-    setTextErrorMessage(error ? formatError(error.message) : null);
+
+    setPrepareTextErrorMessage(error && isPrepareError ? formatError(error.message) : null);
+    setWriteTextErrorMessage(error && !isPrepareError ? formatError(error.message) : null);
   }, []);
 
   const handlePending = useCallback(() => {
@@ -548,24 +549,35 @@ export default function MainTradeComponent() {
     setLeverageValue(leverage);
   };
 
+  useEffect(() => {
+    setPrepareTextErrorMessage(null);
+  }, [currentAmm, saleOrBuyIndex]);
+
   return (
     <div>
-      <LongShortRatio saleOrBuyIndex={saleOrBuyIndex} setSaleOrBuyIndex={setSaleOrBuyIndex} />
+      <LongShortRatio
+        disabled={isPending || isWrongNetwork || !isConnected}
+        saleOrBuyIndex={saleOrBuyIndex}
+        setSaleOrBuyIndex={setSaleOrBuyIndex}
+      />
       <QuantityEnter
         estimation={estimation}
-        disabled={isWrongNetwork || isPending}
+        disabled={isWrongNetwork || isPending || !isConnected}
         value={quantity}
         onChange={(value: string) => {
           handleQuantityInput(value);
         }}
         isAmountTooSmall={isAmountTooSmall}
-        textErrorMessage={textErrorMessage}
+        prepareTextErrorMessage={prepareTextErrorMessage}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
       <LeverageComponent
-        disabled={isPending || isWrongNetwork}
+        disabled={isPending || isWrongNetwork || !isConnected}
         value={leverageValue}
         setValue={setLeverageValue}
         onChange={(value: any) => {
+          setIsInputBlur(true);
           handleLeverageChange(value);
         }}
       />
@@ -578,6 +590,8 @@ export default function MainTradeComponent() {
         toleranceRate={toleranceRate}
         setToleranceRate={setToleranceRate}
         isAmountTooSmall={isAmountTooSmall}
+        isInputBlur={isInputBlur}
+        setIsInputBlur={setIsInputBlur}
       />
 
       <div className="pb-4">
@@ -608,6 +622,10 @@ export default function MainTradeComponent() {
             onError={handleError}
           />
         )}
+      </div>
+
+      <div className="mt-4">
+        <ErrorTip label={writeTextErrorMessage} />
       </div>
 
       {estimation && <ExtendedEstimateComponent estimation={estimation} />}
