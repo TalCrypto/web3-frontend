@@ -1,34 +1,53 @@
 import { binarySearch } from '@/utils/arrayHelper';
 
 const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
+const subgraphBackupUrl = process.env.NEXT_PUBLIC_SUPGRAPH_BACKUP_ENDPOINT ?? '';
+
+const fetchMethod = async (_method: string, _query: string) => {
+  const normalFetch = await fetch(subgraphUrl, {
+    method: _method,
+    body: JSON.stringify({
+      query: _query
+    })
+  });
+  if (normalFetch.ok) {
+    const resJson = await normalFetch.json();
+    return resJson;
+  }
+  const backupFetch = await fetch(subgraphBackupUrl, {
+    method: _method,
+    body: JSON.stringify({
+      query: _query
+    })
+  });
+  const resJson = await backupFetch.json();
+  return resJson;
+};
 
 export const getLatestDayTradingDetails = async (ammAddr: string) => {
-  const dayTradeData = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{
-                dayTradeDatas(
-                    first: 1, 
-                    orderBy:timestamp, 
-                    orderDirection: desc, 
-                    where: {
-                      amm: "${ammAddr}"
-                    }){
-                    amm
-                    timestamp
-                    open
-                    high
-                    low
-                    close
-                    volume
-                    txCount
-                  }
-              }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.dayTradeDatas);
+  const fetchDayTradeData = await fetchMethod(
+    'POST',
+    `{
+      dayTradeDatas(
+          first: 1,
+          orderBy:timestamp,
+          orderDirection: desc,
+          where: {
+            amm: "${ammAddr}"
+          }){
+          amm
+          timestamp
+          open
+          high
+          low
+          close
+          volume
+          txCount
+        }
+    }`
+  );
 
+  const dayTradeData = fetchDayTradeData.data.dayTradeDatas;
   const result = {
     amm: dayTradeData[0].amm,
     startTime: Number(dayTradeData[0].timestamp),
@@ -44,57 +63,51 @@ export const getLatestDayTradingDetails = async (ammAddr: string) => {
 };
 
 export const getOpenInterest = async (ammAddr: string) => {
-  const openInterest = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{
-                amm(id: "${ammAddr.toLowerCase()}") {
-                    positionBalance
-                    openInterestSize
-                    openInterestNotional
-                }
-              }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => ({
-      balance: BigInt(resJson.data.amm.positionBalance),
-      notional: BigInt(resJson.data.amm.openInterestNotional),
-      size: BigInt(resJson.data.amm.openInterestSize)
-    }))
-    .catch(() => null);
+  const fetchOpenInterest = await fetchMethod(
+    'POST',
+    `{
+      amm(id: "${ammAddr.toLowerCase()}") {
+          positionBalance
+          openInterestSize
+          openInterestNotional
+      }
+    }`
+  );
+
+  const openInterest = {
+    balance: BigInt(fetchOpenInterest.data.amm.positionBalance),
+    notional: BigInt(fetchOpenInterest.data.amm.openInterestNotional),
+    size: BigInt(fetchOpenInterest.data.amm.openInterestSize)
+  };
 
   return openInterest;
 };
 
 export const getPositionHistory = async (ammAddr: string, walletArr: string) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{
-                positionChangedEvents(
-                    where:{
-                        amm: "${ammAddr.toLowerCase()}"
-                        trader: "${walletArr.toLowerCase()}"
-                    }
-                    orderBy: timestampIndex,
-                    orderDirection: desc
-                  ){
-                    id
-                    timestamp
-                    exchangedPositionSize
-                    positionSizeAfter
-                    positionNotional
-                    spotPrice
-                    fee
-                    realizedPnl
-                  }
-              }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.positionChangedEvents);
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{
+      positionChangedEvents(
+          where:{
+              amm: "${ammAddr.toLowerCase()}"
+              trader: "${walletArr.toLowerCase()}"
+          }
+          orderBy: timestampIndex,
+          orderDirection: desc
+        ){
+          id
+          timestamp
+          exchangedPositionSize
+          positionSizeAfter
+          positionNotional
+          spotPrice
+          fee
+          realizedPnl
+        }
+    }`
+  );
 
+  const positions = fetchPositions.data.positionChangedEvents;
   const result = positions.map((position: any) => {
     const exchangedPositionSize = BigInt(position.exchangedPositionSize);
     const positionSizeAfter = BigInt(position.positionSizeAfter);
@@ -125,37 +138,34 @@ export const getPositionHistory = async (ammAddr: string, walletArr: string) => 
 };
 
 export const getAllPositionHistory = async (walletArr: string, limit: number, offset: number) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{
-                positionChangedEvents(
-                    first: ${limit},
-                    skip: ${offset},
-                    where:{
-                        trader: "${walletArr.toLowerCase()}"
-                    }
-                    orderBy: timestampIndex,
-                    orderDirection: desc
-                  ){
-                    id
-                    amm
-                    timestamp
-                    exchangedPositionSize
-                    positionSizeAfter
-                    positionNotional
-                    spotPrice
-                    fee
-                    realizedPnl
-                    liquidationPenalty
-                    amount
-                  }
-              }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.positionChangedEvents);
+  const fetchAllPositionHistory = await fetchMethod(
+    'POST',
+    `{
+      positionChangedEvents(
+          first: ${limit},
+          skip: ${offset},
+          where:{
+              trader: "${walletArr.toLowerCase()}"
+          }
+          orderBy: timestampIndex,
+          orderDirection: desc
+        ){
+          id
+          amm
+          timestamp
+          exchangedPositionSize
+          positionSizeAfter
+          positionNotional
+          spotPrice
+          fee
+          realizedPnl
+          liquidationPenalty
+          amount
+        }
+    }`
+  );
 
+  const positions = fetchAllPositionHistory.data.positionChangedEvents;
   const result = positions.map((position: any) => {
     const exchangedPositionSize = BigInt(position.exchangedPositionSize);
     const positionSizeAfter = BigInt(position.positionSizeAfter);
@@ -183,33 +193,30 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
 };
 
 export const getMarketHistory = async (ammAddr: string) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{
-                positionChangedEvents(
-                    orderBy: timestampIndex,
-                    orderDirection: desc,
-                    where:{
-                      amm: "${ammAddr.toLowerCase()}"
-                    }
-                  ){
-                    id
-                    amm  
-                    timestamp
-                    exchangedPositionSize
-                    positionNotional
-                    spotPrice
-                    positionSizeAfter
-                    liquidationPenalty
-                    trader
-                  }
-              }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.positionChangedEvents);
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{
+      positionChangedEvents(
+          orderBy: timestampIndex,
+          orderDirection: desc,
+          where:{
+            amm: "${ammAddr.toLowerCase()}"
+          }
+        ){
+          id
+          amm  
+          timestamp
+          exchangedPositionSize
+          positionNotional
+          spotPrice
+          positionSizeAfter
+          liquidationPenalty
+          trader
+        }
+    }`
+  );
 
+  const positions = fetchPositions.data.positionChangedEvents;
   const userAddresses: any[] = [];
   const finalPositions: any[] = [];
 
@@ -238,56 +245,50 @@ export const getMarketHistory = async (ammAddr: string) => {
 };
 
 export const getFundingPaymentHistory = async (ammAddr: string) => {
-  const fundingPaymentHistory = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{
-                fundingRateUpdatedEvents(
-                    orderBy: timestamp,
-                    orderDirection: desc,
-                    where:{
-                      amm: "${ammAddr.toLowerCase()}"
-                    }
-                  ){
-                    amm  
-                    timestamp
-                    rateLong
-                    rateShort
-                    underlyingPrice
-                  }
-              }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => (resJson.data ? resJson.data.fundingRateUpdatedEvents : []));
+  const fetchFundingPaymentHistory = await fetchMethod(
+    'POST',
+    `{
+      fundingRateUpdatedEvents(
+          orderBy: timestamp,
+          orderDirection: desc,
+          where:{
+            amm: "${ammAddr.toLowerCase()}"
+          }
+        ){
+          amm  
+          timestamp
+          rateLong
+          rateShort
+          underlyingPrice
+        }
+    }`
+  );
 
+  const fundingPaymentHistory = fetchFundingPaymentHistory.data ? fetchFundingPaymentHistory.data.fundingRateUpdatedEvents : [];
   return fundingPaymentHistory.length > 0 ? fundingPaymentHistory : null;
 };
 
 export const getSpotPriceAfter = async (ammAddr: string, timestamp: number, limit: number, offset: number) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                reserveSnapshottedEvents(
-                first: ${limit},
-                skip: ${offset},
-                where:{
-                  amm: "${ammAddr}",
-                  timestamp_gt: ${timestamp}
-                }
-                orderBy: timestampIndex,
-                orderDirection: asc
-              ){
-                timestamp
-                spotPrice
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.reserveSnapshottedEvents);
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{ 
+      reserveSnapshottedEvents(
+      first: ${limit},
+      skip: ${offset},
+      where:{
+        amm: "${ammAddr}",
+        timestamp_gt: ${timestamp}
+      }
+      orderBy: timestampIndex,
+      orderDirection: asc
+    ){
+      timestamp
+      spotPrice
+    }
+  }`
+  );
 
+  const positions = fetchPositions.data.reserveSnapshottedEvents;
   const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
     spotPrice: BigInt(position.spotPrice)
@@ -297,28 +298,25 @@ export const getSpotPriceAfter = async (ammAddr: string, timestamp: number, limi
 };
 
 export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: number) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                reserveSnapshottedEvents(
-                first: 1,
-                where:{
-                  amm: "${ammAddr}",
-                  timestamp_lt: ${timestamp}
-                }
-                orderBy: timestampIndex,
-                orderDirection: desc
-              ){
-                timestamp
-                spotPrice
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.reserveSnapshottedEvents);
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{ 
+        reserveSnapshottedEvents(
+        first: 1,
+        where:{
+          amm: "${ammAddr}",
+          timestamp_lt: ${timestamp}
+        }
+        orderBy: timestampIndex,
+        orderDirection: desc
+      ){
+        timestamp
+        spotPrice
+      }
+    }`
+  );
 
+  const positions = fetchPositions.data.reserveSnapshottedEvents;
   return positions.length > 0
     ? {
         timestamp: Number(positions[0].timestamp),
@@ -328,34 +326,31 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
 };
 
 export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
-  const graphDatas = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                graphDatas(
-                first: 1000,
-                where:{
-                  amm: "${ammAddr}",
-                  startTime_gt: ${timestamp},
-                  resolution: ${resolution}
-                }
-                orderBy: startTime,
-                orderDirection: asc
-              ){
-                startTime
-                endTime
-                high
-                low
-                open
-                close
-                volume
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.graphDatas);
+  const fetchGraphDatas = await fetchMethod(
+    'POST',
+    `{ 
+        graphDatas(
+        first: 1000,
+        where:{
+          amm: "${ammAddr}",
+          startTime_gt: ${timestamp},
+          resolution: ${resolution}
+        }
+        orderBy: startTime,
+        orderDirection: asc
+      ){
+        startTime
+        endTime
+        high
+        low
+        open
+        close
+        volume
+      }
+    }`
+  );
 
+  const { graphDatas } = fetchGraphDatas.data;
   const result = graphDatas.map((data: any) => ({
     start: Number(data.startTime),
     end: Number(data.endTime),
@@ -370,31 +365,28 @@ export const getGraphDataAfter = async (ammAddr: string, timestamp: number, reso
 };
 
 export const getPositionHistoryAfter = async (ammAddr: string, walletAddr: string, timestamp: number) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                positionChangedEvents(
-                first: 1000,
-                where:{
-                  trader: "${walletAddr}",
-                  amm: "${ammAddr}",
-                  timestamp_gt: ${timestamp}
-                }
-                orderBy: timestampIndex,
-                orderDirection: asc
-              ){
-                timestamp
-                positionSizeAfter
-                openNotionalAfter
-                margin
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.positionChangedEvents);
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{ 
+        positionChangedEvents(
+        first: 1000,
+        where:{
+          trader: "${walletAddr}",
+          amm: "${ammAddr}",
+          timestamp_gt: ${timestamp}
+        }
+        orderBy: timestampIndex,
+        orderDirection: asc
+      ){
+        timestamp
+        positionSizeAfter
+        openNotionalAfter
+        margin
+      }
+    }`
+  );
 
+  const positions = fetchPositions.data.positionChangedEvents;
   const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
     size: BigInt(position.positionSizeAfter),
@@ -406,31 +398,28 @@ export const getPositionHistoryAfter = async (ammAddr: string, walletAddr: strin
 };
 
 export const getPositionHistoryBefore = async (ammAddr: string, walletAddr: string, timestamp: number) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                positionChangedEvents(
-                first: 1,
-                where:{
-                  trader: "${walletAddr}",
-                  amm: "${ammAddr}",
-                  timestamp_lt: ${timestamp}
-                }
-                orderBy: timestampIndex,
-                orderDirection: desc
-              ){
-                timestamp
-                positionSizeAfter
-                openNotionalAfter
-                margin
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.positionChangedEvents);
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{ 
+        positionChangedEvents(
+        first: 1,
+        where:{
+          trader: "${walletAddr}",
+          amm: "${ammAddr}",
+          timestamp_lt: ${timestamp}
+        }
+        orderBy: timestampIndex,
+        orderDirection: desc
+      ){
+        timestamp
+        positionSizeAfter
+        openNotionalAfter
+        margin
+      }
+    }`
+  );
 
+  const positions = fetchPositions.data.positionChangedEvents;
   const result = {
     timestamp: Number(positions[0].timestamp),
     size: BigInt(positions[0].positionSizeAfter),
@@ -442,28 +431,25 @@ export const getPositionHistoryBefore = async (ammAddr: string, walletAddr: stri
 };
 
 export const getTokenBalanceAfter = async (walletAddr: string, timestamp: number) => {
-  const histories = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                tokenBalanceHistories(
-                first: 1000,
-                where:{
-                  trader: "${walletAddr}",
-                  timestamp_gt: ${timestamp}
-                }
-                orderBy: timestamp,
-                orderDirection: asc
-              ){
-                timestamp
-                balance
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.tokenBalanceHistories);
+  const fetchHistory = await fetchMethod(
+    'POST',
+    `{ 
+        tokenBalanceHistories(
+        first: 1000,
+        where:{
+          trader: "${walletAddr}",
+          timestamp_gt: ${timestamp}
+        }
+        orderBy: timestamp,
+        orderDirection: asc
+      ){
+        timestamp
+        balance
+      }
+    }`
+  );
 
+  const histories = fetchHistory.data.tokenBalanceHistories;
   const result = histories.map((history: any) => ({
     timestamp: Number(history.timestamp),
     balance: BigInt(history.balance)
@@ -473,28 +459,25 @@ export const getTokenBalanceAfter = async (walletAddr: string, timestamp: number
 };
 
 export const getTokenBalanceBefore = async (walletAddr: string, timestamp: number) => {
-  const histories = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                tokenBalanceHistories(
-                first: 1,
-                where:{
-                  trader: "${walletAddr}",
-                  timestamp_lt: ${timestamp}
-                }
-                orderBy: timestamp,
-                orderDirection: desc
-              ){
-                timestamp
-                balance
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.tokenBalanceHistories);
+  const fetchHistories = await fetchMethod(
+    'POST',
+    `{ 
+      tokenBalanceHistories(
+      first: 1,
+      where:{
+        trader: "${walletAddr}",
+        timestamp_lt: ${timestamp}
+      }
+      orderBy: timestamp,
+      orderDirection: desc
+    ){
+      timestamp
+      balance
+    }
+  }`
+  );
 
+  const histories = fetchHistories.data.tokenBalanceHistories;
   const result = {
     timestamp: Number(histories[0].timestamp),
     balance: BigInt(histories[0].balance)
@@ -504,30 +487,27 @@ export const getTokenBalanceBefore = async (walletAddr: string, timestamp: numbe
 };
 
 export const getMarginChangedEventAfter = async (ammAddr: string, walletAddr: string, timestamp: number) => {
-  const events = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                marginChangedEvents(
-                first: 1000,
-                where:{
-                  sender: "${walletAddr}",
-                  amm: "${ammAddr}",
-                  timestamp_gt: ${timestamp}
-                }
-                orderBy: timestamp,
-                orderDirection: asc
-              ){
-                timestamp
-                amount
-                fundingPayment
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.marginChangedEvents);
+  const fetchEvents = await fetchMethod(
+    'POST',
+    `{ 
+        marginChangedEvents(
+        first: 1000,
+        where:{
+          sender: "${walletAddr}",
+          amm: "${ammAddr}",
+          timestamp_gt: ${timestamp}
+        }
+        orderBy: timestamp,
+        orderDirection: asc
+      ){
+        timestamp
+        amount
+        fundingPayment
+      }
+    }`
+  );
 
+  const events = fetchEvents.data.marginChangedEvents;
   const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
     amount: BigInt(event.amount),
@@ -538,30 +518,27 @@ export const getMarginChangedEventAfter = async (ammAddr: string, walletAddr: st
 };
 
 export const getMarginChangedEventBefore = async (ammAddr: string, walletAddr: string, timestamp: number) => {
-  const events = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                marginChangedEvents(
-                first: 1000,
-                where:{
-                  sender: "${walletAddr}",
-                  amm: "${ammAddr}",
-                  timestamp_lt: ${timestamp}
-                }
-                orderBy: timestamp,
-                orderDirection: desc
-              ){
-                timestamp
-                amount
-                fundingPayment
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.marginChangedEvents);
+  const fetchEvents = await fetchMethod(
+    'POST',
+    `{ 
+        marginChangedEvents(
+        first: 1000,
+        where:{
+          sender: "${walletAddr}",
+          amm: "${ammAddr}",
+          timestamp_lt: ${timestamp}
+        }
+        orderBy: timestamp,
+        orderDirection: desc
+      ){
+        timestamp
+        amount
+        fundingPayment
+      }
+    }`
+  );
 
+  const events = fetchEvents.data.marginChangedEvents;
   const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
     amount: BigInt(event.amount),
@@ -572,25 +549,22 @@ export const getMarginChangedEventBefore = async (ammAddr: string, walletAddr: s
 };
 
 export const getAllAmmPosition = async (walletAddr: string) => {
-  const positions = await fetch(subgraphUrl, {
-    method: 'POST',
-    body: JSON.stringify({
-      query: `{ 
-                ammPositions(
-                first: 1000,
-                where:{
-                  trader: "${walletAddr}"
-                }
-              ){
-                amm
-                positionSize
-              }
-            }`
-    })
-  })
-    .then(res => res.json())
-    .then(resJson => resJson.data.ammPositions);
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{ 
+        ammPositions(
+        first: 1000,
+        where:{
+          trader: "${walletAddr}"
+        }
+      ){
+        amm
+        positionSize
+      }
+    }`
+  );
 
+  const positions = fetchPositions.data.ammPositions;
   const result = positions.map((event: any) => ({
     amm: event.amm,
     positionSize: BigInt(event.positionSize)
