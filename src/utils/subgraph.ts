@@ -11,7 +11,7 @@ const fetchMethod = async (_method: string, _query: string) => {
     })
   });
   if (normalFetch.ok) {
-    const resJson = normalFetch.json();
+    const resJson = await normalFetch.json();
     return resJson;
   }
   const backupFetch = await fetch(subgraphBackupUrl, {
@@ -20,7 +20,7 @@ const fetchMethod = async (_method: string, _query: string) => {
       query: _query
     })
   });
-  const resJson = backupFetch.json();
+  const resJson = await backupFetch.json();
   return resJson;
 };
 
