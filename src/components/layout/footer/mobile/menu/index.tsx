@@ -56,7 +56,7 @@ const MobileMenu = (props: any) => {
 
       for (let i = 0; i < connectors.length; i += 1) {
         const connector = connectors[i];
-        if (connector?.id.includes('injected')) {
+        if (connector?.name.toLowerCase().includes('metamask')) {
           connect({ connector });
           isInjected = true;
           break;
