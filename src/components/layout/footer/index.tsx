@@ -48,7 +48,7 @@ function Footer() {
           <div>
             <div
               className="cursor-pointer text-[14px] font-[400] text-mediumEmphasis hover:text-[#FFFFFF]"
-              onClick={() => router.push('/terms')}>
+              onClick={() => window.open('/terms', '_blank')}>
               Terms & Conditions
             </div>
           </div>

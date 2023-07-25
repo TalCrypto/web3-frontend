@@ -71,7 +71,7 @@ export default function LoginModal() {
 
   const redirectTnc = () => {
     closeModal();
-    router.push('/terms');
+    window.open('/terms', '_blank');
   };
 
   return (

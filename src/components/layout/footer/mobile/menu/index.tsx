@@ -224,7 +224,7 @@ const MobileMenu = (props: any) => {
             </div>
 
             <div className="pb-[35px]">
-              <div onClick={() => onGotoPage('/terms')}>
+              <div onClick={() => window.open('/terms', '_blank')}>
                 <span
                   className={`
                 ${router.route.toLowerCase() === '/terms' ? 'mobile-menu-active font-semibold' : ''}
