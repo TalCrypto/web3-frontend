@@ -13,12 +13,18 @@ import LoginModal from '@/components/layout/header/desktop/LoginModal';
 import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetTokenModal';
 
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { Web3Modal } from '@web3modal/react';
-import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { EthereumClient, w3mConnectors } from '@web3modal/ethereum';
 
 // Wagmi config
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
-const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
+const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? '';
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [
+  alchemyProvider({ apiKey: alchemyKey }),
+  publicProvider()
+]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
