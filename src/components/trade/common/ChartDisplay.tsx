@@ -6,13 +6,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createChart, ColorType, ISeriesApi, IChartApi, SingleValueData, isUTCTimestamp, MouseEventHandler } from 'lightweight-charts';
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
-import { useChartData } from '@/hooks/collection';
-import { $selectedTimeIndex } from '@/stores/trading';
+// import { useChartData } from '@/hooks/collection';
+import { $ohlcData, $selectedTimeIndex } from '@/stores/trading';
 import moment from 'moment';
 import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
+import { getRandomIntInclusive } from '@/utils/number';
 
 function ChartDisplay() {
-  const { graphData, graphVolData, graphTwoData } = useChartData();
+  const ohlcData = useNanostore($ohlcData);
+  // const { graphData, graphVolData, graphTwoData } = useChartData();
   const chartContainerRef: any = useRef();
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
   // const [candleSeries, setCandleSeries] = useState<ISeriesApi<'Candlestick'> | undefined>();
@@ -31,72 +33,6 @@ function ChartDisplay() {
     textColor: 'rgba(168, 203, 255, 0.75)',
     areaTopColor: 'rgba(185, 15, 127, 0.45)',
     areaBottomColor: 'rgba(185, 15, 127, 0.05)'
-  };
-
-  const addVammSeries = () => {
-    if (!chart || areaSeries) return;
-    // console.log('addVammSeries');
-
-    const series = chart.addAreaSeries({
-      lineColor: colors.lineColor,
-      topColor: colors.areaTopColor,
-      bottomColor: colors.areaBottomColor,
-      lineWidth: 1
-    });
-
-    // const newSeries = newChart.addCandlestickSeries({
-    //   upColor: '#26a69a',
-    //   downColor: '#ef5350',
-    //   borderVisible: false,
-    //   wickUpColor: '#26a69a',
-    //   wickDownColor: '#ef5350'
-    // });
-
-    const volSeries = chart.addHistogramSeries({
-      priceFormat: {
-        type: 'volume'
-      },
-      priceScaleId: ''
-    });
-
-    volSeries.priceScale().applyOptions({
-      scaleMargins: {
-        top: 0.8,
-        bottom: 0
-      }
-    });
-
-    setAreaSeries(series);
-    setVolumeSeries(volSeries);
-  };
-
-  const removeVammSeries = () => {
-    if (!chart || !areaSeries || !volumeSeries) return;
-    // console.log('removeOracleSeries');
-    chart.removeSeries(areaSeries);
-    chart.removeSeries(volumeSeries);
-    setAreaSeries(undefined);
-    setVolumeSeries(undefined);
-  };
-
-  const addOracleSeries = () => {
-    if (!chart || oracleSeries) return;
-    // console.log('addOracleSeries');
-    const series = chart.addAreaSeries({
-      lineColor: colors.lineTwoColor,
-      topColor: 'transparent',
-      bottomColor: 'transparent',
-      lineWidth: 1
-    });
-
-    setOracleSeries(series);
-  };
-
-  const removeOracleSeries = () => {
-    if (!chart || !oracleSeries) return;
-    // console.log('removeOracleSeries');
-    chart.removeSeries(oracleSeries);
-    setOracleSeries(undefined);
   };
 
   const toolTipWidth = 100;
@@ -123,28 +59,28 @@ function ChartDisplay() {
       const dateStr = isUTCTimestamp(param.time) ? moment.unix(param.time).format('DD/MM HH:mm') : param.time;
       toolTip.style.display = 'block';
 
-      if (!areaSeries || !oracleSeries) return;
-
-      const data = param.seriesData.get(areaSeries) as SingleValueData | undefined;
-      const dataTwo = param.seriesData.get(oracleSeries) as SingleValueData | undefined;
-      const price = data ? Math.round(data.value * 100) / 100 : 0;
-      const priceTwo = dataTwo ? Math.round(dataTwo.value * 100) / 100 : 0;
+      const data = areaSeries ? (param.seriesData.get(areaSeries) as SingleValueData) : undefined;
+      const dataTwo = oracleSeries ? (param.seriesData.get(oracleSeries) as SingleValueData) : undefined;
+      const price = data ? data.value : 0;
+      const priceTwo = dataTwo ? dataTwo.value : 0;
       toolTip.innerHTML = `
           <div class="flex flex-col space-y-1">
           <p>${dateStr}</p>
-          ${data ? `<p class="text-white">vAMM: ${price}</p>` : ''}
-          ${dataTwo ? `<p class="text-white">Oracle: ${priceTwo}</p>` : ''}
+          ${data ? `<p class="text-white">vAMM: ${price.toFixed(2)}</p>` : ''}
+          ${dataTwo ? `<p class="text-white">Oracle: ${priceTwo.toFixed(2)}</p>` : ''}
           </div>
         `;
+      // console.log(data, dataTwo);
 
       let coordinate;
       if (data) {
-        coordinate = areaSeries.priceToCoordinate(price);
+        coordinate = areaSeries?.priceToCoordinate(price);
       } else {
-        coordinate = oracleSeries.priceToCoordinate(priceTwo);
+        coordinate = oracleSeries?.priceToCoordinate(priceTwo);
       }
       let shiftedCoordinate = param.point.x - 50;
-      if (coordinate === null) {
+
+      if (!coordinate) {
         return;
       }
       shiftedCoordinate = Math.max(0, Math.min(container.clientWidth - toolTipWidth, shiftedCoordinate));
@@ -157,11 +93,99 @@ function ChartDisplay() {
     }
   };
 
-  const handleTooltip = () => {
+  useEffect(() => {
+    if (chart) {
+      chart.unsubscribeCrosshairMove(crossHairMoveHandler);
+      chart.subscribeCrosshairMove(crossHairMoveHandler);
+    }
+  }, [chart, areaSeries, oracleSeries]);
+
+  const removeVammSeries = () => {
+    if (!chart || !areaSeries || !volumeSeries) return;
+    // console.log('removeOracleSeries');
+    chart.removeSeries(areaSeries);
+    chart.removeSeries(volumeSeries);
+    setAreaSeries(undefined);
+    setVolumeSeries(undefined);
+    chart.timeScale().fitContent();
+  };
+
+  const addVammSeries = () => {
     if (!chart) return;
-    // console.log('unsub sub');
-    chart.unsubscribeCrosshairMove(crossHairMoveHandler);
-    chart.subscribeCrosshairMove(crossHairMoveHandler);
+    if (areaSeries) {
+      removeVammSeries();
+    }
+    // console.log('addVammSeries');
+    const series = chart.addAreaSeries({
+      lineColor: colors.lineColor,
+      topColor: colors.areaTopColor,
+      bottomColor: colors.areaBottomColor,
+      lineWidth: 1
+    });
+    const graphData = ohlcData.map(record => ({ time: record.time, value: record.close }));
+    series.setData(graphData);
+    setAreaSeries(series);
+
+    // const newSeries = newChart.addCandlestickSeries({
+    //   upColor: '#26a69a',
+    //   downColor: '#ef5350',
+    //   borderVisible: false,
+    //   wickUpColor: '#26a69a',
+    //   wickDownColor: '#ef5350'
+    // });
+
+    const volSeries = chart.addHistogramSeries({
+      priceFormat: {
+        type: 'volume'
+      },
+      priceScaleId: ''
+    });
+    volSeries.priceScale().applyOptions({
+      scaleMargins: {
+        top: 0.9,
+        bottom: 0
+      }
+    });
+    const graphVolData = ohlcData.map(record => ({
+      time: record.time,
+      value: getRandomIntInclusive(1, record.close * 10),
+      color: Math.random() > 0.5 ? 'rgba(120, 243, 99, 0.3)' : 'rgba(255, 86, 86, 0.3)'
+    }));
+    volSeries.setData(graphVolData);
+    setVolumeSeries(volSeries);
+
+    chart.timeScale().fitContent();
+  };
+
+  const removeOracleSeries = () => {
+    if (!chart || !oracleSeries) return;
+    // console.log('removeOracleSeries');
+    chart.removeSeries(oracleSeries);
+    setOracleSeries(undefined);
+    chart.timeScale().fitContent();
+  };
+
+  const addOracleSeries = () => {
+    if (!chart) return;
+    if (oracleSeries) {
+      removeOracleSeries();
+    }
+    // console.log('addOracleSeries');
+    const series = chart.addAreaSeries({
+      lineColor: colors.lineTwoColor,
+      topColor: 'transparent',
+      bottomColor: 'transparent',
+      lineWidth: 1
+    });
+
+    // todo: second graph oracle / vamm
+    const graphTwoData = ohlcData.map(record => ({
+      time: record.time,
+      value: record.close + 0.01
+    }));
+    series.setData(graphTwoData);
+    setOracleSeries(series);
+    chart.timeScale().fitContent();
   };
 
   useEffect(() => {
@@ -212,16 +236,9 @@ function ChartDisplay() {
     newChart.timeScale().fitContent();
     setChart(newChart);
 
-    // console.log({ isSettingVammOn, isSettingOracleOn });
-    // addVammSeries();
-    // addOracleSeries();
-
     window.addEventListener('resize', handleResize);
 
     return () => {
-      // console.log('didmount');
-      // removeVammSeries();
-      // removeOracleSeries();
       window.removeEventListener('resize', handleResize);
       newChart.remove();
       setChart(undefined);
@@ -230,48 +247,28 @@ function ChartDisplay() {
 
   // graph data sync
   useEffect(() => {
-    if (areaSeries && volumeSeries && chart) {
-      areaSeries.setData(graphData);
-      volumeSeries.setData(graphVolData);
-      chart.timeScale().fitContent();
-      // console.log('graph data sync');
-      handleTooltip();
-    }
-  }, [graphData, chart, areaSeries, volumeSeries]);
-
-  useEffect(() => {
-    if (oracleSeries && chart) {
-      oracleSeries.setData(graphTwoData);
-      chart.timeScale().fitContent();
-      // console.log('graph two data sync');
-      handleTooltip();
-    }
-  }, [graphTwoData, chart, oracleSeries]);
-
-  // show hide vamm oracle series
-  useEffect(() => {
     if (chart) {
-      if (isSettingVammOn) {
+      if (isSettingVammOn === true) {
+        // console.log('vamm sync');
         addVammSeries();
-        // console.log('add vamm series');
-        handleTooltip();
-      } else {
+      }
+
+      if (isSettingVammOn === false) {
+        // console.log('vamm remove');
         removeVammSeries();
       }
-    }
-  }, [isSettingVammOn, chart]);
 
-  useEffect(() => {
-    if (chart) {
-      if (isSettingOracleOn) {
+      if (isSettingOracleOn === true) {
+        // console.log('oracle sync');
         addOracleSeries();
-        // console.log('add oracle series');
-        handleTooltip();
-      } else {
+      }
+
+      if (isSettingOracleOn === false) {
+        // console.log('oracle remove');
         removeOracleSeries();
       }
     }
-  }, [isSettingOracleOn, chart]);
+  }, [chart, ohlcData, isSettingVammOn, isSettingOracleOn]);
 
   return (
     <div ref={chartContainerRef} id="chartDisplay" className="relative">
