@@ -253,7 +253,7 @@ export default function Terms() {
             Additionally, Tribe3 does not provide any warranty regarding the merit, legality, or juridical nature of any token sold on its
             platform. Users should be aware of the risks associated with transactions involving digital currencies, which are based on
             blockchain and cryptography technologies and issued and managed in a decentralized form. The values of digital currencies can be
-            highly volatile and may fluctuate significantly, posing a substantial risk of economic loss. Therefore, by using Tribe3's
+            highly volatile and may fluctuate significantly, posing a substantial risk of economic loss. Therefore, by using Tribe3&#39;s
             services, users acknowledge and agree to assume all risks associated with the use of the services and transactions involving
             digital currencies. Tribe3 will not be liable, directly or indirectly, for any damage or loss caused or alleged to be caused by
             or in connection with the use of or reliance on any such content, goods, or services available on or through the platform.
@@ -268,6 +268,128 @@ export default function Terms() {
             Please note that the provided risk section is a revised version based on the information given and is not an official statement.
             It is always advisable to refer to the official documentation or contact Tribe3 directly for the most accurate and up-to-date
             information regarding risks associated with their services.
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            Termination
+          </div>
+          <div>
+            Tribe3 reserves the right, at its sole discretion, to terminate or suspend your access to all or any part of the Services at any
+            time for any reason, with or without notice, with immediate effect. Termination of your access to and use of the Services shall
+            not relieve you of any obligations arising or accruing prior to such termination or limit any liability which you otherwise may
+            have to the Company or any third party.
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            Intellectual Property
+          </div>
+          <div>
+            The content, design, layout, graphics, logos, trademarks, and other materials (&#34;Intellectual Property&#34;) displayed on our
+            Website and Services are the property of Tribe3 or its licensors and are protected by intellectual property laws. You are
+            granted a limited, non-exclusive, non-transferable, revocable license to access and use the Intellectual Property solely for the
+            purpose of using the Services in accordance with these Terms.
+            <br />
+            You must not reproduce, modify, distribute, display, perform, publish, license, create derivative works from, transfer, or sell
+            any Intellectual Property without prior written consent from Tribe3 or the respective rights holder. Unauthorized use of the
+            Intellectual Property may violate copyright, trademark, and other applicable laws, and may result in legal consequences. By
+            submitting any content, feedback, suggestions, or ideas to us, you grant Tribe3 a perpetual, irrevocable, worldwide,
+            royalty-free, non-exclusive license to use, reproduce, modify, adapt, publish, translate, distribute, and display such content
+            for any purpose, without compensation or attribution to you. You also represent and warrant that the content does not infringe
+            upon the rights of any third party and that you have the necessary rights and permissions to grant this license.
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            No Professional Advice or Advertisement or Fiduciary Duties
+          </div>
+          <div>
+            Tribe3 does not provide any professional advice or recommendations regarding investments or financial matters. It is not acting
+            as an advisor in any financial, legal, tax, or other matters. The Services should not be considered as financial or legal
+            advice. Tribe3 does not assume any fiduciary duties towards you.
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            Anti-Money Laundering
+          </div>
+          <div>
+            Tribe3 complies with anti-money laundering and know-your-customer regulations. You may be required to provide identification and
+            other information to verify your identity before using certain Services. You agree to comply with all applicable domestic and
+            international laws, statutes, ordinances, and regulations regarding your use of our Website and Services.
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            Assignment
+          </div>
+          <div>
+            You may not assign or transfer any rights or obligations under these Terms without the prior written consent of Tribe3. Any
+            purported assignment and transfer shall be ineffective. Tribe3 may freely assign or transfer all rights and obligations under
+            these Terms, fully or partially, without your consent.
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            Indemnification
+          </div>
+          <div>
+            <span>
+              Tribe3 requires you to indemnify and hold the company, its affiliates, directors, officers, employees, and agents harmless
+              from any claims, liabilities, losses, damages, costs, or expenses (including reasonable attorneys&#39; fees) arising out of or
+              related to your use of the services, your violation of any terms or agreements, or your infringement of any rights of a third
+              party. In addition to the above, you agree to indemnify, defend, indemnify, and hold Tribe3 and its affiliates harmless from
+              and against any claims, proceedings, actions, demands, liabilities, loss, damages, fine, penalty, interest, costs, and
+              expenses, including, but not limited to, fees for attorneys and other professional advisors, arising out of or related to:
+            </span>
+            <ol style={{ listStyle: 'number', paddingLeft: '16px', marginTop: '16px', marginBottom: '16px' }}>
+              <li>Your use or misuse of the Services or the software and any transactions conducted through the website.</li>
+              <li>Any content or information you submit, post, transmit, or otherwise make available through the Services.</li>
+              <li>Your violation of any terms, agreements, or policies of Tribe3.</li>
+              <li>Your violation of any law, rule, regulation, or guideline.</li>
+              <li>
+                Your violation of any rights of a third party, including but not limited to any intellectual property, privacy or publicity,
+                or confidentiality rights.
+              </li>
+              <li>Any negligence or misconduct on your part.</li>
+            </ol>
+            <span>
+              Tribe3 will promptly notify you of any claim or demand for indemnification and provide you with reasonable assistance in
+              defending such claims. However, Tribe3 reserves the right, at its own expense, to assume the exclusive defense and control of
+              any matter subject to indemnification by you.
+              <br /> Please note that the provided summary is a revised version based on the information given and is not an official
+              statement. It is always advisable to refer to the official documentation or contact Tribe3 directly for the most accurate and
+              up-to-date information regarding the indemnification section.
+            </span>
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            Jurisdiction and Governing Law
+          </div>
+          <div>
+            These Terms are governed by and construed in accordance with the laws of the jurisdiction where Tribe3 is incorporated, without
+            regard to its conflict of laws principles. Any disputes arising from these Terms will be subject to the exclusive jurisdiction
+            of the courts in that jurisdiction.
+          </div>
+        </div>
+        <div className="space-y-6 pt-[36px]">
+          <div className="flex h-[24px] items-center text-[20px] font-[600]">
+            <div className="mr-[8px] h-[100%] w-[4px] rounded-[30px] bg-primaryBlue" />
+            Severability
+          </div>
+          <div>
+            If any provision of these Terms is found to be unlawful, void, invalid, illegal, or for any reason unenforceable, them that
+            provision shall be deemed severable from these Terms and will not affect the vailidity and enforceability of any remaining
+            provisions. The remaining provisions will continue to be valid and enforceable to the fullest extent permitted by law.
           </div>
         </div>
       </div>
