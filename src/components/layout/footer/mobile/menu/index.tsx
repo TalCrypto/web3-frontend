@@ -120,7 +120,7 @@ const MobileMenu = (props: any) => {
       <div className="flex h-full pt-[18px]">
         <div className="w-full pl-[20px] text-[14px] text-highEmphasis">
           {isConnected ? (
-            <div className="flex w-full items-center">
+            <div className="flex w-full items-center" onClick={() => onGotoPage(`/userprofile/${address}`)}>
               <div className="mr-3 w-[60px]">
                 <Image className="mr-[6px]" src="/images/mobile/common/avatar.svg" alt="" width={60} height={60} />
               </div>
