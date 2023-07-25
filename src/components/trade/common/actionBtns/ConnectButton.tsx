@@ -14,20 +14,20 @@ function ConnectButton() {
 
   const traderConnectWallet = () => {
     if (isMobileView) {
-      // let isInjected = false;
+      let isInjected = false;
 
-      // for (let i = 0; i < connectors.length; i += 1) {
-      //   const connector = connectors[i];
-      //   if (connector?.id.includes('injected')) {
-      //     connect({ connector });
-      //     isInjected = true;
-      //     break;
-      //   }
-      // }
+      for (let i = 0; i < connectors.length; i += 1) {
+        const connector = connectors[i];
+        if (connector?.name.toLowerCase().includes('metamask')) {
+          connect({ connector });
+          isInjected = true;
+          break;
+        }
+      }
 
-      // if (!isInjected) {
-      open();
-      // }
+      if (!isInjected) {
+        open();
+      }
     } else {
       $isShowLoginModal.set(true);
     }

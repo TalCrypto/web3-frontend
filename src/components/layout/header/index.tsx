@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopMenu from '@/components/layout/header/desktop/TopMenu';
 import Web3Area from '@/components/layout/header/desktop/Web3Area';
 import WidgetBot from '@widgetbot/react-embed';
-import { $isShowDiscordModal } from '@/stores/modal';
+import { $isMobileView, $isShowDiscordModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import { firebaseAuth } from '@/const/firebaseConfig';
 // import MobileHeader from '@/components/layout/header/mobile';
@@ -13,6 +13,7 @@ import { firebaseAuth } from '@/const/firebaseConfig';
 function Header() {
   const [isCompleteLoading, setIsCompleteLoading] = useState(false);
   const [localDiscordKey, setLocalDiscordKey] = useState(false);
+  const isMobileView = useNanostore($isMobileView);
 
   const isShowDiscordModal = useNanostore($isShowDiscordModal);
 
@@ -59,7 +60,8 @@ function Header() {
             <Web3Area />
           </div>
         </div>
-        {isCompleteLoading ? (
+
+        {!isMobileView && isCompleteLoading ? (
           <div className={`discord-popup absolute right-[12px] ${!isShowDiscordModal && !localDiscordKey ? 'hidden' : 'open'}`}>
             <div className="relative">
               <div className="button absolute" onClick={closeDiscord}>
