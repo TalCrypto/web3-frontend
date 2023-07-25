@@ -109,9 +109,7 @@ export default function DisplayCollections() {
 
                     <div>
                       <PriceWithIcon
-                        priceValue={`${isPriceGapPositive ? '+' : ''}${priceGap.toFixed(2)} (${
-                          isPriceGapPositive ? '+' : ''
-                        }${priceGapPercentage.toFixed(2)}%)`}
+                        priceValue={`${isPriceGapPositive ? '+' : ''}${priceGap.toFixed(2)} (${Math.abs(priceGapPercentage).toFixed(2)}%)`}
                         className={`${!tradingData || isMarketDataUpdating ? 'flash' : ''} !font-[400]`}
                       />
                     </div>
