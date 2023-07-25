@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import { ToastContainer } from 'react-toastify';
+
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { infuraProvider } from 'wagmi/providers/infura';
+
 import Layout from '@/components/layout';
 import '@/styles/globals.css';
 import '@/styles/all.scss';
@@ -18,7 +22,15 @@ import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 
 // Wagmi config
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
-const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [w3mProvider({ projectId }), publicProvider()]);
+const alchemyProjectId = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? '';
+const infuraProjectId = process.env.NEXT_PUBLIC_INFURA_KEY ?? '';
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [
+  alchemyProvider({ apiKey: alchemyProjectId }),
+  infuraProvider({ apiKey: infuraProjectId }),
+  w3mProvider({ projectId }),
+  publicProvider()
+]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
