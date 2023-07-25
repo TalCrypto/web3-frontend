@@ -80,7 +80,7 @@ function TradePage() {
         <div className="mobile-view block bg-lightBlue md:hidden">
           <Switcher />
 
-          <div className="mt-12 bg-darkBlue">
+          <div className="scrollable mt-12 bg-darkBlue">
             {/* {isMarketDataUpdating ? <UpdatingTradeData /> : null} */}
 
             <ChartMobile />
