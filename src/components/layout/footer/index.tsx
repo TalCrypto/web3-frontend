@@ -1,9 +1,12 @@
 import React from 'react';
+import Router, { useRouter } from 'next/router';
 
 import SocialMediaIcon from '@/components/layout/footer/SocialMediaIcon';
 import MobileFooter from '@/components/layout/footer/mobile';
 
 function Footer() {
+  const router = useRouter();
+
   return (
     <>
       <div
@@ -43,7 +46,11 @@ function Footer() {
             />
           </div>
           <div>
-            <div className="cursor-pointer text-[14px] font-[400] text-mediumEmphasis hover:text-[#FFFFFF]">Terms & Conditions</div>
+            <div
+              className="cursor-pointer text-[14px] font-[400] text-mediumEmphasis hover:text-[#FFFFFF]"
+              onClick={() => router.push('/terms')}>
+              Terms & Conditions
+            </div>
           </div>
         </div>
       </div>
