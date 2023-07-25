@@ -110,7 +110,6 @@ const MarketTrade = () => {
                   ${address === record.userAddress ? 'bg-secondaryBlue' : ''}
                    ${newAdded && record.isNew ? 'flash' : ''}
                 `}
-              style={{ WebkitTransform: 'translate3d(0,0,0)' }}
               key={`market_${record.timestamp}_${index}`}
               onClick={() => router.push(`/userprofile/${record.userAddress}`)}>
               <div className="col-span-4 border-l-[2px] border-primaryBlue pl-2">
