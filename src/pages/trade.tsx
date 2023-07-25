@@ -88,11 +88,11 @@ function TradePage() {
             <PositionMobile />
 
             <InformationMobile />
-
-            <TradingMobile />
-
-            <DisplayCollections />
           </div>
+
+          {/* full screen layout */}
+          <DisplayCollections />
+          <TradingMobile />
         </div>
 
         <CollectionConfigLoader />
