@@ -81,7 +81,7 @@ function TradePage() {
           <Switcher />
 
           <div className="mt-12 bg-darkBlue">
-            {isMarketDataUpdating ? <UpdatingTradeData /> : null}
+            {/* {isMarketDataUpdating ? <UpdatingTradeData /> : null} */}
 
             <ChartMobile />
 
