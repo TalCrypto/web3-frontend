@@ -154,8 +154,7 @@ const MobileMenu = (props: any) => {
               </div>
             </div>
             {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
-            <div className="flex items-center pb-[35px]" onClick={() => setIsOthersOpen(!isOthersOpen)}>
-              {/* <Link href="/others">Others</Link> */}
+            {/* <div className="flex items-center pb-[35px]" onClick={() => setIsOthersOpen(!isOthersOpen)}>
               Others
               <Image
                 className={`ml-2 ${isOthersOpen ? 'rotate-90' : ''}`}
@@ -164,8 +163,8 @@ const MobileMenu = (props: any) => {
                 width={6}
                 height={10}
               />
-            </div>
-            {isOthersOpen ? (
+            </div> */}
+            {/* {isOthersOpen ? (
               <>
                 <div className="ml-5 pb-[35px]">
                   <div
@@ -192,7 +191,7 @@ const MobileMenu = (props: any) => {
                   </div>
                 </div>
               </>
-            ) : null}
+            ) : null} */}
 
             <div className="pb-[35px]">
               <div onClick={() => onGotoPage('/airdrop')}>
@@ -221,6 +220,17 @@ const MobileMenu = (props: any) => {
                     </div>
                   </span>
                 </div>
+              </div>
+            </div>
+
+            <div className="pb-[35px]">
+              <div onClick={() => onGotoPage('/terms')}>
+                <span
+                  className={`
+                ${router.route.toLowerCase() === '/terms' ? 'mobile-menu-active font-semibold' : ''}
+              `}>
+                  Terms & Conditions
+                </span>
               </div>
             </div>
           </div>
