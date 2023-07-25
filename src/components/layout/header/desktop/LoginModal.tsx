@@ -70,7 +70,6 @@ export default function LoginModal() {
   };
 
   const redirectTnc = () => {
-    closeModal();
     window.open('/terms', '_blank');
   };
 
