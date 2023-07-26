@@ -1,5 +1,6 @@
 import React from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import { $isShowMobileTncModal } from '@/stores/modal';
 import { useWeb3Modal } from '@web3modal/react';
 import { useConnect } from 'wagmi';
 
@@ -8,6 +9,12 @@ const WalletNotConnectedMobile = () => {
   const { connect, connectors } = useConnect();
 
   const onBtnConnectWallet = () => {
+    const localStorageTncApproved = localStorage.getItem('isTncApproved') === 'true';
+    if (!localStorageTncApproved) {
+      $isShowMobileTncModal.set(true);
+      return;
+    }
+
     let isInjected = false;
 
     for (let i = 0; i < connectors.length; i += 1) {

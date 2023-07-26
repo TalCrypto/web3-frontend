@@ -55,6 +55,8 @@ module.exports = {
         gradientBlue: '#04AEFC',
         gradientPink: '#F703D9',
 
+        switchDisable: '#51546B',
+
         direction: {
           unselected: {
             normal: '#c3d8ff7a',

@@ -22,6 +22,7 @@ import { useFundingPaymentHistory } from '@/hooks/collection';
 import { ammAbi } from '@/const/abi';
 import { usePublicClient } from 'wagmi';
 import { formatBigInt } from '@/utils/bigInt';
+import { useRouter } from 'next/router';
 
 const PositionDetailMobile = () => {
   const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
@@ -36,6 +37,7 @@ const PositionDetailMobile = () => {
   const [oraclePrice, setOraclePrice] = useState(0);
   const liqSwitchRatio = useNanostore($psLiqSwitchRatio);
   const publicClient = usePublicClient();
+  const router = useRouter();
 
   const handleBackClick = () => {
     $psShowPositionDetail.set(false);
@@ -83,7 +85,9 @@ const PositionDetailMobile = () => {
       <div
         className="h-full w-full justify-between rounded-[12px] border-[1px]
         border-[#71aaff38] bg-darkBlue text-[14px] font-normal text-mediumEmphasis">
-        <div className="mb-[6px] flex w-full items-center justify-between bg-lightBlue px-5 py-6">
+        <div
+          className="mb-[6px] flex w-full items-center justify-between bg-lightBlue px-5 py-6"
+          onClick={() => router.push(`/trade/${collectionInfo?.collection.toLowerCase()}`)}>
           <div>
             <div className="mb-[6px] text-[12px] font-normal text-highEmphasis">Unrealized P/L</div>
             <PriceWithIcon

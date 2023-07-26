@@ -19,3 +19,5 @@ export const $isShowDiscordModal = atom(false);
 export const $isShowLoginModal = atom(false);
 
 export const $isShowMobileTokenModal = atom(false);
+
+export const $isShowMobileTncModal = atom(false);

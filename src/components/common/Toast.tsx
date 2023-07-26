@@ -9,6 +9,16 @@ interface CustomToastProps {
   linkLabel: string;
   warning: boolean;
   error: boolean;
+  isLiquidation: boolean;
+}
+
+interface CustomOutlineToastProps {
+  title: string;
+  message: string;
+  linkUrl: string;
+  linkLabel: string;
+  warning: boolean;
+  error: boolean;
 }
 
 const CustomToast: React.FC<CustomToastProps> = ({
@@ -17,12 +27,14 @@ const CustomToast: React.FC<CustomToastProps> = ({
   linkUrl = '',
   linkLabel = '',
   warning = false,
-  error = false
+  error = false,
+  isLiquidation = false
 }) => (
   <div className="flex">
     <div className="mr-[6px]">
       <Image
-        src={`/images/components/common/toast/icon-${warning ? 'warning' : error ? 'error' : 'success'}.svg`}
+        src={`/images/components/common/toast/icon-${warning ? 'warning' : error ? 'error' : isLiquidation ? 'alert' : 'success'}.svg`}
+        className="p-[2px]"
         alt=""
         width={48}
         height={48}
@@ -37,7 +49,9 @@ const CustomToast: React.FC<CustomToastProps> = ({
             {linkLabel} <Image src="/images/common/out.svg" className="ml-1" alt="" width={16} height={16} />
           </a>
         ) : null}
-        {error ? <div className="closeButton">Close</div> : null}
+        {error || isLiquidation ? (
+          <div className="rounded-[4px] border-[1px] border-primaryBlue px-[12px] py-[6px] text-[12px] font-normal">Close</div>
+        ) : null}
       </div>
     </div>
   </div>
@@ -50,6 +64,7 @@ interface ToastProps {
   linkLabel?: string;
   warning?: boolean;
   error?: boolean;
+  isLiquidation?: boolean;
 }
 
 /**
@@ -59,16 +74,27 @@ interface ToastProps {
  * @param {*} options
  */
 export const showToast = (
-  { title = '', message = '', linkUrl = '', linkLabel = '', warning = false, error = false }: ToastProps,
+  { title = '', message = '', linkUrl = '', linkLabel = '', warning = false, error = false, isLiquidation = false }: ToastProps,
   options: ToastOptions<{}> = {}
 ) => {
-  toast(<CustomToast title={title} message={message} linkUrl={linkUrl} linkLabel={linkLabel} warning={warning} error={error} />, {
-    containerId: 'GLOBAL',
-    ...options
-  });
+  toast(
+    <CustomToast
+      title={title}
+      message={message}
+      linkUrl={linkUrl}
+      linkLabel={linkLabel}
+      warning={warning}
+      error={error}
+      isLiquidation={isLiquidation}
+    />,
+    {
+      containerId: 'GLOBAL',
+      ...options
+    }
+  );
 };
 
-const CustomOutlineToast: React.FC<CustomToastProps> = ({
+const CustomOutlineToast: React.FC<CustomOutlineToastProps> = ({
   title = '',
   message = '',
   linkUrl = '',
