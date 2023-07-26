@@ -67,6 +67,7 @@ export default function App({ Component, pageProps }: AppProps) {
             pauseOnHover
           />
           <ToastContainer
+            className="flex justify-center"
             toastClassName={opt => {
               if (!opt) return '';
               const { type } = opt;
