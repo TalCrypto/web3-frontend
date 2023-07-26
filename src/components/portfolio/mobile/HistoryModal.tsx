@@ -181,7 +181,7 @@ const HistoryModal = () => {
                                 className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}
                                   !text-[14px] font-medium`}
                                 priceValue={`${Number(balance) > 0 ? '+' : ''}${
-                                  Number(balance) === 0 ? '-.--' : Number(balance).toFixed(4)
+                                  Number(balance) === 0 || Number.isNaN(balance) ? '-.--' : Number(balance).toFixed(4)
                                 }`}
                               />
                             </div>
