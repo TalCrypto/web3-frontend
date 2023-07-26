@@ -199,7 +199,7 @@ const SpotTable = () => {
               isUSDC = payment_token.symbol === 'USDC';
             }
             const transactionHash = transaction.transaction_hash;
-            const assetToken = !asset ? asset_bundle.assetBundle_temp[0].token_id : asset.token_id;
+            const assetToken = !asset ? asset_bundle.assetBundle_temp?.[0].token_id : asset.token_id;
 
             const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
             const priceValue = !total_price
