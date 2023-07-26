@@ -42,7 +42,7 @@ function LongShortRatio(props: any) {
 
   return (
     <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
-      {/* {userPosition && userPosition.size > 0 ? (
+      {userPosition && userPosition.size < 0 ? (
         <div className="flex flex-1 items-center justify-center">
           <MobileTooltip
             content={
@@ -60,22 +60,22 @@ function LongShortRatio(props: any) {
             </div>
           </MobileTooltip>
         </div>
-      ) : ( */}
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        key="long"
-        onClick={() => {
-          if (!userPosition || userPosition.size === 0) {
-            setSaleOrBuyIndex(Side.LONG);
-          }
-        }}>
-        <div>LONG</div>
-      </div>
-      {/* )} */}
+          key="long"
+          onClick={() => {
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.LONG);
+            }
+          }}>
+          <div>LONG</div>
+        </div>
+      )}
 
-      {/* {userPosition && userPosition.size < 0 ? (
+      {userPosition && userPosition.size > 0 ? (
         <div className="flex flex-1 items-center justify-center">
           <MobileTooltip
             content={
@@ -93,20 +93,20 @@ function LongShortRatio(props: any) {
             </div>
           </MobileTooltip>
         </div>
-      ) : ( */}
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        key="short"
-        onClick={() => {
-          if (!userPosition || userPosition.size === 0) {
-            setSaleOrBuyIndex(Side.SHORT);
-          }
-        }}>
-        <div>SHORT</div>
-      </div>
-      {/* )} */}
+          key="short"
+          onClick={() => {
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.SHORT);
+            }
+          }}>
+          <div>SHORT</div>
+        </div>
+      )}
     </div>
   );
 }
@@ -397,6 +397,15 @@ function EstimatedValueDisplay(props: {
   );
 }
 
+const waitAndScrollToBottom = () => {
+  const timer = setTimeout(() => {
+    const tradingMobileContent = document.getElementById('tradingMobileScroll');
+    if (tradingMobileContent) tradingMobileContent.scrollTo({ top: tradingMobileContent.scrollHeight, behavior: 'smooth' });
+  }, 200);
+
+  return () => clearTimeout(timer);
+};
+
 function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
   const { estimation } = props;
   const currentAmm = useNanostore($currentAmm);
@@ -412,6 +421,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
           className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
             isShowDetail(!showDetail);
+            waitAndScrollToBottom();
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (

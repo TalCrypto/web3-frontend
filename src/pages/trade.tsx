@@ -83,10 +83,10 @@ function TradePage() {
 
         <div className="mobile-view block bg-lightBlue md:hidden">
           <Switcher />
-          <PullToRefresh isRefreshing={isMarketDataUpdating} onRefresh={updateMarketData} />
+          {/* <PullToRefresh isRefreshing={isMarketDataUpdating} onRefresh={updateMarketData} /> */}
 
           <div className="scrollable mt-12 bg-darkBlue">
-            {isMarketDataUpdating ? <UpdatingTradeData /> : null}
+            {/* {isMarketDataUpdating ? <UpdatingTradeData /> : null} */}
 
             <ChartMobile />
 
