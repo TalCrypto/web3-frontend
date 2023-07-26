@@ -29,7 +29,7 @@ import Analysis from '@/components/userprofile/Analysis';
 import Link from 'next/link';
 import { showOutlineToast } from '@/components/common/Toast';
 import UserprofileUpdater from '@/components/updaters/UserprofileUpdater';
-import { trimAddress } from '@/utils/string';
+import { copyToClp, trimAddress } from '@/utils/string';
 import { $userAddress, $userIsConnected } from '@/stores/user';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { localeConversion } from '@/utils/localeConversion';
@@ -236,7 +236,7 @@ const AddressPage: NextPage = () => {
                 onClick={() => {
                   if (typeof address === 'string') {
                     const url = `${window.location.origin}/userprofile/${address}`;
-                    navigator.clipboard.writeText(url);
+                    copyToClp(url);
                     showOutlineToast({ title: 'Profile link copied to clipboard!' });
                   }
                 }}>
@@ -351,7 +351,7 @@ const AddressPage: NextPage = () => {
                           height={20}
                           onClick={() => {
                             if (typeof address === 'string') {
-                              navigator.clipboard.writeText(address);
+                              copyToClp(address);
                               showOutlineToast({ title: 'Address copied to clipboard!' });
                             }
                           }}
