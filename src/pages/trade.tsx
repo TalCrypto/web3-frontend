@@ -9,7 +9,7 @@ import InformationWindow from '@/components/trade/desktop/information/Informatio
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
-import { $currentAmm, $isMarketDataUpdating } from '@/stores/trading';
+import { $currentAmm, $isMarketDataUpdating, $marketUpdateTrigger } from '@/stores/trading';
 import { AMM, DEFAULT_AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
@@ -25,11 +25,13 @@ import DisplayCollections from '@/components/trade/mobile/trading/DisplayCollect
 import UpdatingTradeData from '@/components/trade/mobile/UpdatingTradeData';
 
 import { useStore as useNanostore } from '@nanostores/react';
+import PullToRefresh from '@/components/common/mobile/PullToRefresh';
 
 function TradePage() {
   const router = useRouter();
 
   const isMarketDataUpdating = useNanostore($isMarketDataUpdating);
+  const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
 
   useEffect(() => {
     const queryCollection = router?.query?.collection;
@@ -49,6 +51,8 @@ function TradePage() {
       $currentAmm.set(undefined);
     };
   }, [router]);
+
+  const updateMarketData = () => $marketUpdateTrigger.set(!marketUpdateTrigger);
 
   return (
     <>
@@ -79,9 +83,10 @@ function TradePage() {
 
         <div className="mobile-view block bg-lightBlue md:hidden">
           <Switcher />
+          <PullToRefresh isRefreshing={isMarketDataUpdating} onRefresh={updateMarketData} />
 
           <div className="scrollable mt-12 bg-darkBlue">
-            {/* {isMarketDataUpdating ? <UpdatingTradeData /> : null} */}
+            {isMarketDataUpdating ? <UpdatingTradeData /> : null}
 
             <ChartMobile />
 
