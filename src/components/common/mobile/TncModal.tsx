@@ -43,7 +43,8 @@ const MobileTncModal = () => {
       onClick={() => dismissModal()}>
       <div
         className={`mx-auto w-full overflow-hidden
-              rounded-[6px] bg-secondaryBlue p-6`}>
+              rounded-[6px] bg-secondaryBlue p-6`}
+        onClick={e => e.stopPropagation()}>
         <div className="mb-6 text-center leading-[20px]">
           <div className="text-[12px] text-highEmphasis">
             <div className="text-[15px] font-semibold">Terms & Conditions</div>
