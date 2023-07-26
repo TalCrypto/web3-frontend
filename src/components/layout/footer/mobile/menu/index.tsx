@@ -4,7 +4,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Image from 'next/image';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Link from 'next/link';
-import { $isShowMobileModal, $showSwitchNetworkErrorModal } from '@/stores/modal';
+import { $isShowMobileModal, $showSwitchNetworkErrorModal, $isShowMobileTncModal } from '@/stores/modal';
 import { useRouter } from 'next/router';
 import {
   $userAddress,
@@ -52,6 +52,12 @@ const MobileMenu = (props: any) => {
 
   const onBtnConnectClick = () => {
     if (!isConnected) {
+      const localStorageTncApproved = localStorage.getItem('isTncApproved') === 'true';
+      if (!localStorageTncApproved) {
+        $isShowMobileTncModal.set(true);
+        return;
+      }
+
       let isInjected = false;
 
       for (let i = 0; i < connectors.length; i += 1) {

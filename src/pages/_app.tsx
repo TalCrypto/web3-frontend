@@ -19,6 +19,7 @@ import MobileGetTokenModal from '@/components/trade/mobile/trading/MobileGetToke
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { Web3Modal } from '@web3modal/react';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import MobileTncModal from '@/components/common/mobile/TncModal';
 
 // Wagmi config
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
@@ -104,6 +105,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </Layout>
         <UserDataUpdater />
         <LoginModal />
+        <MobileTncModal />
       </WagmiConfig>
 
       <Web3Modal
