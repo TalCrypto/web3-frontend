@@ -34,7 +34,7 @@ const MobileMenu = (props: any) => {
   const userTotalCollateral = useNanostore($userTotalCollateral);
 
   const [isShowSocialFooter, setIsShowSocialFooter] = useState(false);
-  const [isOthersOpen, setIsOthersOpen] = useState(false);
+  // const [isOthersOpen, setIsOthersOpen] = useState(false);
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false);
   const router = useRouter();
   const { disconnect } = useDisconnect();
@@ -126,7 +126,7 @@ const MobileMenu = (props: any) => {
       <div className="flex h-full pt-[18px]">
         <div className="w-full pl-[20px] text-[14px] text-highEmphasis">
           {isConnected ? (
-            <div className="flex w-full items-center">
+            <div className="flex w-full items-center" onClick={() => onGotoPage(`/userprofile/${address}`)}>
               <div className="mr-3 w-[60px]">
                 <Image className="mr-[6px]" src="/images/mobile/common/avatar.svg" alt="" width={60} height={60} />
               </div>
@@ -143,8 +143,8 @@ const MobileMenu = (props: any) => {
               <div onClick={() => onGotoPage('/portfolio')}>
                 <span
                   className={`
-                ${router.route.toLowerCase() === '/portfolio' ? 'mobile-menu-active font-semibold' : ''}
-              `}>
+                    ${router.route.toLowerCase() === '/portfolio' ? 'mobile-menu-active font-semibold' : ''}
+                  `}>
                   Portfolio
                 </span>
               </div>
@@ -153,13 +153,12 @@ const MobileMenu = (props: any) => {
               <div onClick={() => onGotoPage('/trade')}>
                 <span
                   className={`
-                ${router.route.toLowerCase() === '/trade' ? 'mobile-menu-active font-semibold' : ''}
-              `}>
+                    ${router.route.toLowerCase() === '/trade' ? 'mobile-menu-active font-semibold' : ''}
+                  `}>
                   Trade
                 </span>
               </div>
             </div>
-            {/* ${router.route.toLowerCase() === '/others' ? 'mobile-menu-active font-semibold' : ''} */}
             {/* <div className="flex items-center pb-[35px]" onClick={() => setIsOthersOpen(!isOthersOpen)}>
               Others
               <Image
@@ -203,8 +202,8 @@ const MobileMenu = (props: any) => {
               <div onClick={() => onGotoPage('/airdrop')}>
                 <span
                   className={`
-                ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
-              `}>
+                    ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
+                  `}>
                   Airdrop
                 </span>
               </div>
