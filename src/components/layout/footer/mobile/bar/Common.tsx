@@ -4,7 +4,14 @@ import { useRouter } from 'next/router';
 
 function MobileCommonFooterInfo() {
   const router = useRouter();
-  const title = router.pathname === '/portfolio' ? 'Portfolio' : router.pathname === '/airdrop' ? 'Airdrop' : '';
+  const title =
+    router.pathname === '/portfolio'
+      ? 'Portfolio'
+      : router.pathname === '/airdrop'
+      ? 'Airdrop'
+      : router.pathname === '/terms'
+      ? 'Terms & Conditions'
+      : '';
 
   const gotoTrade = () => {
     router.push(`/trade`);

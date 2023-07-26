@@ -15,6 +15,7 @@ import ReferUserMobileModal from '@/components/airdrop/mobile/ReferUserMobileMod
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import ResponseModal from '@/components/airdrop/mobile/ResponseModal';
 import { useConnect } from 'wagmi';
+import { $isShowMobileTncModal } from '@/stores/modal';
 
 function ReferralMobile() {
   const router = useRouter();
@@ -53,6 +54,12 @@ function ReferralMobile() {
   );
 
   const onBtnConnectWallet = () => {
+    const localStorageTncApproved = localStorage.getItem('isTncApproved') === 'true';
+    if (!localStorageTncApproved) {
+      $isShowMobileTncModal.set(true);
+      return;
+    }
+
     let isInjected = false;
 
     for (let i = 0; i < connectors.length; i += 1) {
