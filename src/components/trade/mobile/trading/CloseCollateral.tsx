@@ -422,8 +422,6 @@ export default function CloseCollateral() {
   const handleError = useCallback((error: Error | null, isPrepareError: boolean) => {
     setIsPending(false);
 
-    alert('error');
-    alert(error);
     setPrepareTextErrorMessage(error && isPrepareError ? formatError(error.message) : null);
     setWriteTextErrorMessage(error && !isPrepareError ? formatError(error.message) : null);
   }, []);
