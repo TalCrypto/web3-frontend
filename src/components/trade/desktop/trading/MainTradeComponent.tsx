@@ -156,14 +156,24 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled, prepareTextErrorMessage, estimation, isInputBlur, setIsInputBlur } = props;
+  const {
+    value,
+    onChange,
+    isAmountTooSmall,
+    disabled,
+    prepareTextErrorMessage,
+    estimation,
+    isInputBlur,
+    setIsInputBlur,
+    isInsuffBalance,
+    setIsInsuffBalance
+  } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const wethBalance = useNanostore($userWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
-  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
 
   const fluctuationPct =
     (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
@@ -473,6 +483,7 @@ export default function MainTradeComponent() {
   });
   const approvalAmount = getApprovalAmountFromEstimation(estimation);
   const isNeedApproval = useApprovalCheck(approvalAmount);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
 
   useEffect(() => {
     if (userPosition && userPosition.size !== 0) {
@@ -487,6 +498,15 @@ export default function MainTradeComponent() {
       setIsAmountTooSmall(false);
     }
   }, [estimation?.txSummary.collateral]);
+
+  useEffect(() => {
+    const estimatedCost = Number(quantity) + (estimation?.txSummary.fee || 0);
+    if (estimation && estimatedCost > wethBalance) {
+      setIsInsuffBalance(true);
+    } else {
+      setIsInsuffBalance(false);
+    }
+  }, [estimation?.txSummary.cost, quantity]);
 
   useEffect(() => {
     if (isEstError) {
@@ -545,6 +565,8 @@ export default function MainTradeComponent() {
         }}
         isAmountTooSmall={isAmountTooSmall}
         prepareTextErrorMessage={prepareTextErrorMessage}
+        isInsuffBalance={isInsuffBalance}
+        setIsInsuffBalance={setIsInsuffBalance}
       />
       <LeverageComponent
         disabled={isPending || isWrongNetwork || !isConnected}
