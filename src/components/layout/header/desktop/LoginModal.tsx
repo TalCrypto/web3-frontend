@@ -40,8 +40,6 @@ export default function LoginModal() {
   const isTncApproved = localStorageTncApproved || switchSelected;
   const router = useRouter();
 
-  console.log({ localStorageTncApproved });
-
   if (!isShowLoginModal) return null;
 
   const closeModal = () => {
