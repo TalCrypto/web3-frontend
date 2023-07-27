@@ -3,7 +3,7 @@
   "env": {
     "browser": true,
     "node": true,
-    "es6": true
+    "es2020": true
   },
   "settings": {
     "react": {
@@ -48,10 +48,10 @@
     "jsx-a11y/alt-text": 1,
     "react/no-array-index-key": 1,
     "react/self-closing-comp": 1,
-    "operator-linebreak": 1,
+    "operator-linebreak": ["warn", "after"],
     "react/jsx-no-bind": 0,
     "react/jsx-no-useless-fragment": 1,
-    "react-hooks/rules-of-hooks": 0,
+    "react-hooks/rules-of-hooks": 2,
     "react/jsx-one-expression-per-line": 0,
     "dot-notation": 0,
     "indent": 1,

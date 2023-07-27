@@ -12,12 +12,21 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/',
-        destination: '/trade/BAYC'
-      },
-      {
         source: '/trade/:collection',
         destination: '/trade?collection=:collection'
+      },
+      {
+        source: '/airdrop/:target',
+        destination: '/airdrop?target=:target'
+      }
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/trade',
+        permanent: false
       }
     ];
   }

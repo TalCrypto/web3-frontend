@@ -1,16 +1,17 @@
 import React from 'react';
 import Image from 'next/image';
+import { useStore as useNanostore } from '@nanostores/react';
+import { $showGetWEthModal, $isShowMetamaskModal, $metamaskModalTarget } from '@/stores/modal';
 
 interface ButtonContentProps {
   icon: string;
   url: string;
   name: string;
-  setIsShow: any;
 }
 
-function ButtonContent({ icon, url, name, setIsShow }: ButtonContentProps) {
+function ButtonContent({ icon, url, name }: ButtonContentProps) {
   const openUrl = () => {
-    setIsShow(false);
+    $showGetWEthModal.set(false);
     window.open(url, '_blank');
   };
 
@@ -18,7 +19,7 @@ function ButtonContent({ icon, url, name, setIsShow }: ButtonContentProps) {
     <div
       className="mr-[24px] flex h-[40px] min-w-[120px] cursor-pointer
       items-center justify-between rounded-[8px] border border-solid
-      border-blue-500 px-3 text-base font-medium"
+      border-blue-500 px-3 font-normal text-highEmphasis hover:bg-[#2574fb33]"
       onClick={openUrl}>
       <Image src={icon} alt="" className="mr-1 h-6 w-6" width={24} height={24} />
       {name}
@@ -26,25 +27,56 @@ function ButtonContent({ icon, url, name, setIsShow }: ButtonContentProps) {
   );
 }
 
-interface TransferTokenModalProps {
-  isShow: boolean;
-  setIsShow: any;
+interface StaticButtonProps {
+  icon: string;
+  name: string;
+  redirect: () => void;
 }
 
-const TransferTokenModal = (props: TransferTokenModalProps) => {
-  const { isShow, setIsShow } = props;
+function StaticButton({ icon, name, redirect }: StaticButtonProps) {
+  const openUrl = () => {
+    $showGetWEthModal.set(false);
+    redirect();
+  };
 
-  if (!isShow) {
+  return (
+    <div
+      className="mr-[24px] flex h-[40px] min-w-[120px] cursor-pointer
+      items-center justify-between rounded-[8px] border border-solid
+      border-blue-500 px-3 font-normal text-highEmphasis hover:bg-[#2574fb33]"
+      onClick={openUrl}>
+      <Image src={icon} alt="" className="mr-1 h-6 w-6" width={24} height={24} />
+      {name}
+    </div>
+  );
+}
+
+const TransferTokenModal = () => {
+  const showTransferTokenModal = useNanostore($showGetWEthModal);
+
+  const redirectBridge = () => {
+    $metamaskModalTarget.set(0);
+    $showGetWEthModal.set(false);
+    $isShowMetamaskModal.set(true);
+  };
+
+  const redirectWrap = () => {
+    $metamaskModalTarget.set(1);
+    $showGetWEthModal.set(false);
+    $isShowMetamaskModal.set(true);
+  };
+
+  if (!showTransferTokenModal) {
     return null;
   }
 
   return (
     <div
-      className="fixed inset-0 z-10 flex h-screen items-center justify-center
-        overflow-auto bg-black bg-opacity-40"
-      onClick={() => setIsShow(false)}>
+      className="fixed inset-0 z-20 flex h-screen items-center
+        justify-center overflow-auto bg-black bg-opacity-40"
+      onClick={() => $showGetWEthModal.set(false)}>
       <div
-        className="w-[500px] rounded-xl bg-[#171833] p-[16px] pb-0 text-[14px]
+        className="w-[500px] rounded-xl bg-lightBlue p-[16px] pb-0 text-[14px]
           font-normal leading-normal"
         onClick={e => e.stopPropagation()}>
         <div className="items-initial flex content-center justify-end">
@@ -53,32 +85,23 @@ const TransferTokenModal = (props: TransferTokenModalProps) => {
             alt=""
             width={16}
             height={16}
-            className="button"
-            onClick={() => setIsShow(false)}
+            className="cursor-pointer"
+            onClick={() => $showGetWEthModal.set(false)}
           />
         </div>
         <div className="relative flex flex-col items-center justify-center">
           <div className="mb-9">
-            <div className="text-color-87 font-mont text-[15px] font-semibold">Bridge ETH / WETH to Arbitrum👇</div>
+            <div className="text-[15px] font-semibold text-highEmphasis">Bridge ETH / WETH to Arbitrum👇</div>
             <div className="items-initial z-2 mt-4 flex content-center justify-start">
-              <ButtonContent
-                url="https://bridge.arbitrum.io/"
-                name="Arbitrum"
-                icon="/images/components/layout/header/arbitrum.png"
-                setIsShow={setIsShow}
-              />
+              <ButtonContent url="https://bridge.arbitrum.io/" name="Arbitrum" icon="/images/components/layout/header/arbitrum.png" />
+              <StaticButton name="Metamask" icon="/images/components/layout/header/metamask-logo.png" redirect={redirectBridge} />
             </div>
           </div>
-          <div className="mb-[60px]">
-            <div className="text-color-87 font-mont text-[15px] font-semibold">Wrap ETH on Arbitrum👇</div>
-            <div className="items-initial z-2 mt-4 flex content-center justify-start">
-              <ButtonContent
-                url="https://app.uniswap.org/#/swap/"
-                name="Uniswap"
-                icon="/images/components/layout/header/uniswap.png"
-                setIsShow={setIsShow}
-              />
-              <div className="w-[120px]" />
+          <div className="z-[10] mb-[60px]">
+            <div className="text-[15px] font-semibold text-highEmphasis">Wrap ETH on Arbitrum👇</div>
+            <div className="items-initial  mt-4 flex content-center justify-start">
+              <ButtonContent url="https://app.uniswap.org/#/swap/" name="Uniswap" icon="/images/components/layout/header/uniswap.png" />
+              <StaticButton name="Metamask" icon="/images/components/layout/header/metamask-logo.png" redirect={redirectWrap} />
             </div>
           </div>
           <Image

@@ -1,16 +1,30 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable max-len */
 // import React from 'react';
-import { signInWithCustomToken /* , signOut */ } from 'firebase/auth';
-import { firebaseAuth } from '@/const/firebaseConfig';
-import { walletProvider } from './walletProvider';
 import { eventParams, generateBatchName } from './eventLog';
 import { storage } from './storage';
-import { setUserPoint, setLeaderboard, isLeaderboardLoading, isUserPointLoading, defaultUserPoint } from '../stores/airdrop';
+import { isReferralListLoading, setReferralList } from '../stores/airdrop';
 
 const apiUrl = process.env.NEXT_PUBLIC_DASHBOARD_API_URL;
 const authUrl = process.env.NEXT_PUBLIC_AUTHENTICATION_API_URL;
 const leaderboardUrl = process.env.NEXT_PUBLIC_LEADERBOARD_USER_RANKING;
+
+type ApiResponse<T> = {
+  message: string;
+  code: number;
+  data: T;
+};
+
+export type SearchUserData = {
+  isFollowing: boolean;
+  userAddress: string;
+  followers: number;
+  following: number;
+  username?: string;
+  about: string;
+  points: string;
+  ranking: number;
+};
 
 export const apiConnection = {
   getDashboardContent: async function getDashboardContent(address: string, timestamp = Math.floor(Date.now() / 1000)) {
@@ -30,22 +44,23 @@ export const apiConnection = {
   getWalletChartContent: async function getWalletChartContent(address: string, timeIndex: number) {
     let timeRelatedKey = 'dailyAccountValueGraph';
     switch (timeIndex) {
-      case 0:
-        timeRelatedKey = 'dailyAccountValueGraph';
-        break;
       case 1:
-        timeRelatedKey = 'weeklyAccountValueGraph';
+        timeRelatedKey = '1m';
         break;
       case 2:
-        timeRelatedKey = 'monthlyAccountValueGraph';
+        timeRelatedKey = '2m';
         break;
       case 3:
-        timeRelatedKey = 'allTimeAccountValueGraph';
+        timeRelatedKey = '6m';
         break;
+      // case 3:
+      //   timeRelatedKey = 'competition';
+      //   break;
       default:
-        timeRelatedKey = 'dailyAccountValueGraph';
+        timeRelatedKey = '1w';
     }
-    const walletChartUrl = `${apiUrl}/${timeRelatedKey}?trader=${address}`;
+    const walletChartUrl = `${authUrl}/getPnlGraphData?userAddress=${address}&resolution=${timeRelatedKey}`;
+
     let returnData = {};
     try {
       await fetch(walletChartUrl)
@@ -58,47 +73,7 @@ export const apiConnection = {
       return Promise.reject();
     }
   },
-  postUserContent: async function postUserContent(address: string) {
-    const postUserUrl = `${authUrl}/users`;
-    const postData = { userAddress: address };
-    try {
-      const callPost = await fetch(postUserUrl, {
-        method: 'POST',
-        body: JSON.stringify(postData),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const returnData = await callPost.json();
-      return Promise.resolve(returnData);
-    } catch (error) {
-      walletProvider.disconnectWallet();
-      return Promise.reject(error);
-    }
-  },
-  postAuthUser: async function postAuthUser(nonce: any) {
-    const postAuthUserUrl = `${authUrl}/users/auth`;
-    if (!walletProvider || !walletProvider.provider) return Promise.reject();
-    const providerSigner = walletProvider.provider.getSigner(walletProvider.holderAddress);
-    const messageHex = `\x19Ethereum Signed Message:\nHi there! Welcome to Tribe3!\n\nClick to log in to access your very own profile on Tribe3. Please note that this will not execute any blockchain transaction nor it will cost you any gas fee.\n\nYour Nonce: ${nonce}`;
-    const signedMessage = await providerSigner.signMessage(messageHex);
-    const postData = { publicAddress: walletProvider.holderAddress, signature: signedMessage };
-    try {
-      const callPost = await fetch(postAuthUserUrl, {
-        method: 'POST',
-        body: JSON.stringify(postData),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const returnData = await callPost.json();
-      return Promise.resolve(returnData);
-    } catch (error) {
-      walletProvider.disconnectWallet();
-      return Promise.reject(error);
-    }
-  },
-  followUser: async function followUser(followerAddress: any, firebaseToken: any, userAddress = walletProvider.holderAddress) {
+  followUser: async function followUser(followerAddress: any, firebaseToken: any, userAddress: string) {
     const url = `${authUrl}/users/follow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };
@@ -114,7 +89,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  unfollowUser: async function unfollowUser(followerAddress: string, firebaseToken: string, userAddress = walletProvider.holderAddress) {
+  unfollowUser: async function unfollowUser(followerAddress: any, firebaseToken: any, userAddress: any) {
     const url = `${authUrl}/users/unfollow`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, followerAddress };
@@ -130,7 +105,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  getUserInfo: async function getUserInfo(address: string) {
+  getUserInfo: async function getUserInfo(address: any) {
     const url = `${authUrl}/users?publicAddress=${address}`;
     try {
       const call = await fetch(url);
@@ -140,12 +115,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  updateUserInfo: async function updateUserInfo(
-    username: string,
-    about: string,
-    firebaseToken: string,
-    userAddress = walletProvider.holderAddress
-  ) {
+  updateUserInfo: async function updateUserInfo(username: string, about: string, firebaseToken: string, userAddress: string) {
     const url = `${authUrl}/users/update`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { userAddress, username, about };
@@ -159,22 +129,6 @@ export const apiConnection = {
       return Promise.resolve(result);
     } catch (err) {
       return Promise.reject(err);
-    }
-  },
-  switchAccount: async function switchAccount(holderAddress = walletProvider.holderAddress) {
-    const postUserContent = await this.postUserContent(holderAddress);
-    const { nonce } = postUserContent.data;
-    const postAuthUser = await this.postAuthUser(nonce);
-    const firToken = postAuthUser.data.token;
-
-    if (!firebaseAuth) return Promise.reject();
-
-    try {
-      const userCredential = await signInWithCustomToken(firebaseAuth, firToken);
-      const { user } = userCredential;
-      return Promise.resolve(user);
-    } catch (error) {
-      return Promise.reject(error);
     }
   },
   getUserFollowers: async function getUserFollowers(targetUser: any, user: any) {
@@ -230,7 +184,7 @@ export const apiConnection = {
           'Content-Type': 'application/json'
         }
       });
-      const result = await callPost.json();
+      const result = (await callPost.json()) as ApiResponse<SearchUserData[] | null>;
       return Promise.resolve(result);
     } catch (error) {
       return Promise.reject(error);
@@ -253,7 +207,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  finishTrade: async function finishTrade(txHash: any, firebaseToken: string, userAddress = walletProvider.holderAddress) {
+  finishTrade: async function finishTrade(txHash: any, firebaseToken: string, userAddress: string) {
     const url = `${authUrl}/users/trade/completed`;
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
     const body = { txHash, userAddress };
@@ -269,7 +223,7 @@ export const apiConnection = {
       return Promise.reject(error);
     }
   },
-  useReferralCode: async function useReferralCode(code: any, firebaseToken: any, userAddress = walletProvider.holderAddress) {
+  useReferralCode: async function useReferralCode(code: any, firebaseToken: any, userAddress: string) {
     const url = `${authUrl}/users/referral/code`;
     const body = { code, userAddress };
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
@@ -288,7 +242,7 @@ export const apiConnection = {
   getIPInformation: async function getIPInformation() {
     // const url = 'https://api.ipregistry.co/?key=tryout';
   },
-  getPointHistoryList: async function getPointHistoryList(address = walletProvider.holderAddress) {
+  getPointHistoryList: async function getPointHistoryList(address: string) {
     const url = `${authUrl}/achievement/history?userAddress=${address}&pageSize=30&pageNo=1`;
     try {
       const call = await fetch(url);
@@ -298,12 +252,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  postUserEvent: async function postUserEvent(
-    eventName: string,
-    fields: any,
-    wallet = walletProvider.holderAddress,
-    deviceType = 'desktop'
-  ) {
+  postUserEvent: async function postUserEvent(eventName: string, fields: any, wallet: string, deviceType = 'desktop') {
     const url = `${authUrl}/users/event`;
     const defaultParams = await eventParams.get();
     const params = {
@@ -348,7 +297,7 @@ export const apiConnection = {
 
     return Promise.resolve();
   },
-  checkUserIsWhitelisted: async function checkUserIsWhitelisted(address = walletProvider.holderAddress) {
+  checkUserIsWhitelisted: async function checkUserIsWhitelisted(address: string) {
     const url = `${authUrl}/users/whitelist/${address}`;
     try {
       const call = await fetch(url);
@@ -358,7 +307,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  checkUserHasPartialClose: async function checkUserHasPartialClose(address = walletProvider.holderAddress) {
+  checkUserHasPartialClose: async function checkUserHasPartialClose(address: string) {
     const url = `${authUrl}/users/hasPartialClosed?userAddress=${address}`;
     try {
       const call = await fetch(url);
@@ -368,7 +317,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  validateUserTradingState: async function validateUserTradingState(firebaseToken: string, userAddress = walletProvider.holderAddress) {
+  validateUserTradingState: async function validateUserTradingState(firebaseToken: string, userAddress: string) {
     const url = `${authUrl}/users/trade/validateState`;
     const body = { userAddress };
     const headers = { 'auth-token': firebaseToken, 'Content-Type': 'application/json' };
@@ -394,7 +343,7 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserTradingHistory: async function getUserTradingHistory(userAddress = walletProvider.holderAddress, ammAddress = '') {
+  getUserTradingHistory: async function getUserTradingHistory(userAddress: string, ammAddress = '') {
     const url = `${authUrl}/tradeHistory?trader=${userAddress}${!ammAddress ? '' : `&amm=${ammAddress}`}`;
     try {
       const call = await fetch(url);
@@ -404,32 +353,19 @@ export const apiConnection = {
       return Promise.reject(err);
     }
   },
-  getUserPoint: async function getUserPoint(userAddress = walletProvider.holderAddress) {
-    const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge`;
-    let defaultData = { ...defaultUserPoint };
-
+  getUserPoint: async function getUserPoint(userAddress: string, targetSeason = 0) {
+    const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge&season=${targetSeason}`;
     try {
-      isUserPointLoading.set(true);
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-
-      // only to check if data have the right object
-      if (data?.multiplier) {
-        defaultData = data;
-      }
-
-      setUserPoint(defaultData);
-      isUserPointLoading.set(false);
-      return Promise.resolve(defaultData);
+      return Promise.resolve(data);
     } catch (err) {
-      // console.log({ err });
-      setUserPoint(defaultData);
-      isUserPointLoading.set(false);
       return Promise.reject(err);
     }
   },
-  getUserPointLite: async function getUserPointLite(userAddress = walletProvider.holderAddress) {
+
+  getUserPointLite: async function getUserPointLite(userAddress: string) {
     const url = `${authUrl}/points/${userAddress}?show=tradeVol,referral,og,converge`;
     let defaultData = { total: 0, rank: 0 };
     try {
@@ -443,22 +379,103 @@ export const apiConnection = {
 
       return Promise.resolve(defaultData);
     } catch (err) {
-      // console.log({ err });
       return Promise.reject(defaultData);
     }
   },
-  getLeaderboard: async function getLeaderboard() {
-    const url = `${authUrl}/points/rank?show=tradeVol,referral,og,converge&pageSize=250`;
+  getLeaderboard: async function getLeaderboard(targetSeason = 0) {
+    const url = `${authUrl}/points/rank?show=tradeVol,referral,og,converge&pageSize=250&season=${targetSeason}`;
     try {
-      isLeaderboardLoading.set(true);
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      setLeaderboard(data);
-      isLeaderboardLoading.set(false);
       return Promise.resolve(data);
     } catch (err) {
-      isLeaderboardLoading.set(false);
+      return Promise.reject(err);
+    }
+  },
+  getUsernameFromAddress: async function getUsernameFromAddress(userAddressList: any) {
+    const url = `${authUrl}/users/username`;
+    const body = { userAddressList };
+    const headers = { 'Content-Type': 'application/json' };
+    try {
+      const call = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers
+      });
+      const result = await call.json();
+      return Promise.resolve(result.data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getReferralList: async function getReferralList(userAddress: string) {
+    const url = `${authUrl}/points/referral/reward/detail/${userAddress}`;
+    try {
+      isReferralListLoading.set(true);
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      setReferralList(data);
+      isReferralListLoading.set(false);
+      return Promise.resolve(data);
+    } catch (err) {
+      isReferralListLoading.set(false);
+      return Promise.reject(err);
+    }
+  },
+  getUsernameFromReferral: async function getUsernameFromReferral(referralCode: any) {
+    const url = `${authUrl}/users/referral/code/userinfo?code=${referralCode}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getAbsPnlLeaderboard: async function getAbsPnlLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/absPnl?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getRealizedPnlPercentageLeaderboard: async function getRealizedPnlPercentageLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/realisedPnl?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getNetConvergenceLeaderboard: async function getNetConvergenceLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/netConvergenceVol?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getTopLosersLeaderboard: async function getTopLosersLeaderboard(userAddress = '', pageNo = 1) {
+    const url = `${authUrl}/competition/leaderboard/topLoser?pageNo=${pageNo}&userAddress=${userAddress}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
+      return Promise.resolve(data);
+    } catch (err) {
       return Promise.reject(err);
     }
   }

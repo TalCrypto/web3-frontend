@@ -1,8 +1,8 @@
 import React from 'react';
 
-// const clamp = (val: any, min: any, max: any) => Math.min(Math.max(val, min), max);
+const clamp = (val: any, min: any, max: any) => Math.min(Math.max(val, min), max);
 
-// const lerp = (a: any, b: any, val: any) => a + val * (b - a);
+const lerp = (a: any, b: any, val: any) => a + val * (b - a);
 
 export default function InputSlider(props: any) {
   const { min, max, step, defautValue, value, onChange, onAfterChange, marks, disabled } = props;
@@ -17,13 +17,13 @@ export default function InputSlider(props: any) {
     if (onAfterChange) onAfterChange(val);
   }
 
-  // const alphaFill = clamp((value - min) / (max - min), 0, 1); // clamped 0~1
-  // const fill = alphaFill * 100; // 0~100%
+  const alphaFill = clamp((value - min) / (max - min), 0, 1); // clamped 0~1
+  const fill = alphaFill * 100; // 0~100%
 
   return (
     <div className="relative">
       <input
-        className={`h-[4px] w-full rounded-[5px] bg-[#242652]
+        className={`ml-[2px] h-[4px] w-[calc(100%-10px)] appearance-none rounded-[5px] bg-mediumBlue
           ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         disabled={disabled}
         type="range"
@@ -36,17 +36,21 @@ export default function InputSlider(props: any) {
         onMouseUp={handleAfterChange}
       />
       <div
-        className={`absolute left-0 mt-[-11px] h-[4px] w-full rounded-[5px]
+        className={`input-track input-track pointer-events-none absolute left-0
+          mt-[-11px] h-[4px] w-full rounded-[5px] pr-[5px]
         ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        style={{ width: `${fill}%` }}
       />
-
       {marks ? (
         <>
-          <div className="absolute top-[11px] flex w-full justify-between">
+          <div className="pointer-events-none absolute top-[11px] flex w-full justify-between pr-[5px]">
             {Object.keys(marks).map(i => (
               <div
                 key={`dot-${i}`}
-                className="h-[8px] w-[8px] rounded-[4px] bg-[#a8cbff]/[.75]"
+                className={`pointer-events-auto h-[8px] w-[8px] 
+                  ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+                  rounded-[4px] bg-mediumEmphasis
+                  hover:bg-highEmphasis hover:outline-[3px] hover:outline-white/[.20]`}
                 onClick={() => {
                   if (!disabled) onChange(i);
                 }}
@@ -59,7 +63,8 @@ export default function InputSlider(props: any) {
               return (
                 <div
                   key={`mark-${i}`}
-                  className="h-[8px] w-[8px] cursor-pointer text-[14px] text-[#a3c2ff]/[.6]"
+                  className={`${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+                    text-[14px] text-mediumEmphasis`}
                   onClick={() => {
                     if (!disabled) onChange(i);
                   }}>
@@ -71,9 +76,14 @@ export default function InputSlider(props: any) {
         </>
       ) : null}
       <div
-        className="absolute top-2 h-[14px] w-[14px] rounded-full
-        border-[2px] border-[#04aefc] bg-white"
-      />
+        className={`input-slider pointer-events-none absolute top-2 flex h-[14px] w-[14px]
+          ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+          items-center justify-center rounded-full`}
+        style={{
+          left: `calc(${fill}% - ${lerp(0, 14, alphaFill)}px)`
+        }}>
+        <div className="h-[10px] w-[10px] rounded-full bg-white" />
+      </div>
     </div>
   );
 }

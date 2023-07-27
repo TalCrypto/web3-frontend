@@ -2,7 +2,15 @@
 
 @import './common/globals.scss';
 @import './common/fonts.scss';
+@import './common/animate.scss';
+@import './common/gradient.scss';
+@import './common/snackbar.scss';
+@import './common/misc.scss';
 
 @import './components/layout/header/index.scss';
+@import './components/layout/header/discords.scss';
+@import './components/common/chart.scss';
+@import './components/common/input_slider.scss';
+@import './components/competition/index.scss';
 
-@import './mobile/gradient.scss';
+@import 'react-toastify/dist/ReactToastify.css';

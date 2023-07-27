@@ -1,21 +1,23 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 interface NavbarItem {
   name: string;
   path: string;
-  other: string;
+  other: React.ReactElement | string;
   child: NavbarItem[];
+  textClassName: string;
+  icon?: React.ReactElement;
 }
 
-function TopMenu(props: any) {
-  const { router } = props;
+function TopMenu() {
+  const router = useRouter();
 
   const navbarList: NavbarItem[] = [
-    { name: 'Portfolio', path: '/portfolio', other: '', child: [] },
-    { name: 'Trade', path: '/trade', other: '', child: [] },
+    { name: 'Portfolio', path: '/portfolio', other: '', child: [], textClassName: '' },
+    { name: 'Trade', path: '/trade', other: '', child: [], textClassName: '' },
     // {
     //   name: 'Others',
     //   path: '/others',
@@ -25,7 +27,25 @@ function TopMenu(props: any) {
     //     { name: 'Battle', path: '../comingsoonbattle', /*other: <Soon />,*/ child: [] }
     //   ]
     // },
-    { name: 'Airdrop', path: '/airdrop', other: '', child: [] }
+    { name: 'Airdrop', path: '/airdrop', other: '', child: [], textClassName: '' },
+    {
+      name: 'Competition',
+      path: '/competition',
+      other: (
+        <div
+          className="absolute right-0 top-0 mr-[-12px] mt-[12px] rounded-br-[6px] rounded-tl-[6px] 
+        bg-gradient-to-b from-[#FF9D56] to-[#B23333] px-[3px] py-[2px] text-[8px] font-bold italic leading-[8px]">
+          END
+        </div>
+      ),
+      child: [],
+      textClassName: 'glow-yellow',
+      icon: (
+        <div className="mr-1">
+          <Image className="mt-[2px]" src="/images/common/fire.svg" width={18} height={18} alt="Competition Icon" />
+        </div>
+      )
+    }
   ];
 
   const handleDropdown = (name: string, isShow: boolean) => {
@@ -41,7 +61,7 @@ function TopMenu(props: any) {
     }
   };
 
-  const listUI = navbarList.map(({ name, path, other, child }) => {
+  const listUI = navbarList.map(({ name, path, other, child, icon, textClassName }) => {
     if (child.length !== 0) {
       return (
         <div
@@ -57,7 +77,7 @@ function TopMenu(props: any) {
             <div
               className="after rounded-3px absolute bottom-0 left-0 right-0 top-0 h-3 w-0
               translate-y-0 transform bg-gradient-to-r from-pink-500
-              via-purple-500 to-blue-500 transition-all duration-200 "
+              via-purple-500 to-blue-500 transition-all duration-200"
             />
             <p>{name}</p>
             <div className="w-[9px]">
@@ -86,8 +106,9 @@ function TopMenu(props: any) {
     return (
       <Link key={name} href={path}>
         <div
-          className={`item cursor-pointer py-[16px]
+          className={`item relative flex cursor-pointer py-[16px] ${textClassName}
           ${router.route.toUpperCase() === path.toUpperCase() ? 'active' : ''}`}>
+          {icon}
           {name}
           {other}
           <div className="after absolute bottom-0 left-0 h-[3px] w-full rounded-[3px]" />
@@ -98,11 +119,11 @@ function TopMenu(props: any) {
 
   return (
     <div
-      className="font-mont hidden items-center space-x-[20px]
-        text-mediumEmphasis lg:flex">
+      className="hidden items-center space-x-[20px]
+        text-mediumEmphasis xl:flex">
       {listUI}
     </div>
   );
 }
 
-export default withRouter(TopMenu);
+export default TopMenu;

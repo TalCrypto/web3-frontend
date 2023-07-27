@@ -27,6 +27,9 @@ export interface UserPoint {
     val: string;
   };
   degenscore: number;
+  eligible: boolean;
+  originalTotal: number;
+  tradeVolTotal: number;
 }
 
 export const defaultUserPoint: UserPoint = {
@@ -55,23 +58,41 @@ export const defaultUserPoint: UserPoint = {
     points: 0,
     val: '0'
   },
-  degenscore: 0
+  degenscore: 0,
+  eligible: false,
+  originalTotal: 0,
+  tradeVolTotal: 0
 };
 
 // user points
-export const userPoint = atom<UserPoint>({ ...defaultUserPoint });
-
-export const isUserPointLoading = atom(false);
-
-export const setUserPoint = (data: UserPoint) => {
-  userPoint.set(data);
-};
+export const $userPoint = atom<UserPoint | undefined>();
+export const $userPrevPoint = atom<UserPoint | undefined>();
 
 // leaderboard
-export const leaderboard = atom<any[]>([]);
+export const $asSeason1LeaderboardData = atom<any[]>([]);
+export const $asSeason2LeaderboardData = atom<any[]>([]);
 
-export const setLeaderboard = (data: any[]) => {
-  leaderboard.set(data);
+export const $asIsLeaderboardLoading = atom(false);
+
+// referral
+export const $referralList = atom([]);
+
+export const setReferralList = (data: any) => {
+  $referralList.set(data);
 };
+export const isReferralListLoading = atom(false);
 
-export const isLeaderboardLoading = atom(false);
+export const $asActiveTab = atom(0);
+export const $asCurrentSeason = atom(0);
+
+export const $asLeaderboardUpdateTrigger = atom(false);
+
+// Referral Modal
+export const $asShowResponseModal = atom(false);
+
+export const $asHasReferCode = atom(false);
+export const $asReferResponse = atom(0);
+
+export const $asReferredUser = atom();
+
+export const $targetReferralCode = atom();

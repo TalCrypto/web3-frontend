@@ -1,9 +1,134 @@
-export default [
-  {
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-shadow */
+
+export enum AMM {
+  MILADY = 'milady',
+  PPG = 'ppg',
+  DEGODS = 'degods',
+  CAPTAINZ = 'captainz',
+  BAYC = 'bayc',
+  MAYC = 'mayc',
+  AZUKI = 'azuki',
+  PUNKS = 'punks'
+}
+export const DEFAULT_AMM: AMM = AMM.MILADY;
+
+export interface CollectionInfo {
+  amm: AMM;
+  name: string;
+  title: string;
+  image: string;
+  collection: string;
+  contract: string;
+  logo: string;
+  sidebarLogo: string;
+  collectionName: string;
+  collectionType: string;
+  contractId: string;
+  homeUrl: string;
+  twitterUrl: string;
+  discordUrl: string;
+  etherscanUrl: string;
+  shortName: string;
+  displayCollectionPair: string;
+  isNew: boolean;
+  sort: number;
+}
+
+export type CollectionInfos = {
+  [value in AMM]: CollectionInfo;
+};
+
+export const collectionsInfos: CollectionInfos = {
+  [AMM.MILADY]: {
+    amm: AMM.MILADY,
+    name: 'MILADY/ETH',
+    title: 'Milady',
+    image: '/images/collections/small/milady.svg',
+    collection: 'MILADY',
+    contract: process.env.NEXT_PUBLIC_MILADY_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/milady.svg',
+    sidebarLogo: '/images/collections/normal/milady.svg',
+    collectionName: 'MILADY',
+    collectionType: 'MILADY',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'https://miladymaker.net/',
+    twitterUrl: 'https://www.twitter.com/miladymaker',
+    discordUrl: 'https://discord.gg/milady',
+    etherscanUrl: 'https://etherscan.io/address/0x5af0d9827e0c53e4799bb226655a1de152a425a5',
+    shortName: 'MILADY',
+    displayCollectionPair: 'MILADY/WETH',
+    isNew: false,
+    sort: 1
+  },
+  [AMM.PPG]: {
+    amm: AMM.PPG,
+    name: 'PPG/ETH',
+    title: 'PUDGY',
+    image: '/images/collections/small/pudgypenguins.svg',
+    collection: 'PPG',
+    contract: process.env.NEXT_PUBLIC_PUDGYPENGUINS_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/pudgypenguins.svg',
+    sidebarLogo: '/images/collections/normal/pudgypenguins.svg',
+    collectionName: 'PUDGY',
+    collectionType: 'PPG',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'https://www.pudgypenguins.com/',
+    twitterUrl: 'https://www.twitter.com/pudgypenguins',
+    discordUrl: 'https://discord.gg/pudgypenguins',
+    etherscanUrl: 'https://etherscan.io/address/0xbd3531da5cf5857e7cfaa92426877b022e612cf8',
+    shortName: 'PUDGY',
+    displayCollectionPair: 'PPG/WETH',
+    isNew: false,
+    sort: 2
+  },
+  [AMM.DEGODS]: {
+    amm: AMM.DEGODS,
+    name: 'DEGODS/ETH',
+    title: 'DeGods',
+    image: '/images/collections/small/degods.svg',
+    collection: 'DEGODS',
+    contract: process.env.NEXT_PUBLIC_DEGODS_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/degods.svg',
+    sidebarLogo: '/images/collections/normal/degods.svg',
+    collectionName: 'DEGODS',
+    collectionType: 'DEGODS',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'https://degods.com//',
+    twitterUrl: 'https://twitter.com/DeGodsNFT',
+    discordUrl: 'https://discord.gg/dedao',
+    etherscanUrl: 'https://etherscan.io/token/0x1821363abc9E33f1bfbE3f96F7C68ECa7f6Af2BD',
+    shortName: 'DEGODS',
+    displayCollectionPair: 'DEGODS/WETH',
+    isNew: false,
+    sort: 3
+  },
+  [AMM.CAPTAINZ]: {
+    amm: AMM.CAPTAINZ,
+    name: 'CAPTAINZ/ETH',
+    title: 'Captainz',
+    image: '/images/collections/small/captainz.svg',
+    collection: 'CAPTAINZ',
+    contract: process.env.NEXT_PUBLIC_CAPTAINZ_CONTRACT_ADDRESS || '',
+    logo: '/images/collections/big/captainz.svg',
+    sidebarLogo: '/images/collections/normal/captainz.svg',
+    collectionName: 'CAPTAINZ',
+    collectionType: 'CAPTAINZ',
+    contractId: process.env.NEXT_PUBLIC_FIREBASE_CHAT_MEEBITS_CONTRACTID || '',
+    homeUrl: 'http://memeland.com/captainz/',
+    twitterUrl: 'https://www.twitter.com/Memeland',
+    discordUrl: 'https://discord.gg/memeland',
+    etherscanUrl: 'https://etherscan.io/address/0x769272677fab02575e84945f03eca517acc544cc',
+    shortName: 'CAPTAINZ',
+    displayCollectionPair: 'CAPTAINZ/WETH',
+    isNew: false,
+    sort: 4
+  },
+  [AMM.BAYC]: {
+    amm: AMM.BAYC,
     name: 'BAYC/ETH',
     title: 'Bored Ape Yacht Club',
     image: '/images/collections/small/bayc.svg',
-    amm: process.env.NEXT_PUBLIC_AMM_ADDRESS || '',
     collection: 'BAYC',
     contract: process.env.NEXT_PUBLIC_BAYC_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/bayc.svg',
@@ -16,13 +141,15 @@ export default [
     discordUrl: 'https://discord.com/invite/3P5K3dzgdB',
     etherscanUrl: 'https://etherscan.io/token/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
     shortName: 'BAYC',
-    displayCollectionPair: 'BAYC/WETH'
+    displayCollectionPair: 'BAYC/WETH',
+    isNew: false,
+    sort: 5
   },
-  {
+  [AMM.MAYC]: {
+    amm: AMM.MAYC,
     name: 'MAYC/ETH',
     title: 'Mutant Ape Yacht Club',
     image: '/images/collections/small/mayc.svg',
-    amm: process.env.NEXT_PUBLIC_MAYC_AMM_ADDRESS || '',
     collection: 'MAYC',
     contract: process.env.NEXT_PUBLIC_MAYC_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/mayc.svg',
@@ -35,13 +162,15 @@ export default [
     discordUrl: 'https://discord.com/invite/3P5K3dzgdB',
     etherscanUrl: 'https://etherscan.io/token/0x60e4d786628fea6478f785a6d7e704777c86a7c6',
     shortName: 'MAYC',
-    displayCollectionPair: 'MAYC/WETH'
+    displayCollectionPair: 'MAYC/WETH',
+    isNew: false,
+    sort: 6
   },
-  {
+  [AMM.AZUKI]: {
+    amm: AMM.AZUKI,
     name: 'AZUKI/ETH',
     title: 'Azuki',
     image: '/images/collections/small/azuki.svg',
-    amm: process.env.NEXT_PUBLIC_AZUKI_AMM_ADDRESS || '',
     collection: 'AZUKI',
     contract: process.env.NEXT_PUBLIC_AZUKI_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/azuki.svg',
@@ -54,13 +183,15 @@ export default [
     discordUrl: 'https://discord.com/invite/azuki',
     etherscanUrl: 'https://etherscan.io/token/0xed5af388653567af2f388e6224dc7c4b3241c544',
     shortName: 'AZUKI',
-    displayCollectionPair: 'AZUKI/WETH'
+    displayCollectionPair: 'AZUKI/WETH',
+    isNew: false,
+    sort: 7
   },
-  {
+  [AMM.PUNKS]: {
+    amm: AMM.PUNKS,
     name: 'PUNKS/ETH',
     title: 'CRYPTOPUNKS',
     image: '/images/collections/small/cryptopunks.svg',
-    amm: process.env.NEXT_PUBLIC_CRYPTOPUNKS_AMM_ADDRESS || '',
     collection: 'C',
     contract: process.env.NEXT_PUBLIC_CRYPTOPUNKS_CONTRACT_ADDRESS || '',
     logo: '/images/collections/big/cryptopunks.svg',
@@ -73,7 +204,9 @@ export default [
     discordUrl: 'https://discord.com/invite/4JMAauFZBq',
     etherscanUrl: 'https://etherscan.io/token/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb',
     shortName: 'PUNKS',
-    displayCollectionPair: 'PUNKS/WETH'
+    displayCollectionPair: 'PUNKS/WETH',
+    isNew: false,
+    sort: 8
   }
   // {
   //   name: 'DOODLES/ETH',
@@ -148,4 +281,6 @@ export default [
   //   etherscanUrl: 'https://etherscan.io/token/0x7Bd29408f11D2bFC23c34f18275bBf23bB716Bc7',
   //   shortName: 'MEEBITS'
   // }
-];
+};
+
+export const getCollectionInformation = (amm?: AMM): CollectionInfo => (amm ? collectionsInfos[amm] : collectionsInfos[DEFAULT_AMM]);

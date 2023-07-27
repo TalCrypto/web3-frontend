@@ -1,8 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { logEvent } from 'firebase/analytics';
 import { IBrowser, IDevice, IOS, UAParser } from 'ua-parser-js';
-import { apiConnection } from './apiConnection';
-import { firebaseAnalytics } from '../const/firebaseConfig';
 
 interface EventParams {
   language: string;
@@ -80,21 +77,4 @@ export const generateBatchName = (logs: any) => {
     batchNameList.push(logs[i].name);
   }
   return batchNameList.join('-');
-};
-
-export const logHelper = (eventName: any, holderAddress: any, others: any, deviceType: any) => {
-  if (!firebaseAnalytics) return;
-
-  logEvent(firebaseAnalytics, eventName, {
-    wallet: holderAddress.substring(2),
-    ...others
-  });
-  apiConnection.postUserEvent(
-    eventName,
-    {
-      ...others
-    },
-    holderAddress,
-    deviceType
-  );
 };

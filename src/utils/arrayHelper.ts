@@ -23,3 +23,28 @@ export function findLastIndex<T>(array: T[], predicate: any, fromIndex?: number)
   }
   return baseFindIndex(array, predicate, index, true);
 }
+
+export function binarySearch<T>(array: T[], value: any) {
+  let left = 0;
+  let right = array.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+
+    if (array[mid] === value) {
+      return mid; // Value found, return the index
+    }
+    if (array[mid] < value) {
+      left = mid + 1; // Value is in the right half of the remaining array
+    } else {
+      right = mid - 1; // Value is in the left half of the remaining array
+    }
+  }
+
+  return -1; // Value not found
+}
+
+// eslint-disable-next-line no-unused-vars
+export function objectMap(obj: Object, fn: (v: string, k: string, i: number) => void) {
+  return Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
+}

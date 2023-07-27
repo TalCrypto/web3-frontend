@@ -1,158 +1,60 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from '@nanostores/react';
+import { useStore as useNanostore } from '@nanostores/react';
 
-import tradePanelModal from '@/stores/tradePanelModal';
-
-import TradeComponent from '@/components/trade/desktop/trading/tradeComponent';
 import AdjustCollateral from '@/components/trade/desktop/trading/AdjustCollateral';
 import CloseCollateral from '@/components/trade/desktop/trading/CloseCollateral';
-import TradePanelModal from '@/components/trade/desktop/trading/TradePanelModal';
+import { $currentAmm } from '@/stores/trading';
+import { usePositionInfo } from '@/hooks/collection';
+import MainTradeComponent from '@/components/trade/desktop/trading/MainTradeComponent';
 
-// function Tab(props: any) {
-//   const { name, active, onClick: click } = props;
-//   return (
-//     <div className={`col navitem font-14-600 text-color-default ${active ? 'selected' : ''}`} onClick={click}>
-//       {name}
-//       <div className="bottom-line" />
-//     </div>
-//   );
-// }
-
-// function OverFluctuationError(props: any) {
-//   const { setShowOverFluctuationContent } = props;
-//   const closeWindow = () => {
-//     setShowOverFluctuationContent(false);
-//   };
-//   return (
-//     <div className="fails">
-//       <div className="contents-mod">
-//         <div className="col">
-//           Your transaction has failed due to high price fluctuation. <br />
-//           <br /> Please try again with smaller notional value
-//           <div className="confirm" onClick={closeWindow}>
-//             <div className="text">OK</div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-function TradingWindow(props: any) {
-  const {
-    connectWallet,
-    getTestToken,
-    userPosition,
-    isLoginState,
-    refreshPositions,
-    tradingData,
-    isWrongNetwork,
-    isApproveRequired,
-    setIsApproveRequired,
-    wethBalance,
-    fullWalletAddress,
-    currentToken,
-    maxReduceValue
-  } = props;
+function TradingWindow() {
   const [tradeWindowIndex, setTradeWindowIndex] = useState(0);
-  const isTradePanelModalShow = useStore(tradePanelModal.show);
-  const tradePanelModalMsg = useStore(tradePanelModal.message);
-  const tradePanelModalLink = useStore(tradePanelModal.link);
+  const currentAmm = useNanostore($currentAmm);
+  const userPosition = usePositionInfo(currentAmm);
 
-  // const logEventByName = name => {
-  //   logEvent(firebaseAnalytics, name, {
-  //     wallet: fullWalletAddress.substring(2),
-  //     collection: currentToken
-  //   });
-  //   apiConnection.postUserEvent(name, {
-  //     page,
-  //     collection: currentToken
-  //   });
-  // };
-  // const tabs = ['Add', 'Close', 'Adjust Collateral'].map((item, index) => (
-  //   <Tab
-  //     name={item}
-  //     key={item}
-  //     active={tradeWindowIndex === index}
-  //     onClick={() => {
-  //       setTradeWindowIndex(index);
-  //       // logEventByName(analyticsKeys[index]);
-  //     }}
-  //   />
-  // ));
-  // const [showOverFluctuationContent, setShowOverFluctuationContent] = useState(false);
+  useEffect(() => setTradeWindowIndex(0), [currentAmm]);
 
-  const traderConnectWallet = () => {
-    // logEventByName('connectWallet_pressed_tradings');
-    connectWallet();
+  const mainTradeComponent = <MainTradeComponent />;
+
+  const displayComponent = [mainTradeComponent, <CloseCollateral />, <AdjustCollateral />][tradeWindowIndex];
+
+  const tabs = ['Add', 'Close', 'Adjust Collateral'];
+
+  const onTabClick = (index: any) => {
+    setTradeWindowIndex(index);
   };
-  useEffect(() => setTradeWindowIndex(0), [currentToken]);
-
-  const tradeComponent = (
-    <TradeComponent
-      isLoginState={isLoginState}
-      refreshPositions={refreshPositions}
-      connectWallet={traderConnectWallet}
-      getTestToken={getTestToken}
-      isWrongNetwork={isWrongNetwork}
-      isApproveRequired={isApproveRequired}
-      setIsApproveRequired={setIsApproveRequired}
-      wethBalance={wethBalance}
-      fullWalletAddress={fullWalletAddress}
-      // tokenRef={tokenRef}
-      currentToken={currentToken}
-      userPosition={userPosition}
-      tradingData={tradingData}
-    />
-  );
-
-  const displayComponent = [
-    tradeComponent,
-    <CloseCollateral
-      isWrongNetwork={isWrongNetwork}
-      refreshPositions={refreshPositions}
-      userPosition={userPosition}
-      wethBalance={wethBalance}
-      fullWalletAddress={fullWalletAddress}
-      tradingData={tradingData}
-      // tokenRef={tokenRef}
-      currentToken={currentToken}
-      isLoginState={isLoginState}
-      // setShowOverFluctuationContent={setShowOverFluctuationContent}
-      setTradeWindowIndex={setTradeWindowIndex}
-      getTestToken={getTestToken}
-    />,
-    <AdjustCollateral
-      isWrongNetwork={isWrongNetwork}
-      refreshPositions={refreshPositions}
-      userPosition={userPosition}
-      wethBalance={wethBalance}
-      fullWalletAddress={fullWalletAddress}
-      tradingData={tradingData}
-      // tokenRef={tokenRef}
-      currentToken={currentToken}
-      isLoginState={isLoginState}
-      maxReduceValue={maxReduceValue}
-      getTestToken={getTestToken}
-    />
-  ][tradeWindowIndex];
 
   return (
-    <div
-      className="mb-[60px] ml-[44px] mr-[20px] flex w-full
-        rounded-[6px] border-[1px] border-[#71aaff]/[.2]
-      bg-[#171833] p-6 px-[42px] py-[32px] text-white 2xl:w-[400px]
-    "
-      style={{ height: 'fit-content' }}>
-      {/* {showOverFluctuationContent ? <OverFluctuationError setShowOverFluctuationContent={setShowOverFluctuationContent} /> : null} */}
-      {/* {userPosition !== null ? <div className="col selecttyperow">{tabs}</div> : null} */}
-      <div className={`w-full ${userPosition ? 'showmenu' : 'hidemenu'}`}>{userPosition !== null ? displayComponent : tradeComponent}</div>
-      <TradePanelModal
-        isShow={isTradePanelModalShow}
-        setIsShow={tradePanelModal.setIsShow}
-        message={tradePanelModalMsg}
-        link={tradePanelModalLink}
-      />
+    <div className="w-full 2xl:w-[400px]" style={{ height: 'fit-content' }}>
+      {userPosition && userPosition.size !== 0 ? (
+        <div
+          className="border-b-none flex h-[50px] justify-between
+            rounded-t-[6px] border-[1px] border-[#71aaff]/[.2]
+            p-0 font-normal">
+          {tabs.map((item, index) => (
+            <div
+              className={`trade-tab flex w-full cursor-pointer items-center justify-center
+                text-[14px] font-semibold text-primaryBlue
+                ${index === 0 ? 'rounded-tl-[6px] ' : ''}
+                ${index === 2 ? 'rounded-tr-[6px] ' : ''}
+                ${tradeWindowIndex === index ? 'selected' : ''}`}
+              onClick={() => {
+                onTabClick(index);
+              }}
+              key={`trade_tab_${item}`}>
+              {item}
+              <div className="bottom-line" />
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <div
+        className={`flex w-full rounded-b-[6px] border-[1px]
+          border-[#71aaff]/[.2] bg-lightBlue p-4 px-6 pb-9 text-white
+          ${userPosition && userPosition.size !== 0 ? 'pt-6' : 'rounded-t-[6px] pt-9'}
+        `}>
+        <div className="w-full">{userPosition && userPosition.size !== 0 ? displayComponent : mainTradeComponent}</div>
+      </div>
     </div>
   );
 }

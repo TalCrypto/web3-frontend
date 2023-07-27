@@ -4,3 +4,13 @@ export function localeConversion(value: number | string, maximumFractionDigits?:
     maximumFractionDigits: maximumFractionDigits || minimumFractionDigits
   });
 }
+
+export function convertStringToNumber(stringValue: string) {
+  // Remove non-numeric characters
+  const numericString = stringValue.replace(/[^0-9.-]+/g, '');
+
+  // Parse the numeric string into a number
+  const numberValue = parseFloat(numericString);
+
+  return numberValue;
+}

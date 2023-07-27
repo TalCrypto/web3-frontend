@@ -8,7 +8,9 @@ module.exports = {
       md: '840px',
       lg: '968px',
       xl: '1100px',
-      '2xl': '1300px'
+      '2xl': '1300px',
+      '3xl': '1400px',
+      '4xl': '1600px'
     },
     container: {
       center: true,
@@ -21,7 +23,8 @@ module.exports = {
         md: '840px',
         lg: '968px',
         xl: '1100px',
-        '2xl': '1300px'
+        '2xl': '1300px',
+        '3xl': '1400px'
       }
     },
     extend: {
@@ -29,15 +32,44 @@ module.exports = {
         primaryBlue: '#2574fb',
         primaryBlueHover: '#5190fc',
         primaryBluePressed: '#1e5dc9',
+        primaryPink: '#FF42CA',
+        secondaryPink: '#C970D0',
+
         secondaryBlue: '#202249',
         darkBlue: '#0C0D20',
+        mediumBlue: '#242652',
         lightBlue: '#171833',
         lightBlue50: '#12122a',
         highEmphasis: '#ffffffde',
         mediumEmphasis: '#a8cbffbf',
         marketRed: '#ff5656',
         marketGreen: '#78f363',
-        warn: '#FFC24BDE'
+        warn: '#ffc24bde',
+        competition: '#FFEFD0',
+        seasonGreen: '#D0FF4B',
+        tooltipArrow: '#213676',
+        buttonGreen: '#48AE36',
+        buttonRed: '#EA3E3F',
+        buttonHover: '#ffffff33',
+
+        gradientBlue: '#04AEFC',
+        gradientPink: '#F703D9',
+
+        switchDisable: '#51546B',
+
+        direction: {
+          unselected: {
+            normal: '#c3d8ff7a',
+            disabled: '#c3d8ff26'
+          }
+        },
+
+        comingSoon: '#ffc34bde',
+        modal: {
+          item: {
+            hover: '#2574fb33'
+          }
+        }
       },
       fontSize: {
         h1: [
@@ -50,7 +82,7 @@ module.exports = {
         h2: [
           '32px',
           {
-            lineHeight: '39.01px',
+            // lineHeight: '39.01px',
             fontWeight: '700'
           }
         ],
@@ -108,6 +140,13 @@ module.exports = {
           {
             // lineHeight: '17.07px',
             fontWeight: '400'
+          }
+        ],
+        b3e: [
+          '12px',
+          {
+            lineHeight: '14.63px',
+            fontWeight: '600'
           }
         ]
       }

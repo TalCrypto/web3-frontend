@@ -1,143 +1,128 @@
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import collectionList from '@/const/collectionList';
-import { walletProvider } from '@/utils/walletProvider';
-import { apiConnection } from '@/utils/apiConnection';
 import CollectionModal from '@/components/trade/desktop/trading/CollectionModal';
+import { useStore as useNanostore } from '@nanostores/react';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
+import { $currentAmm } from '@/stores/trading';
+import { $currentChain, $userPositionInfos } from '@/stores/user';
+import { usePositionInfosIsLoading } from '@/hooks/collection';
+import { getSupportedAMMs } from '@/const/addresses';
+import Tooltip from '@/components/common/Tooltip';
 
-const getCollectionInformation = (collectionName: any) => {
-  const targetCollection = collectionList.filter(({ collection }) => collection.toUpperCase() === collectionName.toUpperCase());
-  return targetCollection.length !== 0 ? targetCollection[0] : collectionList[0];
-};
-
-function SidebarCollection(props: any, ref: any) {
-  const { currentToken, setCurrentToken, isLoginState, isWrongNetwork, fullWalletAddress, setIsShowPopup } = props;
-  const [isColModalVisible, setIsColModalVisible] = useState(false);
-  const [userPositions, setUserPositions] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [overviewData, setOverviewData] = useState([]);
-
+function SidebarCollection() {
   const router = useRouter();
+  const chain = useNanostore($currentChain);
+  const currentAmm = useNanostore($currentAmm);
+  const positionInfos = useNanostore($userPositionInfos);
+  const [isColModalVisible, setIsColModalVisible] = useState(false);
+  const isLoading = usePositionInfosIsLoading();
 
-  async function fetchOverview(showLoading = false) {
-    if (!isLoginState || isWrongNetwork || fullWalletAddress === '') {
-      setUserPositions([]);
-      setOverviewData([]);
-      return;
-    }
-
-    if (showLoading) setIsLoading(true);
-
-    try {
-      const userCollectionsInfo = await walletProvider.getUserCollectionsInfo(walletProvider.holderAddress);
-      if (showLoading) setIsLoading(false);
-      // console.log('fetchMarketOverview', data);
-      setOverviewData(userCollectionsInfo);
-    } catch (error) {
-      if (showLoading) setIsLoading(false);
-    }
-  }
-
-  useImperativeHandle(ref, () => ({ fetchOverview }));
-
-  // useEffect(() => {
-  //   fetchOverview(true);
-  // }, [isLoginState, isWrongNetwork, fullWalletAddress]);
-
-  // sync active item index in div
-  useEffect(() => {
-    const targetIndex = collectionList.findIndex(i => i.collection === currentToken);
-    setActiveIndex(targetIndex);
-  }, [currentToken]);
-
-  const selectedCollection = getCollectionInformation(currentToken);
-
-  const analyticsLogSelections = (newcollections: any) => {
-    // console.log(newcollections);
-    // logEvent(firebaseAnalytics:, 'switchCollection_collection_pressed', {
-    //   wallet: fullWalletAddress.substring(2),
-    //   current_collection: currentToken,
-    //   new_collection: newcollections
-    // });
-    apiConnection.postUserEvent('switchCollection_collection_pressed', {
-      page: 'Trade',
-      current_collection: currentToken,
-      new_collection: newcollections
-    });
+  const selectCollection = (amm: AMM) => {
+    router.push(`/trade/${amm}`, undefined, { shallow: true });
   };
 
-  const selectCollection = (token: any) => {
-    analyticsLogSelections(token);
-    setIsShowPopup(false);
-    // console.log('selectCollection', token);
-    walletProvider.setCurrentToken(token);
-    // tokenRefCurrent.current = token;
-    setCurrentToken(token);
-
-    router.push(`/trade/${token}`, undefined, { shallow: true });
+  const isHasPos = (amm: AMM): boolean => {
+    const size = positionInfos[amm]?.size;
+    if (size) {
+      return size !== 0;
+    }
+    return false;
   };
 
-  const isHasPos = (amm: any) => overviewData.find((i: any) => i?.amm === amm) || false;
+  const activeIndex = currentAmm ? Object.values(AMM).indexOf(currentAmm) : 0;
+  const yPos = (activeIndex < 0 ? 0 : activeIndex) * 56 + (activeIndex > 1 ? 52 : 51);
 
   return (
-    <>
+    <div
+      className={`absolute ml-[-45px] mt-4 flex w-[45px]
+        flex-col rounded-l-[12px] bg-gradient-to-r from-[#71aaff66]
+        to-[#ffffff00] py-[1px] pl-[1px]
+      `}>
       <div
-        className="side-collection absolute  mt-[9px] flex w-[44px]
-        flex-col rounded-l-[12px] border-b-0 border-[#71AAFF]/[.2] bg-[#202249]
-        px-[6px] py-3
-      ">
+        className="flex w-[44px] flex-col rounded-l-[12px] bg-secondaryBlue px-1 py-3"
+        style={{ '--highlight-y-pos': `${yPos}px` } as CSSProperties}>
+        {activeIndex >= 0 ? (
+          <div
+            className="transition-width absolute right-0 top-[6px] h-[48px] w-[48px]
+              translate-y-[var(--highlight-y-pos)] transform
+              rounded-l-[12px] bg-[#2574fb] transition duration-300 ease-in-out"
+          />
+        ) : null}
         <div
-          className={`item ${isLoading ? 'loading' : ''}
-            relative flex h-8 w-8 cursor-pointer items-center rounded-full 
-            border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]`}
+          className={`item ${isLoading ? 'opacity-30' : ''}
+            relative flex cursor-pointer items-center justify-center rounded-full
+             hover:border-[hsla(0,0%,100%,.2)]`}
           onClick={() => setIsColModalVisible(true)}>
-          <Image src="/images/collections/more.svg" width="24" height="24" alt="" />
+          <Image
+            src="/images/collections/more.svg"
+            width={32}
+            height={32}
+            alt=""
+            className="ml-[2px] rounded-full border-[4px] border-transparent
+              hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
+          />
           {isLoading ? (
-            <div className="loading-indicator">
-              <div className="spinner-border spinner-border-sm text-light" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+            <div
+              className="loading-indicator absolute left-[4px] top-[3px] flex h-7
+                  w-7 items-center justify-center rounded-full text-[10px]">
+              <div
+                className="spinner-border inline-block h-4 w-4
+                    animate-spin rounded-full border-2 border-solid
+                  border-white border-r-transparent"
+              />
             </div>
           ) : null}
         </div>
-        {collectionList.map(item => (
-          <div
-            key={`sidecol-${item.collection}`}
-            className={`${selectedCollection.collection === item.collection ? 'active' : ''} ${isLoading ? 'loading' : ''}
-            relative mt-8 flex h-8 w-8 cursor-pointer items-center rounded-full
-            border-[4px] border-transparent hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]`}
-            onClick={() => selectCollection(item.collection)}>
-            {selectedCollection.collection === item.collection ? (
-              <div className="absolute right-[-10px] top-[-12px] h-[48px] w-[48px] rounded-l-[12px] bg-[#2574fb]" />
-            ) : null}
+        {getSupportedAMMs(chain)
+          .map(amm => getCollectionInformation(amm))
+          .sort((a, b) => a.sort - b.sort)
+          .map(item => (
+            <div
+              key={`side-col-${item.collection}`}
+              className={`${isLoading ? 'opacity-30' : ''}
+              relative mt-5 flex cursor-pointer items-center`}
+              onClick={() => selectCollection(item.amm)}>
+              <Tooltip direction="right" content={item.displayCollectionPair}>
+                {item.isNew ? (
+                  <Image className="absolute right-0 top-[-4px] z-[2]" src="/images/collections/new.svg" alt="" width={26} height={12} />
+                ) : null}
+                <Image
+                  src={item.sidebarLogo}
+                  width={36}
+                  height={36}
+                  alt=""
+                  className="rounded-full border-[4px] border-transparent
+                    hover:border-[4px] hover:border-[hsla(0,0%,100%,.2)]"
+                />
+                {isHasPos(item.amm) ? (
+                  <Image
+                    className="absolute bottom-[3px] right-0"
+                    src="/images/mobile/pages/trade/shopping-bag-green.svg"
+                    width={14}
+                    height={14}
+                    alt=""
+                  />
+                ) : null}
+              </Tooltip>
 
-            {/* <OverlayTrigger placement="right" overlay={<Tooltip>{item.displayCollectionPair}</Tooltip>}>
-              <Image src={item.sidebarLogo} width="24" height="24" alt="" />
-            </OverlayTrigger> */}
-            <Image src={item.sidebarLogo} width="24" height="24" alt="" className="z-10" />
-            {isHasPos(item.amm) ? <Image className="shop-icon" src="/static/shoppingbag-green.svg" width="10" height="10" alt="" /> : null}
-            {isLoading ? (
-              <div className="loading-indicator">
-                <div className="spinner-border spinner-border-sm text-light" role="status">
-                  <span className="visually-hidden">Loading...</span>
+              {isLoading ? (
+                <div
+                  className="loading-indicator absolute left-[4px] top-[4px] flex h-7
+                    w-7 items-center justify-center rounded-full text-[10px]">
+                  <div
+                    className="spinner-border inline-block h-4 w-4
+                      animate-spin rounded-full border-2 border-solid
+                    border-white border-r-transparent"
+                  />
                 </div>
-              </div>
-            ) : null}
-          </div>
-        ))}
+              ) : null}
+            </div>
+          ))}
       </div>
-      <CollectionModal
-        visible={isColModalVisible}
-        setVisible={setIsColModalVisible}
-        isLoginState={isLoginState}
-        isWrongNetwork={isWrongNetwork}
-        selectCollection={selectCollection}
-      />
-    </>
+
+      {isColModalVisible && <CollectionModal setVisible={setIsColModalVisible} selectCollection={selectCollection} />}
+    </div>
   );
 }
-export default forwardRef(SidebarCollection);
+export default SidebarCollection;
