@@ -229,7 +229,7 @@ function EstimationComponent(props: {
           <span className="flex">
             Collateral&nbsp;
             {!isFullClose ? (
-              <Tooltip direction="top" content="Collateral will not be released">
+              <Tooltip direction="top" content="Partial close will not free any collateral">
                 <Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />
               </Tooltip>
             ) : null}

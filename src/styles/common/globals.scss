@@ -82,10 +82,10 @@ h5 {
   }
 
   /* Smooth scrolling polyfill for Safari */
-  @supports (-webkit-overflow-scrolling: touch) {
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-  }
+  // @supports (-webkit-overflow-scrolling: touch) {
+  //   overflow-y: auto;
+  //   -webkit-overflow-scrolling: touch;
+  // }
 }
 
 .no-scrollable {
