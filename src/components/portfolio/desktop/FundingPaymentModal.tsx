@@ -13,11 +13,12 @@ import { $collectionConfig, $fundingRates, $nextFundingTime } from '@/stores/tra
 import { useFundingPaymentHistory } from '@/hooks/collection';
 
 const FundingPaymentModal = () => {
+  const DEFAULT_TIME = '-- : -- : --';
   const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
   const { total: fpTotal, fpRecords } = useFundingPaymentHistory(psSelectedCollectionAmm);
 
   const collectionInfo = getCollectionInformation(psSelectedCollectionAmm);
-  const [timeLabel, setTimeLabel] = useState('-- : -- : --');
+  const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
   const { fundingPeriod } = useNanostore($collectionConfig);
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
@@ -57,6 +58,10 @@ const FundingPaymentModal = () => {
         const difference = endTime - Date.now();
         if (difference < 0) {
           setEndTime(Date.now() + fundingPeriod * 1000);
+        }
+        if (Number.isNaN(difference)) {
+          setTimeLabel(DEFAULT_TIME);
+          return;
         }
         hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
           .toString()

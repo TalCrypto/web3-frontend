@@ -34,7 +34,7 @@ function TransactionStatusMobile() {
 
   return (
     <div
-      className={`fixed inset-0 h-screen w-full
+      className={`fixed inset-0 w-full
         ${tsShowTransactionStatus.isShow ? 'left-[0]' : 'left-[100%]'}
         transition-left bottom-0 right-0 top-0 z-[12] h-full
         overflow-auto  bg-secondaryBlue duration-500

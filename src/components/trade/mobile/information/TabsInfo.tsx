@@ -188,7 +188,7 @@ const SpotTable = () => {
           openseaData?.slice(0, displayCount > openseaData.length ? openseaData.length : displayCount).map((data: IOpenseaData) => {
             const { asset, asset_bundle, payment_token, total_price, event_timestamp, transaction } = data;
             const src = !asset
-              ? asset_bundle.assets[0].image_preview_url
+              ? asset_bundle.assets?.[0].image_preview_url
               : !asset.image_preview_url
               ? 'https://storage.googleapis.com/opensea-static/opensea-profile/25.png'
               : asset.image_preview_url;
@@ -199,9 +199,9 @@ const SpotTable = () => {
               isUSDC = payment_token.symbol === 'USDC';
             }
             const transactionHash = transaction.transaction_hash;
-            const assetToken = !asset ? asset_bundle.assetBundle_temp[0].token_id : asset.token_id;
+            const assetToken = !asset ? asset_bundle.assets?.[0].token_id : asset.token_id;
 
-            const assetCreationDate = !asset ? asset_bundle.assets[0].created_date : asset.created_date;
+            const assetCreationDate = !asset ? asset_bundle.assets?.[0].created_date : asset.created_date;
             const priceValue = !total_price
               ? '0.00'
               : localeConversion(isUSDC ? formatBigInt(total_price, 6).toFixed(2) : formatBigInt(total_price).toFixed(2), 2);
