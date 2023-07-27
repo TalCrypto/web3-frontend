@@ -23,6 +23,7 @@ import { ammAbi } from '@/const/abi';
 import { usePublicClient } from 'wagmi';
 import { formatBigInt } from '@/utils/bigInt';
 import { useRouter } from 'next/router';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 const PositionDetailMobile = () => {
   const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
@@ -111,7 +112,6 @@ const PositionDetailMobile = () => {
             <Image src={collectionInfo?.image} width={40} height={40} alt="" />
           </div>
         </div>
-
         {isLiquidationRisk ? (
           <div className="mx-5 my-6 flex items-start">
             <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
@@ -121,7 +121,6 @@ const PositionDetailMobile = () => {
             </p>
           </div>
         ) : null}
-
         <div className="text-mediumEmphasis">
           <div className="mb-[6px] bg-lightBlue">
             {detailRowMobile(
@@ -187,6 +186,13 @@ const PositionDetailMobile = () => {
               </div>
             )}
           </div>
+        </div>
+        <div className="px-4 py-4">
+          <PrimaryButton
+            onClick={() => router.push(`/trade/${collectionInfo?.collection.toLowerCase()}`)}
+            className="py-2 text-[15px] font-semibold text-highEmphasis">
+            Trade
+          </PrimaryButton>
         </div>
       </div>
 

@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { $tsIsContinueClose, $tsIsFirstPartialClose, $tsIsShowPartialCloseModal } from '@/stores/trading';
 import { useStore as useNanostore } from '@nanostores/react';
 
 export default function PartialCloseModal() {
   const isShowPartialCloseModal = useNanostore($tsIsShowPartialCloseModal);
+
+  useEffect(() => {
+    const firstPartialCloseShow = localStorage.getItem('firstPartialCloseShow');
+    if (firstPartialCloseShow) {
+      $tsIsFirstPartialClose.set(false);
+    }
+  }, []);
+
   if (!isShowPartialCloseModal) {
     return null;
   }
@@ -53,6 +61,7 @@ export default function PartialCloseModal() {
                 $tsIsFirstPartialClose.set(false);
                 $tsIsShowPartialCloseModal.set(false);
                 $tsIsContinueClose.set(true);
+                localStorage.setItem('firstPartialCloseShow', 'true');
               }}>
               Continue Close
             </button>

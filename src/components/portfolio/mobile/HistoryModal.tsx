@@ -181,7 +181,7 @@ const HistoryModal = () => {
                                 className={`${Number(balance) > 0 ? 'text-marketGreen' : Number(balance) < 0 ? 'text-marketRed' : ''}
                                   !text-[14px] font-medium`}
                                 priceValue={`${Number(balance) > 0 ? '+' : ''}${
-                                  Number(balance) === 0 ? '-.--' : Number(balance).toFixed(4)
+                                  Number(balance) === 0 || Number.isNaN(balance) ? '-.--' : Number(balance).toFixed(4)
                                 }`}
                               />
                             </div>
@@ -210,7 +210,7 @@ const HistoryModal = () => {
                     className={`${Number(selectedBalance) > 0 ? 'text-marketGreen' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}
                       mt-[6px] text-[20px] font-semibold`}
                     priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
-                      Number(selectedBalance) === 0 ? '-.--' : Number(selectedBalance).toFixed(4)
+                      Number(selectedBalance) === 0 || Number.isNaN(selectedBalance) ? '-.--' : Number(selectedBalance).toFixed(4)
                     }`}
                   />
                 </div>

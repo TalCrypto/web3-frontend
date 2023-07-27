@@ -237,6 +237,10 @@ const ChartFooter = () => {
           endTime = Date.now() + fundingPeriod * 1000;
           difference = endTime - Date.now();
         }
+        if (Number.isNaN(difference)) {
+          setTimeLabel(DEFAULT_TIME);
+          return;
+        }
         hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
           .toString()
           .padStart(2, '0');
