@@ -115,9 +115,9 @@ const HistoryModal = (props: any) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[12] h-screen w-full
+      className={`fixed inset-0 z-20 h-screen w-full
         ${showHistoryModal ? 'left-[0]' : 'left-[100%]'}
-        transition-left z-[12] overflow-auto
+        transition-left z-20 overflow-auto
         bg-black bg-opacity-40 duration-500
       `}>
       <div
