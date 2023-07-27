@@ -230,7 +230,7 @@ function QuantityEnter(props: any) {
         />
         {!isAmountTooSmall && isNotReduce && !isInsuffBalance ? (
           <ErrorTip label="Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation." />
-        ) : prepareTextErrorMessage ? (
+        ) : prepareTextErrorMessage && !isInsuffBalance ? (
           <ErrorTip label={prepareTextErrorMessage} />
         ) : null}{' '}
       </div>
