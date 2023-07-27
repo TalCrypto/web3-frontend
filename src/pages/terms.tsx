@@ -24,7 +24,7 @@ export default function Terms() {
             These terms and conditions (&#34;Terms&#34;) set forth the agreement between Tribe3 (&#34;we,&#34; &#34;us,&#34; or
             &#34;Company&#34;) and you (&#34;User&#34; or &#34;you&#34;) regarding your use of the Tribe3 website and services. By accessing
             and using our website at{' '}
-            <a href="https://tribe3.xyz" target="_blank" rel="noreferrer" className="text-primaryBlue underline">
+            <a href="https://tribe3.xyz" target="_blank" rel="noreferrer" className="text-[#86A0C7] underline">
               https://tribe3.xyz
             </a>{' '}
             and its subdomains (&#34;Website&#34;), as well as utilizing our Services, you acknowledge that you have read, understood, and

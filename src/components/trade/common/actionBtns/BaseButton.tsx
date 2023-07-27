@@ -14,8 +14,8 @@ function BaseButton({
   // eslint-disable-next-line react/require-default-props
   disabled?: boolean;
 }) {
-  const greenButton = !disabled && (label === 'Open Long' || label === 'Add Collateral');
-  const redButton = !disabled && (label === 'Open Short' || label === 'Reduce Collateral');
+  const greenButton = label === 'Open Long' || label === 'Add Collateral';
+  const redButton = label === 'Open Short' || label === 'Reduce Collateral';
 
   return (
     <div className="flex">
