@@ -21,3 +21,5 @@ export const $isShowLoginModal = atom(false);
 export const $isShowMobileTokenModal = atom(false);
 
 export const $isShowMobileTncModal = atom(false);
+
+export const $isBannerShow = atom(true);

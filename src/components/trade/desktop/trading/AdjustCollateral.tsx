@@ -334,7 +334,7 @@ function AdjustCollateralSlidingBars(props: any) {
         min={0}
         max={maxValue}
         step={0.0001}
-        value={adjustMarginValue}
+        value={adjustMarginValue === 0 ? '' : adjustMarginValue}
         disabled={disabled}
         onChange={onChange}
         onAfterChange={onChange}

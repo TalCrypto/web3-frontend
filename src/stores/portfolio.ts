@@ -1,4 +1,4 @@
-import { AMM } from '@/const/collectionList';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $userPositionInfos } from '@/stores/user';
 import { atom, computed } from 'nanostores';
 
@@ -6,7 +6,11 @@ export const $psShowBalance = atom(true);
 
 export const $psUserPosition = computed($userPositionInfos, userPositionInfos => {
   const amms = Object.keys(userPositionInfos) as AMM[];
-  return amms.map(amm => userPositionInfos[amm]).filter(posInfo => posInfo && posInfo.size !== 0);
+  const orders = ['milady', 'ppg', 'degods', 'captainz', 'bayc', 'mayc', 'azuki', 'punks'];
+  return amms
+    .map(amm => userPositionInfos[amm])
+    .sort((a, b) => orders.indexOf(a?.amm || '') - orders.indexOf(b?.amm || ''))
+    .filter(posInfo => posInfo && posInfo.size !== 0);
 });
 
 export const $psSelectedCollectionAmm = atom();
