@@ -85,7 +85,7 @@ function TradePage() {
           <Switcher />
           {/* <PullToRefresh isRefreshing={isMarketDataUpdating} onRefresh={updateMarketData} /> */}
 
-          <div className="scrollable mt-12 bg-darkBlue">
+          <div className="mt-12 bg-darkBlue">
             {/* {isMarketDataUpdating ? <UpdatingTradeData /> : null} */}
 
             <ChartMobile />
@@ -93,11 +93,11 @@ function TradePage() {
             <PositionMobile />
 
             <InformationMobile />
-          </div>
 
-          {/* full screen layout */}
-          <DisplayCollections />
-          <TradingMobile />
+            {/* full screen layout */}
+            <DisplayCollections />
+            <TradingMobile />
+          </div>
         </div>
 
         <CollectionConfigLoader />

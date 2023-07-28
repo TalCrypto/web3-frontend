@@ -91,10 +91,10 @@ export function getTradingActionTypeFromSubgraph(item: any, isMobile = false) {
 export function getWalletBalanceChange(record: any) {
   const currentRecordType = getActionTypeFromApi(record);
   const recordAmount = Math.abs(record.amount);
-  const recordFee = record.fee;
-  const recordRealizedPnl = record.realizedPnl;
-  const recordRealizedFundingPayment = record.fundingPayment;
-  const recordCollateralChange = record.collateralChange;
+  const recordFee = record.fee || 0;
+  const recordRealizedPnl = record.realizedPnl || 0;
+  const recordRealizedFundingPayment = record.fundingPayment || 0;
+  const recordCollateralChange = record.collateralChange || 0;
   const balance =
     currentRecordType === TradeActions.OPEN || currentRecordType === TradeActions.ADD || currentRecordType === CollateralActions.ADD
       ? -Math.abs(recordAmount + recordFee + recordRealizedFundingPayment)
