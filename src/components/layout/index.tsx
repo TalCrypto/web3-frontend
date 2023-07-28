@@ -86,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           className={`
             ${isUserprofilePage || isNotFoundPage ? userprofileBg2Class : 'content-container pb-[42px]'}
             mmd:pb-10 w-full
-            !px-0  text-white md:h-full md:min-h-screen md:${isBannerShow ? 'pt-[120px]' : 'pt-20'}
+            !px-0  text-white md:h-full md:min-h-screen ${isBannerShow ? 'md:pt-[120px]' : 'md:pt-20'}
             ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}
         `}>
           {children}
