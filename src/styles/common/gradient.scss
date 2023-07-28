@@ -71,13 +71,15 @@
   }
 
   &.season-2-green {
-    color: #ffefd0;
+    background: none;
+    -webkit-text-fill-color: #fff;
+    text-shadow: 0px 0px 7px #d0ff4b;
 
     &:hover,
     &.active {
       background: none;
-      -webkit-text-fill-color: #ffefd0;
-      text-shadow: 0px 0px 7px #d0ff4b;
+      -webkit-text-fill-color: #fff;
+      text-shadow: 0px 0px 12px #d0ff4b;
 
       .after {
         display: none;

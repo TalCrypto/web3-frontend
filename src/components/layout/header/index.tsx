@@ -8,6 +8,7 @@ import WidgetBot from '@widgetbot/react-embed';
 import { $isBannerShow, $isMobileView, $isShowDiscordModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import { firebaseAuth } from '@/const/firebaseConfig';
+import { useRouter } from 'next/router';
 // import MobileHeader from '@/components/layout/header/mobile';
 
 function Header() {
@@ -17,6 +18,7 @@ function Header() {
   const isBannerShow = useNanostore($isBannerShow);
 
   const isShowDiscordModal = useNanostore($isShowDiscordModal);
+  const router = useRouter();
 
   useEffect(() => {
     setIsCompleteLoading(true);
@@ -62,7 +64,11 @@ function Header() {
           </div>
         </div>
         {isBannerShow ? (
-          <div className="relative h-[32px] bg-gradient-to-r from-[#f703d94d] via-[#795af44d] to-[#04aefc4d]">
+          <div
+            className="relative h-[32px] cursor-pointer bg-gradient-to-r from-[#04aefc4d] via-[#795af44d] to-[#f703d94d]"
+            onClick={() => {
+              router.push('/airdrop');
+            }}>
             <div className="flex h-full items-center justify-between">
               <div className="content-container text-[12px] font-[400] text-[#ffffffde]">
                 <span className="font-[600]">
@@ -76,8 +82,11 @@ function Header() {
               src="/images/components/common/modal/close-white.svg"
               width={10}
               height={10}
-              className="absolute right-[12px] top-[10px] cursor-pointer"
-              onClick={() => $isBannerShow.set(false)}
+              className="absolute right-[12px] top-[10px] z-[2] cursor-pointer"
+              onClick={e => {
+                e.stopPropagation();
+                $isBannerShow.set(false);
+              }}
             />
           </div>
         ) : null}
