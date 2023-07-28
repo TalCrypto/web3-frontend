@@ -27,24 +27,31 @@ function TopMenu() {
     //     { name: 'Battle', path: '../comingsoonbattle', /*other: <Soon />,*/ child: [] }
     //   ]
     // },
-    { name: 'Airdrop', path: '/airdrop', other: '', child: [], textClassName: '' },
+    {
+      name: 'Airdrop',
+      path: '/airdrop',
+      other: '',
+      child: [],
+      textClassName: 'season-2-green',
+      icon: (
+        <div className="mr-1">
+          <Image className="mt-[2px]" src="/images/common/season-2-fire.svg" width={18} height={18} alt="Competition Icon" />
+        </div>
+      )
+    },
     {
       name: 'Competition',
       path: '/competition',
       other: (
         <div
           className="absolute right-0 top-0 mr-[-12px] mt-[12px] rounded-br-[6px] rounded-tl-[6px] 
-        bg-gradient-to-b from-[#FF9D56] to-[#B23333] px-[3px] py-[2px] text-[8px] font-bold italic leading-[8px]">
-          END
+        bg-gradient-to-r from-[#f703d94d] via-[#795af44d] to-[#04aefc4d]
+        px-[3px] py-[2px] text-[8px] font-bold italic leading-[8px] text-[#fff]">
+          <span className="end">END</span>
         </div>
       ),
       child: [],
-      textClassName: 'glow-yellow',
-      icon: (
-        <div className="mr-1">
-          <Image className="mt-[2px]" src="/images/common/fire.svg" width={18} height={18} alt="Competition Icon" />
-        </div>
-      )
+      textClassName: ''
     }
   ];
 

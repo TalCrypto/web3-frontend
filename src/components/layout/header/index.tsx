@@ -65,8 +65,10 @@ function Header() {
           <div className="relative h-[32px] bg-gradient-to-r from-[#f703d94d] via-[#795af44d] to-[#04aefc4d]">
             <div className="flex h-full items-center justify-between">
               <div className="content-container text-[12px] font-[400] text-[#ffffffde]">
-                <span className="font-[600]">🚨HOT: Airdrop Season 2 is on 🔥🔥🔥</span>&nbsp; Trade now to flip others and multiply your
-                Tribe3 points for more Tribe3 token.💰 Don&#39;t miss out!
+                <span className="font-[600]">
+                  🚨HOT: <span className="text-seasonGreen">Airdrop Season 2 is ending soon</span> 🔥🔥
+                </span>
+                &nbsp; Trade now to flip others and multiply your Tribe3 points for more Tribe3 token.💰 Don&#39;t miss out!
               </div>
             </div>
             <Image
