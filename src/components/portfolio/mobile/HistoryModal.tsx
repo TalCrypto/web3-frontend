@@ -106,7 +106,7 @@ const HistoryModal = () => {
 
   return (
     <div
-      className={`fixed inset-0 z-10 h-screen w-full
+      className={`fixed inset-0 z-10 h-full w-full
         ${showHistoryModal ? 'left-[0]' : 'left-[100%]'}
         transition-left z-[12] overflow-auto
         bg-black bg-opacity-40 duration-500
@@ -210,7 +210,7 @@ const HistoryModal = () => {
                     className={`${Number(selectedBalance) > 0 ? 'text-marketGreen' : Number(selectedBalance) < 0 ? 'text-marketRed' : ''}
                       mt-[6px] text-[20px] font-semibold`}
                     priceValue={`${Number(selectedBalance) > 0 ? '+' : ''}${
-                      Number(selectedBalance) === 0 || Number.isNaN(selectedBalance) ? '-.--' : Number(selectedBalance).toFixed(4)
+                      Number(selectedBalance) === 0 || Number.isNaN(Number(selectedBalance)) ? '-.--' : Number(selectedBalance).toFixed(4)
                     }`}
                   />
                 </div>

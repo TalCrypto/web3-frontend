@@ -16,19 +16,55 @@ export interface AddressConfig {
 
 const ADDRESSES: Record<number, AddressConfig> = {
   [arbitrum.id]: {
-    ch: '0x01b6407ADf740d135ddF1eBDD1529407845773F3',
-    chViewer: '0x74183D4Afe2f5bd240f24CD690323629A02dF08f',
-    ammViewer: '0x233A76584d5D91140459Be8fd75b799a39EC91dB',
-    weth: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+    ch:
+      process.env.NEXT_PUBLIC_ENV === 'staging'
+        ? '0x550763c20554ea59092c85be847E7292fE7A6295'
+        : '0x01b6407ADf740d135ddF1eBDD1529407845773F3',
+    chViewer:
+      process.env.NEXT_PUBLIC_ENV === 'staging'
+        ? '0x00d857B5FAF26Cbb231283F0FAb4eB781cE29440'
+        : '0x74183D4Afe2f5bd240f24CD690323629A02dF08f',
+    ammViewer:
+      process.env.NEXT_PUBLIC_ENV === 'staging'
+        ? '0x00d857B5FAF26Cbb231283F0FAb4eB781cE29440'
+        : '0x233A76584d5D91140459Be8fd75b799a39EC91dB',
+    weth:
+      process.env.NEXT_PUBLIC_ENV === 'staging'
+        ? '0x7F4C5d495Fd0FFBD76992505200d9dF604Fa0715'
+        : '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
     amms: {
-      [AMM.BAYC]: '0xd490246758b4dFED5Fb8576cB9Ac20073BB111dD',
-      [AMM.AZUKI]: '0xf33c2F463d5aD0e5983181B49A2d9b7b29032085',
-      [AMM.MAYC]: '0x75416ee73fD8C99c1AA33e1e1180E8ed77d4C715',
-      [AMM.PUNKS]: '0x2396cC2b3c814609dAEb7413b7680F569BBC16e0',
-      [AMM.DEGODS]: '0x1BBC1f49497F4f1a08A93df26ADfc7b0cECD95E0',
-      [AMM.CAPTAINZ]: '0xcbA1F8Cdd6c9D6eA71b3d88dCfB777BE9Bc7C737',
-      [AMM.MILADY]: '0x64244464a3e15990299d4106Deca4F4839f3DD99',
-      [AMM.PPG]: '0x0e9148000Cc4368a5C091D85e5AA91596408594d'
+      [AMM.BAYC]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0x26f7786A917f226608c43E18D054829b33dACFca'
+          : '0xd490246758b4dFED5Fb8576cB9Ac20073BB111dD',
+      [AMM.AZUKI]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0x2DB4FB36Bca527b53af5e1E9C977EE230179eee9'
+          : '0xf33c2F463d5aD0e5983181B49A2d9b7b29032085',
+      [AMM.MAYC]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0xf58b3C0e97B8BD6Bd8F49fB170bd6674f037Cffe'
+          : '0x75416ee73fD8C99c1AA33e1e1180E8ed77d4C715',
+      [AMM.PUNKS]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0xCF34C7c0bdD1330B313db5a0Ba82d1684abBCA9F'
+          : '0x2396cC2b3c814609dAEb7413b7680F569BBC16e0',
+      [AMM.DEGODS]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0xE280c8907841d8601837973B6F4cd003A11202c0'
+          : '0x1BBC1f49497F4f1a08A93df26ADfc7b0cECD95E0',
+      [AMM.CAPTAINZ]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0xaeaec732d2878b74a7144B217CCbbB3658e3cC1D'
+          : '0xcbA1F8Cdd6c9D6eA71b3d88dCfB777BE9Bc7C737',
+      [AMM.MILADY]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0xbD890621129D5022f967e633198e0938b9397483'
+          : '0x64244464a3e15990299d4106Deca4F4839f3DD99',
+      [AMM.PPG]:
+        process.env.NEXT_PUBLIC_ENV === 'staging'
+          ? '0x1Ee3e2510d31BF77D7e50Edea8B6a04Ec2DE95De'
+          : '0x0e9148000Cc4368a5C091D85e5AA91596408594d'
     }
   },
   [arbitrumGoerli.id]: {
