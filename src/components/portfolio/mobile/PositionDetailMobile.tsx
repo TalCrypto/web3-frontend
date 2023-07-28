@@ -22,6 +22,8 @@ import { useFundingPaymentHistory } from '@/hooks/collection';
 import { ammAbi } from '@/const/abi';
 import { usePublicClient } from 'wagmi';
 import { formatBigInt } from '@/utils/bigInt';
+import { useRouter } from 'next/router';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 const PositionDetailMobile = () => {
   const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
@@ -36,6 +38,7 @@ const PositionDetailMobile = () => {
   const [oraclePrice, setOraclePrice] = useState(0);
   const liqSwitchRatio = useNanostore($psLiqSwitchRatio);
   const publicClient = usePublicClient();
+  const router = useRouter();
 
   const handleBackClick = () => {
     $psShowPositionDetail.set(false);
@@ -83,7 +86,9 @@ const PositionDetailMobile = () => {
       <div
         className="h-full w-full justify-between rounded-[12px] border-[1px]
         border-[#71aaff38] bg-darkBlue text-[14px] font-normal text-mediumEmphasis">
-        <div className="mb-[6px] flex w-full items-center justify-between bg-lightBlue px-5 py-6">
+        <div
+          className="mb-[6px] flex w-full items-center justify-between bg-lightBlue px-5 py-6"
+          onClick={() => router.push(`/trade/${collectionInfo?.collection.toLowerCase()}`)}>
           <div>
             <div className="mb-[6px] text-[12px] font-normal text-highEmphasis">Unrealized P/L</div>
             <PriceWithIcon
@@ -107,7 +112,6 @@ const PositionDetailMobile = () => {
             <Image src={collectionInfo?.image} width={40} height={40} alt="" />
           </div>
         </div>
-
         {isLiquidationRisk ? (
           <div className="mx-5 my-6 flex items-start">
             <Image src="/images/common/alert/alert_yellow.svg" width={15} height={15} alt="" />
@@ -117,7 +121,6 @@ const PositionDetailMobile = () => {
             </p>
           </div>
         ) : null}
-
         <div className="text-mediumEmphasis">
           <div className="mb-[6px] bg-lightBlue">
             {detailRowMobile(
@@ -183,6 +186,13 @@ const PositionDetailMobile = () => {
               </div>
             )}
           </div>
+        </div>
+        <div className="px-4 py-4">
+          <PrimaryButton
+            onClick={() => router.push(`/trade/${collectionInfo?.collection.toLowerCase()}`)}
+            className="py-2 text-[15px] font-semibold text-highEmphasis">
+            Trade
+          </PrimaryButton>
         </div>
       </div>
 

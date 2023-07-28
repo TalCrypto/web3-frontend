@@ -125,10 +125,10 @@ function QuantityEnter(props: {
 
   return (
     <>
-      <div className={`${disabled ? 'disabled' : ''}`}>
+      <div className={`${disabled ? 'disabled opacity-30' : ''}`}>
         <div className="mb-3 text-[14px] text-mediumEmphasis">Amount to Close (Notional)</div>
       </div>
-      <div className="mb-3">
+      <div className={`mb-3 ${disabled ? 'opacity-30' : ''}`}>
         <div
           className={`trade-input-outline rounded-[4px] bg-none p-[1px]
               ${isFocus ? 'valid' : ''}
@@ -243,7 +243,7 @@ function EstimationComponent(props: {
           <span className="flex">
             Collateral&nbsp;
             {!isFullClose ? (
-              <MobileTooltip content="Collateral will not change">
+              <MobileTooltip content="Partial close will not free any collateral">
                 <Image className="cursor-pointer" src="/images/components/trade/alert.svg" width={16} height={16} alt="" />
               </MobileTooltip>
             ) : null}
@@ -342,6 +342,15 @@ function CloseSlider(props: {
     </div>
   );
 }
+
+const waitAndScrollToBottom = () => {
+  const timer = setTimeout(() => {
+    const tradingMobileContent = document.getElementById('tradingMobileScroll');
+    if (tradingMobileContent) tradingMobileContent.scrollTo({ top: tradingMobileContent.scrollHeight, behavior: 'smooth' });
+  }, 200);
+
+  return () => clearTimeout(timer);
+};
 
 export default function CloseCollateral() {
   const currentAmm = useNanostore($currentAmm);
@@ -476,7 +485,7 @@ export default function CloseCollateral() {
           <div
             className={`rounded-[4px] border-mediumBlue bg-mediumBlue
               px-[10px] py-[4px] text-white
-              ${isPending || isWrongNetwork ? 'disabled' : ''}`}>
+              ${isPending || isWrongNetwork ? 'disabled opacity-30' : ''}`}>
             <input
               disabled={isPending || isWrongNetwork}
               title=""
@@ -553,7 +562,10 @@ export default function CloseCollateral() {
           <div className="flex pb-4">
             <div
               className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
-              onClick={() => setShowDetail(val => !val)}>
+              onClick={() => {
+                setShowDetail(val => !val);
+                waitAndScrollToBottom();
+              }}>
               {!showDetail ? 'Show' : 'Hide'} Advanced Details
               {!showDetail ? (
                 <Image src="/images/common/angle_down.svg" alt="" width={12} height={12} />

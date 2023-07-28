@@ -106,12 +106,14 @@ function QuantityEnter(props: any) {
     estimation,
     isError,
     isInputBlur,
-    setIsInputBlur
+    setIsInputBlur,
+    isAmountTooSmall,
+    setIsAmountTooSmall,
+    isInsuffBalance,
+    setIsInsuffBalance
   } = props;
 
   const [isFocus, setIsFocus] = useState(false);
-  const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
-  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
 
   const userPosition = usePositionInfo();
   const { initMarginRatio } = useNanostore($collectionConfig);
@@ -376,6 +378,9 @@ export default function AdjustCollateral() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
+  const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
+
   const freeCollateral = useFreeCollateral();
   const wethBalance = useNanostore($userWethBalance);
 
@@ -385,7 +390,13 @@ export default function AdjustCollateral() {
   const isNeedApproval = useApprovalCheck(approvalAmount);
   const [isInputBlur, setIsInputBlur] = useState(false);
 
+  const resetAlert = () => {
+    setIsAmountTooSmall(false);
+    setIsInsuffBalance(false);
+  };
+
   const initializeState = useCallback(() => {
+    resetAlert();
     setAdjustMarginValue(0);
     setIsPending(false);
   }, []);
@@ -402,7 +413,10 @@ export default function AdjustCollateral() {
   }, []);
 
   const handleChange = (value: any) => {
+    resetAlert();
     setAdjustMarginValue(value);
+    setIsAmountTooSmall(Number(value) < 0.01);
+    setIsInsuffBalance(marginIndex === 0 && wethBalance < Number(value));
   };
 
   useEffect(() => {
@@ -432,6 +446,10 @@ export default function AdjustCollateral() {
         prepareTextErrorMessage={prepareTextErrorMessage}
         isInputBlur={isInputBlur}
         setIsInputBlur={setIsInputBlur}
+        isAmountTooSmall={isAmountTooSmall}
+        setIsAmountTooSmall={setIsAmountTooSmall}
+        isInsuffBalance={isInsuffBalance}
+        setIsInsuffBalance={setIsInsuffBalance}
       />
 
       <AdjustCollateralSlidingBars

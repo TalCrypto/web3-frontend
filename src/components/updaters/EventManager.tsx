@@ -37,6 +37,13 @@ const EventHandlers = () => {
           });
           const amm = getAMMByAddress(event.amm, chain);
           const ammInfo = getCollectionInformation(amm);
+          const isLiquidation = type === TradeActions.FULL_LIQ || type === TradeActions.PARTIAL_LIQ;
+          const message =
+            type === TradeActions.PARTIAL_LIQ
+              ? 'Your position has been partially liquidated'
+              : type === TradeActions.FULL_LIQ
+              ? 'Your position has been partially liquidated'
+              : 'Order Completed!';
 
           if (!isMobileView) {
             showToast(
@@ -44,9 +51,10 @@ const EventHandlers = () => {
                 title: `${ammInfo?.shortName} - ${type} ${
                   type === TradeActions.OPEN ? (event.positionSizeAfter > 0 ? 'LONG' : 'SHORT') : ''
                 }`,
-                message: 'Order Completed!',
+                message,
                 linkUrl: `${process.env.NEXT_PUBLIC_TRANSACTIONS_DETAILS_URL}${event.txHash ?? ''}`,
-                linkLabel: 'Check on Arbiscan'
+                linkLabel: 'Check on Arbiscan',
+                isLiquidation
               },
               {
                 autoClose: 5000,

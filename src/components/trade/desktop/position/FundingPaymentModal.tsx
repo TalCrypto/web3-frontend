@@ -11,12 +11,13 @@ import { useFundingPaymentHistory } from '@/hooks/collection';
 import { useStore as useNanostore } from '@nanostores/react';
 
 const FundingPaymentModal = (props: { setShowFundingPaymentModal: any }) => {
+  const DEFAULT_TIME = '-- : -- : --';
   const { setShowFundingPaymentModal } = props;
   const currentAmm: any = useNanostore($currentAmm);
   const { total: fpTotal, fpRecords } = useFundingPaymentHistory(currentAmm);
 
   const collectionInfo = getCollectionInformation(currentAmm);
-  const [timeLabel, setTimeLabel] = useState('-- : -- : --');
+  const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
   const { fundingPeriod } = useNanostore($collectionConfig);
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
@@ -56,6 +57,10 @@ const FundingPaymentModal = (props: { setShowFundingPaymentModal: any }) => {
         const difference = endTime - Date.now();
         if (difference < 0) {
           setEndTime(Date.now() + fundingPeriod * 1000);
+        }
+        if (Number.isNaN(difference)) {
+          setTimeLabel(DEFAULT_TIME);
+          return;
         }
         hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
           .toString()

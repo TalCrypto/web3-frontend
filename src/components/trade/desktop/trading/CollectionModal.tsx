@@ -197,8 +197,8 @@ const CollectionModal = (props: any) => {
             </div>
           </div>
           <div className="w-[130px]">
-            <PriceWithIcon priceValue={localeConversion(vAMMPrice, 2)} />
-            <p className="ml-[22px] mt-1 text-[12px]">{localeConversion(oraclePrice, 2)}</p>
+            <PriceWithIcon priceValue={localeConversion(vAMMPrice, 2, 2)} />
+            <p className="ml-[22px] mt-1 text-[12px]">{localeConversion(oraclePrice, 2, 2)}</p>
           </div>
           <div className="w-[140px] text-highEmphasis">{priceGapElement}</div>
           <div className="w-[110px] text-right">

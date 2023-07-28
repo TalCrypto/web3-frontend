@@ -7,7 +7,7 @@ import { $userIsConnected } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
 import { useConnect, useSwitchNetwork } from 'wagmi';
 import { DEFAULT_CHAIN } from '@/const/supportedChains';
-import { $showSwitchNetworkErrorModal } from '@/stores/modal';
+import { $showSwitchNetworkErrorModal, $isShowMobileTncModal } from '@/stores/modal';
 
 function PortfolioEmpty() {
   const isConnected = useNanostore($userIsConnected);
@@ -16,11 +16,17 @@ function PortfolioEmpty() {
   const { connect, connectors } = useConnect();
 
   const onClickConnect = () => {
+    const localStorageTncApproved = localStorage.getItem('isTncApproved') === 'true';
+    if (!localStorageTncApproved) {
+      $isShowMobileTncModal.set(true);
+      return;
+    }
+
     // let isInjected = false;
 
     // for (let i = 0; i < connectors.length; i += 1) {
     //   const connector = connectors[i];
-    //   if (connector?.id.includes('injected')) {
+    //   if (connector?.name.toLowerCase().includes('metamask')) {
     //     connect({ connector });
     //     isInjected = true;
     //     break;
@@ -28,8 +34,9 @@ function PortfolioEmpty() {
     // }
 
     // if (!isInjected) {
-    open();
+    //   open();
     // }
+    open();
   };
 
   const updateTargetNetwork = () => {

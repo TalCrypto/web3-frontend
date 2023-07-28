@@ -104,12 +104,14 @@ function QuantityEnter(props: any) {
     freeCollateral,
     wethBalance,
     estimation,
-    isError
+    isError,
+    isAmountTooSmall,
+    setIsAmountTooSmall,
+    isInsuffBalance,
+    setIsInsuffBalance
   } = props;
 
   const [isFocus, setIsFocus] = useState(false);
-  const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
-  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
 
   const userPosition = usePositionInfo();
   const { initMarginRatio } = useNanostore($collectionConfig);
@@ -130,7 +132,6 @@ function QuantityEnter(props: any) {
       }
       onChange(inputValue);
     }
-
     setIsAmountTooSmall(Number(inputValue) < 0.01);
     setIsInsuffBalance(marginIndex === 0 && wethBalance < Number(inputValue));
   };
@@ -229,7 +230,7 @@ function QuantityEnter(props: any) {
         />
         {!isAmountTooSmall && isNotReduce && !isInsuffBalance ? (
           <ErrorTip label="Your current collateral is below Initial Collateral Requirement, you can only add Collateral to prevent liquidation." />
-        ) : prepareTextErrorMessage ? (
+        ) : prepareTextErrorMessage && !isInsuffBalance ? (
           <ErrorTip label={prepareTextErrorMessage} />
         ) : null}{' '}
       </div>
@@ -361,6 +362,9 @@ export default function AdjustCollateral() {
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
 
+  const [isAmountTooSmall, setIsAmountTooSmall] = useState(false);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
+
   const freeCollateral = useFreeCollateral();
   const wethBalance = useNanostore($userWethBalance);
 
@@ -369,7 +373,13 @@ export default function AdjustCollateral() {
   const approvalAmount = marginIndex === 1 || !debonceBigIntValue ? 0 : formatBigInt(debonceBigIntValue);
   const isNeedApproval = useApprovalCheck(approvalAmount);
 
+  const resetAlert = () => {
+    setIsAmountTooSmall(false);
+    setIsInsuffBalance(false);
+  };
+
   const initializeState = useCallback(() => {
+    resetAlert();
     setAdjustMarginValue(0);
     setIsPending(false);
   }, []);
@@ -386,7 +396,10 @@ export default function AdjustCollateral() {
   }, []);
 
   const handleChange = (value: any) => {
+    resetAlert();
     setAdjustMarginValue(value);
+    setIsAmountTooSmall(Number(value) < 0.01);
+    setIsInsuffBalance(marginIndex === 0 && wethBalance < Number(value));
   };
 
   useEffect(() => {
@@ -414,6 +427,10 @@ export default function AdjustCollateral() {
         isError={prepareTextErrorMessage !== null}
         estimation={estimation}
         prepareTextErrorMessage={prepareTextErrorMessage}
+        isAmountTooSmall={isAmountTooSmall}
+        setIsAmountTooSmall={setIsAmountTooSmall}
+        isInsuffBalance={isInsuffBalance}
+        setIsInsuffBalance={setIsInsuffBalance}
       />
 
       <AdjustCollateralSlidingBars

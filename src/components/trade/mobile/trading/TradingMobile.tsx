@@ -63,6 +63,7 @@ function TradingMobile() {
         </div>
       ) : null}
       <div
+        id="tradingMobileScroll"
         className={`flex ${userPosition && userPosition.size !== 0 ? 'h-[calc(100%-100px)]' : 'h-[calc(100%-50px)]'}
           overflow-y-scroll rounded-b-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
           bg-lightBlue p-[22px] text-white`}>

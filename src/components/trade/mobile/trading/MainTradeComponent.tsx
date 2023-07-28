@@ -42,7 +42,7 @@ function LongShortRatio(props: any) {
 
   return (
     <div className="mb-[26px] flex h-[40px] rounded-full bg-mediumBlue">
-      {/* {userPosition && userPosition.size > 0 ? (
+      {userPosition && userPosition.size < 0 ? (
         <div className="flex flex-1 items-center justify-center">
           <MobileTooltip
             content={
@@ -60,22 +60,22 @@ function LongShortRatio(props: any) {
             </div>
           </MobileTooltip>
         </div>
-      ) : ( */}
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === Side.LONG ? 'long-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        key="long"
-        onClick={() => {
-          if (!userPosition || userPosition.size === 0) {
-            setSaleOrBuyIndex(Side.LONG);
-          }
-        }}>
-        <div>LONG</div>
-      </div>
-      {/* )} */}
+          key="long"
+          onClick={() => {
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.LONG);
+            }
+          }}>
+          <div>LONG</div>
+        </div>
+      )}
 
-      {/* {userPosition && userPosition.size < 0 ? (
+      {userPosition && userPosition.size > 0 ? (
         <div className="flex flex-1 items-center justify-center">
           <MobileTooltip
             content={
@@ -93,20 +93,20 @@ function LongShortRatio(props: any) {
             </div>
           </MobileTooltip>
         </div>
-      ) : ( */}
-      <div
-        className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
+      ) : (
+        <div
+          className={`flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-full
           ${saleOrBuyIndex === Side.SHORT ? 'short-selected text-highEmphasis' : 'text-direction-unselected-normal'}
           text-center text-[14px] font-semibold hover:text-highEmphasis`}
-        key="short"
-        onClick={() => {
-          if (!userPosition || userPosition.size === 0) {
-            setSaleOrBuyIndex(Side.SHORT);
-          }
-        }}>
-        <div>SHORT</div>
-      </div>
-      {/* )} */}
+          key="short"
+          onClick={() => {
+            if (!userPosition || userPosition.size === 0) {
+              setSaleOrBuyIndex(Side.SHORT);
+            }
+          }}>
+          <div>SHORT</div>
+        </div>
+      )}
     </div>
   );
 }
@@ -156,14 +156,24 @@ function QuantityTips(props: any) {
 }
 
 function QuantityEnter(props: any) {
-  const { value, onChange, isAmountTooSmall, disabled, prepareTextErrorMessage, estimation, isInputBlur, setIsInputBlur } = props;
+  const {
+    value,
+    onChange,
+    isAmountTooSmall,
+    disabled,
+    prepareTextErrorMessage,
+    estimation,
+    isInputBlur,
+    setIsInputBlur,
+    isInsuffBalance,
+    setIsInsuffBalance
+  } = props;
 
   const isConnected = useNanostore($userIsConnected);
   const isWrongNetwork = useNanostore($userIsWrongNetwork);
   const wethBalance = useNanostore($userWethBalance);
 
   const [isFocus, setIsFocus] = useState(false);
-  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
 
   const fluctuationPct =
     (Number(estimation?.txSummary?.priceImpactPct) / 100) * 2 + (Number(estimation?.txSummary.priceImpactPct) / 100) ** 2;
@@ -397,6 +407,15 @@ function EstimatedValueDisplay(props: {
   );
 }
 
+const waitAndScrollToBottom = () => {
+  const timer = setTimeout(() => {
+    const tradingMobileContent = document.getElementById('tradingMobileScroll');
+    if (tradingMobileContent) tradingMobileContent.scrollTo({ top: tradingMobileContent.scrollHeight, behavior: 'smooth' });
+  }, 200);
+
+  return () => clearTimeout(timer);
+};
+
 function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }) {
   const { estimation } = props;
   const currentAmm = useNanostore($currentAmm);
@@ -412,6 +431,7 @@ function ExtendedEstimateComponent(props: { estimation: OpenPositionEstimation }
           className="flex cursor-pointer text-[14px] font-semibold text-primaryBlue hover:text-[#6286e3]"
           onClick={() => {
             isShowDetail(!showDetail);
+            waitAndScrollToBottom();
           }}>
           {showDetail ? 'Hide' : 'Show'} Advanced Details
           {showDetail ? (
@@ -497,6 +517,7 @@ export default function MainTradeComponent() {
   });
   const approvalAmount = getApprovalAmountFromEstimation(estimation);
   const isNeedApproval = useApprovalCheck(approvalAmount);
+  const [isInsuffBalance, setIsInsuffBalance] = useState(false);
 
   useEffect(() => {
     if (userPosition && userPosition.size !== 0) {
@@ -511,6 +532,15 @@ export default function MainTradeComponent() {
       setIsAmountTooSmall(false);
     }
   }, [estimation?.txSummary.collateral]);
+
+  useEffect(() => {
+    const estimatedCost = Number(quantity) + (estimation?.txSummary.fee || 0);
+    if (estimation && estimatedCost > wethBalance) {
+      setIsInsuffBalance(true);
+    } else {
+      setIsInsuffBalance(false);
+    }
+  }, [estimation?.txSummary.cost, quantity]);
 
   useEffect(() => {
     if (isEstError) {
@@ -571,6 +601,8 @@ export default function MainTradeComponent() {
         prepareTextErrorMessage={prepareTextErrorMessage}
         isInputBlur={isInputBlur}
         setIsInputBlur={setIsInputBlur}
+        isInsuffBalance={isInsuffBalance}
+        setIsInsuffBalance={setIsInsuffBalance}
       />
       <LeverageComponent
         disabled={isPending || isWrongNetwork || !isConnected}

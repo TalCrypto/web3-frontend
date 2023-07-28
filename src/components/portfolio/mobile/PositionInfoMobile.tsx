@@ -4,7 +4,7 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
-import React from 'react';
+import React, { useEffect } from 'react';
 import HistoryModal from '@/components/portfolio/mobile/HistoryModal';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $psShowBalance, $psShowHistory, $psShowPositionDetail, $psUserPosition } from '@/stores/portfolio';
@@ -33,6 +33,15 @@ function PositionInfoMobile() {
   const totalFundingPaymentAccount = Object.keys(totalFP)
     .map(amm => totalFP[amm as AMM])
     .reduce((total, value) => (value ? total + value : total), 0);
+
+  const resetPage = () => {
+    $psShowHistory.set(false);
+    $isShowMobileModal.set(false);
+  };
+
+  useEffect(() => {
+    resetPage();
+  }, []);
 
   return (
     <div>

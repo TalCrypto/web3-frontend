@@ -2,15 +2,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import PageHeader from '@/components/layout/header/PageHeader';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import TradingWindow from '@/components/trade/desktop/trading/TradingWindow';
 import SidebarCollection from '@/components/trade/desktop/trading/SidebarCollection';
 import InformationWindow from '@/components/trade/desktop/information/InformationWindow';
 import ChartWindows from '@/components/trade/desktop/chart/ChartWindows';
 import PositionDetails from '@/components/trade/desktop/position/PositionDetails';
 
-import { WithRouterProps } from 'next/dist/client/with-router';
-import { $currentAmm, $isMarketDataUpdating } from '@/stores/trading';
+import { $currentAmm, $isMarketDataUpdating, $marketUpdateTrigger } from '@/stores/trading';
 import { AMM, DEFAULT_AMM } from '@/const/collectionList';
 import ChartDataUpdater from '@/components/updaters/ChartDataUpdater';
 import CollectionConfigLoader from '@/components/updaters/CollectionConfigLoader';
@@ -26,11 +25,13 @@ import DisplayCollections from '@/components/trade/mobile/trading/DisplayCollect
 import UpdatingTradeData from '@/components/trade/mobile/UpdatingTradeData';
 
 import { useStore as useNanostore } from '@nanostores/react';
+import PullToRefresh from '@/components/common/mobile/PullToRefresh';
 
-function TradePage(props: WithRouterProps) {
-  const { router } = props;
+function TradePage() {
+  const router = useRouter();
 
   const isMarketDataUpdating = useNanostore($isMarketDataUpdating);
+  const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
 
   useEffect(() => {
     const queryCollection = router?.query?.collection;
@@ -50,6 +51,8 @@ function TradePage(props: WithRouterProps) {
       $currentAmm.set(undefined);
     };
   }, [router]);
+
+  const updateMarketData = () => $marketUpdateTrigger.set(!marketUpdateTrigger);
 
   return (
     <>
@@ -80,9 +83,10 @@ function TradePage(props: WithRouterProps) {
 
         <div className="mobile-view block bg-lightBlue md:hidden">
           <Switcher />
+          {/* <PullToRefresh isRefreshing={isMarketDataUpdating} onRefresh={updateMarketData} /> */}
 
           <div className="mt-12 bg-darkBlue">
-            {isMarketDataUpdating ? <UpdatingTradeData /> : null}
+            {/* {isMarketDataUpdating ? <UpdatingTradeData /> : null} */}
 
             <ChartMobile />
 
@@ -90,9 +94,9 @@ function TradePage(props: WithRouterProps) {
 
             <InformationMobile />
 
-            <TradingMobile />
-
+            {/* full screen layout */}
             <DisplayCollections />
+            <TradingMobile />
           </div>
         </div>
 
@@ -106,4 +110,4 @@ function TradePage(props: WithRouterProps) {
   );
 }
 
-export default withRouter(TradePage);
+export default TradePage;

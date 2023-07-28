@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import Image, { ImageProps } from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 interface NavbarItem {
   name: string;
@@ -13,8 +13,8 @@ interface NavbarItem {
   icon?: React.ReactElement;
 }
 
-function TopMenu(props: any) {
-  const { router } = props;
+function TopMenu() {
+  const router = useRouter();
 
   const navbarList: NavbarItem[] = [
     { name: 'Portfolio', path: '/portfolio', other: '', child: [], textClassName: '' },
@@ -127,4 +127,4 @@ function TopMenu(props: any) {
   );
 }
 
-export default withRouter(TopMenu);
+export default TopMenu;

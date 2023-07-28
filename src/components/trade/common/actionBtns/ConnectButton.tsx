@@ -4,7 +4,7 @@ import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $userIsConnecting } from '@/stores/user';
 import { useWeb3Modal } from '@web3modal/react';
-import { $isMobileView, $isShowLoginModal } from '@/stores/modal';
+import { $isMobileView, $isShowLoginModal, $isShowMobileTncModal } from '@/stores/modal';
 import { useConnect } from 'wagmi';
 
 function ConnectButton() {
@@ -15,11 +15,16 @@ function ConnectButton() {
 
   const traderConnectWallet = () => {
     if (isMobileView) {
+      const localStorageTncApproved = localStorage.getItem('isTncApproved') === 'true';
+      if (!localStorageTncApproved) {
+        $isShowMobileTncModal.set(true);
+        return;
+      }
       // let isInjected = false;
 
       // for (let i = 0; i < connectors.length; i += 1) {
       //   const connector = connectors[i];
-      //   if (connector?.id.includes('injected')) {
+      //   if (connector?.name.toLowerCase().includes('metamask')) {
       //     connect({ connector });
       //     isInjected = true;
       //     break;
@@ -27,8 +32,9 @@ function ConnectButton() {
       // }
 
       // if (!isInjected) {
-      open();
+      //   open();
       // }
+      open();
     } else {
       $isShowLoginModal.set(true);
     }
