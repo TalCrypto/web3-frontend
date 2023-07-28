@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopMenu from '@/components/layout/header/desktop/TopMenu';
 import Web3Area from '@/components/layout/header/desktop/Web3Area';
 import WidgetBot from '@widgetbot/react-embed';
-import { $isMobileView, $isShowDiscordModal } from '@/stores/modal';
+import { $isBannerShow, $isMobileView, $isShowDiscordModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import { firebaseAuth } from '@/const/firebaseConfig';
 // import MobileHeader from '@/components/layout/header/mobile';
@@ -14,6 +14,7 @@ function Header() {
   const [isCompleteLoading, setIsCompleteLoading] = useState(false);
   const [localDiscordKey, setLocalDiscordKey] = useState(false);
   const isMobileView = useNanostore($isMobileView);
+  const isBannerShow = useNanostore($isBannerShow);
 
   const isShowDiscordModal = useNanostore($isShowDiscordModal);
 
@@ -60,6 +61,24 @@ function Header() {
             <Web3Area />
           </div>
         </div>
+        {isBannerShow ? (
+          <div className="relative h-[32px] bg-gradient-to-r from-[#f703d94d] via-[#795af44d] to-[#04aefc4d]">
+            <div className="flex h-full items-center justify-between">
+              <div className="content-container text-[12px] font-[400] text-[#ffffffde]">
+                <span className="font-[600]">🚨HOT: Airdrop Season 2 is on 🔥🔥🔥</span>&nbsp; Trade now to flip others and multiply your
+                Tribe3 points for more Tribe3 token.💰 Don&#39;t miss out!
+              </div>
+            </div>
+            <Image
+              alt=""
+              src="/images/components/common/modal/close-white.svg"
+              width={10}
+              height={10}
+              className="absolute right-[12px] top-[10px] cursor-pointer"
+              onClick={() => $isBannerShow.set(false)}
+            />
+          </div>
+        ) : null}
 
         {!isMobileView && isCompleteLoading ? (
           <div className={`discord-popup absolute right-[12px] ${!isShowDiscordModal && !localDiscordKey ? 'hidden' : 'open'}`}>

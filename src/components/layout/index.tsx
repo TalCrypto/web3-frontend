@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
 import React, { useEffect, useRef } from 'react';
-import { $isMobileView, $isShowMobileModal } from '@/stores/modal';
+import { $isMobileView, $isShowMobileModal, $isBannerShow } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import LayoutUpdater from '@/components/updaters/LayoutUpdater';
 import { useRouter } from 'next/router';
@@ -19,6 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const isShowMobileMenu = useNanostore($isShowMobileModal);
   const isMobileView = useNanostore($isMobileView);
+  const isBannerShow = useNanostore($isBannerShow);
 
   const isNotFoundPage = useNanostore($isNotFoundPage);
   const isAirdropPage = router.pathname === '/airdrop';
@@ -85,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           className={`
             ${isUserprofilePage || isNotFoundPage ? userprofileBg2Class : 'content-container pb-[42px]'}
             mmd:pb-10 w-full
-            !px-0  text-white md:h-full md:min-h-screen md:pt-20 
+            !px-0  text-white md:h-full md:min-h-screen md:${isBannerShow ? 'pt-[120px]' : 'pt-20'}
             ${isShowMobileMenu ? 'h-[100vh] overflow-y-hidden' : ''}
         `}>
           {children}
