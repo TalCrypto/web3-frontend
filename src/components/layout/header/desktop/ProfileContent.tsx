@@ -180,8 +180,8 @@ const ProfileContent = () => {
 
   return (
     <div
-      className="profile-content z-2 transition-visibility invisible
-        absolute right-0 top-[46px] h-0 w-[370px]
+      className="profile-content transition-visibility invisible absolute
+        right-0 top-[46px] z-10 h-0 w-[370px]
         cursor-default rounded-lg bg-secondaryBlue
         opacity-0 transition-opacity duration-300"
       id="profile-content">

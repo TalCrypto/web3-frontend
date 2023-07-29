@@ -37,7 +37,7 @@ function PositionInfo() {
     if (notionalValue !== 0) {
       temp = psUserPosition.filter((item: any) => item !== null);
       temp.sort((a: any, b: any) => {
-        const result = Math.abs(b?.currentNotional) - Math.abs(a?.currentNotional);
+        const result = Math.abs(b?.size) - Math.abs(a?.size);
         return notionalValue === 2 ? -result : result;
       });
       $psUserPosition.set(temp);
@@ -49,6 +49,7 @@ function PositionInfo() {
         const result = b.margin - a.margin;
         return collateralValue === 2 ? -result : result;
       });
+      $psUserPosition.set(temp);
     }
   }, [positionSorting]);
 
