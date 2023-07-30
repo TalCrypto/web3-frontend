@@ -11,7 +11,7 @@ import { $OracleGraphData, $ohlcData, $selectedTimeIndex } from '@/stores/tradin
 import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
 import { getRandomIntInclusive } from '@/utils/number';
 
-function ChartDisplay() {
+function ChartDisplay({ id }: { id: string }) {
   const ohlcData = useNanostore($ohlcData);
   const oracleGraphData = useNanostore($OracleGraphData);
   // const { graphData, graphVolData, graphTwoData } = useChartData();
@@ -51,9 +51,9 @@ function ChartDisplay() {
   };
 
   const crossHairMoveHandler: MouseEventHandler = param => {
-    const toolTip = document.getElementById('chartTooltip');
+    const toolTip = document.getElementById(`${id}-chartTooltip`);
     if (!toolTip) return;
-    const container = document.getElementById('chartDisplay') || chartContainerRef.current;
+    const container: any = document.getElementById(`${id}-chartDisplay`);
 
     if (
       param.point === undefined ||
@@ -294,9 +294,9 @@ function ChartDisplay() {
   }, [chart, ohlcData, isSettingVammOn, isSettingOracleOn]);
 
   return (
-    <div ref={chartContainerRef} id="chartDisplay" className="relative">
+    <div ref={chartContainerRef} id={`${id}-chartDisplay`} className="relative">
       <div
-        id="chartTooltip"
+        id={`${id}-chartTooltip`}
         className="pointer-events-none absolute z-10 hidden h-[80px] w-[100px] rounded border-[0.5px] border-[#C970D0] bg-[rgba(32,34,73,0.9)] px-2 py-3 text-[12px] text-mediumEmphasis "
       />
     </div>

@@ -411,7 +411,7 @@ function ChartMobile() {
       <ChartHeaders />
       <div className="flex justify-center bg-darkBlue py-6">
         <div className="w-full">
-          <ChartDisplay />
+          <ChartDisplay id="mobile" />
         </div>
       </div>
       <ProComponent />

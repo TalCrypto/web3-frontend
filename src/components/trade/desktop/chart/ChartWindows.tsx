@@ -466,7 +466,7 @@ function ChartWindows(props: any, ref: any) {
         <div className="dividerslim" />
         <div className="chart-pro-container mb-[16px] flex">
           <div className="chartcontainer flex-1">
-            <ChartDisplay />
+            <ChartDisplay id="desktop" />
           </div>
           <ProComponent />
         </div>
