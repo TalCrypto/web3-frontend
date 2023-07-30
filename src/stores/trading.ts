@@ -48,6 +48,11 @@ export interface CollectionConfig {
   initMarginRatio: number;
 }
 
+export interface OracleGraphData {
+  timestamp: Time;
+  price: number;
+}
+
 export const $vammPrice = atom<number | undefined>();
 export const $oraclePrice = atom<number | undefined>();
 export const $nextFundingTime = atom<number | undefined>();
@@ -69,6 +74,7 @@ export const $spotMarketHistory = atom<any[] | undefined>();
 export const $selectedTimeIndex = atom(0);
 
 export const $ohlcData = atom<OhlcData[]>([]);
+export const $OracleGraphData = atom<OracleGraphData[]>([]);
 
 export const $tsTransactionStatus = atom({
   isShow: false,

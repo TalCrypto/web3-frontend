@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 /* eslint-disable implicit-arrow-linebreak */
@@ -16,7 +17,8 @@ import {
   getTokenBalanceBefore,
   getAllPositionHistory,
   getMarginChangedEventAfter,
-  getMarginChangedEventBefore
+  getMarginChangedEventBefore,
+  getGraphOracleDataAfter
 } from './subgraph';
 import { findLastIndex } from './arrayHelper';
 
@@ -50,6 +52,37 @@ export async function getMarketHistory(ammAddr: string) {
 
 export async function getFundingPaymentHistory(ammAddr: string) {
   return getFundingPaymentHistoryFromSubgraph(ammAddr);
+}
+
+export async function getOraclePriceGraphData(ammAddr: string, startFrom: number, interval: number) {
+  const now = new Date().getTime();
+  const nowTs = Math.round(now / 1000);
+  const startRoundTime = startFrom - (startFrom % interval);
+  const totalRound = Math.floor((nowTs - startRoundTime) / interval);
+
+  const result = [];
+  const rawGraphData = await getGraphOracleDataAfter(ammAddr, startRoundTime - 1, interval);
+  console.log({ rawGraphData });
+  if (rawGraphData && rawGraphData.length > 0) {
+    result.push(rawGraphData[0]);
+    let i = 1;
+    while (result[result.length - 1].timestamp < nowTs) {
+      if (rawGraphData.length < i + 1) {
+        result.push({
+          timestamp: result[result.length - 1].timestamp + 1,
+          price: result[result.length - 1].price
+        });
+      } else {
+        result.push({
+          timestamp: rawGraphData[i].timestamp,
+          price: rawGraphData[i].price
+        });
+        i += 1;
+      }
+    }
+  }
+
+  return result;
 }
 
 export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, interval: number) {
@@ -107,6 +140,30 @@ export async function getSpotPriceGraphData(ammAddr: string, startFrom: number, 
     }
   }
   return result;
+}
+
+export async function getDailyOraclePriceGraphData(ammAddr: string) {
+  const nowTs = Math.round(new Date().getTime() / 1000);
+  const tsYesterday = nowTs - 1 * 24 * 3600;
+  return getOraclePriceGraphData(ammAddr, tsYesterday, DAY_RESOLUTION); // 5mins
+}
+
+export async function getWeeklyOraclePriceGraphData(ammAddr: string) {
+  const nowTs = Math.round(new Date().getTime() / 1000);
+  const tsYesterday = nowTs - 7 * 24 * 3600;
+  return getOraclePriceGraphData(ammAddr, tsYesterday, WEEK_RESOLUTION); // 30mins
+}
+
+export async function getMonthlyOraclePriceGraphData(ammAddr: string) {
+  const nowTs = Math.round(new Date().getTime() / 1000);
+  const tsYesterday = nowTs - 30 * 24 * 3600;
+  return getOraclePriceGraphData(ammAddr, tsYesterday, MONTH_RESOLUTION); // 2hr
+}
+
+export async function getThreeMonthlyOraclePriceGraphData(ammAddr: string) {
+  const nowTs = Math.round(new Date().getTime() / 1000);
+  const tsYesterday = nowTs - 90 * 24 * 3600;
+  return getOraclePriceGraphData(ammAddr, tsYesterday, MONTH_RESOLUTION); // 2hr
 }
 
 export async function getDailySpotPriceGraphData(ammAddr: string) {

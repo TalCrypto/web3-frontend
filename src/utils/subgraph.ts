@@ -4,6 +4,7 @@ import { binarySearch } from '@/utils/arrayHelper';
 
 const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
 const subgraphBackupUrl = process.env.NEXT_PUBLIC_SUPGRAPH_BACKUP_ENDPOINT ?? '';
+const subgraphOracleUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ORACLE_ENDPOINT ?? '';
 
 const fetchMethod = async (_method: string, _query: string) => {
   const normalFetch = await fetch(subgraphUrl, {
@@ -17,6 +18,28 @@ const fetchMethod = async (_method: string, _query: string) => {
     return resJson;
   }
   const backupFetch = await fetch(subgraphBackupUrl, {
+    method: _method,
+    body: JSON.stringify({
+      query: _query
+    })
+  });
+  const resJson = await backupFetch.json();
+  return resJson;
+};
+
+const fetchOracleMethod = async (_method: string, _query: string) => {
+  const normalFetch = await fetch(subgraphOracleUrl, {
+    method: _method,
+    body: JSON.stringify({
+      query: _query
+    })
+  });
+
+  if (normalFetch.ok) {
+    const resJson = await normalFetch.json();
+    return resJson;
+  }
+  const backupFetch = await fetch(subgraphOracleUrl, {
     method: _method,
     body: JSON.stringify({
       query: _query
@@ -325,6 +348,30 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
         spotPrice: BigInt(positions[0].spotPrice)
       }
     : null;
+};
+
+export const getGraphOracleDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
+  const fetchGraphDatas = await fetchOracleMethod(
+    'POST',
+    `{ 
+      prices(first: 1000, where: {
+        nftAddress:  "${ammAddr}",
+        timestamp_gte: "${timestamp}"
+      }, orderBy: timestamp, orderDirection: asc) {
+        id
+        price
+        timestamp
+      }
+    }`
+  );
+
+  const { prices } = fetchGraphDatas.data;
+  const result = prices.map((data: any) => ({
+    timestamp: Number(data.timestamp),
+    price: BigInt(Number(data.price))
+  }));
+
+  return prices.length > 0 ? result : [];
 };
 
 export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {

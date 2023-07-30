@@ -7,13 +7,14 @@ import { createChart, ColorType, ISeriesApi, IChartApi, SingleValueData, isUTCTi
 import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 // import { useChartData } from '@/hooks/collection';
-import { $ohlcData, $selectedTimeIndex } from '@/stores/trading';
+import { $OracleGraphData, $ohlcData, $selectedTimeIndex } from '@/stores/trading';
 import moment from 'moment';
 import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
 import { getRandomIntInclusive } from '@/utils/number';
 
 function ChartDisplay() {
   const ohlcData = useNanostore($ohlcData);
+  const oracleGraphData = useNanostore($OracleGraphData);
   // const { graphData, graphVolData, graphTwoData } = useChartData();
   const chartContainerRef: any = useRef();
   const selectedTimeIndex = useNanostore($selectedTimeIndex);
@@ -103,11 +104,11 @@ function ChartDisplay() {
   const removeVammSeries = () => {
     if (!chart || !areaSeries || !volumeSeries) return;
     // console.log('removeOracleSeries');
-    chart.removeSeries(areaSeries);
-    chart.removeSeries(volumeSeries);
+    chart?.removeSeries(areaSeries);
+    chart?.removeSeries(volumeSeries);
     setAreaSeries(undefined);
     setVolumeSeries(undefined);
-    chart.timeScale().fitContent();
+    chart?.timeScale().fitContent();
   };
 
   const addVammSeries = () => {
@@ -166,6 +167,8 @@ function ChartDisplay() {
   };
 
   const addOracleSeries = () => {
+    console.log({ ohlcData });
+    console.log({ oracleGraphData });
     if (!chart) return;
     if (oracleSeries) {
       removeOracleSeries();
@@ -179,10 +182,7 @@ function ChartDisplay() {
     });
 
     // todo: second graph oracle / vamm
-    const graphTwoData = ohlcData.map(record => ({
-      time: record.time,
-      value: record.close + 0.01
-    }));
+    const graphTwoData = oracleGraphData.map(record => ({ time: record.timestamp, value: record.price }));
     series.setData(graphTwoData);
     setOracleSeries(series);
     chart.timeScale().fitContent();

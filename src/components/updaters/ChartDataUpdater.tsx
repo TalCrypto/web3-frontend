@@ -1,11 +1,16 @@
 import { getAMMAddress } from '@/const/addresses';
-import { $currentAmm, $dailyVolume, $ohlcData, $selectedTimeIndex, addGraphRecord } from '@/stores/trading';
+import { collectionsInfos } from '@/const/collectionList';
+import { $OracleGraphData, $currentAmm, $dailyVolume, $ohlcData, $selectedTimeIndex, addGraphRecord } from '@/stores/trading';
 import { $currentChain } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 import {
+  getDailyOraclePriceGraphData,
   getDailySpotPriceGraphData,
+  getMonthlyOraclePriceGraphData,
   getMonthlySpotPriceGraphData,
+  getThreeMonthlyOraclePriceGraphData,
   getThreeMonthlySpotPriceGraphData,
+  getWeeklyOraclePriceGraphData,
   getWeeklySpotPriceGraphData
 } from '@/utils/trading';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -19,24 +24,31 @@ const ChartDataUpdater = () => {
 
   useEffect(() => {
     async function loadData() {
+      let chartOracleData;
       let chartData;
       let dailyVolume: number = 0;
       if (currentAmm) {
         const ammAddr = getAMMAddress(chain, currentAmm);
+        const ammOracleAddr = collectionsInfos[currentAmm].contract;
+
         if (!ammAddr) return;
         if (selectedTimeIndex === 0) {
           chartData = await getDailySpotPriceGraphData(ammAddr);
+          chartOracleData = await getDailyOraclePriceGraphData(ammOracleAddr);
           dailyVolume = formatBigInt(chartData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else if (selectedTimeIndex === 1) {
           chartData = await getWeeklySpotPriceGraphData(ammAddr);
+          chartOracleData = await getWeeklyOraclePriceGraphData(ammOracleAddr);
           const dailyData = await getDailySpotPriceGraphData(ammAddr);
           dailyVolume = formatBigInt(dailyData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else if (selectedTimeIndex === 2) {
           chartData = await getMonthlySpotPriceGraphData(ammAddr);
+          chartOracleData = await getMonthlyOraclePriceGraphData(ammOracleAddr);
           const dailyData = await getDailySpotPriceGraphData(ammAddr);
           dailyVolume = formatBigInt(dailyData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         } else {
           chartData = await getThreeMonthlySpotPriceGraphData(ammAddr);
+          chartOracleData = await getThreeMonthlyOraclePriceGraphData(ammOracleAddr);
           const dailyData = await getDailySpotPriceGraphData(ammAddr);
           dailyVolume = formatBigInt(dailyData.reduce((vol: bigint, item: any) => vol + item.volume, 0n));
         }
@@ -53,10 +65,18 @@ const ChartDataUpdater = () => {
           )
         );
         $dailyVolume.set(dailyVolume);
+        console.log({ chartOracleData });
+        $OracleGraphData.set(
+          chartOracleData.map((record: { timestamp: number; price: bigint }) => ({
+            timestamp: record.timestamp as Time,
+            price: formatBigInt(record.price)
+          }))
+        );
       }
     }
     $ohlcData.set([]);
     $dailyVolume.set(undefined);
+    $OracleGraphData.set([]);
     loadData();
   }, [selectedTimeIndex, currentAmm, chain]);
 
