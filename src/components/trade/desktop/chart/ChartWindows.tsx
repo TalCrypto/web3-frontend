@@ -153,7 +153,7 @@ const ChartSetting = () => {
       ) : null}
       {isSettingOracleOn ? (
         <div className="flex items-center space-x-2 rounded">
-          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#1B9C94]" />
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#6286E3]" />
           <p className="select-none text-b3">Oracle Price</p>
         </div>
       ) : null}

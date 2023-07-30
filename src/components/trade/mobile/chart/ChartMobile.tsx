@@ -23,6 +23,8 @@ import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import ShowPriceGapOverModal from '@/components/trade/mobile/chart/ShowPriceGapOverModal';
+import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
+import CheckBox from '@/components/common/CheckBox';
 
 function PriceIndicator(props: any) {
   const { priceChangeValue, priceChangeRatio } = props;
@@ -131,12 +133,51 @@ function ChartTimeTabs(props: any) {
   );
 }
 
+const ChartSetting = () => {
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const isSettingVammOn = useNanostore($isSettingVammOn);
+  const isSettingOracleOn = useNanostore($isSettingOracleOn);
+
+  return (
+    <div className="relative pb-[6px]">
+      <div
+        className="cursor-pointer"
+        onClick={e => {
+          e.stopPropagation();
+          document.addEventListener('click', () => setIsMenuVisible(false));
+          setIsMenuVisible(!isMenuVisible);
+        }}>
+        <Image src="/images/components/trade/chart/settings.svg" alt="" width={20} height={20} />
+      </div>
+      <div
+        onClick={e => e.stopPropagation()}
+        className={`${isMenuVisible ? '' : 'hidden'} absolute right-0 top-5 z-10 mt-2 flex w-[160px] flex-col 
+        rounded-[6px] border border-[#2E4371] bg-secondaryBlue p-1 shadow-lg`}>
+        <div className="flex cursor-not-allowed items-center space-x-2 rounded p-3 transition hover:bg-white/10">
+          <CheckBox disabled checked={isSettingVammOn} />
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
+          <p className="text-b3">VAMM Price</p>
+        </div>
+        <div
+          className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10"
+          onClick={() => $isSettingOracleOn.set(!isSettingOracleOn)}>
+          <CheckBox checked={isSettingOracleOn} />
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#1B9C94]" />
+          <p className="text-b3">Oracle Price</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ChartHeaders = () => {
   const DEFAULT_TIME = '-- : -- : --';
   const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
   const { fundingPeriod } = useNanostore($collectionConfig);
   const { priceChange, priceChangePct } = useChartData();
 
+  const isSettingVammOn = useNanostore($isSettingVammOn);
+  const isSettingOracleOn = useNanostore($isSettingOracleOn);
   const vAMMPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isGapAboveLimit = useIsOverPriceGap();
@@ -270,7 +311,7 @@ const ChartHeaders = () => {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-1 items-end justify-end px-[20px]">
+      <div className="mb-3 mt-4 flex flex-1 items-center justify-end space-x-3 px-[20px]">
         <ChartTimeTabs
           name="group-1"
           controlRef={useRef()}
@@ -282,6 +323,21 @@ const ChartHeaders = () => {
           ]}
           isStartLoadingChart={!vAMMPrice}
         />
+        <ChartSetting />
+      </div>
+      <div className="mb-3 flex justify-end space-x-4 px-5">
+        {isSettingOracleOn ? (
+          <div className="flex items-center space-x-2 rounded">
+            <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
+            <p className="select-none text-b3">VAMM Price</p>
+          </div>
+        ) : null}
+        {isSettingOracleOn ? (
+          <div className="flex items-center space-x-2 rounded">
+            <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#6286E3]" />
+            <p className="select-none text-b3">Oracle Price</p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -226,6 +226,11 @@ function ChartDisplay() {
         axisPressedMouseMove: false,
         mouseWheel: false,
         pinch: false
+      },
+      crosshair: {
+        horzLine: {
+          visible: false
+        }
       }
     });
     const handleResize = () => {
