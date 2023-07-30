@@ -8,7 +8,6 @@ import { formatDateTime } from '@/utils/date';
 import { useStore as useNanostore } from '@nanostores/react';
 // import { useChartData } from '@/hooks/collection';
 import { $OracleGraphData, $ohlcData, $selectedTimeIndex } from '@/stores/trading';
-import moment from 'moment';
 import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
 import { getRandomIntInclusive } from '@/utils/number';
 
@@ -40,6 +39,17 @@ function ChartDisplay() {
   const toolTipHeight = 80;
   const toolTipMargin = 20;
 
+  const dateFormatter = (timestamp: any) => {
+    const date = new Date(timestamp * 1000);
+
+    const DD = String(date.getDate()).padStart(2, '0');
+    const MM = String(date.getMonth() + 1).padStart(2, '0');
+    const HH = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+
+    return `${DD}/${MM} ${HH}:${mm}`;
+  };
+
   const crossHairMoveHandler: MouseEventHandler = param => {
     const toolTip = document.getElementById('chartTooltip');
     if (!toolTip) return;
@@ -57,7 +67,7 @@ function ChartDisplay() {
     } else {
       // time will be in the same format that we supplied to setData.
       // thus it will be YYYY-MM-DD
-      const dateStr = isUTCTimestamp(param.time) ? moment.unix(param.time).format('DD/MM HH:mm') : param.time;
+      const dateStr = isUTCTimestamp(param.time) ? dateFormatter(param.time) : param.time;
       toolTip.style.display = 'block';
 
       const data = areaSeries ? (param.seriesData.get(areaSeries) as SingleValueData) : undefined;
@@ -228,8 +238,16 @@ function ChartDisplay() {
         pinch: false
       },
       crosshair: {
+        // hide the horizontal crosshair line
         horzLine: {
-          visible: false
+          visible: false,
+          labelVisible: false
+        },
+        // hide the vertical crosshair label
+        vertLine: {
+          labelVisible: false,
+          color: colors.lineColor,
+          style: 4
         }
       }
     });

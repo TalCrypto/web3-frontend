@@ -25,7 +25,6 @@
     "html-to-image": "^1.10.8",
     "lightweight-charts": "^4.0.1",
     "localforage": "^1.10.0",
-    "moment": "^2.29.4",
     "lodash": "^4.17.21",
     "nanostores": "^0.8.1",
     "next": "13.4.2",
