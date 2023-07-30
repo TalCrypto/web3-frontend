@@ -145,7 +145,7 @@ const ChartSetting = () => {
 
   return (
     <div className="flex space-x-[18px]">
-      {isSettingVammOn ? (
+      {isSettingOracleOn ? (
         <div className="flex items-center space-x-2 rounded">
           <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
           <p className="select-none text-b3">VAMM Price</p>
@@ -172,10 +172,8 @@ const ChartSetting = () => {
           className={`${
             isMenuVisible ? '' : 'hidden'
           } absolute left-0 top-5 mt-[6px] flex w-[160px] flex-col rounded-[6px] border border-[#2E4371] bg-secondaryBlue p-1 shadow-lg`}>
-          <div
-            className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10"
-            onClick={() => $isSettingVammOn.set(!isSettingVammOn)}>
-            <CheckBox checked={isSettingVammOn} />
+          <div className="flex cursor-not-allowed items-center space-x-2 rounded p-3 transition hover:bg-white/10">
+            <CheckBox disabled checked={isSettingVammOn} />
             <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
             <p className="text-b3">VAMM Price</p>
           </div>
