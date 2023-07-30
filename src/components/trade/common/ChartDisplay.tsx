@@ -182,7 +182,7 @@ function ChartDisplay() {
     });
 
     // todo: second graph oracle / vamm
-    const graphTwoData = oracleGraphData.map(record => ({ time: record.timestamp, value: record.price }));
+    const graphTwoData = ohlcData.map(record => ({ time: record.time, value: record.close + 0.1 }));
     series.setData(graphTwoData);
     setOracleSeries(series);
     chart.timeScale().fitContent();
