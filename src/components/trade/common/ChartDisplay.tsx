@@ -156,6 +156,11 @@ function ChartDisplay({ id }: { id: string }) {
     const toolTipHeight = 80;
     const toolTipMargin = 20;
 
+    const container: any = document.getElementById(`${id}-chartDisplay`);
+    const toolTip: any = document.getElementById(`${id}-chartTooltip`);
+
+    toolTip.style.display = 'none';
+
     const dateFormatter = (timestamp: any) => {
       const date = new Date(timestamp * 1000);
 
@@ -168,10 +173,6 @@ function ChartDisplay({ id }: { id: string }) {
     };
 
     const crossHairMoveHandler: MouseEventHandler = param => {
-      const toolTip = document.getElementById(`${id}-chartTooltip`);
-      if (!toolTip) return;
-      const container: any = document.getElementById(`${id}-chartDisplay`);
-
       if (
         param.point === undefined ||
         !param.time ||
