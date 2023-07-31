@@ -39,6 +39,7 @@ function AddCollateralButton({
   }, [isError, error, onError]);
 
   useEffect(() => {
+    alert(`closePos isSuccess: ${isSuccess}, isMobileView: ${isMobileView}, txHash: ${txHash}`);
     if (isSuccess) {
       onSuccess();
       alert(`addCollateral isMobileView: ${isMobileView}, txHash: ${txHash}`);

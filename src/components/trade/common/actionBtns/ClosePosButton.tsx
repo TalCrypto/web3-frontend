@@ -38,6 +38,7 @@ function ClosePosButton({
   }, [isError, error, onError]);
 
   useEffect(() => {
+    alert(`closePos isSuccess: ${isSuccess}, isMobileView: ${isMobileView}, txHash: ${txHash}`);
     if (isSuccess) {
       onSuccess();
       alert(`closePos isMobileView: ${isMobileView}, txHash: ${txHash}`);
