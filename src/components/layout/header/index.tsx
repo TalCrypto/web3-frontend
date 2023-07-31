@@ -74,7 +74,7 @@ function Header() {
                 <span className="font-[600]">
                   🚨HOT: <span className="text-seasonGreen">Airdrop Season 2 is ending soon</span> 🔥🔥
                 </span>
-                &nbsp; Trade now to flip others and multiply your Tribe3 points for more Tribe3 token.💰 Don&#39;t miss out!
+                &nbsp; Trade now to flip others and multiply your Tribe3 points.💰 Don&#39;t miss out!
               </div>
             </div>
             <Image
