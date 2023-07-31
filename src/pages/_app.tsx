@@ -54,8 +54,17 @@ const outlineToastClass = {
 export default function App({ Component, pageProps }: AppProps) {
   const [ready, setReady] = useState(false);
 
+  const isBrowser = () => typeof window !== 'undefined'; // The approach recommended by Next.js
+
+  function scrollToTop() {
+    if (!isBrowser()) return;
+    console.log('scrollToTop');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   useEffect(() => {
     setReady(true);
+    scrollToTop();
   }, []);
 
   if (!ready) return null;
