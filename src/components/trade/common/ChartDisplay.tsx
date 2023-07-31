@@ -110,24 +110,26 @@ function ChartDisplay({ id }: { id: string }) {
     //   wickDownColor: '#ef5350'
     // });
 
-    const volSeries = newChart.addHistogramSeries({
-      priceFormat: {
-        type: 'volume'
-      },
-      priceScaleId: ''
-    });
-    volSeries.priceScale().applyOptions({
-      scaleMargins: {
-        top: 0.9,
-        bottom: 0
-      }
-    });
-    const graphVolData = ohlcData.map(record => ({
-      time: record.time,
-      value: getRandomIntInclusive(1, record.close * 10),
-      color: Math.random() > 0.5 ? 'rgba(120, 243, 99, 0.3)' : 'rgba(255, 86, 86, 0.3)'
-    }));
-    volSeries.setData(graphVolData);
+    // volume
+    // const volSeries = newChart.addHistogramSeries({
+    //   priceFormat: {
+    //     type: 'volume'
+    //   },
+    //   priceScaleId: ''
+    // });
+    // volSeries.priceScale().applyOptions({
+    //   scaleMargins: {
+    //     top: 0.9,
+    //     bottom: 0
+    //   }
+    // });
+    // const graphVolData = ohlcData.map(record => ({
+    //   time: record.time,
+    //   value: getRandomIntInclusive(1, record.close * 10),
+    //   color: Math.random() > 0.5 ? 'rgba(120, 243, 99, 0.3)' : 'rgba(255, 86, 86, 0.3)'
+    // }));
+    // volSeries.setData(graphVolData);
+
     // setVolumeSeries(volSeries);
 
     let oracleSeries: any;
