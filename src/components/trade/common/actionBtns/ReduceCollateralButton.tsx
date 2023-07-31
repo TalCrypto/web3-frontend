@@ -39,7 +39,7 @@ function ReduceCollateralButton({
   }, [isError, error, onError]);
 
   useEffect(() => {
-    alert(`closePos isSuccess: ${isSuccess}, isMobileView: ${isMobileView}, txHash: ${txHash}`);
+    alert(`reduceCollateral isSuccess: ${isSuccess}, isMobileView: ${isMobileView}, txHash: ${txHash}`);
     if (isSuccess) {
       onSuccess();
       if (isMobileView && txHash) {
