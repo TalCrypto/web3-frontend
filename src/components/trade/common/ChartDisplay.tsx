@@ -142,7 +142,7 @@ function ChartDisplay({ id }: { id: string }) {
       });
 
       // todo: second graph oracle / vamm
-      const graphTwoData = ohlcData.map(record => ({ time: record.time, value: record.close + 0.1 }));
+      const graphTwoData = oracleGraphData.map(record => ({ time: record.time, value: record.close + 0.1 }));
       oracleSeries.setData(graphTwoData);
       // setOracleSeries(oracleSeries);
     }
@@ -237,7 +237,7 @@ function ChartDisplay({ id }: { id: string }) {
       newChart.remove();
       // setChart(undefined);
     };
-  }, [ohlcData, isSettingVammOn, isSettingOracleOn]);
+  }, [ohlcData, oracleGraphData, isSettingVammOn, isSettingOracleOn]);
 
   return (
     <div ref={chartContainerRef} id={`${id}-chartDisplay`} className="relative">
