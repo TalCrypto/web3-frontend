@@ -41,6 +41,7 @@ function AddCollateralButton({
   useEffect(() => {
     if (isSuccess) {
       onSuccess();
+      alert(`addCollateral isMobileView: ${isMobileView}, txHash: ${txHash}`);
       if (isMobileView && txHash) {
         $tsTransactionStatus.set({
           isShow: true,

@@ -40,6 +40,7 @@ function ClosePosButton({
   useEffect(() => {
     if (isSuccess) {
       onSuccess();
+      alert(`closePos isMobileView: ${isMobileView}, txHash: ${txHash}`);
       if (isMobileView && txHash) {
         $tsTransactionStatus.set({
           isShow: true,
