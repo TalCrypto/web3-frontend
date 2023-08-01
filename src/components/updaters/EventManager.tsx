@@ -72,7 +72,7 @@ const EventHandlers = () => {
         const traderAddresses = filteredLogs.map(event => event.trader);
         apiConnection.getUsernameFromAddress(traderAddresses).then(usernameList => {
           filteredLogs.forEach(event => {
-            const targetUsername = usernameList[event.trader.toLowerCase()];
+            const targetUsername = usernameList?.[event.trader.toLowerCase()];
             const newRecord = {
               ammAddress,
               timestamp: Math.round(new Date().getTime() / 1000), // log doesn't return timestamp
