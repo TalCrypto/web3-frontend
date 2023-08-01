@@ -170,7 +170,7 @@ function QuantityEnter(props: {
               type="text"
               // pattern="[0-9]*"
               className="w-full border-none border-mediumBlue bg-mediumBlue text-right text-[15px] font-bold text-white outline-none"
-              value={closeValue}
+              value={closeValue === 0 ? '' : closeValue}
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';

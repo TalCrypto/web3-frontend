@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PrimaryButton from '@/components/common/PrimaryButton';
 import { $isShowMobileTncModal } from '@/stores/modal';

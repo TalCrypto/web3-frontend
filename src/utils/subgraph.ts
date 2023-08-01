@@ -1,10 +1,28 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
+import { GraphDataTarget } from '@/const';
 import { binarySearch } from '@/utils/arrayHelper';
 
 const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
 const subgraphBackupUrl = process.env.NEXT_PUBLIC_SUPGRAPH_BACKUP_ENDPOINT ?? '';
+const subgraphOracleUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ORACLE_ENDPOINT ?? '';
 
-const fetchMethod = async (_method: string, _query: string) => {
-  const normalFetch = await fetch(subgraphUrl, {
+const fetchMethod = async (_method: string, _query: string, target: GraphDataTarget = GraphDataTarget['VAMM']) => {
+  let link = subgraphUrl;
+  let backupLink = subgraphBackupUrl;
+
+  switch (target) {
+    case GraphDataTarget['ORACLE']:
+      link = subgraphOracleUrl;
+      backupLink = subgraphOracleUrl;
+      break;
+    default:
+      link = subgraphUrl;
+      backupLink = subgraphBackupUrl;
+      break;
+  }
+
+  const normalFetch = await fetch(link, {
     method: _method,
     body: JSON.stringify({
       query: _query
@@ -14,7 +32,29 @@ const fetchMethod = async (_method: string, _query: string) => {
     const resJson = await normalFetch.json();
     return resJson;
   }
-  const backupFetch = await fetch(subgraphBackupUrl, {
+  const backupFetch = await fetch(backupLink, {
+    method: _method,
+    body: JSON.stringify({
+      query: _query
+    })
+  });
+  const resJson = await backupFetch.json();
+  return resJson;
+};
+
+const fetchOracleMethod = async (_method: string, _query: string) => {
+  const normalFetch = await fetch(subgraphOracleUrl, {
+    method: _method,
+    body: JSON.stringify({
+      query: _query
+    })
+  });
+
+  if (normalFetch.ok) {
+    const resJson = await normalFetch.json();
+    return resJson;
+  }
+  const backupFetch = await fetch(subgraphOracleUrl, {
     method: _method,
     body: JSON.stringify({
       query: _query
@@ -325,11 +365,40 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
     : null;
 };
 
+export const getLatestOraclePriceBefore = async (ammAddr: string, timestamp: number) => {
+  const fetchPositions = await fetchMethod(
+    'POST',
+    `{ 
+        prices(
+        first: 1,
+        where:{
+          nftAddress: "${ammAddr}",
+          timestamp_lt: ${timestamp}
+        }
+        orderBy: timestamp,
+        orderDirection: desc
+      ){
+        timestamp
+        price
+      }
+    }`,
+    GraphDataTarget['ORACLE']
+  );
+
+  const positions = fetchPositions.data.prices;
+  return positions.length > 0
+    ? {
+        timestamp: Number(positions[0].timestamp),
+        spotPrice: BigInt(positions[0].price)
+      }
+    : null;
+};
+
 export const getGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
   const fetchGraphDatas = await fetchMethod(
     'POST',
     `{ 
-        graphDatas(
+      graphDatas(
         first: 1000,
         where:{
           amm: "${ammAddr}",
@@ -359,6 +428,44 @@ export const getGraphDataAfter = async (ammAddr: string, timestamp: number, reso
     high: BigInt(data.high),
     low: BigInt(data.low),
     volume: BigInt(data.volume)
+  }));
+
+  return graphDatas.length > 0 ? result : [];
+};
+
+export const getOracleGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
+  const fetchGraphDatas = await fetchMethod(
+    'POST',
+    `{ 
+      graphDatas(
+        first: 1000,
+        where:{
+          nftAddress: "${ammAddr}",
+          startTime_gt: ${timestamp},
+          resolution: ${resolution}
+        }
+        orderBy: startTime,
+        orderDirection: asc
+      ){
+        startTime
+        endTime
+        high
+        low
+        open
+        close
+      }
+    }`,
+    GraphDataTarget['ORACLE']
+  );
+
+  const { graphDatas } = fetchGraphDatas.data;
+  const result = graphDatas.map((data: any) => ({
+    start: Number(data.startTime),
+    end: Number(data.endTime),
+    open: BigInt(data.open),
+    close: BigInt(data.close),
+    high: BigInt(data.high),
+    low: BigInt(data.low)
   }));
 
   return graphDatas.length > 0 ? result : [];

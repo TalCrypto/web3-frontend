@@ -22,3 +22,8 @@ export enum CollateralActions {
 export const DAY_RESOLUTION = 300;
 export const WEEK_RESOLUTION = 1800;
 export const MONTH_RESOLUTION = 7200;
+
+export enum GraphDataTarget {
+  VAMM = 'vAMM',
+  ORACLE = 'oracle'
+}

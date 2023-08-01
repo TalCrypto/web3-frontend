@@ -20,6 +20,7 @@ import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { Web3Modal } from '@web3modal/react';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import MobileTncModal from '@/components/common/mobile/TncModal';
+import Head from 'next/head';
 
 // Wagmi config
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
@@ -62,6 +63,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <Head>
+        {/* Tell the browser to never restore the scroll position on load */}
+        <script dangerouslySetInnerHTML={{ __html: `history.scrollRestoration = "manual"` }} />
+      </Head>
       <WagmiConfig config={wagmiConfig}>
         <Layout>
           <ToastContainer
