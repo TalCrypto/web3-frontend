@@ -7,7 +7,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore, useStore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { getCollectionInformation } from '@/const/collectionList';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
 
 import Tooltip from '@/components/common/Tooltip';
 import {
@@ -203,6 +203,26 @@ const ChartHeaders = () => {
   const { priceChange, priceChangePct } = useChartData();
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
+  const [prevVammPrice, setPrevVammPrice] = useState<number>();
+  const [prevAmm, setPrevAmm] = useState<AMM>();
+  const [vammPriceColor, setVammPriceColor] = useState('');
+
+  // handle vamm price color changed
+  useEffect(() => {
+    if (prevVammPrice !== undefined && vammPrice !== undefined && prevAmm === currentAmm) {
+      // console.log(prevVammPrice, vammPrice);
+      // console.log('true change');
+      const textColor = vammPrice > prevVammPrice ? 'text-marketGreen' : vammPrice < prevVammPrice ? 'text-marketRed' : '';
+      setVammPriceColor(textColor);
+      setTimeout(() => {
+        setVammPriceColor('');
+      }, 1000);
+    }
+
+    setPrevAmm(currentAmm);
+    setPrevVammPrice(vammPrice);
+  }, [vammPrice]);
+
   return (
     <div className="flex w-full flex-row items-center justify-start text-[16px]">
       <div className="left">
@@ -218,7 +238,7 @@ const ChartHeaders = () => {
             </div>
           </div>
           <div className="flex">
-            <PriceWithIcon priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
+            <PriceWithIcon className={vammPriceColor} priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
             <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
           </div>
         </div>
