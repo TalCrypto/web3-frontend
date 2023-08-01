@@ -99,10 +99,10 @@ function OpenPosButton({
   }, [isError, error, onError]);
 
   useEffect(() => {
-    alert(`openPos isSuccess: ${isSuccess}, isMobileView: ${isMobileView}, txHash: ${txHash}`);
+    // alert(`openPos isSuccess: ${isSuccess}, isMobileView: ${isMobileView}, txHash: ${txHash}`);
     if (isSuccess) {
       onSuccess();
-      alert(`openPos isMobileView: ${isMobileView}, txHash: ${txHash}`);
+      // alert(`openPos isMobileView: ${isMobileView}, txHash: ${txHash}`);
       if (isMobileView && txHash) {
         $tsTransactionStatus.set({
           isShow: true,
