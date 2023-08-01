@@ -71,6 +71,7 @@ export async function getPriceGraphData(
     target === GraphDataTarget['VAMM']
       ? await getGraphDataAfter(ammAddr, startRoundTime - 1, interval)
       : await getOracleGraphDataAfter(ammAddr, startRoundTime - 1, interval);
+
   if (!rawGraphData || rawGraphData.length === 0) {
     const latestPriceBeforeRange =
       target === GraphDataTarget['VAMM']
@@ -131,20 +132,20 @@ export async function getDailyOraclePriceGraphData(ammAddr: string) {
 
 export async function getWeeklyOraclePriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
-  const tsYesterday = nowTs - 7 * 24 * 3600;
-  return getPriceGraphData(ammAddr, tsYesterday, WEEK_RESOLUTION, GraphDataTarget['ORACLE']); // 30mins
+  const ts7Days = nowTs - 7 * 24 * 3600;
+  return getPriceGraphData(ammAddr, ts7Days, WEEK_RESOLUTION, GraphDataTarget['ORACLE']); // 30mins
 }
 
 export async function getMonthlyOraclePriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
-  const tsYesterday = nowTs - 30 * 24 * 3600;
-  return getPriceGraphData(ammAddr, tsYesterday, MONTH_RESOLUTION, GraphDataTarget['ORACLE']); // 2hr
+  const ts30Days = nowTs - 30 * 24 * 3600;
+  return getPriceGraphData(ammAddr, ts30Days, MONTH_RESOLUTION, GraphDataTarget['ORACLE']); // 2hr
 }
 
 export async function getThreeMonthlyOraclePriceGraphData(ammAddr: string) {
   const nowTs = Math.round(new Date().getTime() / 1000);
-  const tsYesterday = nowTs - 90 * 24 * 3600;
-  return getPriceGraphData(ammAddr, tsYesterday, MONTH_RESOLUTION, GraphDataTarget['ORACLE']); // 2hr
+  const ts90Days = nowTs - 90 * 24 * 3600;
+  return getPriceGraphData(ammAddr, ts90Days, MONTH_RESOLUTION, GraphDataTarget['ORACLE']); // 2hr
 }
 
 export async function getDailySpotPriceGraphData(ammAddr: string) {
