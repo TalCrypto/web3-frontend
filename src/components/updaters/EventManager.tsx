@@ -73,7 +73,6 @@ const EventHandlers = () => {
         apiConnection.getUsernameFromAddress(traderAddresses).then(usernameList => {
           filteredLogs.forEach(event => {
             const targetUsername = usernameList[event.trader.toLowerCase()];
-            console.log({ targetUsername });
             const newRecord = {
               ammAddress,
               timestamp: Math.round(new Date().getTime() / 1000), // log doesn't return timestamp
@@ -87,7 +86,6 @@ const EventHandlers = () => {
               txHash: event.txHash,
               isNew: true
             };
-            console.log({ newRecord });
             const oldHistory = $futureMarketHistory.get();
             if (oldHistory) {
               $futureMarketHistory.set([newRecord, ...oldHistory.map(history => ({ ...history, isNew: false }))]);
