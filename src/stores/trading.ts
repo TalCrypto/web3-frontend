@@ -69,6 +69,7 @@ export const $spotMarketHistory = atom<any[] | undefined>();
 export const $selectedTimeIndex = atom(0);
 
 export const $ohlcData = atom<OhlcData[]>([]);
+export const $OracleGraphData = atom<OhlcData[]>([]);
 
 export const $tsTransactionStatus = atom({
   isShow: false,

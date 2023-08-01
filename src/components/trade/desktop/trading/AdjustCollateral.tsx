@@ -210,7 +210,7 @@ function QuantityEnter(props: any) {
               type="text"
               className={`w-full border-none border-mediumBlue bg-mediumBlue
                   text-right text-[15px] font-bold text-white outline-none`}
-              value={adjustMarginValue}
+              value={adjustMarginValue === 0 ? '' : adjustMarginValue}
               placeholder="0.00"
               onChange={handleEnter}
               disabled={disabled}

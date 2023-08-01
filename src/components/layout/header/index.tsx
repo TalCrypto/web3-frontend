@@ -5,17 +5,20 @@ import Link from 'next/link';
 import TopMenu from '@/components/layout/header/desktop/TopMenu';
 import Web3Area from '@/components/layout/header/desktop/Web3Area';
 import WidgetBot from '@widgetbot/react-embed';
-import { $isMobileView, $isShowDiscordModal } from '@/stores/modal';
+import { $isBannerShow, $isMobileView, $isShowDiscordModal } from '@/stores/modal';
 import { useStore as useNanostore } from '@nanostores/react';
 import { firebaseAuth } from '@/const/firebaseConfig';
+import { useRouter } from 'next/router';
 // import MobileHeader from '@/components/layout/header/mobile';
 
 function Header() {
   const [isCompleteLoading, setIsCompleteLoading] = useState(false);
   const [localDiscordKey, setLocalDiscordKey] = useState(false);
   const isMobileView = useNanostore($isMobileView);
+  const isBannerShow = useNanostore($isBannerShow);
 
   const isShowDiscordModal = useNanostore($isShowDiscordModal);
+  const router = useRouter();
 
   useEffect(() => {
     setIsCompleteLoading(true);
@@ -60,6 +63,33 @@ function Header() {
             <Web3Area />
           </div>
         </div>
+        {isBannerShow ? (
+          <div
+            className="relative h-[32px] cursor-pointer bg-gradient-to-r from-[#04aefc4d] via-[#795af44d] to-[#f703d94d]"
+            onClick={() => {
+              router.push('/airdrop');
+            }}>
+            <div className="flex h-full items-center justify-between">
+              <div className="content-container text-[12px] font-[400] text-[#ffffffde]">
+                <span className="font-[600]">
+                  🚨HOT: <span className="text-seasonGreen">Airdrop Season 2 is ending soon</span> 🔥🔥
+                </span>
+                &nbsp; Trade now to flip others and multiply your Tribe3 points.💰 Don&#39;t miss out!
+              </div>
+            </div>
+            <Image
+              alt=""
+              src="/images/components/common/modal/close-white.svg"
+              width={10}
+              height={10}
+              className="absolute right-[12px] top-[10px] z-[2] cursor-pointer"
+              onClick={e => {
+                e.stopPropagation();
+                $isBannerShow.set(false);
+              }}
+            />
+          </div>
+        ) : null}
 
         {!isMobileView && isCompleteLoading ? (
           <div className={`discord-popup absolute right-[12px] ${!isShowDiscordModal && !localDiscordKey ? 'hidden' : 'open'}`}>

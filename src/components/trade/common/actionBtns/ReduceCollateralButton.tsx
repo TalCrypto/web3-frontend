@@ -39,9 +39,11 @@ function ReduceCollateralButton({
   }, [isError, error, onError]);
 
   useEffect(() => {
+    // alert(`reduceCollateral isSuccess: ${isSuccess}, isMobileView: ${isMobileView}, txHash: ${txHash}`);
     if (isSuccess) {
       onSuccess();
       if (isMobileView && txHash) {
+        // alert(`reduceCollateral isMobileView: ${isMobileView}, txHash: ${txHash}`);
         $tsTransactionStatus.set({
           isShow: true,
           isSuccess: true,

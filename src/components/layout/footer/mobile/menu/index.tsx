@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';

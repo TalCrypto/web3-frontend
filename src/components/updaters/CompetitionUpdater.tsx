@@ -79,6 +79,7 @@ function CompetitionDataUpdater() {
     }
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]);
 
   return null;
