@@ -39,11 +39,11 @@ const EventHandlers = () => {
           const ammInfo = getCollectionInformation(amm);
           const isLiquidation = type === TradeActions.FULL_LIQ || type === TradeActions.PARTIAL_LIQ;
           const message =
-            type === TradeActions.PARTIAL_LIQ
-              ? 'Your position has been partially liquidated'
-              : type === TradeActions.FULL_LIQ
-              ? 'Your position has been partially liquidated'
-              : 'Order Completed!';
+            type === TradeActions.PARTIAL_LIQ ?
+              'Your position has been partially liquidated' :
+              type === TradeActions.FULL_LIQ ?
+                'Your position has been partially liquidated' :
+                'Order Completed!';
 
           if (!isMobileView) {
             showToast(
@@ -70,6 +70,7 @@ const EventHandlers = () => {
         const traderAddresses = filteredLogs.map(event => event.trader);
         apiConnection.getUsernameFromAddress(traderAddresses).then(usernameList => {
           filteredLogs.forEach(event => {
+            const targetUsername = usernameList?.[event.trader.toLowerCase()];
             const newRecord = {
               ammAddress,
               timestamp: Math.round(new Date().getTime() / 1000), // log doesn't return timestamp
@@ -79,7 +80,7 @@ const EventHandlers = () => {
               liquidationPenalty: event.liquidationPenalty,
               spotPrice: event.vammPrice,
               userAddress: event.trader,
-              userId: !usernameList?.[event.trader] || usernameList?.[event.trader] === event.trader ? '' : usernameList?.[event.trader],
+              userId: !targetUsername || usernameList?.[event.trader] === event.trader ? '' : targetUsername,
               txHash: event.txHash,
               isNew: true
             };
