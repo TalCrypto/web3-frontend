@@ -6,7 +6,7 @@ export const $psShowBalance = atom(true);
 
 export const $psUserPosition = computed($userPositionInfos, userPositionInfos => {
   const amms = Object.keys(userPositionInfos) as AMM[];
-  const orders = ['milady', 'ppg', 'degods', 'captainz', 'bayc', 'mayc', 'azuki', 'punks'];
+  const orders = ['bayc', 'mayc', 'degods', 'azuki', 'captainz', 'punks', 'ppg', 'milady'];
   return amms
     .map(amm => userPositionInfos[amm])
     .sort((a, b) => orders.indexOf(a?.amm || '') - orders.indexOf(b?.amm || ''))
