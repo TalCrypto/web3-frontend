@@ -12,6 +12,7 @@ import ChartDisplay from '@/components/trade/common/ChartDisplay';
 
 import {
   $collectionConfig,
+  $currentAmm,
   $fundingRates,
   $nextFundingTime,
   $openInterests,
@@ -26,6 +27,7 @@ import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponen
 import ShowPriceGapOverModal from '@/components/trade/mobile/chart/ShowPriceGapOverModal';
 import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
 import CheckBox from '@/components/common/CheckBox';
+import { AMM } from '@/const/collectionList';
 
 function PriceIndicator(props: any) {
   const { priceChangeValue, priceChangeRatio } = props;
@@ -192,6 +194,28 @@ const ChartHeaders = () => {
   const fundingRates = useNanostore($fundingRates);
   const nextFundingTime = useNanostore($nextFundingTime);
 
+  const vammPrice = vAMMPrice;
+  const currentAmm = useNanostore($currentAmm);
+  const [prevVammPrice, setPrevVammPrice] = useState<number>();
+  const [prevAmm, setPrevAmm] = useState<AMM>();
+  const [vammPriceColor, setVammPriceColor] = useState('');
+
+  // handle vamm price color changed
+  useEffect(() => {
+    if (prevVammPrice !== undefined && vammPrice !== undefined && prevAmm === currentAmm) {
+      // console.log(prevVammPrice, vammPrice);
+      // console.log('true change');
+      const textColor = vammPrice > prevVammPrice ? 'text-marketGreen' : vammPrice < prevVammPrice ? 'text-marketRed' : '';
+      setVammPriceColor(textColor);
+      setTimeout(() => {
+        setVammPriceColor('');
+      }, 1000);
+    }
+
+    setPrevAmm(currentAmm);
+    setPrevVammPrice(vammPrice);
+  }, [vammPrice]);
+
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
 
@@ -265,7 +289,13 @@ const ChartHeaders = () => {
     <div className="w-full">
       <div className="grid grid-cols-2 px-[20px] pt-[27px]">
         <div className="col-span-1">
-          <PriceWithIcon priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'} className="leading-[30px]" width={30} height={30} large />
+          <PriceWithIcon
+            className={`${vammPriceColor} leading-[30px]`}
+            priceValue={vAMMPrice ? vAMMPrice.toFixed(2) : '-.--'}
+            width={30}
+            height={30}
+            large
+          />
           <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
         </div>
 
