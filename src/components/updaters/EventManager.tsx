@@ -26,8 +26,6 @@ const EventHandlers = () => {
   const isMobileView = useNanostore($isMobileView);
 
   useEffect(() => {
-    console.log({ pendingPositionChangedEvents });
-
     if (pendingPositionChangedEvents.length > 0 && ammAddress) {
       $pendingPositionChangedEvents.set([]);
       pendingPositionChangedEvents.forEach(event => {
