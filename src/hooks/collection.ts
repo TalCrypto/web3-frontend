@@ -16,6 +16,7 @@ import {
 import { AMM } from '@/const/collectionList';
 import { getSupportedAMMs } from '@/const/addresses';
 import { SingleValueData } from 'lightweight-charts';
+import { getRandomIntInclusive } from '@/utils/number';
 
 export const usePositionInfo = (amm?: AMM): UserPositionInfo | undefined => {
   const positionInfos = useNanostore($userPositionInfos);
@@ -62,6 +63,8 @@ export const useTransactionIsPending = (amm?: AMM): boolean => {
 
 export const useChartData = (): {
   graphData: SingleValueData[];
+  graphVolData: SingleValueData[];
+  graphTwoData: SingleValueData[];
   dailyVolume?: number;
   priceChange?: number;
   priceChangePct?: number;
@@ -75,5 +78,19 @@ export const useChartData = (): {
   const highPrice = useNanostore($highPrice);
   const lowPrice = useNanostore($lowPrice);
   const graphData = ohlcData.map(record => ({ time: record.time, value: record.close }));
-  return { graphData, dailyVolume, priceChange, priceChangePct, highPrice, lowPrice };
+
+  // todo: get graph vol data
+  const graphVolData = ohlcData.map(record => ({
+    time: record.time,
+    value: getRandomIntInclusive(1, record.close * 10),
+    color: Math.random() > 0.5 ? 'rgba(120, 243, 99, 0.3)' : 'rgba(255, 86, 86, 0.3)'
+  }));
+
+  // todo: second graph oracle / vamm
+  const graphTwoData = ohlcData.map(record => ({
+    time: record.time,
+    value: record.close + 0.01
+  }));
+
+  return { graphData, graphVolData, graphTwoData, dailyVolume, priceChange, priceChangePct, highPrice, lowPrice };
 };

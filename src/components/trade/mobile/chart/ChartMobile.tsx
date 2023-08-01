@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable consistent-return */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
@@ -23,6 +24,8 @@ import { useChartData, useIsOverPriceGap } from '@/hooks/collection';
 import { $isMobileView } from '@/stores/modal';
 import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponents';
 import ShowPriceGapOverModal from '@/components/trade/mobile/chart/ShowPriceGapOverModal';
+import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
+import CheckBox from '@/components/common/CheckBox';
 
 function PriceIndicator(props: any) {
   const { priceChangeValue, priceChangeRatio } = props;
@@ -131,12 +134,57 @@ function ChartTimeTabs(props: any) {
   );
 }
 
+const ChartSetting = () => {
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const isSettingVammOn = useNanostore($isSettingVammOn);
+  const isSettingOracleOn = useNanostore($isSettingOracleOn);
+
+  return (
+    <div className="relative pb-[6px]">
+      <div
+        className="group cursor-pointer"
+        onClick={e => {
+          e.stopPropagation();
+          document.addEventListener('click', () => setIsMenuVisible(false));
+          setIsMenuVisible(!isMenuVisible);
+        }}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            className={`${isMenuVisible ? 'fill-[#FFFFFFDE]' : ''} xgroup-hover:fill-[#FFFFFFDE]`}
+            d="M8.74188 1.66675C8.34271 1.66675 8.00149 1.94891 7.92482 2.34058L7.6465 3.76961C6.96253 4.02825 6.3301 4.38958 5.77475 4.84546L4.40431 4.37345C4.02681 4.24345 3.61147 4.39955 3.41147 4.74455L2.15496 6.92228C1.9558 7.26812 2.02828 7.70716 2.32912 7.96883L3.42775 8.92423C3.37061 9.27536 3.33335 9.63282 3.33335 10.0001C3.33335 10.3673 3.37061 10.7248 3.42775 11.0759L2.32912 12.0313C2.02828 12.293 1.9558 12.732 2.15496 13.0779L3.41147 15.2556C3.61064 15.6014 4.02681 15.7575 4.40431 15.6283L5.77475 15.1563C6.32992 15.6119 6.96284 15.972 7.6465 16.2305L7.92482 17.6596C8.00149 18.0513 8.34271 18.3334 8.74188 18.3334H11.2582C11.6573 18.3334 11.9985 18.0513 12.0752 17.6596L12.3535 16.2305C13.0375 15.9719 13.6699 15.6106 14.2253 15.1547L15.5957 15.6267C15.9732 15.7567 16.3886 15.6014 16.5886 15.2556L17.8451 13.0763C18.0442 12.7304 17.9717 12.293 17.6709 12.0313L16.5723 11.0759C16.6294 10.7248 16.6667 10.3673 16.6667 10.0001C16.6667 9.63282 16.6294 9.27536 16.5723 8.92423L17.6709 7.96883C17.9717 7.70716 18.0442 7.26812 17.8451 6.92228L16.5886 4.74455C16.3894 4.39871 15.9732 4.24266 15.5957 4.37183L14.2253 4.84383C13.6701 4.38824 13.0372 4.02813 12.3535 3.76961L12.0752 2.34058C11.9985 1.94891 11.6573 1.66675 11.2582 1.66675H8.74188ZM10 6.66675C11.8408 6.66675 13.3333 8.15925 13.3333 10.0001C13.3333 11.8409 11.8408 13.3334 10 13.3334C8.15918 13.3334 6.66668 11.8409 6.66668 10.0001C6.66668 8.15925 8.15918 6.66675 10 6.66675Z"
+            fill="#A8CBFFBF"
+          />
+        </svg>
+      </div>
+      <div
+        onClick={e => e.stopPropagation()}
+        className={`${isMenuVisible ? '' : 'hidden'} absolute right-0 top-5 z-10 mt-2 flex w-[160px] flex-col 
+        rounded-[6px] border border-[#2E4371] bg-secondaryBlue p-1 shadow-lg`}>
+        <div className="flex cursor-not-allowed items-center space-x-2 rounded p-3 transition hover:bg-white/10">
+          <CheckBox disabled checked={isSettingVammOn} />
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
+          <p className="text-b3">VAMM Price</p>
+        </div>
+        <div
+          className="flex cursor-pointer items-center space-x-2 rounded p-3 transition hover:bg-white/10"
+          onClick={() => $isSettingOracleOn.set(!isSettingOracleOn)}>
+          <CheckBox checked={isSettingOracleOn} />
+          <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#6286E3]" />
+          <p className="text-b3">Oracle Price</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ChartHeaders = () => {
   const DEFAULT_TIME = '-- : -- : --';
   const [timeLabel, setTimeLabel] = useState(DEFAULT_TIME);
   const { fundingPeriod } = useNanostore($collectionConfig);
   const { priceChange, priceChangePct } = useChartData();
 
+  const isSettingVammOn = useNanostore($isSettingVammOn);
+  const isSettingOracleOn = useNanostore($isSettingOracleOn);
   const vAMMPrice = useNanostore($vammPrice);
   const oraclePrice = useNanostore($oraclePrice);
   const isGapAboveLimit = useIsOverPriceGap();
@@ -270,7 +318,7 @@ const ChartHeaders = () => {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-1 items-end justify-end px-[20px]">
+      <div className="mb-3 mt-4 flex flex-1 items-center justify-end space-x-3 px-[20px]">
         <ChartTimeTabs
           name="group-1"
           controlRef={useRef()}
@@ -282,6 +330,21 @@ const ChartHeaders = () => {
           ]}
           isStartLoadingChart={!vAMMPrice}
         />
+        <ChartSetting />
+      </div>
+      <div className="mb-3 flex justify-end space-x-4 px-5">
+        {isSettingOracleOn ? (
+          <div className="flex items-center space-x-2 rounded">
+            <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#FF62D3]" />
+            <p className="select-none text-b3">VAMM Price</p>
+          </div>
+        ) : null}
+        {isSettingOracleOn ? (
+          <div className="flex items-center space-x-2 rounded">
+            <div className="inline-block h-[4px] w-[13px] rounded-[2px] bg-[#6286E3]" />
+            <p className="select-none text-b3">Oracle Price</p>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -355,7 +418,7 @@ function ChartMobile() {
       <ChartHeaders />
       <div className="flex justify-center bg-darkBlue py-6">
         <div className="w-full">
-          <ChartDisplay />
+          <ChartDisplay id="mobile" />
         </div>
       </div>
       <ProComponent />

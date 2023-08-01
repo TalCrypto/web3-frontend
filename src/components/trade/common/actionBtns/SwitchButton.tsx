@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import BaseButton from '@/components/trade/common/actionBtns/BaseButton';
 import { useStore as useNanostore } from '@nanostores/react';
