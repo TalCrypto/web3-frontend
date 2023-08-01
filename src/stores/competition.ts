@@ -24,3 +24,5 @@ export const $slCurrentUser = atom<any>(null);
 export const $tlCurrentUser = atom<any>(null);
 
 export const $activeDropdown = atom<number>(0);
+
+export const $activeTab = atom<number>(0);
