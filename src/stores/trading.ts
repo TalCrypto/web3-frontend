@@ -135,7 +135,7 @@ export async function addGraphRecord(ohlcPrice?: number /* TODO , notionalValue?
 
   let oraclePrice;
 
-  if (currentAmm) {
+  if (currentAmm && oracleData?.length > 0) {
     const ammOracleAddr = collectionsInfos[currentAmm].contract;
     let latestOraclePrice: any = oracleData[oracleData.length - 1].close;
     latestOraclePrice = await getLatestOraclePriceBefore(ammOracleAddr, nowTs);
