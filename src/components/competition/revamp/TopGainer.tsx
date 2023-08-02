@@ -5,6 +5,7 @@ import Image from 'next/image';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table from './Table';
+import Rules from './Rules';
 
 const TopGainer = () => {
   const router = useRouter();
@@ -26,7 +27,9 @@ const TopGainer = () => {
       <div className="mx-auto lg:max-w-[929px]">
         <TopThree />
 
-        <Table />
+        <Table className="mb-[170px]" />
+
+        <Rules />
       </div>
     </div>
   );

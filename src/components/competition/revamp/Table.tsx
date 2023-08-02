@@ -5,10 +5,14 @@ import UserMedal from '../common/UserMedal';
 
 const dummyList = Array.from({ length: 40 }).map((v, i) => i + 1);
 
-const Table: FC<PropsWithChildren> = () => {
+type TableProps = PropsWithChildren & {
+  className?: string;
+};
+
+const Table: FC<TableProps> = ({ className }) => {
   const foo = 'bar';
   return (
-    <div>
+    <div className={className}>
       <div className="flex items-center py-4 text-b2 text-mediumEmphasis">
         <div className="basis-1/4 text-center">Rank</div>
         <div className="basis-1/4">User</div>
@@ -43,6 +47,10 @@ const Table: FC<PropsWithChildren> = () => {
       </div>
     </div>
   );
+};
+
+Table.defaultProps = {
+  className: undefined
 };
 
 export default Table;
