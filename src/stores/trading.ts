@@ -1,8 +1,10 @@
 import { DAY_RESOLUTION, MONTH_RESOLUTION, WEEK_RESOLUTION } from '@/const';
-import { AMM } from '@/const/collectionList';
+import { AMM, collectionsInfos } from '@/const/collectionList';
 import { OhlcData, Time } from 'lightweight-charts';
 import { atom, computed, map } from 'nanostores';
 import { Address } from 'wagmi';
+import { formatBigInt } from '@/utils/bigInt';
+import { getLatestOraclePriceBefore } from '@/utils/subgraph';
 
 export type TransactionPendings = {
   // eslint-disable-next-line no-unused-vars
@@ -123,51 +125,68 @@ export const $highPrice = computed($ohlcData, graphData => {
 
 export const $dailyVolume = atom<number | undefined>();
 
-export function addGraphRecord(price?: number /* TODO , notionalValue?: number */) {
+export async function addGraphRecord(ohlcPrice?: number /* TODO , notionalValue?: number */) {
   const selectedTimeIndex = $selectedTimeIndex.get();
+  const nowTs = Math.round(new Date().getTime() / 1000);
   const interval = selectedTimeIndex === 0 ? DAY_RESOLUTION : selectedTimeIndex === 1 ? WEEK_RESOLUTION : MONTH_RESOLUTION;
-  const graphData = $ohlcData.get();
-  if (graphData && graphData.length > 0) {
-    const lastGraphRecord = graphData[graphData.length - 1];
-    const nowTs = Math.round(new Date().getTime() / 1000);
-    if (nowTs >= Number(lastGraphRecord.time) + interval) {
-      if (price) {
-        $ohlcData.set([
-          ...graphData,
-          {
-            time: (Number(lastGraphRecord.time) + interval) as Time,
-            open: price,
-            high: price,
-            low: price,
-            close: price
-          }
-        ]);
-      } else {
-        $ohlcData.set([
-          ...graphData,
-          {
-            time: (Number(lastGraphRecord.time) + interval) as Time,
-            open: lastGraphRecord.close,
-            high: lastGraphRecord.close,
-            low: lastGraphRecord.close,
-            close: lastGraphRecord.close
-          }
-        ]);
-      }
-    } else if (price) {
-      const high = Math.max(price, lastGraphRecord.high);
-      const low = Math.min(price, lastGraphRecord.low);
-      const newRecord = {
-        time: lastGraphRecord.time,
-        open: lastGraphRecord.open,
-        high,
-        low,
-        close: price
-      };
-      graphData.pop();
-      $ohlcData.set([...graphData, newRecord]);
-    }
+  const ohlcData = $ohlcData.get();
+  const oracleData = $OracleGraphData.get();
+  const currentAmm = $currentAmm.get();
+
+  let oraclePrice;
+
+  if (currentAmm) {
+    const ammOracleAddr = collectionsInfos[currentAmm].contract;
+    let latestOraclePrice: any = oracleData[oracleData.length - 1].close;
+    latestOraclePrice = await getLatestOraclePriceBefore(ammOracleAddr, nowTs);
+    oraclePrice = formatBigInt(latestOraclePrice?.spotPrice);
   }
+
+  const updateGraph = (targetData: any, graphData: any[], price?: number) => {
+    if (graphData && graphData.length > 0) {
+      const lastGraphRecord = graphData[graphData.length - 1];
+      if (nowTs >= Number(lastGraphRecord.time) + interval) {
+        if (price) {
+          targetData.set([
+            ...graphData,
+            {
+              time: (Number(lastGraphRecord.time) + interval) as Time,
+              open: price,
+              high: price,
+              low: price,
+              close: price
+            }
+          ]);
+        } else {
+          targetData.set([
+            ...graphData,
+            {
+              time: (Number(lastGraphRecord.time) + interval) as Time,
+              open: lastGraphRecord.close,
+              high: lastGraphRecord.close,
+              low: lastGraphRecord.close,
+              close: lastGraphRecord.close
+            }
+          ]);
+        }
+      } else if (price) {
+        const high = Math.max(price, lastGraphRecord.high);
+        const low = Math.min(price, lastGraphRecord.low);
+        const newRecord = {
+          time: lastGraphRecord.time,
+          open: lastGraphRecord.open,
+          high,
+          low,
+          close: price
+        };
+        graphData.pop();
+        targetData.set([...graphData, newRecord]);
+      }
+    }
+  };
+
+  updateGraph($ohlcData, ohlcData, ohlcPrice);
+  updateGraph($OracleGraphData, oracleData, oraclePrice);
 }
 
 // Market Overview Data Trigger

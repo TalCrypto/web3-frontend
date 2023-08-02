@@ -144,7 +144,7 @@ function ChartDisplay({ id }: { id: string }) {
       });
 
       // todo: second graph oracle / vamm
-      const graphTwoData = oracleGraphData.map(record => ({ time: record.time, value: record.close + 0.1 }));
+      const graphTwoData = oracleGraphData.map(record => ({ time: record.time, value: record.close }));
       oracleSeries.setData(graphTwoData);
       // setOracleSeries(oracleSeries);
     }
