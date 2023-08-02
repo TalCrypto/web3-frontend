@@ -9,6 +9,7 @@ import Title from '@/components/competition/revamp/Title';
 import Tabs from '@/components/competition/revamp/Tabs';
 import { useStore } from '@nanostores/react';
 import TopGainer from '@/components/competition/revamp/TopGainer';
+import MyPerformance from '@/components/competition/revamp/MyPerformance';
 
 export default function Competition() {
   const { address } = useAccount();
@@ -36,7 +37,7 @@ export default function Competition() {
             {activeTab === 2 && <TopGainer />}
             {activeTab === 3 && 'Top FP'}
             {activeTab === 4 && 'Top Referrer'}
-            {activeTab === 5 && 'My Performance'}
+            {activeTab === 5 && <MyPerformance />}
           </div>
         </div>
         <CompetitionDataUpdater />
