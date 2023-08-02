@@ -80,7 +80,6 @@ export const FollowButton = ({
       }
       setIsLoadingFollow(false);
     } catch (error) {
-      // console.log('err', error);
       setIsLoadingFollow(false);
     }
   };
@@ -107,7 +106,6 @@ export const FollowButton = ({
       }
       setIsLoadingFollow(false);
     } catch (error) {
-      // console.log('err', error);
       setIsLoadingFollow(false);
     }
   };

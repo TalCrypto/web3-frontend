@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
 /* eslint-disable consistent-return */
 /* eslint-disable max-len */
 /* eslint-disable @next/next/no-img-element */
@@ -7,7 +9,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore, useStore } from '@nanostores/react';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
-import { getCollectionInformation } from '@/const/collectionList';
+import { AMM, getCollectionInformation } from '@/const/collectionList';
 
 import Tooltip from '@/components/common/Tooltip';
 import {
@@ -203,6 +205,29 @@ const ChartHeaders = () => {
   const { priceChange, priceChangePct } = useChartData();
   const collectionInfo = currentAmm ? getCollectionInformation(currentAmm) : null;
 
+  const [prevVammPrice, setPrevVammPrice] = useState<number>();
+  const [prevAmm, setPrevAmm] = useState<AMM>();
+  const [vammPriceColor, setVammPriceColor] = useState('');
+
+  // handle vamm price color changed
+  useEffect(() => {
+    if (prevVammPrice !== undefined && vammPrice !== undefined && prevAmm === currentAmm) {
+      const textColor =
+        vammPrice > prevVammPrice
+          ? 'animate-[greentowhite_0.5s_linear_infinite]'
+          : vammPrice < prevVammPrice
+          ? 'animate-[redtowhite_0.5s_linear_infinite]'
+          : '';
+      setVammPriceColor(textColor);
+      setTimeout(() => {
+        setVammPriceColor('');
+      }, 1500);
+    }
+
+    setPrevAmm(currentAmm);
+    setPrevVammPrice(vammPrice);
+  }, [vammPrice]);
+
   return (
     <div className="flex w-full flex-row items-center justify-start text-[16px]">
       <div className="left">
@@ -218,7 +243,7 @@ const ChartHeaders = () => {
             </div>
           </div>
           <div className="flex">
-            <PriceWithIcon priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
+            <PriceWithIcon className={vammPriceColor} priceValue={vammPrice ? vammPrice.toFixed(2) : '-.--'} width={30} height={30} large />
             <PriceIndicator priceChangeValue={priceChange} priceChangeRatio={priceChangePct} />
           </div>
         </div>

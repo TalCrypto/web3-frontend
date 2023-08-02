@@ -21,3 +21,25 @@
     opacity: 0;
   }
 }
+
+@keyframes greentowhite {
+  0%,
+  50% {
+    color: #78f363;
+  }
+  60%,
+  100% {
+    color: #ffffffde;
+  }
+}
+
+@keyframes redtowhite {
+  0%,
+  50% {
+    color: #ff5656;
+  }
+  60%,
+  100% {
+    color: #ffffffde;
+  }
+}

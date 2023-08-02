@@ -24,6 +24,7 @@ import { usePublicClient } from 'wagmi';
 import { formatBigInt } from '@/utils/bigInt';
 import { useRouter } from 'next/router';
 import PrimaryButton from '@/components/common/PrimaryButton';
+import { $isShowTradingMobile, $tsTransactionStatus } from '@/stores/trading';
 
 const PositionDetailMobile = () => {
   const psSelectedCollectionAmm: any = useNanostore($psSelectedCollectionAmm);
@@ -189,7 +190,16 @@ const PositionDetailMobile = () => {
         </div>
         <div className="px-4 py-4">
           <PrimaryButton
-            onClick={() => router.push(`/trade/${collectionInfo?.collection.toLowerCase()}`)}
+            onClick={() => {
+              $tsTransactionStatus.set({
+                isShow: false,
+                isSuccess: true,
+                linkUrl: ''
+              });
+              $isShowTradingMobile.set(false);
+              $isShowMobileModal.set(false);
+              router.push(`/trade/${collectionInfo?.collection.toLowerCase()}`);
+            }}
             className="py-2 text-[15px] font-semibold text-highEmphasis">
             Trade
           </PrimaryButton>
