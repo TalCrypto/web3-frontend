@@ -65,7 +65,6 @@ const ChartDataUpdater = () => {
           )
         );
         $dailyVolume.set(dailyVolume);
-        // console.log({ chartOracleData });
         $OracleGraphData.set(
           chartOracleData.map(
             (record: { start: number; end: number; high: bigint; low: bigint; open: bigint; close: bigint; volume: bigint }) => ({

@@ -159,7 +159,6 @@ const AddressPage: NextPage = () => {
       }
       setIsLoadingFollow(false);
     } catch (error) {
-      // console.log('err', error);
       setIsLoadingFollow(false);
     }
   };
@@ -182,7 +181,6 @@ const AddressPage: NextPage = () => {
       }
       setIsLoadingFollow(false);
     } catch (error) {
-      // console.log('err', error);
       setIsLoadingFollow(false);
     }
   };
