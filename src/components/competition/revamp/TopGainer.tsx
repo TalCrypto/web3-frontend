@@ -4,13 +4,12 @@ import React from 'react';
 import Image from 'next/image';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
+import Table from './Table';
 
 const TopGainer = () => {
   const router = useRouter();
   return (
     <div className="relative">
-      <TopThree />
-
       <FloatingWidget.Container>
         <FloatingWidget.Item>
           <div className="mb-4 flex space-x-1">
@@ -23,6 +22,12 @@ const TopGainer = () => {
           </p>
         </FloatingWidget.Item>
       </FloatingWidget.Container>
+
+      <div className="mx-auto lg:max-w-[929px]">
+        <TopThree />
+
+        <Table />
+      </div>
     </div>
   );
 };
