@@ -90,8 +90,6 @@ function ChartDisplay({ id }: { id: string }) {
     });
 
     // add series vamm and oracle -----------------------------------
-
-    // console.log('addVammSeries');
     const vammSeries = newChart.addAreaSeries({
       lineColor: colors.lineColor,
       topColor: colors.areaTopColor,
@@ -135,7 +133,6 @@ function ChartDisplay({ id }: { id: string }) {
     let oracleSeries: any;
 
     if (isSettingOracleOn) {
-      // console.log('addOracleSeries');
       oracleSeries = newChart.addAreaSeries({
         lineColor: colors.lineTwoColor,
         topColor: 'transparent',
@@ -201,7 +198,6 @@ function ChartDisplay({ id }: { id: string }) {
           ${dataTwo ? `<p class="text-white">Oracle: ${priceTwo.toFixed(2)}</p>` : ''}
           </div>
         `;
-        // console.log(data, dataTwo);
 
         let coordinate;
         if (data) {

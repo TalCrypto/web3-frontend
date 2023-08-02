@@ -212,8 +212,6 @@ const ChartHeaders = () => {
   // handle vamm price color changed
   useEffect(() => {
     if (prevVammPrice !== undefined && vammPrice !== undefined && prevAmm === currentAmm) {
-      // console.log(prevVammPrice, vammPrice);
-      // console.log('true change');
       const textColor =
         vammPrice > prevVammPrice
           ? 'animate-[greentowhite_0.5s_linear_infinite]'
