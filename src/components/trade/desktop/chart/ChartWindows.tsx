@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
 /* eslint-disable consistent-return */
 /* eslint-disable max-len */
 /* eslint-disable @next/next/no-img-element */
@@ -212,11 +214,16 @@ const ChartHeaders = () => {
     if (prevVammPrice !== undefined && vammPrice !== undefined && prevAmm === currentAmm) {
       // console.log(prevVammPrice, vammPrice);
       // console.log('true change');
-      const textColor = vammPrice > prevVammPrice ? 'text-marketGreen' : vammPrice < prevVammPrice ? 'text-marketRed' : '';
+      const textColor =
+        vammPrice > prevVammPrice
+          ? 'animate-[greentowhite_0.5s_linear_infinite]'
+          : vammPrice < prevVammPrice
+          ? 'animate-[redtowhite_0.5s_linear_infinite]'
+          : '';
       setVammPriceColor(textColor);
       setTimeout(() => {
         setVammPriceColor('');
-      }, 1000);
+      }, 1500);
     }
 
     setPrevAmm(currentAmm);
