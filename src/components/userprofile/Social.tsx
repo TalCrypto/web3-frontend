@@ -16,6 +16,7 @@ import Image from 'next/image';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { authConnections } from '@/utils/authConnections';
 import { ThreeDots } from 'react-loader-spinner';
+import { useRouter } from 'next/router';
 
 const TableContainer: React.FC<PropsWithChildren> = ({ children }) => (
   <div
@@ -140,6 +141,7 @@ FollowButton.defaultProps = {
 };
 
 const Social: React.FC<PropsWithChildren> = () => {
+  const router = useRouter();
   const isConnected = useStore($userIsConnected);
   const userInfo = useStore($userInfo);
   const userFollowings = useStore($userFollowings);
@@ -170,7 +172,14 @@ const Social: React.FC<PropsWithChildren> = () => {
                 <div className="flex">
                   {/* desktop cols */}
                   <div className="hidden flex-1 py-[10px] md:table-cell">
-                    <p>{d.username || trimAddress(d.followerAddress)}</p>
+                    <p
+                      className="cursor-pointer"
+                      onClick={e => {
+                        e.stopPropagation();
+                        router.push(`/userprofile/${d.followerAddress}`);
+                      }}>
+                      {d.username || trimAddress(d.followerAddress)}
+                    </p>
                   </div>
                   <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-[-12px]">
@@ -192,7 +201,13 @@ const Social: React.FC<PropsWithChildren> = () => {
                     <div className="flex space-x-2 py-[12px]">
                       <div className="w-[3px] rounded bg-[#2574FB]" />
                       <div className="flex flex-col space-y-2">
-                        <p>{d.username || trimAddress(d.followerAddress)}</p>
+                        <p
+                          onClick={e => {
+                            e.stopPropagation();
+                            router.push(`/userprofile/${d.followerAddress}`);
+                          }}>
+                          {d.username || trimAddress(d.followerAddress)}
+                        </p>
 
                         <div className="flex space-x-[-12px]">
                           {d.amm?.map(amm => (
@@ -236,7 +251,14 @@ const Social: React.FC<PropsWithChildren> = () => {
                 <div className="flex">
                   {/* desktop cols */}
                   <div className="hidden flex-1 py-[10px] md:table-cell">
-                    <p>{d.username || trimAddress(d.userAddress)}</p>
+                    <p
+                      className="cursor-pointer"
+                      onClick={e => {
+                        e.stopPropagation();
+                        router.push(`/userprofile/${d.userAddress}`);
+                      }}>
+                      {d.username || trimAddress(d.userAddress)}
+                    </p>
                   </div>
                   <div className="hidden flex-1 py-[10px] text-highEmphasis md:table-cell">
                     <div className="flex space-x-[-12px]">
@@ -258,7 +280,13 @@ const Social: React.FC<PropsWithChildren> = () => {
                     <div className="flex space-x-2 py-[12px]">
                       <div className="w-[3px] rounded bg-[#2574FB]" />
                       <div className="flex flex-col space-y-2">
-                        <p>{d.username || trimAddress(d.userAddress)}</p>
+                        <p
+                          onClick={e => {
+                            e.stopPropagation();
+                            router.push(`/userprofile/${d.followerAddress}`);
+                          }}>
+                          {d.username || trimAddress(d.userAddress)}
+                        </p>
                         <div className="flex space-x-[-12px]">
                           {d.amm?.map(amm => (
                             <TypeWithIconByAmm amm={amm} />
