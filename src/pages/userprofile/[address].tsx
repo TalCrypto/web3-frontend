@@ -190,6 +190,7 @@ const AddressPage: NextPage = () => {
   useEffect(() => {
     if (typeof address === 'string') {
       $userprofileAddress.set(address);
+      $activeTab.set(0);
     }
     return () => {
       $userprofileAddress.set('');
