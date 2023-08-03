@@ -21,9 +21,11 @@ function TradingMobile() {
 
   useEffect(() => setTradeWindowIndex(0), [currentAmm]);
 
-  const mainTradeComponent = <MainTradeComponent />;
-
-  const displayComponent = [mainTradeComponent, <CloseCollateral />, <AdjustCollateral />][tradeWindowIndex];
+  const displayComponent = [
+    <MainTradeComponent />,
+    userPosition?.size !== 0 ? <CloseCollateral /> : null,
+    userPosition?.size !== 0 ? <AdjustCollateral /> : null
+  ][tradeWindowIndex];
 
   const tabs = ['Add', 'Close', 'Adjust Collateral'];
 
@@ -67,7 +69,7 @@ function TradingMobile() {
         className={`flex ${userPosition && userPosition.size !== 0 ? 'h-[calc(100%-100px)]' : 'h-[calc(100%-50px)]'}
           overflow-y-scroll rounded-b-[6px] border-[1px] border-b-0 border-[#71aaff]/[.2]
           bg-lightBlue p-[22px] text-white`}>
-        <div className="w-full pb-6">{userPosition && userPosition.size !== 0 ? displayComponent : mainTradeComponent}</div>
+        <div className="w-full pb-6">{displayComponent}</div>
       </div>
 
       <div
