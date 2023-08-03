@@ -113,7 +113,7 @@ function Tabs() {
 
   return (
     <div className="">
-      <div className="competition_tabs flex justify-center space-x-9 overflow-auto px-[20px] md:px-0">
+      <div className="competition_tabs hidden justify-center space-x-9 overflow-auto px-[20px] md:px-0 lg:flex">
         {tabs.map(({ label, idName, svgSource }, i) => (
           <TabIcon
             key={idName}
