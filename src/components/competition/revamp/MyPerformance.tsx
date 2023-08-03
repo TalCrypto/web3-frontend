@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { useConnect } from 'wagmi';
-import { $userIsConnected } from '@/stores/user';
+import { $userIsConnected, $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
 
@@ -65,8 +65,13 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
   );
 };
 
+const Divider = () => <div className="h-[1px] w-full bg-[#2E4371]" />;
+
 const MyPerformance = () => {
   const isConnected = useStore($userIsConnected);
+  const userInfo = useStore($userInfo);
+  const displayUsername =
+    userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
 
   return !isConnected ? (
     <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
@@ -87,7 +92,80 @@ const MyPerformance = () => {
           Referral - My Team
         </div>
       </div>
-      <div className="mt-[36px]" />
+      <div className="mt-[36px]">
+        <div className="flex items-center">
+          <div className="mr-[36px] w-[388px] rounded-[12px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
+            <div
+              className="flex items-center rounded-t-[12px] bg-[#3A1A18] 
+            bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
+              <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
+              <div className="ml-[12px] flex flex-col justify-between">
+                <div className="text-[12px] font-[400]">Master (Referrer)</div>
+                <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                  {displayUsername}
+                </div>
+              </div>
+            </div>
+            <Divider />
+            <div className="flex items-stretch justify-between px-[36px] py-[24px]">
+              <div className="flex flex-col items-center justify-between">
+                <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
+                <div className="text-[15px] font-[600]">12</div>
+              </div>
+              <div className="flex flex-col items-center justify-between">
+                <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
+                <div className="text-[15px] font-[600]">400USDT</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="text-center text-[12px] font-[400] text-[#FFD392]">
+                  Referee’s Total <br /> Trad. Vol
+                </div>
+                <div className="mt-[6px] text-[15px] font-[600]">55.00</div>
+              </div>
+            </div>
+            <Divider />
+            <div className="flex items-center justify-center px-[36px] py-[24px]">
+              <div className="text-center">
+                <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
+                <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(50% of Team Reward)</div>
+                <div className="mt-[12px] text-[20px] font-[600]">100USDT</div>
+              </div>
+            </div>
+            <Divider />
+            <div className="flex items-center justify-center px-[36px] py-[24px]">
+              <div>
+                <div className="text-center text-[15px] font-[600]">📢 Share My Referral Link</div>
+                <div className="mt-[24px] flex items-center justify-between">
+                  <button
+                    className="mr-[12px] flex items-center justify-center 
+                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]">
+                    <Image
+                      src="/images/components/competition/revamp/my-performance/share.svg"
+                      width={16}
+                      height={16}
+                      alt=""
+                      className="mr-[8px]"
+                    />
+                    Share Link
+                  </button>
+                  <button
+                    className="mr-[12px] flex items-center justify-center rounded-[4px] 
+                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]">
+                    <Image
+                      src="/images/components/competition/revamp/my-performance/copy.svg"
+                      width={16}
+                      height={16}
+                      alt=""
+                      className="mr-[8px]"
+                    />
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
