@@ -1,7 +1,45 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-promise-executor-return */
 /* eslint-disable indent */
 /* eslint-disable operator-linebreak */
 import { GraphDataTarget } from '@/const';
 import { binarySearch } from '@/utils/arrayHelper';
+
+type RetryFunction<T> = () => Promise<T>;
+const maxRetry = 3;
+
+// Helper function for sleeping (waiting) asynchronously
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve: any) => setTimeout(resolve, ms));
+}
+
+async function autoRetryWithMaxRetry<T>(fn: RetryFunction<T>, maxRetryCount: number, initialRetryDelay: number = 1000): Promise<T> {
+  const maxRetryAttempts = maxRetryCount + 1;
+  let retryAttempt = 1;
+  let retryDelay = initialRetryDelay;
+
+  while (retryAttempt <= maxRetryAttempts) {
+    try {
+      const result: any = await fn();
+      if (result?.ok) {
+        const resJson = await result.json();
+        if (!(resJson?.errors?.length > 0)) return resJson;
+      }
+      throw new Error('Error occurred, need retry');
+    } catch (error: any) {
+      if (retryAttempt === maxRetryAttempts) {
+        throw new Error(`Exceeded maximum retry count (${maxRetryCount}). Last error: ${error.message}`);
+      }
+      console.warn(`Retry attempt ${retryAttempt}/${maxRetryCount}: ${error.message}`);
+      await sleep(retryDelay);
+      retryAttempt += 1;
+      retryDelay *= 2; // Exponential backoff - doubling the delay for each retry
+    }
+  }
+
+  // The code should never reach this point, but to satisfy TypeScript, return a Promise with never resolved value
+  return new Promise(() => {});
+}
 
 const subgraphUrl = process.env.NEXT_PUBLIC_SUPGRAPH_ENDPOINT ?? '';
 const subgraphBackupUrl = process.env.NEXT_PUBLIC_SUPGRAPH_BACKUP_ENDPOINT ?? '';
@@ -22,46 +60,26 @@ const fetchMethod = async (_method: string, _query: string, target: GraphDataTar
       break;
   }
 
-  const normalFetch = await fetch(link, {
-    method: _method,
-    body: JSON.stringify({
-      query: _query
-    })
-  });
-  if (normalFetch.ok) {
-    const resJson = await normalFetch.json();
-    return resJson;
-  }
-  const backupFetch = await fetch(backupLink, {
-    method: _method,
-    body: JSON.stringify({
-      query: _query
-    })
-  });
-  const resJson = await backupFetch.json();
-  return resJson;
-};
-
-const fetchOracleMethod = async (_method: string, _query: string) => {
-  const normalFetch = await fetch(subgraphOracleUrl, {
+  const normalFetch = fetch(link, {
     method: _method,
     body: JSON.stringify({
       query: _query
     })
   });
 
-  if (normalFetch.ok) {
-    const resJson = await normalFetch.json();
+  try {
+    const resJson = await autoRetryWithMaxRetry(() => normalFetch, maxRetry);
+    return resJson;
+  } catch (error) {
+    const backupFetch = await fetch(backupLink, {
+      method: _method,
+      body: JSON.stringify({
+        query: _query
+      })
+    });
+    const resJson = await backupFetch.json();
     return resJson;
   }
-  const backupFetch = await fetch(subgraphOracleUrl, {
-    method: _method,
-    body: JSON.stringify({
-      query: _query
-    })
-  });
-  const resJson = await backupFetch.json();
-  return resJson;
 };
 
 export const getLatestDayTradingDetails = async (ammAddr: string) => {
@@ -87,7 +105,9 @@ export const getLatestDayTradingDetails = async (ammAddr: string) => {
     }`
   );
 
-  const dayTradeData = fetchDayTradeData.data.dayTradeDatas;
+  const dayTradeData = fetchDayTradeData?.data?.dayTradeDatas;
+  if (!dayTradeData) return null;
+
   const result = {
     amm: dayTradeData[0].amm,
     startTime: Number(dayTradeData[0].timestamp),
@@ -114,10 +134,13 @@ export const getOpenInterest = async (ammAddr: string) => {
     }`
   );
 
+  const amm = fetchOpenInterest?.data?.amm;
+  if (!amm) return null;
+
   const openInterest = {
-    balance: BigInt(fetchOpenInterest.data.amm.positionBalance),
-    notional: BigInt(fetchOpenInterest.data.amm.openInterestNotional),
-    size: BigInt(fetchOpenInterest.data.amm.openInterestSize)
+    balance: BigInt(amm.positionBalance),
+    notional: BigInt(amm.openInterestNotional),
+    size: BigInt(amm.openInterestSize)
   };
 
   return openInterest;
@@ -147,7 +170,9 @@ export const getPositionHistory = async (ammAddr: string, walletArr: string) => 
     }`
   );
 
-  const positions = fetchPositions.data.positionChangedEvents;
+  const positions = fetchPositions?.data?.positionChangedEvents;
+  if (!positions) return null;
+
   const result = positions.map((position: any) => {
     const exchangedPositionSize = BigInt(position.exchangedPositionSize);
     const positionSizeAfter = BigInt(position.positionSizeAfter);
@@ -205,7 +230,9 @@ export const getAllPositionHistory = async (walletArr: string, limit: number, of
     }`
   );
 
-  const positions = fetchAllPositionHistory.data.positionChangedEvents;
+  const positions = fetchAllPositionHistory?.data?.positionChangedEvents;
+  if (!positions) return null;
+
   const result = positions.map((position: any) => {
     const exchangedPositionSize = BigInt(position.exchangedPositionSize);
     const positionSizeAfter = BigInt(position.positionSizeAfter);
@@ -256,10 +283,12 @@ export const getMarketHistory = async (ammAddr: string) => {
     }`
   );
 
-  const positions = fetchPositions.data.positionChangedEvents;
+  const positions = fetchPositions?.data?.positionChangedEvents;
+
   const userAddresses: any[] = [];
   const finalPositions: any[] = [];
 
+  if (!(positions.length > 0)) return { userAddresses, finalPositions };
   if (positions.length > 0) {
     positions.map((position: any) => {
       if (binarySearch(userAddresses, position.trader) < 0) {
@@ -304,8 +333,8 @@ export const getFundingPaymentHistory = async (ammAddr: string) => {
     }`
   );
 
-  const fundingPaymentHistory = fetchFundingPaymentHistory.data ? fetchFundingPaymentHistory.data.fundingRateUpdatedEvents : [];
-  return fundingPaymentHistory.length > 0 ? fundingPaymentHistory : null;
+  const fundingPaymentHistory = fetchFundingPaymentHistory?.data ? fetchFundingPaymentHistory.data.fundingRateUpdatedEvents : [];
+  return fundingPaymentHistory.length > 0 ? fundingPaymentHistory : [];
 };
 
 export const getSpotPriceAfter = async (ammAddr: string, timestamp: number, limit: number, offset: number) => {
@@ -329,12 +358,13 @@ export const getSpotPriceAfter = async (ammAddr: string, timestamp: number, limi
   );
 
   const positions = fetchPositions.data.reserveSnapshottedEvents;
+  if (!(positions.length > 0)) return [];
   const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
     spotPrice: BigInt(position.spotPrice)
   }));
 
-  return positions.length > 0 ? result : null;
+  return positions.length > 0 ? result : [];
 };
 
 export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: number) => {
@@ -356,8 +386,8 @@ export const getLatestSpotPriceBefore = async (ammAddr: string, timestamp: numbe
     }`
   );
 
-  const positions = fetchPositions.data.reserveSnapshottedEvents;
-  return positions.length > 0
+  const positions = fetchPositions?.data?.reserveSnapshottedEvents;
+  return positions?.length > 0
     ? {
         timestamp: Number(positions[0].timestamp),
         spotPrice: BigInt(positions[0].spotPrice)
@@ -385,8 +415,8 @@ export const getLatestOraclePriceBefore = async (ammAddr: string, timestamp: num
     GraphDataTarget['ORACLE']
   );
 
-  const positions = fetchPositions.data.prices;
-  return positions.length > 0
+  const positions = fetchPositions?.data?.prices;
+  return positions?.length > 0
     ? {
         timestamp: Number(positions[0].timestamp),
         spotPrice: BigInt(positions[0].price)
@@ -419,7 +449,8 @@ export const getGraphDataAfter = async (ammAddr: string, timestamp: number, reso
     }`
   );
 
-  const { graphDatas } = fetchGraphDatas.data;
+  const graphDatas = fetchGraphDatas?.data?.graphDatas;
+  if (!(graphDatas?.length > 0)) return [];
   const result = graphDatas.map((data: any) => ({
     start: Number(data.startTime),
     end: Number(data.endTime),
@@ -430,7 +461,7 @@ export const getGraphDataAfter = async (ammAddr: string, timestamp: number, reso
     volume: BigInt(data.volume)
   }));
 
-  return graphDatas.length > 0 ? result : [];
+  return graphDatas?.length > 0 ? result : [];
 };
 
 export const getOracleGraphDataAfter = async (ammAddr: string, timestamp: number, resolution: number) => {
@@ -458,7 +489,9 @@ export const getOracleGraphDataAfter = async (ammAddr: string, timestamp: number
     GraphDataTarget['ORACLE']
   );
 
-  const { graphDatas } = fetchGraphDatas.data;
+  const graphDatas = fetchGraphDatas?.data?.graphDatas;
+  if (!(graphDatas?.length > 0)) return [];
+
   const result = graphDatas.map((data: any) => ({
     start: Number(data.startTime),
     end: Number(data.endTime),
@@ -468,7 +501,7 @@ export const getOracleGraphDataAfter = async (ammAddr: string, timestamp: number
     low: BigInt(data.low)
   }));
 
-  return graphDatas.length > 0 ? result : [];
+  return graphDatas?.length > 0 ? result : [];
 };
 
 export const getPositionHistoryAfter = async (ammAddr: string, walletAddr: string, timestamp: number) => {
@@ -493,7 +526,9 @@ export const getPositionHistoryAfter = async (ammAddr: string, walletAddr: strin
     }`
   );
 
-  const positions = fetchPositions.data.positionChangedEvents;
+  const positions = fetchPositions?.data?.positionChangedEvents;
+  if (!(positions?.length > 0)) return [];
+
   const result = positions.map((position: any) => ({
     timestamp: Number(position.timestamp),
     size: BigInt(position.positionSizeAfter),
@@ -501,7 +536,7 @@ export const getPositionHistoryAfter = async (ammAddr: string, walletAddr: strin
     margin: BigInt(position.margin)
   }));
 
-  return positions.length > 0 ? result : [];
+  return positions?.length > 0 ? result : [];
 };
 
 export const getPositionHistoryBefore = async (ammAddr: string, walletAddr: string, timestamp: number) => {
@@ -526,7 +561,9 @@ export const getPositionHistoryBefore = async (ammAddr: string, walletAddr: stri
     }`
   );
 
-  const positions = fetchPositions.data.positionChangedEvents;
+  const positions = fetchPositions?.data?.positionChangedEvents;
+  if (!(positions?.length > 0)) return [];
+
   const result = {
     timestamp: Number(positions[0].timestamp),
     size: BigInt(positions[0].positionSizeAfter),
@@ -534,7 +571,7 @@ export const getPositionHistoryBefore = async (ammAddr: string, walletAddr: stri
     margin: BigInt(positions[0].margin)
   };
 
-  return positions.length > 0 ? result : null;
+  return positions.length > 0 ? result : [];
 };
 
 export const getTokenBalanceAfter = async (walletAddr: string, timestamp: number) => {
@@ -556,7 +593,9 @@ export const getTokenBalanceAfter = async (walletAddr: string, timestamp: number
     }`
   );
 
-  const histories = fetchHistory.data.tokenBalanceHistories;
+  const histories = fetchHistory?.data?.tokenBalanceHistories;
+  if (!(histories?.length > 0)) return [];
+
   const result = histories.map((history: any) => ({
     timestamp: Number(history.timestamp),
     balance: BigInt(history.balance)
@@ -584,7 +623,9 @@ export const getTokenBalanceBefore = async (walletAddr: string, timestamp: numbe
   }`
   );
 
-  const histories = fetchHistories.data.tokenBalanceHistories;
+  const histories = fetchHistories?.data?.tokenBalanceHistories;
+  if (!(histories?.length > 0)) return null;
+
   const result = {
     timestamp: Number(histories[0].timestamp),
     balance: BigInt(histories[0].balance)
@@ -614,7 +655,9 @@ export const getMarginChangedEventAfter = async (ammAddr: string, walletAddr: st
     }`
   );
 
-  const events = fetchEvents.data.marginChangedEvents;
+  const events = fetchEvents?.data?.marginChangedEvents;
+  if (!(events?.length > 0)) return [];
+
   const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
     amount: BigInt(event.amount),
@@ -645,7 +688,9 @@ export const getMarginChangedEventBefore = async (ammAddr: string, walletAddr: s
     }`
   );
 
-  const events = fetchEvents.data.marginChangedEvents;
+  const events = fetchEvents?.data?.marginChangedEvents;
+  if (!(events?.length > 0)) return [];
+
   const result = events.map((event: any) => ({
     timestamp: Number(event.timestamp),
     amount: BigInt(event.amount),
@@ -671,7 +716,9 @@ export const getAllAmmPosition = async (walletAddr: string) => {
     }`
   );
 
-  const positions = fetchPositions.data.ammPositions;
+  const positions = fetchPositions?.data?.ammPositions;
+  if (!(positions?.length > 0)) return [];
+
   const result = positions.map((event: any) => ({
     amm: event.amm,
     positionSize: BigInt(event.positionSize)
