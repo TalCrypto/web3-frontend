@@ -67,6 +67,33 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
 
 const Divider = () => <div className="h-[1px] w-full bg-[#2E4371]" />;
 
+const referees = [
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 15, contribution: 25, reward: 25 },
+  { username: 'Tribe3OG', isEligible: true, vol: 10, contribution: 15, reward: 15 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 }
+];
+
+function Cell(props: any) {
+  const { items, classNames } = props;
+  return (
+    <div
+      className="relative mb-6 grid grid-cols-12 items-center
+      text-[14px] text-mediumEmphasis">
+      {items.map((item: any, index: any) => (
+        <div className={`${classNames[index]}`} key={index}>
+          {item}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const MyPerformance = () => {
   const isConnected = useStore($userIsConnected);
   const userInfo = useStore($userInfo);
@@ -92,9 +119,9 @@ const MyPerformance = () => {
           Referral - My Team
         </div>
       </div>
-      <div className="mt-[36px]">
+      <div className="mt-[36px] w-full">
         <div className="flex items-center">
-          <div className="mr-[36px] w-[388px] rounded-[12px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
+          <div className="mr-[36px] h-[528px] min-w-[388px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
             <div
               className="flex items-center rounded-t-[12px] bg-[#3A1A18] 
             bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
@@ -163,6 +190,80 @@ const MyPerformance = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="h-[528px] grow rounded-[6px] border-[1px] border-[#2E4371] bg-[#0C0D20] py-[36px]">
+            <div className="flex items-center justify-between px-[36px]">
+              <div className="text-[16px] font-[600]">My Referees</div>
+              <div className="text-[12px] font-[400]">
+                Eligible / Total Referees :{' '}
+                <span className="text-[20px] font-[600] text-[#FFC24B]">{referees.filter(item => item.isEligible).length}</span>{' '}
+                <span className="text-[15px]">/ {referees.length}</span>
+              </div>
+            </div>
+            {referees.length > 0 ? (
+              <div className="mt-[36px]">
+                <div className="px-[36px]">
+                  <Cell
+                    items={['User ID', 'Status', 'Trading Vol.', 'Contribution', 'Reward']}
+                    classNames={[
+                      'col-span-3 text-[12px]',
+                      'col-span-2 text-[12px]',
+                      'col-span-2 text-[12px]',
+                      'col-span-2 text-[12px]',
+                      'col-span-3 text-[12px]'
+                    ]}
+                  />
+                </div>
+                <div className="mt-[24px] max-h-[320px] overflow-y-scroll">
+                  {referees.map(item => (
+                    <div
+                      className={`grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
+                      <div className="relative col-span-3 items-center">
+                        <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
+                        <div className="truncate pr-[40px]">{item.username}</div>
+                      </div>
+                      <div className="relative col-span-2">
+                        {item.isEligible ? (
+                          <Image
+                            src="/images/components/competition/revamp/my-performance/eligible.svg"
+                            width={16}
+                            height={16}
+                            alt=""
+                            className="absolute left-[-20px] top-[2px]"
+                          />
+                        ) : null}
+                        {item.isEligible ? 'Eligible' : 'Not Eligible'}
+                      </div>
+                      <div className="col-span-2 flex items-center">
+                        <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                        {item.vol.toFixed(2)}
+                      </div>
+                      <div className="col-span-2 font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
+                      <div className="col-span-3">
+                        <div className="flex w-fit items-center rounded-[12px] bg-[#2E4371] px-[12px] py-[4px]">
+                          <Image
+                            src="/images/components/competition/revamp/my-performance/reward.svg"
+                            width={16}
+                            height={16}
+                            alt=""
+                            className="mr-[10px]"
+                          />
+                          {!item.isEligible ? '-' : `${item.reward}USDT`}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
+                  Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as eligible
+                  referees.
+                </div>
+              </div>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-[15px] font-[400] text-mediumEmphasis">
+                List is empty, start sharing your referral link now!
+              </div>
+            )}
           </div>
         </div>
       </div>
