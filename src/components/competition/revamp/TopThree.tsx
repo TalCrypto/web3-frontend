@@ -1,7 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import React, { FC, PropsWithChildren, ReactNode } from 'react';
 
 type ItemProps = PropsWithChildren & {
@@ -33,44 +30,12 @@ Item.defaultProps = {
   title: undefined
 };
 
-const TopThree: FC<PropsWithChildren> = () => {
-  const foo = 'bar';
-  return (
-    <div
-      className="flex h-[400px] items-center justify-center space-x-4
+const Container: FC<PropsWithChildren> = ({ children }) => (
+  <div
+    className="flex h-[400px] items-center justify-center space-x-4
       bg-[radial-gradient(farthest-side_at_50%_35%,_var(--tw-gradient-stops))] from-[rgba(104,84,12,0.6)] to-55%">
-      <Item rank={2} className="mt-8 w-[200px]" title={<p className="mb-4 text-h5 text-white">JEFFGPT8888</p>}>
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Vol.</p>
-        <div className="flex space-x-1">
-          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-          <p className="text-b2e text-marketGreen">+89.99</p>
-        </div>
-        <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">Prize</p>
-        <p className="text-b2 text-highEmphasis">500USDT + 1,500Pts</p>
-      </Item>
-      <Item rank={1} className="w-[200px]" title={<p className="mb-4 text-h5 text-[#FFD540]">JEFFGPT9999</p>}>
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Vol.</p>
-        <div className="flex space-x-1">
-          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-          <p className="text-b2e text-marketGreen">+99.99</p>
-        </div>
-        <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">Prize</p>
-        <p className="text-b2 text-highEmphasis">500USDT + 1,500Pts</p>
-      </Item>
-      <Item rank={3} className="mt-8 w-[200px]" title={<p className="mb-4 text-h5 text-[#FF8A65]">JEFFGPT7777</p>}>
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Vol.</p>
-        <div className="flex space-x-1">
-          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-          <p className="text-b2e text-marketGreen">+79.99</p>
-        </div>
-        <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">Prize</p>
-        <p className="text-b2 text-highEmphasis">500USDT + 1,500Pts</p>
-      </Item>
-    </div>
-  );
-};
+    {children}
+  </div>
+);
 
-export default TopThree;
+export default { Container, Item };

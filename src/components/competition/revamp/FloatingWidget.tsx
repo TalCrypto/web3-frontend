@@ -12,6 +12,10 @@ Item.defaultProps = {
   className: undefined
 };
 
-const Container: FC<PropsWithChildren> = ({ children }) => <div className="absolute right-0 top-0 flex flex-col space-y-4">{children}</div>;
+const Container: FC<PropsWithChildren> = ({ children }) => (
+  <div className="absolute right-0 top-0 h-full">
+    <div className="sticky top-24 flex flex-col space-y-4">{children}</div>
+  </div>
+);
 
 export default { Container, Item };
