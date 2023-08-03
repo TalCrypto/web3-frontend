@@ -32,8 +32,9 @@ Item.defaultProps = {
 
 const Container: FC<PropsWithChildren> = ({ children }) => (
   <div
-    className="flex h-[400px] items-center justify-center space-x-4
-      bg-[radial-gradient(farthest-side_at_50%_35%,_var(--tw-gradient-stops))] from-[rgba(104,84,12,0.6)] to-55%">
+    className="hidden h-[400px] items-center justify-center space-x-4 
+    bg-[radial-gradient(farthest-side_at_50%_35%,_var(--tw-gradient-stops))]
+      from-[rgba(104,84,12,0.6)] to-55% lg:flex">
     {children}
   </div>
 );

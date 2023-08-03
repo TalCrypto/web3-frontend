@@ -10,6 +10,7 @@ import Tabs from '@/components/competition/revamp/Tabs';
 import { useStore } from '@nanostores/react';
 import TopGainer from '@/components/competition/revamp/TopGainer';
 import MyPerformance from '@/components/competition/revamp/MyPerformance';
+import MobileDropdown from '@/components/competition/revamp/MobileDropdown';
 
 export default function Competition() {
   const { address } = useAccount();
@@ -29,9 +30,10 @@ export default function Competition() {
       <main className="flex min-h-[calc(100vh-80px)] flex-col">
         <Title />
         <Tabs />
+        <MobileDropdown />
 
         <div className="flex-1 border-t border-t-[#71AAFF38] bg-[#00000080]">
-          <div className="content-container mb-[48px] px-5 py-[48px] md:px-0">
+          <div className="content-container mb-[48px] px-0 md:py-[48px]">
             {activeTab === 0 && 'Top Vol'}
             {activeTab === 1 && 'Top ROI'}
             {activeTab === 2 && <TopGainer />}

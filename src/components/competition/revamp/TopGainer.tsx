@@ -7,6 +7,7 @@ import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
 import Rules from './Rules';
 import UserMedal from '../common/UserMedal';
+import PrizePool from './PrizePool';
 
 type Data = {
   rank: number;
@@ -19,20 +20,25 @@ type Data = {
 const tableColumns: TableColumn<Data>[] = [
   {
     label: 'Rank',
-    className: 'basis-1/4 text-center',
+    className: 'pl-5 lg:p-0 basis-1/3 lg:basis-1/4 text-left lg:text-center',
     render: row => (
-      <div className="flex basis-1/4 justify-center">
+      <div className="flex basis-1/4 lg:justify-center">
         <UserMedal rank={row.rank} isYou={row.rank === 30} />
       </div>
     )
   },
-  { label: 'User', field: 'username', className: 'basis-1/4' },
+  { label: 'User', field: 'username', className: 'basis-1/3 lg:basis-1/4' },
   {
-    label: 'Realized P/L',
+    label: (
+      <div className="flex items-center justify-end space-x-1 lg:justify-center">
+        <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+        <p>Realized P/L</p>
+      </div>
+    ),
     field: 'realized_pnl',
-    className: 'basis-1/4 text-center',
+    className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/4 text-right lg:text-center',
     render: row => (
-      <div className="flex justify-center space-x-1">
+      <div className="flex justify-end space-x-1 lg:justify-center">
         <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
         <p className="text-b2e text-marketGreen">{row.realized_pnl}</p>
       </div>
@@ -41,7 +47,7 @@ const tableColumns: TableColumn<Data>[] = [
   {
     label: 'Prize',
     field: 'prize',
-    className: 'basis-1/4',
+    className: 'hidden md:block basis-1/4',
     render: row => (
       <div className="flex w-fit space-x-1 rounded-[12px] bg-[#2E4371] px-4 py-1">
         <Image src="/images/components/competition/revamp/gift.svg" width={16} height={16} alt="" />
@@ -96,6 +102,8 @@ const TopGainer = () => {
       </FloatingWidget.Container>
 
       <div className="mx-auto lg:max-w-[929px]">
+        <PrizePool />
+
         <TopThree.Container>
           <TopThree.Item rank={2} className="mt-8 w-[200px]" title={<p className="mb-4 text-h5 text-white">JEFFGPT8888</p>}>
             <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Vol.</p>
