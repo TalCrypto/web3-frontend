@@ -5,9 +5,10 @@ import Image from 'next/image';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
-import Rules from './Rules';
+import Rules from './topgainer/Rules';
 import UserMedal from '../common/UserMedal';
-import PrizePool from './PrizePool';
+import PrizePool from './topgainer/PrizePool';
+import MobileDrawer from './MobileDrawer';
 
 type Data = {
   rank: number;
@@ -137,10 +138,22 @@ const TopGainer = () => {
           </TopThree.Item>
         </TopThree.Container>
 
-        <Table className="mb-[170px]" columns={tableColumns} data={tableData} fixedRow={userData} />
+        <Table
+          className="lg:mb-[120px]"
+          headerClassName="sticky top-12 z-[2] text-b3 py-4 lg:static lg:text-b2"
+          columns={tableColumns}
+          data={tableData}
+          fixedRow={userData}
+        />
+      </div>
 
+      <div className="hidden md:block">
         <Rules />
       </div>
+
+      <MobileDrawer title="Rules - Top Gainers">
+        <Rules />
+      </MobileDrawer>
     </div>
   );
 };

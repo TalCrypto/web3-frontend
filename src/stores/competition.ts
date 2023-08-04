@@ -26,3 +26,13 @@ export const $tlCurrentUser = atom<any>(null);
 export const $activeDropdown = atom<number>(0);
 
 export const $activeTab = atom<number>(0);
+
+export const $isShowMobileDrawer = atom(false);
+
+$isShowMobileDrawer.listen(val => {
+  if (val) {
+    document.body.style.setProperty('overflow-y', 'hidden');
+  } else {
+    document.body.style.removeProperty('overflow-y');
+  }
+});

@@ -18,36 +18,36 @@ type TableProps = PropsWithChildren & {
   data: TableRow[];
   fixedRow?: TableRow;
   className?: string;
+  headerClassName?: string;
+  bodyClassName?: string;
+  rowClassName?: string;
 };
 
-const Table: FC<TableProps> = ({ className, columns, data, fixedRow }) => {
-  const foo = 'bar';
+const Table: FC<TableProps> = ({ className, headerClassName, bodyClassName, rowClassName, columns, data, fixedRow }) => {
+  const defaultClassName = 'text-mediumEmphasis';
+  const defaultHeaderClassName = 'flex items-center bg-darkBlue py-3';
+  const defaultRowClassName = 'flex items-center border-b border-b-[#2E4371] py-3 text-b3 transition hover:bg-secondaryBlue lg:text-b2';
   return (
-    <div className={className}>
-      <div className="sticky top-12 z-[2] flex items-center bg-darkBlue py-4 text-b3 text-mediumEmphasis lg:static lg:text-b2">
+    <div className={`${defaultClassName} ${className}`}>
+      <div className={`${defaultHeaderClassName} ${headerClassName}`}>
         {columns.map(col => (
           <div className={col.className}>{col.label}</div>
         ))}
       </div>
-      <div className="scrollable overflow-auto lg:h-[480px]">
+      <div className={`scrollable overflow-auto lg:h-[480px] ${bodyClassName}`}>
         {fixedRow && (
-          <div
-            className="flex items-center border-b border-b-[#2E4371]
-          bg-secondaryBlue py-3 text-b3 text-mediumEmphasis transition hover:bg-secondaryBlue lg:sticky lg:top-0 lg:z-[2] lg:text-b2">
+          <div className={`${defaultRowClassName} bg-secondaryBlue lg:sticky lg:top-0 lg:z-[2] ${rowClassName}`}>
             {columns.map((col, i) => (
-              <div key={`fix-${i}`} className={col.className}>
+              <div key={`fix-${i}`} className={col.className || 'flex-1'}>
                 {col.render ? col.render(fixedRow) : col.field ? fixedRow[col.field] : null}
               </div>
             ))}
           </div>
         )}
         {data.map((row, rowIdx) => (
-          <div
-            key={`row-${rowIdx}`}
-            className="flex items-center border-b border-b-[#2E4371] py-3 text-b3 text-mediumEmphasis 
-            transition hover:bg-secondaryBlue lg:text-b2">
+          <div key={`row-${rowIdx}`} className={`${defaultRowClassName} ${rowClassName}`}>
             {columns.map((col, i) => (
-              <div key={`row-${rowIdx}-${i}`} className={col.className}>
+              <div key={`row-${rowIdx}-${i}`} className={col.className || 'flex-1'}>
                 {col.render ? col.render(row) : col.field ? row[col.field] : null}
               </div>
             ))}
@@ -60,6 +60,9 @@ const Table: FC<TableProps> = ({ className, columns, data, fixedRow }) => {
 
 Table.defaultProps = {
   className: undefined,
+  headerClassName: undefined,
+  bodyClassName: undefined,
+  rowClassName: undefined,
   fixedRow: undefined
 };
 

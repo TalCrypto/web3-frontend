@@ -14,7 +14,7 @@ Item.defaultProps = {
 
 const Container: FC<PropsWithChildren> = ({ children }) => (
   <div className="absolute right-0 top-0 hidden h-full lg:block">
-    <div className="sticky top-24 flex flex-col space-y-4">{children}</div>
+    <div className="sticky top-24 z-[3] flex flex-col space-y-4">{children}</div>
   </div>
 );
 
