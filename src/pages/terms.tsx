@@ -217,12 +217,9 @@ export default function Terms() {
             Fees and Price Estimates
           </div>
           <div>
-            Tribe3 may charge fees for certain Services, including transaction fees and gas fees. Gas fees are the fees required to process
-            and validate transactions on the blockchain network. The applicable fees, including gas fees, will be clearly disclosed to you
-            before you confirm a transaction. Please note that gas fees are determined by the blockchain network and can vary depending on
-            network congestion and other factors. You hereby agree to pay all applicable fees associated with your transactions. Price
-            estimates provided by Tribe3 are for informational purposes only and are subject to market fluctuations, gas fees, and other
-            factors.
+            Tribe3 may charge fees for transaction fees. The applicable fees, will be clearly disclosed to you before you confirm a
+            transaction. You hereby agree to pay all applicable fees associated with your transactions. Price estimates provided by Tribe3
+            are for informational purposes only and are subject to market fluctuations and other factors.
           </div>
         </div>
         <div className="space-y-6 pt-[36px]">
@@ -319,9 +316,8 @@ export default function Terms() {
             Anti-Money Laundering
           </div>
           <div>
-            Tribe3 complies with anti-money laundering and know-your-customer regulations. You may be required to provide identification and
-            other information to verify your identity before using certain Services. You agree to comply with all applicable domestic and
-            international laws, statutes, ordinances, and regulations regarding your use of our Website and Services.
+            Tribe3 complies with anti-money laundering regulations. You agree to comply with all applicable domestic and international laws,
+            statutes, ordinances, and regulations regarding your use of our Website and Services.
           </div>
         </div>
         <div className="space-y-6 pt-[36px]">
