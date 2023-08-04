@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import Image from 'next/image';
 import { $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -105,7 +106,7 @@ const MyPerformanceMobile = () => {
       <div className="px-[20px] pt-[48px]">
         <div className="flex items-center text-[20px] font-[600] ">
           <Image src="/images/components/competition/revamp/my-performance/crown.svg" alt="" width={24} height={24} className="mr-[6px]" />
-          Referral - My Team
+          My Team
         </div>
         <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
           <div
@@ -175,6 +176,32 @@ const MyPerformanceMobile = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="px-[20px] pt-[36px] ">
+        <div className="text-[20px] font-[600]">My Referees</div>
+        <div className="mt-[24px] flex items-center justify-between">
+          <div className="flex items-center text-[14px] font-[400]">
+            <div className="mr-[6px]">Eligible / Total Referees</div>
+            <MobileTooltip
+              direction="top"
+              title="Eligible referee"
+              content={
+                <div className="text-center">Referees with at least 1 WETH trading volume will be counted as eligible referees.</div>
+              }>
+              <Image
+                src="/images/components/trade/history/more_info.svg"
+                alt="more info"
+                width={12}
+                height={12}
+                className="mr-[6px] cursor-pointer md:hidden"
+              />
+            </MobileTooltip>
+          </div>
+          <div>
+            <span className="text-[20px] font-[600] text-[#FFC24B]">{referees.filter(item => item.isEligible).length}</span>{' '}
+            <span className="text-[15px]">/ {referees.length}</span>
           </div>
         </div>
       </div>

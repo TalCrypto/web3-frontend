@@ -266,7 +266,7 @@ const MyPerformance = () => {
                   height={24}
                   className="mr-[6px]"
                 />
-                Referral - My Team
+                My Team
               </div>
             </div>
             <div className="mt-[36px] w-full">
