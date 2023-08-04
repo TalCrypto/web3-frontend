@@ -76,7 +76,7 @@ function ReduceCollateralButton({
 
   useEffect(() => {
     if (isError && !isMobileView) {
-      if (String(error).includes('RPC')) {
+      if (String(error).includes('RPC') || String(error).includes('CH_RM')) {
         showToast(
           {
             error: true,
