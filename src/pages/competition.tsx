@@ -11,6 +11,7 @@ import { useStore } from '@nanostores/react';
 import TopGainer from '@/components/competition/revamp/TopGainer';
 import MyPerformance from '@/components/competition/revamp/MyPerformance';
 import MobileDropdown from '@/components/competition/revamp/MobileDropdown';
+import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerformanceMobile';
 
 export default function Competition() {
   const { address } = useAccount();
@@ -32,16 +33,32 @@ export default function Competition() {
         <Tabs />
         <MobileDropdown />
 
-        <div className="flex-1 border-t border-t-[#71AAFF38] bg-[#00000080]">
-          <div className="content-container mb-[48px] px-0 md:py-[48px]">
-            {activeTab === 0 && 'Top Vol'}
-            {activeTab === 1 && 'Top ROI'}
-            {activeTab === 2 && <TopGainer />}
-            {activeTab === 3 && 'Top FP'}
-            {activeTab === 4 && 'Top Referrer'}
-            {activeTab === 5 && <MyPerformance />}
+        <div className="hidden md:block">
+          <div className="flex-1 border-t border-t-[#71AAFF38] bg-[#00000080]">
+            <div className="content-container mb-[48px] px-0 md:py-[48px]">
+              {activeTab === 0 && 'Top Vol'}
+              {activeTab === 1 && 'Top ROI'}
+              {activeTab === 2 && <TopGainer />}
+              {activeTab === 3 && 'Top FP'}
+              {activeTab === 4 && 'Top Referrer'}
+              {activeTab === 5 && <MyPerformance />}
+            </div>
           </div>
         </div>
+
+        <div className="mobile-view block md:hidden">
+          <div className="flex-1 border-t border-t-[#71AAFF38] bg-[#00000080]">
+            <div className="content-container mb-[48px] px-0 md:py-[48px]">
+              {activeTab === 0 && 'Top Vol'}
+              {activeTab === 1 && 'Top ROI'}
+              {activeTab === 2 && <TopGainer />}
+              {activeTab === 3 && 'Top FP'}
+              {activeTab === 4 && 'Top Referrer'}
+              {activeTab === 5 && <MyPerformanceMobile />}
+            </div>
+          </div>
+        </div>
+
         <CompetitionDataUpdater />
       </main>
     </>
