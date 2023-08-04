@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { $userInfo, $userIsConnected } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
-import { isEligable } from '@/utils/airdrop';
+import ContributionDetailsModal from '@/components/competition/revamp/mobile/ContributionDetailsModal';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -97,6 +97,8 @@ const MyPerformanceMobile = () => {
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
   const [displayCount, setDisplayCount] = useState(8);
+
+  const [isShowContributionModal, setIsShowContributionModal] = useState(false);
 
   return !isConnected ? (
     <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
@@ -316,6 +318,7 @@ const MyPerformanceMobile = () => {
           className="flex items-center justify-center text-center text-[14px] font-semibold text-primaryBlue"
           onClick={() => {
             // setDisplayCount(displayCount + 8);
+            setIsShowContributionModal(true);
           }}>
           <Image
             src="/images/components/competition/revamp/my-performance/details.svg"
@@ -326,6 +329,7 @@ const MyPerformanceMobile = () => {
           />
           Contribution Details
         </span>
+        <ContributionDetailsModal isShow={isShowContributionModal} setIsShow={setIsShowContributionModal} referrers={referrers} />
       </div>
     </div>
   );
