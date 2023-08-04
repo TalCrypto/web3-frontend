@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import Image from 'next/image';
-import { $userInfo } from '@/stores/user';
+import { $userInfo, $userIsConnected } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
+import { isEligable } from '@/utils/airdrop';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -92,9 +93,16 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
 
 const MyPerformanceMobile = () => {
   const userInfo = useStore($userInfo);
+  const isConnected = useStore($userIsConnected);
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
-  return (
+  const [displayCount, setDisplayCount] = useState(8);
+
+  return !isConnected ? (
+    <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
+      Please connect to your wallet to get started.
+    </div>
+  ) : (
     <div className="block bg-[#0C0D20] md:hidden">
       <div className="px-[20px] pt-[36px] ">
         <div className="text-[20px] font-[600] ">General Performance</div>
@@ -204,6 +212,120 @@ const MyPerformanceMobile = () => {
             <span className="text-[15px]">/ {referees.length}</span>
           </div>
         </div>
+        <div className="mt-[24px] text-[14px] font-[400] text-mediumEmphasis">
+          <div className="flex items-center justify-between">
+            <div>
+              User ID /
+              <br />
+              Status
+            </div>
+            <div>
+              Contribution /
+              <br />
+              Trading Vol.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="mt-[16px]">
+        {referees.slice(0, displayCount > referees.length ? referees.length : displayCount).map(item => {
+          const showUsername = item.username.length > 10 ? `${item.username.substring(0, 10)}...` : item.username;
+          return (
+            <div className={`h-full px-[20px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
+              <div className="flex h-[48px] items-center justify-between">
+                <div className="flex h-full items-center">
+                  <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
+                  <div className="flex flex-col justify-between">
+                    <div className="font-[600]">{showUsername}</div>
+                    <div className="mt-[6px] flex items-center">
+                      {item.isEligible ? (
+                        <Image
+                          src="/images/components/competition/revamp/my-performance/eligible.svg"
+                          width={16}
+                          height={16}
+                          alt=""
+                          className="mr-[4px]"
+                        />
+                      ) : null}
+                      {item.isEligible ? 'Eligible' : 'Not Eligible'}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex h-full items-end text-end">
+                  <div className="flex flex-col justify-end">
+                    <div className="font-[600] text-[#FFC24B]">{item.isEligible ? `${item.reward}%` : '-'}</div>
+                    <div className="mt-[6px] flex items-center justify-end">
+                      <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                      {item.vol.toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {referees && referees.length > 0 ? (
+        displayCount >= referees.length ? null : (
+          <div className="bg-darkBlue py-[35px] text-center">
+            <span
+              className="text-center text-[14px] font-semibold text-primaryBlue"
+              onClick={() => {
+                setDisplayCount(displayCount + 8);
+              }}>
+              Show More
+            </span>
+          </div>
+        )
+      ) : null}
+
+      <div className="px-[20px] pt-[13px]">
+        <div className="text-[20px] font-[600]">My Referrer’s Team</div>
+        <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
+          <div className="flex items-center justify-between border-b-[1px] border-b-[#2E4371] p-[24px]">
+            <div className="flex items-center">
+              <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
+              <div className="ml-[12px] flex flex-col justify-between">
+                <div className="text-[12px] font-[400]">My Referrer</div>
+                <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                  Tribe3OG
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-between">
+              <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
+              <div className="text-[15px] font-[600]">12</div>
+            </div>
+          </div>
+          <div className="relative flex items-center justify-between bg-[#202249] px-[48px] py-[24px]">
+            <div className="flex flex-col items-center justify-between text-center">
+              <div className="text-[12px] font-[400] text-[#FFD392]">My Contribution</div>
+              <div className="mt-[6px] text-[16px] font-[600] text-[#FFC24B]">50%</div>
+            </div>
+            <div className="flex flex-col items-center justify-between text-center">
+              <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
+              <div className="mt-[6px] text-[16px] font-[600]">250USDT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-darkBlue py-[35px] text-center">
+        <span
+          className="flex items-center justify-center text-center text-[14px] font-semibold text-primaryBlue"
+          onClick={() => {
+            // setDisplayCount(displayCount + 8);
+          }}>
+          <Image
+            src="/images/components/competition/revamp/my-performance/details.svg"
+            width={16}
+            height={16}
+            alt=""
+            className="mr-[4px]"
+          />
+          Contribution Details
+        </span>
       </div>
     </div>
   );
