@@ -202,28 +202,29 @@ const MobileMenu = (props: any) => {
 
             <div className="pb-[35px]">
               <div onClick={() => onGotoPage('/airdrop')}>
-                <span
-                  className={`
+                <div className="flex flex-row items-center">
+                  <Image className="mr-[4px]" src="/images/common/season-2-fire.svg" width={15} height={15} alt="Competition Icon" />
+                  <span
+                    className={`season-2-green relative flex
                     ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
                   `}>
-                  Airdrop
-                </span>
+                    Airdrop
+                  </span>
+                </div>
               </div>
             </div>
 
             <div className="pb-[35px]">
               <div onClick={() => onGotoPage('/competition')}>
                 <div className="flex flex-row items-center">
-                  <Image className="mr-[4px]" src="/images/common/fire.svg" width={15} height={15} alt="Competition Icon" />
                   <span
-                    className={`glow-yellow relative flex ${
-                      router.route.toLowerCase() === '/competition' ? 'mobile-menu-active font-semibold' : ''
-                    }`}>
+                    className={`relative flex ${router.route.toLowerCase() === '/competition' ? 'mobile-menu-active font-semibold' : ''}`}>
                     Competition
                     <div
                       className="absolute right-0 top-0 mr-[-6px] mt-[-2px] rounded-br-[6px] rounded-tl-[6px] 
-                    bg-gradient-to-b from-[#FF9D56] to-[#B23333] px-[3px] py-[2px] text-[6px] font-bold italic leading-[6px]">
-                      END
+                    bg-gradient-to-r from-[#f703d94d] via-[#795af44d] to-[#04aefc4d]
+                    px-[3px] py-[2px] text-[6px] font-bold italic leading-[6px] text-[#fff]">
+                      <span className="end">END</span>
                     </div>
                   </span>
                 </div>
