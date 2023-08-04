@@ -1,8 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useConnect } from 'wagmi';
 import { $userIsConnected, $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
+import { atom } from 'nanostores';
+
+const $isShowReferralModal = atom(false);
 
 interface PerformanceTagProps {
   title: string;
@@ -79,6 +82,22 @@ const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 }
 ];
 
+const referrers = [
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 15, contribution: 25, reward: 25 },
+  { username: 'Tribe3OG', isEligible: true, vol: 10, contribution: 15, reward: 15 },
+  { username: '0x370b4f2ac5a767ABDe6Ff03b739914bc77b564fd', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 }
+];
+
 function Cell(props: any) {
   const { items, classNames } = props;
   return (
@@ -93,6 +112,125 @@ function Cell(props: any) {
     </div>
   );
 }
+
+interface ReferreeModalProps {
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ReferreeModal = () => {
+  const isShowReferralModal = useStore($isShowReferralModal);
+  const userInfo = useStore($userInfo);
+
+  const closeModal = () => $isShowReferralModal.set(false);
+
+  if (!isShowReferralModal) return null;
+
+  return (
+    <div
+      className="fixed bottom-0 left-0 right-0 top-0 z-20 h-full
+       w-full bg-black/[.2] backdrop-blur-[4px]"
+      onClick={closeModal}>
+      <div
+        className="relative mx-auto mt-[160px] max-w-[940px]
+          rounded-[12px] bg-darkBlue text-[14px]
+          font-normal leading-[17px] text-mediumEmphasis"
+        onClick={e => {
+          e.stopPropagation();
+        }}>
+        <div className="h-[528px] grow rounded-[6px] border-[1px] border-[#2E4371] bg-[#0C0D20] text-[#fff]">
+          <div className="mr-[16px] mt-[16px] flex justify-end">
+            <Image
+              src="/images/components/common/modal/close.svg"
+              alt=""
+              className="button cursor-pointer"
+              width={16}
+              height={16}
+              onClick={closeModal}
+            />
+          </div>
+          <div className="flex items-center justify-between px-[36px] pt-[8px]">
+            <div className="text-[16px] font-[600]">Contribution Details</div>
+            <div className="text-[12px] font-[400]">
+              Eligible / Total Referees :{' '}
+              <span className="text-[20px] font-[600] text-[#FFC24B]">{referrers.filter(item => item.isEligible).length}</span>{' '}
+              <span className="text-[15px]">/ {referrers.length}</span>
+            </div>
+          </div>
+          {referrers.length > 0 ? (
+            <div className="mt-[36px]">
+              <div className="px-[36px]">
+                <Cell
+                  items={['User ID', 'Status', 'Trading Vol.', 'Contribution', 'Reward']}
+                  classNames={[
+                    'col-span-3 text-[12px]',
+                    'col-span-2 text-[12px]',
+                    'col-span-2 text-[12px]',
+                    'col-span-2 text-[12px]',
+                    'col-span-3 text-[12px]'
+                  ]}
+                />
+              </div>
+              <div className="mt-[24px] max-h-[320px] overflow-y-scroll">
+                {referrers.map(item => {
+                  const isCurrentUser =
+                    item.username.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
+
+                  return (
+                    <div
+                      className={`grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
+                      <div className={`relative col-span-3 flex items-center ${!isCurrentUser ? 'pr-[40px]' : 'pr-[70px]'}`}>
+                        <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
+                        <div className="truncate">{item.username}</div>
+                        {isCurrentUser ? <div className="rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div> : null}
+                      </div>
+                      <div className="relative col-span-2">
+                        {item.isEligible ? (
+                          <Image
+                            src="/images/components/competition/revamp/my-performance/eligible.svg"
+                            width={16}
+                            height={16}
+                            alt=""
+                            className="absolute left-[-20px] top-[0px]"
+                          />
+                        ) : null}
+                        {item.isEligible ? 'Eligible' : 'Not Eligible'}
+                      </div>
+                      <div className="col-span-2 flex items-center">
+                        <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                        {item.vol.toFixed(2)}
+                      </div>
+                      <div className="col-span-2 font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
+                      <div className="col-span-3">
+                        <div className="flex w-fit items-center rounded-[12px] bg-[#2E4371] px-[12px] py-[4px]">
+                          <Image
+                            src="/images/components/competition/revamp/my-performance/reward.svg"
+                            width={16}
+                            height={16}
+                            alt=""
+                            className="mr-[10px]"
+                          />
+                          {!item.isEligible ? '-' : `${item.reward}USDT`}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
+                Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as eligible
+                referees.
+              </div>
+            </div>
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-[15px] font-[400] text-mediumEmphasis">
+              List is empty, start sharing your referral link now!
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const MyPerformance = () => {
   const isConnected = useStore($userIsConnected);
@@ -128,8 +266,11 @@ const MyPerformance = () => {
               <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
               <div className="ml-[12px] flex flex-col justify-between">
                 <div className="text-[12px] font-[400]">Master (Referrer)</div>
-                <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
-                  {displayUsername}
+                <div className="mt-[8px] flex items-center">
+                  <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                    {displayUsername}
+                  </div>
+                  <div className="rounded-[2px] bg-[#E06732] px-[4px] py-[2px] text-[8px] font-[800] ">YOU</div>
                 </div>
               </div>
             </div>
@@ -267,6 +408,79 @@ const MyPerformance = () => {
           </div>
         </div>
       </div>
+      <div className="mt-[78px]">
+        <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">My Referrer’s Team</div>
+      </div>
+      <div className="mt-[36px] flex items-center justify-center">
+        <div className="w-[765px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
+          <div className="flex flex-col">
+            <div className="grid grid-cols-12 rounded-t-[6px] bg-[#0C0D20]">
+              <div
+                className="col-span-5 flex items-center border-b-[1px] border-r-[1px]
+              border-[#2E4371] px-[60px] py-[36px]">
+                <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
+                <div className="ml-[12px] flex flex-col justify-between">
+                  <div className="text-[12px] font-[400]">My Referrer</div>
+                  <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                    Tribe3OG
+                  </div>
+                </div>
+              </div>
+              <div
+                className="col-span-7 border-b-[1px] border-[#2E4371] px-[52px]
+              py-[36px]">
+                <div className="flex justify-between">
+                  <div className="flex flex-col items-center justify-between text-center">
+                    <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
+                    <div className="mt-[6px] text-[16px] font-[600]">2</div>
+                  </div>
+                  <div className="flex flex-col items-center justify-between text-center">
+                    <div className="text-[12px] font-[400] text-[#FFD392]">
+                      Referee’s Total <br /> Trad. Vol
+                    </div>
+                    <div className="mt-[6px] flex items-center justify-center text-[16px] font-[600]">
+                      <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                      255.00
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center justify-between text-center">
+                    <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
+                    <div className="mt-[6px] text-[15px] font-[600]">1000USDT</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="pb-[16px] pt-[36px]">
+              <div className="relative flex items-center justify-between px-[176px]">
+                <div className="flex flex-col items-center justify-between text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">My Contribution</div>
+                  <div className="mt-[6px] text-[24px] font-[700] text-[#FFC24B]">50%</div>
+                </div>
+                <div className="flex flex-col items-center justify-between text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
+                  <div className="mt-[6px] text-[24px] font-[700]">250USDT</div>
+                </div>
+              </div>
+              <div className="mx-[24px] mt-[32px] flex justify-between">
+                <div />
+                <div
+                  className="flex cursor-pointer items-center text-[14px] font-[600] text-primaryBlue"
+                  onClick={() => $isShowReferralModal.set(true)}>
+                  <Image
+                    src="/images/components/competition/revamp/my-performance/details.svg"
+                    width={16}
+                    height={16}
+                    alt=""
+                    className="mr-[4px]"
+                  />
+                  Contribution Details
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ReferreeModal />
     </div>
   );
 };
