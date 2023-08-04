@@ -159,7 +159,6 @@ const AddressPage: NextPage = () => {
       }
       setIsLoadingFollow(false);
     } catch (error) {
-      // console.log('err', error);
       setIsLoadingFollow(false);
     }
   };
@@ -182,7 +181,6 @@ const AddressPage: NextPage = () => {
       }
       setIsLoadingFollow(false);
     } catch (error) {
-      // console.log('err', error);
       setIsLoadingFollow(false);
     }
   };
@@ -192,6 +190,7 @@ const AddressPage: NextPage = () => {
   useEffect(() => {
     if (typeof address === 'string') {
       $userprofileAddress.set(address);
+      $activeTab.set(0);
     }
     return () => {
       $userprofileAddress.set('');

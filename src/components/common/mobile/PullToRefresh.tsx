@@ -33,7 +33,6 @@ const PullToRefresh = ({ isRefreshing, onRefresh }: PullToRefreshProps) => {
       if (mobileView?.scrollTop === 0) {
         const translateMult = clamp(touchDiff / pullThreshold, 0, 1);
         const lerpVal = lerp(-80, 0, translateMult);
-        // console.log(lerpVal);
         pullToRefresh.style.transform = `translate(0, ${lerpVal}px)`;
       }
     };
@@ -41,7 +40,6 @@ const PullToRefresh = ({ isRefreshing, onRefresh }: PullToRefreshProps) => {
     const endHandler = () => {
       pullToRefresh.style.transform = 'translate(0, -80px)';
       if (mobileView?.scrollTop === 0 && touchDiff > pullThreshold) {
-        // console.log('hit threshold');
         onRefresh();
       }
     };

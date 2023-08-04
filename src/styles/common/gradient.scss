@@ -172,6 +172,19 @@
     -webkit-text-fill-color: #ffefd0;
     text-shadow: 0px 0px 7px rgba(255, 165, 31, 0.8);
   }
+
+  &.season-2-green {
+    background: none;
+    -webkit-text-fill-color: #fff;
+    text-shadow: 0px 0px 12px #d0ff4b;
+  }
+
+  .end {
+    background: rgb(255, 255, 255);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 .gradient-button {
@@ -277,7 +290,24 @@
     transform: translateY(8px);
   }
 
-  &:hover,
+  @media (min-width: 768px) {
+    &:hover {
+      background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+
+      &::after {
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      #tab-icon-transition {
+        opacity: 1;
+      }
+    }
+  }
   &.active {
     background: linear-gradient(265.04deg, #f703d9 -10.63%, #795af4 42.02%, #04aefc 103.03%);
     -webkit-background-clip: text;
@@ -363,4 +393,10 @@
 
 .bg-gradient-blue-referral {
   background-image: radial-gradient(circle at top, rgba(52, 170, 255, 0.5), #202249 75%);
+}
+
+.season-2-green {
+  background: none;
+  -webkit-text-fill-color: #fff;
+  text-shadow: 0px 0px 7px #d0ff4b;
 }
