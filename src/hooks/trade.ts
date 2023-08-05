@@ -10,7 +10,6 @@ import { getCHContract, getCHViewerContract, getWEthContract } from '@/const/con
 import { ammAbi, chAbi, chViewerAbi, wethAbi } from '@/const/abi';
 import { $userAddress, $currentChain, $userWethAllowance } from '@/stores/user';
 import { useDebounce } from '@/hooks/debounce';
-import { usePositionInfo } from '@/hooks/collection';
 
 // eslint-disable-next-line no-shadow
 export enum Side {
@@ -207,18 +206,28 @@ export const useOpenPositionTransaction = (args: {
 export const useClosePositionTransaction = (_slippagePercent: number) => {
   const amm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
-  const positionInfo = usePositionInfo(amm);
+  const address = useNanostore($userAddress);
+
+  const ammAddr = getAMMAddress(chain, amm);
+  const chContract = getCHContract(chain);
+  const chViewer = getCHViewerContract(chain);
+
+  const { data: positionInfo } = useContractRead({
+    ...chViewer,
+    abi: chViewerAbi,
+    functionName: 'getTraderPositionInfo',
+    args: ammAddr && address ? [ammAddr, address] : undefined
+  });
+
   const slippagePercent = useDebounce(parseBigInt(_slippagePercent));
   const slippage = slippagePercent
     ? positionInfo
-      ? positionInfo.size > 0 // long => lower limit
+      ? positionInfo.positionSize > 0n // long => lower limit
         ? 1 - formatBigInt(slippagePercent) / 100
         : 1 + formatBigInt(slippagePercent) / 100
       : 0
     : 0;
-  const notionalLimit = positionInfo ? parseBigInt(positionInfo.currentNotional * slippage) : 0n;
-  const ammAddr = getAMMAddress(chain, amm);
-  const chContract = getCHContract(chain);
+  const notionalLimit = positionInfo ? parseBigInt(formatBigInt(positionInfo.positionNotional) * slippage) : 0n;
 
   const {
     config,
