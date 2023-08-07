@@ -429,7 +429,7 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Season 2 Pts</p>
                   <div className="mb-[24px] flex items-center space-x-[6px]">
                     <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 font-bold text-transparent">
-                      {userAirdropRank?.total}
+                      {userAirdropRank?.total ? localeConversion(userAirdropRank.total, 1, 1) : 0}
                     </span>
                     <span className="text-b3">Pts</span>
                   </div>
