@@ -64,7 +64,7 @@ const TopContent = () => {
         <div className="title text-[20px]">
           {userName}
           {isNotSetUsername ? (
-            <Link href="/userprofile/update">
+            <Link href="/userprofile/edit">
               <div className="ml-[4px] cursor-pointer">
                 <Image src="/images/components/layout/header/update-name.png" width={18} height={18} alt="" />
               </div>

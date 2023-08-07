@@ -429,7 +429,7 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Season 2 Pts</p>
                   <div className="mb-[24px] flex items-center space-x-[6px]">
                     <span className="bg-gradient-to-b from-[#94C655] to-white bg-clip-text text-h5 font-bold text-transparent">
-                      {userAirdropRank?.total}
+                      {userAirdropRank?.total ? localeConversion(userAirdropRank.total, 1, 1) : 0}
                     </span>
                     <span className="text-b3">Pts</span>
                   </div>
@@ -449,9 +449,16 @@ const AddressPage: NextPage = () => {
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Realized P/L</p>
                   <div className="mb-6 flex items-center space-x-[6px]">
                     <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={16} height={16} />
-                    <p className={`text-h5 ${userPnl > 0 ? 'text-marketGreen' : userPnl < 0 ? 'text-marketRed' : ''}`}>
-                      {userPnl > 0 ? '+' : ''}
-                      {userPnl}
+                    <p
+                      className={`text-h5 ${
+                        Number(localeConversion(userPnl, 2)) > 0
+                          ? 'text-marketGreen'
+                          : Number(localeConversion(userPnl, 2)) < 0
+                          ? 'text-marketRed'
+                          : ''
+                      }`}>
+                      {Number(localeConversion(userPnl, 2)) > 0 ? '+' : ''}
+                      {Number(localeConversion(userPnl, 2))}
                     </p>
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Top Gainer Rank</p>
