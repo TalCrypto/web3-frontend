@@ -34,7 +34,7 @@ const UserReferralUpdater = () => {
   const fbApp = firebaseApp;
 
   useEffect(() => {
-    if (isConnected === true) {
+    if (isConnected === true && userAddress) {
       apiConnection.getReferralList(String(userAddress));
     }
   }, [isConnected, userAddress]);
