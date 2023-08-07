@@ -8,6 +8,7 @@ import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
 import { useRouter } from 'next/router';
 import WalletNotConnectedMobile from '@/components/airdrop/mobile/WalletNotConnectedMobile';
+import { localeConversion } from '@/utils/localeConversion';
 
 function OverviewMobile() {
   const userPoint = useNanostore($userPoint);
@@ -85,8 +86,8 @@ function OverviewMobile() {
               <p className="text-[20px] font-semibold">Total Pts</p>
               <p className="mb-3 text-[14px] font-normal">with Multiplier</p>
               <div className="flex items-end justify-center">
-                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(1)}</p>
-                <p>Pts</p>
+                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{localeConversion(total, 1, 1)}</p>
+                <p>&nbsp;Pts</p>
               </div>
             </div>
             <div className="h-[1px] bg-gradient-to-r from-white/0 via-white/50 to-white/0" />
@@ -114,7 +115,7 @@ function OverviewMobile() {
                 <div className="mb-6 flex items-center justify-between">
                   <div className="text-[20px] font-semibold leading-[20px]">Season 1 Points</div>
                   <div className="text-[15px] font-normal leading-[20px]">
-                    <span className="text-glow-yellow text-[20px] font-semibold">{prevTotal.toFixed(1)}</span> Pts
+                    <span className="text-glow-yellow text-[20px] font-semibold">{localeConversion(prevTotal, 1, 1)}</span> Pts
                   </div>
                 </div>
                 <div className="flex items-end">
@@ -152,7 +153,7 @@ function OverviewMobile() {
                 Trading Vol.
               </div>
               <div className="flex items-center">
-                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{localeConversion(tradeVol.points, 1, 1)}</p>
                 <p className="mt-[3px] text-[15px]">Pts</p>
               </div>
             </div>
@@ -173,7 +174,7 @@ function OverviewMobile() {
                 Trading Vol.
               </div>
               <div className="flex items-center">
-                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{localeConversion(tradeVol.points, 1, 1)}</p>
                 <p className="mt-[3px] text-[15px]">Pts</p>
               </div>
               {!eligible() ? <BoxLocked blur={0} iconWidth={20} iconHeight={20} /> : null}
@@ -193,7 +194,7 @@ function OverviewMobile() {
 
             <div className="flex items-center">
               <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
-                {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
+                {referralIsHidden ? '****' : localeConversion(referral.referralSelfRewardPoints + referral.referringRewardPoints, 1, 1)}
               </p>
               <p className="mt-[3px] text-[15px]">Pts</p>
             </div>
@@ -210,7 +211,7 @@ function OverviewMobile() {
 
             <div className="flex items-center">
               <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
-                {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
+                {referralIsHidden ? '****' : localeConversion(referral.referralSelfRewardPoints + referral.referringRewardPoints, 1, 1)}
               </p>
               <p className="mt-[3px] text-[15px]">Pts</p>
             </div>
@@ -241,7 +242,9 @@ function OverviewMobile() {
               </div>
 
               <div className="flex items-center">
-                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
+                  {ogPointsIsHidden ? '****' : localeConversion(og, 1, 1)}
+                </p>
                 <p className="mt-[3px] text-[15px]">Pts</p>
               </div>
             </div>
@@ -263,7 +266,9 @@ function OverviewMobile() {
               </div>
 
               <div className="flex items-center">
-                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
+                <p className="text-glow-green mr-[6px] text-[20px] font-bold leading-[36px]">
+                  {ogPointsIsHidden ? '****' : localeConversion(og, 1, 1)}
+                </p>
                 <p className="mt-[3px] text-[15px]">Pts</p>
               </div>
               <BoxLocked blur={0} iconWidth={20} iconHeight={20} />
@@ -302,7 +307,8 @@ function OverviewMobile() {
                   <div className="relative flex items-center justify-start text-[15px] font-normal">
                     <div className="flex items-end text-[15px]">
                       <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
-                        {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
+                        {Number(localeConversion(converge.points, 1, 1)) > 0 ? '+' : ''}{' '}
+                        {convergIsHidden ? '****' : localeConversion(converge.points, 1, 1)}
                       </span>
                       Pts
                     </div>
@@ -331,7 +337,8 @@ function OverviewMobile() {
                   <div className="relative flex items-center justify-start text-[15px] font-normal">
                     <div className="flex items-end text-[15px]">
                       <span className="text-glow-green mr-[6px] text-[20px] font-semibold">
-                        {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
+                        {Number(localeConversion(converge.points, 1, 1)) > 0 ? '+' : ''}{' '}
+                        {convergIsHidden ? '****' : localeConversion(converge.points, 1, 1)}
                       </span>
                       Pts
                     </div>
