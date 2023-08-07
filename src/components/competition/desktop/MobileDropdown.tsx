@@ -7,12 +7,12 @@ import { $isShowMobileModal } from '@/stores/modal';
 const mobileDropdownOptions = [
   {
     id: 0,
-    label: 'Top Gainers',
+    label: 'Top Gainer',
     icon: '/images/components/competition/icons/m-gainer.svg'
   },
   {
     id: 1,
-    label: 'Top Gainers %',
+    label: 'Top ROI',
     icon: '/images/components/competition/icons/m-gainer2.svg'
   },
   {
