@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import PageHeader from '@/components/layout/header/PageHeader';
 import OutlineButton from '@/components/common/OutlineButton';
 import PrimaryButton from '@/components/common/PrimaryButton';
-import { $userAddress, $userIsConnected } from '@/stores/user';
+import { $userAddress, $userIsConnected, setUserInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import { getAuth } from 'firebase/auth';
 import { authConnections } from '@/utils/authConnections';
@@ -50,7 +50,9 @@ const AddressPage: NextPage = () => {
       const newToken: any = await currentUser?.getIdToken(true);
       try {
         const res = await apiConnection.updateUserInfo(userId, about, newToken, userAddr);
+        const userInfoRes = await apiConnection.getUserInfo(userAddr);
         if (res.code === 0) {
+          setUserInfo(userInfoRes.data, userAddr);
           showOutlineToast({ title: 'Changes have been saved.' });
           setTimeout(() => {
             router.push(`/userprofile/${currentUserAddress}`);
