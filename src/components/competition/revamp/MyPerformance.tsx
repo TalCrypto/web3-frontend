@@ -7,6 +7,9 @@ import Image from 'next/image';
 import { atom } from 'nanostores';
 import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerformanceMobile';
 import { $activeTab } from '@/stores/competition';
+import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import { showOutlineToast } from '@/components/common/Toast';
+import ShareModal from '@/components/airdrop/desktop/ShareModal';
 
 const $isShowReferralModal = atom(false);
 
@@ -53,13 +56,7 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
             {title}
           </div>
           {type === 0 ? <div className="mt-[4px] text-[12px] font-[400]">(Week 2)</div> : null}
-          <div
-            className={`${type === 0 ? 'mt-[16px]' : 'mt-[36px]'} text-[12px] font-[400] text-[#FFD392]`}
-            onClick={() => {
-              $activeTab.set(type);
-            }}>
-            Leaderboard Rank
-          </div>
+          <div className={`${type === 0 ? 'mt-[16px]' : 'mt-[36px]'} text-[12px] font-[400] text-[#FFD392]`}>Leaderboard Rank</div>
           <div className="mt-[6px] text-[20px] font-[600]">{leaderboardRank}</div>
           <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">{contentTitle}</div>
           <div className="mt-[6px] text-[20px] font-[600]">{leaderboardRank}</div>
@@ -67,7 +64,10 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
           <div className="mt-[6px] text-[14px] font-[400]">200USDT</div>
           <div
             className="mt-[28px] flex min-w-[173px] cursor-pointer flex-row items-center justify-center
-          rounded-[4px] border-[0.5px] border-[#FFD39240] py-[8px] pl-[8px] text-[12px] font-[400] text-[#FFD392] hover:bg-[#FFD39233]">
+          rounded-[4px] border-[0.5px] border-[#FFD39240] py-[8px] pl-[8px] text-[12px] font-[400] text-[#FFD392] hover:bg-[#FFD39233]"
+            onClick={() => {
+              $activeTab.set(type);
+            }}>
             View Leaderboard
             <Image src="/images/components/userprofile/arrow_right.svg" alt="" width={16} height={16} />
           </div>
@@ -244,8 +244,42 @@ const ReferreeModal = () => {
 const MyPerformance = () => {
   const isConnected = useStore($userIsConnected);
   const userInfo = useStore($userInfo);
+  const userPointData = useStore($userPoint);
+
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
+  const userPoint = userPointData || defaultUserPoint;
+  const { referralCode } = userPoint;
+
+  const [isShowShareModal, setIsShowShareModal] = useState(false);
+
+  const copyTextFunc = (text: any) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    }
+  };
+
+  const copyUserUrl = () => {
+    copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
+    showOutlineToast({ title: 'Referral link copied to clipboard!' });
+  };
+
+  const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
+    copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
+  };
+
+  const shareToCopyText = () => `📢 Use my referral link to enjoy extra Tribe3 points!
+  🎉 Long & short Blue-chips NFTs with leverage at any amount on ${referralCode?.toUpperCase()}`;
+
+  const shareToTwitter = () => {
+    // logHelper('reward_my_referral_code_share_twitter_pressed', walletProvider.holderAddress, { page: 'Reward' });
+    setIsShowShareModal(false);
+    const encodeItem = `🎉 Long & short Blue-chips NFTs with leverage at any amount on
+      https://app.tribe3.xyz/airdrop/refer?ref=${referralCode?.toUpperCase()}
+      \n📢 Use my referral link to enjoy extra Tribe3 points!
+      \n@Tribe3Official`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
+  };
 
   return (
     <>
@@ -325,7 +359,8 @@ const MyPerformance = () => {
                       <div className="mt-[24px] flex items-center justify-between">
                         <button
                           className="mr-[12px] flex items-center justify-center 
-                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]">
+                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
+                          onClick={() => setIsShowShareModal(true)}>
                           <Image
                             src="/images/components/competition/revamp/my-performance/share.svg"
                             width={16}
@@ -337,7 +372,8 @@ const MyPerformance = () => {
                         </button>
                         <button
                           className="mr-[12px] flex items-center justify-center rounded-[4px] 
-                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]">
+                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
+                          onClick={copyUserUrl}>
                           <Image
                             src="/images/components/competition/revamp/my-performance/copy.svg"
                             width={16}
@@ -503,7 +539,17 @@ const MyPerformance = () => {
                 </div>
               </div>
             </div>
+
             <ReferreeModal />
+            {isShowShareModal ? (
+              <ShareModal
+                setIsShow={setIsShowShareModal}
+                referralCode={referralCode}
+                copyCode={copyCode}
+                shareToTwitter={shareToTwitter}
+                shareToCopyText={shareToCopyText}
+              />
+            ) : null}
           </div>
         )}
       </div>

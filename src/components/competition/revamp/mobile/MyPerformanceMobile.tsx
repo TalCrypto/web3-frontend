@@ -6,7 +6,7 @@ import MobileTooltip from '@/components/common/mobile/Tooltip';
 import ContributionDetailsModal from '@/components/competition/revamp/mobile/ContributionDetailsModal';
 import { $activeTab } from '@/stores/competition';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
-import { $asHasReferCode, $asReferResponse, $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -86,7 +86,6 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
             <div
               className="text-[12px] font-[600] text-[#FFD392]"
               onClick={() => {
-                console.log({ type });
                 $activeTab.set(type);
               }}>
               Leaderboard &gt;
