@@ -13,6 +13,7 @@ import TopVol from '@/components/competition/revamp/TopVol';
 import MyPerformance from '@/components/competition/revamp/MyPerformance';
 import MobileDropdown from '@/components/competition/revamp/MobileDropdown';
 import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerformanceMobile';
+import TopFP from '@/components/competition/revamp/TopFP';
 
 export default function Competition() {
   const { address } = useAccount();
@@ -38,7 +39,7 @@ export default function Competition() {
           <div className="content-container mb-[48px] px-0 md:py-[48px]">
             {activeTab === 0 && <TopVol />}
             {activeTab === 1 && <TopGainer />}
-            {activeTab === 2 && 'Top FP'}
+            {activeTab === 2 && <TopFP />}
             {activeTab === 3 && 'Top Referrer'}
             {activeTab === 4 && <MyPerformance />}
           </div>
