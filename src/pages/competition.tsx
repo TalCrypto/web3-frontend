@@ -15,6 +15,7 @@ import MobileDropdown from '@/components/competition/revamp/MobileDropdown';
 import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerformanceMobile';
 import TopFP from '@/components/competition/revamp/TopFP';
 import ScrollTopButton from '@/components/common/ScrollToTopButton';
+import TopReferrer from '@/components/competition/revamp/TopReferrer';
 
 export default function Competition() {
   const { address } = useAccount();
@@ -82,7 +83,7 @@ export default function Competition() {
             {activeTab === 0 && <TopVol />}
             {activeTab === 1 && <TopGainer />}
             {activeTab === 2 && <TopFP />}
-            {activeTab === 3 && 'Top Referrer'}
+            {activeTab === 3 && <TopReferrer />}
             {activeTab === 4 && <MyPerformance />}
           </div>
         </div>

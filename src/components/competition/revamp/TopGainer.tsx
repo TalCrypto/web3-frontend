@@ -5,9 +5,9 @@ import Image from 'next/image';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
-import Rules from './topgainer/Rules';
+import Rules from './TopGainer/Rules';
 import UserMedal from '../common/UserMedal';
-import PrizePool from './topgainer/PrizePool';
+import PrizePool from './TopGainer/PrizePool';
 import MobileDrawer from './MobileDrawer';
 
 type Data = {
