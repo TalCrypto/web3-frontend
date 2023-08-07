@@ -6,9 +6,9 @@ import { useStore } from '@nanostores/react';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
-import Rules from './TopGainer/Rules';
+import Rules from './TopVol/Rules';
 import UserMedal from '../common/UserMedal';
-import PrizePool from './TopGainer/PrizePool';
+import PrizePool from './TopVol/PrizePool';
 import MobileDrawer from './MobileDrawer';
 
 type Data = {

@@ -5,9 +5,9 @@ import Image from 'next/image';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
-import Rules from './TopGainer/Rules';
+import Rules from './TopFP/Rules';
 import UserMedal from '../common/UserMedal';
-import PrizePool from './TopGainer/PrizePool';
+import PrizePool from './TopFP/PrizePool';
 import MobileDrawer from './MobileDrawer';
 
 type Data = {
@@ -152,7 +152,7 @@ const TopFP = () => {
         <Rules />
       </div>
 
-      <MobileDrawer title="Rules - Top Gainers">
+      <MobileDrawer title="Rules - Top FP">
         <Rules />
       </MobileDrawer>
     </div>

@@ -12,7 +12,7 @@ const PrizePool: FC<PropsWithChildren> = () => (
     <div className="mb-24 hidden lg:flex lg:flex-col lg:items-center">
       <Image
         className="pointer-events-none scale-[1.4] object-cover"
-        src="/images/components/competition/revamp/prizepool-topgainer.svg"
+        src="/images/components/competition/revamp/prizepool-topvol.svg"
         width={937}
         height={345}
         alt=""
@@ -23,7 +23,7 @@ const PrizePool: FC<PropsWithChildren> = () => (
       <div className="flex flex-col items-center">
         <Image
           className="h-[400px] scale-[1.2] object-cover"
-          src="/images/components/competition/revamp/prizepool-topgainer_m.svg"
+          src="/images/components/competition/revamp/prizepool-topvol_m.svg"
           width={375}
           height={529}
           alt=""
