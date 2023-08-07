@@ -7,9 +7,13 @@
   padding: 12px;
   position: fixed;
   z-index: 1;
-  left: 35%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
   bottom: 50%;
   font-size: 12px;
+  width: fit-content;
 
   &.show {
     visibility: visible; /* Show the snackbar */

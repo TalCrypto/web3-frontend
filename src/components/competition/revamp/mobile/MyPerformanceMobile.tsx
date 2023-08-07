@@ -4,6 +4,9 @@ import { $userInfo, $userIsConnected } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
 import ContributionDetailsModal from '@/components/competition/revamp/mobile/ContributionDetailsModal';
+import { $activeTab } from '@/stores/competition';
+import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
+import { $asHasReferCode, $asReferResponse, $referralList, $userPoint, defaultUserPoint } from '@/stores/airdrop';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -42,6 +45,18 @@ const referrers = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
+  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 }
 ];
 
@@ -68,7 +83,14 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
               <Image src="/images/components/competition/revamp/performance-icon.svg" width={16} height={16} alt="" className="mr-[4px]" />
               {title}
             </div>
-            <div className="text-[12px] font-[600] text-[#FFD392]">Leaderboard &gt;</div>
+            <div
+              className="text-[12px] font-[600] text-[#FFD392]"
+              onClick={() => {
+                console.log({ type });
+                $activeTab.set(type);
+              }}>
+              Leaderboard &gt;
+            </div>
           </div>
           <div className="mt-[24px]">
             <div className="mx-[72px] flex justify-between">
@@ -94,11 +116,37 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
 const MyPerformanceMobile = () => {
   const userInfo = useStore($userInfo);
   const isConnected = useStore($userIsConnected);
+  const userPointData = useStore($userPoint);
+
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
-  const [displayCount, setDisplayCount] = useState(8);
+  const userPoint = userPointData || defaultUserPoint;
+  const { referralCode } = userPoint;
 
+  const [displayCount, setDisplayCount] = useState(8);
   const [isShowContributionModal, setIsShowContributionModal] = useState(false);
+  const [isShowShareModal, setIsShowShareModal] = useState(false);
+
+  const copyTextFunc = (text: any) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    }
+  };
+
+  const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
+    copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
+  };
+
+  function showSnackBar() {
+    const snackbar = document.getElementById('snackbar');
+    if (snackbar) {
+      snackbar.className = 'snackbar show';
+      copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
+      setTimeout(() => {
+        snackbar.className = snackbar.className.replace('show', '');
+      }, 3000);
+    }
+  }
 
   return !isConnected ? (
     <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
@@ -162,7 +210,8 @@ const MyPerformanceMobile = () => {
               <div className="mt-[24px] flex items-center justify-between">
                 <button
                   className="mr-[12px] flex items-center justify-center 
-                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]">
+                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
+                  onClick={() => setIsShowShareModal(true)}>
                   <Image
                     src="/images/components/competition/revamp/my-performance/share.svg"
                     width={16}
@@ -174,7 +223,8 @@ const MyPerformanceMobile = () => {
                 </button>
                 <button
                   className="mr-[12px] flex items-center justify-center rounded-[4px] 
-                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]">
+                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
+                  onClick={showSnackBar}>
                   <Image
                     src="/images/components/competition/revamp/my-performance/copy.svg"
                     width={16}
@@ -329,7 +379,12 @@ const MyPerformanceMobile = () => {
           />
           Contribution Details
         </span>
+
         <ContributionDetailsModal isShow={isShowContributionModal} setIsShow={setIsShowContributionModal} referrers={referrers} />
+        {isShowShareModal ? <ShareMobileModal setIsShow={setIsShowShareModal} referralCode={referralCode} copyCode={copyCode} /> : null}
+        <div className="snackbar" id="snackbar">
+          Referral link copied to clipboard!
+        </div>
       </div>
     </div>
   );

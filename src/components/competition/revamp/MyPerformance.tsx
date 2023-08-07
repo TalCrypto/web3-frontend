@@ -6,6 +6,7 @@ import { useStore } from '@nanostores/react';
 import Image from 'next/image';
 import { atom } from 'nanostores';
 import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerformanceMobile';
+import { $activeTab } from '@/stores/competition';
 
 const $isShowReferralModal = atom(false);
 
@@ -52,7 +53,13 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
             {title}
           </div>
           {type === 0 ? <div className="mt-[4px] text-[12px] font-[400]">(Week 2)</div> : null}
-          <div className={`${type === 0 ? 'mt-[16px]' : 'mt-[36px]'} text-[12px] font-[400] text-[#FFD392]`}>Leaderboard Rank</div>
+          <div
+            className={`${type === 0 ? 'mt-[16px]' : 'mt-[36px]'} text-[12px] font-[400] text-[#FFD392]`}
+            onClick={() => {
+              $activeTab.set(type);
+            }}>
+            Leaderboard Rank
+          </div>
           <div className="mt-[6px] text-[20px] font-[600]">{leaderboardRank}</div>
           <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">{contentTitle}</div>
           <div className="mt-[6px] text-[20px] font-[600]">{leaderboardRank}</div>
