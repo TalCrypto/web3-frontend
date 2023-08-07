@@ -6,7 +6,6 @@ import { useStore as useNanostore } from '@nanostores/react';
 import { SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
 import PositionListItem from '@/components/portfolio/desktop/PositionListItem';
 import { $userTotalFP } from '@/stores/user';
-import { AMM } from '@/const/collectionList';
 
 function PositionList() {
   const router = useRouter();
@@ -17,9 +16,10 @@ function PositionList() {
   const totalCollateral = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.margin), 0);
 
   const totalUnrealized = psUserPosition.reduce((pre: any, item: any) => (!item ? pre : pre + item.unrealizedPnl), 0);
-  const totalFundingPaymentAccount = Object.keys(totalFP)
-    .map(amm => totalFP[amm as AMM])
-    .reduce((total, value) => (value ? total + value : total), 0);
+  const totalFundingPaymentAccount = psUserPosition.reduce(
+    (pre: any, item) => (!item || !totalFP?.[item?.amm] ? pre : pre + totalFP[item.amm]),
+    0
+  );
 
   return (
     <div>
