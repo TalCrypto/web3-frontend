@@ -79,9 +79,9 @@ const PerformanceTag = (props: any) => {
         <div className="absolute bottom-[-24px] flex w-full items-center justify-center">
           {volList.map((_item: any, index: any) => (
             <div
-              className={`h-[8px] w-[8px] cursor-pointer rounded-[50%] ${index === defaultVolRecord ? 'bg-[#D9D9D9]' : 'bg-[#D9D9D980]'} ${
-                index + 1 < volList.length ? 'mr-[8px]' : ''
-              }`}
+              className={`h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9] ${
+                index === defaultVolRecord ? 'bg-[#D9D9D9]' : 'bg-[#D9D9D980]'
+              } ${index + 1 < volList.length ? 'mr-[8px]' : ''}`}
               onClick={() => setDefaultVolRecord(index)}
             />
           ))}
@@ -455,7 +455,10 @@ const MyPerformance = () => {
                               !item.isEligible ? '-' : `${item.contribution}%`
                             }`}</div>
                             <div className="col-span-3">
-                              <div className="flex w-fit items-center rounded-[12px] bg-[#2E4371] px-[12px] py-[4px]">
+                              <div
+                                className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${
+                                  item.isEligible ? 'bg-[#2E4371]' : ''
+                                }`}>
                                 <Image
                                   src="/images/components/competition/revamp/my-performance/reward.svg"
                                   width={16}

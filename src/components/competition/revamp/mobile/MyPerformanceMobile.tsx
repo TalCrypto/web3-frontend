@@ -7,6 +7,8 @@ import ContributionDetailsModal from '@/components/competition/revamp/mobile/Con
 import { $activeTab } from '@/stores/competition';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -112,6 +114,11 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
   );
 };
 
+const volList = [
+  { week: 1, rank: 250, vol: 0.5, reward: 5 },
+  { week: 2, rank: 10, vol: 100.5, reward: 500 }
+];
+
 const MyPerformanceMobile = () => {
   const userInfo = useStore($userInfo);
   const isConnected = useStore($userIsConnected);
@@ -125,6 +132,7 @@ const MyPerformanceMobile = () => {
   const [displayCount, setDisplayCount] = useState(8);
   const [isShowContributionModal, setIsShowContributionModal] = useState(false);
   const [isShowShareModal, setIsShowShareModal] = useState(false);
+  const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
 
   const copyTextFunc = (text: any) => {
     if (navigator.clipboard && window.isSecureContext) {
@@ -155,7 +163,25 @@ const MyPerformanceMobile = () => {
     <div className="block bg-[#0C0D20] md:hidden">
       <div className="px-[20px] pt-[36px] ">
         <div className="text-[20px] font-[600] ">General Performance</div>
-        <PerformanceTag title="Top Vol." type={0} leaderboardRank={3} />
+        <div className="relative">
+          <Swiper spaceBetween={50} onSlideChange={value => console.log({ value })}>
+            {volList.map(item => (
+              <SwiperSlide>
+                <PerformanceTag title="Top Vol." type={0} leaderboardRank={item.rank} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          <div className="absolute bottom-[-16px] flex w-full items-center justify-center">
+            {volList.map((_item: any, index: any) => (
+              <div
+                className={`h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9] ${
+                  index === defaultVolRecord ? 'bg-[#D9D9D9]' : 'bg-[#D9D9D980]'
+                } ${index + 1 < volList.length ? 'mr-[8px]' : ''}`}
+                onClick={() => setDefaultVolRecord(index)}
+              />
+            ))}
+          </div>
+        </div>
         <PerformanceTag title="Top Gainer" type={1} leaderboardRank={5} />
         <PerformanceTag title="Top FP" type={2} leaderboardRank={99} />
         <PerformanceTag title="Top Referrer" type={3} leaderboardRank={100} />
