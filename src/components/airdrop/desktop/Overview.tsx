@@ -10,6 +10,7 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 import Tooltip from '@/components/common/Tooltip';
 import { formatBigInt } from '@/utils/bigInt';
 import WalletNotConnected from '@/components/airdrop/desktop/WalletNotConnected';
+import { localeConversion } from '@/utils/localeConversion';
 
 function Overview() {
   const userPoint = useNanostore($userPoint);
@@ -143,7 +144,9 @@ function Overview() {
                         </div>
                       </div>
                       <div className="mt-[11px] flex h-[39px] flex-row items-end">
-                        <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">{tradeVol.points.toFixed(1)}</p>
+                        <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">
+                          {localeConversion(tradeVol.points, 1, 1)}
+                        </p>
                         <p>Pts</p>
                       </div>
                     </div>
@@ -199,7 +202,9 @@ function Overview() {
                     </div>
                     <div className="mt-3 flex h-[39px] flex-row items-end">
                       <p className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">
-                        {referralIsHidden ? '****' : (referral.referralSelfRewardPoints + referral.referringRewardPoints).toFixed(1)}
+                        {referralIsHidden
+                          ? '****'
+                          : localeConversion(referral.referralSelfRewardPoints + referral.referringRewardPoints, 1, 1)}
                       </p>
                       <p>Pts</p>
                     </div>
@@ -227,7 +232,7 @@ function Overview() {
                     </div>
                     <div className="mt-3 flex h-[39px] flex-row items-end">
                       <div className="text-glow-green mr-[6px] text-[32px] font-bold leading-[36px]">
-                        <p className="text-glow-green text-h4 md:text-h2">{ogPointsIsHidden ? '****' : og.toFixed(1)}</p>
+                        <p className="text-glow-green text-h4 md:text-h2">{ogPointsIsHidden ? '****' : localeConversion(og, 1, 1)}</p>
                       </div>
                       <p>Pts</p>
                     </div>
@@ -280,9 +285,10 @@ function Overview() {
                     <Image src="/images/components/airdrop/season2-arrow.svg" width={24} height={24} className="mx-3 -rotate-90" alt="" />
                     <div className="flex flex-row items-center">
                       <span className="text-glow-green text-[16px] font-semibold">
-                        {Number(converge.points) > 0 ? '+' : ''} {convergIsHidden ? '****' : converge.points.toFixed(1)}
+                        {Number(localeConversion(converge.points, 1, 1)) > 0 ? '+' : ''}{' '}
+                        {convergIsHidden ? '****' : localeConversion(converge.points, 1, 1)}
                       </span>
-                      &nbsp;Pts.
+                      &nbsp;Pts
                     </div>
                   </div>
                 </div>
@@ -300,8 +306,8 @@ function Overview() {
               <p className="text-[20px] font-semibold">Total Pts</p>
               <p className="mb-[12px] text-[14px] font-normal">After Multiplier</p>
               <div className="flex items-end justify-center">
-                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{total.toFixed(1)}</p>
-                <p>Pts</p>
+                <p className="text-glow-green text-[48px] font-bold leading-[48px]">{localeConversion(total, 1, 1)}</p>
+                <p>&nbsp;Pts</p>
               </div>
             </div>
             <div className="h-[1px] bg-gradient-to-r from-white/0 via-white/50 to-white/0" />
@@ -337,7 +343,7 @@ function Overview() {
                   <div>
                     <div className="text-[20px] font-semibold leading-[20px]">Season 1 Points</div>
                     <div className="mt-3 text-[15px] font-normal leading-[20px]">
-                      <span className="text-glow-yellow text-[20px] font-semibold">{prevTotal.toFixed(1)}</span> Pts.
+                      <span className="text-glow-yellow text-[20px] font-semibold">{localeConversion(prevTotal, 1, 1)}</span> Pts
                     </div>
                   </div>
                   <div className="flex flex-col items-end">
