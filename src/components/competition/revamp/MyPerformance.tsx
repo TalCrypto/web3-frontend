@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 import React, { FC, useState } from 'react';
-import { useConnect } from 'wagmi';
 import { $userIsConnected, $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
@@ -13,13 +12,11 @@ import ShareModal from '@/components/airdrop/desktop/ShareModal';
 
 const $isShowReferralModal = atom(false);
 
-interface PerformanceTagProps {
-  title: string;
-  type: number;
-  leaderboardRank: number;
-}
+const PerformanceTag = (props: any) => {
+  const { title, type, leaderboardRank = 3, volList = null } = props;
 
-const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank = 3 }) => {
+  const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
+
   let contentTitle = '';
   switch (type) {
     case 0:
@@ -42,26 +39,31 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
       break;
   }
 
+  const selectedVol = volList ? volList[defaultVolRecord] : null;
+
   return (
     <div
-      className="relative mr-[24px] h-[362px] w-[242px] overflow-hidden
+      className="relative mr-[24px] h-[362px] w-[242px]
                 rounded-[12px] border-[0.5px] border-[#FFD39240] bg-[#0C0D20CC]
                 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[rgba(72,50,24,0.7)] to-50% ">
       <div
-        className="h-full w-full  bg-[url('/images/components/userprofile/profilecardbg.png')] 
+        className="h-full w-full bg-[url('/images/components/userprofile/profilecardbg.png')] 
     bg-cover bg-[center_bottom_-3rem] bg-no-repeat px-[36px] py-[24px]">
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-row items-center justify-start text-[16px] font-[600]">
             <Image src="/images/components/competition/revamp/performance-icon.svg" width={16} height={16} alt="" className="mr-[4px]" />
             {title}
           </div>
-          {type === 0 ? <div className="mt-[4px] text-[12px] font-[400]">(Week 2)</div> : null}
+          {type === 0 ? <div className="mt-[4px] text-[12px] font-[400]">{`(Week ${selectedVol.week})`}</div> : null}
           <div className={`${type === 0 ? 'mt-[16px]' : 'mt-[36px]'} text-[12px] font-[400] text-[#FFD392]`}>Leaderboard Rank</div>
-          <div className="mt-[6px] text-[20px] font-[600]">{leaderboardRank}</div>
+          <div className="mt-[6px] text-[20px] font-[600]">{selectedVol ? selectedVol.rank : leaderboardRank}</div>
           <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">{contentTitle}</div>
-          <div className="mt-[6px] text-[20px] font-[600]">{leaderboardRank}</div>
+          <div className="mt-[6px] flex items-center text-[20px] font-[600]">
+            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+            {selectedVol ? selectedVol.vol : leaderboardRank}
+          </div>
           <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">Reward</div>
-          <div className="mt-[6px] text-[14px] font-[400]">200USDT</div>
+          <div className="mt-[6px] text-[14px] font-[400]">{selectedVol ? `${selectedVol.reward}USDT` : '200USDT'}</div>
           <div
             className="mt-[28px] flex min-w-[173px] cursor-pointer flex-row items-center justify-center
           rounded-[4px] border-[0.5px] border-[#FFD39240] py-[8px] pl-[8px] text-[12px] font-[400] text-[#FFD392] hover:bg-[#FFD39233]"
@@ -73,6 +75,18 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
           </div>
         </div>
       </div>
+      {volList ? (
+        <div className="absolute bottom-[-24px] flex w-full items-center justify-center">
+          {volList.map((_item: any, index: any) => (
+            <div
+              className={`h-[8px] w-[8px] cursor-pointer rounded-[50%] ${index === defaultVolRecord ? 'bg-[#D9D9D9]' : 'bg-[#D9D9D980]'} ${
+                index + 1 < volList.length ? 'mr-[8px]' : ''
+              }`}
+              onClick={() => setDefaultVolRecord(index)}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -107,6 +121,11 @@ const referrers = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 }
 ];
 
+const volList = [
+  { week: 1, rank: 250, vol: 0.5, reward: 5 },
+  { week: 2, rank: 10, vol: 100.5, reward: 500 }
+];
+
 function Cell(props: any) {
   const { items, classNames } = props;
   return (
@@ -120,10 +139,6 @@ function Cell(props: any) {
       ))}
     </div>
   );
-}
-
-interface ReferreeModalProps {
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ReferreeModal = () => {
@@ -293,7 +308,7 @@ const MyPerformance = () => {
           <div>
             <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">General Performance</div>
             <div className="mt-[36px] flex flex-row items-center justify-center">
-              <PerformanceTag title="Top Vol." type={0} leaderboardRank={3} />
+              <PerformanceTag title="Top Vol." type={0} leaderboardRank={3} volList={volList} />
               <PerformanceTag title="Top Gainer" type={1} leaderboardRank={5} />
               <PerformanceTag title="FP" type={2} leaderboardRank={99} />
               <PerformanceTag title="Top Referrer" type={3} leaderboardRank={100} />
