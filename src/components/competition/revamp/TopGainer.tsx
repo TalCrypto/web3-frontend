@@ -152,7 +152,7 @@ const TopGainer = () => {
         <Rules />
       </div>
 
-      <MobileDrawer title="Rules - Top Gainers">
+      <MobileDrawer title="Rules - Top Gainer">
         <Rules />
       </MobileDrawer>
     </div>
