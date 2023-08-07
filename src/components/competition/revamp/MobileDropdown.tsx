@@ -12,26 +12,21 @@ const mobileDropdownOptions = [
   },
   {
     id: 1,
-    label: 'Top ROI',
-    icon: '/images/components/airdrop/tabs/leaderboard.svg'
-  },
-  {
-    id: 2,
     label: 'Top Gainers',
     icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
-    id: 3,
+    id: 2,
     label: 'Top FP',
     icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
-    id: 4,
+    id: 3,
     label: 'Top Referrer',
     icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
-    id: 5,
+    id: 4,
     label: 'My Performance',
     icon: '/images/components/airdrop/tabs/overview.svg'
   }

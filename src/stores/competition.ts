@@ -23,10 +23,9 @@ export const $flCurrentUser = atom<any>(null);
 export const $slCurrentUser = atom<any>(null);
 export const $tlCurrentUser = atom<any>(null);
 
+// revamp
 export const $activeDropdown = atom<number>(0);
-
 export const $activeTab = atom<number>(0);
-
 export const $isShowMobileDrawer = atom(false);
 
 $isShowMobileDrawer.listen(val => {
@@ -36,3 +35,5 @@ $isShowMobileDrawer.listen(val => {
     document.body.style.removeProperty('overflow-y');
   }
 });
+
+export const $topVolActiveWeek = atom(1); // index base 0

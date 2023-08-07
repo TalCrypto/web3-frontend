@@ -2,14 +2,18 @@ import React, { FC, PropsWithChildren } from 'react';
 
 type ItemProps = PropsWithChildren & {
   className?: string;
+  onClick?: () => void;
 };
 
-const Item: FC<ItemProps> = ({ children, className }) => (
-  <div className={`flex min-w-[140px] flex-col items-center rounded bg-secondaryBlue p-[10px] ${className}`}>{children}</div>
+const Item: FC<ItemProps> = ({ children, className, onClick }) => (
+  <div onClick={onClick} className={`flex min-w-[140px] flex-col items-center rounded bg-secondaryBlue p-[10px] ${className}`}>
+    {children}
+  </div>
 );
 
 Item.defaultProps = {
-  className: undefined
+  className: undefined,
+  onClick: undefined
 };
 
 const Container: FC<PropsWithChildren> = ({ children }) => (

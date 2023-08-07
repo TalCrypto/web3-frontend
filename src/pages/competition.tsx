@@ -9,6 +9,7 @@ import Title from '@/components/competition/revamp/Title';
 import Tabs from '@/components/competition/revamp/Tabs';
 import { useStore } from '@nanostores/react';
 import TopGainer from '@/components/competition/revamp/TopGainer';
+import TopVol from '@/components/competition/revamp/TopVol';
 import MyPerformance from '@/components/competition/revamp/MyPerformance';
 import MobileDropdown from '@/components/competition/revamp/MobileDropdown';
 import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerformanceMobile';
@@ -35,12 +36,11 @@ export default function Competition() {
 
         <div className="flex-1 border-t border-t-[#71AAFF38] bg-[#00000080]">
           <div className="content-container mb-[48px] px-0 md:py-[48px]">
-            {activeTab === 0 && 'Top Vol'}
-            {activeTab === 1 && 'Top ROI'}
-            {activeTab === 2 && <TopGainer />}
-            {activeTab === 3 && 'Top FP'}
-            {activeTab === 4 && 'Top Referrer'}
-            {activeTab === 5 && <MyPerformance />}
+            {activeTab === 0 && <TopVol />}
+            {activeTab === 1 && <TopGainer />}
+            {activeTab === 2 && 'Top FP'}
+            {activeTab === 3 && 'Top Referrer'}
+            {activeTab === 4 && <MyPerformance />}
           </div>
         </div>
 
