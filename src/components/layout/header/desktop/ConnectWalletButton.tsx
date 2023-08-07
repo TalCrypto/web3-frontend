@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-unused-vars */
 /* eslint-disable operator-linebreak */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { ThreeDots } from 'react-loader-spinner';
 
@@ -40,6 +40,11 @@ const ConnectWalletButton: React.FC = () => {
       <button
         type="button"
         className={`navbar-button ${!isConnected ? 'not-connected' : 'connected'}`}
+        onMouseEnter={() => {
+          const profileContent = document.getElementById('profile-content');
+          profileContent?.style.removeProperty('opacity');
+          profileContent?.style.removeProperty('visibility');
+        }}
         onClick={() => (isWrongNetwork ? updateTargetNetwork() : !isConnected ? openLoginModal() : null)}>
         <div className="btn-connect-before absolute bottom-0 left-0 right-0 top-0 z-10 rounded-full p-[1px]" />
         <div className="flex flex-row items-center justify-center px-5" id="login-btn">

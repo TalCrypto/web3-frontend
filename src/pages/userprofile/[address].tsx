@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
@@ -259,7 +261,7 @@ const AddressPage: NextPage = () => {
       <main className="flex min-h-[calc(100vh-80px)] flex-col">
         <div>
           <div className="content-container">
-            <div className="px-[20px] py-[36px] lg:px-0 xl:flex xl:space-x-[48px] xl:p-0">
+            <div className="px-[20px] py-[36px] lg:px-0 xl:flex xl:space-x-4 xl:p-0 2xl:space-x-[48px]">
               <div className="flex-1">
                 {/* desktop only search and edit share btn */}
                 <div className="mb-[36px] hidden justify-between md:flex">
@@ -334,7 +336,7 @@ const AddressPage: NextPage = () => {
                 {/* username / wallet address */}
                 <div className="mb-4 md:flex md:justify-between">
                   <div className="md:flex md:space-x-4">
-                    <div className="mb-4 md:mb-0">
+                    <div className="mb-4 md:mb-0 md:max-w-[350px] lg:max-w-[450px] xl:max-w-[200px] 2xl:max-w-[380px] 3xl:max-w-[450px]">
                       <p
                         className="overflow-hidden text-clip bg-gradient-to-b from-[#FFC977] to-white bg-clip-text 
                         text-h2 leading-[1.12] text-transparent">
@@ -363,7 +365,7 @@ const AddressPage: NextPage = () => {
                   </div>
 
                   {/* desktop only followers */}
-                  <div className="hidden space-x-[16px] md:flex md:items-center">
+                  <div className="hidden md:flex md:items-center md:space-x-2 xl:space-x-[16px]">
                     <div>
                       <p className="text-b1 text-mediumEmphasis">
                         Following <span className="text-b1e text-highEmphasis">{userInfo?.following || 0}</span>
