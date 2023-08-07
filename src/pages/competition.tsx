@@ -14,6 +14,7 @@ import MyPerformance from '@/components/competition/revamp/MyPerformance';
 import MobileDropdown from '@/components/competition/revamp/MobileDropdown';
 import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerformanceMobile';
 import TopFP from '@/components/competition/revamp/TopFP';
+import ScrollTopButton from '@/components/common/ScrollToTopButton';
 
 export default function Competition() {
   const { address } = useAccount();
@@ -66,7 +67,7 @@ export default function Competition() {
         preload="auto"
         className={`${
           competitionActiveDropdown === 0 ? '' : 'hidden md:block'
-        } fixed top-0 z-0 hidden h-screen w-full object-cover md:block`}>
+        } fixed top-0 z-[-1] hidden h-screen w-full object-cover md:block`}>
         <source src="/images/components/competition/backgrounds/CompetitionBgVideo.mp4" type="video/mp4" />
         {/* Your browser does not support the video tag. */}
       </video>
@@ -76,7 +77,7 @@ export default function Competition() {
         <Tabs />
         <MobileDropdown />
 
-        <div className="z-[1] flex-1 border-t border-t-[#71AAFF38] bg-black/60">
+        <div className="flex-1 border-t border-t-[#71AAFF38] bg-black/60">
           <div className="content-container mb-[48px] px-0 md:py-[48px]">
             {activeTab === 0 && <TopVol />}
             {activeTab === 1 && <TopGainer />}
@@ -88,6 +89,7 @@ export default function Competition() {
 
         <CompetitionDataUpdater />
       </main>
+      <ScrollTopButton />
     </>
   );
 }

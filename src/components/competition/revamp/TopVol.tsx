@@ -188,6 +188,7 @@ const TopVol = () => {
           <Table
             className="lg:mb-[120px]"
             headerClassName="sticky top-12 z-[2] text-b3 py-4 lg:static lg:text-b2"
+            rowClassName="hover:bg-secondaryBlue"
             columns={tableColumns}
             data={tableData}
             fixedRow={userData}

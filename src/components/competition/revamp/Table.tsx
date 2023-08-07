@@ -26,7 +26,7 @@ type TableProps = PropsWithChildren & {
 const Table: FC<TableProps> = ({ className, headerClassName, bodyClassName, rowClassName, columns, data, fixedRow }) => {
   const defaultClassName = 'text-mediumEmphasis';
   const defaultHeaderClassName = 'flex items-center bg-darkBlue py-3';
-  const defaultRowClassName = 'flex items-center border-b border-b-[#2E4371] py-3 text-b3 transition hover:bg-secondaryBlue lg:text-b2';
+  const defaultRowClassName = 'flex items-center border-b border-b-[#2E4371] py-3 text-b3 transition lg:text-b2';
   return (
     <div className={`${defaultClassName} ${className}`}>
       <div className={`${defaultHeaderClassName} ${headerClassName}`}>

@@ -6,7 +6,7 @@ import React from 'react';
 const Title = () => {
   const router = useRouter();
   return (
-    <div className="z-[1] flex flex-col items-center py-16">
+    <div className="flex flex-col items-center py-16">
       <h1 className="text-glow-yellow text-shadow-lb mb-8 hidden text-center text-h1 md:block">TRADING COMPETITION</h1>
 
       <div className="m_main_title_ mb-9 md:hidden">
