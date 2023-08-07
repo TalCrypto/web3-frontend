@@ -6,7 +6,7 @@ import { $isMobileView, $isShowMobileModal, $isBannerShow } from '@/stores/modal
 import { useStore as useNanostore } from '@nanostores/react';
 import LayoutUpdater from '@/components/updaters/LayoutUpdater';
 import { useRouter } from 'next/router';
-import { $activeDropdown } from '@/stores/competition';
+// import { $activeDropdown } from '@/stores/competition';
 import { $isNotFoundPage } from '@/stores/route';
 import Header from './header';
 import Footer from './footer';
@@ -33,33 +33,34 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     "bg-black bg-[url('/images/components/userprofile/bg1.png')] bg-cover bg-fixed bg-left-top 4xl:bg-[left_top_-10rem] bg-no-repeat";
   const userprofileBg2Class = "bg-[url('/images/components/userprofile/bg2.png')] bg-cover bg-fixed bg-right-top bg-no-repeat";
 
-  const competitionActiveDropdown = useNanostore($activeDropdown);
   const isFullContentContainer = isUserprofilePage || isCompetitionPage || isNotFoundPage;
 
+  // const competitionActiveDropdown = useNanostore($activeDropdown);
+
   // competition page bg video
-  const videoRef: any = useRef(null);
+  // const videoRef: any = useRef(null);
 
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      // Play the video when the user interacts with the site
-      if (videoRef.current) {
-        videoRef.playsInline = true;
-        videoRef.current.play();
-      }
-    };
-
-    // Listen for user interaction events (e.g., click, touch, key press)
-    window.addEventListener('mousedown', handleUserInteraction);
-    window.addEventListener('touchstart', handleUserInteraction);
-    window.addEventListener('keydown', handleUserInteraction);
-
-    // Clean up event listeners when the component unmounts
-    return () => {
-      window.removeEventListener('mousedown', handleUserInteraction);
-      window.removeEventListener('touchstart', handleUserInteraction);
-      window.removeEventListener('keydown', handleUserInteraction);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const handleUserInteraction = () => {
+  //     // Play the video when the user interacts with the site
+  //     if (videoRef.current) {
+  //       videoRef.playsInline = true;
+  //       videoRef.current.play();
+  //     }
+  //   };
+  //
+  //   // Listen for user interaction events (e.g., click, touch, key press)
+  //   window.addEventListener('mousedown', handleUserInteraction);
+  //   window.addEventListener('touchstart', handleUserInteraction);
+  //   window.addEventListener('keydown', handleUserInteraction);
+  //
+  //   // Clean up event listeners when the component unmounts
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleUserInteraction);
+  //     window.removeEventListener('touchstart', handleUserInteraction);
+  //     window.removeEventListener('keydown', handleUserInteraction);
+  //   };
+  // }, []);
 
   // const competitionVideoBg = () => {
   //   if (isCompetitionPage)
