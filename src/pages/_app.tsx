@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
 import Layout from '@/components/layout';
 import '@/styles/globals.css';
@@ -26,19 +27,25 @@ import Head from 'next/head';
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
 const alchemyProjectId = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? '';
 const infuraProjectId = process.env.NEXT_PUBLIC_INFURA_KEY ?? '';
+const quickNodeProviderUrl = process.env.NEXT_PUBLIC_QUICKNODE_URL ?? '';
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [
-  alchemyProvider({ apiKey: alchemyProjectId }),
-  infuraProvider({ apiKey: infuraProjectId }),
-  w3mProvider({ projectId }),
-  publicProvider()
+const { chains, publicClient } = configureChains(CHAINS, [
+  jsonRpcProvider({
+    rpc: () => ({
+      http: quickNodeProviderUrl
+    })
+  })
+  // alchemyProvider({ apiKey: alchemyProjectId }),
+  // infuraProvider({ apiKey: infuraProjectId }),
+  // w3mProvider({ projectId }),
+  // publicProvider()
 ]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: [...w3mConnectors({ projectId, chains })],
-  publicClient,
-  webSocketPublicClient
+  publicClient
+  // webSocketPublicClient
 });
 
 const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
