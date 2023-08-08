@@ -301,7 +301,7 @@ const MyPerformance = () => {
       <div className="hidden md:block">
         {!isConnected ? (
           <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
-            Please connect to your wallet to get started.
+            Please connect to your wallet to get started
           </div>
         ) : (
           <div>

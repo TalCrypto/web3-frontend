@@ -104,7 +104,7 @@ function TrendContent() {
           <div
             className="mb-6 mt-[66px]
             text-center text-mediumEmphasis">
-            Please connect to your wallet to get started.
+            Please connect to your wallet to get started
           </div>
           <div className="flex justify-center">
             <PrimaryButton className="px-[14px] py-[7px] !text-[14px] font-semibold" onClick={onBtnConnectWallet}>
