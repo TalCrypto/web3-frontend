@@ -1,0 +1,16 @@
+.mySwiper {
+  overflow: visible;
+  .swiper-pagination-bullets {
+    // position: absolute;
+    overflow: visible;
+    bottom: 2px !important;
+  }
+
+  .swiper-pagination-bullet {
+    background-color: #d9d9d9;
+  }
+
+  .swiper-pagination-bullet-active {
+    background-color: #fff;
+  }
+}
