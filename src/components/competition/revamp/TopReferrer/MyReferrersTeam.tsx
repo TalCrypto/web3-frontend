@@ -67,8 +67,10 @@ const MyReferrersTeam = () => {
               </div>
               <div className="mx-[24px] mt-[32px] hidden justify-between lg:flex">
                 <div className="text-[12px]">
+                  {/*
                   Trade at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume to be eligible referee.{' '}
                   <span className="text-[#FFC24B]">(0.99 / 1.00)</span>
+                  */}
                 </div>
                 <div
                   className="flex cursor-pointer items-center text-[14px] font-[600] text-primaryBlue"

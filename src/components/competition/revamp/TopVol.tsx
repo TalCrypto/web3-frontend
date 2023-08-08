@@ -15,7 +15,8 @@ type Data = {
   rank: number;
   username: string;
   realized_pnl: number;
-  prize: number;
+  prize?: number;
+  prize_points?: number;
 };
 
 // define tables columns
@@ -50,12 +51,26 @@ const tableColumns: TableColumn<Data>[] = [
     label: 'Prize',
     field: 'prize',
     className: 'hidden md:block basis-1/4',
-    render: row => (
-      <div className="flex w-fit space-x-1 rounded-[12px] bg-[#2E4371] px-4 py-1">
-        <Image src="/images/components/competition/revamp/gift.svg" width={16} height={16} alt="" />
-        <p className="text-b2">{row.prize} USDT</p>
-      </div>
-    )
+    render: row => {
+      let usdtPrize = null;
+      if (row.prize && row.prize > 0) usdtPrize = `${row.prize} USDT`;
+      let pointPrize = null;
+      if (row.prize_points && row.prize_points > 0) pointPrize = `${row.prize_points}Pts`;
+
+      const hasPrize = usdtPrize !== null || pointPrize !== null;
+
+      let prize = '';
+      if (usdtPrize) prize += ` ${usdtPrize}`;
+      if (pointPrize) prize += ` + ${pointPrize}`;
+      if (!hasPrize) prize = '-';
+
+      return (
+        <div className={`flex w-fit space-x-1 text-b2 ${hasPrize ? 'rounded-[12px] bg-[#2E4371]' : ''} px-4 py-1`}>
+          <Image src="/images/components/competition/revamp/gift.svg" width={16} height={16} alt="" />
+          <p>{prize}</p>
+        </div>
+      );
+    }
   }
 ];
 
@@ -64,13 +79,13 @@ const tableData: Data[] = [
   { rank: 1, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
   { rank: 2, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
   { rank: 3, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
-  { rank: 4, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
+  { rank: 4, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200, prize_points: 1500 },
   { rank: 5, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
-  { rank: 6, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
-  { rank: 7, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
-  { rank: 8, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
+  { rank: 6, username: '0xbf44b...980', realized_pnl: 8.99, prize: 0 },
+  { rank: 7, username: '0xbf44b...980', realized_pnl: 8.99 },
+  { rank: 8, username: '0xbf44b...980', realized_pnl: 8.99 },
   { rank: 9, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
-  { rank: 10, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
+  { rank: 10, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200, prize_points: 1500 },
   { rank: 11, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
   { rank: 12, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
   { rank: 13, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 },
