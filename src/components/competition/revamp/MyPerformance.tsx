@@ -175,7 +175,7 @@ const ReferreeModal = () => {
           <div className="flex items-center justify-between px-[36px] pt-[8px]">
             <div className="text-[16px] font-[600]">Contribution Details</div>
             <div className="text-[12px] font-[400]">
-              Total Referees : <span className="text-[14px] font-[600]">{referrers.filter(item => item.isEligible).length}</span>{' '}
+              Total Referees : <span className="text-[14px] font-[600]">{referrers.length}</span>{' '}
               {/* <span className="text-[15px]">/ {referrers.length}</span> */}
             </div>
           </div>
@@ -193,7 +193,7 @@ const ReferreeModal = () => {
                   ]}
                 />
               </div>
-              <div className="mt-[24px] max-h-[320px] overflow-y-scroll">
+              <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
                 {referrers.map(item => {
                   const isCurrentUser =
                     item.username.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
@@ -239,10 +239,10 @@ const ReferreeModal = () => {
                   );
                 })}
               </div>
-              <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
+              {/* <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
                 Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as eligible
                 referees.
-              </div>
+              </div> */}
             </div>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[15px] font-[400] text-mediumEmphasis">
@@ -405,7 +405,7 @@ const MyPerformance = () => {
                   <div className="flex items-center justify-between px-[36px]">
                     <div className="text-[16px] font-[600]">My Referees</div>
                     <div className="text-[12px] font-[400]">
-                      Total Referees : <span className="font-[600]">{referrers.filter(item => item.isEligible).length}</span>{' '}
+                      Total Referees : <span className="font-[600]">{referrers.length}</span>{' '}
                       {/* <span className="text-[15px]">/ {referrers.length}</span> */}
                     </div>
                   </div>
@@ -422,7 +422,7 @@ const MyPerformance = () => {
                           ]}
                         />
                       </div>
-                      <div className="mt-[24px] max-h-[320px] overflow-y-scroll">
+                      <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
                         {referees.map(item => (
                           <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                             <div className="relative col-span-3 items-center">
@@ -466,10 +466,10 @@ const MyPerformance = () => {
                           </div>
                         ))}
                       </div>
-                      <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
+                      {/* <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
                         Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as
                         eligible referees.
-                      </div>
+                      </div> */}
                     </div>
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-[15px] font-[400] text-mediumEmphasis">
