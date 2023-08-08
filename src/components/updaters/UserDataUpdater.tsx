@@ -25,6 +25,7 @@ import React, { useEffect, useState } from 'react';
 import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } from 'wagmi';
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import { getAddress, zeroAddress } from 'viem';
+import { authConnections } from '@/utils/authConnections';
 
 const PositionInfoUpdater: React.FC<{
   chain: Chain | undefined;
@@ -141,8 +142,9 @@ const UserDataUpdater: React.FC = () => {
     watch: true
   });
 
-  useEffect(() => {
+  const handleAddresChange = async () => {
     if (address) {
+      await authConnections.postUserContent(address);
       apiConnection.getUserInfo(address).then(result => {
         setUserInfo(result.data, address);
       });
@@ -162,6 +164,10 @@ const UserDataUpdater: React.FC = () => {
       });
       $userAddress.set(address);
     }
+  };
+
+  useEffect(() => {
+    handleAddresChange();
   }, [address]);
 
   useEffect(() => {
