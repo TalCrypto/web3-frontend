@@ -44,8 +44,8 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, 
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: [...w3mConnectors({ projectId, chains })],
-  publicClient,
-  webSocketPublicClient
+  publicClient
+  // webSocketPublicClient
 });
 
 const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
