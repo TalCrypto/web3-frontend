@@ -34,11 +34,11 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, 
     rpc: () => ({
       http: quickNodeProviderUrl
     })
-  }),
-  alchemyProvider({ apiKey: alchemyProjectId }),
-  infuraProvider({ apiKey: infuraProjectId }),
-  w3mProvider({ projectId }),
-  publicProvider()
+  })
+  // alchemyProvider({ apiKey: alchemyProjectId }),
+  // infuraProvider({ apiKey: infuraProjectId }),
+  // w3mProvider({ projectId }),
+  // publicProvider()
 ]);
 
 const wagmiConfig = createConfig({
