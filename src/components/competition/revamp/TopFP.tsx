@@ -152,7 +152,7 @@ const TopFP = () => {
         <Rules />
       </div>
 
-      <MobileDrawer title="Rules - Top FP">
+      <MobileDrawer title="Rules - Top FP Receiver">
         <Rules />
       </MobileDrawer>
     </div>

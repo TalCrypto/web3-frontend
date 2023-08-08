@@ -8,8 +8,8 @@ const radialBgClassName =
   'from-[rgba(78,85,121,0.6)] to-darkBlue to-100% bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] lg:bg-[radial-gradient(farthest-side_at_center,_var(--tw-gradient-stops))] lg:to-transparent lg:to-85%';
 
 const PrizePool: FC<PropsWithChildren> = () => (
-  <div className="justify-center lg:flex lg:flex-col">
-    <div className="mb-24 hidden lg:flex lg:flex-col lg:items-center">
+  <div className="justify-center md:flex md:flex-col">
+    <div className="mb-24 hidden md:flex md:flex-col md:items-center">
       <Image
         className="pointer-events-none scale-[1.4] object-cover"
         src="/images/components/competition/revamp/prizepool-top-referrer.svg"
@@ -19,10 +19,10 @@ const PrizePool: FC<PropsWithChildren> = () => (
       />
     </div>
 
-    <div className="relative overflow-clip lg:hidden">
+    <div className="relative overflow-clip md:hidden">
       <div className="flex flex-col items-center">
         <Image
-          className="h-[400px] scale-[1.2] object-cover"
+          className="h-[400px] object-cover sm:scale-[1.1]"
           src="/images/components/competition/revamp/prizepool-top-referrer_m.svg"
           width={375}
           height={529}

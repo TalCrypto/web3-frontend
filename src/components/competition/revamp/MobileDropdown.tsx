@@ -17,7 +17,7 @@ const mobileDropdownOptions = [
   },
   {
     id: 2,
-    label: 'Top FP',
+    label: 'Top FP Receiver',
     icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {

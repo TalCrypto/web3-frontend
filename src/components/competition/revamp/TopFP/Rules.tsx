@@ -29,13 +29,13 @@ const data: Data[] = [
 
 const Rules = () => (
   <div className="px-5 py-9 lg:p-0">
-    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Rules for Top FP</p>
+    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Rules for Top FP Receiver</p>
 
     <ul className="mb-16 ml-5 list-disc space-y-6 text-b1">
       <li>
         <p>
-          In the Top FP competition, users are competing on the Realized P/L during the period. Winners will share a prize pool with USDT
-          and Tribe3 points!
+          In the Top FP Receiver competition, users are competing on the Realized P/L during the period. Winners will share a prize pool
+          with USDT and Tribe3 points!
         </p>
       </li>
       <li>

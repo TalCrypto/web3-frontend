@@ -68,7 +68,7 @@ export default function Competition() {
         preload="auto"
         className={`${
           competitionActiveDropdown === 0 ? '' : 'hidden md:block'
-        } fixed top-0 z-[-1] hidden h-screen w-full object-cover md:block`}>
+        } fixed top-0 z-[-1] hidden h-full w-full object-cover md:block`}>
         <source src="/images/components/competition/backgrounds/CompetitionBgVideo.mp4" type="video/mp4" />
         {/* Your browser does not support the video tag. */}
       </video>

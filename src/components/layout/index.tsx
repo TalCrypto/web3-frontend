@@ -90,7 +90,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div
         className={`min-h-screen w-full
           ${isAirdropPage ? airdropBgClass : 'bg-darkBlue'}
-          ${isCompetitionPage ? 'bg-transparent' : ''}
+          ${isCompetitionPage ? 'overflow-hidden bg-transparent' : ''}
           ${isUserprofilePage || isNotFoundPage ? userprofileBgClass : ''}`}>
         <div
           className={`
