@@ -12,12 +12,12 @@ const mobileDropdownOptions = [
   },
   {
     id: 1,
-    label: 'Top Gainers',
+    label: 'Top Gainer',
     icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
     id: 2,
-    label: 'Top FP',
+    label: 'Top FP Receiver',
     icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {

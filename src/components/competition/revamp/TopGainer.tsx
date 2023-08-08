@@ -5,9 +5,9 @@ import Image from 'next/image';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
-import Rules from './topgainer/Rules';
+import Rules from './TopGainer/Rules';
 import UserMedal from '../common/UserMedal';
-import PrizePool from './topgainer/PrizePool';
+import PrizePool from './TopGainer/PrizePool';
 import MobileDrawer from './MobileDrawer';
 
 type Data = {
@@ -107,7 +107,7 @@ const TopGainer = () => {
 
         <TopThree.Container>
           <TopThree.Item rank={2} className="mt-8 w-[200px]" title={<p className="mb-4 text-h5 text-white">JEFFGPT8888</p>}>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Vol.</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">Realized P/L</p>
             <div className="flex space-x-1">
               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
               <p className="text-b2e text-marketGreen">+89.99</p>
@@ -117,7 +117,7 @@ const TopGainer = () => {
             <p className="text-b2 text-highEmphasis">500USDT + 1,500Pts</p>
           </TopThree.Item>
           <TopThree.Item rank={1} className="w-[200px]" title={<p className="mb-4 text-h5 text-[#FFD540]">JEFFGPT9999</p>}>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Vol.</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">Realized P/L</p>
             <div className="flex space-x-1">
               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
               <p className="text-b2e text-marketGreen">+99.99</p>
@@ -127,7 +127,7 @@ const TopGainer = () => {
             <p className="text-b2 text-highEmphasis">500USDT + 1,500Pts</p>
           </TopThree.Item>
           <TopThree.Item rank={3} className="mt-8 w-[200px]" title={<p className="mb-4 text-h5 text-[#FF8A65]">JEFFGPT7777</p>}>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Vol.</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">Realized P/L</p>
             <div className="flex space-x-1">
               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
               <p className="text-b2e text-marketGreen">+79.99</p>
@@ -141,6 +141,7 @@ const TopGainer = () => {
         <Table
           className="lg:mb-[120px]"
           headerClassName="sticky top-12 z-[2] text-b3 py-4 lg:static lg:text-b2"
+          rowClassName="hover:bg-secondaryBlue"
           columns={tableColumns}
           data={tableData}
           fixedRow={userData}
@@ -151,7 +152,7 @@ const TopGainer = () => {
         <Rules />
       </div>
 
-      <MobileDrawer title="Rules - Top Gainers">
+      <MobileDrawer title="Rules - Top Gainer">
         <Rules />
       </MobileDrawer>
     </div>

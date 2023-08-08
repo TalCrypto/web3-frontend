@@ -55,7 +55,15 @@ const TopContent = () => {
 
   const clickViewProfile = (e: React.MouseEvent) => {
     e.preventDefault();
+    const profileContent = document.getElementById('profile-content');
+    profileContent.style.setProperty('visibility', 'hidden');
+    profileContent.style.setProperty('opacity', '0');
     router.push(`/userprofile/${address ? address.toString() : ''}`);
+
+    // setTimeout(() => {
+    //   profileContent.style.removeProperty('opacity');
+    //   profileContent.style.removeProperty('visibility');
+    // }, 1000);
   };
 
   return (
