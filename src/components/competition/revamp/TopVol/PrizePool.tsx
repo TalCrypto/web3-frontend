@@ -23,7 +23,7 @@ const PrizePool: FC<PropsWithChildren> = () => (
       <div className="flex h-[529px] w-full flex-col items-center">
         <Image
           className="h-[400px] object-cover sm:scale-[1.1]"
-          src="/images/components/competition/revamp/prize_image_m.svg"
+          src="/images/components/competition/revamp/prize_image_m.png"
           fill
           alt=""
         />
