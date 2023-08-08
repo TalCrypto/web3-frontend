@@ -6,7 +6,7 @@ import TopMenu from '@/components/layout/header/desktop/TopMenu';
 import Web3Area from '@/components/layout/header/desktop/Web3Area';
 import WidgetBot from '@widgetbot/react-embed';
 import { $isBannerShow, $isMobileView, $isShowDiscordModal } from '@/stores/modal';
-import { useStore as useNanostore } from '@nanostores/react';
+import { useStore as useNanostore, useStore } from '@nanostores/react';
 import { firebaseAuth } from '@/const/firebaseConfig';
 import { useRouter } from 'next/router';
 // import MobileHeader from '@/components/layout/header/mobile';
@@ -22,19 +22,10 @@ function Header() {
 
   useEffect(() => {
     setIsCompleteLoading(true);
-
-    const localStorageDiscord = localStorage.getItem('isDiscordShown');
-    if (!localStorageDiscord || localStorageDiscord === null) {
-      localStorage.setItem('isDiscordShown', 'false');
-      setLocalDiscordKey(false);
-    } else if (localStorageDiscord === 'true') {
-      setLocalDiscordKey(true);
-    }
   }, []);
 
   const closeDiscord = () => {
     $isShowDiscordModal.set(false);
-    localStorage.setItem('isDiscordShown', 'false');
   };
 
   return (
