@@ -246,6 +246,26 @@ const TopVol = () => {
         ))}
       </FloatingWidget.Container>
 
+      <div className="flex space-x-3 overflow-auto px-5 py-4 md:hidden">
+        {weeksData.map(({ title, isEnded }, i) => (
+          <div
+            onClick={() => $topVolActiveWeek.set(i)}
+            className={`relative flex min-w-[100px] flex-col items-center rounded  p-3 text-b3 ${
+              topVolActiveWeek === i ? 'bg-primaryBlue' : 'bg-secondaryBlue'
+            }`}>
+            {title}
+            {isEnded && (
+              <div
+                className="absolute right-[-3px] top-[-2px] rounded-br-[6px] rounded-tl-[6px] 
+                bg-gradient-to-r from-gradientBlue to-gradientPink 
+                px-[3px] py-[2px] text-[7.5px] font-bold leading-[7.5px]">
+                END
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
       {renderCurrentWeek()}
     </div>
   );
