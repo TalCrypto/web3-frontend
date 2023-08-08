@@ -30,12 +30,12 @@ const infuraProjectId = process.env.NEXT_PUBLIC_INFURA_KEY ?? '';
 const quickNodeProviderUrl = process.env.NEXT_PUBLIC_QUICKNODE_URL ?? '';
 
 const { chains, publicClient } = configureChains(CHAINS, [
+  w3mProvider({ projectId }),
   jsonRpcProvider({
     rpc: () => ({
       http: quickNodeProviderUrl
     })
   }),
-  w3mProvider({ projectId }),
   alchemyProvider({ apiKey: alchemyProjectId }),
   infuraProvider({ apiKey: infuraProjectId }),
   publicProvider()
