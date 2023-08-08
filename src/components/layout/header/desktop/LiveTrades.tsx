@@ -1,18 +1,15 @@
 import React from 'react';
 import Image from 'next/image';
 import { $isShowDiscordModal } from '@/stores/modal';
+import { useStore } from '@nanostores/react';
 
 export default function LiveTrades() {
+  const isShowDiscordModal = useStore($isShowDiscordModal);
+
   const openDiscordModal = () => {
-    const localIsDiscordShown = localStorage.getItem('isDiscordShown');
-    if (localIsDiscordShown === 'true') {
-      localStorage.setItem('isDiscordShown', 'false');
-      $isShowDiscordModal.set(false);
-    } else {
-      localStorage.setItem('isDiscordShown', 'true');
-      $isShowDiscordModal.set(true);
-    }
+    $isShowDiscordModal.set(!isShowDiscordModal);
   };
+
   return (
     <div className="navbar-outer">
       <button type="button" className="navbar-button connected" onClick={openDiscordModal}>
