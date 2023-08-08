@@ -23,6 +23,8 @@ type TableProps = PropsWithChildren & {
   rowClassName?: string;
 };
 
+const emptyList = Array.from({ length: 5 });
+
 const Table: FC<TableProps> = ({ className, headerClassName, bodyClassName, rowClassName, columns, data, fixedRow }) => {
   const defaultClassName = 'text-mediumEmphasis';
   const defaultHeaderClassName = 'flex items-center bg-darkBlue py-3';
@@ -44,15 +46,31 @@ const Table: FC<TableProps> = ({ className, headerClassName, bodyClassName, rowC
             ))}
           </div>
         )}
-        {data.map((row, rowIdx) => (
-          <div key={`row-${rowIdx}`} className={`${defaultRowClassName} ${rowClassName}`}>
-            {columns.map((col, i) => (
-              <div key={`row-${rowIdx}-${i}`} className={col.className || 'flex-1'}>
-                {col.render ? col.render(row) : col.field ? row[col.field] : null}
+        {data.length > 0 ? (
+          <>
+            {data.map((row, rowIdx) => (
+              <div key={`row-${rowIdx}`} className={`${defaultRowClassName} ${rowClassName}`}>
+                {columns.map((col, i) => (
+                  <div key={`row-${rowIdx}-${i}`} className={col.className || 'flex-1'}>
+                    {col.render ? col.render(row) : col.field ? row[col.field] : null}
+                  </div>
+                ))}
               </div>
             ))}
-          </div>
-        ))}
+          </>
+        ) : (
+          <>
+            {emptyList.map((row, rowIdx) => (
+              <div key={`row-${rowIdx}`} className={`${defaultRowClassName} min-h-[50px] ${rowClassName}`}>
+                {columns.map((col, i) => (
+                  <div key={`row-${rowIdx}-${i}`} className={col.className || 'flex-1'}>
+                    {' '}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
