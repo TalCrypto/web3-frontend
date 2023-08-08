@@ -29,6 +29,7 @@ export const $activeTab = atom<number>(0);
 
 export const $isShowMobileRules = atom(false);
 export const $isShowMobileMyTeam = atom(false);
+export const $isShowMobileMyReferrerTeam = atom(false);
 
 $isShowMobileRules.listen(val => {
   if (val) {
@@ -46,4 +47,14 @@ $isShowMobileMyTeam.listen(val => {
   }
 });
 
+$isShowMobileMyReferrerTeam.listen(val => {
+  if (val) {
+    document.body.style.setProperty('overflow-y', 'hidden');
+  } else {
+    document.body.style.removeProperty('overflow-y');
+  }
+});
+
 export const $topVolActiveWeek = atom(1); // index base 0
+
+export const $isShowContributionModal = atom(false);

@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useStore } from '@nanostores/react';
-import { $isShowMobileMyTeam, $isShowMobileRules } from '@/stores/competition';
+import { $isShowMobileMyReferrerTeam, $isShowMobileMyTeam, $isShowMobileRules } from '@/stores/competition';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -11,6 +11,8 @@ import PrizePool from './TopReferrer/PrizePool';
 import Rules from './TopReferrer/Rules';
 import MobileDrawer from './MobileDrawer';
 import MyTeam from './TopReferrer/MyTeam';
+import MyReferrersTeam from './TopReferrer/MyReferrersTeam';
+import { ContributionDetail } from './TopReferrer/ContributionDetail';
 
 type Data = {
   rank: number;
@@ -114,6 +116,7 @@ const userData = { rank: 30, username: 'Me', num_ref: 2, total_tradingvol: 8.99,
 
 const TopReferrer = () => {
   const isShowMobileMyTeam = useStore($isShowMobileMyTeam);
+  const isShowMobileMyReferrerTeam = useStore($isShowMobileMyReferrerTeam);
   const isShowMobileRules = useStore($isShowMobileRules);
 
   return (
@@ -185,8 +188,14 @@ const TopReferrer = () => {
 
       <div className="hidden space-y-32 md:block">
         <MyTeam />
+        <MyReferrersTeam />
         <Rules />
       </div>
+
+      <MobileDrawer title="My Referrer's Team" show={isShowMobileMyReferrerTeam} onClickBack={() => $isShowMobileMyReferrerTeam.set(false)}>
+        <MyReferrersTeam />
+        <ContributionDetail />
+      </MobileDrawer>
 
       <MobileDrawer title="My Team" show={isShowMobileMyTeam} onClickBack={() => $isShowMobileMyTeam.set(false)}>
         <MyTeam />
