@@ -51,7 +51,7 @@ const PerformanceTag = (props: any) => {
     bg-cover bg-[center_bottom_-3rem] bg-no-repeat px-[36px] py-[24px]">
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-row items-center justify-start text-[16px] font-[600]">
-            <Image src="/images/components/competition/revamp/performance-icon.svg" width={16} height={16} alt="" className="mr-[4px]" />
+            {/* <Image src="/images/components/competition/revamp/performance-icon.svg" width={16} height={16} alt="" className="mr-[4px]" /> */}
             {title}
           </div>
           {type === 0 ? <div className="mt-[4px] text-[12px] font-[400]">{`(Week ${selectedVol.week})`}</div> : null}

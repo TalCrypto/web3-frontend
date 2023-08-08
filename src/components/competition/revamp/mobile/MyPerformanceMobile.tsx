@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { FC, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { $userInfo, $userIsConnected } from '@/stores/user';
@@ -9,6 +10,7 @@ import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/scss';
+import 'swiper/scss/pagination';
 import { Pagination } from 'swiper/modules';
 
 const referees = [
@@ -73,38 +75,40 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
   const contentTitle = '';
 
   return (
-    <div
-      className="relative mt-[24px] overflow-hidden
-                rounded-[6px] border-[0.5px] border-[#FFD39240] bg-[#0C0D20CC]
-                bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[rgba(72,50,24,0.7)] to-50% ">
+    <div className="pb-[24px]">
       <div
-        className="h-full w-full  bg-[url('/images/components/userprofile/profilecardbg.png')] 
+        className="relative overflow-visible rounded-[6px]
+                border-[0.5px] border-[#FFD39240] bg-[#0C0D20CC] bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))]
+                from-[rgba(72,50,24,0.7)] to-50% ">
+        <div
+          className="h-full w-full  bg-[url('/images/components/userprofile/profilecardbg.png')] 
     bg-cover bg-[center_bottom_-3rem] bg-no-repeat px-[24px] py-[18px]">
-        <div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center text-[16px] font-[600] ">
-              <Image src="/images/components/competition/revamp/performance-icon.svg" width={16} height={16} alt="" className="mr-[4px]" />
-              {title}
-            </div>
-            <div
-              className="text-[12px] font-[600] text-[#FFD392]"
-              onClick={() => {
-                $activeTab.set(type);
-              }}>
-              Leaderboard &gt;
-            </div>
-          </div>
-          <div className="mt-[24px]">
-            <div className="mx-[72px] flex justify-between">
-              <div className="flex flex-col text-center">
-                <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
-                <div className="mt-[16px] text-[14px] font-[600]">999</div>
+          <div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center text-[16px] font-[600] ">
+                {/* <Image src="/images/components/competition/revamp/performance-icon.svg" width={16} height={16} alt="" className="mr-[4px]" /> */}
+                {title}
               </div>
-              <div className="flex flex-col text-center">
-                <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
-                <div className="mt-[16px] flex items-center text-[14px] font-[600]">
-                  <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                  999
+              <div
+                className="text-[12px] font-[600] text-[#FFD392]"
+                onClick={() => {
+                  $activeTab.set(type);
+                }}>
+                Leaderboard &gt;
+              </div>
+            </div>
+            <div className="mt-[24px]">
+              <div className="mx-[72px] flex justify-between">
+                <div className="flex flex-col text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
+                  <div className="mt-[16px] text-[14px] font-[600]">999</div>
+                </div>
+                <div className="flex flex-col text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
+                  <div className="mt-[16px] flex items-center text-[14px] font-[600]">
+                    <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                    999
+                  </div>
                 </div>
               </div>
             </div>
@@ -134,11 +138,18 @@ const MyPerformanceMobile = () => {
   const [isShowContributionModal, setIsShowContributionModal] = useState(false);
   const [isShowShareModal, setIsShowShareModal] = useState(false);
   const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
-  const swiperRef = useRef();
+  const [swiperRef, setSwiperRef] = useState(null);
+  // const swiperRef = useRef();
+  // const swiper = useSwiper();
 
-  useEffect(() => {
-    console.log('currentPage', swiperRef.current.activeIndex);
-  }, [swiperRef]);
+  // useEffect(() => {
+  //   if (swiperRef.current.activeIndex) {
+  //     console.log('swiperRef.current.activeIndex', swiperRef.current.activeIndex);
+  //   }
+  // }, [swiperRef.current.activeIndex]);
+
+  // console.log('fucc0', swiperRef);
+  // console.log('fucc', swiperRef.activeIndex || 0);
 
   const copyTextFunc = (text: any) => {
     if (navigator.clipboard && window.isSecureContext) {
@@ -169,13 +180,16 @@ const MyPerformanceMobile = () => {
     <div className="block bg-[#0C0D20] md:hidden">
       <div className="px-[20px] pt-[36px] ">
         <div className="text-[20px] font-[600] ">General Performance</div>
-        <div className="relative">
+        <div className="relative pt-[24px]">
           <Swiper
             spaceBetween={30}
             modules={[Pagination]}
-            onSwiper={_swiper => {
-              swiperRef.current = _swiper;
-            }}>
+            initialSlide={volList.length - 1}
+            pagination={{
+              dynamicBullets: false,
+              clickable: true
+            }}
+            className="mySwiper">
             {volList.map(item => (
               <SwiperSlide>
                 <PerformanceTag title="Top Vol." type={0} leaderboardRank={item.rank} />
@@ -183,14 +197,9 @@ const MyPerformanceMobile = () => {
             ))}
           </Swiper>
           <div className="absolute bottom-[-16px] flex w-full items-center justify-center">
-            {volList.map((_item: any, index: any) => (
-              <div
-                className={`h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9] ${
-                  index === defaultVolRecord ? 'bg-[#D9D9D9]' : 'bg-[#D9D9D980]'
-                } ${index + 1 < volList.length ? 'mr-[8px]' : ''}`}
-                onClick={() => setDefaultVolRecord(index)}
-              />
-            ))}
+            <div className="swiper-pagination-bullets">
+              <div className="h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9]" />
+            </div>
           </div>
         </div>
         <PerformanceTag title="Top Gainer" type={1} leaderboardRank={5} />
