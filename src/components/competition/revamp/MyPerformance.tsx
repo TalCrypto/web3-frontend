@@ -175,9 +175,8 @@ const ReferreeModal = () => {
           <div className="flex items-center justify-between px-[36px] pt-[8px]">
             <div className="text-[16px] font-[600]">Contribution Details</div>
             <div className="text-[12px] font-[400]">
-              Eligible / Total Referees :{' '}
-              <span className="text-[20px] font-[600] text-[#FFC24B]">{referrers.filter(item => item.isEligible).length}</span>{' '}
-              <span className="text-[15px]">/ {referrers.length}</span>
+              Total Referees : <span className="text-[14px] font-[600]">{referrers.filter(item => item.isEligible).length}</span>{' '}
+              {/* <span className="text-[15px]">/ {referrers.length}</span> */}
             </div>
           </div>
           {referrers.length > 0 ? (
@@ -406,36 +405,31 @@ const MyPerformance = () => {
                   <div className="flex items-center justify-between px-[36px]">
                     <div className="text-[16px] font-[600]">My Referees</div>
                     <div className="text-[12px] font-[400]">
-                      Eligible / Total Referees :{' '}
-                      <span className="text-[20px] font-[600] text-[#FFC24B]">{referees.filter(item => item.isEligible).length}</span>{' '}
-                      <span className="text-[15px]">/ {referees.length}</span>
+                      Total Referees : <span className="font-[600]">{referrers.filter(item => item.isEligible).length}</span>{' '}
+                      {/* <span className="text-[15px]">/ {referrers.length}</span> */}
                     </div>
                   </div>
                   {referees.length > 0 ? (
                     <div className="mt-[36px]">
                       <div className="px-[36px]">
                         <Cell
-                          items={['User ID', 'Status', 'Trading Vol.', 'Contribution', 'Reward']}
+                          items={['User ID', 'Trading Vol.', 'Contribution', 'Reward']}
                           classNames={[
                             'col-span-3 text-[12px]',
-                            'col-span-2 text-[12px]',
-                            'col-span-2 text-[12px]',
-                            'col-span-2 text-[12px]',
+                            'col-span-3 text-[12px]',
+                            'col-span-3 text-[12px]',
                             'col-span-3 text-[12px]'
                           ]}
                         />
                       </div>
                       <div className="mt-[24px] max-h-[320px] overflow-y-scroll">
                         {referees.map(item => (
-                          <div
-                            className={`grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] ${
-                              item.isEligible ? 'bg-[#202249]' : ''
-                            }`}>
+                          <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                             <div className="relative col-span-3 items-center">
                               <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
                               <div className="truncate pr-[40px]">{item.username}</div>
                             </div>
-                            <div className="relative col-span-2">
+                            {/* <div className="relative col-span-2">
                               {item.isEligible ? (
                                 <Image
                                   src="/images/components/competition/revamp/my-performance/eligible.svg"
@@ -446,12 +440,12 @@ const MyPerformance = () => {
                                 />
                               ) : null}
                               {item.isEligible ? 'Eligible' : 'Not Eligible'}
-                            </div>
-                            <div className="col-span-2 flex items-center">
+                            </div> */}
+                            <div className="col-span-3 flex items-center">
                               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                               {item.vol.toFixed(2)}
                             </div>
-                            <div className="col-span-2 font-[600] text-[#FFC24B]">{`${
+                            <div className="col-span-3 font-[600] text-[#FFC24B]">{`${
                               !item.isEligible ? '-' : `${item.contribution}%`
                             }`}</div>
                             <div className="col-span-3">

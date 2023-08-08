@@ -8,7 +8,8 @@ import { $activeTab } from '@/stores/competition';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
+import 'swiper/scss';
+import { Pagination } from 'swiper/modules';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -164,7 +165,7 @@ const MyPerformanceMobile = () => {
       <div className="px-[20px] pt-[36px] ">
         <div className="text-[20px] font-[600] ">General Performance</div>
         <div className="relative">
-          <Swiper spaceBetween={50} onSlideChange={value => console.log({ value })}>
+          <Swiper spaceBetween={30} modules={[Pagination]}>
             {volList.map(item => (
               <SwiperSlide>
                 <PerformanceTag title="Top Vol." type={0} leaderboardRank={item.rank} />
