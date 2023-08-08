@@ -20,12 +20,11 @@ const PrizePool: FC<PropsWithChildren> = () => (
     </div>
 
     <div className="relative overflow-clip md:hidden">
-      <div className="flex flex-col items-center">
+      <div className="flex h-[529px] w-full flex-col items-center">
         <Image
           className="h-[400px] object-cover sm:scale-[1.1]"
           src="/images/components/competition/revamp/prize_image_m.svg"
-          width={375}
-          height={529}
+          fill
           alt=""
         />
       </div>
