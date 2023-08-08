@@ -2,6 +2,8 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import Image from 'next/image';
+import { useStore } from '@nanostores/react';
+import { $isShowMobileRules } from '@/stores/competition';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -86,7 +88,8 @@ const tableData: Data[] = [
 const userData = { rank: 30, username: '0xbf44b...980', accumulated_fp: 8.99, prize: 200 };
 
 const TopFP = () => {
-  const router = useRouter();
+  const isShowMobileRules = useStore($isShowMobileRules);
+
   return (
     <div className="relative">
       <FloatingWidget.Container>
@@ -152,7 +155,7 @@ const TopFP = () => {
         <Rules />
       </div>
 
-      <MobileDrawer title="Rules - Top FP Receiver">
+      <MobileDrawer title="Rules - Top FP Receiver" show={isShowMobileRules} onClickBack={() => $isShowMobileRules.set(false)}>
         <Rules />
       </MobileDrawer>
     </div>

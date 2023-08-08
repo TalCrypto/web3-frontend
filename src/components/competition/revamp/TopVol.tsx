@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import Image from 'next/image';
-import { $topVolActiveWeek } from '@/stores/competition';
+import { $isShowMobileRules, $topVolActiveWeek } from '@/stores/competition';
 import { useStore } from '@nanostores/react';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
@@ -126,6 +126,7 @@ const weeksData: WeekData[] = [
 ];
 
 const TopVol = () => {
+  const isShowMobileRules = useStore($isShowMobileRules);
   const topVolActiveWeek = useStore($topVolActiveWeek);
 
   const renderCurrentWeek = () => {
@@ -199,7 +200,7 @@ const TopVol = () => {
           <Rules />
         </div>
 
-        <MobileDrawer title="Rules - Top Vol.">
+        <MobileDrawer title="Rules - Top Vol." show={isShowMobileRules} onClickBack={() => $isShowMobileRules.set(false)}>
           <Rules />
         </MobileDrawer>
       </>

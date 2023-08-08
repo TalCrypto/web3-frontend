@@ -26,9 +26,19 @@ export const $tlCurrentUser = atom<any>(null);
 // revamp
 export const $activeDropdown = atom<number>(0);
 export const $activeTab = atom<number>(0);
-export const $isShowMobileDrawer = atom(false);
 
-$isShowMobileDrawer.listen(val => {
+export const $isShowMobileRules = atom(false);
+export const $isShowMobileMyTeam = atom(false);
+
+$isShowMobileRules.listen(val => {
+  if (val) {
+    document.body.style.setProperty('overflow-y', 'hidden');
+  } else {
+    document.body.style.removeProperty('overflow-y');
+  }
+});
+
+$isShowMobileMyTeam.listen(val => {
   if (val) {
     document.body.style.setProperty('overflow-y', 'hidden');
   } else {

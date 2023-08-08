@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { useRouter } from 'next/router';
 import React from 'react';
 import Image from 'next/image';
+import { useStore } from '@nanostores/react';
+import { $isShowMobileMyTeam, $isShowMobileRules } from '@/stores/competition';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -9,6 +10,7 @@ import UserMedal from '../common/UserMedal';
 import PrizePool from './TopReferrer/PrizePool';
 import Rules from './TopReferrer/Rules';
 import MobileDrawer from './MobileDrawer';
+import MyTeam from './TopReferrer/MyTeam';
 
 type Data = {
   rank: number;
@@ -53,10 +55,21 @@ const tableColumns: TableColumn<Data>[] = [
     field: 'total_tradingvol',
     className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/5 text-right lg:text-center',
     render: row => (
-      <div className="flex justify-end space-x-1 lg:justify-center">
-        <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-        <p className="text-b2e text-highEmphasis">{row.total_tradingvol}</p>
-      </div>
+      <>
+        <div className="flex justify-end space-x-1 lg:justify-center">
+          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
+          <p className="text-b2e text-highEmphasis">{row.total_tradingvol}</p>
+        </div>
+        {row.username === 'Me' ? (
+          <div className="mt-4 flex justify-end space-x-[3px] text-primaryBlue lg:hidden" onClick={() => $isShowMobileMyTeam.set(true)}>
+            <p className="text-b3e">View My Team</p>
+
+            <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12.5L10 8.5L6 4.5" stroke="#2574FB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        ) : null}
+      </>
     )
   },
   {
@@ -97,10 +110,12 @@ const tableData: Data[] = [
   { rank: 21, username: '0xbf44b...980', num_ref: 2, total_tradingvol: 8.99, prize: 200 }
 ];
 
-const userData = { rank: 30, username: '0xbf44b...980', num_ref: 2, total_tradingvol: 8.99, prize: 200 };
+const userData = { rank: 30, username: 'Me', num_ref: 2, total_tradingvol: 8.99, prize: 200 };
 
 const TopReferrer = () => {
-  const router = useRouter();
+  const isShowMobileMyTeam = useStore($isShowMobileMyTeam);
+  const isShowMobileRules = useStore($isShowMobileRules);
+
   return (
     <div className="relative">
       <FloatingWidget.Container>
@@ -161,18 +176,23 @@ const TopReferrer = () => {
         <Table
           className="lg:mb-[120px]"
           headerClassName="sticky top-12 z-[2] text-b3 py-4 lg:static lg:text-b2"
-          rowClassName="hover:bg-secondaryBlue"
+          rowClassName="!items-start md:!items-center hover:bg-secondaryBlue"
           columns={tableColumns}
           data={tableData}
           fixedRow={userData}
         />
       </div>
 
-      <div className="hidden md:block">
+      <div className="hidden space-y-32 md:block">
+        <MyTeam />
         <Rules />
       </div>
 
-      <MobileDrawer title="Rules - Top Referrer">
+      <MobileDrawer title="My Team" show={isShowMobileMyTeam} onClickBack={() => $isShowMobileMyTeam.set(false)}>
+        <MyTeam />
+      </MobileDrawer>
+
+      <MobileDrawer title="Rules - Top Referrer" show={isShowMobileRules} onClickBack={() => $isShowMobileRules.set(false)}>
         <Rules />
       </MobileDrawer>
     </div>

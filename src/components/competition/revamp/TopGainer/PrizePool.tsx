@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
-import { $isShowMobileDrawer } from '@/stores/competition';
+import { $isShowMobileRules } from '@/stores/competition';
 import Image from 'next/image';
 import React, { FC, PropsWithChildren } from 'react';
 
@@ -41,7 +41,7 @@ const PrizePool: FC<PropsWithChildren> = () => (
           <div
             className="flex space-x-[3px] text-primaryBlue"
             onClick={() => {
-              $isShowMobileDrawer.set(true);
+              $isShowMobileRules.set(true);
             }}>
             <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
