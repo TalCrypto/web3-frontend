@@ -34,18 +34,17 @@ const { chains, publicClient } = configureChains(CHAINS, [
     rpc: () => ({
       http: quickNodeProviderUrl
     })
-  })
-  // alchemyProvider({ apiKey: alchemyProjectId }),
-  // infuraProvider({ apiKey: infuraProjectId }),
-  // w3mProvider({ projectId }),
-  // publicProvider()
+  }),
+  w3mProvider({ projectId }),
+  alchemyProvider({ apiKey: alchemyProjectId }),
+  infuraProvider({ apiKey: infuraProjectId }),
+  publicProvider()
 ]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: [...w3mConnectors({ projectId, chains })],
   publicClient
-  // webSocketPublicClient
 });
 
 const ethereumClient = new EthereumClient(wagmiConfig, CHAINS);
