@@ -32,7 +32,7 @@ const PerformanceTag = (props: any) => {
       break;
 
     case 3:
-      contentTitle = 'Referee’s Total Trad. Vol.';
+      contentTitle = 'Team Trad. Vol';
       break;
 
     default:
@@ -321,7 +321,7 @@ const MyPerformance = () => {
                   height={24}
                   className="mr-[6px]"
                 />
-                My Team
+                My Referral Team
               </div>
             </div>
             <div className="mt-[36px] w-full">
@@ -332,7 +332,7 @@ const MyPerformance = () => {
             bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
                     <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
                     <div className="ml-[12px] flex flex-col justify-between">
-                      <div className="text-[12px] font-[400]">Team Head (Referrer)</div>
+                      <div className="text-[12px] font-[400]">Team Lead</div>
                       <div className="mt-[8px] flex items-center">
                         <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                           {displayUsername}
@@ -352,9 +352,7 @@ const MyPerformance = () => {
                       <div className="text-[15px] font-[600]">400USDT</div>
                     </div>
                     <div className="flex flex-col items-center">
-                      <div className="text-center text-[12px] font-[400] text-[#FFD392]">
-                        Referee’s Total <br /> Trad. Vol
-                      </div>
+                      <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
                       <div className="mt-[6px] text-[15px] font-[600]">55.00</div>
                     </div>
                   </div>
@@ -369,7 +367,7 @@ const MyPerformance = () => {
                   <Divider />
                   <div className="flex items-center justify-center px-[36px] py-[24px]">
                     <div>
-                      <div className="text-center text-[15px] font-[600]">📢 Share My Referral Link</div>
+                      <div className="text-center text-[15px] font-[600]">📢 Invitation to my team (Referral Link)</div>
                       <div className="mt-[24px] flex items-center justify-between">
                         <button
                           className="mr-[12px] flex items-center justify-center 
@@ -403,9 +401,9 @@ const MyPerformance = () => {
                 </div>
                 <div className="h-[528px] grow rounded-[6px] border-[1px] border-[#2E4371] bg-[#0C0D20] py-[36px]">
                   <div className="flex items-center justify-between px-[36px]">
-                    <div className="text-[16px] font-[600]">My Referees</div>
+                    <div className="text-[16px] font-[600]">My Team Member</div>
                     <div className="text-[12px] font-[400]">
-                      Total Referees : <span className="font-[600]">{referrers.length}</span>{' '}
+                      No. of Member : <span className="font-[600]">{referrers.length}</span>{' '}
                       {/* <span className="text-[15px]">/ {referrers.length}</span> */}
                     </div>
                   </div>
@@ -533,7 +531,10 @@ const MyPerformance = () => {
                       </div>
                     </div>
                     <div className="mx-[24px] mt-[32px] flex justify-between">
-                      <div />
+                      <div className="text-[12px]">
+                        Trade at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume to be eligible referee.{' '}
+                        <span className="text-[#FFC24B]">(0.99 / 1.00)</span>
+                      </div>
                       <div
                         className="flex cursor-pointer items-center text-[14px] font-[600] text-primaryBlue"
                         onClick={() => $isShowReferralModal.set(true)}>
