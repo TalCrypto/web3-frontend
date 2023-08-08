@@ -29,7 +29,7 @@ const alchemyProjectId = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? '';
 const infuraProjectId = process.env.NEXT_PUBLIC_INFURA_KEY ?? '';
 const quickNodeProviderUrl = process.env.NEXT_PUBLIC_QUICKNODE_URL ?? '';
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [
+const { chains, publicClient } = configureChains(CHAINS, [
   jsonRpcProvider({
     rpc: () => ({
       http: quickNodeProviderUrl
@@ -42,7 +42,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, 
 ]);
 
 const wagmiConfig = createConfig({
-  autoConnect: false,
+  autoConnect: true,
   connectors: [...w3mConnectors({ projectId, chains })],
   publicClient
   // webSocketPublicClient
