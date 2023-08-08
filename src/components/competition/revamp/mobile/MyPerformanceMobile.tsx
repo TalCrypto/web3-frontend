@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { $userInfo, $userIsConnected } from '@/stores/user';
 import { useStore } from '@nanostores/react';
@@ -134,6 +134,11 @@ const MyPerformanceMobile = () => {
   const [isShowContributionModal, setIsShowContributionModal] = useState(false);
   const [isShowShareModal, setIsShowShareModal] = useState(false);
   const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
+  const swiperRef = useRef();
+
+  useEffect(() => {
+    console.log('currentPage', swiperRef.current.activeIndex);
+  }, [swiperRef]);
 
   const copyTextFunc = (text: any) => {
     if (navigator.clipboard && window.isSecureContext) {
@@ -165,7 +170,12 @@ const MyPerformanceMobile = () => {
       <div className="px-[20px] pt-[36px] ">
         <div className="text-[20px] font-[600] ">General Performance</div>
         <div className="relative">
-          <Swiper spaceBetween={30} modules={[Pagination]}>
+          <Swiper
+            spaceBetween={30}
+            modules={[Pagination]}
+            onSwiper={_swiper => {
+              swiperRef.current = _swiper;
+            }}>
             {volList.map(item => (
               <SwiperSlide>
                 <PerformanceTag title="Top Vol." type={0} leaderboardRank={item.rank} />
