@@ -9,7 +9,7 @@ const radialBgClassName =
 
 const PrizePool: FC<PropsWithChildren> = () => (
   <div className="justify-center md:flex md:flex-col">
-    <div className="mb-24 hidden md:flex md:flex-col md:items-center">
+    <div className="relative mb-24 hidden md:block">
       <Image
         className="pointer-events-none scale-[1.4] object-cover"
         src="/images/components/competition/revamp/prize_image.svg"
@@ -17,16 +17,29 @@ const PrizePool: FC<PropsWithChildren> = () => (
         height={345}
         alt=""
       />
+      <div className="absolute top-[68px] flex w-full items-center justify-center lg:top-[80px] xl:top-[86px]">
+        <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
+        <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-h5 font-bold text-transparent">
+          Total Prize Pool for Top Vol. -{' '}
+        </p>
+      </div>
     </div>
 
     <div className="relative overflow-clip md:hidden">
-      <div className="flex h-[529px] w-full flex-col items-center">
+      <div className="flex flex-col items-center">
         <Image
-          className="h-[400px] object-cover sm:scale-[1.1]"
+          className="h-[400px] object-cover sm:scale-[1.3]"
           src="/images/components/competition/revamp/prize_image_m.svg"
-          fill
+          width={600}
+          height={300}
           alt=""
         />
+        <div className="absolute top-[100px] flex w-full items-center justify-center sm:top-[75px]">
+          <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
+          <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-b2e text-transparent">
+            Total Prize Pool for Top Vol. -{' '}
+          </p>
+        </div>
       </div>
 
       <div className="absolute bottom-0 w-full space-y-6 px-5 pb-9">
