@@ -10,7 +10,12 @@ type Data = {
 
 const columns: TableColumn<Data>[] = [
   { label: 'Rank', field: 'rank', className: 'flex-1 py-3 text-center border-r border-r-[#2E4371]' },
-  { label: 'USDT', field: 'usdt', className: 'flex-1 py-3 text-center', render: row => <p className="text-h5 text-warn">{row.usdt}</p> },
+  {
+    label: 'USDT',
+    field: 'usdt',
+    className: 'flex-1 py-3 text-center',
+    render: row => <p className="text-h5 text-warn">{row.usdt ? row.usdt : '-'}</p>
+  },
   {
     label: 'Points',
     field: 'points',
@@ -20,12 +25,16 @@ const columns: TableColumn<Data>[] = [
 ];
 
 const data: Data[] = [
-  { rank: '1', usdt: 100, points: 1000 },
-  { rank: '2', usdt: 100, points: 1000 },
-  { rank: '3', usdt: 100, points: 1000 },
-  { rank: '4-10', usdt: 100, points: 1000 },
-  { rank: '11-50', usdt: 100, points: 1000 },
-  { rank: '51-250', usdt: 100, points: 1000 }
+  { rank: '1', usdt: 800, points: 5000 },
+  { rank: '2', usdt: 400, points: 4000 },
+  { rank: '3', usdt: 200, points: 3000 },
+  { rank: '4', usdt: 150, points: 2000 },
+  { rank: '5', usdt: 100, points: 1000 },
+  { rank: '6-10', usdt: 0, points: 900 },
+  { rank: '11-20', usdt: 0, points: 800 },
+  { rank: '21-30', usdt: 0, points: 700 },
+  { rank: '31-40', usdt: 0, points: 600 },
+  { rank: '41-50', usdt: 0, points: 500 }
 ];
 
 const Rules = () => (
