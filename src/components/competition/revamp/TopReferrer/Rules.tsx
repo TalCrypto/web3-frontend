@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Table, { TableColumn } from '../Table';
 
 type Data = {
@@ -68,7 +69,7 @@ const Rules = () => (
 
     <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Top Referrer Prize Table</p>
 
-    <div className="mx-auto lg:max-w-[620px]">
+    <div className="mx-auto mb-9 lg:max-w-[620px]">
       <Table
         className="!text-highEmphasis"
         headerClassName="bg-secondaryBlue text-h5 
@@ -77,6 +78,44 @@ const Rules = () => (
         columns={columns}
         data={data}
       />
+    </div>
+
+    <p className="mb-6 text-h5 lg:text-center">Prize Distribution Among the Team</p>
+
+    <p className="mb-9 text-b1 lg:text-center">
+      Following is a distribution of the prize between the Team Lead and the 5 Team Members with the highest trading volume. If fewer than 5
+      team members are present, the remaining percentages will not be distributed.
+    </p>
+
+    <div className="hidden justify-center lg:flex">
+      <Image src="/images/components/competition/revamp/prize_distribution.svg" width={950} height={516} alt="" />
+    </div>
+
+    <div className="flex flex-col justify-center space-y-[10px] text-b2 lg:hidden">
+      <div className="flex">
+        <p className="basis-2/3">Team Lead:</p>
+        <p className="basis-1/3 text-b2e text-warn">40%</p>
+      </div>
+      <div className="flex">
+        <p className="basis-2/3">Top 1 Trading Vol. Member:</p>
+        <p className="basis-1/3 text-b2e text-warn">16%</p>
+      </div>
+      <div className="flex">
+        <p className="basis-2/3">Top 2 Trading Vol. Member:</p>
+        <p className="basis-1/3 text-b2e text-warn">14%</p>
+      </div>
+      <div className="flex">
+        <p className="basis-2/3">Top 3 Trading Vol. Member:</p>
+        <p className="basis-1/3 text-b2e text-warn">12%</p>
+      </div>
+      <div className="flex">
+        <p className="basis-2/3">Top 4 Trading Vol. Member:</p>
+        <p className="basis-1/3 text-b2e text-warn">10%</p>
+      </div>
+      <div className="flex">
+        <p className="basis-2/3">Top 5 Trading Vol. Member:</p>
+        <p className="basis-1/3 text-b2e text-warn">8%</p>
+      </div>
     </div>
   </div>
 );

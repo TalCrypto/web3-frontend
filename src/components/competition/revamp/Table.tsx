@@ -36,7 +36,7 @@ const Table: FC<TableProps> = ({ className, headerClassName, bodyClassName, rowC
           <div className={col.className}>{col.label}</div>
         ))}
       </div>
-      <div className={`scrollable overflow-auto lg:h-[480px] ${bodyClassName}`}>
+      <div className={`scrollable overflow-auto ${bodyClassName}`}>
         {fixedRow && (
           <div className={`${defaultRowClassName} bg-secondaryBlue lg:sticky lg:top-0 lg:z-[2] ${rowClassName}`}>
             {columns.map((col, i) => (

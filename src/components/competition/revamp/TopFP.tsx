@@ -203,6 +203,7 @@ const TopFP = () => {
           className="lg:mb-[120px]"
           headerClassName="sticky top-12 z-[2] text-b3 py-4 lg:static lg:text-b2"
           rowClassName="hover:bg-secondaryBlue"
+          bodyClassName="lg:h-[480px]"
           columns={tableColumns}
           data={tableData}
           fixedRow={userData}
