@@ -103,7 +103,7 @@ const tableColumns: TableColumn<Data>[] = [
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
           <p className="text-b2e text-highEmphasis">{row.total_tradingvol}</p>
         </div>
-        {row.username === 'Me' ? (
+        {row.username === 'MrLemon888888' ? (
           <div className="mt-4 flex justify-end space-x-[3px] text-primaryBlue lg:hidden" onClick={() => $isShowMobileMyTeam.set(true)}>
             <p className="text-b3e">View My Team</p>
 
@@ -252,7 +252,7 @@ const TopReferrer = () => {
         <ContributionDetail />
       </MobileDrawer>
 
-      <MobileDrawer title="My Team" show={isShowMobileMyTeam} onClickBack={() => $isShowMobileMyTeam.set(false)}>
+      <MobileDrawer title="My Referral Team" show={isShowMobileMyTeam} onClickBack={() => $isShowMobileMyTeam.set(false)}>
         <MyTeam />
       </MobileDrawer>
 

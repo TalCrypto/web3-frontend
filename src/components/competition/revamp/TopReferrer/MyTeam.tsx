@@ -115,11 +115,17 @@ const MyTeam = () => {
               </div>
               <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-                <div className="text-[15px] font-[600]">400USDT</div>
+                <div className="text-[15px] font-[600]">
+                  200USDT
+                  <br /> + 1,500Pts
+                </div>
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
-                <div className="mt-[6px] text-[15px] font-[600]">55.00</div>
+                <div className="flex justify-end space-x-1 lg:justify-center">
+                  <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
+                  <p className="text-[15px] font-[600]">99.99</p>
+                </div>
               </div>
             </div>
             <Divider />
@@ -127,7 +133,7 @@ const MyTeam = () => {
               <div className="text-center">
                 <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
                 <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(50% of Team Reward)</div>
-                <div className="mt-[12px] text-[20px] font-[600]">100USDT</div>
+                <div className="mt-[12px] text-[20px] font-[600]">100USDT + 750Pts</div>
               </div>
             </div>
             <Divider />
