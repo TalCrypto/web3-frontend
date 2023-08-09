@@ -62,7 +62,7 @@ const Rules = () => (
       </li>
     </ul>
 
-    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Prize</p>
+    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Top FP Receiver Price Table</p>
 
     <div className="mx-auto lg:max-w-[620px]">
       <Table

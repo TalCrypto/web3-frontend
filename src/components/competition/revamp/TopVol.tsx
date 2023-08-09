@@ -258,7 +258,7 @@ const TopVol = () => {
           <Rules />
         </div>
 
-        <MobileDrawer title="Rules - Top Vol." show={isShowMobileRules} onClickBack={() => $isShowMobileRules.set(false)}>
+        <MobileDrawer title="Rules - Top Vol" show={isShowMobileRules} onClickBack={() => $isShowMobileRules.set(false)}>
           <Rules />
         </MobileDrawer>
       </>

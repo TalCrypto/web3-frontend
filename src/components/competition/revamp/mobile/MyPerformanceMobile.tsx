@@ -192,7 +192,7 @@ const MyPerformanceMobile = () => {
             {volList.map(item => (
               <SwiperSlide>
                 <PerformanceTag
-                  title="Top Vol."
+                  title="Top Vol"
                   type={0}
                   leaderboardRank={item.rank}
                   volList={volList}

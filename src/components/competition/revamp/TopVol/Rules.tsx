@@ -29,7 +29,7 @@ const data: Data[] = [
 
 const Rules = () => (
   <div className="px-5 py-9 lg:p-0">
-    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Rules for Top Vol.</p>
+    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Rules for Top Vol</p>
 
     <ul className="mb-16 space-y-6 text-b1">
       <li>
@@ -62,7 +62,7 @@ const Rules = () => (
       </li>
     </ul>
 
-    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Prize</p>
+    <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Top Vol Prize Table</p>
 
     <div className="mx-auto lg:max-w-[620px]">
       <Table

@@ -132,7 +132,7 @@ const MyTeam = () => {
             <div className="flex items-center justify-center px-[36px] py-[24px]">
               <div className="text-center">
                 <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
-                <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(50% of Team Reward)</div>
+                <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(40% of Team Reward)</div>
                 <div className="mt-[12px] text-[20px] font-[600]">100USDT + 750Pts</div>
               </div>
             </div>
