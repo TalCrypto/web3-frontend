@@ -1,9 +1,11 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 import { useRouter } from 'next/router';
 import React from 'react';
 import Image from 'next/image';
 import { useStore } from '@nanostores/react';
 import { $isShowMobileRules } from '@/stores/competition';
+import Tooltip from '@/components/common/Tooltip';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -31,11 +33,55 @@ const tableColumns: TableColumn<Data>[] = [
       </div>
     )
   },
-  { label: 'User', field: 'username', className: 'basis-1/3 lg:basis-1/4' },
+  {
+    label: 'User',
+    className: 'basis-1/3 lg:basis-1/4',
+    render(row) {
+      // todo: current user
+      if (row.username === 'MrLemon888888') {
+        return (
+          <div className="flex space-x-1">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M9.9987 1.66699C8.89363 1.66699 7.83382 2.10598 7.05242 2.88738C6.27102 3.66878 5.83203 4.72859 5.83203 5.83366C5.83203 6.93873 6.27102 7.99854 7.05242 8.77994C7.83382 9.56134 8.89363 10.0003 9.9987 10.0003C11.1038 10.0003 12.1636 9.56134 12.945 8.77994C13.7264 7.99854 14.1654 6.93873 14.1654 5.83366C14.1654 4.72859 13.7264 3.66878 12.945 2.88738C12.1636 2.10598 11.1038 1.66699 9.9987 1.66699ZM15.0074 11.667H4.98995C4.07578 11.667 3.33203 12.4107 3.33203 13.3249V13.9587C3.33203 15.3387 4.11745 16.532 5.54328 17.3182C6.72953 17.9732 8.31203 18.3337 9.9987 18.3337C13.2095 18.3337 16.6654 16.9645 16.6654 13.9587V13.3249C16.6654 12.4107 15.9216 11.667 15.0074 11.667Z"
+                fill="url(#paint0_linear_17429_1493)"
+              />
+              <defs>
+                <linearGradient
+                  id="paint0_linear_17429_1493"
+                  x1="18.7853"
+                  y1="10.0003"
+                  x2="1.00403"
+                  y2="11.2358"
+                  gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#F703D9" />
+                  <stop offset="0.427083" stopColor="#795AF4" />
+                  <stop offset="0.921875" stopColor="#04AEFC" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <p className="bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">{row.username}</p>
+          </div>
+        );
+      }
+      return <p className="text-highEmphasis">{row.username}</p>;
+    }
+  },
   {
     label: (
       <div className="flex items-center justify-end space-x-1 lg:justify-center">
-        <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+        <Tooltip
+          content={
+            <div className="max-w-[260px] text-b3">
+              <p>
+                Realized P/L is the sum of funding payment and P/L from price change. P/L from price change here refers to the gain/loss tha
+                results from partial close/full close/liquidation of a position. The trader with the highest realized P/L is ranked top
+              </p>
+            </div>
+          }>
+          <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+        </Tooltip>
         <p>Realized P/L</p>
       </div>
     ),
@@ -66,7 +112,7 @@ const tableColumns: TableColumn<Data>[] = [
       if (!hasPrize) prize = '-';
 
       return (
-        <div className={`flex w-fit space-x-1 text-b2 ${hasPrize ? 'rounded-[12px] bg-[#2E4371]' : ''} px-4 py-1`}>
+        <div className={`flex w-fit space-x-1 text-b2 text-highEmphasis ${hasPrize ? 'rounded-[12px] bg-[#2E4371]' : ''} px-4 py-1`}>
           <Image src="/images/components/competition/revamp/gift.svg" width={16} height={16} alt="" />
           <p>{prize}</p>
         </div>
@@ -100,7 +146,7 @@ const tableData: Data[] = [
   { rank: 21, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 }
 ];
 
-const userData = { rank: 30, username: '0xbf44b...980', realized_pnl: 8.99, prize: 200 };
+const userData = { rank: 30, username: 'MrLemon888888', realized_pnl: 8.99, prize: 200 };
 
 const TopGainer = () => {
   const isShowMobileRules = useStore($isShowMobileRules);
