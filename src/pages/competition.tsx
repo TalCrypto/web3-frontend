@@ -16,6 +16,7 @@ import MyPerformanceMobile from '@/components/competition/revamp/mobile/MyPerfor
 import TopFP from '@/components/competition/revamp/TopFP';
 import ScrollTopButton from '@/components/common/ScrollToTopButton';
 import TopReferrer from '@/components/competition/revamp/TopReferrer';
+import RevampCompetitionUpdater from '@/components/updaters/RevampCompetitionUpdater';
 
 export default function Competition() {
   const { address } = useAccount();
@@ -88,7 +89,8 @@ export default function Competition() {
           </div>
         </div>
 
-        <CompetitionDataUpdater />
+        {/* <CompetitionDataUpdater /> */}
+        <RevampCompetitionUpdater />
       </main>
       <ScrollTopButton />
     </>
