@@ -12,6 +12,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/scss';
 import 'swiper/scss/pagination';
 import { Pagination } from 'swiper/modules';
+import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 
 const referees = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -71,7 +72,8 @@ interface PerformanceTagProps {
   leaderboardRank: number;
 }
 
-const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank = 3 }) => {
+const PerformanceTag = (props: any) => {
+  const { title, type, leaderboardRank = 3, volList = null, defaultVolRecord } = props;
   const contentTitle = '';
 
   return (
@@ -101,7 +103,7 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
               <div className="mx-[72px] flex justify-between">
                 <div className="flex flex-col text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
-                  <div className="mt-[16px] text-[14px] font-[600]">999</div>
+                  <div className="mt-[16px] text-[14px] font-[600]">{leaderboardRank}</div>
                 </div>
                 <div className="flex flex-col text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
@@ -114,6 +116,15 @@ const PerformanceTag: FC<PerformanceTagProps> = ({ title, type, leaderboardRank 
             </div>
           </div>
         </div>
+        {volList && defaultVolRecord < volList.length - 1 ? (
+          <div
+            className="absolute left-0 top-0 flex min-w-[100px] translate-x-[-25%] translate-y-[50%] 
+          -rotate-45 items-center justify-center border 
+        border-y-white/50 bg-gradient-to-r from-[#BB3930] via-[#CE716B] to-[#C2342B] py-1 
+        text-[8px] font-semibold leading-[9.75px] text-[#FFF6D7]">
+            <p>ENDED</p>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -138,18 +149,6 @@ const MyPerformanceMobile = () => {
   const [isShowContributionModal, setIsShowContributionModal] = useState(false);
   const [isShowShareModal, setIsShowShareModal] = useState(false);
   const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
-  const [swiperRef, setSwiperRef] = useState(null);
-  // const swiperRef = useRef();
-  // const swiper = useSwiper();
-
-  // useEffect(() => {
-  //   if (swiperRef.current.activeIndex) {
-  //     console.log('swiperRef.current.activeIndex', swiperRef.current.activeIndex);
-  //   }
-  // }, [swiperRef.current.activeIndex]);
-
-  // console.log('fucc0', swiperRef);
-  // console.log('fucc', swiperRef.activeIndex || 0);
 
   const copyTextFunc = (text: any) => {
     if (navigator.clipboard && window.isSecureContext) {
@@ -192,7 +191,13 @@ const MyPerformanceMobile = () => {
             className="mySwiper">
             {volList.map(item => (
               <SwiperSlide>
-                <PerformanceTag title="Top Vol." type={0} leaderboardRank={item.rank} />
+                <PerformanceTag
+                  title="Top Vol."
+                  type={0}
+                  leaderboardRank={item.rank}
+                  volList={volList}
+                  defaultVolRecord={defaultVolRecord}
+                />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -245,7 +250,7 @@ const MyPerformanceMobile = () => {
           <div className="flex items-center justify-center border-b-[1px] border-[#2E4371] px-[36px] py-[24px]">
             <div className="text-center">
               <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
-              <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(50% of Team Reward)</div>
+              <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(40% of Team Reward)</div>
               <div className="mt-[12px] text-[20px] font-[600]">100USDT</div>
             </div>
           </div>
@@ -285,28 +290,12 @@ const MyPerformanceMobile = () => {
         </div>
       </div>
       <div className="px-[20px] pt-[36px] ">
-        <div className="text-[20px] font-[600]">My Referees</div>
-        <div className="mt-[24px] flex items-center justify-between">
+        <div className="flex items-center justify-between text-[20px] font-[600]">
+          My Referees
           <div className="flex items-center text-[14px] font-[400]">
-            <div className="mr-[6px]">Eligible / Total Referees</div>
-            <MobileTooltip
-              direction="top"
-              title="Eligible referee"
-              content={
-                <div className="text-center">Referees with at least 1 WETH trading volume will be counted as eligible referees.</div>
-              }>
-              <Image
-                src="/images/components/trade/history/more_info.svg"
-                alt="more info"
-                width={12}
-                height={12}
-                className="mr-[6px] cursor-pointer md:hidden"
-              />
-            </MobileTooltip>
-          </div>
-          <div>
-            <span className="text-[20px] font-[600] text-[#FFC24B]">{referees.filter(item => item.isEligible).length}</span>{' '}
-            <span className="text-[15px]">/ {referees.length}</span>
+            <div className="mr-[6px]">
+              Total Referees : <span className="font-[600]">{referees.length}</span>
+            </div>
           </div>
         </div>
         <div className="mt-[24px] text-[14px] font-[400] text-mediumEmphasis">
@@ -328,13 +317,15 @@ const MyPerformanceMobile = () => {
         {referees.slice(0, displayCount > referees.length ? referees.length : displayCount).map(item => {
           const showUsername = item.username.length > 10 ? `${item.username.substring(0, 10)}...` : item.username;
           return (
-            <div className={`h-full px-[20px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
+            <div
+              className={`h-full px-[20px] py-[16px] text-[14px] 
+            odd:bg-[#202249]`}>
               <div className="flex h-[48px] items-center justify-between">
                 <div className="flex h-full items-center">
                   <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
                   <div className="flex flex-col justify-between">
                     <div className="font-[600]">{showUsername}</div>
-                    <div className="mt-[6px] flex items-center">
+                    {/* <div className="mt-[6px] flex items-center">
                       {item.isEligible ? (
                         <Image
                           src="/images/components/competition/revamp/my-performance/eligible.svg"
@@ -345,7 +336,7 @@ const MyPerformanceMobile = () => {
                         />
                       ) : null}
                       {item.isEligible ? 'Eligible' : 'Not Eligible'}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="flex h-full items-end text-end">
@@ -378,7 +369,7 @@ const MyPerformanceMobile = () => {
       ) : null}
 
       <div className="px-[20px] pt-[13px]">
-        <div className="text-[20px] font-[600]">My Referrer’s Team</div>
+        <div className="text-[20px] font-[600]">Referral Team I Joined</div>
         <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
           <div className="flex items-center justify-between border-b-[1px] border-b-[#2E4371] p-[24px]">
             <div className="flex items-center">
