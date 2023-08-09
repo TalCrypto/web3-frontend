@@ -29,17 +29,21 @@ const alchemyProjectId = process.env.NEXT_PUBLIC_ALCHEMY_KEY ?? '';
 const infuraProjectId = process.env.NEXT_PUBLIC_INFURA_KEY ?? '';
 const quickNodeProviderUrl = process.env.NEXT_PUBLIC_QUICKNODE_URL ?? '';
 
-const { chains, publicClient } = configureChains(CHAINS, [
-  w3mProvider({ projectId }),
-  jsonRpcProvider({
-    rpc: () => ({
-      http: quickNodeProviderUrl
-    })
-  }),
-  alchemyProvider({ apiKey: alchemyProjectId }),
-  infuraProvider({ apiKey: infuraProjectId }),
-  publicProvider()
-]);
+const { chains, publicClient } = configureChains(
+  CHAINS,
+  [
+    w3mProvider({ projectId }),
+    jsonRpcProvider({
+      rpc: () => ({
+        http: quickNodeProviderUrl
+      })
+    }),
+    alchemyProvider({ apiKey: alchemyProjectId }),
+    infuraProvider({ apiKey: infuraProjectId }),
+    publicProvider()
+  ],
+  { pollingInterval: 10_000 }
+);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
