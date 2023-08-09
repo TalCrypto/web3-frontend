@@ -378,7 +378,7 @@ const MyPerformanceMobile = () => {
       ) : null}
 
       <div className="px-[20px] pt-[13px]">
-        <div className="text-[20px] font-[600]">My Referrer’s Team</div>
+        <div className="text-[20px] font-[600]">Referral Team I Joined</div>
         <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
           <div className="flex items-center justify-between border-b-[1px] border-b-[#2E4371] p-[24px]">
             <div className="flex items-center">

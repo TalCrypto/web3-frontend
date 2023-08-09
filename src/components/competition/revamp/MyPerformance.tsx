@@ -478,7 +478,7 @@ const MyPerformance = () => {
               </div>
             </div>
             <div className="mt-[78px]">
-              <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">My Referrer’s Team</div>
+              <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">Referral Team I Joined</div>
             </div>
             <div className="mt-[36px] flex items-center justify-center">
               <div className="w-[765px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
