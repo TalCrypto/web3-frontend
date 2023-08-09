@@ -274,7 +274,7 @@ const TopVol = () => {
             onClick={() => $topVolActiveWeek.set(i)}
             className={`${
               topVolActiveWeek === i ? '!bg-primaryBlue' : ''
-            } relative min-h-[84px] cursor-pointer justify-between hover:!bg-primaryBlueHover/90`}>
+            } relative min-h-[84px] cursor-pointer justify-between hover:!bg-primaryBlueHover`}>
             {d.isEnded && (
               <div
                 className="absolute right-[-3px] top-[-2px] rounded-br-[6px] rounded-tl-[6px] 
