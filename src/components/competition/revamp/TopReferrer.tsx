@@ -42,7 +42,7 @@ const tableColumns: TableColumn<Data>[] = [
     }
   },
   {
-    label: 'No. of Referee',
+    label: 'No. of Member',
     className: 'hidden md:block basis-1/3 lg:basis-1/6',
     render(row) {
       return <p className="text-b2e text-highEmphasis">{row.num_ref}</p>;
@@ -52,7 +52,7 @@ const tableColumns: TableColumn<Data>[] = [
     label: (
       <div className="flex items-center justify-end space-x-1 lg:justify-center">
         <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
-        <p>Referee‘s Total Trad. Vol.</p>
+        <p>Team Trad. Vol.</p>
       </div>
     ),
     field: 'total_tradingvol',
@@ -154,36 +154,36 @@ const TopReferrer = () => {
 
         <TopThree.Container>
           <TopThree.Item rank={2} className="mt-8 w-[200px]" title={<p className="mb-4 text-h5 text-white">JEFFGPT8888</p>}>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">Referee‘s Total Trading Vol.</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Trad. Vol.</p>
             <div className="mb-3 flex space-x-1">
               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
               <p className="text-b2e">89.99</p>
             </div>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Referee</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Member</p>
             <p className="text-b2e">12</p>
             <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
             <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Prize</p>
             <p className="text-b2 text-highEmphasis">500USDT + 1,500Pts</p>
           </TopThree.Item>
           <TopThree.Item rank={1} className="w-[200px]" title={<p className="mb-4 text-h5 text-[#FFD540]">JEFFGPT9999</p>}>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">Referee‘s Total Trading Vol.</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Trad. Vol.</p>
             <div className="mb-3 flex space-x-1">
               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
               <p className="text-b2e">99.99</p>
             </div>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Referee</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Member</p>
             <p className="text-b2e">13</p>
             <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
             <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Prize</p>
             <p className="text-b2 text-highEmphasis">500USDT + 1,500Pts</p>
           </TopThree.Item>
           <TopThree.Item rank={3} className="mt-8 w-[200px]" title={<p className="mb-4 text-h5 text-[#FF8A65]">JEFFGPT7777</p>}>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">Referee‘s Total Trading Vol.</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Trad. Vol.</p>
             <div className="mb-3 flex space-x-1">
               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
               <p className="text-b2e">79.99</p>
             </div>
-            <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Referee</p>
+            <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Member</p>
             <p className="text-b2e">3</p>
             <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
             <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Prize</p>
