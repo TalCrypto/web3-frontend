@@ -179,7 +179,7 @@ const TopReferrer = () => {
       <FloatingWidget.Container>
         <FloatingWidget.Item>
           <div className="mb-4 flex space-x-1">
-            <Image src="/images/components/competition/revamp/leaderboard.svg" width={16} height={16} alt="" />
+            {/* <Image src="/images/components/competition/revamp/leaderboard.svg" width={16} height={16} alt="" /> */}
             <p className="text-h5 text-highEmphasis">Top Referrer</p>
           </div>
           <Image src="/images/components/competition/revamp/timer.svg" className="mb-1" width={16} height={16} alt="" />
