@@ -8,7 +8,7 @@ type Data = {
 };
 
 const columns: TableColumn<Data>[] = [
-  { label: 'Rank', field: 'rank', className: 'flex-1 py-3 text-center border-r border-r-[#2E4371] lg:border-r-transparent' },
+  { label: 'Rank', field: 'rank', className: 'flex-1 py-3 text-center border-r border-r-[#2E4371]' },
   { label: 'USDT', field: 'usdt', className: 'flex-1 py-3 text-center', render: row => <p className="text-h5 text-warn">{row.usdt}</p> },
   {
     label: 'Points',
@@ -31,7 +31,7 @@ const Rules = () => (
   <div className="px-5 py-9 lg:p-0">
     <p className="mb-6 text-h4 lg:mb-7 lg:text-center">Rules for Top FP Receiver</p>
 
-    <ul className="mb-16 ml-5 list-disc space-y-6 text-b1">
+    <ul className="mb-16 space-y-6 text-b1">
       <li>
         <p>
           In the Top FP Receiver competition, users are competing on the Realized P/L during the period. Winners will share a prize pool
@@ -40,22 +40,24 @@ const Rules = () => (
       </li>
       <li>
         <p>
-          <span className="text-b1e">Competing Metrics: </span> Total funding payment
+          <span className="text-b1e">Competing Metrics: </span> <br />
+          Total funding payment
         </p>
       </li>
       <li>
         <p>
-          <span className="text-b1e">Definition:</span> Funding payment received through holding positions{' '}
+          <span className="text-b1e">Definition:</span> <br />
+          Funding payment received through holding positions{' '}
         </p>
       </li>
       <li>
         <p>
-          <span className="text-b1e">Rules:</span> Rank from highest Funding payment to lowest Funding payment
+          <span className="text-b1e">Rules:</span> <br /> Rank from highest Funding payment to lowest Funding payment
         </p>
       </li>
       <li>
         <p>
-          <span className="text-b1e">Period:</span> 1 Month (15 Aug 2023 - 15 Sep 2023)
+          <span className="text-b1e">Period:</span> <br /> 1 Month (15 Aug 2023 - 15 Sep 2023)
         </p>
       </li>
     </ul>
@@ -66,8 +68,8 @@ const Rules = () => (
       <Table
         className="!text-highEmphasis"
         headerClassName="bg-secondaryBlue text-h5 
-        border border-t-[rgba(113,170,255,0.22)] !py-0 border-x-[rgba(113,170,255,0.1)] border-b-transparent"
-        rowClassName="!py-0 border-x border-x-transparent !text-[16px]"
+        border !py-0 border-[#2E4371]"
+        rowClassName="!py-0 border-x border-x-[#2E4371] !text-[16px]"
         columns={columns}
         data={data}
       />

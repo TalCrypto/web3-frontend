@@ -10,7 +10,7 @@ const MyReferrersTeam = () => {
     <div className="px-5 py-6 lg:p-0">
       <div className="lg:mt-[78px]">
         <div className="text-h4 lg:mt-[16px] lg:flex lg:items-center lg:justify-center lg:text-[18pt] lg:font-[700] ">
-          My Referrer’s Team
+          Referral Team I Joined
         </div>
       </div>
       <div className="mt-6 flex items-center justify-center lg:mt-[36px]">
@@ -22,7 +22,7 @@ const MyReferrersTeam = () => {
               lg:col-span-5 lg:border-r-[1px] lg:px-[60px] lg:py-[36px]">
                 <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
                 <div className="ml-[12px] flex flex-col justify-between">
-                  <div className="text-[12px] font-[400]">My Referrer</div>
+                  <div className="text-[12px] font-[400]">My Team Lead</div>
                   <div
                     className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-b1e text-transparent 
                   lg:text-[20px] lg:font-[600]">
@@ -39,9 +39,7 @@ const MyReferrersTeam = () => {
                     <div className="mt-[6px] text-[16px] font-[600]">2</div>
                   </div>
                   <div className="hidden flex-col items-center justify-between text-center lg:flex">
-                    <div className="text-[12px] font-[400] text-[#FFD392]">
-                      Referee’s Total <br /> Trad. Vol
-                    </div>
+                    <div className="text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
                     <div className="mt-[6px] flex items-center justify-center text-[16px] font-[600]">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                       255.00
@@ -58,11 +56,11 @@ const MyReferrersTeam = () => {
               <div className="relative flex items-center justify-between lg:px-[176px]">
                 <div className="flex flex-col items-center justify-between text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">My Contribution</div>
-                  <div className="mt-[6px] text-h5 text-[#FFC24B] lg:text-[24px] lg:font-[700]">50%</div>
+                  <div className="mt-[6px] text-h5 text-[#FFC24B] lg:text-h4">50%</div>
                 </div>
                 <div className="flex flex-col items-center justify-between text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
-                  <div className="mt-[6px] text-h5 lg:text-[24px] lg:font-[700]">250USDT</div>
+                  <div className="mt-[6px] text-h5 lg:text-h4">250USDT</div>
                 </div>
               </div>
               <div className="mx-[24px] mt-[32px] hidden justify-between lg:flex">

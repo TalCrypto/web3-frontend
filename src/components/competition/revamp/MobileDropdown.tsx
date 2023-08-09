@@ -7,23 +7,23 @@ import { $isShowMobileModal } from '@/stores/modal';
 const mobileDropdownOptions = [
   {
     id: 0,
-    label: 'Top Vol',
-    icon: '/images/components/airdrop/tabs/leaderboard.svg'
+    label: 'Top Vol'
+    // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
     id: 1,
-    label: 'Top Gainer',
-    icon: '/images/components/airdrop/tabs/leaderboard.svg'
+    label: 'Top Gainer'
+    // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
     id: 2,
-    label: 'Top FP Receiver',
-    icon: '/images/components/airdrop/tabs/leaderboard.svg'
+    label: 'Top FP Receiver'
+    // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
     id: 3,
-    label: 'Top Referrer',
-    icon: '/images/components/airdrop/tabs/leaderboard.svg'
+    label: 'Top Referrer'
+    // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
     id: 4,
@@ -45,7 +45,9 @@ const MobileDropdown = () => {
       <div className={`sticky top-0 md:hidden ${!isShowMobileMenu ? 'z-[3]' : ''}`}>
         <div className="flex justify-between bg-[#202249] px-5 py-[12px]" onClick={() => setIsExpand(!isExpand)}>
           <div className="flex space-x-[6px]">
-            <Image alt="gainers" src={activeItem?.icon || '/images/components/competition/icons/m-gainer.svg'} width={16} height={16} />
+            {activeItem?.icon ? (
+              <Image alt="gainers" src={activeItem?.icon || '/images/components/competition/icons/m-gainer.svg'} width={16} height={16} />
+            ) : null}
             <p className="b1">{activeItem?.label}</p>
           </div>
 
@@ -75,7 +77,7 @@ const MobileDropdown = () => {
                 setIsExpand(false);
                 $activeTab.set(item.id);
               }}>
-              <Image alt="gainers" src={item.icon} width={16} height={16} />
+              {item.icon ? <Image alt="gainers" src={item.icon} width={16} height={16} /> : null}
               <p className="b1">{item.label}</p>
             </div>
           ))}

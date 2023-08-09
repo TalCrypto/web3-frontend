@@ -85,7 +85,7 @@ const MyTeam = () => {
       <div className="lg:mt-[78px]">
         <div className="flex items-center text-[18pt] font-[700] lg:mt-[16px] lg:justify-center ">
           <Image src="/images/components/competition/revamp/my-performance/crown.svg" alt="" width={24} height={24} className="mr-[6px]" />
-          My Team
+          My Referral Team
         </div>
       </div>
       <div className="mt-6 w-full lg:mt-[36px]">
@@ -98,7 +98,7 @@ const MyTeam = () => {
             bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
               <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
               <div className="ml-[12px] flex flex-col justify-between">
-                <div className="text-[12px] font-[400]">Team Head (Referrer)</div>
+                <div className="text-[12px] font-[400]">Team Lead</div>
                 <div className="mt-[8px] flex items-center">
                   <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                     {displayUsername}
@@ -118,9 +118,7 @@ const MyTeam = () => {
                 <div className="text-[15px] font-[600]">400USDT</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="text-center text-[12px] font-[400] text-[#FFD392]">
-                  Referee’s Total <br /> Trad. Vol
-                </div>
+                <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
                 <div className="mt-[6px] text-[15px] font-[600]">55.00</div>
               </div>
             </div>
@@ -135,7 +133,7 @@ const MyTeam = () => {
             <Divider />
             <div className="flex items-center justify-center px-[22px] py-6 lg:px-[36px] lg:py-[24px]">
               <div>
-                <div className="text-center text-[15px] font-[600]">📢 Share My Referral Link</div>
+                <div className="text-center text-[15px] font-[600]">📢 Invitation to my team (Referral Link)</div>
                 <div className="mt-[24px] flex items-center justify-between">
                   <button
                     className="mr-[12px] flex items-center justify-center 
@@ -169,23 +167,21 @@ const MyTeam = () => {
           </div>
           <div className="-mx-5 grow bg-[#0C0D20] py-[36px] lg:mx-0 lg:h-[528px] lg:rounded-[6px] lg:border-[1px] lg:border-[#2E4371]">
             <div className="flex items-center justify-between px-[36px]">
-              <div className="text-[16px] font-[600]">My Referees</div>
-              <div className="text-[12px] font-[400]">
-                Eligible / Total Referees :{' '}
-                <span className="text-[20px] font-[600] text-[#FFC24B]">{referees.filter(item => item.isEligible).length}</span>{' '}
-                <span className="text-[15px]">/ {referees.length}</span>
+              <div className="text-[16px] font-[600]">My Team Member</div>
+              <div className="text-b3">
+                No. of Member:
+                <span className="text-b3e"> {referees.length}</span>
               </div>
             </div>
             {referees.length > 0 ? (
               <div className="mt-6 lg:mt-[36px]">
                 <div className="px-[36px]">
                   <Cell
-                    items={['User ID', 'Status', 'Trading Vol.', 'Contribution', 'Reward', 'Contribution / Trading Vol.']}
+                    items={['User ID', 'Trading Vol.', 'Contribution', 'Reward', 'Contribution / Trading Vol.']}
                     classNames={[
-                      'col-span-8 lg:col-span-3 text-[12px]',
+                      'col-span-8 lg:col-span-4 text-[12px]',
                       'col-span-2 text-[12px] hidden lg:block',
-                      'col-span-2 text-[12px] hidden lg:block',
-                      'col-span-2 text-[12px] hidden lg:block',
+                      'col-span-3 text-[12px] hidden lg:block',
                       'col-span-3 text-[12px] hidden lg:block',
                       'col-span-4 text-[12px] text-right lg:hidden block'
                     ]}
@@ -195,27 +191,15 @@ const MyTeam = () => {
                   {referees.map(item => (
                     <div
                       className={`grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
-                      <div className="relative col-span-8 items-center lg:col-span-3">
+                      <div className="relative col-span-8 items-center lg:col-span-4">
                         <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
                         <div className="truncate pr-[40px]">{item.username}</div>
-                      </div>
-                      <div className="relative col-span-2 hidden lg:block">
-                        {item.isEligible ? (
-                          <Image
-                            src="/images/components/competition/revamp/my-performance/eligible.svg"
-                            width={16}
-                            height={16}
-                            alt=""
-                            className="absolute left-[-20px] top-[2px]"
-                          />
-                        ) : null}
-                        {item.isEligible ? 'Eligible' : 'Not Eligible'}
                       </div>
                       <div className="col-span-2 hidden items-center md:flex">
                         <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                         {item.vol.toFixed(2)}
                       </div>
-                      <div className="col-span-2 hidden font-[600] text-[#FFC24B] md:block">{`${
+                      <div className="col-span-3 hidden font-[600] text-[#FFC24B] md:block">{`${
                         !item.isEligible ? '-' : `${item.contribution}%`
                       }`}</div>
                       <div className="col-span-3 hidden md:block">
@@ -241,10 +225,6 @@ const MyTeam = () => {
                       </div>
                     </div>
                   ))}
-                </div>
-                <div className="mt-[16px] hidden px-[36px] text-[12px] text-mediumEmphasis lg:block">
-                  Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as eligible
-                  referees.
                 </div>
               </div>
             ) : (
