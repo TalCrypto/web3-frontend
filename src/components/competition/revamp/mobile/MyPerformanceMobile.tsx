@@ -13,30 +13,33 @@ import 'swiper/scss';
 import 'swiper/scss/pagination';
 import { Pagination } from 'swiper/modules';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
+import { useAccount } from 'wagmi';
+import {
+  $triggerKey,
+  $topFundingPaymentUserItem,
+  $topGainerUserItem,
+  $topReferrerUserItem,
+  $topVolumeUserItem,
+  $referralUserItem,
+  $referralTeamList
+} from '@/stores/revampCompetition';
+import { formatBigInt } from '@/utils/bigInt';
 
-const referees = [
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 15, contribution: 25, reward: 25 },
-  { username: 'Tribe3OG', isEligible: true, vol: 10, contribution: 15, reward: 15 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 }
-];
+const itemUsername = (item: any) =>
+  item.username === ''
+    ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
+    : item.username.length > 10
+    ? `${item.username.substring(0, 10)}...`
+    : item.username;
+
+const itemReward = (item: any) =>
+  item?.pointPrize === 0 && item?.usdtPrize === 0
+    ? '-'
+    : item?.pointPrize === 0 && item?.usdtPrize > 0
+    ? `${item?.usdtPrize}USDT`
+    : item?.usdtPrize === 0 && item?.pointPrize > 0
+    ? `${item?.pointPrize} Pts.`
+    : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
 
 const referrers = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
@@ -73,7 +76,7 @@ interface PerformanceTagProps {
 }
 
 const PerformanceTag = (props: any) => {
-  const { title, type, leaderboardRank = 3, volList = null, defaultVolRecord } = props;
+  const { title, type, volList = null, rank = '', val = '', reward = '', pointPrize = 0, usdtPrize = 0, isSide = false } = props;
   const contentTitle = '';
 
   return (
@@ -103,20 +106,24 @@ const PerformanceTag = (props: any) => {
               <div className="mx-[72px] flex justify-between">
                 <div className="flex flex-col text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
-                  <div className="mt-[16px] text-[14px] font-[600]">{leaderboardRank}</div>
+                  <div className="mt-[16px] text-[14px] font-[600]">{rank}</div>
                 </div>
                 <div className="flex flex-col text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
-                  <div className="mt-[16px] flex items-center text-[14px] font-[600]">
+                  <div
+                    className={`mt-[16px] flex items-center text-[14px] font-[600] ${
+                      isSide ? (Number(val) > 0 ? 'text-marketGreen' : Number(val) < 0 ? 'text-marketRed' : '') : ''
+                    }`}>
                     <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                    999
+                    {isSide ? (Number(val) > 0 ? '+' : '') : ''}
+                    {Number(val).toFixed(2)}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        {volList && defaultVolRecord < volList.length - 1 ? (
+        {/* {volList && defaultVolRecord < volList.length - 1 ? (
           <div
             className="absolute left-0 top-0 flex min-w-[100px] translate-x-[-25%] translate-y-[50%] 
           -rotate-45 items-center justify-center border 
@@ -124,7 +131,7 @@ const PerformanceTag = (props: any) => {
         text-[8px] font-semibold leading-[9.75px] text-[#FFF6D7]">
             <p>ENDED</p>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     </div>
   );
@@ -135,82 +142,10 @@ const volList = [
   { week: 2, rank: 10, vol: 100.5, reward: 500 }
 ];
 
-const MyPerformanceMobile = () => {
-  const userInfo = useStore($userInfo);
-  const isConnected = useStore($userIsConnected);
-  const userPointData = useStore($userPoint);
-
-  const displayUsername =
-    userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
-  const userPoint = userPointData || defaultUserPoint;
-  const { referralCode } = userPoint;
-
-  const [displayCount, setDisplayCount] = useState(8);
-  const [isShowContributionModal, setIsShowContributionModal] = useState(false);
-  const [isShowShareModal, setIsShowShareModal] = useState(false);
-  const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
-
-  const copyTextFunc = (text: any) => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text);
-    }
-  };
-
-  const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
-    copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
-  };
-
-  function showSnackBar() {
-    const snackbar = document.getElementById('snackbar');
-    if (snackbar) {
-      snackbar.className = 'snackbar show';
-      copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
-      setTimeout(() => {
-        snackbar.className = snackbar.className.replace('show', '');
-      }, 3000);
-    }
-  }
-
-  return !isConnected ? (
-    <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
-      Please connect to your wallet to get started
-    </div>
-  ) : (
-    <div className="block bg-[#0C0D20] md:hidden">
-      <div className="px-[20px] pt-[36px] ">
-        <div className="text-[20px] font-[600] ">General Performance</div>
-        <div className="relative pt-[24px]">
-          <Swiper
-            spaceBetween={30}
-            modules={[Pagination]}
-            initialSlide={volList.length - 1}
-            pagination={{
-              dynamicBullets: false,
-              clickable: true
-            }}
-            className="mySwiper">
-            {volList.map(item => (
-              <SwiperSlide>
-                <PerformanceTag
-                  title="Top Vol"
-                  type={0}
-                  leaderboardRank={item.rank}
-                  volList={volList}
-                  defaultVolRecord={defaultVolRecord}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-          <div className="absolute bottom-[-16px] flex w-full items-center justify-center">
-            <div className="swiper-pagination-bullets">
-              <div className="h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9]" />
-            </div>
-          </div>
-        </div>
-        <PerformanceTag title="Top Gainer" type={1} leaderboardRank={5} />
-        <PerformanceTag title="Top FP" type={2} leaderboardRank={99} />
-        <PerformanceTag title="Top Referrer" type={3} leaderboardRank={100} />
-      </div>
+const MyReferralTeam = (props: any) => {
+  const { displayUsername, setIsShowShareModal, showSnackBar } = props;
+  return (
+    <div>
       <div className="px-[20px] pt-[48px]">
         <div className="flex items-center text-[20px] font-[600] ">
           <Image src="/images/components/competition/revamp/my-performance/crown.svg" alt="" width={24} height={24} className="mr-[6px]" />
@@ -289,12 +224,23 @@ const MyPerformanceMobile = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const MyRefereesList = (props: any) => {
+  const { referralTeamList } = props;
+
+  const [displayCount, setDisplayCount] = useState(8);
+
+  return (
+    <div>
       <div className="px-[20px] pt-[36px] ">
         <div className="flex items-center justify-between text-[20px] font-[600]">
           My Referees
           <div className="flex items-center text-[14px] font-[400]">
             <div className="mr-[6px]">
-              Total Referees : <span className="font-[600]">{referees.length}</span>
+              Total Referees : <span className="font-[600]">{referralTeamList.length}</span>
             </div>
           </div>
         </div>
@@ -314,8 +260,8 @@ const MyPerformanceMobile = () => {
         </div>
       </div>
       <div className="mt-[16px]">
-        {referees.slice(0, displayCount > referees.length ? referees.length : displayCount).map(item => {
-          const showUsername = item.username.length > 10 ? `${item.username.substring(0, 10)}...` : item.username;
+        {referralTeamList.slice(0, displayCount > referralTeamList.length ? referralTeamList.length : displayCount).map((item: any) => {
+          const showUsername = itemUsername(item);
           return (
             <div
               className={`h-full px-[20px] py-[16px] text-[14px] 
@@ -324,7 +270,7 @@ const MyPerformanceMobile = () => {
                 <div className="flex h-full items-center">
                   <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
                   <div className="flex flex-col justify-between">
-                    <div className="font-[600]">{showUsername}</div>
+                    <div className="overflow-auto font-[600]">{showUsername}</div>
                     {/* <div className="mt-[6px] flex items-center">
                       {item.isEligible ? (
                         <Image
@@ -341,10 +287,12 @@ const MyPerformanceMobile = () => {
                 </div>
                 <div className="flex h-full items-end text-end">
                   <div className="flex flex-col justify-end">
-                    <div className="font-[600] text-[#FFC24B]">{item.isEligible ? `${item.reward}%` : '-'}</div>
+                    <div className="font-[600] text-[#FFC24B]">{`${
+                      Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(2)}%`
+                    }`}</div>
                     <div className="mt-[6px] flex items-center justify-end">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                      {item.vol.toFixed(2)}
+                      {formatBigInt(item.tradedVolume).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -354,8 +302,8 @@ const MyPerformanceMobile = () => {
         })}
       </div>
 
-      {referees && referees.length > 0 ? (
-        displayCount >= referees.length ? null : (
+      {referralTeamList && referralTeamList.length > 0 ? (
+        displayCount >= referralTeamList.length ? null : (
           <div className="bg-darkBlue py-[35px] text-center">
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
@@ -367,7 +315,15 @@ const MyPerformanceMobile = () => {
           </div>
         )
       ) : null}
+    </div>
+  );
+};
 
+const ReferralTeamJoined = (props: any) => {
+  const { setIsShowContributionModal } = props;
+
+  return (
+    <div>
       <div className="px-[20px] pt-[13px]">
         <div className="text-[20px] font-[600]">Referral Team I Joined</div>
         <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
@@ -415,12 +371,131 @@ const MyPerformanceMobile = () => {
           />
           Contribution Details
         </span>
+      </div>
+    </div>
+  );
+};
 
-        <ContributionDetailsModal isShow={isShowContributionModal} setIsShow={setIsShowContributionModal} referrers={referrers} />
-        {isShowShareModal ? <ShareMobileModal setIsShow={setIsShowShareModal} referralCode={referralCode} copyCode={copyCode} /> : null}
-        <div className="snackbar" id="snackbar">
-          Referral link copied to clipboard!
+const MyPerformanceMobile = () => {
+  const { address } = useAccount();
+
+  const userInfo = useStore($userInfo);
+  const isConnected = useStore($userIsConnected);
+  const userPointData = useStore($userPoint);
+  const topFundingPaymentUserItem = useStore($topFundingPaymentUserItem);
+  const topVolumeUserItem = useStore($topVolumeUserItem);
+  const topGainerUserItem = useStore($topGainerUserItem);
+  const topReferrerUserItem = useStore($topReferrerUserItem);
+  const referralTeamList = useStore($referralTeamList);
+
+  const displayUsername =
+    userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
+  const userPoint = userPointData || defaultUserPoint;
+  const { referralCode } = userPoint;
+
+  const [isShowContributionModal, setIsShowContributionModal] = useState(false);
+  const [isShowShareModal, setIsShowShareModal] = useState(false);
+  const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
+
+  const copyTextFunc = (text: any) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    }
+  };
+
+  const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
+    copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
+  };
+
+  function showSnackBar() {
+    const snackbar = document.getElementById('snackbar');
+    if (snackbar) {
+      snackbar.className = 'snackbar show';
+      copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
+      setTimeout(() => {
+        snackbar.className = snackbar.className.replace('show', '');
+      }, 3000);
+    }
+  }
+
+  useEffect(() => {
+    $triggerKey.set(!$triggerKey.get());
+  }, [address]);
+
+  return !isConnected ? (
+    <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
+      Please connect to your wallet to get started
+    </div>
+  ) : (
+    <div className="block bg-[#0C0D20] md:hidden">
+      <div className="px-[20px] pt-[36px] ">
+        <div className="text-[20px] font-[600] ">General Performance</div>
+        <div className="relative pt-[24px]">
+          <Swiper
+            spaceBetween={30}
+            modules={[Pagination]}
+            initialSlide={volList.length - 1}
+            pagination={{
+              dynamicBullets: false,
+              clickable: true
+            }}
+            className="mySwiper">
+            {volList.map(item => (
+              <SwiperSlide>
+                <PerformanceTag
+                  title="Top Vol"
+                  type={0}
+                  volList={volList}
+                  rank={topVolumeUserItem?.rank}
+                  val={topVolumeUserItem?.weeklyTradedVolume}
+                  pointPrize={topVolumeUserItem?.pointPrize}
+                  usdtPrize={topVolumeUserItem?.usdtPrize}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          <div className="absolute bottom-[-16px] flex w-full items-center justify-center">
+            <div className="swiper-pagination-bullets">
+              <div className="h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9]" />
+            </div>
+          </div>
         </div>
+        <PerformanceTag
+          title="Top Gainer"
+          type={1}
+          rank={topGainerUserItem?.rank}
+          val={formatBigInt(topGainerUserItem?.pnl)}
+          pointPrize={topGainerUserItem?.pointPrize}
+          usdtPrize={topGainerUserItem?.usdtPrize}
+          isSide
+        />
+        <PerformanceTag
+          title="FP"
+          type={2}
+          rank={topFundingPaymentUserItem?.rank}
+          val={formatBigInt(topFundingPaymentUserItem?.fundingPayment)}
+          pointPrize={topFundingPaymentUserItem?.pointPrize}
+          usdtPrize={topFundingPaymentUserItem?.usdtPrize}
+          isSide
+        />
+        <PerformanceTag
+          title="Top Referrer"
+          type={3}
+          rank={topReferrerUserItem?.rank}
+          val={formatBigInt(topReferrerUserItem?.totalVolume)}
+          pointPrize={topReferrerUserItem?.pointPrize}
+          usdtPrize={topReferrerUserItem?.usdtPrize}
+          isSide
+        />
+      </div>
+      <MyReferralTeam displayUsername={displayUsername} setIsShowShareModal={setIsShowShareModal} showSnackBar={showSnackBar} />
+      <MyRefereesList referralTeamList={referralTeamList} />
+      <ReferralTeamJoined setIsShowContributionModal={setIsShowContributionModal} />
+
+      <ContributionDetailsModal isShow={isShowContributionModal} setIsShow={setIsShowContributionModal} referrers={referrers} />
+      {isShowShareModal ? <ShareMobileModal setIsShow={setIsShowShareModal} referralCode={referralCode} copyCode={copyCode} /> : null}
+      <div className="snackbar" id="snackbar">
+        Referral link copied to clipboard!
       </div>
     </div>
   );

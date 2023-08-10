@@ -132,18 +132,6 @@ const PerformanceTag = (props: any) => {
 
 const Divider = () => <div className="h-[1px] w-full bg-[#2E4371]" />;
 
-const referees = [
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 15, contribution: 25, reward: 25 },
-  { username: 'Tribe3OG', isEligible: true, vol: 10, contribution: 15, reward: 15 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 },
-  { username: 'EMMMMMMMMMAAAAAAA', isEligible: false, vol: 0.1, contribution: 0, reward: 0 }
-];
-
 const referrers = [
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 30, contribution: 50, reward: 50 },
   { username: 'EMMMMMMMMMAAAAAAA', isEligible: true, vol: 15, contribution: 25, reward: 25 },
@@ -289,9 +277,7 @@ const ReferreeModal = () => {
 };
 
 const MyReferralTeam = (props: any) => {
-  const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal } = props;
-
-  const referralTeamList: any[] = useStore($referralTeamList);
+  const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList } = props;
 
   const copyUserUrl = () => {
     copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
@@ -436,7 +422,9 @@ const MyReferralTeam = (props: any) => {
                           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                           {formatBigInt(item.tradedVolume).toFixed(2)}
                         </div>
-                        <div className="col-span-3 font-[600] text-[#FFC24B]">{`${Number(item.distribution).toFixed(2)}%`}</div>
+                        <div className="col-span-3 font-[600] text-[#FFC24B]">{`${
+                          Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(2)}%`
+                        }`}</div>
                         <div className="col-span-3">
                           <div
                             className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${
@@ -563,6 +551,7 @@ const MyPerformance = () => {
   const topVolumeUserItem = useStore($topVolumeUserItem);
   const topGainerUserItem = useStore($topGainerUserItem);
   const topReferrerUserItem = useStore($topReferrerUserItem);
+  const referralTeamList = useStore($referralTeamList);
 
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
@@ -652,6 +641,7 @@ const MyPerformance = () => {
               referralCode={referralCode}
               displayUsername={displayUsername}
               setIsShowShareModal={setIsShowShareModal}
+              referralTeamList={referralTeamList}
             />
             <ReferrerTeamJoined />
 
