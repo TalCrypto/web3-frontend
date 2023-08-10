@@ -14,8 +14,8 @@ function SwitchNetworkErrorModal() {
 
   return (
     <div
-      className={`fixed inset-0 z-20 flex h-screen items-center
-        justify-center overflow-auto bg-black bg-opacity-40 px-6`}
+      className={`fixed inset-0 z-20 flex h-screen items-center justify-center
+        overflow-auto bg-black bg-opacity-40 px-6 md:hidden`}
       onClick={dismissModal}>
       <div
         className={`mx-auto w-full overflow-hidden
