@@ -16,7 +16,7 @@ export type TableColumn<T = any> = {
 type TableProps = PropsWithChildren & {
   columns: TableColumn<any>[];
   data: TableRow[];
-  fixedRow?: TableRow;
+  fixedRow?: TableRow | null;
   className?: string;
   headerClassName?: string;
   bodyClassName?: string;
