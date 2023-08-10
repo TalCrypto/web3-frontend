@@ -5,7 +5,35 @@ export type TopGainerRanking = {
   pointPrize: number;
   rank: string;
   usdtPrize: number;
-  userAddress: string;
+  userAddress?: string;
+  username: string;
+};
+
+export type TopFundingPaymentRanking = {
+  fundingPayment: string;
+  pointPrize: number;
+  rank: string;
+  usdtPrize: number;
+  userAddress?: string;
+  username: string;
+};
+
+export type TopVolumeRanking = {
+  weeklyTradedVolume: string;
+  pointPrize: number;
+  rank: string;
+  usdtPrize: number;
+  userAddress?: string;
+  username: string;
+};
+
+export type TopReferrerRanking = {
+  refereeCount: number;
+  totalVolume: string;
+  pointPrize: number;
+  rank: string;
+  usdtPrize: number;
+  userAddress?: string;
   username: string;
 };
 
@@ -14,7 +42,7 @@ export const $triggerKey = atom(false);
 // data handling
 export const $isDataLoading = atom(false);
 
-export const $topFundingPaymentRankingList = atom([]);
+export const $topFundingPaymentRankingList = atom<TopFundingPaymentRanking[]>([]);
 export const $topGainerRankingList = atom<TopGainerRanking[]>([]);
 export const $topReferrerRankingList = atom([]);
 export const $topVolumeRankingList = atom([]);
