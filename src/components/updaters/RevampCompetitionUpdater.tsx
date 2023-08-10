@@ -12,7 +12,9 @@ import {
   $topReferrerRankingList,
   $topReferrerUserItem,
   $topVolumeRankingList,
-  $topVolumeUserItem
+  $topVolumeUserItem,
+  $referralTeamList,
+  $referralUserItem
 } from '@/stores/revampCompetition';
 
 function RevampCompetitionUpdater() {
@@ -26,10 +28,11 @@ function RevampCompetitionUpdater() {
       tradingCompetitionApi.getTopFp(address),
       tradingCompetitionApi.getTopGainer(address),
       tradingCompetitionApi.getTopReferrer(address),
-      tradingCompetitionApi.getTopVolume(address, 1)
+      tradingCompetitionApi.getTopVolume(address, 1),
+      tradingCompetitionApi.getReferrerTeamList(address)
     ];
 
-    const [topFpRes, topGainerRes, topReferrerRes, topVolRes] = await Promise.allSettled(promises);
+    const [topFpRes, topGainerRes, topReferrerRes, topVolRes, referrerTeamRes] = await Promise.allSettled(promises);
 
     if (topFpRes.status === 'fulfilled') {
       const topFp = topFpRes.value;
@@ -68,6 +71,17 @@ function RevampCompetitionUpdater() {
         $topVolumeUserItem.set(topVolume?.user);
       } else {
         $topVolumeUserItem.set(null);
+      }
+    }
+
+    if (referrerTeamRes.status === 'fulfilled') {
+      const referrerTeam = referrerTeamRes.value;
+      console.log({ referrerTeam });
+      $referralTeamList.set(referrerTeam?.referees);
+      if (address) {
+        $referralUserItem.set(referrerTeam?.user);
+      } else {
+        $referralUserItem.set(null);
       }
     }
 

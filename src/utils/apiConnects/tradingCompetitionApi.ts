@@ -45,12 +45,13 @@ export const tradingCompetitionApi = {
       return Promise.reject(err);
     }
   },
-  getReferrerTeamList: async function getTopReferrer(userAddr: string = '') {
+  getReferrerTeamList: async function getReferrerTeamList(userAddr: string = '') {
     const url = `${authUrl}/competition/leaderboard/s2/refererTeamList?userAddress=${userAddr}`;
     try {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
+      console.log({ url, data });
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);

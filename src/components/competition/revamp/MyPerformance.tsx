@@ -15,7 +15,9 @@ import {
   $topFundingPaymentUserItem,
   $topGainerUserItem,
   $topReferrerUserItem,
-  $topVolumeUserItem
+  $topVolumeUserItem,
+  $referralUserItem,
+  $referralTeamList
 } from '@/stores/revampCompetition';
 import { formatBigInt } from '@/utils/bigInt';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
@@ -27,8 +29,8 @@ const PerformanceTag = (props: any) => {
 
   const [defaultVolRecord, setDefaultVolRecord] = useState(!volList ? 0 : volList.length - 1);
   const numberVal = Number(val);
-  const displayNumber = numberVal === 0 ? '0.00' : numberVal.toFixed(2);
-  console.log({ type, displayNumber });
+  // const displayNumber = numberVal === 0 ? '0.00' : numberVal.toFixed(2);
+  // console.log({ type, displayNumber });
 
   const showReward =
     pointPrize === 0 && usdtPrize === 0
@@ -36,7 +38,7 @@ const PerformanceTag = (props: any) => {
       : pointPrize === 0 && usdtPrize > 0
       ? `${usdtPrize}USDT`
       : usdtPrize === 0 && pointPrize > 0
-      ? `${usdtPrize} Pts.`
+      ? `${pointPrize} Pts.`
       : `${usdtPrize}USDT + ${pointPrize} Pts.`;
 
   let contentTitle = '';
@@ -81,11 +83,13 @@ const PerformanceTag = (props: any) => {
             <div className={`${type === 0 ? 'mt-[16px]' : 'mt-[36px]'} text-[12px] font-[400] text-[#FFD392]`}>Leaderboard Rank</div>
             <div className="mt-[6px] text-[20px] font-[600]">{!rank ? '0' : rank}</div>
             <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">{contentTitle}</div>
-            <div className="mt-[6px] flex items-center text-[20px] font-[600]">
-              <PriceWithIcon
-                className={`${isSide ? (numberVal > 0 ? '!text-marketGreen' : numberVal < 0 ? '!text-marketRed' : '') : ''}`}
-                priceValue={`${isSide ? (numberVal > 0 ? '+' : '') : ''}${numberVal === 0 ? '0.00' : numberVal.toFixed(2)}`}
-              />
+            <div
+              className={`mt-[6px] flex items-center text-[16px] font-[600] ${
+                isSide ? (numberVal > 0 ? 'text-marketGreen' : numberVal < 0 ? 'text-marketRed' : '') : ''
+              }`}>
+              <Image src="/images/common/symbols/eth-tribe3.svg" className="mr-[6px]" width={16} height={16} alt="" />
+              {isSide ? (numberVal > 0 ? '+' : '') : ''}
+              {numberVal.toFixed(2)}
             </div>
             <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">Reward</div>
             <div className="mt-[6px] text-[14px] font-[400]">{showReward}</div>
@@ -218,14 +222,8 @@ const ReferreeModal = () => {
             <div className="mt-[36px]">
               <div className="px-[36px]">
                 <Cell
-                  items={['User ID', 'Status', 'Trading Vol.', 'Contribution', 'Reward']}
-                  classNames={[
-                    'col-span-3 text-[12px]',
-                    'col-span-2 text-[12px]',
-                    'col-span-2 text-[12px]',
-                    'col-span-2 text-[12px]',
-                    'col-span-3 text-[12px]'
-                  ]}
+                  items={['User ID', 'Trading Vol.', 'Contribution', 'Reward']}
+                  classNames={['col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]']}
                 />
               </div>
               <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
@@ -241,7 +239,7 @@ const ReferreeModal = () => {
                         <div className="truncate">{item.username}</div>
                         {isCurrentUser ? <div className="rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div> : null}
                       </div>
-                      <div className="relative col-span-2">
+                      {/* <div className="relative col-span-2">
                         {item.isEligible ? (
                           <Image
                             src="/images/components/competition/revamp/my-performance/eligible.svg"
@@ -252,12 +250,12 @@ const ReferreeModal = () => {
                           />
                         ) : null}
                         {item.isEligible ? 'Eligible' : 'Not Eligible'}
-                      </div>
-                      <div className="col-span-2 flex items-center">
+                      </div> */}
+                      <div className="col-span-3 flex items-center">
                         <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                         {item.vol.toFixed(2)}
                       </div>
-                      <div className="col-span-2 font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
+                      <div className="col-span-3 font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
                       <div className="col-span-3">
                         <div className="flex w-fit items-center rounded-[12px] bg-[#2E4371] px-[12px] py-[4px]">
                           <Image
@@ -292,6 +290,8 @@ const ReferreeModal = () => {
 
 const MyReferralTeam = (props: any) => {
   const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal } = props;
+
+  const referralTeamList: any[] = useStore($referralTeamList);
 
   const copyUserUrl = () => {
     copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
@@ -385,11 +385,11 @@ const MyReferralTeam = (props: any) => {
             <div className="flex items-center justify-between px-[36px]">
               <div className="text-[16px] font-[600]">My Team Member</div>
               <div className="text-[12px] font-[400]">
-                No. of Member : <span className="font-[600]">{referrers.length}</span>{' '}
+                No. of Member : <span className="font-[600]">{referralTeamList.length}</span>{' '}
                 {/* <span className="text-[15px]">/ {referrers.length}</span> */}
               </div>
             </div>
-            {referees.length > 0 ? (
+            {referralTeamList.length > 0 ? (
               <div className="mt-[36px]">
                 <div className="px-[36px]">
                   <Cell
@@ -398,44 +398,63 @@ const MyReferralTeam = (props: any) => {
                   />
                 </div>
                 <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
-                  {referees.map(item => (
-                    <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
-                      <div className="relative col-span-3 items-center">
-                        <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                        <div className="truncate pr-[40px]">{item.username}</div>
-                      </div>
-                      {/* <div className="relative col-span-2">
-                              {item.isEligible ? (
-                                <Image
-                                  src="/images/components/competition/revamp/my-performance/eligible.svg"
-                                  width={16}
-                                  height={16}
-                                  alt=""
-                                  className="absolute left-[-20px] top-[2px]"
-                                />
-                              ) : null}
-                              {item.isEligible ? 'Eligible' : 'Not Eligible'}
-                            </div> */}
-                      <div className="col-span-3 flex items-center">
-                        <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                        {item.vol.toFixed(2)}
-                      </div>
-                      <div className="col-span-3 font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
-                      <div className="col-span-3">
-                        <div
-                          className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${item.isEligible ? 'bg-[#2E4371]' : ''}`}>
-                          <Image
-                            src="/images/components/competition/revamp/my-performance/reward.svg"
-                            width={16}
-                            height={16}
-                            alt=""
-                            className="mr-[10px]"
-                          />
-                          {!item.isEligible ? '-' : `${item.reward}USDT`}
+                  {referralTeamList.map((item: any) => {
+                    const username =
+                      item.username === ''
+                        ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
+                        : item.username.length > 10
+                        ? `${item.username.substring(0, 10)}...`
+                        : item.username;
+
+                    const showReward =
+                      item?.pointPrize === 0 && item?.usdtPrize === 0
+                        ? '-'
+                        : item?.pointPrize === 0 && item?.usdtPrize > 0
+                        ? `${item?.usdtPrize}USDT`
+                        : item?.usdtPrize === 0 && item?.pointPrize > 0
+                        ? `${item?.pointPrize} Pts.`
+                        : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
+                    return (
+                      <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                        <div className="relative col-span-3 items-center">
+                          <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
+                          <div className="truncate pr-[40px]">{username}</div>
+                        </div>
+                        {/* <div className="relative col-span-2">
+                            {item.isEligible ? (
+                              <Image
+                                src="/images/components/competition/revamp/my-performance/eligible.svg"
+                                width={16}
+                                height={16}
+                                alt=""
+                                className="absolute left-[-20px] top-[2px]"
+                              />
+                            ) : null}
+                            {item.isEligible ? 'Eligible' : 'Not Eligible'}
+                          </div> */}
+                        <div className="col-span-3 flex items-center">
+                          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                          {formatBigInt(item.tradedVolume).toFixed(2)}
+                        </div>
+                        <div className="col-span-3 font-[600] text-[#FFC24B]">{`${Number(item.distribution).toFixed(2)}%`}</div>
+                        <div className="col-span-3">
+                          <div
+                            className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${
+                              item.isEligible ? 'bg-[#2E4371]' : ''
+                            }`}>
+                            <Image
+                              src="/images/components/competition/revamp/my-performance/reward.svg"
+                              width={16}
+                              height={16}
+                              alt=""
+                              className="mr-[10px]"
+                            />
+                            {showReward}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 {/* <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
                         Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as
@@ -453,6 +472,86 @@ const MyReferralTeam = (props: any) => {
     </div>
   );
 };
+
+const ReferrerTeamJoined = (props: any) => (
+  <div>
+    <div className="mt-[78px]">
+      <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">Referral Team I Joined</div>
+    </div>
+    <div className="mt-[36px] flex items-center justify-center">
+      <div className="w-[765px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
+        <div className="flex flex-col">
+          <div className="grid grid-cols-12 rounded-t-[6px] bg-[#0C0D20]">
+            <div
+              className="col-span-5 flex items-center border-b-[1px] border-r-[1px]
+              border-[#2E4371] px-[60px] py-[36px]">
+              <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
+              <div className="ml-[12px] flex flex-col justify-between">
+                <div className="text-[12px] font-[400]">My Referrer</div>
+                <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                  Tribe3OG
+                </div>
+              </div>
+            </div>
+            <div
+              className="col-span-7 border-b-[1px] border-[#2E4371] px-[52px]
+              py-[36px]">
+              <div className="flex justify-between">
+                <div className="flex flex-col items-center justify-between text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
+                  <div className="mt-[6px] text-[16px] font-[600]">2</div>
+                </div>
+                <div className="flex flex-col items-center justify-between text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">
+                    Referee’s Total <br /> Trad. Vol
+                  </div>
+                  <div className="mt-[6px] flex items-center justify-center text-[16px] font-[600]">
+                    <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                    255.00
+                  </div>
+                </div>
+                <div className="flex flex-col items-center justify-between text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
+                  <div className="mt-[6px] text-[15px] font-[600]">1000USDT</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="pb-[16px] pt-[36px]">
+            <div className="relative flex items-center justify-between px-[176px]">
+              <div className="flex flex-col items-center justify-between text-center">
+                <div className="text-[12px] font-[400] text-[#FFD392]">My Contribution</div>
+                <div className="mt-[6px] text-[24px] font-[700] text-[#FFC24B]">50%</div>
+              </div>
+              <div className="flex flex-col items-center justify-between text-center">
+                <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
+                <div className="mt-[6px] text-[24px] font-[700]">250USDT</div>
+              </div>
+            </div>
+            <div className="mx-[24px] mt-[32px] flex justify-between">
+              <div className="text-[12px]">
+                Trade at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume to be eligible referee.{' '}
+                <span className="text-[#FFC24B]">(0.99 / 1.00)</span>
+              </div>
+              <div
+                className="flex cursor-pointer items-center text-[14px] font-[600] text-primaryBlue"
+                onClick={() => $isShowReferralModal.set(true)}>
+                <Image
+                  src="/images/components/competition/revamp/my-performance/details.svg"
+                  width={16}
+                  height={16}
+                  alt=""
+                  className="mr-[4px]"
+                />
+                Contribution Details
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 const MyPerformance = () => {
   const { address } = useAccount();
@@ -554,81 +653,7 @@ const MyPerformance = () => {
               displayUsername={displayUsername}
               setIsShowShareModal={setIsShowShareModal}
             />
-            <div className="mt-[78px]">
-              <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">Referral Team I Joined</div>
-            </div>
-            <div className="mt-[36px] flex items-center justify-center">
-              <div className="w-[765px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
-                <div className="flex flex-col">
-                  <div className="grid grid-cols-12 rounded-t-[6px] bg-[#0C0D20]">
-                    <div
-                      className="col-span-5 flex items-center border-b-[1px] border-r-[1px]
-              border-[#2E4371] px-[60px] py-[36px]">
-                      <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
-                      <div className="ml-[12px] flex flex-col justify-between">
-                        <div className="text-[12px] font-[400]">My Referrer</div>
-                        <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
-                          Tribe3OG
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="col-span-7 border-b-[1px] border-[#2E4371] px-[52px]
-              py-[36px]">
-                      <div className="flex justify-between">
-                        <div className="flex flex-col items-center justify-between text-center">
-                          <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-                          <div className="mt-[6px] text-[16px] font-[600]">2</div>
-                        </div>
-                        <div className="flex flex-col items-center justify-between text-center">
-                          <div className="text-[12px] font-[400] text-[#FFD392]">
-                            Referee’s Total <br /> Trad. Vol
-                          </div>
-                          <div className="mt-[6px] flex items-center justify-center text-[16px] font-[600]">
-                            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                            255.00
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-center justify-between text-center">
-                          <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-                          <div className="mt-[6px] text-[15px] font-[600]">1000USDT</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pb-[16px] pt-[36px]">
-                    <div className="relative flex items-center justify-between px-[176px]">
-                      <div className="flex flex-col items-center justify-between text-center">
-                        <div className="text-[12px] font-[400] text-[#FFD392]">My Contribution</div>
-                        <div className="mt-[6px] text-[24px] font-[700] text-[#FFC24B]">50%</div>
-                      </div>
-                      <div className="flex flex-col items-center justify-between text-center">
-                        <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
-                        <div className="mt-[6px] text-[24px] font-[700]">250USDT</div>
-                      </div>
-                    </div>
-                    <div className="mx-[24px] mt-[32px] flex justify-between">
-                      <div className="text-[12px]">
-                        Trade at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume to be eligible referee.{' '}
-                        <span className="text-[#FFC24B]">(0.99 / 1.00)</span>
-                      </div>
-                      <div
-                        className="flex cursor-pointer items-center text-[14px] font-[600] text-primaryBlue"
-                        onClick={() => $isShowReferralModal.set(true)}>
-                        <Image
-                          src="/images/components/competition/revamp/my-performance/details.svg"
-                          width={16}
-                          height={16}
-                          alt=""
-                          className="mr-[4px]"
-                        />
-                        Contribution Details
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ReferrerTeamJoined />
 
             <ReferreeModal />
             {isShowShareModal ? (
