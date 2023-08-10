@@ -94,6 +94,7 @@ function Header() {
                 channel={process.env.NEXT_PUBLIC_DISCORD_CHANNEL_ID}
                 width={430}
                 style={{ height: 'calc(100dvh - 112px)' }}
+                shard="https://emerald.widgetbot.io"
               />
             </div>
           </div>
