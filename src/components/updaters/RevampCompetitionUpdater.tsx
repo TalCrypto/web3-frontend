@@ -26,7 +26,7 @@ function RevampCompetitionUpdater() {
       tradingCompetitionApi.getTopFp(address),
       tradingCompetitionApi.getTopGainer(address),
       tradingCompetitionApi.getTopReferrer(address),
-      tradingCompetitionApi.getTopVolume(address)
+      tradingCompetitionApi.getTopVolume(address, 1)
     ];
 
     const [topFpRes, topGainerRes, topReferrerRes, topVolRes] = await Promise.allSettled(promises);
