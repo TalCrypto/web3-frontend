@@ -8,7 +8,7 @@ import { $isShowMobileRules } from '@/stores/competition';
 import Tooltip from '@/components/common/Tooltip';
 import { $userIsConnected } from '@/stores/user';
 import { $topGainerRankingList, $topGainerUserItem, TopGainerRanking } from '@/stores/revampCompetition';
-import { trimAddress } from '@/utils/string';
+import { trimAddress, trimString } from '@/utils/string';
 import { useAccount } from 'wagmi';
 import { formatBigInt } from '@/utils/bigInt';
 import TopThree from './TopThree';
@@ -94,7 +94,6 @@ const TopGainer = () => {
           <p>Realized P/L</p>
         </div>
       ),
-      field: 'realized_pnl',
       className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/4 text-right lg:text-center',
       render: row => {
         const val = Number(formatBigInt(row.pnl));
@@ -102,14 +101,16 @@ const TopGainer = () => {
         return (
           <div className="flex justify-end space-x-1 lg:justify-center">
             <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-            <p className={`text-b2e ${textColor}`}>{val.toFixed(2)}</p>
+            <p className={`text-b2e ${textColor}`}>
+              {val > 0 ? '+' : ''}
+              {val.toFixed(2)}
+            </p>
           </div>
         );
       }
     },
     {
       label: 'Prize',
-      field: 'prize',
       className: 'hidden md:block basis-1/4',
       render: row => {
         let usdtPrize = null;
@@ -166,7 +167,7 @@ const TopGainer = () => {
       <TopThree.Item
         rank={pos}
         className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} w-[200px]`}
-        title={<p className={`mb-4 text-h5 ${nameColor}`}>{rank.username || trimAddress(rank.userAddress)}</p>}>
+        title={<p className={`mb-4 text-h5 ${nameColor}`}>{trimString(rank.username, 12) || trimAddress(rank.userAddress)}</p>}>
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Realized P/L</p>
         <div className="flex space-x-1">
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
