@@ -240,7 +240,7 @@ const ReferreeModal = (props: any) => {
                       : item.username;
 
                   return (
-                    <div className={`grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]`}>
+                    <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                       <div className={`relative col-span-3 flex items-center ${!isCurrentUser ? 'pr-[40px]' : 'pr-[70px]'}`}>
                         <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
                         <div className="truncate">{displayUsername}</div>
@@ -587,7 +587,7 @@ const ReferrerTeamJoined = (props: any) => {
               <div className="relative flex items-center justify-between px-[176px]">
                 <div className="flex flex-col items-center justify-between text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">My Contribution</div>
-                  <div className="mt-[6px] text-[24px] font-[700] text-[#FFC24B]">{showContribution.toFixed(2) + '%'}</div>
+                  <div className="mt-[6px] text-[24px] font-[700] text-[#FFC24B]">{`${showContribution.toFixed(2)}%`}</div>
                 </div>
                 <div className="flex flex-col items-center justify-between text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
