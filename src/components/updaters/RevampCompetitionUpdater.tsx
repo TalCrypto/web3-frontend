@@ -14,7 +14,9 @@ import {
   $topVolumeRankingList,
   $topVolumeUserItem,
   $referralTeamList,
-  $referralUserItem
+  $referralUserItem,
+  $myRefererTeamList,
+  $myRefererUserItem
 } from '@/stores/revampCompetition';
 
 function RevampCompetitionUpdater() {
@@ -29,10 +31,11 @@ function RevampCompetitionUpdater() {
       tradingCompetitionApi.getTopGainer(address),
       tradingCompetitionApi.getTopReferrer(address),
       tradingCompetitionApi.getTopVolume(address, 1),
-      tradingCompetitionApi.getReferrerTeamList(address)
+      tradingCompetitionApi.getReferrerTeamList(address),
+      tradingCompetitionApi.getMyRefereeTeamList(address)
     ];
 
-    const [topFpRes, topGainerRes, topReferrerRes, topVolRes, referrerTeamRes] = await Promise.allSettled(promises);
+    const [topFpRes, topGainerRes, topReferrerRes, topVolRes, referrerTeamRes, myRefererRes] = await Promise.allSettled(promises);
 
     if (topFpRes.status === 'fulfilled') {
       const topFp = topFpRes.value;
@@ -76,12 +79,21 @@ function RevampCompetitionUpdater() {
 
     if (referrerTeamRes.status === 'fulfilled') {
       const referrerTeam = referrerTeamRes.value;
-      console.log({ referrerTeam });
       $referralTeamList.set(referrerTeam?.referees);
       if (address) {
         $referralUserItem.set(referrerTeam?.user);
       } else {
         $referralUserItem.set(null);
+      }
+    }
+
+    if (myRefererRes.status === 'fulfilled') {
+      const myReferer = myRefererRes.value;
+      $myRefererTeamList.set(myReferer?.referees);
+      if (address) {
+        $myRefererUserItem.set(myReferer?.user);
+      } else {
+        $myRefererUserItem.set(null);
       }
     }
 

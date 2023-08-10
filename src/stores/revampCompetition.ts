@@ -19,9 +19,11 @@ export const $topGainerRankingList = atom<TopGainerRanking[]>([]);
 export const $topReferrerRankingList = atom([]);
 export const $topVolumeRankingList = atom([]);
 export const $referralTeamList = atom([]);
+export const $myRefererTeamList = atom([]);
 
 export const $topFundingPaymentUserItem = atom<any>(null);
 export const $topGainerUserItem = atom<TopGainerRanking | null>(null);
 export const $topReferrerUserItem = atom<any>(null);
 export const $topVolumeUserItem = atom<any>(null);
 export const $referralUserItem = atom<any>(null);
+export const $myRefererUserItem = atom<any>(null);

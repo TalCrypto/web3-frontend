@@ -51,7 +51,17 @@ export const tradingCompetitionApi = {
       const call = await fetch(url);
       const result = await call.json();
       const { data } = result;
-      console.log({ url, data });
+      return Promise.resolve(data);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  },
+  getMyRefereeTeamList: async function getMyRefereeTeamList(userAddr: string = '') {
+    const url = `${authUrl}/competition/leaderboard/s2/myRefererTeamList?userAddress=${userAddr}`;
+    try {
+      const call = await fetch(url);
+      const result = await call.json();
+      const { data } = result;
       return Promise.resolve(data);
     } catch (err) {
       return Promise.reject(err);
