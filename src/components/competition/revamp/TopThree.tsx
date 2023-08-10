@@ -4,7 +4,7 @@ import React, { FC, PropsWithChildren, ReactNode } from 'react';
 type ItemProps = PropsWithChildren & {
   className?: string;
   title?: ReactNode;
-  rank: 1 | 2 | 3;
+  rank: number | 1 | 2 | 3;
 };
 
 const Item: FC<ItemProps> = ({ children, className, title, rank }) => (
