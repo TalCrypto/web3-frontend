@@ -32,17 +32,17 @@ const quickNodeProviderUrl = process.env.NEXT_PUBLIC_QUICKNODE_URL ?? '';
 const { chains, publicClient } = configureChains(
   CHAINS,
   [
-    w3mProvider({ projectId }),
+    publicProvider(),
     jsonRpcProvider({
       rpc: () => ({
         http: quickNodeProviderUrl
       })
     }),
+    w3mProvider({ projectId }),
     alchemyProvider({ apiKey: alchemyProjectId }),
-    infuraProvider({ apiKey: infuraProjectId }),
-    publicProvider()
+    infuraProvider({ apiKey: infuraProjectId })
   ],
-  { pollingInterval: 10000 }
+  { pollingInterval: 4000 }
 );
 
 const wagmiConfig = createConfig({
