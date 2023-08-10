@@ -38,7 +38,7 @@ const TopGainer = () => {
       className: 'pl-5 lg:p-0 basis-1/3 lg:basis-1/4 text-left lg:text-center',
       render: row => (
         <div className="flex basis-1/4 lg:justify-center">
-          <UserMedal rank={row.rank} isYou={row.userAddress.toLowerCase() === address?.toLowerCase()} />
+          <UserMedal rank={row.rank} isYou={row.userAddress?.toLowerCase() === address?.toLowerCase()} />
         </div>
       )
     },
@@ -46,8 +46,7 @@ const TopGainer = () => {
       label: 'User',
       className: 'basis-1/3 lg:basis-1/4',
       render(row) {
-        // todo: current user
-        if (row.username === 'MrLemon888888') {
+        if (row.userAddress?.toLowerCase() === address?.toLowerCase()) {
           return (
             <div className="flex space-x-1">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -171,7 +170,10 @@ const TopGainer = () => {
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Realized P/L</p>
         <div className="flex space-x-1">
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-          <p className={`text-b2e ${textColor}`}>{val.toFixed(2)}</p>
+          <p className={`text-b2e ${textColor}`}>
+            {val > 0 ? '+' : ''}
+            {val.toFixed(2)}
+          </p>
         </div>
         <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Prize</p>

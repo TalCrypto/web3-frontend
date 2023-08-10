@@ -5,7 +5,7 @@ export type TopGainerRanking = {
   pointPrize: number;
   rank: string;
   usdtPrize: number;
-  userAddress: string;
+  userAddress?: string;
   username: string;
 };
 
