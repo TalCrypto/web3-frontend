@@ -143,7 +143,33 @@ const volList = [
 ];
 
 const MyReferralTeam = (props: any) => {
-  const { displayUsername, setIsShowShareModal, showSnackBar } = props;
+  const { displayUsername, setIsShowShareModal, showSnackBar, referralUserItem } = props;
+
+  const teamRank = referralUserItem?.rank;
+  const teamPoint = referralUserItem?.teamPointPrize;
+  const teamUsdt = referralUserItem?.teamUsdtPrize;
+  const personalPoint = referralUserItem?.pointPrize;
+  const personalUsdt = referralUserItem?.usdtPrize;
+  const teamVol = referralUserItem?.totalVolume;
+
+  const showTeamReward =
+    teamPoint === 0 && teamUsdt === 0
+      ? '-'
+      : teamPoint === 0 && teamUsdt > 0
+      ? `${teamUsdt}USDT`
+      : teamUsdt === 0 && teamPoint > 0
+      ? `${teamPoint} Pts.`
+      : `${teamUsdt}USDT + ${teamPoint} Pts.`;
+
+  const showPersonalReward =
+    personalPoint === 0 && personalUsdt === 0
+      ? '-'
+      : personalPoint === 0 && personalUsdt > 0
+      ? `${personalUsdt}USDT`
+      : personalUsdt === 0 && personalPoint > 0
+      ? `${personalPoint} Pts.`
+      : `${personalUsdt}USDT + ${personalPoint} Pts.`;
+
   return (
     <div>
       <div className="px-[20px] pt-[48px]">
@@ -169,24 +195,27 @@ const MyReferralTeam = (props: any) => {
           <div className="flex items-stretch justify-between border-b-[1px] border-[#2E4371] px-[36px] py-[24px]">
             <div className="flex flex-col items-center justify-between">
               <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-              <div className="text-[15px] font-[600]">12</div>
+              <div className="text-[15px] font-[600]">{teamRank}</div>
             </div>
             <div className="flex flex-col items-center justify-between">
               <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-              <div className="text-[15px] font-[600]">400USDT</div>
+              <div className="text-[15px] font-[600]">{showTeamReward}</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-center text-[12px] font-[400] text-[#FFD392]">
                 Referee’s Total <br /> Trad. Vol
               </div>
-              <div className="mt-[6px] text-[15px] font-[600]">55.00</div>
+              <div className="mt-[6px] flex items-center text-[15px] font-[600]">
+                <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                {formatBigInt(teamVol).toFixed(2)}
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-center border-b-[1px] border-[#2E4371] px-[36px] py-[24px]">
             <div className="text-center">
               <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
               <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(40% of Team Reward)</div>
-              <div className="mt-[12px] text-[20px] font-[600]">100USDT</div>
+              <div className="mt-[12px] text-[20px] font-[600]">{showPersonalReward}</div>
             </div>
           </div>
           <div className="flex items-center justify-center px-[22px] py-[24px]">
@@ -387,6 +416,7 @@ const MyPerformanceMobile = () => {
   const topGainerUserItem = useStore($topGainerUserItem);
   const topReferrerUserItem = useStore($topReferrerUserItem);
   const referralTeamList = useStore($referralTeamList);
+  const referralUserItem = useStore($referralUserItem);
 
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
@@ -464,7 +494,7 @@ const MyPerformanceMobile = () => {
           title="Top Gainer"
           type={1}
           rank={topGainerUserItem?.rank}
-          val={formatBigInt(topGainerUserItem?.pnl)}
+          val={formatBigInt(topGainerUserItem?.pnl || '0')}
           pointPrize={topGainerUserItem?.pointPrize}
           usdtPrize={topGainerUserItem?.usdtPrize}
           isSide
@@ -488,7 +518,12 @@ const MyPerformanceMobile = () => {
           isSide
         />
       </div>
-      <MyReferralTeam displayUsername={displayUsername} setIsShowShareModal={setIsShowShareModal} showSnackBar={showSnackBar} />
+      <MyReferralTeam
+        displayUsername={displayUsername}
+        setIsShowShareModal={setIsShowShareModal}
+        showSnackBar={showSnackBar}
+        referralUserItem={referralUserItem}
+      />
       <MyRefereesList referralTeamList={referralTeamList} />
       <ReferralTeamJoined setIsShowContributionModal={setIsShowContributionModal} />
 

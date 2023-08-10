@@ -24,6 +24,15 @@ import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 
 const $isShowReferralModal = atom(false);
 
+const itemShowReward = (item: any) =>
+  item?.pointPrize === 0 && item?.usdtPrize === 0
+    ? '-'
+    : item?.pointPrize === 0 && item?.usdtPrize > 0
+    ? `${item?.usdtPrize}USDT`
+    : item?.usdtPrize === 0 && item?.pointPrize > 0
+    ? `${item?.pointPrize} Pts.`
+    : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
+
 const PerformanceTag = (props: any) => {
   const { title, type, volList = null, rank = '', val = '', reward = '', pointPrize = 0, usdtPrize = 0, isSide = false } = props;
 
@@ -277,12 +286,37 @@ const ReferreeModal = () => {
 };
 
 const MyReferralTeam = (props: any) => {
-  const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList } = props;
+  const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList, referralUserItem } = props;
+
+  const teamRank = referralUserItem?.rank;
+  const teamPoint = referralUserItem?.teamPointPrize;
+  const teamUsdt = referralUserItem?.teamUsdtPrize;
+  const personalPoint = referralUserItem?.pointPrize;
+  const personalUsdt = referralUserItem?.usdtPrize;
+  const teamVol = referralUserItem?.totalVolume;
 
   const copyUserUrl = () => {
     copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
     showOutlineToast({ title: 'Referral link copied to clipboard!' });
   };
+
+  const showTeamReward =
+    teamPoint === 0 && teamUsdt === 0
+      ? '-'
+      : teamPoint === 0 && teamUsdt > 0
+      ? `${teamUsdt}USDT`
+      : teamUsdt === 0 && teamPoint > 0
+      ? `${teamPoint} Pts.`
+      : `${teamUsdt}USDT + ${teamPoint} Pts.`;
+
+  const showPersonalReward =
+    personalPoint === 0 && personalUsdt === 0
+      ? '-'
+      : personalPoint === 0 && personalUsdt > 0
+      ? `${personalUsdt}USDT`
+      : personalUsdt === 0 && personalPoint > 0
+      ? `${personalPoint} Pts.`
+      : `${personalUsdt}USDT + ${personalPoint} Pts.`;
 
   return (
     <div>
@@ -313,15 +347,18 @@ const MyReferralTeam = (props: any) => {
             <div className="flex items-stretch justify-between px-[36px] py-[24px]">
               <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-                <div className="text-[15px] font-[600]">12</div>
+                <div className="text-[15px] font-[600]">{teamRank}</div>
               </div>
               <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-                <div className="text-[15px] font-[600]">400USDT</div>
+                <div className="text-[15px] font-[600]">{showTeamReward}</div>
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
-                <div className="mt-[6px] text-[15px] font-[600]">55.00</div>
+                <div className="mt-[6px] flex items-center text-[15px] font-[600]">
+                  <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                  {formatBigInt(teamVol).toFixed(2)}
+                </div>
               </div>
             </div>
             <Divider />
@@ -329,7 +366,7 @@ const MyReferralTeam = (props: any) => {
               <div className="text-center">
                 <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
                 <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(40% of Team Reward)</div>
-                <div className="mt-[12px] text-[20px] font-[600]">100USDT</div>
+                <div className="mt-[12px] text-[20px] font-[600]">{showPersonalReward}</div>
               </div>
             </div>
             <Divider />
@@ -392,14 +429,6 @@ const MyReferralTeam = (props: any) => {
                         ? `${item.username.substring(0, 10)}...`
                         : item.username;
 
-                    const showReward =
-                      item?.pointPrize === 0 && item?.usdtPrize === 0
-                        ? '-'
-                        : item?.pointPrize === 0 && item?.usdtPrize > 0
-                        ? `${item?.usdtPrize}USDT`
-                        : item?.usdtPrize === 0 && item?.pointPrize > 0
-                        ? `${item?.pointPrize} Pts.`
-                        : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
                     return (
                       <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                         <div className="relative col-span-3 items-center">
@@ -437,7 +466,7 @@ const MyReferralTeam = (props: any) => {
                               alt=""
                               className="mr-[10px]"
                             />
-                            {showReward}
+                            {itemShowReward(item)}
                           </div>
                         </div>
                       </div>
@@ -552,6 +581,7 @@ const MyPerformance = () => {
   const topGainerUserItem = useStore($topGainerUserItem);
   const topReferrerUserItem = useStore($topReferrerUserItem);
   const referralTeamList = useStore($referralTeamList);
+  const referralUserItem = useStore($referralUserItem);
 
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
@@ -612,7 +642,7 @@ const MyPerformance = () => {
                 title="Top Gainer"
                 type={1}
                 rank={topGainerUserItem?.rank}
-                val={formatBigInt(topGainerUserItem?.pnl)}
+                val={formatBigInt(topGainerUserItem?.pnl || '0')}
                 pointPrize={topGainerUserItem?.pointPrize}
                 usdtPrize={topGainerUserItem?.usdtPrize}
                 isSide
@@ -642,6 +672,7 @@ const MyPerformance = () => {
               displayUsername={displayUsername}
               setIsShowShareModal={setIsShowShareModal}
               referralTeamList={referralTeamList}
+              referralUserItem={referralUserItem}
             />
             <ReferrerTeamJoined />
 
