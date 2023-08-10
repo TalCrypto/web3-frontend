@@ -462,7 +462,7 @@ const MyReferralTeam = (props: any) => {
                           {formatBigInt(item.tradedVolume).toFixed(2)}
                         </div>
                         <div className="col-span-3 font-[600] text-[#FFC24B]">{`${
-                          Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(2)}%`
+                          Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
                         }`}</div>
                         <div className="col-span-3">
                           <div
@@ -703,7 +703,7 @@ const MyPerformance = () => {
                 title="FP"
                 type={2}
                 rank={topFundingPaymentUserItem?.rank}
-                val={formatBigInt(topFundingPaymentUserItem?.fundingPayment)}
+                val={formatBigInt(topFundingPaymentUserItem?.fundingPayment || '0')}
                 pointPrize={topFundingPaymentUserItem?.pointPrize}
                 usdtPrize={topFundingPaymentUserItem?.usdtPrize}
                 isSide
@@ -712,7 +712,7 @@ const MyPerformance = () => {
                 title="Top Referrer"
                 type={3}
                 rank={topReferrerUserItem?.rank}
-                val={formatBigInt(topReferrerUserItem?.totalVolume)}
+                val={formatBigInt(topReferrerUserItem?.totalVolume || '0')}
                 pointPrize={topReferrerUserItem?.pointPrize}
                 usdtPrize={topReferrerUserItem?.usdtPrize}
                 isSide

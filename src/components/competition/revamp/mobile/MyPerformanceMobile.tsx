@@ -21,7 +21,9 @@ import {
   $topReferrerUserItem,
   $topVolumeUserItem,
   $referralUserItem,
-  $referralTeamList
+  $referralTeamList,
+  $myRefererUserItem,
+  $myRefererTeamList
 } from '@/stores/revampCompetition';
 import { formatBigInt } from '@/utils/bigInt';
 
@@ -317,7 +319,7 @@ const MyRefereesList = (props: any) => {
                 <div className="flex h-full items-end text-end">
                   <div className="flex flex-col justify-end">
                     <div className="font-[600] text-[#FFC24B]">{`${
-                      Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(2)}%`
+                      Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
                     }`}</div>
                     <div className="mt-[6px] flex items-center justify-end">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
@@ -349,7 +351,31 @@ const MyRefereesList = (props: any) => {
 };
 
 const ReferralTeamJoined = (props: any) => {
-  const { setIsShowContributionModal } = props;
+  const { setIsShowContributionModal, myRefererUserItem, myRefererTeamList } = props;
+
+  const userInfo = useStore($userInfo);
+
+  const displayUsername =
+    myRefererUserItem.username === ''
+      ? `${myRefererUserItem.userAddress.substring(0, 7)}...${myRefererUserItem.userAddress.slice(-3)}`
+      : myRefererUserItem.username.length > 10
+      ? `${myRefererUserItem.username.substring(0, 10)}...`
+      : myRefererUserItem.username;
+
+  const rank = myRefererUserItem?.rank;
+  const personalPoint = myRefererUserItem?.pointPrize;
+  const personalUsdt = myRefererUserItem?.usdtPrize;
+
+  const showPersonalReward =
+    personalPoint === 0 && personalUsdt === 0
+      ? '-'
+      : personalPoint === 0 && personalUsdt > 0
+      ? `${personalUsdt}USDT`
+      : personalUsdt === 0 && personalPoint > 0
+      ? `${personalPoint} Pts.`
+      : `${personalUsdt}USDT + ${personalPoint} Pts.`;
+
+  const showContribution = myRefererTeamList.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
 
   return (
     <div>
@@ -362,23 +388,23 @@ const ReferralTeamJoined = (props: any) => {
               <div className="ml-[12px] flex flex-col justify-between">
                 <div className="text-[12px] font-[400]">My Referrer</div>
                 <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
-                  Tribe3OG
+                  {displayUsername}
                 </div>
               </div>
             </div>
             <div className="flex flex-col items-center justify-between">
               <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-              <div className="text-[15px] font-[600]">12</div>
+              <div className="text-[15px] font-[600]">{rank}</div>
             </div>
           </div>
           <div className="relative flex items-center justify-between bg-[#202249] px-[48px] py-[24px]">
             <div className="flex flex-col items-center justify-between text-center">
               <div className="text-[12px] font-[400] text-[#FFD392]">My Contribution</div>
-              <div className="mt-[6px] text-[16px] font-[600] text-[#FFC24B]">50%</div>
+              <div className="mt-[6px] text-[16px] font-[600] text-[#FFC24B]">{`${showContribution.toFixed(2)}%`}</div>
             </div>
             <div className="flex flex-col items-center justify-between text-center">
               <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
-              <div className="mt-[6px] text-[16px] font-[600]">250USDT</div>
+              <div className="mt-[6px] text-[16px] font-[600]">{showPersonalReward}</div>
             </div>
           </div>
         </div>
@@ -417,6 +443,8 @@ const MyPerformanceMobile = () => {
   const topReferrerUserItem = useStore($topReferrerUserItem);
   const referralTeamList = useStore($referralTeamList);
   const referralUserItem = useStore($referralUserItem);
+  const myRefererUserItem = useStore($myRefererUserItem);
+  const myRefererTeamList = useStore($myRefererTeamList);
 
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
@@ -503,7 +531,7 @@ const MyPerformanceMobile = () => {
           title="FP"
           type={2}
           rank={topFundingPaymentUserItem?.rank}
-          val={formatBigInt(topFundingPaymentUserItem?.fundingPayment)}
+          val={formatBigInt(topFundingPaymentUserItem?.fundingPayment || '0')}
           pointPrize={topFundingPaymentUserItem?.pointPrize}
           usdtPrize={topFundingPaymentUserItem?.usdtPrize}
           isSide
@@ -512,7 +540,7 @@ const MyPerformanceMobile = () => {
           title="Top Referrer"
           type={3}
           rank={topReferrerUserItem?.rank}
-          val={formatBigInt(topReferrerUserItem?.totalVolume)}
+          val={formatBigInt(topReferrerUserItem?.totalVolume || '0')}
           pointPrize={topReferrerUserItem?.pointPrize}
           usdtPrize={topReferrerUserItem?.usdtPrize}
           isSide
@@ -525,9 +553,22 @@ const MyPerformanceMobile = () => {
         referralUserItem={referralUserItem}
       />
       <MyRefereesList referralTeamList={referralTeamList} />
-      <ReferralTeamJoined setIsShowContributionModal={setIsShowContributionModal} />
 
-      <ContributionDetailsModal isShow={isShowContributionModal} setIsShow={setIsShowContributionModal} referrers={referrers} />
+      {myRefererUserItem ? (
+        <ReferralTeamJoined
+          setIsShowContributionModal={setIsShowContributionModal}
+          myRefererTeamList={myRefererTeamList}
+          myRefererUserItem={myRefererUserItem}
+        />
+      ) : null}
+
+      <ContributionDetailsModal
+        isShow={isShowContributionModal}
+        setIsShow={setIsShowContributionModal}
+        referrers={referrers}
+        myRefererTeamList={myRefererTeamList}
+        myRefererUserItem={myRefererUserItem}
+      />
       {isShowShareModal ? <ShareMobileModal setIsShow={setIsShowShareModal} referralCode={referralCode} copyCode={copyCode} /> : null}
       <div className="snackbar" id="snackbar">
         Referral link copied to clipboard!

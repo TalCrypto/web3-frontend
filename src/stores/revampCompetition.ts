@@ -44,14 +44,14 @@ export const $isDataLoading = atom(false);
 
 export const $topFundingPaymentRankingList = atom<TopFundingPaymentRanking[]>([]);
 export const $topGainerRankingList = atom<TopGainerRanking[]>([]);
-export const $topReferrerRankingList = atom([]);
-export const $topVolumeRankingList = atom([]);
+export const $topReferrerRankingList = atom<TopReferrerRanking[]>([]);
+export const $topVolumeRankingList = atom<TopVolumeRanking[]>([]);
 export const $referralTeamList = atom([]);
 export const $myRefererTeamList = atom([]);
 
-export const $topFundingPaymentUserItem = atom<any>(null);
+export const $topFundingPaymentUserItem = atom<TopFundingPaymentRanking | null>(null);
 export const $topGainerUserItem = atom<TopGainerRanking | null>(null);
-export const $topReferrerUserItem = atom<any>(null);
-export const $topVolumeUserItem = atom<any>(null);
+export const $topReferrerUserItem = atom<TopReferrerRanking | null>(null);
+export const $topVolumeUserItem = atom<TopVolumeRanking | null>(null);
 export const $referralUserItem = atom<any>(null);
 export const $myRefererUserItem = atom<any>(null);
