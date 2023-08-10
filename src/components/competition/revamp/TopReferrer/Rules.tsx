@@ -100,7 +100,7 @@ const Rules = () => (
       <Image src="/images/components/competition/revamp/prize_distribution.svg" width={950} height={516} alt="" />
     </div>
 
-    <div className="flex flex-col justify-center space-y-[10px] text-b2 lg:hidden">
+    <div className="mb-9 flex flex-col justify-center space-y-[10px] text-b2 lg:hidden">
       <div className="flex">
         <p className="basis-2/3">Team Lead:</p>
         <p className="basis-1/3 text-b2e text-warn">40%</p>
@@ -125,6 +125,10 @@ const Rules = () => (
         <p className="basis-2/3">Top 5 Trading Vol. Member:</p>
         <p className="basis-1/3 text-b2e text-warn">8%</p>
       </div>
+    </div>
+
+    <div className="flex justify-center lg:hidden">
+      <Image src="/images/components/competition/revamp/prize_distribution_m.svg" width={302} height={642} alt="" />
     </div>
   </div>
 );
