@@ -57,7 +57,7 @@ export const tradingCompetitionApi = {
     }
   },
   getMyRefereeTeamList: async function getMyRefereeTeamList(userAddr: string = '') {
-    const url = `${authUrl}/competition/leaderboard/s2/myRefererTeamList?userAddress=${userAddr}`;
+    const url = `${authUrl}/competition/leaderboard/s2/myRefererTeamList?userAddress=0x88b928eff9ff4cf5a32f0f8d1bd2e1989fcad8f9`;
     try {
       const call = await fetch(url);
       const result = await call.json();
