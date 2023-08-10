@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { $isShowMobileRules, $topVolActiveWeek } from '@/stores/competition';
 import { useStore } from '@nanostores/react';
 import Tooltip from '@/components/common/Tooltip';
+import { $userIsConnected } from '@/stores/user';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -184,6 +185,7 @@ const weeksData: WeekData[] = [
 ];
 
 const TopVol = () => {
+  const isConnected = useStore($userIsConnected);
   const isShowMobileRules = useStore($isShowMobileRules);
   const topVolActiveWeek = useStore($topVolActiveWeek);
 
@@ -251,7 +253,7 @@ const TopVol = () => {
             bodyClassName="lg:h-[480px]"
             columns={tableColumns}
             data={tableData}
-            fixedRow={userData}
+            fixedRow={isConnected ? userData : undefined}
           />
         </div>
 

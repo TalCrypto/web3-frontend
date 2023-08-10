@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useStore } from '@nanostores/react';
 import { $isShowMobileRules } from '@/stores/competition';
 import Tooltip from '@/components/common/Tooltip';
+import { $userIsConnected } from '@/stores/user';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -149,6 +150,7 @@ const tableData: Data[] = [
 const userData = { rank: 30, username: 'MrLemon888888', realized_pnl: 8.99, prize: 200 };
 
 const TopGainer = () => {
+  const isConnected = useStore($userIsConnected);
   const isShowMobileRules = useStore($isShowMobileRules);
 
   return (
@@ -209,7 +211,7 @@ const TopGainer = () => {
           bodyClassName="lg:h-[480px]"
           columns={tableColumns}
           data={tableData}
-          fixedRow={userData}
+          fixedRow={isConnected ? userData : undefined}
         />
       </div>
 
