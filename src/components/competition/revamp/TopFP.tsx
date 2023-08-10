@@ -162,7 +162,7 @@ const TopFP = () => {
     return (
       <TopThree.Item
         rank={pos}
-        className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} w-[200px]`}
+        className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} min-w-[200px]`}
         title={<p className={`mb-4 text-h5 ${nameColor}`}>{trimString(rank.username, 12) || trimAddress(rank.userAddress)}</p>}>
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Acc. Fund. Payment</p>
         <div className="flex space-x-1">
