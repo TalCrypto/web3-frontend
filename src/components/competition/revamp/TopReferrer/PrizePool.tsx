@@ -5,6 +5,7 @@ import { $userIsConnected } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
 import React, { FC, PropsWithChildren } from 'react';
+import CountdownTimer from '../CountdownTimer';
 
 const radialBgClassName =
   'from-[rgba(78,85,121,0.6)] to-darkBlue to-100% bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] lg:bg-[radial-gradient(farthest-side_at_center,_var(--tw-gradient-stops))] lg:to-transparent lg:to-85%';
@@ -53,7 +54,10 @@ const PrizePool: FC<PropsWithChildren> = () => {
               <div className="flex space-x-[3px] rounded-2xl bg-[#2E4371] px-3 py-[6px]">
                 <Image src="/images/components/competition/revamp/timer.svg" width={16} height={16} alt="" />
                 <p className="text-b3 text-highEmphasis">
-                  Ends in: <span className="text-b3e">4d 3h 12m</span>
+                  Ends in:{' '}
+                  <span className="text-b3e">
+                    <CountdownTimer date="2023-09-12T20:00:00.000+08:00" timeZone="Asia/Hong_Kong" />
+                  </span>
                 </p>
               </div>
             </div>
