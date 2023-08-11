@@ -494,7 +494,7 @@ const MyPerformanceMobile = () => {
     <div className="block bg-[#0C0D20] md:hidden">
       <div className="px-[20px] pt-[36px] ">
         <div className="text-[20px] font-[600] ">General Performance</div>
-        <div className="relative pt-[24px]">
+        {/* <div className="relative pt-[24px]">
           <Swiper
             spaceBetween={30}
             modules={[Pagination]}
@@ -523,7 +523,8 @@ const MyPerformanceMobile = () => {
               <div className="h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9]" />
             </div>
           </div>
-        </div>
+        </div> */}
+        <div className=" pt-[24px]" />
         <PerformanceTag
           title="Top Gainer"
           type={1}

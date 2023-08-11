@@ -672,7 +672,7 @@ const MyPerformance = () => {
           <div>
             <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">General Performance</div>
             <div className="mt-[36px] flex flex-row items-center justify-center">
-              <PerformanceTag
+              {/* <PerformanceTag
                 title="Top Vol"
                 type={0}
                 volList={volList}
@@ -680,7 +680,7 @@ const MyPerformance = () => {
                 val={topVolumeUserItem?.weeklyTradedVolume}
                 pointPrize={topVolumeUserItem?.pointPrize}
                 usdtPrize={topVolumeUserItem?.usdtPrize}
-              />
+              /> */}
               <PerformanceTag
                 title="Top Gainer"
                 type={1}
