@@ -63,7 +63,7 @@ const ContributionDetailsModal = (props: any) => {
                 <div className="text-end">
                   Contribution /
                   <br />
-                  Trading Vol.
+                  Trading Volume
                 </div>
               </div>
             </div>

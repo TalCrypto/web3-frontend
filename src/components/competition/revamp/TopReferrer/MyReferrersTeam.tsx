@@ -78,7 +78,7 @@ const MyReferrersTeam = (props: any) => {
                   </div>
                   <div className="flex flex-col items-center justify-between text-center">
                     <div className="text-[12px] font-[400] text-[#FFD392]">
-                      Referee’s Total <br /> Trad. Vol
+                      Referee’s Total <br /> Trading Volume
                     </div>
                     <div className="mt-[6px] flex items-center justify-center text-[16px] font-[600]">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
