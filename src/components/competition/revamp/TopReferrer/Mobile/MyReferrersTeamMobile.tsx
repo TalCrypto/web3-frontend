@@ -2,7 +2,6 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
 import Image from 'next/image';
-import { formatBigInt } from '@/utils/bigInt';
 import { useStore } from '@nanostores/react';
 import { $userInfo } from '@/stores/user';
 
@@ -18,12 +17,12 @@ const MyReferrersTeamMobile = (props: any) => {
       ? `${myRefererUserItem?.username.substring(0, 10)}...`
       : myRefererUserItem?.username;
 
-  const rank = myRefererUserItem?.rank;
-  const volume = myRefererUserItem?.totalVolume;
-  const teamPoint = myRefererUserItem?.teamPointPrize;
-  const teamUsdt = myRefererUserItem?.teamUsdtPrize;
-  const personalPoint = myRefererUserItem?.pointPrize;
-  const personalUsdt = myRefererUserItem?.usdtPrize;
+  const rank = myRefererUserItem?.rank || '-';
+  const volume = myRefererUserItem?.totalVolume || 0;
+  const teamPoint = myRefererUserItem?.teamPointPrize || 0;
+  const teamUsdt = myRefererUserItem?.teamUsdtPrize || 0;
+  const personalPoint = myRefererUserItem?.pointPrize || 0;
+  const personalUsdt = myRefererUserItem?.usdtPrize || 0;
 
   const showTeamReward =
     teamPoint === 0 && teamUsdt === 0
