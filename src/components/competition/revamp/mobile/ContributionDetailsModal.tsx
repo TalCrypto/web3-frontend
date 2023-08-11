@@ -85,7 +85,7 @@ const ContributionDetailsModal = (props: any) => {
                   const vol = formatBigInt(item.tradedVolume).toFixed(2);
 
                   return (
-                    <div className={`px-[20px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
+                    <div className="px-[20px] py-[16px] text-[14px] odd:bg-[#202249]">
                       <div className="flex h-[48px] items-center justify-between">
                         <div className="flex h-full items-center">
                           <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
