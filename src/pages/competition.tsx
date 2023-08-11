@@ -81,11 +81,11 @@ export default function Competition() {
 
         <div className="flex-1 border-t border-t-[#71AAFF38] bg-black/60">
           <div className="content-container mb-[48px] px-0 md:py-[48px]">
-            {activeTab === 0 && <TopVol />}
-            {activeTab === 1 && <TopGainer />}
-            {activeTab === 2 && <TopFP />}
-            {activeTab === 3 && <TopReferrer />}
-            {activeTab === 4 && <MyPerformance />}
+            {/* {activeTab === 0 && <TopVol />} */}
+            {activeTab === 0 && <TopGainer />}
+            {activeTab === 1 && <TopFP />}
+            {activeTab === 2 && <TopReferrer />}
+            {activeTab === 3 && <MyPerformance />}
           </div>
         </div>
 

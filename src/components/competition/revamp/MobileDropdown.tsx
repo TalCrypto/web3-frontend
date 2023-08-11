@@ -5,28 +5,28 @@ import { $activeTab } from '@/stores/competition';
 import { $isShowMobileModal } from '@/stores/modal';
 
 const mobileDropdownOptions = [
+  // {
+  //   id: 0,
+  //   label: 'Top Volume'
+  //   // icon: '/images/components/airdrop/tabs/leaderboard.svg'
+  // },
   {
     id: 0,
-    label: 'Top Volume'
-    // icon: '/images/components/airdrop/tabs/leaderboard.svg'
-  },
-  {
-    id: 1,
     label: 'Top Gainer'
     // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
-    id: 2,
+    id: 1,
     label: 'Top FP Receiver'
     // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
-    id: 3,
+    id: 2,
     label: 'Top Referrer'
     // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {
-    id: 4,
+    id: 3,
     label: 'My Performance',
     icon: '/images/components/airdrop/tabs/overview.svg'
   }
