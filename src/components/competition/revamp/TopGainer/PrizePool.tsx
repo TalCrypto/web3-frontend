@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
-import { $isShowMobileRules } from '@/stores/competition';
 import Image from 'next/image';
 import React, { FC, PropsWithChildren } from 'react';
+import { $isShowMobileRules } from '@/stores/competition';
 
 const radialBgClassName =
   'from-[rgba(78,85,121,0.6)] to-darkBlue to-100% bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] lg:bg-[radial-gradient(farthest-side_at_center,_var(--tw-gradient-stops))] lg:to-transparent lg:to-85%';
@@ -28,13 +28,13 @@ const PrizePool: FC<PropsWithChildren> = () => (
     <div className="relative overflow-clip md:hidden">
       <div className="flex flex-col items-center">
         <Image
-          className="h-[400px] object-cover sm:scale-[1.3]"
+          className="h-[400px] sm:scale-[1.3]"
           src="/images/components/competition/revamp/prize_topGainer_mobile.png"
           width={600}
           height={300}
           alt=""
         />
-        <div className="absolute top-[100px] flex w-full items-center justify-center sm:top-[75px]">
+        <div className="absolute top-[101px] flex w-full items-center justify-center sm:top-[75px]">
           <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
           <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-b2e text-transparent">Total Prize Pool for Top Gainer</p>
         </div>
