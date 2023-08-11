@@ -5,6 +5,7 @@ import { $userIsConnected } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
 import React, { FC, PropsWithChildren } from 'react';
+import { $myRefererUserItem } from '@/stores/revampCompetition';
 import CountdownTimer from '../CountdownTimer';
 
 const radialBgClassName =
@@ -12,6 +13,7 @@ const radialBgClassName =
 
 const PrizePool: FC<PropsWithChildren> = () => {
   const isConnected = useStore($userIsConnected);
+  const myRefererUserItem = useStore($myRefererUserItem);
 
   return (
     <div className="justify-center md:flex md:flex-col">
@@ -49,7 +51,7 @@ const PrizePool: FC<PropsWithChildren> = () => {
         </div>
 
         <div className="absolute bottom-0 w-full space-y-6 px-5 pb-9">
-          {isConnected ? (
+          {isConnected && myRefererUserItem ? (
             <div className="flex justify-center">
               <div className="flex space-x-[3px] rounded-2xl bg-[#2E4371] px-3 py-[6px]">
                 <Image src="/images/components/competition/revamp/timer.svg" width={16} height={16} alt="" />
@@ -63,7 +65,7 @@ const PrizePool: FC<PropsWithChildren> = () => {
             </div>
           ) : null}
           <div className="flex items-center justify-between">
-            {isConnected ? (
+            {isConnected && myRefererUserItem ? (
               <div
                 className="flex space-x-[3px] text-primaryBlue"
                 onClick={() => {
