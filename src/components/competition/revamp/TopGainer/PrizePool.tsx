@@ -12,12 +12,12 @@ const PrizePool: FC<PropsWithChildren> = () => (
     <div className="relative mb-24 hidden md:block">
       <Image
         className="pointer-events-none scale-[1.4] object-cover"
-        src="/images/components/competition/revamp/prize_topGainer_desktops.png"
+        src="/images/components/competition/revamp/prize_topGainer_desktop.png"
         width={937}
         height={345}
         alt=""
       />
-      <div className="absolute top-[68px] flex w-full items-center justify-center lg:top-[80px] xl:top-[86px]">
+      <div className="absolute top-[64px] flex w-full items-center justify-center lg:top-[76px] xl:top-[82px]">
         <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
         <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-h5 font-bold text-transparent">
           Total Prize Pool for Top Gainer
@@ -28,8 +28,8 @@ const PrizePool: FC<PropsWithChildren> = () => (
     <div className="relative overflow-clip md:hidden">
       <div className="flex flex-col items-center">
         <Image
-          className="mt-[92px] h-[400px] object-cover sm:scale-[1.3]"
-          src="/images/components/competition/revamp/prize_topGainer_mobiles.png"
+          className="h-[400px] object-cover sm:scale-[1.3]"
+          src="/images/components/competition/revamp/prize_topGainer_mobile.png"
           width={600}
           height={300}
           alt=""
