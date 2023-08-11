@@ -206,9 +206,9 @@ const MyTeam = (props: any) => {
                     items={['User ID', 'Trading Volume', 'Contribution', 'Reward', 'Contribution / Trading Volume']}
                     classNames={[
                       'col-span-8 lg:col-span-3 text-[12px]',
-                      'col-span-2 text-[12px] hidden lg:block',
-                      'col-span-2 text-[12px] hidden lg:block',
-                      'col-span-2 text-[12px] hidden lg:block',
+                      'col-span-3 text-[12px] hidden lg:block',
+                      'col-span-3 text-[12px] hidden lg:block',
+                      'col-span-3 text-[12px] hidden lg:block',
                       'col-span-4 text-[12px] text-right lg:hidden block'
                     ]}
                   />
