@@ -61,8 +61,6 @@ export type MyRefererUser = {
   usdtPrize: number;
 };
 
-export const $triggerKey = atom(false);
-
 // data handling
 export const $isDataLoading = atom(false);
 

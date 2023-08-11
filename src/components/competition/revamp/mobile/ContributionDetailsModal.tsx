@@ -6,7 +6,7 @@ import { $userInfo } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
 
 const ContributionDetailsModal = (props: any) => {
-  const { isShow, setIsShow, referrers, myRefererTeamList, myRefererUserItem } = props;
+  const { isShow, setIsShow, myRefererTeamList, myRefererUserItem } = props;
   const [displayCount, setDisplayCount] = useState(8);
 
   const displayUsername =
@@ -50,7 +50,7 @@ const ContributionDetailsModal = (props: any) => {
                 </div>
               </div>
               <div className="text-[14px] font-[400]">
-                Total Referees: <span className="font-[600] ">{myRefererTeamList.length}</span>
+                Total Referees: <span className="font-[600] ">{myRefererTeamList?.length}</span>
               </div>
             </div>
             <div className="sticky left-0 right-0 top-0 z-[2] mt-[24px] w-full text-[14px] font-[400] text-mediumEmphasis">
@@ -70,32 +70,33 @@ const ContributionDetailsModal = (props: any) => {
           </div>
           <div className="max-h-[calc(100%-50px)] overflow-auto ">
             <div className="pt-[16px]">
-              {myRefererTeamList.slice(0, displayCount > referrers.length ? referrers.length : displayCount).map((item: any) => {
-                console.log({ item });
-                const showUsername =
-                  item.username === ''
-                    ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
-                    : item.username.length > 10
-                    ? `${item.username.substring(0, 10)}...`
-                    : item.username;
+              {myRefererTeamList
+                ?.slice(0, displayCount > myRefererTeamList.length ? myRefererTeamList.length : displayCount)
+                .map((item: any) => {
+                  const showUsername =
+                    item.username === ''
+                      ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
+                      : item.username.length > 10
+                      ? `${item.username.substring(0, 10)}...`
+                      : item.username;
 
-                const isCurrentUser =
-                  item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
-                const vol = formatBigInt(item.tradedVolume).toFixed(2);
+                  const isCurrentUser =
+                    item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
+                  const vol = formatBigInt(item.tradedVolume).toFixed(2);
 
-                return (
-                  <div className={`px-[20px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
-                    <div className="flex h-[48px] items-center justify-between">
-                      <div className="flex h-full items-center">
-                        <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
-                        <div className="flex flex-col justify-between">
-                          <div className="flex items-center font-[600]">
-                            {showUsername}
-                            {isCurrentUser ? (
-                              <div className="ml-[6px] rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div>
-                            ) : null}
-                          </div>
-                          {/* <div className="mt-[6px] flex items-center">
+                  return (
+                    <div className="px-[20px] py-[16px] text-[14px] odd:bg-[#202249]">
+                      <div className="flex h-[48px] items-center justify-between">
+                        <div className="flex h-full items-center">
+                          <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
+                          <div className="flex flex-col justify-between">
+                            <div className="flex items-center font-[600]">
+                              {showUsername}
+                              {isCurrentUser ? (
+                                <div className="ml-[6px] rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div>
+                              ) : null}
+                            </div>
+                            {/* <div className="mt-[6px] flex items-center">
                               {item.isEligible ? (
                                 <Image
                                   src="/images/components/competition/revamp/my-performance/eligible.svg"
@@ -107,26 +108,26 @@ const ContributionDetailsModal = (props: any) => {
                               ) : null}
                               {item.isEligible ? 'Eligible' : 'Not Eligible'}
                             </div> */}
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex h-full items-end text-end">
-                        <div className="flex flex-col justify-end">
-                          <div className="font-[600] text-[#FFC24B]">{`${
-                            Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
-                          }`}</div>
-                          <div className="mt-[6px] flex items-center justify-end">
-                            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                            {vol}
+                        <div className="flex h-full items-end text-end">
+                          <div className="flex flex-col justify-end">
+                            <div className="font-[600] text-[#FFC24B]">{`${
+                              Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
+                            }`}</div>
+                            <div className="mt-[6px] flex items-center justify-end">
+                              <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                              {vol}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
 
-              {myRefererTeamList && myRefererTeamList.length > 0 ? (
-                displayCount >= myRefererTeamList.length ? null : (
+              {myRefererTeamList && myRefererTeamList?.length > 0 ? (
+                displayCount >= myRefererTeamList?.length ? null : (
                   <div className="bg-darkBlue py-[35px] text-center">
                     <span
                       className="text-center text-[14px] font-semibold text-primaryBlue"

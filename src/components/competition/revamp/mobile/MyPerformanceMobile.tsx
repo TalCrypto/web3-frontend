@@ -15,7 +15,6 @@ import { Pagination } from 'swiper/modules';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { useAccount } from 'wagmi';
 import {
-  $triggerKey,
   $topFundingPaymentUserItem,
   $topGainerUserItem,
   $topReferrerUserItem,
@@ -262,6 +261,7 @@ const MyReferralTeam = (props: any) => {
 const MyRefereesList = (props: any) => {
   const { referralTeamList } = props;
 
+  const isListEmpty = referralTeamList?.length === 0;
   const [displayCount, setDisplayCount] = useState(8);
 
   return (
@@ -271,38 +271,46 @@ const MyRefereesList = (props: any) => {
           My Referees
           <div className="flex items-center text-[14px] font-[400]">
             <div className="mr-[6px]">
-              Total Referees : <span className="font-[600]">{referralTeamList.length}</span>
-            </div>
-          </div>
-        </div>
-        <div className="mt-[24px] text-[14px] font-[400] text-mediumEmphasis">
-          <div className="flex items-center justify-between">
-            <div>
-              User ID /
-              <br />
-              Status
-            </div>
-            <div>
-              Contribution /
-              <br />
-              Trading Vol.
+              Total Referees : <span className="font-[600]">{referralTeamList?.length}</span>
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-[16px]">
-        {referralTeamList.slice(0, displayCount > referralTeamList.length ? referralTeamList.length : displayCount).map((item: any) => {
-          const showUsername = itemUsername(item);
-          return (
-            <div
-              className={`h-full px-[20px] py-[16px] text-[14px] 
+      {isListEmpty ? (
+        <div className="flex items-center justify-center p-[64px] text-center text-[15px] text-mediumEmphasis">
+          List is empty, start sharing your referral link now!
+        </div>
+      ) : (
+        <div>
+          <div className="mt-[24px] px-[20px] text-[14px] font-[400] text-mediumEmphasis">
+            <div className="flex items-center justify-between">
+              <div>
+                User ID /
+                <br />
+                Status
+              </div>
+              <div>
+                Contribution /
+                <br />
+                Trading Vol.
+              </div>
+            </div>
+          </div>
+          <div className="mt-[16px]">
+            {referralTeamList
+              ?.slice(0, displayCount > referralTeamList?.length ? referralTeamList?.length : displayCount)
+              .map((item: any) => {
+                const showUsername = itemUsername(item);
+                return (
+                  <div
+                    className={`h-full px-[20px] py-[16px] text-[14px] 
             odd:bg-[#202249]`}>
-              <div className="flex h-[48px] items-center justify-between">
-                <div className="flex h-full items-center">
-                  <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
-                  <div className="flex flex-col justify-between">
-                    <div className="overflow-auto font-[600]">{showUsername}</div>
-                    {/* <div className="mt-[6px] flex items-center">
+                    <div className="flex h-[48px] items-center justify-between">
+                      <div className="flex h-full items-center">
+                        <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
+                        <div className="flex flex-col justify-between">
+                          <div className="overflow-auto font-[600]">{showUsername}</div>
+                          {/* <div className="mt-[6px] flex items-center">
                       {item.isEligible ? (
                         <Image
                           src="/images/components/competition/revamp/my-performance/eligible.svg"
@@ -314,27 +322,29 @@ const MyRefereesList = (props: any) => {
                       ) : null}
                       {item.isEligible ? 'Eligible' : 'Not Eligible'}
                     </div> */}
-                  </div>
-                </div>
-                <div className="flex h-full items-end text-end">
-                  <div className="flex flex-col justify-end">
-                    <div className="font-[600] text-[#FFC24B]">{`${
-                      Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
-                    }`}</div>
-                    <div className="mt-[6px] flex items-center justify-end">
-                      <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                      {formatBigInt(item.tradedVolume).toFixed(2)}
+                        </div>
+                      </div>
+                      <div className="flex h-full items-end text-end">
+                        <div className="flex flex-col justify-end">
+                          <div className="font-[600] text-[#FFC24B]">{`${
+                            Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
+                          }`}</div>
+                          <div className="mt-[6px] flex items-center justify-end">
+                            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                            {formatBigInt(item.tradedVolume).toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
 
-      {referralTeamList && referralTeamList.length > 0 ? (
-        displayCount >= referralTeamList.length ? null : (
+      {referralTeamList && referralTeamList?.length > 0 ? (
+        displayCount >= referralTeamList?.length ? null : (
           <div className="bg-darkBlue py-[35px] text-center">
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
@@ -375,7 +385,7 @@ const ReferralTeamJoined = (props: any) => {
       ? `${personalPoint} Pts.`
       : `${personalUsdt}USDT + ${personalPoint} Pts.`;
 
-  const showContribution = myRefererTeamList.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
+  const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
 
   return (
     <div>
@@ -476,10 +486,6 @@ const MyPerformanceMobile = () => {
     }
   }
 
-  useEffect(() => {
-    $triggerKey.set(!$triggerKey.get());
-  }, [address]);
-
   return !isConnected ? (
     <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
       Please connect to your wallet to get started
@@ -488,7 +494,7 @@ const MyPerformanceMobile = () => {
     <div className="block bg-[#0C0D20] md:hidden">
       <div className="px-[20px] pt-[36px] ">
         <div className="text-[20px] font-[600] ">General Performance</div>
-        <div className="relative pt-[24px]">
+        {/* <div className="relative pt-[24px]">
           <Swiper
             spaceBetween={30}
             modules={[Pagination]}
@@ -517,7 +523,8 @@ const MyPerformanceMobile = () => {
               <div className="h-[8px] w-[8px] cursor-pointer rounded-[50%] hover:bg-[#D9D9D9]" />
             </div>
           </div>
-        </div>
+        </div> */}
+        <div className=" pt-[24px]" />
         <PerformanceTag
           title="Top Gainer"
           type={1}
@@ -565,7 +572,6 @@ const MyPerformanceMobile = () => {
       <ContributionDetailsModal
         isShow={isShowContributionModal}
         setIsShow={setIsShowContributionModal}
-        referrers={referrers}
         myRefererTeamList={myRefererTeamList}
         myRefererUserItem={myRefererUserItem}
       />

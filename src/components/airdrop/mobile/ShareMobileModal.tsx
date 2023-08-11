@@ -24,7 +24,7 @@ export default function ShareMobileModal(props: any) {
 
   return (
     <div
-      className={`t-0 fixed bottom-0 left-0 right-0 z-[12] w-full
+      className={`t-0 fixed bottom-0 left-0 right-0 z-[21] w-full
         ${isExpand ? 'h-full' : 'h-0'}
        bg-black/[.3] backdrop-blur-[4px]`}
       onClick={handleCloseModal}>

@@ -11,7 +11,6 @@ import { showOutlineToast } from '@/components/common/Toast';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import { useAccount } from 'wagmi';
 import {
-  $triggerKey,
   $topFundingPaymentUserItem,
   $topGainerUserItem,
   $topReferrerUserItem,
@@ -214,11 +213,11 @@ const ReferreeModal = (props: any) => {
           <div className="flex items-center justify-between px-[36px] pt-[8px]">
             <div className="text-[16px] font-[600]">Contribution Details</div>
             <div className="text-[12px] font-[400]">
-              Total Referees : <span className="text-[14px] font-[600]">{myRefererTeamList.length}</span>{' '}
+              Total Referees : <span className="text-[14px] font-[600]">{myRefererTeamList?.length}</span>{' '}
               {/* <span className="text-[15px]">/ {referrers.length}</span> */}
             </div>
           </div>
-          {myRefererTeamList.length > 0 ? (
+          {myRefererTeamList?.length > 0 ? (
             <div className="mt-[36px]">
               <div className="px-[36px]">
                 <Cell
@@ -227,7 +226,7 @@ const ReferreeModal = (props: any) => {
                 />
               </div>
               <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
-                {myRefererTeamList.map((item: any) => {
+                {myRefererTeamList?.map((item: any) => {
                   const isCurrentUser =
                     item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
                   const vol = formatBigInt(item.tradedVolume).toFixed(2);
@@ -537,7 +536,7 @@ const ReferrerTeamJoined = (props: any) => {
       ? `${personalPoint} Pts.`
       : `${personalUsdt}USDT + ${personalPoint} Pts.`;
 
-  const showContribution = myRefererTeamList.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
+  const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
 
   return (
     <div>
@@ -665,10 +664,6 @@ const MyPerformance = () => {
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
   };
 
-  useEffect(() => {
-    $triggerKey.set(!$triggerKey.get());
-  }, [address]);
-
   return (
     <>
       <MyPerformanceMobile />
@@ -677,7 +672,7 @@ const MyPerformance = () => {
           <div>
             <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">General Performance</div>
             <div className="mt-[36px] flex flex-row items-center justify-center">
-              <PerformanceTag
+              {/* <PerformanceTag
                 title="Top Volume"
                 type={0}
                 volList={volList}
@@ -685,7 +680,7 @@ const MyPerformance = () => {
                 val={topVolumeUserItem?.weeklyTradedVolume}
                 pointPrize={topVolumeUserItem?.pointPrize}
                 usdtPrize={topVolumeUserItem?.usdtPrize}
-              />
+              /> */}
               <PerformanceTag
                 title="Top Gainer"
                 type={1}
