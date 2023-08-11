@@ -17,7 +17,7 @@ const PrizePool: FC<PropsWithChildren> = () => {
       <div className="relative mb-24 hidden md:block">
         <Image
           className="pointer-events-none scale-[1.4] object-cover"
-          src="/images/components/competition/revamp/prize_topRefer_desktop.png"
+          src="/images/components/competition/revamp/prize_topRefer_desktops.png"
           width={937}
           height={345}
           alt=""
@@ -33,8 +33,8 @@ const PrizePool: FC<PropsWithChildren> = () => {
       <div className="relative overflow-clip md:hidden">
         <div className="flex flex-col items-center">
           <Image
-            className="h-[400px] object-cover sm:scale-[1.3]"
-            src="/images/components/competition/revamp/prize_topRefer_mobile.png"
+            className="mt-[92px] h-[400px] object-cover sm:scale-[1.3]"
+            src="/images/components/competition/revamp/prize_topRefer_mobiles.png"
             width={600}
             height={300}
             alt=""
