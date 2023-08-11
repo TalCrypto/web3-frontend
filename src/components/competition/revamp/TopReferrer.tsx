@@ -25,7 +25,7 @@ import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import { atom } from 'nanostores';
 import ReferralMobile from '@/components/airdrop/mobile/Referral';
 import ReferreeModal from '@/components/competition/revamp/TopReferrer/RefereeModal';
-import MyTeamMobile from '@/components/competition/revamp/TopReferrer/Mobile/MyTeam';
+import MyReferrersTeamMobile from '@/components/competition/revamp/TopReferrer/Mobile/MyReferrersTeamMobile';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import ContributionDetailsMobile from '@/components/competition/revamp/TopReferrer/Mobile/ContributionDetail';
 import { $isMobileScreen } from '@/stores/window';
@@ -376,12 +376,7 @@ const TopReferrer = () => {
         title="Referral Team I Joined"
         show={isShowMobileMyReferrerTeam}
         onClickBack={() => $isShowMobileMyReferrerTeam.set(false)}>
-        <MyTeamMobile
-          displayUsername={displayUsername}
-          setIsShowShareModal={setIsShowMobileShareModal}
-          showSnackBar={showSnackBar}
-          referralUserItem={referralUserItem}
-        />
+        <MyReferrersTeamMobile myRefererUserItem={myRefererUserItem} myRefererTeamList={myRefererTeamList} />
         {myRefererUserItem ? (
           <ContributionDetailsMobile myRefererTeamList={myRefererTeamList} myRefererUserItem={myRefererUserItem} />
         ) : null}
