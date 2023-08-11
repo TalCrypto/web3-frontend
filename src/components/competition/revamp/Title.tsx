@@ -62,7 +62,9 @@ const Title = () => {
           <p className="text-b1e">15 Aug 2023 - 12 Sep 2023</p>
         </div>
 
-        <PrimaryButton className="px-6 py-3 text-b1e">Trade Now!</PrimaryButton>
+        <PrimaryButton onClick={() => router.push('/trade/bayc')} className="px-6 py-3 text-b1e">
+          Trade Now!
+        </PrimaryButton>
       </div>
     </div>
   );
