@@ -634,8 +634,6 @@ const MyPerformance = () => {
   const myRefererUserItem = useStore($myRefererUserItem);
   const myRefererTeamList = useStore($myRefererTeamList);
 
-  console.log({ referralTeamList });
-
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
   const userPoint = userPointData || defaultUserPoint;
