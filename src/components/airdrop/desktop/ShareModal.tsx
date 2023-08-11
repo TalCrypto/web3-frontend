@@ -14,7 +14,7 @@ export default function ShareModal(props: any) {
 
   return (
     <div
-      className="fixed inset-0 z-10 flex h-screen
+      className="fixed inset-0 z-20 flex h-screen
         items-center justify-center overflow-auto bg-black bg-opacity-40"
       onClick={closeModal}>
       <div

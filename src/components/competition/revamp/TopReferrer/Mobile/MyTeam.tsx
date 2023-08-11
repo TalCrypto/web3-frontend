@@ -36,8 +36,9 @@ const MyTeamMobile = (props: any) => {
     <div>
       <div className="px-[20px] pt-[24px]">
         <div className="flex items-center text-[20px] font-[600] ">
-          <Image src="/images/components/competition/revamp/my-performance/crown.svg" alt="" width={24} height={24} className="mr-[6px]" />
-          My Team
+          {/* <Image src="/images/components/competition/revamp/my-performance/crown.svg" 
+          alt="" width={24} height={24} className="mr-[6px]" /> */}
+          Referral Team I Joined
         </div>
         <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
           <div
