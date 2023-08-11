@@ -221,7 +221,7 @@ const ReferreeModal = (props: any) => {
             <div className="mt-[36px]">
               <div className="px-[36px]">
                 <Cell
-                  items={['User ID', 'Trading Vol.', 'Contribution', 'Reward']}
+                  items={['User ID', 'Trading Volume', 'Contribution', 'Reward']}
                   classNames={['col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]']}
                 />
               </div>
@@ -425,7 +425,7 @@ const MyReferralTeam = (props: any) => {
               <div className="mt-[36px]">
                 <div className="px-[36px]">
                   <Cell
-                    items={['User ID', 'Trading Vol.', 'Contribution', 'Reward']}
+                    items={['User ID', 'Trading Volume', 'Contribution', 'Reward']}
                     classNames={['col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]']}
                   />
                 </div>
@@ -552,7 +552,7 @@ const ReferrerTeamJoined = (props: any) => {
               border-[#2E4371] px-[60px] py-[36px]">
                 <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
                 <div className="ml-[12px] flex flex-col justify-between">
-                  <div className="text-[12px] font-[400]">My Referrer</div>
+                  <div className="text-[12px] font-[400]">My Team Lead</div>
                   <div className="mt-[8px] truncate bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                     {displayUsername}
                   </div>
@@ -567,9 +567,7 @@ const ReferrerTeamJoined = (props: any) => {
                     <div className="mt-[6px] text-[16px] font-[600]">{rank}</div>
                   </div>
                   <div className="flex flex-col items-center justify-between text-center">
-                    <div className="text-[12px] font-[400] text-[#FFD392]">
-                      Referee’s Total <br /> Trad. Vol
-                    </div>
+                    <div className="text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
                     <div className="mt-[6px] flex items-center justify-center text-[16px] font-[600]">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                       {formatBigInt(volume).toFixed(2)}

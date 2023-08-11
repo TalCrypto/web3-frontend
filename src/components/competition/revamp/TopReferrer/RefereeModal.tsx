@@ -70,7 +70,7 @@ const ReferreeModal = (props: any) => {
             <div className="mt-[36px]">
               <div className="px-[36px]">
                 <Cell
-                  items={['User ID', 'Trading Vol.', 'Contribution', 'Reward']}
+                  items={['User ID', 'Trading Volume', 'Contribution', 'Reward']}
                   classNames={['col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]']}
                 />
               </div>

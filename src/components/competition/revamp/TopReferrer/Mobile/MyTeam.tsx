@@ -43,7 +43,7 @@ const MyTeamMobile = (props: any) => {
             bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
             <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
             <div className="ml-[12px] flex flex-col justify-between">
-              <div className="text-[12px] font-[400]">Team Head (Referrer)</div>
+              <div className="text-[12px] font-[400]">Team Head</div>
               <div className="mt-[8px] flex items-center">
                 <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                   {displayUsername}
@@ -62,9 +62,7 @@ const MyTeamMobile = (props: any) => {
               <div className="text-[15px] font-[600]">{showTeamReward}</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-center text-[12px] font-[400] text-[#FFD392]">
-                Referee’s Total <br /> Trad. Vol
-              </div>
+              <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
               <div className="mt-[6px] flex items-center text-[15px] font-[600]">
                 <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                 {formatBigInt(teamVol).toFixed(2)}
