@@ -1,3 +1,5 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
@@ -26,10 +28,11 @@ import ReferreeModal from '@/components/competition/revamp/TopReferrer/RefereeMo
 import MyTeamMobile from '@/components/competition/revamp/TopReferrer/Mobile/MyTeam';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import ContributionDetailsMobile from '@/components/competition/revamp/TopReferrer/Mobile/ContributionDetail';
+import { $isMobileScreen } from '@/stores/window';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
-import UserMedal from '../common/UserMedal';
+import UserMedal from './UserMedal';
 import PrizePool from './TopReferrer/PrizePool';
 import Rules from './TopReferrer/Rules';
 import MobileDrawer from './MobileDrawer';
@@ -40,19 +43,32 @@ import { ContributionDetail } from './TopReferrer/ContributionDetail';
 const TopReferrer = () => {
   const { address } = useAccount();
   const isConnected = useStore($userIsConnected);
+  const userInfo = useStore($userInfo);
   const isShowMobileMyTeam = useStore($isShowMobileMyTeam);
   const isShowMobileMyReferrerTeam = useStore($isShowMobileMyReferrerTeam);
   const isShowMobileRules = useStore($isShowMobileRules);
+  const isMobileScreen = useStore($isMobileScreen);
 
   const rankingList = useStore($topReferrerRankingList);
-  const userRank = useStore($topReferrerUserItem);
+  const userItemRank = useStore($topReferrerUserItem);
+  const userRank: TopReferrerRanking = userItemRank?.userAddress
+    ? userItemRank
+    : {
+        rank: '0',
+        userAddress: userInfo?.userAddress,
+        username: userInfo?.username,
+        refereeCount: 0,
+        totalVolume: '0',
+        pointPrize: 0,
+        usdtPrize: 0
+      };
+
   const referralTeamList = useStore($referralTeamList);
   const referralUserItem = useStore($referralUserItem);
   const myRefererUserItem = useStore($myRefererUserItem);
   const myRefererTeamList = useStore($myRefererTeamList);
 
   const userPointData = useStore($userPoint);
-  const userInfo = useStore($userInfo);
   const userPoint = userPointData || defaultUserPoint;
   const { referralCode } = userPoint;
 
@@ -64,17 +80,21 @@ const TopReferrer = () => {
   const [isShowReferralModal, setIsShowReferralModal] = useState(false);
 
   useEffect(() => {
-    console.log({ rankingList, userRank });
-  }, [rankingList, userRank]);
+    console.log({ rankingList, userItemRank });
+  }, [rankingList, userItemRank]);
 
   // define tables columns
   const tableColumns: TableColumn<TopReferrerRanking>[] = [
     {
       label: 'Rank',
-      className: 'pl-5 lg:p-0 basis-1/3 lg:basis-1/5 text-left lg:text-center',
+      className: 'pl-5 lg:p-0 basis-1/3 lg:basis-1/6 text-left lg:text-center',
       render: row => (
         <div className="flex basis-1/4 lg:justify-center">
-          <UserMedal rank={row.rank} isYou={row.userAddress?.toLowerCase() === address?.toLowerCase()} />
+          <UserMedal
+            rank={Number(row.rank)}
+            isUnranked={Number(row.rank) === 0}
+            isYou={row.userAddress?.toLowerCase() === address?.toLowerCase()}
+          />
         </div>
       )
     },
@@ -109,7 +129,7 @@ const TopReferrer = () => {
             </div>
           );
         }
-        return <p className="text-highEmphasis">{trimString(row.username, 12) || trimAddress(row.userAddress)}</p>;
+        return <p className="text-highEmphasis">{trimString(row.username, 10) || trimAddress(row.userAddress)}</p>;
       }
     },
     {
@@ -121,7 +141,7 @@ const TopReferrer = () => {
     },
     {
       label: (
-        <div className="flex items-center justify-end space-x-1 lg:justify-center">
+        <div className="flex items-center space-x-1">
           <Tooltip
             content={
               <div className="max-w-[200px] text-b3">
@@ -136,14 +156,16 @@ const TopReferrer = () => {
           <p>Team Trading Volume</p>
         </div>
       ),
-      className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/5 text-right lg:text-center',
+      className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/5',
       render: row => {
         const val = Number(formatBigInt(row.totalVolume));
+        let strVal = val.toFixed(2);
+        if (Number(row.rank) === 0) strVal = '-'; // unranked
         return (
           <>
-            <div className="flex justify-end space-x-1 lg:justify-center">
+            <div className="flex space-x-1">
               <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-              <p className="text-b2e text-highEmphasis">{val.toFixed(2)}</p>
+              <p className="text-b2e text-highEmphasis">{strVal}</p>
             </div>
             {row.userAddress?.toLowerCase() === address?.toLowerCase() ? (
               <div className="mt-4 flex justify-end space-x-[3px] text-primaryBlue lg:hidden" onClick={() => $isShowMobileMyTeam.set(true)}>
@@ -161,7 +183,7 @@ const TopReferrer = () => {
     {
       label: 'Team Prize',
       field: 'prize',
-      className: 'hidden md:block',
+      className: 'hidden md:block lg:basis-3/12',
       render: row => {
         let usdtPrize = null;
         if (row.usdtPrize && row.usdtPrize > 0) usdtPrize = `${row.usdtPrize.toLocaleString()} USDT`;
@@ -214,6 +236,7 @@ const TopReferrer = () => {
     return (
       <TopThree.Item
         rank={pos}
+        isYou={rank.userAddress?.toLowerCase() === userInfo?.userAddress.toLowerCase()}
         className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} min-w-[200px]`}
         title={<p className={`mb-4 text-h5 ${nameColor}`}>{trimString(rank.username, 12) || trimAddress(rank.userAddress)}</p>}>
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Trading Volume</p>
@@ -294,7 +317,7 @@ const TopReferrer = () => {
           rowClassName="!items-start md:!items-center hover:bg-secondaryBlue"
           bodyClassName="lg:h-[480px]"
           columns={tableColumns}
-          data={rankingList}
+          data={isMobileScreen ? rankingList : rankingList.filter(i => Number(i.rank) > 3)}
           fixedRow={isConnected ? userRank : null}
         />
       </div>

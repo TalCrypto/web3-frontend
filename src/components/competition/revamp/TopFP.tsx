@@ -1,3 +1,5 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 import { useRouter } from 'next/router';
@@ -6,30 +8,43 @@ import Image from 'next/image';
 import { useStore } from '@nanostores/react';
 import { $isShowMobileRules } from '@/stores/competition';
 import Tooltip from '@/components/common/Tooltip';
-import { $userIsConnected } from '@/stores/user';
+import { $userInfo, $userIsConnected } from '@/stores/user';
 import { useAccount } from 'wagmi';
 import { $topFundingPaymentRankingList, $topFundingPaymentUserItem, TopFundingPaymentRanking } from '@/stores/revampCompetition';
 import { trimAddress, trimString } from '@/utils/string';
 import { formatBigInt } from '@/utils/bigInt';
+import { $isMobileScreen } from '@/stores/window';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
 import Rules from './TopFP/Rules';
-import UserMedal from '../common/UserMedal';
+import UserMedal from './UserMedal';
 import PrizePool from './TopFP/PrizePool';
 import MobileDrawer from './MobileDrawer';
 
 const TopFP = () => {
   const { address } = useAccount();
   const isConnected = useStore($userIsConnected);
+  const userInfo = useStore($userInfo);
   const isShowMobileRules = useStore($isShowMobileRules);
+  const isMobileScreen = useStore($isMobileScreen);
 
   const rankingList = useStore($topFundingPaymentRankingList);
-  const userRank = useStore($topFundingPaymentUserItem);
+  const userItemRank = useStore($topFundingPaymentUserItem);
+  const userRank: TopFundingPaymentRanking = userItemRank?.userAddress
+    ? userItemRank
+    : {
+        rank: '0',
+        userAddress: userInfo?.userAddress,
+        username: userInfo?.username,
+        fundingPayment: '0',
+        pointPrize: 0,
+        usdtPrize: 0
+      };
 
   useEffect(() => {
-    console.log({ rankingList, userRank });
-  }, [rankingList, userRank]);
+    console.log({ rankingList, userItemRank });
+  }, [rankingList, userItemRank]);
 
   // define tables columns
   const tableColumns: TableColumn<TopFundingPaymentRanking>[] = [
@@ -38,7 +53,11 @@ const TopFP = () => {
       className: 'pl-5 lg:p-0 basis-1/3 lg:basis-1/4 text-left lg:text-center',
       render: row => (
         <div className="flex basis-1/4 lg:justify-center">
-          <UserMedal rank={row.rank} isYou={row.userAddress?.toLowerCase() === address?.toLowerCase()} />
+          <UserMedal
+            rank={Number(row.rank)}
+            isUnranked={Number(row.rank) === 0}
+            isYou={row.userAddress?.toLowerCase() === address?.toLowerCase()}
+          />
         </div>
       )
     },
@@ -73,12 +92,12 @@ const TopFP = () => {
             </div>
           );
         }
-        return <p className="text-highEmphasis">{row.username || trimAddress(row.userAddress)}</p>;
+        return <p className="text-highEmphasis">{trimString(row.username, 10) || trimAddress(row.userAddress)}</p>;
       }
     },
     {
       label: (
-        <div className="flex items-center justify-end space-x-1 lg:justify-center">
+        <div className="flex items-center space-x-1">
           <Tooltip
             content={
               <div className="max-w-[200px] text-b3">
@@ -90,16 +109,18 @@ const TopFP = () => {
           <p>Acc. Fund. Payment</p>
         </div>
       ),
-      className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/4 text-right lg:text-center',
+      className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/4 text-left',
       render: row => {
         const val = Number(formatBigInt(row.fundingPayment));
         const textColor = val > 0 ? 'text-marketGreen' : val < 0 ? 'text-marketRed' : '';
+        let strVal = val.toFixed(2);
+        if (Number(row.rank) === 0) strVal = '-'; // unranked
         return (
-          <div className="flex justify-end space-x-1 lg:justify-center">
+          <div className="flex space-x-1">
             <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
             <p className={`text-b2e ${textColor}`}>
               {val > 0 ? '+' : ''}
-              {val.toFixed(2)}
+              {strVal}
             </p>
           </div>
         );
@@ -162,6 +183,7 @@ const TopFP = () => {
     return (
       <TopThree.Item
         rank={pos}
+        isYou={rank.userAddress?.toLowerCase() === userInfo?.userAddress.toLowerCase()}
         className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} min-w-[200px]`}
         title={<p className={`mb-4 text-h5 ${nameColor}`}>{trimString(rank.username, 12) || trimAddress(rank.userAddress)}</p>}>
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Acc. Fund. Payment</p>
@@ -209,7 +231,7 @@ const TopFP = () => {
           rowClassName="hover:bg-secondaryBlue"
           bodyClassName="lg:h-[480px]"
           columns={tableColumns}
-          data={rankingList}
+          data={isMobileScreen ? rankingList : rankingList.filter(i => Number(i.rank) > 3)}
           fixedRow={isConnected ? userRank : undefined}
         />
       </div>

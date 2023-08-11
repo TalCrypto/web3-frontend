@@ -5,9 +5,10 @@ type ItemProps = PropsWithChildren & {
   className?: string;
   title?: ReactNode;
   rank: number | 1 | 2 | 3;
+  isYou?: boolean;
 };
 
-const Item: FC<ItemProps> = ({ children, className, title, rank }) => (
+const Item: FC<ItemProps> = ({ children, className, title, rank, isYou }) => (
   <div className={`relative flex w-fit flex-col items-center ${className}`}>
     <div className="relative h-16 w-full">
       <div
@@ -16,7 +17,14 @@ const Item: FC<ItemProps> = ({ children, className, title, rank }) => (
       />
       <div className="absolute top-0 flex w-full flex-col items-center">
         {title}
-        <Image src={`/images/components/competition/revamp/medal${rank}.svg`} className="z-[1]" width={70} height={40} alt="rank2" />
+        <div className="relative z-[1]">
+          <Image src={`/images/components/competition/revamp/medal${rank}.svg`} width={70} height={40} alt="rank2" />
+          {isYou ? (
+            <div style={{ left: 'calc(50% - 13px)' }} className="absolute -bottom-[2px] h-[12px] w-[27px]">
+              <Image alt="YOU" src="/images/components/airdrop/YOU.svg" width={27} height={12} />
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
     <div className="relative flex w-full flex-col items-center bg-gradient-to-b from-[#282B45] to-[#14173100] px-4 pb-4 pt-6">
@@ -27,7 +35,8 @@ const Item: FC<ItemProps> = ({ children, className, title, rank }) => (
 
 Item.defaultProps = {
   className: undefined,
-  title: undefined
+  title: undefined,
+  isYou: false
 };
 
 const Container: FC<PropsWithChildren> = ({ children }) => (

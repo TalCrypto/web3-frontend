@@ -9,7 +9,12 @@ type Data = {
 
 const columns: TableColumn<Data>[] = [
   { label: 'Rank', field: 'rank', className: 'flex-1 py-3 text-center border-r border-r-[#2E4371]' },
-  { label: 'USDT', field: 'usdt', className: 'flex-1 py-3 text-center', render: row => <p className="text-h5 text-warn">{row.usdt}</p> },
+  {
+    label: 'USDT',
+    field: 'usdt',
+    className: 'flex-1 py-3 text-center',
+    render: row => <p className="text-h5 text-warn">{row.usdt ? row.usdt : '-'}</p>
+  },
   {
     label: 'Pts',
     field: 'points',

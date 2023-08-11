@@ -6,7 +6,7 @@ export type TopGainerRanking = {
   rank: string;
   usdtPrize: number;
   userAddress?: string;
-  username: string;
+  username?: string;
 };
 
 export type TopFundingPaymentRanking = {
@@ -15,7 +15,7 @@ export type TopFundingPaymentRanking = {
   rank: string;
   usdtPrize: number;
   userAddress?: string;
-  username: string;
+  username?: string;
 };
 
 export type TopVolumeRanking = {
@@ -24,7 +24,7 @@ export type TopVolumeRanking = {
   rank: string;
   usdtPrize: number;
   userAddress?: string;
-  username: string;
+  username?: string;
 };
 
 export type TopReferrerRanking = {
@@ -34,7 +34,7 @@ export type TopReferrerRanking = {
   rank: string;
   usdtPrize: number;
   userAddress?: string;
-  username: string;
+  username?: string;
 };
 
 export type ReferralUser = {
