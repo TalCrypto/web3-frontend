@@ -219,7 +219,7 @@ const MyReferralTeam = (props: any) => {
           </div>
           <div className="flex items-center justify-center px-[22px] py-[24px]">
             <div>
-              <div className="text-center text-[15px] font-[600]">📢 Share My Referral Link</div>
+              <div className="text-center text-[15px] font-[600]">📢 Invitation to my team (Referral Link)</div>
               <div className="mt-[24px] flex items-center justify-between">
                 <button
                   className="mr-[12px] flex items-center justify-center 
