@@ -11,7 +11,6 @@ import { showOutlineToast } from '@/components/common/Toast';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import { useAccount } from 'wagmi';
 import {
-  $triggerKey,
   $topFundingPaymentUserItem,
   $topGainerUserItem,
   $topReferrerUserItem,
@@ -635,6 +634,8 @@ const MyPerformance = () => {
   const myRefererUserItem = useStore($myRefererUserItem);
   const myRefererTeamList = useStore($myRefererTeamList);
 
+  console.log({ referralTeamList });
+
   const displayUsername =
     userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
   const userPoint = userPointData || defaultUserPoint;
@@ -664,10 +665,6 @@ const MyPerformance = () => {
       \n@Tribe3Official`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
   };
-
-  useEffect(() => {
-    $triggerKey.set(!$triggerKey.get());
-  }, [address]);
 
   return (
     <>

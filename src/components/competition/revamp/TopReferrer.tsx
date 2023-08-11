@@ -13,7 +13,6 @@ import {
   $referralUserItem,
   $topReferrerRankingList,
   $topReferrerUserItem,
-  $triggerKey,
   TopReferrerRanking
 } from '@/stores/revampCompetition';
 import { useAccount } from 'wagmi';
@@ -22,6 +21,8 @@ import { formatBigInt } from '@/utils/bigInt';
 import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
 import { atom } from 'nanostores';
+import ReferralMobile from '@/components/airdrop/mobile/Referral';
+import ReferreeModal from '@/components/competition/revamp/TopReferrer/RefereeModal';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -286,8 +287,28 @@ const TopReferrer = () => {
       <div className="hidden space-y-32 md:block">
         {isConnected ? (
           <>
-            <MyTeam />
-            <MyReferrersTeam />
+            <MyTeam
+              copyTextFunc={copyTextFunc}
+              referralCode={referralCode}
+              displayUsername={displayUsername}
+              setIsShowShareModal={setIsShowShareModal}
+              referralTeamList={referralTeamList}
+              referralUserItem={referralUserItem}
+            />
+            {myRefererUserItem ? (
+              <>
+                <MyReferrersTeam
+                  myRefererUserItem={myRefererUserItem}
+                  myRefererTeamList={myRefererTeamList}
+                  setIsShowReferralModal={setIsShowReferralModal}
+                />
+                <ReferreeModal
+                  myRefererTeamList={myRefererTeamList}
+                  isShowReferralModal={isShowReferralModal}
+                  setIsShowReferralModal={setIsShowReferralModal}
+                />
+              </>
+            ) : null}
           </>
         ) : null}
         <Rules />

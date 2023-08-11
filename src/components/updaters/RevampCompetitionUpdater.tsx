@@ -4,7 +4,6 @@ import { useAccount } from 'wagmi';
 import { tradingCompetitionApi } from '@/utils/apiConnects/tradingCompetitionApi';
 import {
   $isDataLoading,
-  $triggerKey,
   $topFundingPaymentUserItem,
   $topFundingPaymentRankingList,
   $topGainerRankingList,
@@ -40,7 +39,6 @@ const getWeekInfo = (inputTimestamp: number) => {
 
 function RevampCompetitionUpdater() {
   const { address } = useAccount();
-  const triggerKey = useStore($triggerKey);
 
   const currentTime = Date.now() / 1000;
   const currentWeek = getWeekInfo(currentTime);
@@ -125,7 +123,7 @@ function RevampCompetitionUpdater() {
 
   useEffect(() => {
     fetchData();
-  }, [triggerKey]);
+  }, [address]);
 
   return null;
 }

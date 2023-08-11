@@ -15,7 +15,6 @@ import { Pagination } from 'swiper/modules';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { useAccount } from 'wagmi';
 import {
-  $triggerKey,
   $topFundingPaymentUserItem,
   $topGainerUserItem,
   $topReferrerUserItem,
@@ -271,7 +270,7 @@ const MyRefereesList = (props: any) => {
           My Referees
           <div className="flex items-center text-[14px] font-[400]">
             <div className="mr-[6px]">
-              Total Referees : <span className="font-[600]">{referralTeamList.length}</span>
+              Total Referees : <span className="font-[600]">{referralTeamList?.length}</span>
             </div>
           </div>
         </div>
@@ -291,7 +290,7 @@ const MyRefereesList = (props: any) => {
         </div>
       </div>
       <div className="mt-[16px]">
-        {referralTeamList.slice(0, displayCount > referralTeamList.length ? referralTeamList.length : displayCount).map((item: any) => {
+        {referralTeamList?.slice(0, displayCount > referralTeamList?.length ? referralTeamList?.length : displayCount).map((item: any) => {
           const showUsername = itemUsername(item);
           return (
             <div
@@ -333,8 +332,8 @@ const MyRefereesList = (props: any) => {
         })}
       </div>
 
-      {referralTeamList && referralTeamList.length > 0 ? (
-        displayCount >= referralTeamList.length ? null : (
+      {referralTeamList && referralTeamList?.length > 0 ? (
+        displayCount >= referralTeamList?.length ? null : (
           <div className="bg-darkBlue py-[35px] text-center">
             <span
               className="text-center text-[14px] font-semibold text-primaryBlue"
@@ -475,10 +474,6 @@ const MyPerformanceMobile = () => {
       }, 3000);
     }
   }
-
-  useEffect(() => {
-    $triggerKey.set(!$triggerKey.get());
-  }, [address]);
 
   return !isConnected ? (
     <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
