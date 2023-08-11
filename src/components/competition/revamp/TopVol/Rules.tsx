@@ -19,12 +19,13 @@ const columns: TableColumn<Data>[] = [
 ];
 
 const data: Data[] = [
-  { rank: '1', usdt: 100, points: 1000 },
-  { rank: '2', usdt: 100, points: 1000 },
-  { rank: '3', usdt: 100, points: 1000 },
-  { rank: '4-10', usdt: 100, points: 1000 },
-  { rank: '11-50', usdt: 100, points: 1000 },
-  { rank: '51-250', usdt: 100, points: 1000 }
+  { rank: '1', usdt: 0, points: 1000 },
+  { rank: '2', usdt: 0, points: 900 },
+  { rank: '3', usdt: 0, points: 800 },
+  { rank: '4', usdt: 0, points: 700 },
+  { rank: '5', usdt: 0, points: 600 },
+  { rank: '6-10', usdt: 0, points: 500 },
+  { rank: '11-20', usdt: 0, points: 400 }
 ];
 
 const Rules = () => (
@@ -40,7 +41,8 @@ const Rules = () => (
       </li>
       <li>
         <p>
-          <span className="text-b1e">Competing Metrics: </span> <br /> Competing Metrics: Total trading volume
+          <span className="text-b1e">Competing Metrics: </span> <br />
+          Total trading volume
         </p>
       </li>
       <li>
@@ -57,7 +59,7 @@ const Rules = () => (
       </li>
       <li>
         <p>
-          <span className="text-b1e">Period:</span> <br />1 Week (there will be 4 rounds of competition)
+          <span className="text-b1e">Period:</span> <br />1 Week/there will be 4 rounds of competition
         </p>
       </li>
     </ul>

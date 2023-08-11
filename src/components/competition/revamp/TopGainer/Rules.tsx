@@ -59,7 +59,7 @@ const Rules = () => (
           <span className="text-b1e">Definition:</span>
           <br />
           Realized P/L is the sum of funding payment and P/L from price change of a position. P/L from price change refers to the gain &
-          loss from full close, partial close and liquidation of a position.
+          loss from full close, partial close and liquidation of a position
         </p>
       </li>
       <li>
