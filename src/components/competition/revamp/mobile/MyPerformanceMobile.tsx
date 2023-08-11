@@ -374,7 +374,7 @@ const ReferralTeamJoined = (props: any) => {
       ? `${personalPoint} Pts.`
       : `${personalUsdt}USDT + ${personalPoint} Pts.`;
 
-  const showContribution = myRefererTeamList.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
+  const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
 
   return (
     <div>

@@ -62,11 +62,11 @@ const ReferreeModal = (props: any) => {
           <div className="flex items-center justify-between px-[36px] pt-[8px]">
             <div className="text-[16px] font-[600]">Contribution Details</div>
             <div className="text-[12px] font-[400]">
-              Total Referees : <span className="text-[14px] font-[600]">{myRefererTeamList.length}</span>{' '}
+              Total Referees : <span className="text-[14px] font-[600]">{myRefererTeamList?.length}</span>{' '}
               {/* <span className="text-[15px]">/ {referrers.length}</span> */}
             </div>
           </div>
-          {myRefererTeamList.length > 0 ? (
+          {myRefererTeamList?.length > 0 ? (
             <div className="mt-[36px]">
               <div className="px-[36px]">
                 <Cell
@@ -75,7 +75,7 @@ const ReferreeModal = (props: any) => {
                 />
               </div>
               <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
-                {myRefererTeamList.map((item: any) => {
+                {myRefererTeamList?.map((item: any) => {
                   const isCurrentUser =
                     item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
                   const vol = formatBigInt(item.tradedVolume).toFixed(2);

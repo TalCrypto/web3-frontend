@@ -50,7 +50,7 @@ const ContributionDetailsModal = (props: any) => {
                 </div>
               </div>
               <div className="text-[14px] font-[400]">
-                Total Referees: <span className="font-[600] ">{myRefererTeamList.length}</span>
+                Total Referees: <span className="font-[600] ">{myRefererTeamList?.length}</span>
               </div>
             </div>
             <div className="sticky left-0 right-0 top-0 z-[2] mt-[24px] w-full text-[14px] font-[400] text-mediumEmphasis">
@@ -70,7 +70,7 @@ const ContributionDetailsModal = (props: any) => {
           </div>
           <div className="max-h-[calc(100%-50px)] overflow-auto ">
             <div className="pt-[16px]">
-              {myRefererTeamList.slice(0, displayCount > referrers.length ? referrers.length : displayCount).map((item: any) => {
+              {myRefererTeamList?.slice(0, displayCount > referrers.length ? referrers.length : displayCount).map((item: any) => {
                 console.log({ item });
                 const showUsername =
                   item.username === ''
@@ -125,8 +125,8 @@ const ContributionDetailsModal = (props: any) => {
                 );
               })}
 
-              {myRefererTeamList && myRefererTeamList.length > 0 ? (
-                displayCount >= myRefererTeamList.length ? null : (
+              {myRefererTeamList && myRefererTeamList?.length > 0 ? (
+                displayCount >= myRefererTeamList?.length ? null : (
                   <div className="bg-darkBlue py-[35px] text-center">
                     <span
                       className="text-center text-[14px] font-semibold text-primaryBlue"
