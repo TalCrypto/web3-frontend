@@ -1,3 +1,6 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 import { showOutlineToast } from '@/components/common/Toast';
@@ -70,12 +73,12 @@ const itemShowReward = (item: any) =>
 const MyTeam = (props: any) => {
   const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList, referralUserItem } = props;
 
-  const teamRank = referralUserItem?.rank;
-  const teamPoint = referralUserItem?.teamPointPrize;
-  const teamUsdt = referralUserItem?.teamUsdtPrize;
-  const personalPoint = referralUserItem?.pointPrize;
-  const personalUsdt = referralUserItem?.usdtPrize;
-  const teamVol = referralUserItem?.totalVolume;
+  const teamRank = referralUserItem?.rank || 0;
+  const teamPoint = referralUserItem?.teamPointPrize || 0;
+  const teamUsdt = referralUserItem?.teamUsdtPrize || 0;
+  const personalPoint = referralUserItem?.pointPrize || 0;
+  const personalUsdt = referralUserItem?.usdtPrize || 0;
+  const teamVol = referralUserItem?.totalVolume || 0;
 
   const copyUserUrl = () => {
     copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
@@ -101,16 +104,18 @@ const MyTeam = (props: any) => {
       : `${personalUsdt}USDT + ${personalPoint} Pts.`;
 
   return (
-    <div>
-      <div className="mt-[78px]">
-        <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">
+    <div className="px-5 py-6 lg:p-0">
+      <div className="lg:mt-[78px]">
+        <div className="flex items-center text-[18pt] font-[700] lg:mt-[16px] lg:justify-center ">
           <Image src="/images/components/competition/revamp/my-performance/crown.svg" alt="" width={24} height={24} className="mr-[6px]" />
           My Referral Team
         </div>
       </div>
-      <div className="mt-[36px] w-full">
-        <div className="flex items-center">
-          <div className="mr-[36px] h-[528px] min-w-[388px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
+      <div className="mt-6 w-full lg:mt-[36px]">
+        <div className="flex flex-col items-center lg:flex-row">
+          <div
+            className="w-full rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30] lg:mr-[36px] 
+          lg:h-[528px] lg:w-[388px] lg:min-w-[388px]">
             <div
               className="flex items-center rounded-t-[12px] bg-[#3A1A18] 
             bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
@@ -186,7 +191,7 @@ const MyTeam = (props: any) => {
               </div>
             </div>
           </div>
-          <div className="h-[528px] grow rounded-[6px] border-[1px] border-[#2E4371] bg-[#0C0D20] py-[36px]">
+          <div className="-mx-5 grow bg-[#0C0D20] py-[36px] lg:mx-0 lg:h-[528px] lg:rounded-[6px] lg:border-[1px] lg:border-[#2E4371]">
             <div className="flex items-center justify-between px-[36px]">
               <div className="text-[16px] font-[600]">My Team Member</div>
               <div className="text-[12px] font-[400]">
@@ -195,14 +200,20 @@ const MyTeam = (props: any) => {
               </div>
             </div>
             {referralTeamList?.length > 0 ? (
-              <div className="mt-[36px]">
+              <div className="mt-6 lg:mt-[36px]">
                 <div className="px-[36px]">
                   <Cell
-                    items={['User ID', 'Trading Volume', 'Contribution', 'Reward']}
-                    classNames={['col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]']}
+                    items={['User ID', 'Trading Volume', 'Contribution', 'Reward', 'Contribution / Trading Volume']}
+                    classNames={[
+                      'col-span-8 lg:col-span-3 text-[12px]',
+                      'col-span-2 text-[12px] hidden lg:block',
+                      'col-span-2 text-[12px] hidden lg:block',
+                      'col-span-2 text-[12px] hidden lg:block',
+                      'col-span-4 text-[12px] text-right lg:hidden block'
+                    ]}
                   />
                 </div>
-                <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
+                <div className="scrollable mt-[24px] overflow-y-scroll lg:max-h-[360px]">
                   {referralTeamList?.map((item: any) => {
                     const username =
                       item.username === ''
@@ -213,7 +224,7 @@ const MyTeam = (props: any) => {
 
                     return (
                       <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
-                        <div className="relative col-span-3 items-center">
+                        <div className="relative col-span-8 items-center lg:col-span-3">
                           <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
                           <div className="truncate pr-[40px]">{username}</div>
                         </div>
@@ -229,14 +240,14 @@ const MyTeam = (props: any) => {
                             ) : null}
                             {item.isEligible ? 'Eligible' : 'Not Eligible'}
                           </div> */}
-                        <div className="col-span-3 flex items-center">
+                        <div className="col-span-3 hidden items-center md:flex">
                           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                           {formatBigInt(item.tradedVolume).toFixed(2)}
                         </div>
-                        <div className="col-span-3 font-[600] text-[#FFC24B]">{`${
+                        <div className="col-span-3 hidden font-[600] text-[#FFC24B] md:block">{`${
                           Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
                         }`}</div>
-                        <div className="col-span-3">
+                        <div className="col-span-3 hidden md:block">
                           <div
                             className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${
                               item.isEligible ? 'bg-[#2E4371]' : ''
@@ -251,6 +262,15 @@ const MyTeam = (props: any) => {
                             {itemShowReward(item)}
                           </div>
                         </div>
+                        <div className="col-span-4 flex flex-col items-end lg:hidden">
+                          <div className="flex items-center">
+                            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                            {formatBigInt(item.tradedVolume).toFixed(2)}
+                          </div>
+                          <div className="font-[600] text-[#FFC24B]">
+                            {`${Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`}`}
+                          </div>
+                        </div>
                       </div>
                     );
                   })}
@@ -261,7 +281,7 @@ const MyTeam = (props: any) => {
                       </div> */}
               </div>
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-[15px] font-[400] text-mediumEmphasis">
+              <div className="flex h-full w-full items-center justify-center py-4 text-[15px] font-[400] text-mediumEmphasis lg:py-0">
                 List is empty, start sharing your referral link now!
               </div>
             )}

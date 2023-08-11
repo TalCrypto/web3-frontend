@@ -385,7 +385,14 @@ const TopReferrer = () => {
       </MobileDrawer>
 
       <MobileDrawer title="My Referral Team" show={isShowMobileMyTeam} onClickBack={() => $isShowMobileMyTeam.set(false)}>
-        <MyTeam />
+        <MyTeam
+          copyTextFunc={copyTextFunc}
+          referralCode={referralCode}
+          displayUsername={displayUsername}
+          setIsShowShareModal={setIsShowShareModal}
+          referralTeamList={referralTeamList}
+          referralUserItem={referralUserItem}
+        />
       </MobileDrawer>
 
       <MobileDrawer title="Rules - Top Referrer" show={isShowMobileRules} onClickBack={() => $isShowMobileRules.set(false)}>
