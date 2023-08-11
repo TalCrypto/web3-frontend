@@ -91,7 +91,7 @@ const TopFP = () => {
               </svg>
 
               <p className="overflow-hidden text-ellipsis bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">
-                {row.username}
+                {row.username || trimAddress(row.userAddress)}
               </p>
             </div>
           );
