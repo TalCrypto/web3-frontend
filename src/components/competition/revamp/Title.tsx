@@ -59,7 +59,7 @@ const Title = () => {
 
         <div className="mb-9 flex flex-col text-center text-b1 text-highEmphasis lg:flex-row lg:space-x-2">
           <p>Competition Period:</p>
-          <p className="text-b1e">15 Aug 2023 - 15 Sep 2023</p>
+          <p className="text-b1e">15 Aug 2023 - 12 Sep 2023</p>
         </div>
 
         <PrimaryButton className="px-6 py-3 text-b1e">Trade Now!</PrimaryButton>
