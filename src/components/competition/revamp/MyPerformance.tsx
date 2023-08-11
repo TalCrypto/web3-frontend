@@ -418,11 +418,11 @@ const MyReferralTeam = (props: any) => {
             <div className="flex items-center justify-between px-[36px]">
               <div className="text-[16px] font-[600]">My Team Member</div>
               <div className="text-[12px] font-[400]">
-                No. of Member : <span className="font-[600]">{referralTeamList.length}</span>{' '}
+                No. of Member : <span className="font-[600]">{referralTeamList?.length}</span>{' '}
                 {/* <span className="text-[15px]">/ {referrers.length}</span> */}
               </div>
             </div>
-            {referralTeamList.length > 0 ? (
+            {referralTeamList?.length > 0 ? (
               <div className="mt-[36px]">
                 <div className="px-[36px]">
                   <Cell
@@ -431,7 +431,7 @@ const MyReferralTeam = (props: any) => {
                   />
                 </div>
                 <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
-                  {referralTeamList.map((item: any) => {
+                  {referralTeamList?.map((item: any) => {
                     const username =
                       item.username === ''
                         ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
@@ -673,11 +673,7 @@ const MyPerformance = () => {
     <>
       <MyPerformanceMobile />
       <div className="hidden md:block">
-        {!isConnected ? (
-          <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
-            Please connect to your wallet to get started
-          </div>
-        ) : (
+        {!isConnected ? null : (
           <div>
             <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">General Performance</div>
             <div className="mt-[36px] flex flex-row items-center justify-center">

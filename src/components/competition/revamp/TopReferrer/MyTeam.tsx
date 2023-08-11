@@ -6,6 +6,7 @@ import { $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
 import React, { useState } from 'react';
+import { formatBigInt } from '@/utils/bigInt';
 
 function Cell(props: any) {
   const { items, classNames } = props;
@@ -57,42 +58,59 @@ const referees = [
 //   { week: 2, rank: 10, vol: 100.5, reward: 500 }
 // ];
 
-const MyTeam = () => {
-  const userInfo = useStore($userInfo);
-  const userPointData = useStore($userPoint);
+const itemShowReward = (item: any) =>
+  item?.pointPrize === 0 && item?.usdtPrize === 0
+    ? '-'
+    : item?.pointPrize === 0 && item?.usdtPrize > 0
+    ? `${item?.usdtPrize}USDT`
+    : item?.usdtPrize === 0 && item?.pointPrize > 0
+    ? `${item?.pointPrize} Pts.`
+    : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
 
-  const displayUsername =
-    userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
+const MyTeam = (props: any) => {
+  const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList, referralUserItem } = props;
 
-  const userPoint = userPointData || defaultUserPoint;
-  const { referralCode } = userPoint;
-
-  const [isShowShareModal, setIsShowShareModal] = useState(false);
-
-  const copyTextFunc = (text: any) => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text);
-    }
-  };
+  const teamRank = referralUserItem?.rank;
+  const teamPoint = referralUserItem?.teamPointPrize;
+  const teamUsdt = referralUserItem?.teamUsdtPrize;
+  const personalPoint = referralUserItem?.pointPrize;
+  const personalUsdt = referralUserItem?.usdtPrize;
+  const teamVol = referralUserItem?.totalVolume;
 
   const copyUserUrl = () => {
     copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
     showOutlineToast({ title: 'Referral link copied to clipboard!' });
   };
 
+  const showTeamReward =
+    teamPoint === 0 && teamUsdt === 0
+      ? '-'
+      : teamPoint === 0 && teamUsdt > 0
+      ? `${teamUsdt}USDT`
+      : teamUsdt === 0 && teamPoint > 0
+      ? `${teamPoint} Pts.`
+      : `${teamUsdt}USDT + ${teamPoint} Pts.`;
+
+  const showPersonalReward =
+    personalPoint === 0 && personalUsdt === 0
+      ? '-'
+      : personalPoint === 0 && personalUsdt > 0
+      ? `${personalUsdt}USDT`
+      : personalUsdt === 0 && personalPoint > 0
+      ? `${personalPoint} Pts.`
+      : `${personalUsdt}USDT + ${personalPoint} Pts.`;
+
   return (
-    <div className="px-5 py-6 lg:p-0">
-      <div className="lg:mt-[78px]">
-        <div className="flex items-center text-[18pt] font-[700] lg:mt-[16px] lg:justify-center ">
+    <div>
+      <div className="mt-[78px]">
+        <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">
           <Image src="/images/components/competition/revamp/my-performance/crown.svg" alt="" width={24} height={24} className="mr-[6px]" />
           My Referral Team
         </div>
       </div>
-      <div className="mt-6 w-full lg:mt-[36px]">
-        <div className="flex flex-col items-center lg:flex-row">
-          <div
-            className="w-full rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30] lg:mr-[36px] 
-          lg:h-[528px] lg:w-[388px] lg:min-w-[388px]">
+      <div className="mt-[36px] w-full">
+        <div className="flex items-center">
+          <div className="mr-[36px] h-[528px] min-w-[388px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
             <div
               className="flex items-center rounded-t-[12px] bg-[#3A1A18] 
             bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
@@ -111,20 +129,17 @@ const MyTeam = () => {
             <div className="flex items-stretch justify-between px-[36px] py-[24px]">
               <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-                <div className="text-[15px] font-[600]">12</div>
+                <div className="text-[15px] font-[600]">{teamRank}</div>
               </div>
               <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-                <div className="text-[15px] font-[600]">
-                  200USDT
-                  <br /> + 1,500Pts
-                </div>
+                <div className="text-[15px] font-[600]">{showTeamReward}</div>
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trad. Vol</div>
-                <div className="flex justify-end space-x-1 lg:justify-center">
-                  <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
-                  <p className="text-[15px] font-[600]">99.99</p>
+                <div className="mt-[6px] flex items-center text-[15px] font-[600]">
+                  <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                  {formatBigInt(teamVol).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -133,17 +148,17 @@ const MyTeam = () => {
               <div className="text-center">
                 <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
                 <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(40% of Team Reward)</div>
-                <div className="mt-[12px] text-[20px] font-[600]">100USDT + 750Pts</div>
+                <div className="mt-[12px] text-[20px] font-[600]">{showPersonalReward}</div>
               </div>
             </div>
             <Divider />
-            <div className="flex items-center justify-center px-[22px] py-6 lg:px-[36px] lg:py-[24px]">
+            <div className="flex items-center justify-center px-[36px] py-[24px]">
               <div>
                 <div className="text-center text-[15px] font-[600]">📢 Invitation to my team (Referral Link)</div>
                 <div className="mt-[24px] flex items-center justify-between">
                   <button
                     className="mr-[12px] flex items-center justify-center 
-                  rounded-[4px] bg-[#2574FB] px-4 py-[10px] text-[15px] font-[600] lg:px-[21px]"
+                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
                     onClick={() => setIsShowShareModal(true)}>
                     <Image
                       src="/images/components/competition/revamp/my-performance/share.svg"
@@ -156,7 +171,7 @@ const MyTeam = () => {
                   </button>
                   <button
                     className="mr-[12px] flex items-center justify-center rounded-[4px] 
-                  bg-[#2574FB] px-4 py-[10px] text-[15px] font-[600] lg:px-[21px]"
+                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
                     onClick={copyUserUrl}>
                     <Image
                       src="/images/components/competition/revamp/my-performance/copy.svg"
@@ -171,67 +186,79 @@ const MyTeam = () => {
               </div>
             </div>
           </div>
-          <div className="-mx-5 grow bg-[#0C0D20] py-[36px] lg:mx-0 lg:h-[528px] lg:rounded-[6px] lg:border-[1px] lg:border-[#2E4371]">
+          <div className="h-[528px] grow rounded-[6px] border-[1px] border-[#2E4371] bg-[#0C0D20] py-[36px]">
             <div className="flex items-center justify-between px-[36px]">
               <div className="text-[16px] font-[600]">My Team Member</div>
-              <div className="text-b3">
-                No. of Member:
-                <span className="text-b3e"> {referees.length}</span>
+              <div className="text-[12px] font-[400]">
+                No. of Member : <span className="font-[600]">{referralTeamList?.length}</span>{' '}
+                {/* <span className="text-[15px]">/ {referrers.length}</span> */}
               </div>
             </div>
-            {referees.length > 0 ? (
-              <div className="mt-6 lg:mt-[36px]">
+            {referralTeamList?.length > 0 ? (
+              <div className="mt-[36px]">
                 <div className="px-[36px]">
                   <Cell
-                    items={['User ID', 'Trading Vol.', 'Contribution', 'Reward', 'Contribution / Trading Vol.']}
-                    classNames={[
-                      'col-span-8 lg:col-span-4 text-[12px]',
-                      'col-span-2 text-[12px] hidden lg:block',
-                      'col-span-3 text-[12px] hidden lg:block',
-                      'col-span-3 text-[12px] hidden lg:block',
-                      'col-span-4 text-[12px] text-right lg:hidden block'
-                    ]}
+                    items={['User ID', 'Trading Vol.', 'Contribution', 'Reward']}
+                    classNames={['col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]']}
                   />
                 </div>
-                <div className="scrollable mt-[24px] overflow-y-scroll lg:max-h-[320px]">
-                  {referees.map(item => (
-                    <div
-                      className={`grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
-                      <div className="relative col-span-8 items-center lg:col-span-4">
-                        <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                        <div className="truncate pr-[40px]">{item.username}</div>
-                      </div>
-                      <div className="col-span-2 hidden items-center md:flex">
-                        <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                        {item.vol.toFixed(2)}
-                      </div>
-                      <div className="col-span-3 hidden font-[600] text-[#FFC24B] md:block">{`${
-                        !item.isEligible ? '-' : `${item.contribution}%`
-                      }`}</div>
-                      <div className="col-span-3 hidden md:block">
-                        <div
-                          className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${item.isEligible ? 'bg-[#2E4371]' : ''}`}>
-                          <Image
-                            src="/images/components/competition/revamp/my-performance/reward.svg"
-                            width={16}
-                            height={16}
-                            alt=""
-                            className="mr-[10px]"
-                          />
-                          {!item.isEligible ? '-' : `${item.reward}USDT`}
-                        </div>
-                      </div>
+                <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
+                  {referralTeamList?.map((item: any) => {
+                    const username =
+                      item.username === ''
+                        ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
+                        : item.username.length > 10
+                        ? `${item.username.substring(0, 10)}...`
+                        : item.username;
 
-                      <div className="col-span-4 flex flex-col items-end lg:hidden">
-                        <div className="flex items-center">
-                          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                          {item.vol.toFixed(2)}
+                    return (
+                      <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                        <div className="relative col-span-3 items-center">
+                          <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
+                          <div className="truncate pr-[40px]">{username}</div>
                         </div>
-                        <div className="font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
+                        {/* <div className="relative col-span-2">
+                            {item.isEligible ? (
+                              <Image
+                                src="/images/components/competition/revamp/my-performance/eligible.svg"
+                                width={16}
+                                height={16}
+                                alt=""
+                                className="absolute left-[-20px] top-[2px]"
+                              />
+                            ) : null}
+                            {item.isEligible ? 'Eligible' : 'Not Eligible'}
+                          </div> */}
+                        <div className="col-span-3 flex items-center">
+                          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                          {formatBigInt(item.tradedVolume).toFixed(2)}
+                        </div>
+                        <div className="col-span-3 font-[600] text-[#FFC24B]">{`${
+                          Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
+                        }`}</div>
+                        <div className="col-span-3">
+                          <div
+                            className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${
+                              item.isEligible ? 'bg-[#2E4371]' : ''
+                            }`}>
+                            <Image
+                              src="/images/components/competition/revamp/my-performance/reward.svg"
+                              width={16}
+                              height={16}
+                              alt=""
+                              className="mr-[10px]"
+                            />
+                            {itemShowReward(item)}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
+                {/* <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
+                        Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as
+                        eligible referees.
+                      </div> */}
               </div>
             ) : (
               <div className="flex h-full w-full items-center justify-center text-[15px] font-[400] text-mediumEmphasis">

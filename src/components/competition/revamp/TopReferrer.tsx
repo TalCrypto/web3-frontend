@@ -1,15 +1,27 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useStore } from '@nanostores/react';
 import { $isShowMobileMyReferrerTeam, $isShowMobileMyTeam, $isShowMobileRules } from '@/stores/competition';
 import Tooltip from '@/components/common/Tooltip';
-import { $userIsConnected } from '@/stores/user';
-import { $topReferrerRankingList, $topReferrerUserItem, TopReferrerRanking } from '@/stores/revampCompetition';
+import { $userInfo, $userIsConnected } from '@/stores/user';
+import {
+  $myRefererTeamList,
+  $myRefererUserItem,
+  $referralTeamList,
+  $referralUserItem,
+  $topReferrerRankingList,
+  $topReferrerUserItem,
+  $triggerKey,
+  TopReferrerRanking
+} from '@/stores/revampCompetition';
 import { useAccount } from 'wagmi';
 import { trimAddress, trimString } from '@/utils/string';
 import { formatBigInt } from '@/utils/bigInt';
+import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
+import ShareModal from '@/components/airdrop/desktop/ShareModal';
+import { atom } from 'nanostores';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -30,6 +42,21 @@ const TopReferrer = () => {
 
   const rankingList = useStore($topReferrerRankingList);
   const userRank = useStore($topReferrerUserItem);
+  const referralTeamList = useStore($referralTeamList);
+  const referralUserItem = useStore($referralUserItem);
+  const myRefererUserItem = useStore($myRefererUserItem);
+  const myRefererTeamList = useStore($myRefererTeamList);
+
+  const userPointData = useStore($userPoint);
+  const userInfo = useStore($userInfo);
+  const userPoint = userPointData || defaultUserPoint;
+  const { referralCode } = userPoint;
+
+  const displayUsername =
+    userInfo?.username === '' ? `${userInfo.userAddress.substring(0, 7)}...${userInfo.userAddress.slice(-3)}` : userInfo?.username;
+
+  const [isShowShareModal, setIsShowShareModal] = useState(false);
+  const [isShowReferralModal, setIsShowReferralModal] = useState(false);
 
   useEffect(() => {
     console.log({ rankingList, userRank });
@@ -197,6 +224,30 @@ const TopReferrer = () => {
       </TopThree.Item>
     );
   };
+
+  const copyTextFunc = (text: any) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    }
+  };
+
+  const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
+    copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
+  };
+
+  const shareToCopyText = () => `📢 Use my referral link to enjoy extra Tribe3 points!
+  🎉 Long & short Blue-chips NFTs with leverage at any amount on ${referralCode?.toUpperCase()}`;
+
+  const shareToTwitter = () => {
+    // logHelper('reward_my_referral_code_share_twitter_pressed', walletProvider.holderAddress, { page: 'Reward' });
+    setIsShowShareModal(false);
+    const encodeItem = `🎉 Long & short Blue-chips NFTs with leverage at any amount on
+      https://app.tribe3.xyz/airdrop/refer?ref=${referralCode?.toUpperCase()}
+      \n📢 Use my referral link to enjoy extra Tribe3 points!
+      \n@Tribe3Official`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
+  };
+
   return (
     <div className="relative">
       <FloatingWidget.Container>
@@ -233,8 +284,23 @@ const TopReferrer = () => {
       </div>
 
       <div className="hidden space-y-32 md:block">
-        <MyTeam />
-        <MyReferrersTeam />
+        {referralUserItem ? (
+          <MyTeam
+            copyTextFunc={copyTextFunc}
+            referralCode={referralCode}
+            displayUsername={displayUsername}
+            setIsShowShareModal={setIsShowShareModal}
+            referralTeamList={referralTeamList}
+            referralUserItem={referralUserItem}
+          />
+        ) : null}
+        {myRefererUserItem ? (
+          <MyReferrersTeam
+            myRefererUserItem={myRefererUserItem}
+            myRefererTeamList={myRefererTeamList}
+            setIsShowReferralModal={setIsShowReferralModal}
+          />
+        ) : null}
         <Rules />
       </div>
 
@@ -250,6 +316,16 @@ const TopReferrer = () => {
       <MobileDrawer title="Rules - Top Referrer" show={isShowMobileRules} onClickBack={() => $isShowMobileRules.set(false)}>
         <Rules />
       </MobileDrawer>
+
+      {isShowShareModal ? (
+        <ShareModal
+          setIsShow={setIsShowShareModal}
+          referralCode={referralCode}
+          copyCode={copyCode}
+          shareToTwitter={shareToTwitter}
+          shareToCopyText={shareToCopyText}
+        />
+      ) : null}
     </div>
   );
 };

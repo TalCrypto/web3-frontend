@@ -37,6 +37,30 @@ export type TopReferrerRanking = {
   username: string;
 };
 
+export type ReferralUser = {
+  userAddress: string;
+  username: string;
+  rank?: string;
+  totalVolume?: string;
+  tradedVolume?: string;
+  teamPointPrize?: number;
+  teamUsdtPrize?: number;
+  pointPrize: number;
+  usdtPrize: number;
+};
+
+export type MyRefererUser = {
+  userAddress: string;
+  username: string;
+  rank?: string;
+  totalVolume?: string;
+  tradedVolume?: string;
+  teamPointPrize?: number;
+  teamUsdtPrize?: number;
+  pointPrize: number;
+  usdtPrize: number;
+};
+
 export const $triggerKey = atom(false);
 
 // data handling
@@ -46,8 +70,8 @@ export const $topFundingPaymentRankingList = atom<TopFundingPaymentRanking[]>([]
 export const $topGainerRankingList = atom<TopGainerRanking[]>([]);
 export const $topReferrerRankingList = atom<TopReferrerRanking[]>([]);
 export const $topVolumeRankingList = atom<TopVolumeRanking[]>([]);
-export const $referralTeamList = atom([]);
-export const $myRefererTeamList = atom([]);
+export const $referralTeamList = atom<ReferralUser[]>([]);
+export const $myRefererTeamList = atom<MyRefererUser[]>([]);
 
 export const $userVolumeList = atom<TopVolumeRanking[]>([]);
 
@@ -55,5 +79,5 @@ export const $topFundingPaymentUserItem = atom<TopFundingPaymentRanking | null>(
 export const $topGainerUserItem = atom<TopGainerRanking | null>(null);
 export const $topReferrerUserItem = atom<TopReferrerRanking | null>(null);
 export const $topVolumeUserItem = atom<TopVolumeRanking | null>(null);
-export const $referralUserItem = atom<any>(null);
-export const $myRefererUserItem = atom<any>(null);
+export const $referralUserItem = atom<ReferralUser | null>(null);
+export const $myRefererUserItem = atom<MyRefererUser | null>(null);
