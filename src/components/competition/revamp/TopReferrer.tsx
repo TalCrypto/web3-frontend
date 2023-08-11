@@ -81,7 +81,7 @@ const TopReferrer = () => {
       }
     },
     {
-      label: 'No. of Member',
+      label: 'No. of Referee',
       className: 'hidden md:block basis-1/3 lg:basis-1/6',
       render(row) {
         return <p className="text-b2e text-highEmphasis">{row.refereeCount}</p>;
@@ -101,7 +101,7 @@ const TopReferrer = () => {
             }>
             <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
           </Tooltip>
-          <p>Team Trad. Vol.</p>
+          <p>Referee‘s Total Trading Vol.</p>
         </div>
       ),
       className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/5 text-right lg:text-center',
@@ -184,12 +184,12 @@ const TopReferrer = () => {
         rank={pos}
         className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} min-w-[200px]`}
         title={<p className={`mb-4 text-h5 ${nameColor}`}>{trimString(rank.username, 12) || trimAddress(rank.userAddress)}</p>}>
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Trad. Vol.</p>
+        <p className="mb-[6px] text-b3 text-mediumEmphasis">Referee‘s Total Trading Vol.</p>
         <div className="mb-3 flex space-x-1">
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
           <p className="text-b2e">{val.toFixed(2)}</p>
         </div>
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Member</p>
+        <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Referee</p>
         <p className="text-b2e">{rank.refereeCount}</p>
         <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Prize</p>
@@ -197,6 +197,7 @@ const TopReferrer = () => {
       </TopThree.Item>
     );
   };
+
   return (
     <div className="relative">
       <FloatingWidget.Container>
@@ -233,8 +234,12 @@ const TopReferrer = () => {
       </div>
 
       <div className="hidden space-y-32 md:block">
-        <MyTeam />
-        <MyReferrersTeam />
+        {isConnected ? (
+          <>
+            <MyTeam />
+            <MyReferrersTeam />
+          </>
+        ) : null}
         <Rules />
       </div>
 
