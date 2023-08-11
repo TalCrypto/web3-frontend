@@ -13,6 +13,7 @@ import { $topVolumeRankingList, $topVolumeUserItem, TopVolumeRanking } from '@/s
 import { trimAddress, trimString } from '@/utils/string';
 import { formatBigInt } from '@/utils/bigInt';
 import { $isMobileScreen } from '@/stores/window';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -102,7 +103,7 @@ const TopVol = () => {
     },
     {
       label: 'User',
-      className: 'basis-1/3 lg:basis-1/4',
+      className: 'basis-1/3 lg:basis-1/4 overflow-hidden',
       render(row) {
         if (row.userAddress?.toLowerCase() === address?.toLowerCase()) {
           return (
@@ -127,24 +128,35 @@ const TopVol = () => {
                 </defs>
               </svg>
 
-              <p className="bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">{row.username}</p>
+              <p className="overflow-hidden text-ellipsis bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">
+                {row.username}
+              </p>
             </div>
           );
         }
-        return <p className="text-highEmphasis">{trimString(row.username, 10) || trimAddress(row.userAddress)}</p>;
+        return <p className="overflow-hidden text-ellipsis text-highEmphasis">{row.username || trimAddress(row.userAddress)}</p>;
       }
     },
     {
       label: (
         <div className="flex items-center space-x-1">
-          <Tooltip
-            content={
-              <div className="max-w-[230px] text-b3">
-                <p>The total notional trading volume (open, add, partial close and full close would be counted) in WETH</p>
-              </div>
-            }>
-            <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
-          </Tooltip>
+          <div className="hidden lg:block">
+            <Tooltip
+              content={
+                <div className="max-w-[230px] text-b3">
+                  <p>The total notional trading volume (open, add, partial close and full close would be counted) in WETH</p>
+                </div>
+              }>
+              <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+            </Tooltip>
+          </div>
+          <div className="block lg:hidden">
+            <MobileTooltip
+              content={<p>The total notional trading volume (open, add, partial close and full close would be counted) in WETH</p>}>
+              <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+            </MobileTooltip>
+          </div>
+
           <p>Total Trading Volume</p>
         </div>
       ),

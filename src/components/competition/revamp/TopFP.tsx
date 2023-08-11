@@ -14,6 +14,7 @@ import { $topFundingPaymentRankingList, $topFundingPaymentUserItem, TopFundingPa
 import { trimAddress, trimString } from '@/utils/string';
 import { formatBigInt } from '@/utils/bigInt';
 import { $isMobileScreen } from '@/stores/window';
+import MobileTooltip from '@/components/common/mobile/Tooltip';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -50,7 +51,7 @@ const TopFP = () => {
   const tableColumns: TableColumn<TopFundingPaymentRanking>[] = [
     {
       label: 'Rank',
-      className: 'pl-5 lg:p-0 basis-1/3 lg:basis-1/4 text-left lg:text-center',
+      className: 'pl-5 lg:p-0 basis-2/6 lg:basis-1/4 text-left lg:text-center',
       render: row => (
         <div className="flex basis-1/4 lg:justify-center">
           <UserMedal
@@ -63,7 +64,7 @@ const TopFP = () => {
     },
     {
       label: 'User',
-      className: 'basis-1/3 lg:basis-1/4',
+      className: 'basis-3/6 lg:basis-1/4 overflow-hidden',
       render(row) {
         if (row.userAddress?.toLowerCase() === address?.toLowerCase()) {
           return (
@@ -88,28 +89,38 @@ const TopFP = () => {
                 </defs>
               </svg>
 
-              <p className="bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">{row.username}</p>
+              <p className="overflow-hidden text-ellipsis bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">
+                {row.username}
+              </p>
             </div>
           );
         }
-        return <p className="text-highEmphasis">{trimString(row.username, 10) || trimAddress(row.userAddress)}</p>;
+        return <p className="overflow-hidden text-ellipsis text-highEmphasis">{row.username || trimAddress(row.userAddress)}</p>;
       }
     },
     {
       label: (
         <div className="flex items-center space-x-1">
-          <Tooltip
-            content={
-              <div className="max-w-[200px] text-b3">
-                <p>Funding payment received through holding positions</p>
-              </div>
-            }>
-            <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
-          </Tooltip>
+          <div className="hidden lg:block">
+            <Tooltip
+              content={
+                <div className="max-w-[200px] text-b3">
+                  <p>Funding payment received through holding positions</p>
+                </div>
+              }>
+              <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+            </Tooltip>
+          </div>
+          <div className="block lg:hidden">
+            <MobileTooltip content={<p>Funding payment received through holding positions</p>}>
+              <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
+            </MobileTooltip>
+          </div>
+
           <p>Acc. Fund. Payment</p>
         </div>
       ),
-      className: 'pr-5 lg:p-0 basis-1/3 lg:basis-1/4 text-left',
+      className: 'pr-5 lg:p-0 basis-3/6 lg:basis-1/4 text-left',
       render: row => {
         const val = Number(formatBigInt(row.fundingPayment));
         const textColor = val > 0 ? 'text-marketGreen' : val < 0 ? 'text-marketRed' : '';
