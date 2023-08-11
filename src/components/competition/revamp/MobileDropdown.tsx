@@ -7,7 +7,7 @@ import { $isShowMobileModal } from '@/stores/modal';
 const mobileDropdownOptions = [
   {
     id: 0,
-    label: 'Top Vol'
+    label: 'Top Volume'
     // icon: '/images/components/airdrop/tabs/leaderboard.svg'
   },
   {

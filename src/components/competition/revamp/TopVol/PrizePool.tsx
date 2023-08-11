@@ -20,7 +20,7 @@ const PrizePool: FC<PropsWithChildren> = () => (
       <div className="absolute top-[68px] flex w-full items-center justify-center lg:top-[80px] xl:top-[86px]">
         <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
         <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-h5 font-bold text-transparent">
-          Total Prize Pool for Top Vol -{' '}
+          Total Prize Pool for Top Volume -{' '}
         </p>
       </div>
     </div>
@@ -36,7 +36,9 @@ const PrizePool: FC<PropsWithChildren> = () => (
         />
         <div className="absolute top-[100px] flex w-full items-center justify-center sm:top-[75px]">
           <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
-          <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-b2e text-transparent">Total Prize Pool for Top Vol - </p>
+          <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-b2e text-transparent">
+            Total Prize Pool for Top Volume -{' '}
+          </p>
         </div>
       </div>
 

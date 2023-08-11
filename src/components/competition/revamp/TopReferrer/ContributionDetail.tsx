@@ -61,7 +61,7 @@ export const ContributionDetail = () => {
         <div className="mt-[36px]">
           <div className="px-[36px]">
             <Cell
-              items={['User ID', 'Status', 'Trading Vol.', 'Contribution', 'Reward', 'Contribution / Trading Vol.']}
+              items={['User ID', 'Status', 'Trading Volume', 'Contribution', 'Reward', 'Contribution / Trading Volume']}
               classNames={[
                 'col-span-8 lg:col-span-3 text-[12px]',
                 'col-span-2 text-[12px] hidden lg:block',

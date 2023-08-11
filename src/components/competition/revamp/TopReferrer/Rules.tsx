@@ -17,7 +17,7 @@ const columns: TableColumn<Data>[] = [
     render: row => <p className="text-h5 text-warn">{row.usdt ? row.usdt : '-'}</p>
   },
   {
-    label: 'Points',
+    label: 'Pts',
     field: 'points',
     className: 'flex-1 py-3 text-center',
     render: row => <p className="text-h5 text-seasonGreen">{row.points.toLocaleString()}</p>

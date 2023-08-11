@@ -671,7 +671,7 @@ const MyPerformance = () => {
             <div className="mt-[16px] flex items-center justify-center text-[18pt] font-[700] ">General Performance</div>
             <div className="mt-[36px] flex flex-row items-center justify-center">
               {/* <PerformanceTag
-                title="Top Vol"
+                title="Top Volume"
                 type={0}
                 volList={volList}
                 rank={topVolumeUserItem?.rank}
