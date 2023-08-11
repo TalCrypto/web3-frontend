@@ -261,6 +261,7 @@ const MyReferralTeam = (props: any) => {
 const MyRefereesList = (props: any) => {
   const { referralTeamList } = props;
 
+  const isListEmpty = referralTeamList?.length === 0;
   const [displayCount, setDisplayCount] = useState(8);
 
   return (
@@ -274,34 +275,42 @@ const MyRefereesList = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="mt-[24px] text-[14px] font-[400] text-mediumEmphasis">
-          <div className="flex items-center justify-between">
-            <div>
-              User ID /
-              <br />
-              Status
-            </div>
-            <div>
-              Contribution /
-              <br />
-              Trading Vol.
+      </div>
+      {isListEmpty ? (
+        <div className="flex items-center justify-center p-[64px] text-center text-[15px] text-mediumEmphasis">
+          List is empty, start sharing your referral link now!
+        </div>
+      ) : (
+        <div>
+          <div className="mt-[24px] px-[20px] text-[14px] font-[400] text-mediumEmphasis">
+            <div className="flex items-center justify-between">
+              <div>
+                User ID /
+                <br />
+                Status
+              </div>
+              <div>
+                Contribution /
+                <br />
+                Trading Vol.
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="mt-[16px]">
-        {referralTeamList?.slice(0, displayCount > referralTeamList?.length ? referralTeamList?.length : displayCount).map((item: any) => {
-          const showUsername = itemUsername(item);
-          return (
-            <div
-              className={`h-full px-[20px] py-[16px] text-[14px] 
+          <div className="mt-[16px]">
+            {referralTeamList
+              ?.slice(0, displayCount > referralTeamList?.length ? referralTeamList?.length : displayCount)
+              .map((item: any) => {
+                const showUsername = itemUsername(item);
+                return (
+                  <div
+                    className={`h-full px-[20px] py-[16px] text-[14px] 
             odd:bg-[#202249]`}>
-              <div className="flex h-[48px] items-center justify-between">
-                <div className="flex h-full items-center">
-                  <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
-                  <div className="flex flex-col justify-between">
-                    <div className="overflow-auto font-[600]">{showUsername}</div>
-                    {/* <div className="mt-[6px] flex items-center">
+                    <div className="flex h-[48px] items-center justify-between">
+                      <div className="flex h-full items-center">
+                        <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
+                        <div className="flex flex-col justify-between">
+                          <div className="overflow-auto font-[600]">{showUsername}</div>
+                          {/* <div className="mt-[6px] flex items-center">
                       {item.isEligible ? (
                         <Image
                           src="/images/components/competition/revamp/my-performance/eligible.svg"
@@ -313,24 +322,26 @@ const MyRefereesList = (props: any) => {
                       ) : null}
                       {item.isEligible ? 'Eligible' : 'Not Eligible'}
                     </div> */}
-                  </div>
-                </div>
-                <div className="flex h-full items-end text-end">
-                  <div className="flex flex-col justify-end">
-                    <div className="font-[600] text-[#FFC24B]">{`${
-                      Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
-                    }`}</div>
-                    <div className="mt-[6px] flex items-center justify-end">
-                      <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                      {formatBigInt(item.tradedVolume).toFixed(2)}
+                        </div>
+                      </div>
+                      <div className="flex h-full items-end text-end">
+                        <div className="flex flex-col justify-end">
+                          <div className="font-[600] text-[#FFC24B]">{`${
+                            Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
+                          }`}</div>
+                          <div className="mt-[6px] flex items-center justify-end">
+                            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                            {formatBigInt(item.tradedVolume).toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
 
       {referralTeamList && referralTeamList?.length > 0 ? (
         displayCount >= referralTeamList?.length ? null : (
@@ -560,7 +571,6 @@ const MyPerformanceMobile = () => {
       <ContributionDetailsModal
         isShow={isShowContributionModal}
         setIsShow={setIsShowContributionModal}
-        referrers={referrers}
         myRefererTeamList={myRefererTeamList}
         myRefererUserItem={myRefererUserItem}
       />
