@@ -16,12 +16,35 @@ import {
   $referralTeamList,
   $referralUserItem,
   $myRefererTeamList,
-  $myRefererUserItem
+  $myRefererUserItem,
+  $userVolumeList
 } from '@/stores/revampCompetition';
+
+const getWeekInfo = (inputTimestamp: number) => {
+  const COMPETITION_START_TIME = 1686042000;
+  const constantTimestamp = COMPETITION_START_TIME;
+  const weekDuration = 7 * 24 * 60 * 60; // 7 days in seconds
+  const weekOffset = Math.floor((inputTimestamp - constantTimestamp) / weekDuration);
+
+  const weekStartTimestamp = constantTimestamp + weekOffset * weekDuration;
+  const weekEndTimestamp = weekStartTimestamp + weekDuration - 1;
+
+  const weekNumber = weekOffset;
+
+  return {
+    weekNumber,
+    weekStart: weekStartTimestamp,
+    weekEnd: weekEndTimestamp
+  };
+};
 
 function RevampCompetitionUpdater() {
   const { address } = useAccount();
   const triggerKey = useStore($triggerKey);
+
+  const currentTime = Date.now() / 1000;
+  const currentWeek = getWeekInfo(currentTime);
+  // console.log({ currentTime, currentWeek });
 
   async function fetchData() {
     $isDataLoading.set(true);

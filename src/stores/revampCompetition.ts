@@ -49,6 +49,8 @@ export const $topVolumeRankingList = atom<TopVolumeRanking[]>([]);
 export const $referralTeamList = atom([]);
 export const $myRefererTeamList = atom([]);
 
+export const $userVolumeList = atom<TopVolumeRanking[]>([]);
+
 export const $topFundingPaymentUserItem = atom<TopFundingPaymentRanking | null>(null);
 export const $topGainerUserItem = atom<TopGainerRanking | null>(null);
 export const $topReferrerUserItem = atom<TopReferrerRanking | null>(null);
