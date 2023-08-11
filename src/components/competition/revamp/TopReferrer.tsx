@@ -40,6 +40,7 @@ import MobileDrawer from './MobileDrawer';
 import MyTeam from './TopReferrer/MyTeam';
 import MyReferrersTeam from './TopReferrer/MyReferrersTeam';
 import { ContributionDetail } from './TopReferrer/ContributionDetail';
+import CountdownTimer from './CountdownTimer';
 
 const TopReferrer = () => {
   const { address } = useAccount();
@@ -313,7 +314,10 @@ const TopReferrer = () => {
           </div>
           <Image src="/images/components/competition/revamp/timer.svg" className="mb-1" width={16} height={16} alt="" />
           <p className="text-b3 text-highEmphasis">
-            Ends in: <span className="text-b3e">4d 3h 12m</span>
+            Ends in:{' '}
+            <span className="text-b3e">
+              <CountdownTimer date="2023-09-12T20:00:00.000+08:00" timeZone="Asia/Hong_Kong" />
+            </span>
           </p>
         </FloatingWidget.Item>
       </FloatingWidget.Container>

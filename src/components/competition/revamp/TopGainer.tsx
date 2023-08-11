@@ -22,6 +22,7 @@ import Rules from './TopGainer/Rules';
 import UserMedal from './UserMedal';
 import PrizePool from './TopGainer/PrizePool';
 import MobileDrawer from './MobileDrawer';
+import CountdownTimer from './CountdownTimer';
 
 const TopGainer = () => {
   const { address } = useAccount();
@@ -232,7 +233,10 @@ const TopGainer = () => {
           </div>
           <Image src="/images/components/competition/revamp/timer.svg" className="mb-1" width={16} height={16} alt="" />
           <p className="text-b3 text-highEmphasis">
-            Ends in: <span className="text-b3e">4d 3h 12m</span>
+            Ends in:{' '}
+            <span className="text-b3e">
+              <CountdownTimer date="2023-09-12T20:00:00.000+08:00" timeZone="Asia/Hong_Kong" />
+            </span>
           </p>
         </FloatingWidget.Item>
       </FloatingWidget.Container>
