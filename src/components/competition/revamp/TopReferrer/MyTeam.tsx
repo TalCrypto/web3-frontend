@@ -66,8 +66,8 @@ const itemShowReward = (item: any) =>
     : item?.pointPrize === 0 && item?.usdtPrize > 0
     ? `${item?.usdtPrize}USDT`
     : item?.usdtPrize === 0 && item?.pointPrize > 0
-    ? `${item?.pointPrize} Pts.`
-    : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
+    ? `${item?.pointPrize} Pts`
+    : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts`;
 
 const MyTeam = (props: any) => {
   const router = useRouter();
@@ -88,8 +88,8 @@ const MyTeam = (props: any) => {
       : teamPoint === 0 && teamUsdt > 0
       ? `${teamUsdt}USDT`
       : teamUsdt === 0 && teamPoint > 0
-      ? `${teamPoint} Pts.`
-      : `${teamUsdt}USDT + ${teamPoint} Pts.`;
+      ? `${teamPoint} Pts`
+      : `${teamUsdt}USDT + ${teamPoint} Pts`;
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
@@ -97,8 +97,8 @@ const MyTeam = (props: any) => {
       : personalPoint === 0 && personalUsdt > 0
       ? `${personalUsdt}USDT`
       : personalUsdt === 0 && personalPoint > 0
-      ? `${personalPoint} Pts.`
-      : `${personalUsdt}USDT + ${personalPoint} Pts.`;
+      ? `${personalPoint} Pts`
+      : `${personalUsdt}USDT + ${personalPoint} Pts`;
 
   return (
     <div className="px-5 py-6 lg:p-0">

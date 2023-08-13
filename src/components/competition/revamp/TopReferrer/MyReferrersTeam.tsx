@@ -34,8 +34,8 @@ const MyReferrersTeam = (props: any) => {
       : teamPoint === 0 && teamUsdt > 0
       ? `${teamUsdt}USDT`
       : teamUsdt === 0 && teamPoint > 0
-      ? `${teamPoint} Pts.`
-      : `${teamUsdt}USDT + ${teamPoint} Pts.`;
+      ? `${teamPoint} Pts`
+      : `${teamUsdt}USDT + ${teamPoint} Pts`;
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
@@ -43,8 +43,8 @@ const MyReferrersTeam = (props: any) => {
       : personalPoint === 0 && personalUsdt > 0
       ? `${personalUsdt}USDT`
       : personalUsdt === 0 && personalPoint > 0
-      ? `${personalPoint} Pts.`
-      : `${personalUsdt}USDT + ${personalPoint} Pts.`;
+      ? `${personalPoint} Pts`
+      : `${personalUsdt}USDT + ${personalPoint} Pts`;
 
   const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
 

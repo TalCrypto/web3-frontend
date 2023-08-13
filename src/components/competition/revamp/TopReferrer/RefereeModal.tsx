@@ -26,8 +26,8 @@ const itemShowReward = (item: any) =>
     : item?.pointPrize === 0 && item?.usdtPrize > 0
     ? `${item?.usdtPrize}USDT`
     : item?.usdtPrize === 0 && item?.pointPrize > 0
-    ? `${item?.pointPrize} Pts.`
-    : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
+    ? `${item?.pointPrize} Pts`
+    : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts`;
 
 const ReferreeModal = (props: any) => {
   const router = useRouter();
