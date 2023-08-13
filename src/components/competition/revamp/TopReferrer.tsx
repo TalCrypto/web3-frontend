@@ -29,6 +29,7 @@ import ContributionDetailsMobile from '@/components/competition/revamp/TopReferr
 import { $isMobileScreen } from '@/stores/window';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
 import { useRouter } from 'next/router';
+import { showOutlineToast } from '@/components/common/Toast';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -289,6 +290,11 @@ const TopReferrer = () => {
 
   const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
     copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
+    if (!isMobileScreen) {
+      showOutlineToast({ title: 'Referral text copied to clipboard!' });
+    }
+    setIsShowShareModal(false);
+    setIsShowMobileShareModal(false);
   };
 
   const shareToCopyText = () => `📢 Use my referral link to enjoy extra Tribe3 points!
@@ -304,7 +310,12 @@ const TopReferrer = () => {
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
   };
 
-  function showSnackBar() {
+  const copyUserUrl = () => {
+    copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
+    showOutlineToast({ title: 'Referral link copied to clipboard!' });
+  };
+
+  const showSnackBar = () => {
     const snackbar = document.getElementById('snackbar');
     if (snackbar) {
       snackbar.className = 'snackbar show';
@@ -313,7 +324,7 @@ const TopReferrer = () => {
         snackbar.className = snackbar.className.replace('show', '');
       }, 3000);
     }
-  }
+  };
 
   return (
     <div className="relative">
@@ -357,10 +368,10 @@ const TopReferrer = () => {
         {isConnected ? (
           <>
             <MyTeam
-              copyTextFunc={copyTextFunc}
+              copyTextFunc={copyUserUrl}
               referralCode={referralCode}
               displayUsername={displayUsername}
-              setIsShowShareModal={setIsShowShareModal}
+              setIsShowShareModal={isMobileScreen ? setIsShowMobileShareModal : setIsShowShareModal}
               referralTeamList={referralTeamList}
               referralUserItem={referralUserItem}
             />
@@ -395,10 +406,10 @@ const TopReferrer = () => {
 
       <MobileDrawer title="My Referral Team" show={isShowMobileMyTeam} onClickBack={() => $isShowMobileMyTeam.set(false)}>
         <MyTeam
-          copyTextFunc={copyTextFunc}
+          copyTextFunc={showSnackBar}
           referralCode={referralCode}
           displayUsername={displayUsername}
-          setIsShowShareModal={setIsShowShareModal}
+          setIsShowShareModal={isMobileScreen ? setIsShowMobileShareModal : setIsShowShareModal}
           referralTeamList={referralTeamList}
           referralUserItem={referralUserItem}
         />

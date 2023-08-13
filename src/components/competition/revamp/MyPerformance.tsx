@@ -663,6 +663,8 @@ const MyPerformance = () => {
 
   const copyCode = (targetElement: any, text = '', isUrlOnly = true) => {
     copyTextFunc(`${isUrlOnly ? 'https://app.tribe3.xyz/airdrop/refer?ref=' : ''}${text || referralCode}`);
+    showOutlineToast({ title: 'Referral text copied to clipboard!' });
+    setIsShowShareModal(false);
   };
 
   const shareToCopyText = () => `📢 Use my referral link to enjoy extra Tribe3 points!

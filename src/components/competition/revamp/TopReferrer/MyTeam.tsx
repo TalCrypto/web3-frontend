@@ -3,12 +3,10 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
-import { showOutlineToast } from '@/components/common/Toast';
-import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import { $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import { formatBigInt } from '@/utils/bigInt';
 import { useRouter } from 'next/router';
 
@@ -74,6 +72,7 @@ const itemShowReward = (item: any) =>
 const MyTeam = (props: any) => {
   const router = useRouter();
   const userInfo = useStore($userInfo);
+
   const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList, referralUserItem } = props;
 
   const teamRank = referralUserItem?.rank || 0;
@@ -82,11 +81,6 @@ const MyTeam = (props: any) => {
   const personalPoint = referralUserItem?.pointPrize || 0;
   const personalUsdt = referralUserItem?.usdtPrize || 0;
   const teamVol = referralUserItem?.totalVolume || 0;
-
-  const copyUserUrl = () => {
-    copyTextFunc(`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode || ''}`);
-    showOutlineToast({ title: 'Referral link copied to clipboard!' });
-  };
 
   const showTeamReward =
     teamPoint === 0 && teamUsdt === 0
@@ -183,7 +177,7 @@ const MyTeam = (props: any) => {
                   <button
                     className="mr-[12px] flex items-center justify-center rounded-[4px] 
                   bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
-                    onClick={copyUserUrl}>
+                    onClick={copyTextFunc}>
                     <Image
                       src="/images/components/competition/revamp/my-performance/copy.svg"
                       width={16}
