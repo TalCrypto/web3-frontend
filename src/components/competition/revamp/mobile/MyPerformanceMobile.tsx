@@ -496,13 +496,13 @@ const MyPerformanceMobile = () => {
   }
 
   return !isConnected ? (
-    <div className="mt-[72px] flex items-center justify-center text-[16px] text-mediumEmphasis">
-      Please connect to your wallet to get started
+    <div className="my-[64px] flex items-center justify-center text-[16px] text-mediumEmphasis">
+      <div className="w-[250px] text-center md:w-full">Please connect to your wallet to get started</div>
     </div>
   ) : (
     <div className="block bg-[#0C0D20] md:hidden">
       <div className="px-[20px] pt-[36px] ">
-        <div className="text-[20px] font-[600] ">General Performance</div>
+        <div className="text-[20px] font-[600]">General Performance</div>
         {/* <div className="relative pt-[24px]">
           <Swiper
             spaceBetween={30}

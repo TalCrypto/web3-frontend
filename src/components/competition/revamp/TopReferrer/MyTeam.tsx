@@ -284,7 +284,7 @@ const MyTeam = (props: any) => {
               </div>
             ) : (
               <div className="flex h-full w-full items-center justify-center py-4 text-[15px] font-[400] text-mediumEmphasis lg:py-0">
-                List is empty, start sharing your referral link now!
+                <div className="px-[64px] pt-[10px] text-center md:p-0">List is empty, start sharing your referral link now!</div>
               </div>
             )}
           </div>
