@@ -10,6 +10,7 @@ import { useStore } from '@nanostores/react';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { formatBigInt } from '@/utils/bigInt';
+import { useRouter } from 'next/router';
 
 function Cell(props: any) {
   const { items, classNames } = props;
@@ -71,6 +72,8 @@ const itemShowReward = (item: any) =>
     : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
 
 const MyTeam = (props: any) => {
+  const router = useRouter();
+  const userInfo = useStore($userInfo);
   const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList, referralUserItem } = props;
 
   const teamRank = referralUserItem?.rank || 0;
@@ -123,7 +126,10 @@ const MyTeam = (props: any) => {
               <div className="ml-[12px] flex flex-col justify-between">
                 <div className="text-[12px] font-[400]">Team Lead</div>
                 <div className="mt-[8px] flex items-center">
-                  <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                  <div
+                    onClick={() => router.push(`/userprofile/${userInfo?.userAddress}`)}
+                    className="mr-[8px] cursor-pointer bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text
+                     text-[20px] font-[600] text-transparent">
                     {displayUsername}
                   </div>
                   <div className="rounded-[2px] bg-[#E06732] px-[4px] py-[2px] text-[8px] font-[800] ">YOU</div>
@@ -223,10 +229,16 @@ const MyTeam = (props: any) => {
                         : item.username;
 
                     return (
-                      <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                      <div
+                        key={item.userAddress}
+                        className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                         <div className="relative col-span-8 items-center lg:col-span-3">
                           <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                          <div className="truncate pr-[40px]">{username}</div>
+                          <div
+                            onClick={() => router.push(`/userprofile/${item.userAddress}`)}
+                            className="cursor-pointer truncate pr-[40px]">
+                            {username}
+                          </div>
                         </div>
                         {/* <div className="relative col-span-2">
                             {item.isEligible ? (
@@ -275,10 +287,6 @@ const MyTeam = (props: any) => {
                     );
                   })}
                 </div>
-                {/* <div className="mt-[16px] px-[36px] text-[12px] text-mediumEmphasis">
-                        Referees with at least <span className="font-[600] text-[#fff]">1 WETH</span> trading volume will be counted as
-                        eligible referees.
-                      </div> */}
               </div>
             ) : (
               <div className="flex h-full w-full items-center justify-center py-4 text-[15px] font-[400] text-mediumEmphasis lg:py-0">

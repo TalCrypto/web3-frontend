@@ -3,6 +3,7 @@ import { formatBigInt } from '@/utils/bigInt';
 import { useStore } from '@nanostores/react';
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 function Cell(props: any) {
   const { items, classNames } = props;
@@ -29,6 +30,7 @@ const itemShowReward = (item: any) =>
     : `${item?.usdtPrize}USDT + ${item?.pointPrize} Pts.`;
 
 const ReferreeModal = (props: any) => {
+  const router = useRouter();
   const { myRefererTeamList, isShowReferralModal, setIsShowReferralModal } = props;
   const userInfo = useStore($userInfo);
 
@@ -88,10 +90,12 @@ const ReferreeModal = (props: any) => {
                       : item.username;
 
                   return (
-                    <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                    <div key={item.userAddress} className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                       <div className={`relative col-span-3 flex items-center ${!isCurrentUser ? 'pr-[40px]' : 'pr-[70px]'}`}>
                         <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                        <div className="truncate">{displayUsername}</div>
+                        <div onClick={() => router.push(`/userprofile/${item.userAddress}`)} className="cursor-pointer truncate">
+                          {displayUsername}
+                        </div>
                         {isCurrentUser ? <div className="rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div> : null}
                       </div>
                       {/* <div className="relative col-span-2">

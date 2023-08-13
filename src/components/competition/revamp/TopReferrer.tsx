@@ -22,14 +22,13 @@ import { trimAddress, trimString } from '@/utils/string';
 import { formatBigInt } from '@/utils/bigInt';
 import { $userPoint, defaultUserPoint } from '@/stores/airdrop';
 import ShareModal from '@/components/airdrop/desktop/ShareModal';
-import { atom } from 'nanostores';
-import ReferralMobile from '@/components/airdrop/mobile/Referral';
 import ReferreeModal from '@/components/competition/revamp/TopReferrer/RefereeModal';
 import MyReferrersTeamMobile from '@/components/competition/revamp/TopReferrer/Mobile/MyReferrersTeamMobile';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
 import ContributionDetailsMobile from '@/components/competition/revamp/TopReferrer/Mobile/ContributionDetail';
 import { $isMobileScreen } from '@/stores/window';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
+import { useRouter } from 'next/router';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -39,10 +38,10 @@ import Rules from './TopReferrer/Rules';
 import MobileDrawer from './MobileDrawer';
 import MyTeam from './TopReferrer/MyTeam';
 import MyReferrersTeam from './TopReferrer/MyReferrersTeam';
-import { ContributionDetail } from './TopReferrer/ContributionDetail';
 import CountdownTimer from './CountdownTimer';
 
 const TopReferrer = () => {
+  const router = useRouter();
   const { address } = useAccount();
   const isConnected = useStore($userIsConnected);
   const userInfo = useStore($userInfo);
@@ -127,13 +126,21 @@ const TopReferrer = () => {
                 </defs>
               </svg>
 
-              <p className="overflow-hidden text-ellipsis bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">
+              <p
+                onClick={() => router.push(`/userprofile/${row.userAddress}`)}
+                className="cursor-pointer overflow-hidden text-ellipsis bg-gradient-to-r from-gradientBlue to-gradientPink bg-clip-text text-b2e text-transparent">
                 {row.username || trimAddress(row.userAddress)}
               </p>
             </div>
           );
         }
-        return <p className="overflow-hidden text-ellipsis text-highEmphasis">{row.username || trimAddress(row.userAddress)}</p>;
+        return (
+          <p
+            onClick={() => router.push(`/userprofile/${row.userAddress}`)}
+            className="cursor-pointer overflow-hidden text-ellipsis text-highEmphasis">
+            {row.username || trimAddress(row.userAddress)}
+          </p>
+        );
       }
     },
     {
@@ -255,7 +262,11 @@ const TopReferrer = () => {
         rank={pos}
         isYou={rank.userAddress?.toLowerCase() === userInfo?.userAddress.toLowerCase()}
         className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} min-w-[200px]`}
-        title={<p className={`mb-4 text-h5 ${nameColor}`}>{trimString(rank.username, 12) || trimAddress(rank.userAddress)}</p>}>
+        title={
+          <p onClick={() => router.push(`/userprofile/${rank.userAddress}`)} className={`mb-4 cursor-pointer text-h5 ${nameColor}`}>
+            {trimString(rank.username, 12) || trimAddress(rank.userAddress)}
+          </p>
+        }>
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Trading Volume</p>
         <div className="mb-3 flex space-x-1">
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />

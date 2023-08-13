@@ -5,9 +5,11 @@ import { $isShowContributionModal } from '@/stores/competition';
 import { $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import { formatBigInt } from '@/utils/bigInt';
+import { useRouter } from 'next/router';
 import { ContributionModal } from './ContributionDetail';
 
 const MyReferrersTeam = (props: any) => {
+  const router = useRouter();
   const { myRefererUserItem, myRefererTeamList, setIsShowReferralModal } = props;
 
   const userInfo = useStore($userInfo);
@@ -62,7 +64,8 @@ const MyReferrersTeam = (props: any) => {
                 <div className="ml-[12px] flex flex-col justify-between">
                   <div className="text-[12px] font-[400]">My Team Lead</div>
                   <div
-                    className="mt-[8px] truncate bg-gradient-to-b from-[#FFC977] to-[#fff] 
+                    onClick={() => router.push(`/userprofile/${myRefererUserItem?.userAddress}`)}
+                    className="mt-[8px] cursor-pointer truncate bg-gradient-to-b from-[#FFC977] to-[#fff] 
                   bg-clip-text text-[20px] font-[600] text-transparent">
                     {displayUsername}
                   </div>

@@ -4,8 +4,10 @@ import React from 'react';
 import Image from 'next/image';
 import { useStore } from '@nanostores/react';
 import { $userInfo } from '@/stores/user';
+import { useRouter } from 'next/router';
 
 const MyReferrersTeamMobile = (props: any) => {
+  const router = useRouter();
   const { myRefererTeamList, myRefererUserItem } = props;
 
   const userInfo = useStore($userInfo);
@@ -62,6 +64,7 @@ const MyReferrersTeamMobile = (props: any) => {
                 <div className="ml-[12px] flex flex-col justify-between">
                   <div className="text-[12px] font-[400]">My Team Lead</div>
                   <div
+                    onClick={() => router.push(`/userprofile/${myRefererUserItem?.userAddress}`)}
                     className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-b1e text-transparent 
                 lg:text-[20px] lg:font-[600]">
                     {displayUsername}

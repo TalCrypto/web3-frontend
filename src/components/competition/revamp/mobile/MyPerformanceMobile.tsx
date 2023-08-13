@@ -3,7 +3,6 @@ import React, { FC, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { $userInfo, $userIsConnected } from '@/stores/user';
 import { useStore } from '@nanostores/react';
-import MobileTooltip from '@/components/common/mobile/Tooltip';
 import ContributionDetailsModal from '@/components/competition/revamp/mobile/ContributionDetailsModal';
 import { $activeTab } from '@/stores/competition';
 import ShareMobileModal from '@/components/airdrop/mobile/ShareMobileModal';
@@ -25,6 +24,7 @@ import {
   $myRefererTeamList
 } from '@/stores/revampCompetition';
 import { formatBigInt } from '@/utils/bigInt';
+import { useRouter } from 'next/router';
 
 const itemUsername = (item: any) =>
   item.username === ''
@@ -144,6 +144,8 @@ const volList = [
 ];
 
 const MyReferralTeam = (props: any) => {
+  const router = useRouter();
+  const userInfo = useStore($userInfo);
   const { displayUsername, setIsShowShareModal, showSnackBar, referralUserItem } = props;
 
   const teamRank = referralUserItem?.rank;
@@ -186,7 +188,9 @@ const MyReferralTeam = (props: any) => {
             <div className="ml-[12px] flex flex-col justify-between">
               <div className="text-[12px] font-[400]">Team Lead</div>
               <div className="mt-[8px] flex items-center">
-                <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                <div
+                  onClick={() => router.push(`/userprofile/${userInfo?.userAddress}`)}
+                  className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                   {displayUsername}
                 </div>
                 <div className="rounded-[2px] bg-[#E06732] px-[4px] py-[2px] text-[8px] font-[800] ">YOU</div>
@@ -257,6 +261,7 @@ const MyReferralTeam = (props: any) => {
 };
 
 const MyRefereesList = (props: any) => {
+  const router = useRouter();
   const { referralTeamList } = props;
 
   const isListEmpty = referralTeamList?.length === 0;
@@ -301,13 +306,16 @@ const MyRefereesList = (props: any) => {
                 const showUsername = itemUsername(item);
                 return (
                   <div
+                    key={item.userAddress}
                     className={`h-full px-[20px] py-[16px] text-[14px] 
             odd:bg-[#202249]`}>
                     <div className="flex h-[48px] items-center justify-between">
                       <div className="flex h-full items-center">
                         <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
                         <div className="flex flex-col justify-between">
-                          <div className="overflow-auto font-[600]">{showUsername}</div>
+                          <div onClick={() => router.push(`/userprofile/${item.userAddress}`)} className="overflow-auto font-[600]">
+                            {showUsername}
+                          </div>
                           {/* <div className="mt-[6px] flex items-center">
                       {item.isEligible ? (
                         <Image
@@ -359,6 +367,7 @@ const MyRefereesList = (props: any) => {
 };
 
 const ReferralTeamJoined = (props: any) => {
+  const router = useRouter();
   const { setIsShowContributionModal, myRefererUserItem, myRefererTeamList } = props;
 
   const userInfo = useStore($userInfo);
@@ -395,7 +404,9 @@ const ReferralTeamJoined = (props: any) => {
               <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
               <div className="ml-[12px] flex flex-col justify-between">
                 <div className="text-[12px] font-[400]">My Team Lead </div>
-                <div className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                <div
+                  onClick={() => router.push(`/userprofile/${myRefererUserItem?.userAddress}`)}
+                  className="mt-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                   {displayUsername}
                 </div>
               </div>

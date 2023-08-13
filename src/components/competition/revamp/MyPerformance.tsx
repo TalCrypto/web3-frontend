@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React, { FC, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { $userIsConnected, $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
@@ -21,7 +21,7 @@ import {
   $myRefererTeamList
 } from '@/stores/revampCompetition';
 import { formatBigInt } from '@/utils/bigInt';
-import { PriceWithIcon } from '@/components/common/PriceWithIcon';
+import { useRouter } from 'next/router';
 
 const $isShowReferralModal = atom(false);
 
@@ -179,6 +179,7 @@ function Cell(props: any) {
 }
 
 const ReferreeModal = (props: any) => {
+  const router = useRouter();
   const { myRefererTeamList } = props;
   const isShowReferralModal = useStore($isShowReferralModal);
   const userInfo = useStore($userInfo);
@@ -239,10 +240,12 @@ const ReferreeModal = (props: any) => {
                       : item.username;
 
                   return (
-                    <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                    <div key={item.userAddress} className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                       <div className={`relative col-span-3 flex items-center ${!isCurrentUser ? 'pr-[40px]' : 'pr-[70px]'}`}>
                         <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                        <div className="truncate">{displayUsername}</div>
+                        <div onClick={() => router.push(`/userprofile/${item.userAddress}`)} className="cursor-pointer truncate">
+                          {displayUsername}
+                        </div>
                         {isCurrentUser ? <div className="rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div> : null}
                       </div>
                       {/* <div className="relative col-span-2">
@@ -295,6 +298,8 @@ const ReferreeModal = (props: any) => {
 };
 
 const MyReferralTeam = (props: any) => {
+  const router = useRouter();
+  const userInfo = useStore($userInfo);
   const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList, referralUserItem } = props;
 
   const teamRank = referralUserItem?.rank;
@@ -345,7 +350,9 @@ const MyReferralTeam = (props: any) => {
               <div className="ml-[12px] flex flex-col justify-between">
                 <div className="text-[12px] font-[400]">Team Lead</div>
                 <div className="mt-[8px] flex items-center">
-                  <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                  <div
+                    onClick={() => router.push(`/userprofile/${userInfo?.userAddress}`)}
+                    className="mr-[8px] cursor-pointer bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                     {displayUsername}
                   </div>
                   <div className="rounded-[2px] bg-[#E06732] px-[4px] py-[2px] text-[8px] font-[800] ">YOU</div>
@@ -439,10 +446,16 @@ const MyReferralTeam = (props: any) => {
                         : item.username;
 
                     return (
-                      <div className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                      <div
+                        key={item.userAddress}
+                        className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                         <div className="relative col-span-3 items-center">
                           <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                          <div className="truncate pr-[40px]">{username}</div>
+                          <div
+                            onClick={() => router.push(`/userprofile/${item.userAddress}`)}
+                            className="cursor-pointer truncate pr-[40px]">
+                            {username}
+                          </div>
                         </div>
                         {/* <div className="relative col-span-2">
                             {item.isEligible ? (
@@ -500,6 +513,7 @@ const MyReferralTeam = (props: any) => {
 };
 
 const ReferrerTeamJoined = (props: any) => {
+  const router = useRouter();
   const { myRefererUserItem, myRefererTeamList } = props;
 
   const userInfo = useStore($userInfo);
@@ -553,7 +567,9 @@ const ReferrerTeamJoined = (props: any) => {
                 <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
                 <div className="ml-[12px] flex flex-col justify-between">
                   <div className="text-[12px] font-[400]">My Team Lead</div>
-                  <div className="mt-[8px] truncate bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+                  <div
+                    onClick={() => router.push(`/userprofile/${myRefererUserItem?.userAddress}`)}
+                    className="mt-[8px] cursor-pointer truncate bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
                     {displayUsername}
                   </div>
                 </div>

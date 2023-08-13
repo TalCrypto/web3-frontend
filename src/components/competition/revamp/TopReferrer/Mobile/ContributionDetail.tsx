@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import MobileTooltip from '@/components/common/mobile/Tooltip';
 import { useStore } from '@nanostores/react';
 import { $userInfo } from '@/stores/user';
 import { formatBigInt } from '@/utils/bigInt';
+import { useRouter } from 'next/router';
 
 const ContributionDetailsMobile = (props: any) => {
+  const router = useRouter();
   const { myRefererTeamList, myRefererUserItem } = props;
   const [displayCount, setDisplayCount] = useState(8);
 
@@ -31,7 +32,9 @@ const ContributionDetailsMobile = (props: any) => {
               height={24}
               className="mr-[6px] cursor-pointer md:hidden"
             />
-            <div className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
+            <div
+              onClick={() => router.push(`/userprofile/${myRefererUserItem?.userAddress}`)}
+              className="mr-[8px] bg-gradient-to-b from-[#FFC977] to-[#fff] bg-clip-text text-[20px] font-[600] text-transparent">
               {`${displayUsername}'s Team`}
             </div>
           </div>
@@ -71,12 +74,12 @@ const ContributionDetailsMobile = (props: any) => {
               const vol = formatBigInt(item.tradedVolume).toFixed(2);
 
               return (
-                <div className="px-[20px] py-[16px] text-[14px] odd:bg-[#202249]">
+                <div key={item.userAddress} className="px-[20px] py-[16px] text-[14px] odd:bg-[#202249]">
                   <div className="flex h-[48px] items-center justify-between">
                     <div className="flex h-full items-center">
                       <div className="mr-[6px] h-full w-[3px] rounded-[30px] bg-[#2574FB]" />
                       <div className="flex flex-col justify-between">
-                        <div className="flex items-center font-[600]">
+                        <div onClick={() => router.push(`/userprofile/${item.userAddress}`)} className="flex items-center font-[600]">
                           {showUsername}
                           {isCurrentUser ? (
                             <div className="ml-[6px] rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div>
