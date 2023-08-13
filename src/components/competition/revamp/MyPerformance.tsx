@@ -436,7 +436,7 @@ const MyReferralTeam = (props: any) => {
                     classNames={['col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]', 'col-span-3 text-[12px]']}
                   />
                 </div>
-                <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
+                <div className="scrollable mt-[24px] max-h-[360px] overflow-y-scroll">
                   {referralTeamList?.map((item: any) => {
                     const username =
                       item.username === ''
