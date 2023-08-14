@@ -489,7 +489,7 @@ export const getOracleGraphDataAfter = async (ammAddr: string, timestamp: number
     // GraphDataTarget['ORACLE']
   );
 
-  const graphDatas = fetchGraphDatas?.data?.graphDatas;
+  const graphDatas = fetchGraphDatas?.data?.oracleGraphDatas;
   if (!(graphDatas?.length > 0)) return [];
 
   const result = graphDatas.map((data: any) => ({
