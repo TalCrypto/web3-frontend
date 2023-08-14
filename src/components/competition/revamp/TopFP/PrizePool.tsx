@@ -5,20 +5,19 @@ import Image from 'next/image';
 import React, { FC, PropsWithChildren } from 'react';
 import CountdownTimer from '../CountdownTimer';
 
-const radialBgClassName =
-  'from-[rgba(78,85,121,0.6)] to-darkBlue to-100% bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] lg:bg-[radial-gradient(farthest-side_at_center,_var(--tw-gradient-stops))] lg:to-transparent lg:to-85%';
+const radialBgClassName = 'from-[rgba(93,75,122,0.8)] to-darkBlue to-90% bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))]';
 
 const PrizePool: FC<PropsWithChildren> = () => (
   <div className="justify-center md:flex md:flex-col">
-    <div className="relative mb-24 hidden md:block">
+    <div className="relative mb-24 hidden h-[500px] overflow-clip md:block">
       <Image
-        className="pointer-events-none scale-[1.4] object-cover"
+        className="pointer-events-none scale-[1.2] object-cover"
         src="/images/components/competition/revamp/prize_topFP_desktop.png"
-        width={937}
-        height={345}
+        width={1337}
+        height={664}
         alt=""
       />
-      <div className="absolute top-[64px] flex w-full items-center justify-center lg:top-[76px] xl:top-[82px]">
+      <div className="absolute top-[90px] flex w-full items-center justify-center xl:top-[100px]">
         <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
         <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-h5 font-bold text-transparent">
           Total Prize Pool for Top FP
@@ -27,15 +26,15 @@ const PrizePool: FC<PropsWithChildren> = () => (
     </div>
 
     <div className="relative overflow-clip md:hidden">
-      <div className="flex flex-col items-center">
+      <div className={`flex h-[400px] flex-col items-center sm:h-[500px] ${radialBgClassName}`}>
         <Image
-          className="h-[400px] sm:scale-[1.3]"
+          className="absolute top-[95px] xs:top-[90px] sm:top-[80px]"
           src="/images/components/competition/revamp/prize_topFP_mobile.png"
           width={600}
           height={300}
           alt=""
         />
-        <div className="absolute top-[101px] flex w-full items-center justify-center sm:top-[75px]">
+        <div className="absolute top-[100px] flex w-full items-center justify-center">
           <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
           <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-b2e text-transparent">Total Prize Pool for Top FP</p>
         </div>

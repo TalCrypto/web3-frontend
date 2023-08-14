@@ -1,3 +1,7 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 import React, { FC, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
@@ -227,7 +231,7 @@ const MyReferralTeam = (props: any) => {
               <div className="mt-[24px] flex items-center justify-between">
                 <button
                   className="mr-[12px] flex items-center justify-center 
-                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
+                  rounded-[4px] bg-primaryBlue px-[21px] py-[10px] text-[15px] font-[600] hover:bg-primaryBlueHover"
                   onClick={() => setIsShowShareModal(true)}>
                   <Image
                     src="/images/components/competition/revamp/my-performance/share.svg"
@@ -240,7 +244,7 @@ const MyReferralTeam = (props: any) => {
                 </button>
                 <button
                   className="mr-[12px] flex items-center justify-center rounded-[4px] 
-                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
+                  bg-primaryBlue px-[21px] py-[10px] text-[15px] font-[600] hover:bg-primaryBlueHover"
                   onClick={showSnackBar}>
                   <Image
                     src="/images/components/competition/revamp/my-performance/copy.svg"

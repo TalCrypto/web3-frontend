@@ -354,13 +354,13 @@ const TopReferrer = () => {
           <div className="flex space-x-[12px]">
             <button
               className="flex items-center justify-center 
-                  rounded-[4px] bg-[#2574FB] px-3 py-2 text-[15px] font-[600]"
+                  rounded-[4px] bg-primaryBlue px-3 py-2 text-[15px] font-[600] hover:bg-primaryBlueHover"
               onClick={() => setIsShowShareModal(true)}>
               <Image src="/images/components/competition/revamp/my-performance/share.svg" width={20} height={20} alt="" />
             </button>
             <button
               className="flex items-center justify-center rounded-[4px] 
-                  bg-[#2574FB] px-3 py-2 text-[15px] font-[600]"
+                  bg-primaryBlue px-3 py-2 text-[15px] font-[600] hover:bg-primaryBlueHover"
               onClick={copyUserUrl}>
               <Image src="/images/components/competition/revamp/my-performance/copy.svg" width={20} height={20} alt="" />
             </button>
