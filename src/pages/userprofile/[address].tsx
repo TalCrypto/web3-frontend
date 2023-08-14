@@ -446,7 +446,7 @@ const AddressPage: NextPage = () => {
                 </ProfileHeaderCard>
 
                 {/* trading competition */}
-                <ProfileHeaderCard isEnded>
+                <ProfileHeaderCard>
                   <p className="z-[1] mb-[36px] flex-1 text-center text-b1e text-[#FFD392]">Trading Competition</p>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Realized P/L</p>
                   <div className="mb-6 flex items-center space-x-[6px]">
