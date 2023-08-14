@@ -216,7 +216,7 @@ const MyReferralTeam = (props: any) => {
         <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
           <div
             className="flex items-center rounded-t-[12px] border-b-[1px] border-[#2E4371] bg-[#3A1A18]
-            bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#8C6E4B] to-50% p-[36px]">
+            bg-[radial-gradient(ellipse_at_50%_-10%,_var(--tw-gradient-stops))] from-[#8C6E4B] to-70% p-[36px]">
             <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
             <div className="ml-[12px] flex flex-col justify-between">
               <div className="text-[12px] font-[400]">Team Lead</div>
