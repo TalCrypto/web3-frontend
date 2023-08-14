@@ -41,15 +41,15 @@ const Rules = () => (
     <ul className="mb-16 space-y-6 text-b1">
       <li>
         <p>
-          In the Top Referrer competition, users are competing on the total trading volume of your referees during the period. Winners will
-          share a prize pool with USDT and Tribe3 points!
+          In the Top Referrer competition, users are competing on the total trading volume of the referees during the period. Winner team,
+          i.e. Referrer & Referees, will share a prize pool with USDT and Tribe3 points!
         </p>
       </li>
       <li>
         <p>
           <span className="text-b1e">Competing Metrics: </span>
           <br />
-          Referees’ trading volume
+          Total Referees’ Trading Volume
         </p>
       </li>
       <li>
@@ -62,13 +62,13 @@ const Rules = () => (
       <li>
         <p>
           <span className="text-b1e">Rules:</span>
-          <br /> Rank from highest Referees’ trading volume to lowest Referees’ trading volume. Only users who never traded with Tribe3 can
-          use a referral link
+          <br /> Rank from highest total referees’ trading volume to lowest
         </p>
       </li>
       <li>
         <p>
-          <span className="text-b1e">Period:</span> <br />1 Month (15 Aug 2023 - 12 Sep 2023)
+          <span className="text-b1e">Period:</span> <br />
+          15 Aug 2023 - 12 Sep 2023
         </p>
       </li>
     </ul>

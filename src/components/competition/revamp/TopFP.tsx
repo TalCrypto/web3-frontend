@@ -115,14 +115,14 @@ const TopFP = () => {
             <Tooltip
               content={
                 <div className="max-w-[200px] text-b3">
-                  <p>Funding payment received through holding positions</p>
+                  <p>Net Funding Payment during the period</p>
                 </div>
               }>
               <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
             </Tooltip>
           </div>
           <div className="block lg:hidden">
-            <MobileTooltip content={<p>Funding payment received through holding positions</p>}>
+            <MobileTooltip content={<p>Net Funding Payment during the period</p>}>
               <Image src="/images/components/airdrop/more-info.svg" width={12} height={12} alt="" />
             </MobileTooltip>
           </div>
@@ -232,7 +232,7 @@ const TopFP = () => {
         <FloatingWidget.Item>
           <div className="mb-4 flex space-x-1">
             {/* <Image src="/images/components/competition/revamp/leaderboard.svg" width={16} height={16} alt="" /> */}
-            <p className="text-h5 text-highEmphasis">Top FP</p>
+            <p className="text-h5 text-highEmphasis">Top FP Receiver</p>
           </div>
           <Image src="/images/components/competition/revamp/timer.svg" className="mb-1" width={16} height={16} alt="" />
           <p className="text-b3 text-highEmphasis">

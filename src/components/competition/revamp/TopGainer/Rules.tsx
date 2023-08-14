@@ -72,7 +72,8 @@ const Rules = () => (
       <li>
         <p>
           <span className="text-b1e">Period:</span>
-          <br />1 Month (15 Aug 2023 - 12 Sep 2023)
+          <br />
+          15 Aug 2023 - 12 Sep 2023
         </p>
       </li>
     </ul>

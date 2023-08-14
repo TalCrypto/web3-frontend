@@ -40,14 +40,14 @@ const Rules = () => (
     <ul className="mb-16 space-y-6 text-b1">
       <li>
         <p>
-          In the Top FP Receiver competition, users are competing on the Realized P/L during the period. Winners will share a prize pool
-          with USDT and Tribe3 points!
+          In the Top FP Receiver competition, users are competing on the net funding payment during the period. Winners will share a prize
+          pool with USDT and Tribe3 points!
         </p>
       </li>
       <li>
         <p>
           <span className="text-b1e">Competing Metrics: </span> <br />
-          Total funding payment
+          Net Funding Payment
         </p>
       </li>
       <li>
@@ -58,12 +58,12 @@ const Rules = () => (
       </li>
       <li>
         <p>
-          <span className="text-b1e">Rules:</span> <br /> Rank from highest Funding payment to lowest Funding payment
+          <span className="text-b1e">Rules:</span> <br /> Rank from highest net funding payment to lowest net funding payment
         </p>
       </li>
       <li>
         <p>
-          <span className="text-b1e">Period:</span> <br /> 1 Month (15 Aug 2023 - 12 Sep 2023)
+          <span className="text-b1e">Period:</span> <br /> 15 Aug 2023 - 12 Sep 2023
         </p>
       </li>
     </ul>
