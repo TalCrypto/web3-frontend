@@ -53,9 +53,12 @@ export const apiConnection = {
       case 3:
         timeRelatedKey = '6m';
         break;
-      // case 3:
-      //   timeRelatedKey = 'competition';
-      //   break;
+      case 4:
+        timeRelatedKey = '6m';
+        // todo:
+        // handle index 4 for competition
+        // timeRelatedKey = 'competition';
+        break;
       default:
         timeRelatedKey = '1w';
     }

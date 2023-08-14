@@ -35,8 +35,8 @@ function TrendContent() {
     { label: '1W', ref: useRef() },
     { label: '1M', ref: useRef() },
     { label: '2M', ref: useRef() },
-    { label: '6M', ref: useRef() }
-    // { label: 'Competition', ref: useRef() }
+    { label: '6M', ref: useRef() },
+    { label: 'Competition', ref: useRef() }
   ];
 
   const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
@@ -150,23 +150,21 @@ function TrendContent() {
               {contentArray.map((item: any, index: any) => (
                 <div
                   // ${index === 3 ? 'competition' : 'mr-3'}
-                  // ${selectedTimeIndex === index ? 'text-highEmphasis' : index === 3 ? 'text-competition' : 'text-mediumEmphasis'}
                   className={`item-overview mr-3 cursor-pointer text-[12px]
-                  ${index === 3 ? 'mr-6' : 'mr-3'}
+                  ${index === contentArray.length - 1 ? 'mr-6' : 'mr-3'}
                   ${index === selectedTimeIndex ? 'active' : ''}
-                    ${selectedTimeIndex === index ? 'text-highEmphasis' : 'text-mediumEmphasis'}
+                  ${selectedTimeIndex === index ? 'text-highEmphasis' : index === 4 ? 'text-competition' : 'text-mediumEmphasis'}
                   `}
                   key={`time_${item.label}`}
                   onClick={() => clickSelectedTimeIndex(index)}
                   ref={item.ref}>
-                  {item.label}
-                  {/* {index === 3 ? (
+                  {index === 4 ? (
                     <Tooltip direction="top" content="Since Trading Competition" className="!text-highEmphasis">
-                      <div className={`${index === 3 ? 'glow-yellow' : 'mr-3'} cursor-pointe`}>{item.label}</div>
+                      <div className={`${index === 4 ? 'glow-yellow' : 'mr-3'} cursor-pointer`}>{item.label}</div>
                     </Tooltip>
                   ) : (
                     item.label
-                  )} */}
+                  )}
                 </div>
               ))}
             </div>

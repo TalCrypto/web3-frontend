@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $userPositionInfos } from '@/stores/user';
 import { atom, computed } from 'nanostores';
@@ -37,6 +38,6 @@ export const $psTimeDescription: any = {
   0: '(1 Week)',
   1: '(1 Month)',
   2: '(2 Months)',
-  3: '(6 Months)'
-  // 3: '(Since Trading Competition)'
+  3: '(6 Months)',
+  4: '(Since Trading Competition)'
 };
