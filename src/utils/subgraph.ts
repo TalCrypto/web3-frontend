@@ -52,7 +52,7 @@ const fetchMethod = async (_method: string, _query: string, target: GraphDataTar
   switch (target) {
     case GraphDataTarget['ORACLE']:
       link = subgraphOracleUrl;
-      backupLink = subgraphBackupUrl;
+      backupLink = subgraphOracleUrl;
       break;
     default:
       link = subgraphUrl;
@@ -411,8 +411,8 @@ export const getLatestOraclePriceBefore = async (ammAddr: string, timestamp: num
         timestamp
         price
       }
-    }`
-    // GraphDataTarget['ORACLE']
+    }`,
+    GraphDataTarget['ORACLE']
   );
 
   const positions = fetchPositions?.data?.prices;
@@ -468,7 +468,7 @@ export const getOracleGraphDataAfter = async (ammAddr: string, timestamp: number
   const fetchGraphDatas = await fetchMethod(
     'POST',
     `{ 
-      oracleGraphDatas(
+      graphDatas(
         first: 1000,
         where:{
           nftAddress: "${ammAddr}",
@@ -485,8 +485,8 @@ export const getOracleGraphDataAfter = async (ammAddr: string, timestamp: number
         open
         close
       }
-    }`
-    // GraphDataTarget['ORACLE']
+    }`,
+    GraphDataTarget['ORACLE']
   );
 
   const graphDatas = fetchGraphDatas?.data?.graphDatas;
