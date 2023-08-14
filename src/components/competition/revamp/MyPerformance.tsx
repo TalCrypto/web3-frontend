@@ -691,7 +691,7 @@ const MyPerformance = () => {
     setIsShowShareModal(false);
   };
 
-  const shareToCopyText = () => `📢 Use my referral link to enjoy extra Tribe3 points!
+  const shareToCopyText = () => `📢 Join me via the referral link to win the referral competition & get extra Tribe3 points!
   🎉 Long & short Blue-chips NFTs with leverage at any amount on ${referralCode?.toUpperCase()}`;
 
   const shareToTwitter = () => {
@@ -699,7 +699,7 @@ const MyPerformance = () => {
     setIsShowShareModal(false);
     const encodeItem = `🎉 Long & short Blue-chips NFTs with leverage at any amount on
       https://app.tribe3.xyz/airdrop/refer?ref=${referralCode?.toUpperCase()}
-      \n📢 Use my referral link to enjoy extra Tribe3 points!
+      \n📢 Join me via the referral link to win the referral competition & get extra Tribe3 points!
       \n@Tribe3Official`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(encodeItem)}`);
   };
@@ -772,6 +772,7 @@ const MyPerformance = () => {
                 copyCode={copyCode}
                 shareToTwitter={shareToTwitter}
                 shareToCopyText={shareToCopyText}
+                desc="📢 Join me via the referral link to win the referral competition & get extra Tribe3 points!"
               />
             ) : null}
           </div>

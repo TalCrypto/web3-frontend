@@ -630,7 +630,14 @@ const MyPerformanceMobile = () => {
         myRefererTeamList={myRefererTeamList}
         myRefererUserItem={myRefererUserItem}
       />
-      {isShowShareModal ? <ShareMobileModal setIsShow={setIsShowShareModal} referralCode={referralCode} copyCode={copyCode} /> : null}
+      {isShowShareModal ? (
+        <ShareMobileModal
+          setIsShow={setIsShowShareModal}
+          referralCode={referralCode}
+          copyCode={copyCode}
+          desc="📢 Join me via the referral link to win the referral competition & get extra Tribe3 points!"
+        />
+      ) : null}
       <div className="snackbar" id="snackbar">
         Referral link copied to clipboard!
       </div>
