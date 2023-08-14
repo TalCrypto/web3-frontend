@@ -31,7 +31,14 @@ function TopMenu() {
     {
       name: 'Airdrop',
       path: '/airdrop',
-      other: '',
+      other: (
+        <div
+          className="absolute right-0 top-0 mr-[-12px] mt-[8px] rounded-br-[6px] rounded-tl-[6px]
+        bg-gradient-to-b from-[#E8900C] to-[#DA3B19]
+        px-[3px] py-[2px] text-[8px] font-bold italic leading-[8px] text-[#fff]">
+          <span className="end">On-going</span>
+        </div>
+      ),
       child: [],
       textClassName: ''
     },

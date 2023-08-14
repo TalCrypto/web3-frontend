@@ -208,6 +208,12 @@ const MobileMenu = (props: any) => {
                     ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
                   `}>
                     Airdrop
+                    <div
+                      className="absolute right-0 top-0 mr-[-6px] mt-[-6px] rounded-br-[6px] rounded-tl-[6px] 
+                      bg-gradient-to-b from-[#E8900C] to-[#DA3B19]
+                    px-[3px] py-[2px] text-[6px] font-bold italic leading-[6px] text-[#fff]">
+                      <span className="end">On-going</span>
+                    </div>
                   </span>
                 </div>
               </div>
