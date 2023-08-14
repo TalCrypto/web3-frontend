@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { formatBigInt } from '@/utils/bigInt';
 import { useRouter } from 'next/router';
 import { $isMobileScreen, $screenWidth } from '@/stores/window';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 function Cell(props: any) {
   const { items, classNames } = props;
@@ -163,10 +164,9 @@ const MyTeam = (props: any) => {
             <div className="flex items-center justify-center px-[36px] py-[24px]">
               <div>
                 <div className="text-center text-[15px] font-[600]">📢 Invitation to my team (Referral Link)</div>
-                <div className="mt-[24px] flex items-center justify-between">
-                  <button
-                    className="mr-[12px] flex items-center justify-center 
-                  rounded-[4px] bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
+                <div className="mt-[24px] flex items-center justify-between space-x-4">
+                  <PrimaryButton
+                    className="rounded-2 min-w-[72px] px-[20px] py-[12px] text-[14px] font-semibold"
                     onClick={() => setIsShowShareModal(true)}>
                     <Image
                       src="/images/components/competition/revamp/my-performance/share.svg"
@@ -176,11 +176,8 @@ const MyTeam = (props: any) => {
                       className="mr-[8px]"
                     />
                     Share Link
-                  </button>
-                  <button
-                    className="mr-[12px] flex items-center justify-center rounded-[4px] 
-                  bg-[#2574FB] px-[21px] py-[10px] text-[15px] font-[600]"
-                    onClick={copyTextFunc}>
+                  </PrimaryButton>
+                  <PrimaryButton className="rounded-2 min-w-[72px] px-[20px] py-[12px] text-[14px] font-semibold" onClick={copyTextFunc}>
                     <Image
                       src="/images/components/competition/revamp/my-performance/copy.svg"
                       width={16}
@@ -189,7 +186,7 @@ const MyTeam = (props: any) => {
                       className="mr-[8px]"
                     />
                     Copy Link
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             </div>
