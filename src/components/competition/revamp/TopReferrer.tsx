@@ -146,7 +146,7 @@ const TopReferrer = () => {
       }
     },
     {
-      label: 'No. of Referee',
+      label: 'No. of Member',
       className: 'hidden md:block basis-1/3 lg:basis-1/6',
       render(row) {
         return <p className="text-b2e text-highEmphasis">{row.refereeCount}</p>;
@@ -274,7 +274,7 @@ const TopReferrer = () => {
           <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
           <p className="text-b2e">{val.toFixed(2)}</p>
         </div>
-        <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Referee</p>
+        <p className="mb-[6px] text-b3 text-mediumEmphasis">No. of Member</p>
         <p className="text-b2e">{rank.refereeCount}</p>
         <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
         <p className="mb-[6px] text-b3 text-mediumEmphasis">Team Prize</p>
