@@ -30,7 +30,7 @@ const MyReferrersTeam = (props: any) => {
 
   const showTeamReward =
     teamPoint === 0 && teamUsdt === 0
-      ? '-'
+      ? '0 Pts'
       : teamPoint === 0 && teamUsdt > 0
       ? `${teamUsdt}USDT`
       : teamUsdt === 0 && teamPoint > 0
@@ -39,7 +39,7 @@ const MyReferrersTeam = (props: any) => {
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
-      ? '-'
+      ? '0 Pts'
       : personalPoint === 0 && personalUsdt > 0
       ? `${personalUsdt}USDT`
       : personalUsdt === 0 && personalPoint > 0

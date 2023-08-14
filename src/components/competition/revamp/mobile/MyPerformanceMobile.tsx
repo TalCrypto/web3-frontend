@@ -35,7 +35,7 @@ const itemUsername = (item: any) =>
 
 const itemReward = (item: any) =>
   item?.pointPrize === 0 && item?.usdtPrize === 0
-    ? '-'
+    ? '0 Pts'
     : item?.pointPrize === 0 && item?.usdtPrize > 0
     ? `${item?.usdtPrize}USDT`
     : item?.usdtPrize === 0 && item?.pointPrize > 0
@@ -157,7 +157,7 @@ const MyReferralTeam = (props: any) => {
 
   const showTeamReward =
     teamPoint === 0 && teamUsdt === 0
-      ? '-'
+      ? '0 Pts'
       : teamPoint === 0 && teamUsdt > 0
       ? `${teamUsdt}USDT`
       : teamUsdt === 0 && teamPoint > 0
@@ -166,7 +166,7 @@ const MyReferralTeam = (props: any) => {
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
-      ? '-'
+      ? '0 Pts'
       : personalPoint === 0 && personalUsdt > 0
       ? `${personalUsdt}USDT`
       : personalUsdt === 0 && personalPoint > 0
@@ -385,7 +385,7 @@ const ReferralTeamJoined = (props: any) => {
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
-      ? '-'
+      ? '0 Pts'
       : personalPoint === 0 && personalUsdt > 0
       ? `${personalUsdt}USDT`
       : personalUsdt === 0 && personalPoint > 0
@@ -544,7 +544,7 @@ const MyPerformanceMobile = () => {
           isSide
         />
         <PerformanceTag
-          title="FP"
+          title="Top FP Receiver"
           type={2}
           rank={topFundingPaymentUserItem?.rank}
           val={formatBigInt(topFundingPaymentUserItem?.fundingPayment || '0')}

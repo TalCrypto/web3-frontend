@@ -22,7 +22,7 @@ function Cell(props: any) {
 
 const itemShowReward = (item: any) =>
   item?.pointPrize === 0 && item?.usdtPrize === 0
-    ? '-'
+    ? '0 Pts'
     : item?.pointPrize === 0 && item?.usdtPrize > 0
     ? `${item?.usdtPrize}USDT`
     : item?.usdtPrize === 0 && item?.pointPrize > 0
