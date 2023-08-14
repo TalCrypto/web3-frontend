@@ -77,18 +77,18 @@ const MyReferrersTeam = (props: any) => {
                 <div className="flex justify-between">
                   <div className="flex flex-col items-center justify-between text-center">
                     <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-                    <div className="mt-[6px] text-[16px] font-[600]">{rank}</div>
+                    <div className="mt-[6px] text-[16px] font-[600]">{rank === 0 ? '-' : rank}</div>
                   </div>
                   <div className="flex flex-col items-center justify-between text-center">
                     <div className="text-[12px] font-[400] text-[#FFD392]">Team Trading Volume</div>
                     <div className="mt-[6px] flex items-center justify-center text-[16px] font-[600]">
                       <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                      {formatBigInt(volume).toFixed(2)}
+                      {rank === '0' ? '-' : formatBigInt(volume).toFixed(2)}
                     </div>
                   </div>
                   <div className="flex flex-col items-center justify-between text-center">
                     <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-                    <div className="mt-[6px] text-[15px] font-[600]">{showTeamReward}</div>
+                    <div className="mt-[6px] text-[15px] font-[600]">{rank === '0' ? '-' : showTeamReward}</div>
                   </div>
                 </div>
               </div>

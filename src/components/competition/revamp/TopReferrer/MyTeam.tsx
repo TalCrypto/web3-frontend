@@ -136,19 +136,19 @@ const MyTeam = (props: any) => {
             </div>
             <Divider />
             <div className="flex items-stretch justify-between px-[36px] py-[24px]">
-              <div className="flex flex-col items-center justify-between space-y-[6px] text-center">
+              <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-                <div className="text-[15px] font-[600]">{teamRank}</div>
+                <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : teamRank}</div>
               </div>
-              <div className="flex flex-col items-center justify-between space-y-[6px] text-center">
+              <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-                <div className="text-[15px] font-[600]">{showTeamReward}</div>
+                <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : showTeamReward}</div>
               </div>
-              <div className="flex flex-col items-center space-y-[6px] text-center">
+              <div className="flex flex-col items-center">
                 <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trading Volume</div>
                 <div className="mt-[6px] flex items-center text-[15px] font-[600]">
                   <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                  {formatBigInt(teamVol).toFixed(2)}
+                  {teamRank === '0' ? '-' : formatBigInt(teamVol).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -157,7 +157,7 @@ const MyTeam = (props: any) => {
               <div className="text-center">
                 <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
                 <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(40% of Team Reward)</div>
-                <div className="mt-[12px] text-[20px] font-[600]">{showPersonalReward}</div>
+                <div className="mt-[12px] text-[20px] font-[600]">{teamRank === '0' ? '-' : showPersonalReward}</div>
               </div>
             </div>
             <Divider />

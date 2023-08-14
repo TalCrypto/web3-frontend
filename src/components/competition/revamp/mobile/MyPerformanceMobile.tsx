@@ -125,7 +125,9 @@ const PerformanceTag = (props: any) => {
               <div
                 className="text-[12px] font-[600] text-[#FFD392]"
                 onClick={() => {
-                  $activeTab.set(type);
+                  // Re-activate after vol released
+                  // $activeTab.set(type);
+                  $activeTab.set(type - 1);
                 }}>
                 Leaderboard &gt;
               </div>
@@ -233,17 +235,17 @@ const MyReferralTeam = (props: any) => {
           <div className="flex items-stretch justify-between border-b-[1px] border-[#2E4371] px-[36px] py-[24px]">
             <div className="flex flex-col items-center justify-between">
               <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-              <div className="text-[15px] font-[600]">{teamRank}</div>
+              <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : teamRank}</div>
             </div>
             <div className="flex flex-col items-center justify-between">
               <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-              <div className="text-[15px] font-[600]">{showTeamReward}</div>
+              <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : showTeamReward}</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trading Volume</div>
               <div className="mt-[6px] flex items-center text-[15px] font-[600]">
                 <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                {formatBigInt(teamVol).toFixed(2)}
+                {teamRank === '0' ? '-' : formatBigInt(teamVol).toFixed(2)}
               </div>
             </div>
           </div>
@@ -251,7 +253,7 @@ const MyReferralTeam = (props: any) => {
             <div className="text-center">
               <div className="text-[20px] font-[600] text-[#FFD392]">My Reward</div>
               <div className="mt-[6px] text-[12px] font-[400] text-[#FFD392]">(40% of Team Reward)</div>
-              <div className="mt-[12px] text-[20px] font-[600]">{showPersonalReward}</div>
+              <div className="mt-[12px] text-[20px] font-[600]">{teamRank === '0' ? '-' : showPersonalReward}</div>
             </div>
           </div>
           <div className="flex items-center justify-center px-[22px] py-[24px]">
@@ -426,6 +428,17 @@ const ReferralTeamJoined = (props: any) => {
       : `${personalUsdt}USDT + ${personalPoint} Pts`;
 
   const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
+  const personalPointPrize = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.pointPrize || 0;
+  const personalUsdtPrize = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.usdtPrize || 0;
+
+  const showReward =
+    personalPointPrize === 0 && personalUsdtPrize === 0
+      ? '0 Pts'
+      : personalPointPrize === 0 && personalUsdtPrize > 0
+      ? `${personalUsdtPrize}USDT`
+      : personalUsdtPrize === 0 && personalPointPrize > 0
+      ? `${personalPointPrize} Pts`
+      : `${personalUsdtPrize}USDT + ${personalPointPrize} Pts`;
 
   return (
     <div>
@@ -434,7 +447,7 @@ const ReferralTeamJoined = (props: any) => {
         <div className="mt-[24px] rounded-[6px] border-[1px] border-[#2E4371] bg-[#1B1C30]">
           <div className="flex items-center justify-between border-b-[1px] border-b-[#2E4371] p-[24px]">
             <div className="flex items-center">
-              <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={43} height={57} alt="" />
+              <Image src="/images/components/competition/revamp/my-performance/referrer-master.svg" width={36} height={36} alt="" />
               <div className="ml-[12px] flex flex-col justify-between">
                 <div className="text-[12px] font-[400]">My Team Lead </div>
                 <div
@@ -456,7 +469,7 @@ const ReferralTeamJoined = (props: any) => {
             </div>
             <div className="flex flex-col items-center justify-between text-center">
               <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
-              <div className="mt-[6px] text-[16px] font-[600]">{showPersonalReward}</div>
+              <div className="mt-[6px] text-[16px] font-[600]">{showReward}</div>
             </div>
           </div>
         </div>
@@ -592,7 +605,7 @@ const MyPerformanceMobile = () => {
           val={formatBigInt(topReferrerUserItem?.totalVolume || '0')}
           pointPrize={topReferrerUserItem?.pointPrize}
           usdtPrize={topReferrerUserItem?.usdtPrize}
-          isSide
+          isSide={false}
         />
       </div>
       <MyReferralTeam
