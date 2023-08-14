@@ -82,7 +82,30 @@ interface PerformanceTagProps {
 
 const PerformanceTag = (props: any) => {
   const { title, type, volList = null, rank = '', val = '', reward = '', pointPrize = 0, usdtPrize = 0, isSide = false } = props;
-  const contentTitle = '';
+  let contentTitle = '';
+
+  const numberRank = Number(rank) || 0;
+
+  switch (type) {
+    case 0:
+      contentTitle = 'Trad. Vol.';
+      break;
+
+    case 1:
+      contentTitle = 'Realized P/L';
+      break;
+
+    case 2:
+      contentTitle = 'Total Fund. Payment';
+      break;
+
+    case 3:
+      contentTitle = 'Team Trading Volume';
+      break;
+
+    default:
+      break;
+  }
 
   return (
     <div className="pb-[24px]">
@@ -108,20 +131,26 @@ const PerformanceTag = (props: any) => {
               </div>
             </div>
             <div className="mt-[24px]">
-              <div className="mx-[72px] flex justify-between">
+              <div className="mx-[48px] flex justify-between">
                 <div className="flex flex-col text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
-                  <div className="mt-[16px] text-[14px] font-[600]">{rank}</div>
+                  <div className="mt-[16px] text-[14px] font-[600]">{numberRank === 0 ? 'Unranked' : rank}</div>
                 </div>
-                <div className="flex flex-col text-center">
-                  <div className="text-[12px] font-[400] text-[#FFD392]">Rank</div>
+                <div className="flex flex-col items-center text-center">
+                  <div className="text-[12px] font-[400] text-[#FFD392]">{contentTitle}</div>
                   <div
                     className={`mt-[16px] flex items-center text-[14px] font-[600] ${
                       isSide ? (Number(val) > 0 ? 'text-marketGreen' : Number(val) < 0 ? 'text-marketRed' : '') : ''
                     }`}>
                     <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                    {isSide ? (Number(val) > 0 ? '+' : '') : ''}
-                    {Number(val).toFixed(2)}
+                    {numberRank === 0 ? (
+                      '-'
+                    ) : (
+                      <div>
+                        {isSide ? (Number(val) > 0 ? '+' : '') : ''}
+                        {Number(val).toFixed(2)}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
