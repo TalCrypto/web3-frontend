@@ -6,9 +6,10 @@
 import { $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { formatBigInt } from '@/utils/bigInt';
 import { useRouter } from 'next/router';
+import { $isMobileScreen, $screenWidth } from '@/stores/window';
 
 function Cell(props: any) {
   const { items, classNames } = props;
@@ -74,6 +75,8 @@ const MyTeam = (props: any) => {
   const userInfo = useStore($userInfo);
 
   const { copyTextFunc, referralCode, displayUsername, setIsShowShareModal, referralTeamList, referralUserItem } = props;
+  const [displayCount, setDisplayCount] = useState(8);
+  const isMobileScreen = useStore($isMobileScreen);
 
   const teamRank = referralUserItem?.rank || 0;
   const teamPoint = referralUserItem?.teamPointPrize || 0;
@@ -214,27 +217,29 @@ const MyTeam = (props: any) => {
                   />
                 </div>
                 <div className="scrollable mt-[24px] overflow-y-scroll lg:max-h-[360px]">
-                  {referralTeamList?.map((item: any) => {
-                    const username =
-                      item.username === ''
-                        ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
-                        : item.username.length > 10
-                        ? `${item.username.substring(0, 10)}...`
-                        : item.username;
+                  {referralTeamList
+                    ?.slice(0, !isMobileScreen || displayCount >= referralTeamList.length ? referralTeamList.length : displayCount)
+                    .map((item: any) => {
+                      const username =
+                        item.username === ''
+                          ? `${item.userAddress.substring(0, 7)}...${item.userAddress.slice(-3)}`
+                          : item.username.length > 10
+                          ? `${item.username.substring(0, 10)}...`
+                          : item.username;
 
-                    return (
-                      <div
-                        key={item.userAddress}
-                        className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
-                        <div className="relative col-span-8 items-center lg:col-span-3">
-                          <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                          <div
-                            onClick={() => router.push(`/userprofile/${item.userAddress}`)}
-                            className="cursor-pointer truncate pr-[40px]">
-                            {username}
+                      return (
+                        <div
+                          key={item.userAddress}
+                          className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                          <div className="relative col-span-8 items-center lg:col-span-3">
+                            <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
+                            <div
+                              onClick={() => router.push(`/userprofile/${item.userAddress}`)}
+                              className="cursor-pointer truncate pr-[40px]">
+                              {username}
+                            </div>
                           </div>
-                        </div>
-                        {/* <div className="relative col-span-2">
+                          {/* <div className="relative col-span-2">
                             {item.isEligible ? (
                               <Image
                                 src="/images/components/competition/revamp/my-performance/eligible.svg"
@@ -246,40 +251,40 @@ const MyTeam = (props: any) => {
                             ) : null}
                             {item.isEligible ? 'Eligible' : 'Not Eligible'}
                           </div> */}
-                        <div className="col-span-3 hidden items-center md:flex">
-                          <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
-                          {formatBigInt(item.tradedVolume).toFixed(2)}
-                        </div>
-                        <div className="col-span-3 hidden font-[600] text-[#FFC24B] md:block">{`${
-                          Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
-                        }`}</div>
-                        <div className="col-span-3 hidden md:block">
-                          <div
-                            className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${
-                              item.isEligible ? 'bg-[#2E4371]' : ''
-                            }`}>
-                            <Image
-                              src="/images/components/competition/revamp/my-performance/reward.svg"
-                              width={16}
-                              height={16}
-                              alt=""
-                              className="mr-[10px]"
-                            />
-                            {itemShowReward(item)}
-                          </div>
-                        </div>
-                        <div className="col-span-4 flex flex-col items-end lg:hidden">
-                          <div className="font-[600] text-[#FFC24B]">
-                            {`${Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`}`}
-                          </div>
-                          <div className="flex items-center">
+                          <div className="col-span-3 hidden items-center md:flex">
                             <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                             {formatBigInt(item.tradedVolume).toFixed(2)}
                           </div>
+                          <div className="col-span-3 hidden font-[600] text-[#FFC24B] md:block">{`${
+                            Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`
+                          }`}</div>
+                          <div className="col-span-3 hidden md:block">
+                            <div
+                              className={`flex w-fit items-center rounded-[12px] px-[12px] py-[4px] ${
+                                item.isEligible ? 'bg-[#2E4371]' : ''
+                              }`}>
+                              <Image
+                                src="/images/components/competition/revamp/my-performance/reward.svg"
+                                width={16}
+                                height={16}
+                                alt=""
+                                className="mr-[10px]"
+                              />
+                              {itemShowReward(item)}
+                            </div>
+                          </div>
+                          <div className="col-span-4 flex flex-col items-end lg:hidden">
+                            <div className="font-[600] text-[#FFC24B]">
+                              {`${Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`}`}
+                            </div>
+                            <div className="flex items-center">
+                              <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
+                              {formatBigInt(item.tradedVolume).toFixed(2)}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
             ) : (
@@ -287,6 +292,20 @@ const MyTeam = (props: any) => {
                 <div className="px-[64px] pt-[10px] text-center md:p-0">List is empty, start sharing your referral link now!</div>
               </div>
             )}
+
+            {isMobileScreen && referralTeamList && referralTeamList?.length > 0 ? (
+              displayCount >= referralTeamList?.length ? null : (
+                <div className="bg-darkBlue py-[35px] text-center">
+                  <span
+                    className="text-center text-[14px] font-semibold text-primaryBlue"
+                    onClick={() => {
+                      setDisplayCount(displayCount + 8);
+                    }}>
+                    Show More
+                  </span>
+                </div>
+              )
+            ) : null}
           </div>
         </div>
       </div>
