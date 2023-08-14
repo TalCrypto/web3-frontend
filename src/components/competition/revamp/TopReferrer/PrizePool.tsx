@@ -24,7 +24,7 @@ const PrizePool: FC<PropsWithChildren> = () => {
           height={664}
           alt=""
         />
-        <div className="absolute top-[90px] flex w-full items-center justify-center xl:top-[100px]">
+        <div className="absolute top-[90px] flex w-full items-center justify-center space-x-1 xl:top-[100px]">
           <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
           <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-h5 font-bold text-transparent">
             Total Prize Pool for Top Referrer
@@ -41,7 +41,7 @@ const PrizePool: FC<PropsWithChildren> = () => {
             height={300}
             alt=""
           />
-          <div className="absolute top-[100px] flex w-full items-center justify-center">
+          <div className="absolute top-[100px] flex w-full items-center justify-center space-x-1">
             <Image src="/images/components/competition/icons/animated-gift.gif" width={24} height={24} alt="" />
             <p className="bg-gradient-to-b from-[#F0A45D] to-white bg-clip-text text-b2e text-transparent">
               Total Prize Pool for Top Referrer
