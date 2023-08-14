@@ -269,12 +269,12 @@ const MyTeam = (props: any) => {
                           </div>
                         </div>
                         <div className="col-span-4 flex flex-col items-end lg:hidden">
+                          <div className="font-[600] text-[#FFC24B]">
+                            {`${Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`}`}
+                          </div>
                           <div className="flex items-center">
                             <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                             {formatBigInt(item.tradedVolume).toFixed(2)}
-                          </div>
-                          <div className="font-[600] text-[#FFC24B]">
-                            {`${Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`}`}
                           </div>
                         </div>
                       </div>
