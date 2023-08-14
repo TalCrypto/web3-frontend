@@ -74,7 +74,7 @@ export default function Competition() {
         {/* Your browser does not support the video tag. */}
       </video>
 
-      <main className="flex h-screen flex-col overflow-auto lg:h-full lg:min-h-[calc(100vh-80px)] lg:overflow-hidden">
+      <main className="flex min-h-screen flex-col lg:h-full lg:min-h-[calc(100vh-80px)]">
         <Title />
         <Tabs />
         <MobileDropdown />

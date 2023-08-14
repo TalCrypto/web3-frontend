@@ -30,6 +30,7 @@ import { $isMobileScreen } from '@/stores/window';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
 import { useRouter } from 'next/router';
 import { showOutlineToast } from '@/components/common/Toast';
+import PrimaryButton from '@/components/common/PrimaryButton';
 import TopThree from './TopThree';
 import FloatingWidget from './FloatingWidget';
 import Table, { TableColumn } from './Table';
@@ -341,6 +342,29 @@ const TopReferrer = () => {
               <CountdownTimer date="2023-09-12T20:00:00.000+08:00" timeZone="Asia/Hong_Kong" />
             </span>
           </p>
+        </FloatingWidget.Item>
+        <FloatingWidget.Item>
+          <div className="mb-4 flex space-x-1">
+            <p className="text-h5 text-highEmphasis">
+              📢 Share My
+              <br />
+              Referral Link
+            </p>
+          </div>
+          <div className="flex space-x-[12px]">
+            <button
+              className="flex items-center justify-center 
+                  rounded-[4px] bg-[#2574FB] px-3 py-2 text-[15px] font-[600]"
+              onClick={() => setIsShowShareModal(true)}>
+              <Image src="/images/components/competition/revamp/my-performance/share.svg" width={20} height={20} alt="" />
+            </button>
+            <button
+              className="flex items-center justify-center rounded-[4px] 
+                  bg-[#2574FB] px-3 py-2 text-[15px] font-[600]"
+              onClick={copyUserUrl}>
+              <Image src="/images/components/competition/revamp/my-performance/copy.svg" width={20} height={20} alt="" />
+            </button>
+          </div>
         </FloatingWidget.Item>
       </FloatingWidget.Container>
 
