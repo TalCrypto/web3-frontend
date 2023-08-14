@@ -380,7 +380,7 @@ const MyReferralTeam = (props: any) => {
             <div className="flex items-stretch justify-between px-[36px] py-[24px]">
               <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
-                <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : teamRank}</div>
+                <div className="text-[15px] font-[600]">{teamRank === '0' ? 'Unranked' : teamRank}</div>
               </div>
               <div className="flex flex-col items-center justify-between">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
