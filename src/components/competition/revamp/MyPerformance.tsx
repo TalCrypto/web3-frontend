@@ -80,6 +80,7 @@ const PerformanceTag = (props: any) => {
   }
 
   const selectedVol = volList ? volList[defaultVolRecord] : null;
+  const numberRank = Number(rank) || 0;
 
   return (
     <div className="relative mr-[24px]">
@@ -97,18 +98,24 @@ const PerformanceTag = (props: any) => {
             </div>
             {type === 0 ? <div className="mt-[4px] text-[12px] font-[400]">{`(Week ${selectedVol.week})`}</div> : null}
             <div className={`${type === 0 ? 'mt-[16px]' : 'mt-[36px]'} text-[12px] font-[400] text-[#FFD392]`}>Leaderboard Rank</div>
-            <div className="mt-[6px] text-[20px] font-[600]">{!rank ? '0' : rank}</div>
+            <div className="mt-[6px] text-[20px] font-[600]">{numberRank === 0 ? 'Unranked' : rank}</div>
             <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">{contentTitle}</div>
             <div
               className={`mt-[6px] flex items-center text-[16px] font-[600] ${
                 isSide ? (numberVal > 0 ? 'text-marketGreen' : numberVal < 0 ? 'text-marketRed' : '') : ''
               }`}>
               <Image src="/images/common/symbols/eth-tribe3.svg" className="mr-[6px]" width={16} height={16} alt="" />
-              {isSide ? (numberVal > 0 ? '+' : '') : ''}
-              {numberVal.toFixed(2)}
+              {numberRank === 0 ? (
+                '-'
+              ) : (
+                <div>
+                  {isSide ? (numberVal > 0 ? '+' : '') : ''}
+                  {numberVal.toFixed(2)}
+                </div>
+              )}
             </div>
             <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">Reward</div>
-            <div className="mt-[6px] text-[14px] font-[400]">{showReward}</div>
+            <div className="mt-[6px] text-[14px] font-[400]">{numberRank === 0 ? '-' : showReward}</div>
             <div
               className="mt-[28px] flex min-w-[173px] cursor-pointer flex-row items-center justify-center
           rounded-[4px] border-[0.5px] border-[#FFD39240] py-[8px] pl-[8px] text-[12px] font-[400] text-[#FFD392] hover:bg-[#FFD39233]"
@@ -234,8 +241,8 @@ const ReferreeModal = (props: any) => {
               </div>
               <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
                 {myRefererTeamList?.map((item: any) => {
-                  const isCurrentUser =
-                    item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
+                  console.log({ item });
+                  const isCurrentUser = item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase();
                   const vol = formatBigInt(item.tradedVolume).toFixed(2);
                   const reward = itemShowReward(item);
                   const displayUsername =
@@ -252,7 +259,9 @@ const ReferreeModal = (props: any) => {
                         <div onClick={() => router.push(`/userprofile/${item.userAddress}`)} className="cursor-pointer truncate">
                           {displayUsername}
                         </div>
-                        {isCurrentUser ? <div className="rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800] ">YOU</div> : null}
+                        {isCurrentUser ? (
+                          <div className="ml-[6px] rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800]">YOU</div>
+                        ) : null}
                       </div>
                       {/* <div className="relative col-span-2">
                         {item.isEligible ? (
