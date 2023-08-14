@@ -35,7 +35,7 @@ const MyReferrersTeamMobile = (props: any) => {
       `${teamPoint} Pts`
     ) : (
       <div>
-        {teamUsdt}USDT <br /> + ${teamPoint} Pts
+        {teamUsdt}USDT <br /> + {teamPoint} Pts
       </div>
     );
 

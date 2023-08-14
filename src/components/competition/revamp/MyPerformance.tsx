@@ -396,7 +396,7 @@ const MyReferralTeam = (props: any) => {
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
                 <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : showTeamReward}</div>
               </div>
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center  justify-between">
                 <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trading Volume</div>
                 <div className="mt-[6px] flex items-center text-[15px] font-[600]">
                   <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />

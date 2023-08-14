@@ -87,13 +87,17 @@ const MyTeam = (props: any) => {
   const teamVol = referralUserItem?.totalVolume || 0;
 
   const showTeamReward =
-    teamPoint === 0 && teamUsdt === 0
-      ? '0 Pts'
-      : teamPoint === 0 && teamUsdt > 0
-      ? `${teamUsdt}USDT`
-      : teamUsdt === 0 && teamPoint > 0
-      ? `${teamPoint} Pts`
-      : `${teamUsdt}USDT + ${teamPoint} Pts`;
+    teamPoint === 0 && teamUsdt === 0 ? (
+      '0 Pts'
+    ) : teamPoint === 0 && teamUsdt > 0 ? (
+      `${teamUsdt}USDT`
+    ) : teamUsdt === 0 && teamPoint > 0 ? (
+      `${teamPoint} Pts`
+    ) : (
+      <div>
+        {teamUsdt}USDT <br /> + {teamPoint} Pts
+      </div>
+    );
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
@@ -140,11 +144,11 @@ const MyTeam = (props: any) => {
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Rank</div>
                 <div className="text-[15px] font-[600]">{teamRank === '0' ? 'Unranked' : teamRank}</div>
               </div>
-              <div className="flex flex-col items-center justify-between">
+              <div className="hidden flex-col items-center justify-between md:flex">
                 <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
                 <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : showTeamReward}</div>
               </div>
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center justify-between">
                 <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trading Volume</div>
                 <div className="mt-[6px] flex items-center text-[15px] font-[600]">
                   <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
