@@ -7,9 +7,9 @@ import { $asHasReferCode, $asReferredUser, $asShowResponseModal } from '@/stores
 export default function ReferUserModal() {
   const referredUser: any = useNanostore($asReferredUser);
 
-  const closeModal = () => {
+  const closeModal = (setIsShowModal = false) => {
     $asHasReferCode.set(false);
-    $asShowResponseModal.set(true);
+    $asShowResponseModal.set(setIsShowModal);
   };
 
   const userNameShow =
@@ -21,7 +21,7 @@ export default function ReferUserModal() {
     <div
       className="fixed inset-0 z-10 flex h-screen
       items-center justify-center overflow-auto bg-black bg-opacity-40"
-      onClick={closeModal}>
+      onClick={() => closeModal()}>
       <div
         className="relative w-full max-w-[500px] rounded-[12px]
         bg-lightBlue px-6 py-6 text-[15px] font-normal text-highEmphasis"
@@ -33,7 +33,7 @@ export default function ReferUserModal() {
             className="button cursor-pointer"
             width={16}
             height={16}
-            onClick={closeModal}
+            onClick={() => closeModal()}
           />
         </div>
         <div className="mx-6">
@@ -79,7 +79,7 @@ export default function ReferUserModal() {
               className="gradient-button relative flex h-[32px] w-[160px]
               cursor-pointer items-center justify-center rounded-full border-[1px]
               border-[#3576f7] px-4 text-[14px] font-normal text-highEmphasis"
-              onClick={closeModal}>
+              onClick={() => closeModal(true)}>
               Trade Now !
             </div>
           </div>

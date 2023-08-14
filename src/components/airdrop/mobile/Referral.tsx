@@ -32,6 +32,7 @@ function ReferralMobile() {
   const eligibleReferees = userPoint.eligibleCount;
   const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
+  const isInputCode = userPoint.referralUser?.userAddress;
 
   const isConnected = useNanostore($userIsConnected);
   const [isReferralPopupShow, setIsReferralPopupShow] = useState(false);
@@ -347,6 +348,26 @@ function ReferralMobile() {
                 </div>
               </div>
             </div>
+
+            {/* Referrer got */}
+            {isInputCode ? (
+              <div className="p-[1px] ">
+                <div className="flex-1 p-[24px] md:p-[36px]">
+                  <div className="mb-[24px] text-[20px] font-[600]">Enter Referral Code</div>
+                  <div className="border-1 rounded-[6px] border-[#71AAFF]/20 bg-[#171833] px-[20px] py-[24px]">
+                    <p className="mb-[24px] text-[12px]">🥳 Congrats! You already have a referrer!</p>
+                    <div className="text-[15px] font-[600]">
+                      My Referrer:{' '}
+                      <span
+                        className="cursor-pointer text-primaryBlue"
+                        onClick={() => router.push(`/userprofile/${userPoint.referralUser?.userAddress}`)}>
+                        {userPoint.referralUser?.username || userPoint.referralUser?.userAddress}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
