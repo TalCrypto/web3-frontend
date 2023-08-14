@@ -33,12 +33,7 @@ function TopMenu() {
       path: '/airdrop',
       other: '',
       child: [],
-      textClassName: 'season-2-green',
-      icon: (
-        <div className="mr-1">
-          <Image className="mt-[2px]" src="/images/common/season-2-fire.svg" width={18} height={18} alt="Airdrop Icon" />
-        </div>
-      )
+      textClassName: ''
     },
     {
       name: 'Competition',

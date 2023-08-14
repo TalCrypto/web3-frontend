@@ -203,9 +203,8 @@ const MobileMenu = (props: any) => {
             <div className="pb-[35px]">
               <div onClick={() => onGotoPage('/airdrop')}>
                 <div className="flex flex-row items-center">
-                  <Image className="mr-[4px]" src="/images/common/season-2-fire.svg" width={15} height={15} alt="Competition Icon" />
                   <span
-                    className={`season-2-green relative flex
+                    className={`relative flex
                     ${router.route.toLowerCase() === '/airdrop' ? 'mobile-menu-active font-semibold' : ''}
                   `}>
                     Airdrop
