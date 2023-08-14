@@ -390,7 +390,7 @@ const TopReferrer = () => {
         />
       </div>
 
-      <div className="hidden space-y-32 md:block">
+      <div className="hidden md:block">
         {isConnected ? (
           <>
             <MyTeam
@@ -417,7 +417,9 @@ const TopReferrer = () => {
             ) : null}
           </>
         ) : null}
-        <Rules />
+        <div className="mt-32">
+          <Rules />
+        </div>
       </div>
 
       <MobileDrawer
