@@ -191,13 +191,17 @@ const MyReferralTeam = (props: any) => {
   const teamVol = referralUserItem?.totalVolume;
 
   const showTeamReward =
-    teamPoint === 0 && teamUsdt === 0
-      ? '0 Pts'
-      : teamPoint === 0 && teamUsdt > 0
-      ? `${teamUsdt}USDT`
-      : teamUsdt === 0 && teamPoint > 0
-      ? `${teamPoint} Pts`
-      : `${teamUsdt}USDT + ${teamPoint} Pts`;
+    teamPoint === 0 && teamUsdt === 0 ? (
+      '0 Pts'
+    ) : teamPoint === 0 && teamUsdt > 0 ? (
+      `${teamUsdt}USDT`
+    ) : teamUsdt === 0 && teamPoint > 0 ? (
+      `${teamPoint} Pts`
+    ) : (
+      <div>
+        {teamUsdt}USDT <br /> + ${teamPoint} Pts
+      </div>
+    );
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
@@ -239,7 +243,7 @@ const MyReferralTeam = (props: any) => {
             </div>
             <div className="flex flex-col items-center justify-between">
               <div className="text-[12px] font-[400] text-[#FFD392]">Team Reward</div>
-              <div className="text-[15px] font-[600]">{teamRank === '0' ? '-' : showTeamReward}</div>
+              <div className="text-center text-[15px] font-[600]">{teamRank === '0' ? '-' : showTeamReward}</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-center text-[12px] font-[400] text-[#FFD392]">Team Trading Volume</div>

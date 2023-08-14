@@ -49,13 +49,17 @@ const PerformanceTag = (props: any) => {
   // console.log({ type, displayNumber });
 
   const showReward =
-    pointPrize === 0 && usdtPrize === 0
-      ? '0 Pts'
-      : pointPrize === 0 && usdtPrize > 0
-      ? `${usdtPrize}USDT`
-      : usdtPrize === 0 && pointPrize > 0
-      ? `${pointPrize} Pts`
-      : `${usdtPrize}USDT + ${pointPrize} Pts`;
+    pointPrize === 0 && usdtPrize === 0 ? (
+      '0 Pts'
+    ) : pointPrize === 0 && usdtPrize > 0 ? (
+      `${usdtPrize}USDT`
+    ) : usdtPrize === 0 && pointPrize > 0 ? (
+      `${pointPrize} Pts`
+    ) : (
+      <div>
+        {usdtPrize}USDT <br /> + {pointPrize} Pts
+      </div>
+    );
 
   let contentTitle = '';
   switch (type) {
@@ -115,7 +119,9 @@ const PerformanceTag = (props: any) => {
               )}
             </div>
             <div className="mt-[18px] text-[12px] font-[400] text-[#FFD392]">Reward</div>
-            <div className="mt-[6px] text-[14px] font-[400]">{numberRank === 0 ? '-' : showReward}</div>
+            <div className="mt-[6px] text-center text-[14px] font-[400]">
+              <p>{numberRank === 0 ? '-' : showReward}</p>
+            </div>
             <div
               className="mt-[28px] flex min-w-[173px] cursor-pointer flex-row items-center justify-center
           rounded-[4px] border-[0.5px] border-[#FFD39240] py-[8px] pl-[8px] text-[12px] font-[400] text-[#FFD392] hover:bg-[#FFD39233]"
@@ -332,13 +338,17 @@ const MyReferralTeam = (props: any) => {
   };
 
   const showTeamReward =
-    teamPoint === 0 && teamUsdt === 0
-      ? '0 Pts'
-      : teamPoint === 0 && teamUsdt > 0
-      ? `${teamUsdt}USDT`
-      : teamUsdt === 0 && teamPoint > 0
-      ? `${teamPoint} Pts`
-      : `${teamUsdt}USDT + ${teamPoint} Pts`;
+    teamPoint === 0 && teamUsdt === 0 ? (
+      '0 Pts'
+    ) : teamPoint === 0 && teamUsdt > 0 ? (
+      `${teamUsdt}USDT`
+    ) : teamUsdt === 0 && teamPoint > 0 ? (
+      `${teamPoint} Pts`
+    ) : (
+      <div>
+        {teamUsdt}USDT <br /> + ${teamPoint} Pts
+      </div>
+    );
 
   const showPersonalReward =
     personalPoint === 0 && personalUsdt === 0
@@ -546,22 +556,17 @@ const ReferrerTeamJoined = (props: any) => {
   const personalUsdt = myRefererUserItem?.usdtPrize;
 
   const showTeamReward =
-    teamPoint === 0 && teamUsdt === 0
-      ? '0 Pts'
-      : teamPoint === 0 && teamUsdt > 0
-      ? `${teamUsdt}USDT`
-      : teamUsdt === 0 && teamPoint > 0
-      ? `${teamPoint} Pts`
-      : `${teamUsdt}USDT + ${teamPoint} Pts`;
-
-  const showPersonalReward =
-    personalPoint === 0 && personalUsdt === 0
-      ? '0 Pts'
-      : personalPoint === 0 && personalUsdt > 0
-      ? `${personalUsdt}USDT`
-      : personalUsdt === 0 && personalPoint > 0
-      ? `${personalPoint} Pts`
-      : `${personalUsdt}USDT + ${personalPoint} Pts`;
+    teamPoint === 0 && teamUsdt === 0 ? (
+      '0 Pts'
+    ) : teamPoint === 0 && teamUsdt > 0 ? (
+      `${teamUsdt}USDT`
+    ) : teamUsdt === 0 && teamPoint > 0 ? (
+      `${teamPoint} Pts`
+    ) : (
+      <div>
+        {teamUsdt}USDT <br /> + ${teamPoint} Pts
+      </div>
+    );
 
   const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
   const personalPointPrize = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.pointPrize || 0;
