@@ -1,12 +1,10 @@
 /* eslint-disable no-unused-vars */
 import Image from 'next/image';
 import React from 'react';
-import { $isShowContributionModal } from '@/stores/competition';
 import { $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import { formatBigInt } from '@/utils/bigInt';
 import { useRouter } from 'next/router';
-import { ContributionModal } from './ContributionDetail';
 
 const MyReferrersTeam = (props: any) => {
   const router = useRouter();

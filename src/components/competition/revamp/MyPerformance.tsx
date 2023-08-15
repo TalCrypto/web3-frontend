@@ -287,7 +287,9 @@ const ReferreeModal = (props: any) => {
                         <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                         {vol}
                       </div>
-                      <div className="col-span-3 font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
+                      <div className="col-span-3 font-[600] text-[#FFC24B]">
+                        {Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`}
+                      </div>
                       <div className="col-span-3">
                         <div className="flex w-fit items-center rounded-[12px] bg-[#2E4371] px-[12px] py-[4px]">
                           <Image
