@@ -49,6 +49,17 @@ const MyReferrersTeamMobile = (props: any) => {
       : `${personalUsdt}USDT + ${personalPoint} Pts`;
 
   const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
+  const personalPointPrize = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.pointPrize || 0;
+  const personalUsdtPrize = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.usdtPrize || 0;
+
+  const showReward =
+    personalPointPrize === 0 && personalUsdtPrize === 0
+      ? '0 Pts'
+      : personalPointPrize === 0 && personalUsdtPrize > 0
+      ? `${personalUsdtPrize}USDT`
+      : personalUsdtPrize === 0 && personalPointPrize > 0
+      ? `${personalPointPrize} Pts`
+      : `${personalUsdtPrize}USDT + ${personalPointPrize} Pts`;
 
   return (
     <div className="px-5 py-6 lg:p-0">
@@ -105,7 +116,7 @@ const MyReferrersTeamMobile = (props: any) => {
                 </div>
                 <div className="flex flex-col items-center justify-between text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
-                  <div className="mt-[6px] text-h5 lg:text-h4">{showPersonalReward}</div>
+                  <div className="mt-[6px] text-h5 lg:text-h4">{showReward}</div>
                 </div>
               </div>
             </div>
