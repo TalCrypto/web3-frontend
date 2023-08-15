@@ -370,7 +370,7 @@ function AdjustCollateralSlidingBars(props: any) {
 export default function AdjustCollateral() {
   const currentAmm = useNanostore($currentAmm);
   const [adjustMarginValue, setAdjustMarginValue] = useState(0);
-  const debonceBigIntValue = useDebounce(parseBigInt(adjustMarginValue));
+  const debonceBigIntValue = useDebounce(parseBigInt(Number(adjustMarginValue) || 0));
   const [marginIndex, setMarginIndex] = useState(0);
   const [prepareTextErrorMessage, setPrepareTextErrorMessage] = useState<string | null>(null);
   const [writeTextErrorMessage, setWriteTextErrorMessage] = useState<string | null>(null);
@@ -454,7 +454,7 @@ export default function AdjustCollateral() {
 
       <AdjustCollateralSlidingBars
         marginIndex={marginIndex}
-        adjustMarginValue={adjustMarginValue}
+        adjustMarginValue={Number(adjustMarginValue) || 0}
         freeCollateral={freeCollateral}
         wethBalance={wethBalance}
         onChange={(value: any) => {
