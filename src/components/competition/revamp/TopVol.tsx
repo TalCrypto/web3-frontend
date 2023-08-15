@@ -209,9 +209,25 @@ const TopVol = () => {
 
   const renderTopThreeItem = (pos: number) => {
     const rank = rankingList.find(i => Number(i.rank) === pos);
-    if (!rank) return null;
     const nameColor = pos === 1 ? 'text-[#FFD540]' : pos === 2 ? 'text-white' : pos === 3 ? 'text-[#FF8A65]' : '';
-
+    if (!rank) {
+      return (
+        <TopThree.Item
+          rank={pos}
+          isYou={false}
+          className={`${pos === 2 || pos === 3 ? 'mt-8' : ''} min-w-[200px]`}
+          title={<p className={`mb-4 cursor-pointer text-h5 ${nameColor}`} />}>
+          <p className="mb-[6px] text-b3 text-mediumEmphasis">Total Trading Volume</p>
+          <div className="flex space-x-1">
+            <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" />
+            <p className="text-b2e">-</p>
+          </div>
+          <div className="my-4 h-[1px] w-full bg-[#2E4371]" />
+          <p className="mb-[6px] text-b3 text-mediumEmphasis">Prize</p>
+          <p className="text-b2 text-highEmphasis">-</p>
+        </TopThree.Item>
+      );
+    }
     // realized pnl
     const val = Number(formatBigInt(rank.weeklyTradedVolume));
 

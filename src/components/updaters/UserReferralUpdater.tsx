@@ -13,7 +13,8 @@ import {
   $asReferredUser,
   $asShowResponseModal,
   $userPoint,
-  $targetReferralCode
+  $targetReferralCode,
+  defaultUserPoint
 } from '@/stores/airdrop';
 import { useRouter } from 'next/router';
 import { ReferredResponse } from '@/const/airdrop';
@@ -25,6 +26,7 @@ const UserReferralUpdater = () => {
   const userAddress = useNanostore($userAddress);
   const referredUser: any = useNanostore($asReferredUser);
   const showResponseModal = useNanostore($asShowResponseModal);
+  const asReferResponse = useNanostore($asReferResponse);
 
   const refersCode = router.query.ref;
   const address = useNanostore($userAddress);
@@ -72,7 +74,7 @@ const UserReferralUpdater = () => {
       }
     }
 
-    if (showResponseModal && isConnected && userPoint && referredUser) {
+    if (showResponseModal && isConnected && userPoint && referredUser && refersCode) {
       if (referredUser?.userAddress === userAddr) {
         $asReferResponse.set(ReferredResponse.IsInvalidCode);
       } else if (hadTradedOnce) {
@@ -83,7 +85,20 @@ const UserReferralUpdater = () => {
         useReferral();
       }
     }
-  }, [showResponseModal, isConnected, userPoint]);
+  }, [showResponseModal, isConnected, userPoint, refersCode]);
+
+  useEffect(() => {
+    const userAddr: any = address?.toLowerCase();
+    if (asReferResponse === ReferredResponse.Congrats) {
+      apiConnection.getUserPoint(userAddr).then(res => {
+        if (res?.multiplier) {
+          $userPoint.set(res);
+        } else {
+          $userPoint.set(defaultUserPoint);
+        }
+      });
+    }
+  }, [asReferResponse]);
 
   return null;
 };
