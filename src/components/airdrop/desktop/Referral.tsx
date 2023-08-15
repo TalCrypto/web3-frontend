@@ -39,6 +39,7 @@ function Referral() {
   const eligibleReferees = userPoint.eligibleCount;
   const eligible = () => userPoint?.eligible;
   const isReferralListEmpty = referralListData.length === 0;
+  const isInputCode = userPoint.referralUser?.userAddress;
 
   const { open } = useWeb3Modal();
 
@@ -368,6 +369,26 @@ function Referral() {
               </div>
             </div>
           </div>
+
+          {/* Referrer got */}
+          {isInputCode ? (
+            <div
+              className="flex-column-reverse border-1 relative z-0 mt-8 flex h-fit flex-1 rounded-[6px] 
+          border-[#71AAFF]/20 bg-lightBlue/50 p-[1px] ">
+              <div className="flex-1 p-[24px] md:p-[36px]">
+                <h3 className="mb-[24px]">My Referrer</h3>
+                <p className="body2 mb-[24px] pt-[12px]">🥳 Congrats! You already have a referrer!</p>
+                <h5 className="mb-[36px]">
+                  My Referrer:{' '}
+                  <span
+                    className="cursor-pointer text-primaryBlue"
+                    onClick={() => router.push(`/userprofile/${userPoint.referralUser?.userAddress}`)}>
+                    {userPoint.referralUser?.username || userPoint.referralUser?.userAddress}
+                  </span>
+                </h5>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
       {isReferralPopupShow ? (
