@@ -226,7 +226,7 @@ function ReferralMobile() {
                 </div>
                 <div className="mx-5 flex flex-col pb-6 text-[20px]">
                   <div className="flex flex-row">
-                    <span className="text-[14px]">Referral Total Pts.</span>
+                    <span className="text-[14px]">Referral Total Pts</span>
                     <MobileTooltip direction="top" content={tooltipMessage}>
                       <Image src="/images/components/airdrop/more-info.svg" alt="" className="ml-[6px] mr-0" width={16} height={16} />
                     </MobileTooltip>
@@ -265,14 +265,14 @@ function ReferralMobile() {
                       <div>3% Referees&#39; Pts</div>
                       <div className="mt-[12px] text-[15px]">
                         <span className="text-glow-green font-semibold">{userPoint.referral.referringRewardPoints.toFixed(1)}</span>
-                        &nbsp; Pts.
+                        &nbsp; Pts
                       </div>
                     </div>
                     <div className="flex basis-1/2 flex-col text-[14px]">
-                      <div>2% own trading Pts.</div>
+                      <div>2% own trading Pts</div>
                       <div className="mt-[12px] text-[15px]">
                         <span className="text-glow-green font-semibold">{userPoint.referral.referralSelfRewardPoints.toFixed(1)}</span>
-                        &nbsp; Pts.
+                        &nbsp; Pts
                       </div>
                     </div>
                   </div>

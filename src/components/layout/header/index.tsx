@@ -58,14 +58,19 @@ function Header() {
           <div
             className="relative h-[32px] cursor-pointer bg-gradient-to-r from-[#04aefc4d] via-[#795af44d] to-[#f703d94d]"
             onClick={() => {
-              router.push('/airdrop');
+              // router.push('/airdrop');
+              router.push('/competition');
             }}>
             <div className="flex h-full items-center justify-between">
               <div className="content-container text-[12px] font-[400] text-[#ffffffde]">
-                <span className="font-[600]">
+                {/* <span className="font-[600]">
                   🚨HOT: <span className="text-seasonGreen">Airdrop Season 2 is ending soon</span> 🔥🔥
                 </span>
-                &nbsp; Trade now to flip others and multiply your Tribe3 points.💰 Don&#39;t miss out!
+                &nbsp; Trade now to flip others and multiply your Tribe3 points.💰 Don&#39;t miss out! */}
+                <span>
+                  🔥 The Tribe3 Trading Competition is ON! Trade like a pro, refer your pals, and race for the leaderboard. It&apos;s your
+                  time to shine! 🚀🏅
+                </span>
               </div>
             </div>
             <Image

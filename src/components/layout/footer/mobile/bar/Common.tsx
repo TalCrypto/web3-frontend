@@ -11,6 +11,8 @@ function MobileCommonFooterInfo() {
       ? 'Airdrop'
       : router.pathname === '/terms'
       ? 'Terms & Conditions'
+      : router.pathname === '/competition'
+      ? 'Competition'
       : '';
 
   const gotoTrade = () => {
