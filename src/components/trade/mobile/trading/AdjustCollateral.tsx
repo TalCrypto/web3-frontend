@@ -348,7 +348,7 @@ function AdjustCollateralSlidingBars(props: any) {
     <div className={`${disabled ? 'disabled' : ''}`}>
       <InputSlider
         min={0}
-        max={maxValue}
+        max={Number(maxValue.toFixed(4))}
         step={0.0001}
         value={adjustMarginValue}
         disabled={disabled}

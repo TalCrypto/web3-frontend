@@ -317,10 +317,13 @@ function CloseSlider(props: {
         disabled={disabled}
         value={closeValue}
         min={0}
-        max={maxCloseValue}
+        max={Number(maxCloseValue.toFixed(4))}
         defaultValue={0}
         onChange={onSlide}
         onAfterChange={onChange}
+        // onSlideMax={() => {
+        //   onChange(Number(maxCloseValue.toFixed(4)));
+        // }}
         step={0.0001}
       />
       <div className="mb-6 mt-[6px] flex justify-between text-[12px] text-highEmphasis">

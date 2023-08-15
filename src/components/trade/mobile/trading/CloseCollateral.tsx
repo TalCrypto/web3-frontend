@@ -329,7 +329,7 @@ function CloseSlider(props: {
         disabled={disabled}
         value={closeValue}
         min={0}
-        max={maxCloseValue}
+        max={Number(maxCloseValue.toFixed(4))}
         defaultValue={0}
         onChange={onSlide}
         onAfterChange={onChange}

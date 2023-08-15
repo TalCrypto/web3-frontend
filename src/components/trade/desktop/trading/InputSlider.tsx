@@ -5,16 +5,24 @@ const clamp = (val: any, min: any, max: any) => Math.min(Math.max(val, min), max
 const lerp = (a: any, b: any, val: any) => a + val * (b - a);
 
 export default function InputSlider(props: any) {
-  const { min, max, step, defautValue, value, onChange, onAfterChange, marks, disabled } = props;
+  const { min, max, step, defautValue, value, onChange, onAfterChange, onSlideMax, marks, disabled } = props;
 
   function handleChange(event: any) {
     const val = event.target.value;
     if (onChange) onChange(val);
+
+    if (val === max) {
+      if (onSlideMax) onSlideMax();
+    }
   }
 
   function handleAfterChange(event: any) {
     const val = event.target.value;
     if (onAfterChange) onAfterChange(val);
+
+    if (val === max) {
+      if (onSlideMax) onSlideMax();
+    }
   }
 
   const alphaFill = clamp((value - min) / (max - min), 0, 1); // clamped 0~1
