@@ -146,7 +146,7 @@ function LeaderboardMobile() {
                 <p>User</p>
               </div>
               <div className="flex-1 text-right">
-                <p>Season {currentSeason === 0 ? '2' : '1'} Pts. (Multiplier)</p>
+                <p>Season {currentSeason === 0 ? '2' : '1'} Pts (Multiplier)</p>
               </div>
             </div>
           </div>

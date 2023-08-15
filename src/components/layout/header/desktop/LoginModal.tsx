@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $isShowLoginModal } from '@/stores/modal';
 import { useWeb3Modal } from '@web3modal/react';
 import { useConnect } from 'wagmi';
 import { useRouter } from 'next/router';
-import Switch from 'react-switch';
+import WrongSwitch from 'react-switch'; // TS has an issue with the return type
+import { $isShowLoginModal } from '@/stores/modal';
+
+const Switch = WrongSwitch as any;
 
 interface Platform {
   title: string;

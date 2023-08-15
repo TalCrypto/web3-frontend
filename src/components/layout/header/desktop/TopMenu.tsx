@@ -31,28 +31,36 @@ function TopMenu() {
     {
       name: 'Airdrop',
       path: '/airdrop',
-      other: '',
-      child: [],
-      textClassName: 'season-2-green',
-      icon: (
-        <div className="mr-1">
-          <Image className="mt-[2px]" src="/images/common/season-2-fire.svg" width={18} height={18} alt="Competition Icon" />
-        </div>
-      )
-    },
-    {
-      name: 'Competition',
-      path: '/competition',
       other: (
         <div
-          className="absolute right-0 top-0 mr-[-12px] mt-[12px] rounded-br-[6px] rounded-tl-[6px] 
-        bg-gradient-to-r from-[#f703d94d] via-[#795af44d] to-[#04aefc4d]
+          className="absolute right-0 top-0 mr-[-12px] mt-[8px] rounded-br-[6px] rounded-tl-[6px]
+        bg-gradient-to-b from-[#E8900C] to-[#DA3B19]
         px-[3px] py-[2px] text-[8px] font-bold italic leading-[8px] text-[#fff]">
-          <span className="end">END</span>
+          <span className="end">On-going</span>
         </div>
       ),
       child: [],
       textClassName: ''
+    },
+    {
+      name: 'Competition',
+      path: '/competition',
+      // other: (
+      //   <div
+      //     className="absolute right-0 top-0 mr-[-12px] mt-[12px] rounded-br-[6px] rounded-tl-[6px]
+      //   bg-gradient-to-r from-[#f703d94d] via-[#795af44d] to-[#04aefc4d]
+      //   px-[3px] py-[2px] text-[8px] font-bold italic leading-[8px] text-[#fff]">
+      //     <span className="end">END</span>
+      //   </div>
+      // ),
+      other: '',
+      child: [],
+      textClassName: 'glow-yellow',
+      icon: (
+        <div className="mr-1">
+          <Image className="mt-[2px]" src="/images/common/fire.svg" width={18} height={18} alt="Airdrop Icon" />
+        </div>
+      )
     }
   ];
 

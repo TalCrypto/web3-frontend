@@ -27,6 +27,7 @@ import { Address, zeroAddress } from 'viem';
 import { AMM } from '@/const/collectionList';
 import { formatBigInt } from '@/utils/bigInt';
 import { getAMMAddress, getSupportedAMMs } from '@/const/addresses';
+import { tradingCompetitionApi } from '@/utils/apiConnects/tradingCompetitionApi';
 
 const PositionInfoUpdater: React.FC<{
   chain: Chain | undefined;
@@ -149,7 +150,7 @@ function UserprofileUpdater() {
 
       const userprofilePromises = [
         apiConnection.getUserPointLite(userprofileAddress),
-        apiConnection.getAbsPnlLeaderboard(userprofileAddress),
+        tradingCompetitionApi.getTopGainer(userprofileAddress),
         getAllTraderPositionHistory(userprofileAddress, 500, 0)
         // apiConnection.getUserTradingHistory(userprofileAddress),
       ];

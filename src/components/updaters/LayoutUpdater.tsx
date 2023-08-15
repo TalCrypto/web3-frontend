@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
 import { $isMobileView } from '@/stores/modal';
+import { $screenWidth } from '@/stores/window';
 
 const LayoutUpdater: React.FC = () => {
   const isMobileView = useNanostore($isMobileView);
@@ -29,6 +30,19 @@ const LayoutUpdater: React.FC = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [isMobileView]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      $screenWidth.set(window.screen.width);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return null;
 };

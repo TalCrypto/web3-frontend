@@ -4,12 +4,12 @@ import { $isShowMobileModal } from '@/stores/modal';
 import PrimaryButton from '@/components/common/PrimaryButton';
 
 export default function ShareMobileModal(props: any) {
-  const { setIsShow, referralCode, copyCode } = props;
+  const { setIsShow, referralCode, copyCode, desc = '📢 Use my referral link to enjoy extra Tribe3 points!' } = props;
   const [isExpand, setIsExpand] = useState(false);
 
   const copyText = `🎉 Long & short Blue-chips NFTs with leverage at any amount
     on https://app.tribe3.xyz/airdrop/refer?ref=${referralCode?.toUpperCase()}
-  📢 Use my referral link to enjoy extra Tribe3 points!`;
+  ${desc}`;
 
   const handleCloseModal = () => {
     setTimeout(() => {
@@ -24,7 +24,7 @@ export default function ShareMobileModal(props: any) {
 
   return (
     <div
-      className={`t-0 fixed bottom-0 left-0 right-0 z-[12] w-full
+      className={`t-0 fixed bottom-0 left-0 right-0 z-[21] w-full
         ${isExpand ? 'h-full' : 'h-0'}
        bg-black/[.3] backdrop-blur-[4px]`}
       onClick={handleCloseModal}>
@@ -38,11 +38,11 @@ export default function ShareMobileModal(props: any) {
           <div className="z-10 rounded-[16px] bg-gradient-to-r from-gradientBlue to-gradientPink p-[1px]">
             <div className="flex rounded-[15px] bg-lightBlue px-[20px] py-[36px] outline-dashed outline-2 outline-lightBlue">
               <div className="flex-1">
-                <h5 className="mb-[24px]">
+                <h5 className="mb-[24px] text-start">
                   🎉 Long & short Blue-chips NFTs with leverage at any amount on{' '}
                   <span className="text-[#2574FB]">{`https://app.tribe3.xyz/airdrop/refer?ref=${referralCode}`}</span>
                 </h5>
-                <p className="body2">📢 Use my referral link to enjoy extra Tribe3 points!</p>
+                <p className="body2 text-start">{desc}</p>
               </div>
             </div>
           </div>

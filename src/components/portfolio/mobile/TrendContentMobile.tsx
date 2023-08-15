@@ -24,8 +24,8 @@ function TrendContentMobile() {
     { label: '1W', ref: useRef() },
     { label: '1M', ref: useRef() },
     { label: '2M', ref: useRef() },
-    { label: '6M', ref: useRef() }
-    // { label: 'Competition', ref: useRef() }
+    { label: '6M', ref: useRef() },
+    { label: 'Competition', ref: useRef() }
   ];
 
   const totalAccountValueDiff = useNanostore($accumulatedDailyPnl);
@@ -81,9 +81,9 @@ function TrendContentMobile() {
           border-b-[#71AAFF]/[.12] px-6 text-[12px]">
           {contentArray.map((item: any, index: any) => (
             <div
-              // ${index === 3 ? 'text-competition' : ''}
               className={`mb-3 cursor-pointer text-[12px]
                     ${selectedTimeIndex === index ? 'selected' : ''}
+              ${index === 4 ? 'text-competition' : ''}
                   `}
               key={`time_${item.label}`}
               onClick={() => clickSelectedTimeIndex(index)}

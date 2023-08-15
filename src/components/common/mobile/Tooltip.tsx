@@ -2,7 +2,7 @@ import PrimaryButton from '@/components/common/PrimaryButton';
 import React, { useState } from 'react';
 
 const MobileTooltip = (props: any) => {
-  const { content, children } = props;
+  const { title = '', content, children } = props;
   const [isShow, setIsShow] = useState(false);
 
   const dismissModal = () => {
@@ -19,6 +19,11 @@ const MobileTooltip = (props: any) => {
           <div
             className={`mx-auto w-full overflow-hidden
               rounded-[6px] bg-secondaryBlue p-6`}>
+            {title !== '' ? (
+              <div className="mb-4 text-center leading-[20px]">
+                <div className="text-[15px] font-[600] text-highEmphasis">{title}</div>
+              </div>
+            ) : null}
             <div className="mb-6 text-center leading-[20px]">
               <div className="text-[12px] text-highEmphasis">{content}</div>
             </div>

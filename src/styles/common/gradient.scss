@@ -273,7 +273,8 @@
   }
 }
 
-.userprofile_tabs .item {
+.userprofile_tabs .item,
+.competition_tabs .item {
   &::after {
     position: absolute;
     top: initial;

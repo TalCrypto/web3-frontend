@@ -132,7 +132,7 @@ function Referral() {
               </div>
               <div className="relative flex flex-col items-center justify-center px-6 pb-6">
                 <div className="flex flex-row">
-                  <span className="text-[14px]">Referral Total Pts.</span>
+                  <span className="text-[14px]">Referral Total Pts</span>
                   <Tooltip content={tooltipMessage} direction="top">
                     <Image
                       src="/images/components/airdrop/more-info.svg"
@@ -175,14 +175,14 @@ function Referral() {
                     <div>3% referees&#39; points</div>
                     <div className="mt-[12px] text-[15px]">
                       <span className="text-glow-green font-semibold">{userPoint.referral.referringRewardPoints.toFixed(1)}</span>
-                      &nbsp; Pts.
+                      &nbsp; Pts
                     </div>
                   </div>
                   <div className="flex basis-1/2 flex-col text-[14px]">
                     <div>2% own trading points</div>
                     <div className="mt-[12px] text-[15px]">
                       <span className="text-glow-green font-semibold">{userPoint.referral.referralSelfRewardPoints.toFixed(1)}</span>
-                      &nbsp; Pts.
+                      &nbsp; Pts
                     </div>
                   </div>
                 </div>
