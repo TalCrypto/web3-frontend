@@ -260,12 +260,13 @@ const ReferreeModal = (props: any) => {
                       : item.username;
 
                   return (
-                    <div key={item.userAddress} className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                    <div
+                      key={item.userAddress}
+                      className="grid cursor-pointer grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]"
+                      onClick={() => router.push(`/userprofile/${item.userAddress}`)}>
                       <div className={`relative col-span-3 flex items-center ${!isCurrentUser ? 'pr-[40px]' : 'pr-[70px]'}`}>
                         <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                        <div onClick={() => router.push(`/userprofile/${item.userAddress}`)} className="cursor-pointer truncate">
-                          {displayUsername}
-                        </div>
+                        <div className="truncate">{displayUsername}</div>
                         {isCurrentUser ? (
                           <div className="ml-[6px] rounded-[2px] bg-[#E06732] px-[4px] py-0 text-[8px] font-[800]">YOU</div>
                         ) : null}
@@ -286,7 +287,9 @@ const ReferreeModal = (props: any) => {
                         <Image src="/images/common/symbols/eth-tribe3.svg" width={16} height={16} alt="" className="mr-[4px]" />
                         {vol}
                       </div>
-                      <div className="col-span-3 font-[600] text-[#FFC24B]">{`${!item.isEligible ? '-' : `${item.contribution}%`}`}</div>
+                      <div className="col-span-3 font-[600] text-[#FFC24B]">
+                        {Number(item.distribution) === 0 ? '-' : `${Number(item.distribution).toFixed(1)}%`}
+                      </div>
                       <div className="col-span-3">
                         <div className="flex w-fit items-center rounded-[12px] bg-[#2E4371] px-[12px] py-[4px]">
                           <Image
@@ -470,14 +473,11 @@ const MyReferralTeam = (props: any) => {
                     return (
                       <div
                         key={item.userAddress}
-                        className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                        onClick={() => router.push(`/userprofile/${item.userAddress}`)}
+                        className="grid cursor-pointer grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
                         <div className="relative col-span-3 items-center">
                           <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                          <div
-                            onClick={() => router.push(`/userprofile/${item.userAddress}`)}
-                            className="cursor-pointer truncate pr-[40px]">
-                            {username}
-                          </div>
+                          <div className=" truncate pr-[40px]">{username}</div>
                         </div>
                         {/* <div className="relative col-span-2">
                             {item.isEligible ? (

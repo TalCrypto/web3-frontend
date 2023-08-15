@@ -1,12 +1,10 @@
 /* eslint-disable no-unused-vars */
 import Image from 'next/image';
 import React from 'react';
-import { $isShowContributionModal } from '@/stores/competition';
 import { $userInfo } from '@/stores/user';
 import { useStore } from '@nanostores/react';
 import { formatBigInt } from '@/utils/bigInt';
 import { useRouter } from 'next/router';
-import { ContributionModal } from './ContributionDetail';
 
 const MyReferrersTeam = (props: any) => {
   const router = useRouter();
@@ -51,6 +49,17 @@ const MyReferrersTeam = (props: any) => {
       : `${personalUsdt}USDT + ${personalPoint} Pts`;
 
   const showContribution = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.distribution || 0;
+  const personalPointPrize = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.pointPrize || 0;
+  const personalUsdtPrize = myRefererTeamList?.filter((item: any) => item.userAddress === userInfo?.userAddress)[0]?.usdtPrize || 0;
+
+  const showReward =
+    personalPointPrize === 0 && personalUsdtPrize === 0
+      ? '0 Pts'
+      : personalPointPrize === 0 && personalUsdtPrize > 0
+      ? `${personalUsdtPrize}USDT`
+      : personalUsdtPrize === 0 && personalPointPrize > 0
+      ? `${personalPointPrize} Pts`
+      : `${personalUsdtPrize}USDT + ${personalPointPrize} Pts`;
 
   return (
     <div>
@@ -105,7 +114,7 @@ const MyReferrersTeam = (props: any) => {
                 </div>
                 <div className="flex flex-col items-center justify-between text-center">
                   <div className="text-[12px] font-[400] text-[#FFD392]">My Reward</div>
-                  <div className="mt-[6px] text-[24px] font-[700]">{showPersonalReward}</div>
+                  <div className="mt-[6px] text-[24px] font-[700]">{showReward}</div>
                 </div>
               </div>
               <div className="mx-[24px] mt-[32px] flex justify-end">

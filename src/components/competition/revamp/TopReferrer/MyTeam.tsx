@@ -231,14 +231,11 @@ const MyTeam = (props: any) => {
                       return (
                         <div
                           key={item.userAddress}
-                          className="grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]">
+                          className="grid cursor-pointer grid-cols-12 items-center px-[36px] py-[16px] text-[14px] odd:bg-[#202249]"
+                          onClick={() => router.push(`/userprofile/${item.userAddress}`)}>
                           <div className="relative col-span-8 items-center lg:col-span-3">
                             <div className="absolute left-[-10px] top-0 h-full w-[3px] rounded-[30px] bg-primaryBlue" />
-                            <div
-                              onClick={() => router.push(`/userprofile/${item.userAddress}`)}
-                              className="cursor-pointer truncate pr-[40px]">
-                              {username}
-                            </div>
+                            <div className="truncate pr-[40px]">{username}</div>
                           </div>
                           {/* <div className="relative col-span-2">
                             {item.isEligible ? (
