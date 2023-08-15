@@ -85,7 +85,7 @@ const PositionDetailMobile = () => {
         bg-black/[.2] backdrop-blur-[4px] duration-500
       `}>
       <div
-        className="h-full w-full justify-between rounded-[12px] border-[1px]
+        className="h-[calc(100%-50px)] w-full justify-between overflow-scroll rounded-[12px] border-[1px]
         border-[#71aaff38] bg-darkBlue text-[14px] font-normal text-mediumEmphasis">
         <div
           className="mb-[6px] flex w-full items-center justify-between bg-lightBlue px-5 py-6"
