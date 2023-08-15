@@ -69,8 +69,7 @@ const ContributionDetailsMobile = (props: any) => {
                   ? `${item.username.substring(0, 10)}...`
                   : item.username;
 
-              const isCurrentUser =
-                item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
+              const isCurrentUser = item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase();
               const vol = formatBigInt(item.tradedVolume).toFixed(2);
 
               return (
