@@ -453,14 +453,14 @@ const AddressPage: NextPage = () => {
                     <Image src="/images/common/symbols/eth-tribe3.svg" alt="" width={16} height={16} />
                     <p
                       className={`text-h5 ${
-                        Number(localeConversion(userPnl, 2)) > 0
+                        Number(localeConversion(userPnl, 2, 2)) > 0
                           ? 'text-marketGreen'
-                          : Number(localeConversion(userPnl, 2)) < 0
+                          : Number(localeConversion(userPnl, 2, 2)) < 0
                           ? 'text-marketRed'
                           : ''
                       }`}>
-                      {Number(localeConversion(userPnl, 2)) > 0 ? '+' : ''}
-                      {Number(localeConversion(userPnl, 2))}
+                      {Number(localeConversion(userPnl, 2, 2)) > 0 ? '+' : ''}
+                      {Number(localeConversion(userPnl, 2, 2)) === 0 ? '0.00' : Number(localeConversion(userPnl, 2, 2))}
                     </p>
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Top Gainer Rank</p>
