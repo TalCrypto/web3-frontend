@@ -45,10 +45,6 @@ const TopFP = () => {
         usdtPrize: 0
       };
 
-  useEffect(() => {
-    console.log({ rankingList, userItemRank });
-  }, [rankingList, userItemRank]);
-
   // define tables columns
   const tableColumns: TableColumn<TopFundingPaymentRanking>[] = [
     {

@@ -249,7 +249,6 @@ const ReferreeModal = (props: any) => {
               </div>
               <div className="mt-[24px] max-h-[360px] overflow-y-scroll">
                 {myRefererTeamList?.map((item: any) => {
-                  console.log({ item });
                   const isCurrentUser = item.userAddress.toLowerCase() === userInfo?.userAddress.toLowerCase();
                   const vol = formatBigInt(item.tradedVolume).toFixed(2);
                   const reward = itemShowReward(item);

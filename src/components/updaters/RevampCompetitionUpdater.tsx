@@ -42,7 +42,6 @@ function RevampCompetitionUpdater() {
 
   const currentTime = Date.now() / 1000;
   const currentWeek = getWeekInfo(currentTime);
-  // console.log({ currentTime, currentWeek });
 
   async function fetchData() {
     $isDataLoading.set(true);

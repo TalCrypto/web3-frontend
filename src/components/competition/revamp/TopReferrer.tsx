@@ -82,10 +82,6 @@ const TopReferrer = () => {
   const [isShowMobileShareModal, setIsShowMobileShareModal] = useState(false);
   const [isShowReferralModal, setIsShowReferralModal] = useState(false);
 
-  useEffect(() => {
-    console.log({ rankingList, userItemRank });
-  }, [rankingList, userItemRank]);
-
   // define tables columns
   const tableColumns: TableColumn<TopReferrerRanking>[] = [
     {
