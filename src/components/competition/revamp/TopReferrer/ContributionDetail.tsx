@@ -74,8 +74,8 @@ export const ContributionDetail = () => {
           </div>
           <div className="mt-[24px] overflow-y-scroll lg:max-h-[360px]">
             {referrers.map(item => {
-              const isCurrentUser =
-                item.username.toLowerCase() === userInfo?.userAddress.toLowerCase() || item.username === userInfo?.username;
+              console.log(item.username);
+              const isCurrentUser = item.username === userInfo?.username;
 
               return (
                 <div className={`grid grid-cols-12 items-center px-[36px] py-[16px] text-[14px] ${item.isEligible ? 'bg-[#202249]' : ''}`}>
