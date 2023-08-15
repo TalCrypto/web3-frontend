@@ -28,6 +28,16 @@ const CollectionModal = (props: any) => {
     if (overviewData) {
       const temp = [...overviewData];
       const { dayVolume, fundingRate, vammPrice, priceGap, timeValue } = positionSorting;
+      // default sorting, set initSorting all to 0
+      // if (dayVolume === 0 && fundingRate === 0 && vammPrice === 0 && priceGap === 0 && timeValue === 0) {
+      //   const tempSort = temp.sort((a: any, b: any) => {
+      //     const { sort: sortA } = getCollectionInformation(a.amm);
+      //     const { sort: sortB } = getCollectionInformation(b.amm);
+      //     return sortA - sortB;
+      //   });
+      //
+      //   setSortedData(tempSort);
+      // }
       if (dayVolume !== 0) {
         const tempSort = temp.sort((a: any, b: any) => {
           const dayVol = a.volume - b.volume;

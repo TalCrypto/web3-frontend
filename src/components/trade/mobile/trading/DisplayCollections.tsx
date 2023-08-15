@@ -24,6 +24,11 @@ export default function DisplayCollections() {
   const isMarketDataUpdating = useNanostore($isMarketDataUpdating);
 
   const ammList = getSupportedAMMs(); // .filter((amm: AMM) => amm !== currentAmm);
+  const sortedAmmList = [...ammList].sort((a, b) => {
+    const { sort: sortA } = getCollectionInformation(a);
+    const { sort: sortB } = getCollectionInformation(b);
+    return sortA - sortB;
+  });
 
   const marketUpdateTrigger = useNanostore($marketUpdateTrigger);
   const updateOverviewData = () => {
@@ -56,7 +61,7 @@ export default function DisplayCollections() {
             <ThreeDots ariaLabel="loading-indicator" height={60} width={60} color="white" />
           </div>
         ) : (
-          ammList.map((item: any, index) => {
+          sortedAmmList.map((item: any, index) => {
             const key = `switcher_collection_${index}`;
             const collectionInfo = getCollectionInformation(item);
             const tradingDataList: any = overviewData?.filter((dataItem: any) => item === dataItem.amm);
