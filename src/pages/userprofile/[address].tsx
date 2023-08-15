@@ -460,7 +460,7 @@ const AddressPage: NextPage = () => {
                           : ''
                       }`}>
                       {Number(localeConversion(userPnl, 2, 2)) > 0 ? '+' : ''}
-                      {Number(localeConversion(userPnl, 2, 2))}
+                      {Number(localeConversion(userPnl, 2, 2)) === 0 ? '0.00' : Number(localeConversion(userPnl, 2, 2))}
                     </p>
                   </div>
                   <p className="mb-[6px] text-b3 text-[#FFD392]">Top Gainer Rank</p>
