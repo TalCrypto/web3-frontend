@@ -329,7 +329,7 @@ function CloseSlider(props: {
         disabled={disabled}
         value={closeValue}
         min={0}
-        max={maxCloseValue}
+        max={Number(maxCloseValue.toFixed(4))}
         defaultValue={0}
         onChange={onSlide}
         onAfterChange={onChange}
@@ -375,7 +375,7 @@ export default function CloseCollateral() {
     error: estError
   } = useOpenPositionEstimation({
     side: closeSide,
-    notionalAmount: closeValue,
+    notionalAmount: Number(closeValue) || 0,
     slippagePercent: Number(toleranceRate),
     leverage: 1
   });
@@ -542,7 +542,7 @@ export default function CloseCollateral() {
           <OpenPosButton
             isEstimating={isEstLoading}
             side={closeSide}
-            notionalAmount={closeValue}
+            notionalAmount={Number(closeValue) || 0}
             leverage={1}
             slippagePercent={Number(toleranceRate)}
             estimation={isAmountTooLarge || isAmountTooSmall ? undefined : estimation}
