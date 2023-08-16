@@ -69,7 +69,6 @@ const MarketTrade = () => {
   const userInfo = useNanostore($userInfo);
 
   useEffect(() => {
-    console.log({ marketHistory });
     if (marketHistory && marketHistory.length > 0) {
       setNewAdded(true);
     }
