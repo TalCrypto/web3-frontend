@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
 import { chViewerAbi, wethAbi } from '@/const/abi';
@@ -10,6 +11,7 @@ import {
   $userFPHistory,
   $userIsConnected,
   $userIsWrongNetwork,
+  $userPosHistoryTrigger,
   $userPositionHistory,
   $userPositionInfos,
   $userTotalFP,
@@ -26,6 +28,7 @@ import { Address, useAccount, useContractRead, useBalance, Chain, useNetwork } f
 import { $userPoint, $userPrevPoint, defaultUserPoint } from '@/stores/airdrop';
 import { getAddress, zeroAddress } from 'viem';
 import { authConnections } from '@/utils/authConnections';
+import { useStore } from '@nanostores/react';
 
 const PositionInfoUpdater: React.FC<{
   chain: Chain | undefined;
@@ -131,6 +134,8 @@ const UserDataUpdater: React.FC = () => {
 
   const chContract = getCHContract(chain);
   const weth = getWEthContract(chain);
+
+  const userPosHistoryTrigger = useStore($userPosHistoryTrigger);
 
   // get allowance
   const { data: allowanceData } = useContractRead({
@@ -258,7 +263,7 @@ const UserDataUpdater: React.FC = () => {
       }
     }
     update();
-  }, [address, chain]);
+  }, [address, chain, userPosHistoryTrigger]);
 
   if (!amms) return null;
 

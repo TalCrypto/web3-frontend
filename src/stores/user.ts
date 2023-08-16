@@ -98,6 +98,7 @@ export const $userTotalCollateral = computed($userPositionInfos, userPositionInf
   return amms.map(amm => userPositionInfos[amm]).reduce((val, posInfo) => (posInfo ? val + posInfo.margin : val), 0);
 });
 export const $userPositionHistory = atom<PositionHistoryRecord[]>([]);
+export const $userPosHistoryTrigger = atom(false);
 export const $userFPHistory = map<{ [value in AMM]: FundingPaymentRecord[] }>();
 export const $userTotalFP = map<{ [value in AMM]: number }>();
 
