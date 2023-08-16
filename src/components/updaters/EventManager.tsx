@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable operator-linebreak */
 import React, { useEffect } from 'react';
 import { showToast } from '@/components/common/Toast';
 import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
@@ -39,11 +41,11 @@ const EventHandlers = () => {
           const ammInfo = getCollectionInformation(amm);
           const isLiquidation = type === TradeActions.FULL_LIQ || type === TradeActions.PARTIAL_LIQ;
           const message =
-            type === TradeActions.PARTIAL_LIQ ?
-              'Your position has been partially liquidated' :
-              type === TradeActions.FULL_LIQ ?
-                'Your position has been partially liquidated' :
-                'Order Completed!';
+            type === TradeActions.PARTIAL_LIQ
+              ? 'Your position has been partially liquidated'
+              : type === TradeActions.FULL_LIQ
+              ? 'Your position has been partially liquidated'
+              : 'Order Completed!';
 
           if (!isMobileView) {
             showToast(
@@ -85,7 +87,11 @@ const EventHandlers = () => {
               isNew: true
             };
             const oldHistory = $futureMarketHistory.get();
-            if (oldHistory) {
+            const exists = oldHistory?.find(i => i.txHash === newRecord.txHash);
+            if (exists) {
+              console.log('existing record in history, will not added', exists);
+            }
+            if (oldHistory && !exists) {
               $futureMarketHistory.set([newRecord, ...oldHistory.map(history => ({ ...history, isNew: false }))]);
             }
             addGraphRecord(event.vammPrice);
