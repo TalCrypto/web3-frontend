@@ -14,7 +14,7 @@ import {
   $psShowShareIndicator
 } from '@/stores/portfolio';
 import { DoubleRowPriceContent, LargeTypeIcon, SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
-import { UserPositionInfo } from '@/stores/user';
+import { $userFPHistoryTrigger, UserPositionInfo } from '@/stores/user';
 import { useFundingPaymentHistory } from '@/hooks/collection';
 import { usePublicClient } from 'wagmi';
 import { ammAbi } from '@/const/abi';
@@ -98,6 +98,7 @@ function PositionListItem(props: { userPosition: UserPositionInfo; itemIndex: nu
     e.stopPropagation();
     $psSelectedCollectionAmm.set(userPositionAmm);
     $psShowFundingPayment.set(true);
+    $userFPHistoryTrigger.set(!$userFPHistoryTrigger.get());
   };
 
   const showSharePosition = (e: any) => {

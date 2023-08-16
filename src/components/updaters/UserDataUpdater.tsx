@@ -9,6 +9,7 @@ import {
   $currentChain,
   $userAddress,
   $userFPHistory,
+  $userFPHistoryTrigger,
   $userIsConnected,
   $userIsWrongNetwork,
   $userPosHistoryTrigger,
@@ -38,6 +39,7 @@ const PositionInfoUpdater: React.FC<{
   isWrongNetwork: boolean;
 }> = ({ chain, amm, ammAddress, trader, isWrongNetwork }) => {
   const chViewer = getCHViewerContract(chain);
+  const userFPHistoryTrigger = useStore($userFPHistoryTrigger);
   const { data } = useContractRead({
     ...chViewer,
     abi: chViewerAbi,
@@ -119,7 +121,7 @@ const PositionInfoUpdater: React.FC<{
         );
       });
     }
-  }, [trader, ammAddress, amm]);
+  }, [trader, ammAddress, amm, userFPHistoryTrigger]);
 
   return null;
 };

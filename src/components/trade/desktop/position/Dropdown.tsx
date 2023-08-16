@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { $isShowMobileModal } from '@/stores/modal';
-import { $userPosHistoryTrigger } from '@/stores/user';
+import { $userFPHistoryTrigger, $userPosHistoryTrigger } from '@/stores/user';
 
 const Dropdown = (props: any) => {
   const { showDropdown, setShowDropdown, setShowHistoryModal, setShowFundingPaymentModal } = props;
@@ -33,6 +33,7 @@ const Dropdown = (props: any) => {
   const onClickFundingPayment = () => {
     setShowFundingPaymentModal(true);
     $isShowMobileModal.set(true);
+    $userFPHistoryTrigger.set(!$userFPHistoryTrigger.get());
   };
 
   return (
