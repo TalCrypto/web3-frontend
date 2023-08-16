@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 
 import TabsInfo from '@/components/trade/mobile/information/TabsInfo';
+import { $fundingRatesHistoryTrigger } from '@/stores/trading';
 
 function InformationMobile() {
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
@@ -18,6 +19,11 @@ function InformationMobile() {
     });
 
     setActiveTab(index);
+
+    if (index === 2) {
+      // funding payment
+      $fundingRatesHistoryTrigger.set(!$fundingRatesHistoryTrigger.get());
+    }
   };
 
   const Tabs = ['Market Trades', 'Spot Transactions', 'Funding Payment'].map((item, index) => (

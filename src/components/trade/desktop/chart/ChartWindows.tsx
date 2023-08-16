@@ -16,6 +16,7 @@ import {
   $collectionConfig,
   $currentAmm,
   $fundingRates,
+  $fundingRatesHistoryTrigger,
   $nextFundingTime,
   $openInterests,
   $oraclePrice,
@@ -30,6 +31,7 @@ import { SmallPriceIcon } from '@/components/portfolio/common/PriceLabelComponen
 import ShowPriceGapOverModal from '@/components/trade/desktop/chart/ShowPriceGapOverModal';
 import CheckBox from '@/components/common/CheckBox';
 import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
+import { $userFPHistoryTrigger } from '@/stores/user';
 
 const flashAnim = 'flash';
 
@@ -359,6 +361,13 @@ const ChartFooter = () => {
           .toString()
           .padStart(2, '0');
         setTimeLabel(`${hours}:${minutes}:${seconds}`);
+        const label = `${hours}:${minutes}:${seconds}`;
+        // exact match string timer to 3 mins after distribution
+        if (label === '02:57:00') {
+          // refresh user pos detail total fp, user fp history, and funding payment history rates table
+          $userFPHistoryTrigger.set(!$userFPHistoryTrigger.get());
+          $fundingRatesHistoryTrigger.set(!$fundingRatesHistoryTrigger.get());
+        }
       }, 1000);
     }
     return () => {
