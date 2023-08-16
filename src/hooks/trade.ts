@@ -132,7 +132,7 @@ export const useApproveTransaction = () => {
     ...weth,
     abi: wethAbi,
     functionName: 'approve',
-    args: chContract && [chContract.address, parseBigInt(10)],
+    args: chContract && [chContract.address, BigInt(2) ** BigInt(256) - BigInt(1)],
     enabled: Boolean(chContract)
   });
 
