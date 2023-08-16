@@ -12,7 +12,7 @@ import PositionList from '@/components/portfolio/mobile/PositionList';
 import FundingPaymentModal from '@/components/portfolio/mobile/FundingPaymentModal';
 import OutlineButton from '@/components/common/OutlineButton';
 import { SingleRowPriceContent } from '@/components/portfolio/common/PriceLabelComponents';
-import { $userIsConnected, $userTotalFP } from '@/stores/user';
+import { $userIsConnected, $userPosHistoryTrigger, $userTotalFP } from '@/stores/user';
 import { $isShowMobileModal } from '@/stores/modal';
 import { AMM } from '@/const/collectionList';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
@@ -61,6 +61,7 @@ function PositionInfoMobile() {
               onClick={() => {
                 $psShowHistory.set(true);
                 $isShowMobileModal.set(true);
+                $userPosHistoryTrigger.set(!$userPosHistoryTrigger.get());
               }}>
               Trade History
             </OutlineButton>

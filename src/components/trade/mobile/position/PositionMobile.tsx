@@ -16,6 +16,7 @@ import { AMM, getCollectionInformation } from '@/const/collectionList';
 import { $currentAmm, $oraclePrice, $vammPrice } from '@/stores/trading';
 import { $isShowMobileModal } from '@/stores/modal';
 import MobileTooltip from '@/components/common/mobile/Tooltip';
+import { $userPosHistoryTrigger } from '@/stores/user';
 
 function MedPriceIcon(props: any) {
   const { priceValue = 0, className = '', isLoading = false, image = '' } = props;
@@ -92,6 +93,7 @@ export default function PositionMobile() {
             onClick={() => {
               setShowHistoryModal(true);
               $isShowMobileModal.set(true);
+              $userPosHistoryTrigger.set(!$userPosHistoryTrigger.get());
             }}>
             <Image alt="" src="/images/components/trade/position/trade_history.svg" width={16} height={16} />
           </div>
