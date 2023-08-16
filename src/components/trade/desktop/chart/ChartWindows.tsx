@@ -209,6 +209,9 @@ const ChartHeaders = () => {
   const [prevAmm, setPrevAmm] = useState<AMM>();
   const [vammPriceColor, setVammPriceColor] = useState('');
 
+  const [prevOraclePrice, setPrevOraclePrice] = useState<number>();
+  const [oraclePriceColor, setOraclePriceColor] = useState('');
+
   // handle vamm price color changed
   useEffect(() => {
     if (prevVammPrice !== undefined && vammPrice !== undefined && prevAmm === currentAmm) {
@@ -228,6 +231,25 @@ const ChartHeaders = () => {
     setPrevVammPrice(vammPrice);
   }, [vammPrice]);
 
+  // handle oracle price color changed
+  useEffect(() => {
+    if (prevOraclePrice !== undefined && oraclePrice !== undefined && prevAmm === currentAmm) {
+      const textColor =
+        oraclePrice > prevOraclePrice
+          ? 'animate-[greentowhite_0.5s_linear_infinite]'
+          : oraclePrice < prevOraclePrice
+          ? 'animate-[redtowhite_0.5s_linear_infinite]'
+          : '';
+      setOraclePriceColor(textColor);
+      setTimeout(() => {
+        setOraclePriceColor('');
+      }, 1500);
+    }
+
+    setPrevAmm(currentAmm);
+    setPrevOraclePrice(oraclePrice);
+  }, [oraclePrice]);
+
   return (
     <div className="flex w-full flex-row items-center justify-start text-[16px]">
       <div className="left">
@@ -238,7 +260,7 @@ const ChartHeaders = () => {
                 <span>{collectionInfo ? collectionInfo.displayCollectionPair : ''}</span>
               </div>
               <div className="font-400 flex text-[14px] text-highEmphasis">
-                <SmallPriceIcon priceValue={`${oraclePrice ? oraclePrice.toFixed(2) : '-.--'} (Oracle)`} />
+                <SmallPriceIcon className={oraclePriceColor} priceValue={`${oraclePrice ? oraclePrice.toFixed(2) : '-.--'} (Oracle)`} />
               </div>
             </div>
           </div>

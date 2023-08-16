@@ -201,6 +201,9 @@ const ChartHeaders = () => {
   const [prevAmm, setPrevAmm] = useState<AMM>();
   const [vammPriceColor, setVammPriceColor] = useState('');
 
+  const [prevOraclePrice, setPrevOraclePrice] = useState<number>();
+  const [oraclePriceColor, setOraclePriceColor] = useState('');
+
   // handle vamm price color changed
   useEffect(() => {
     if (prevVammPrice !== undefined && vammPrice !== undefined && prevAmm === currentAmm) {
@@ -219,6 +222,25 @@ const ChartHeaders = () => {
     setPrevAmm(currentAmm);
     setPrevVammPrice(vammPrice);
   }, [vammPrice]);
+
+  // handle oracle price color changed
+  useEffect(() => {
+    if (prevOraclePrice !== undefined && oraclePrice !== undefined && prevAmm === currentAmm) {
+      const textColor =
+        oraclePrice > prevOraclePrice
+          ? 'animate-[greentowhite_0.5s_linear_infinite]'
+          : oraclePrice < prevOraclePrice
+          ? 'animate-[redtowhite_0.5s_linear_infinite]'
+          : '';
+      setOraclePriceColor(textColor);
+      setTimeout(() => {
+        setOraclePriceColor('');
+      }, 1500);
+    }
+
+    setPrevAmm(currentAmm);
+    setPrevOraclePrice(oraclePrice);
+  }, [oraclePrice]);
 
   const priceGap = vAMMPrice && oraclePrice ? vAMMPrice / oraclePrice - 1 : 0;
   const priceGapPercentage = priceGap * 100;
@@ -304,9 +326,9 @@ const ChartHeaders = () => {
         </div>
 
         <div className="col-span-1 text-right">
-          <div className="font-400 mb-[14px] h-[15px] text-[14px]">
+          <div className="font-400 mb-[14px] h-[15px] text-[14px] text-highEmphasis">
             <span className="mr-[6px] text-[12px] text-mediumEmphasis">Oracle:</span>
-            <span className="text-[12px] text-highEmphasis">{oraclePrice ? oraclePrice.toFixed(2) : '-.--'}</span>
+            <span className={`text-[12px] ${oraclePriceColor}`}>{oraclePrice ? oraclePrice.toFixed(2) : '-.--'}</span>
           </div>
 
           <div>

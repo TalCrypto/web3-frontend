@@ -42,7 +42,7 @@ const { chains, publicClient } = configureChains(
     infuraProvider({ apiKey: infuraProjectId }),
     publicProvider()
   ],
-  { pollingInterval: 4000 }
+  { pollingInterval: 8000 }
 );
 
 const wagmiConfig = createConfig({
