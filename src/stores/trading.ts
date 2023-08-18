@@ -65,6 +65,7 @@ export const $collectionConfig = map<CollectionConfig>();
 export const $futureMarketHistory = atom<MarketHistoryRecord[] | undefined>();
 
 export const $fundingRatesHistory = atom<FundingRatesRecord[] | undefined>();
+export const $fundingRatesHistoryTrigger = atom(false);
 
 export const $spotMarketHistory = atom<any[] | undefined>();
 

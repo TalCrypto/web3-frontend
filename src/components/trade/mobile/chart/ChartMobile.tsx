@@ -15,6 +15,7 @@ import {
   $collectionConfig,
   $currentAmm,
   $fundingRates,
+  $fundingRatesHistoryTrigger,
   $nextFundingTime,
   $openInterests,
   $oraclePrice,
@@ -29,6 +30,7 @@ import ShowPriceGapOverModal from '@/components/trade/mobile/chart/ShowPriceGapO
 import { $isSettingOracleOn, $isSettingVammOn } from '@/stores/chart';
 import CheckBox from '@/components/common/CheckBox';
 import { AMM } from '@/const/collectionList';
+import { $userFPHistoryTrigger } from '@/stores/user';
 
 function PriceIndicator(props: any) {
   const { priceChangeValue, priceChangeRatio } = props;
@@ -300,6 +302,13 @@ const ChartHeaders = () => {
           .toString()
           .padStart(2, '0');
         setTimeLabel(`${hours}:${minutes}:${seconds}`);
+        const label = `${hours}:${minutes}:${seconds}`;
+        // exact match string timer to 3 mins after distribution
+        if (label === '02:57:00') {
+          // refresh user pos detail total fp, user fp history, and funding payment history rates table
+          $userFPHistoryTrigger.set(!$userFPHistoryTrigger.get());
+          $fundingRatesHistoryTrigger.set(!$fundingRatesHistoryTrigger.get());
+        }
       }, 1000);
     }
     return () => {
