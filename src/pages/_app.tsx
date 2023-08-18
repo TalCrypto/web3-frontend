@@ -22,6 +22,7 @@ import { Web3Modal } from '@web3modal/react';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import MobileTncModal from '@/components/common/mobile/TncModal';
 import Head from 'next/head';
+import IdleUpdater from '@/components/updaters/IdleUpdater';
 
 // Wagmi config
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID ?? '';
@@ -120,6 +121,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
         <UserDataUpdater />
+        <IdleUpdater />
         <LoginModal />
         <MobileTncModal />
       </WagmiConfig>
