@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 interface CountdownTimerProps {
   date: string;
@@ -8,12 +8,11 @@ interface CountdownTimerProps {
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ date, timeZone }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [eventTime, setEventTime] = useState(new Date(date));
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-
-  const eventTime = new Date(date).toLocaleString('en-US', { timeZone });
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -44,9 +43,9 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ date, timeZone }) => {
   }, [currentTime, eventTime]);
 
   return (
-    <>
+    <span title={eventTime.toLocaleString()}>
       {days}d {hours}h {minutes}m
-    </>
+    </span>
   );
 };
 

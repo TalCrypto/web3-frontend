@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import TribeDetailComponents from '@/components/trade/desktop/information/TribeDetailComponents';
 import Image from 'next/image';
+import { $fundingRatesHistoryTrigger } from '@/stores/trading';
 
 function InformationWindow() {
   const [detailHeaderIndex /* ,setDetailHeaderIndex */] = useState(0);
@@ -20,7 +21,13 @@ function InformationWindow() {
         justify-center text-center text-[16px] font-semibold text-highEmphasis
         ${activeTab === index ? 'selected' : ''}`}
       key={item}
-      onClick={() => setActiveTab(index)}>
+      onClick={() => {
+        setActiveTab(index);
+        if (index === 2) {
+          // funding payment history
+          $fundingRatesHistoryTrigger.set(!$fundingRatesHistoryTrigger.get());
+        }
+      }}>
       {tabsImages[index]}
       <span className="hidden 2xl:block">{item}</span>
       <span className="block 2xl:hidden">{item.split(' ')[0]}</span>

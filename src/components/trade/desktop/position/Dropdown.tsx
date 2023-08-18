@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { $isShowMobileModal } from '@/stores/modal';
+import { $userFPHistoryTrigger, $userPosHistoryTrigger } from '@/stores/user';
 
 const Dropdown = (props: any) => {
   const { showDropdown, setShowDropdown, setShowHistoryModal, setShowFundingPaymentModal } = props;
@@ -22,6 +23,7 @@ const Dropdown = (props: any) => {
   const onClickViewHistory = () => {
     setShowHistoryModal(true);
     $isShowMobileModal.set(true);
+    $userPosHistoryTrigger.set(!$userPosHistoryTrigger.get());
   };
 
   const onClickViewPortfolio = () => {
@@ -31,6 +33,7 @@ const Dropdown = (props: any) => {
   const onClickFundingPayment = () => {
     setShowFundingPaymentModal(true);
     $isShowMobileModal.set(true);
+    $userFPHistoryTrigger.set(!$userFPHistoryTrigger.get());
   };
 
   return (

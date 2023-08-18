@@ -1,7 +1,7 @@
 /* eslint-disable operator-linebreak */
 import { useEffect } from 'react';
 import { useStore as useNanostore } from '@nanostores/react';
-import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
+import { $currentAmm, $fundingRatesHistory, $fundingRatesHistoryTrigger, $futureMarketHistory, $spotMarketHistory } from '@/stores/trading';
 import { getAMMAddress } from '@/const/addresses';
 import { getFundingPaymentHistory, getMarketHistory } from '@/utils/trading';
 import { formatBigInt } from '@/utils/bigInt';
@@ -13,6 +13,7 @@ import { getCollectionInformation } from '@/const/collectionList';
 const MarketHistoryUpdater = () => {
   const currentAmm = useNanostore($currentAmm);
   const chain = useNanostore($currentChain);
+  const fundingRatesHistoryTrigger = useNanostore($fundingRatesHistoryTrigger);
 
   // load future market history for once
   useEffect(() => {
@@ -109,7 +110,7 @@ const MarketHistoryUpdater = () => {
       $fundingRatesHistory.set(undefined);
       fetch();
     }
-  }, [currentAmm, chain]);
+  }, [currentAmm, chain, fundingRatesHistoryTrigger]);
 
   return null;
 };
