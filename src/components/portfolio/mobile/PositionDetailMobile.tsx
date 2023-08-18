@@ -15,7 +15,7 @@ import {
 } from '@/stores/portfolio';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $isShowMobileModal } from '@/stores/modal';
-import { $userPositionInfos } from '@/stores/user';
+import { $userFPHistoryTrigger, $userPositionInfos } from '@/stores/user';
 import { PriceWithIcon } from '@/components/common/PriceWithIcon';
 import { detailRowMobile } from '@/components/common/LabelsComponents';
 import { useFundingPaymentHistory } from '@/hooks/collection';
@@ -75,6 +75,7 @@ const PositionDetailMobile = () => {
 
   const onClickFundingPayment = () => {
     $psShowFundingPayment.set(true);
+    $userFPHistoryTrigger.set(!$userFPHistoryTrigger.get());
   };
 
   return (

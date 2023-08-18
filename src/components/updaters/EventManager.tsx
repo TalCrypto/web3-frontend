@@ -6,7 +6,7 @@ import { getAMMAddress, getAMMByAddress } from '@/const/addresses';
 import { getCollectionInformation } from '@/const/collectionList';
 import { $pendingPositionChangedEvents, $pendingMarginChangedEvents } from '@/stores/events';
 import { $currentAmm, $fundingRatesHistory, $futureMarketHistory, addGraphRecord } from '@/stores/trading';
-import { $currentChain, $userAddress } from '@/stores/user';
+import { $currentChain, $userAddress, $userPosHistoryTrigger } from '@/stores/user';
 import { getTradingActionType, getCollateralActionType } from '@/utils/actionType';
 import { apiConnection } from '@/utils/apiConnection';
 import { useStore as useNanostore } from '@nanostores/react';
@@ -64,6 +64,8 @@ const EventHandlers = () => {
               }
             );
           }
+
+          $userPosHistoryTrigger.set(!$userPosHistoryTrigger.get());
         }
       });
 

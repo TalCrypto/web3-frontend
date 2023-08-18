@@ -14,7 +14,7 @@ import PositionList from '@/components/portfolio/desktop/PositionList';
 import FundingPaymentModal from '@/components/portfolio/desktop/FundingPaymentModal';
 import SharePosition from '@/components/portfolio/desktop/SharePosition';
 import OutlineButton from '@/components/common/OutlineButton';
-import { $userIsConnected } from '@/stores/user';
+import { $userIsConnected, $userPosHistoryTrigger } from '@/stores/user';
 import SortingIndicator from '@/components/common/SortingIndicator';
 import Tooltip from '@/components/common/Tooltip';
 
@@ -65,7 +65,15 @@ function PositionInfo() {
               My Position {isConnected ? ` (${currentPositionCount})` : ''}
             </h4>
           </div>
-          {isConnected ? <OutlineButton onClick={() => $psShowHistory.set(true)}>Trade History</OutlineButton> : null}
+          {isConnected ? (
+            <OutlineButton
+              onClick={() => {
+                $psShowHistory.set(true);
+                $userPosHistoryTrigger.set(!$userPosHistoryTrigger.get());
+              }}>
+              Trade History
+            </OutlineButton>
+          ) : null}
         </div>
 
         <div className="mb-[66px] pb-5">
